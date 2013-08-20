@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<add>
+	<doc>
+		<field name="id">322832</field>
+		<field name="coordinate">50.633300,9.400000</field>
+		<field name="osm_id">240080123</field>
+		<field name="name">Lauterbach (Hessen)</field>
+		<field name="city">Lauterbach (Hessen)</field>
+		<field name="country">Deutschland</field>
+		<field name="places">Vogelsbergkreis, Regierungsbezirk Gießen, Hessen, Europe</field>
+		<field name="type">CITY</field>
+		<field name="category">218</field>
+	</doc>
+	<doc>
+		<field name="id">51118531</field>
+		<field name="coordinate">50.641371,9.357951</field>
+		<field name="osm_id">418333</field>
+		<field name="name">Lauterbach</field>
+		<field name="country">Deutschland</field>
+		<field name="city">Lauterbach</field>
+		<field name="places">Vogelsbergkreis, Regierungsbezirk, Hessen, Gießen, Europe</field>
+		<field name="type">CITY</field>
+		<field name="category">218</field>
+	</doc>
+</add>

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<add>
+	<doc>
+		<field name="category">218</field>
+		<field name="city">Geretsried</field>
+
+
+		<field name="city_fr"/>
+		<field name="city_it"/>
+		<field name="coordinate">47.894976,11.424227</field>
+		<field name="country">Deutschland</field>
+		<field name="country_de">Deutschland</field>
+		<field name="country_en">Germany</field>
+		<field name="country_fr">Allemagne</field>
+		<field name="country_it">Germania</field>
+		<field name="id">33579008</field>
+		<field name="name">Gelting</field>
+		<field name="osm_id">191172808</field>
+		<field name="places">
+			Geretsried, Bad Tölz-Wolfratshausen, Regierungsbezirk Oberbayern, Regierungsbezirk Oberbayern, Bayern,
+			Bayern,
+			Free State of Bavaria, Bavière, Baviera
+		</field>
+		<field name="postcode">82538</field>
+		<field name="ranking_kmt">8</field>
+		<field name="secondary_places">
+			Farchet, Waldram, Nantwein, Weidach, Achmühle, Buchberg, Dorfen, Meilenberg, Bolzwang, Puppling,
+			Schwaigwall,
+			Adelsreuth, Schlederloh, Unterherrnhausen, Attenhausen, Baierlach, Höhenrain, Degerndorf, Sonderham
+		</field>
+	</doc>
+
+	<doc>
+		<field name="id">10620095</field>
+		<field name="coordinate">46.493751,7.561036</field>
+		<field name="osm_id">1785639140</field>
+		<field name="name">The Cambrian</field>
+		<field name="street">DORFSTRASSE</field>
+		<field name="housenumber">7</field>
+		<field name="postcode">3715</field>
+		<field name="country">Switzerland</field>
+		<field name="country_de">Schweiz</field>
+		<field name="country_en">Switzerland</field>
+		<field name="country_fr">Suisse</field>
+		<field name="country_it">Svizzera</field>
+		<field name="city">Adelboden</field>
+		<field name="places">Adelboden, Verwaltungskreis Frutigen-Niedersimmental, Verwaltungsregion Oberland, Bern -
+			Berne
+		</field>
+		<field name="places_de">Bern</field>
+		<field name="places_fr">Berne</field>
+		<field name="places_it">Berna</field>
+		<field name="secondary_places">Bezirk See;District du Lac, Amtsbezirk Niedersimmental, Valais - Wallis, Fribourg
+			- Freiburg, Schweiz, Suisse, Svizzera, Svizra
+		</field>
+		<field name="secondary_places_de">Wallis, Freiburg, Schweiz</field>
+		<field name="secondary_places_en">Switzerland</field>
+		<field name="secondary_places_fr">Valais, Fribourg, Suisse</field>
+		<field name="secondary_places_it">Vallese, Friburgo, Svizzera</field>
+		<field name="ranking_kmt">0</field>
+	</doc>
+	<doc>
+		<field name="category">218</field>
+		<field name="city">Brissago</field>
+		<field name="city_de"/>
+		<field name="city_en"/>
+		<field name="coordinate">46.115122,8.706943</field>
+		<field name="country">Switzerland</field>
+		<field name="country_de">Schweiz</field>
+		<field name="country_en">Switzerland</field>
+		<field name="id">44524389</field>
+		<field name="name">Via R. Leoncavallo</field>
+		<field name="osm_id">185348616</field>
+		<field name="places">
+			Alpe di Naccio, Brissago, Circolo dell'Isole, Distretto di Locarno, Ticino
+		</field>
+		<field name="postcode">6614</field>
+		<field name="ranking_kmt">4</field>
+		<field name="street">Via R. Leoncavallo</field>
+		<field name="type">STREET</field>
+	</doc>
+</add>

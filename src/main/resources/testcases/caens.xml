@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<add>
+  <doc>
+    <str name="id">24347380</str>
+    <str name="coordinate">27.955664,-15.596182</str>
+    <str name="osm_id">46419272</str>
+    <str name="name">Gran Canaria, España (territorial waters)</str>
+    <str name="name_de"/>
+    <str name="name_en">Gran Canaria, Spain (territorial waters)</str>
+    <str name="street"/>
+    <str name="housenumber"/>
+    <str name="postcode"/>
+    <str name="country">España</str>
+    <str name="country_de">Spanien</str>
+    <str name="country_en">Spain</str>
+    <str name="city"/>
+    <str name="city_de"/>
+    <str name="city_en"/>
+    <str name="places"/>
+    <int name="ranking_kmt">26</int>
+    <str name="type">COUNTRY</str>
+    <str name="category">218</str>
+    </doc>
+    <doc>
+    <str name="id">51207789</str>
+    <str name="coordinate">28.286890,-16.795616</str>
+    <str name="osm_id">2146410</str>
+    <str name="name">Islas Canarias</str>
+    <str name="name_de">Kanarische Inseln</str>
+    <str name="name_en">Canary Islands</str>
+    <str name="street"/>
+    <str name="housenumber"/>
+    <str name="postcode"/>
+    <str name="country">España</str>
+    <str name="country_de">Spanien</str>
+    <str name="country_en">Spain</str>
+    <str name="city"/>
+    <str name="city_de"/>
+    <str name="city_en"/>
+    <str name="places"/>
+    <int name="ranking_kmt">24</int>
+    <str name="type"/>
+    <str name="category">218</str>
+    </doc>
+    <doc>
+    <str name="id">3191996</str>
+    <str name="coordinate">43.159566,-4.087838</str>
+    <str name="osm_id">602379943</str>
+    <str name="name">Cantabria</str>
+    <str name="name_de">Kantabrien</str>
+    <str name="name_en">Cantabria</str>
+    <str name="street"/>
+    <str name="housenumber"/>
+    <str name="postcode"/>
+    <str name="country">España</str>
+    <str name="country_de">Spanien</str>
+    <str name="country_en">Spain</str>
+    <str name="city"/>
+    <str name="city_de"/>
+    <str name="city_en"/>
+    <str name="places">España</str>
+    <int name="ranking_kmt">22</int>
+    <str name="type"/>
+    <str name="category">218</str>
+    </doc>
+ <doc>
+    <str name="id">51096114</str>
+    <str name="coordinate">49.182510,-0.367629</str>
+    <str name="osm_id">149197</str>
+    <str name="name">Caen</str>
+    <str name="name_de"/>
+    <str name="name_en">Caen</str>
+    <str name="street"/>
+    <str name="housenumber"/>
+    <str name="postcode">14000,14300</str>
+    <str name="country">France</str>
+    <str name="country_de">Frankreich</str>
+    <str name="country_en">France</str>
+    <str name="city">Caen</str>
+    <str name="city_de"/>
+    <str name="city_en">Caen</str>
+    <str name="places">Caen, Calvados, Basse-Normandie</str>
+    <int name="ranking_kmt">14</int>
+    <str name="type">CITY</str>
+    <str name="category">218</str>
+    </doc>
+</add>

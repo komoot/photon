@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<add>
+<doc>
+    <field name="id">1</field>
+    <field name="category">218</field>
+    <field name="coordinate">48.870278,2.316389</field>
+    <field name="ranking_kmt">299</field>
+    <field name="country">France</field>
+    <field name="city">Paris</field>
+    <field name="postcode">75008</field>
+    <field name="street">Rue du Faubourg Saint-Honoré</field>
+    <field name="housenumber">55</field>
+  </doc>
+  <doc>
+   <field name="id">2</field>
+    <field name="category">218</field>
+    <field name="coordinate">48.870278,2.316389</field>
+    <field name="ranking_kmt">299</field>
+    <field name="country">France</field>
+    <field name="city">Paris</field>
+    <field name="postcode">75008</field>
+    <field name="street">Rue du Faubourg Saint-Honoré</field>
+  </doc>
+</add>

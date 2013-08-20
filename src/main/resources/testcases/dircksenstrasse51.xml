@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<add>
+	<doc>
+		<field name="id">9358511</field>
+		<field name="coordinate">52.523294,13.403835</field>
+		<field name="osm_id">1552576044</field>
+		<field name="street">Dircksenstraße</field>
+		<field name="housenumber">51</field>
+		<field name="postcode">10178</field>
+		<field name="country">Deutschland</field>
+		<field name="country_de">Deutschland</field>
+		<field name="country_en">Germany</field>
+		<field name="city">Berlin</field>
+		<field name="city_de">Berlin</field>
+		<field name="city_en">Berlin</field>
+		<field name="places">Scheunenviertel, Mitte, Mitte, Berlin</field>
+		<field name="places_de">Mitte, Mitte, Berlin</field>
+		<field name="places_en">Berlin</field>
+		<field name="secondary_places">Mitte, Spandauer Vorstadt, Nikolaiviertel, Friedrichswerder, Neukölln am Wasser,
+			Alt-Berlin, Friedrichstadt, Oranienburger Vorstadt, Luisenstadt, Dorotheenstadt, Potsdam, Teltow-Fläming,
+			Barnim, Oberhavel, Oberhavel, Teltow-Fläming
+		</field>
+		<field name="secondary_places_de">Mitte, Nikolaiviertel</field>
+		<field name="ranking_kmt">0</field>
+	</doc>
+	<doc>
+		<field name="id">32411556</field>
+		<field name="coordinate">52.554091,13.325559</field>
+		<field name="osm_id">105054504</field>
+		<field name="name">51</field>
+		<field name="postcode">13351</field>
+		<field name="country">Deutschland</field>
+		<field name="country_de">Deutschland</field>
+		<field name="country_en">Germany</field>
+		<field name="city">Berlin</field>
+		<field name="city_de">Berlin</field>
+		<field name="city_en">Berlin</field>
+		<field name="places">Wedding, Mitte, Berlin</field>
+		<field name="places_de">Wedding, Mitte, Berlin</field>
+		<field name="places_en">Berlin</field>
+		<field name="secondary_places">Wedding, Potsdam, Oberhavel, Oberhavel, Teltow-Fläming, Barnim, Teltow-Fläming
+		</field>
+		<field name="ranking_kmt">8</field>
+	</doc>
+</add>

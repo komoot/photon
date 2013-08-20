@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema name="geocoder" version="1.3">
+
+	<types>
+		<fieldType name="string" class="solr.StrField" sortMissingLast="true" omitNorms="true"/>
+		<fieldType name="int" class="solr.TrieIntField" precisionStep="0" omitNorms="true" positionIncrementGap="0"/>
+		<fieldType name="long" class="solr.TrieLongField" precisionStep="0" omitNorms="true" positionIncrementGap="0"/>
+		<fieldType name="tdouble" class="solr.TrieDoubleField" precisionStep="8" omitNorms="true"
+				   positionIncrementGap="0"/>
+		<fieldType name="location" class="solr.LatLonType" subFieldSuffix="_coordinate"/>
+
+		<!-- HOUSENUMBER -->
+		<fieldType name="housenumber" class="solr.TextField" positionIncrementGap="100">
+			<analyzer>
+				<charFilter class="solr.MappingCharFilterFactory" mapping="mapping-ISOLatin1Accent.txt"/>
+				<tokenizer class="solr.StandardTokenizerFactory"/>
+
+				<filter class="solr.WordDelimiterFilterFactory" generateWordParts="1" generateNumberParts="1"
+						catenateAll="1" preserveOriginal="1"/>
+				<filter class="solr.LowerCaseFilterFactory"/>
+			</analyzer>
+		</fieldType>
+
+		<!-- POSTCODE -->
+		<fieldType name="postcode" class="solr.TextField" positionIncrementGap="100">
+			<analyzer type="index">
+				<charFilter class="solr.MappingCharFilterFactory" mapping="mapping-ISOLatin1Accent.txt"/>
+				<tokenizer class="solr.StandardTokenizerFactory"/>
+				<filter class="solr.WordDelimiterFilterFactory" generateWordParts="1" generateNumberParts="1"
+						catenateAll="5" splitOnCaseChange="1" preserveOriginal="1"/>
+				<filter class="solr.LowerCaseFilterFactory"/>
+				<filter class="solr.EdgeNGramFilterFactory" minGramSize="3" maxGramSize="40" side="front"/>
+			</analyzer>
+			<analyzer type="query">
+				<charFilter class="solr.MappingCharFilterFactory" mapping="mapping-ISOLatin1Accent.txt"/>
+				<tokenizer class="solr.StandardTokenizerFactory"/>
+				<filter class="solr.WordDelimiterFilterFactory" generateWordParts="1" generateNumberParts="1"
+						splitOnCaseChange="1" catenateAll="5" preserveOriginal="1"/>
+				<filter class="solr.LowerCaseFilterFactory"/>
+			</analyzer>
+		</fieldType>
+
+		<!-- STREET -->
+		<fieldType name="street" class="solr.TextField" positionIncrementGap="100">
+			<analyzer type="index">
+				<charFilter class="solr.MappingCharFilterFactory" mapping="mapping-ISOLatin1Accent.txt"/>
+				<tokenizer class="solr.StandardTokenizerFactory"/>
+				<filter class="solr.SynonymFilterFactory" synonyms="street_synonyms.txt" ignoreCase="true"
+						expand="true"/>
+				<filter class="solr.WordDelimiterFilterFactory" generateWordParts="1" generateNumberParts="1"
+						catenateAll="5" splitOnCaseChange="1" preserveOriginal="1"/>
+				<filter class="solr.LowerCaseFilterFactory"/>
+				<filter class="solr.EdgeNGramFilterFactory" minGramSize="2" maxGramSize="40" side="front"/>
+			</analyzer>
+			<analyzer type="query">
+				<charFilter class="solr.MappingCharFilterFactory" mapping="mapping-ISOLatin1Accent.txt"/>
+				<tokenizer class="solr.StandardTokenizerFactory"/>
+				<filter class="solr.WordDelimiterFilterFactory" generateWordParts="1" generateNumberParts="1"
+						splitOnCaseChange="1" catenateAll="5" preserveOriginal="1"/>
+				<filter class="solr.LowerCaseFilterFactory"/>
+			</analyzer>
+		</fieldType>
+
+		<!-- STANDARD TEXT -->
+		<fieldType name="text" class="solr.TextField" positionIncrementGap="100">
+			<analyzer type="index">
+				<charFilter class="solr.MappingCharFilterFactory" mapping="mapping-ISOLatin1Accent.txt"/>
+				<tokenizer class="solr.StandardTokenizerFactory"/>
+				<filter class="solr.SynonymFilterFactory" synonyms="synonyms.txt" ignoreCase="true" expand="true"/>
+				<filter class="solr.WordDelimiterFilterFactory" generateWordParts="1" generateNumberParts="1"
+						catenateAll="5" splitOnCaseChange="1" preserveOriginal="1"/>
+				<filter class="solr.LowerCaseFilterFactory"/>
+				<filter class="solr.EdgeNGramFilterFactory" minGramSize="2" maxGramSize="40" side="front"/>
+			</analyzer>
+			<analyzer type="query">
+				<charFilter class="solr.MappingCharFilterFactory" mapping="mapping-ISOLatin1Accent.txt"/>
+				<tokenizer class="solr.StandardTokenizerFactory"/>
+				<filter class="solr.WordDelimiterFilterFactory" generateWordParts="1" generateNumberParts="1"
+						splitOnCaseChange="1" catenateAll="5" preserveOriginal="1"/>
+				<filter class="solr.LowerCaseFilterFactory"/>
+			</analyzer>
+		</fieldType>
+
+		<!-- TEXT FOR PLACES -->
+		<fieldType name="text_places" class="solr.TextField" positionIncrementGap="100">
+			<analyzer type="index">
+				<charFilter class="solr.MappingCharFilterFactory" mapping="mapping-ISOLatin1Accent.txt"/>
+				<tokenizer class="solr.StandardTokenizerFactory"/>
+				<filter class="solr.WordDelimiterFilterFactory" generateWordParts="1" generateNumberParts="1"
+						catenateAll="5" splitOnCaseChange="1" preserveOriginal="1"/>
+				<filter class="solr.LowerCaseFilterFactory"/>
+				<filter class="solr.EdgeNGramFilterFactory" minGramSize="3" maxGramSize="40" side="front"/>
+			</analyzer>
+			<analyzer type="query">
+				<charFilter class="solr.MappingCharFilterFactory" mapping="mapping-ISOLatin1Accent.txt"/>
+				<tokenizer class="solr.StandardTokenizerFactory"/>
+				<!--<filter class="solr.SynonymFilterFactory" synonyms="synonyms.txt" ignoreCase="true" expand="false"/>-->
+				<filter class="solr.WordDelimiterFilterFactory" generateWordParts="1" generateNumberParts="1"
+						splitOnCaseChange="1" catenateAll="5" preserveOriginal="1"/>
+				<filter class="solr.LowerCaseFilterFactory"/>
+			</analyzer>
+		</fieldType>
+	</types>
+	<uniqueKey>id</uniqueKey>
+	<fields>
+		<field name="id" type="long" indexed="true" stored="true" required="true"/>
+		<field name="category" type="string" indexed="false" stored="true" required="false" default="218"/>
+		<field name="coordinate" type="location" indexed="true" stored="true" required="false" multiValued="false"/>
+		<field name="ranking_kmt" type="int" indexed="true" stored="true" required="false"/>
+		<field name="osm_id" type="long" indexed="true" stored="true"/>
+		<field name="type" type="string" indexed="true" stored="true" omitNorms="true"/>
+
+		<field name="street" type="street" indexed="true" stored="true"/>
+		<field name="housenumber" type="housenumber" indexed="true" stored="true"/>
+		<field name="postcode" type="postcode" indexed="true" stored="true" omitNorms="true"/>
+
+		<field name="name" type="text" indexed="true" stored="true"/>
+		<field name="name_de" type="text" indexed="true" stored="true"/>
+		<field name="name_en" type="text" indexed="true" stored="true"/>
+		<field name="name_fr" type="text" indexed="false" stored="false"/>
+		<field name="name_it" type="text" indexed="false" stored="false"/>
+
+		<field name="city" type="text" indexed="true" stored="true"/>
+		<field name="city_de" type="text" indexed="true" stored="true"/>
+		<field name="city_en" type="text" indexed="true" stored="true"/>
+		<field name="city_fr" type="text" indexed="false" stored="false"/>
+		<field name="city_it" type="text" indexed="false" stored="false"/>
+
+		<field name="country" type="text" indexed="true" stored="true"/>
+		<field name="country_de" type="text" indexed="true" stored="true"/>
+		<field name="country_en" type="text" indexed="true" stored="true"/>
+		<field name="country_fr" type="text" indexed="false" stored="false"/>
+		<field name="country_it" type="text" indexed="false" stored="false"/>
+
+		<field name="places" type="text_places" indexed="true" stored="false"/>
+		<field name="places_de" type="text_places" indexed="true" stored="false"/>
+		<field name="places_en" type="text_places" indexed="true" stored="false"/>
+		<field name="places_fr" type="text_places" indexed="false" stored="false"/>
+		<field name="places_it" type="text_places" indexed="false" stored="false"/>
+
+		<field name="secondary_places" type="text_places" indexed="true" stored="false"/>
+		<field name="secondary_places_de" type="text_places" indexed="true" stored="false"/>
+		<field name="secondary_places_en" type="text_places" indexed="true" stored="false"/>
+		<field name="secondary_places_fr" type="text_places" indexed="false" stored="false"/>
+		<field name="secondary_places_it" type="text_places" indexed="false" stored="false"/>
+
+		<!--
+		if more languages will be added, it might be useful to use dynamic fields
+		http://wiki.apache.org/solr/SchemaXml#Dynamic_fields
+
+		<dynamicField name="*_de" type="text" indexed="true" stored="true"/>
+		<dynamicField name="*_en" type="text" indexed="true" stored="true"/>
+		<dynamicField name="*_fr" type="text" indexed="false" stored="false"/>
+		<dynamicField name="*_it" type="text" indexed="false" stored="false"/>
+		-->
+
+		<dynamicField name="*_coordinate" type="tdouble" indexed="true" stored="false"/>
+	</fields>
+</schema>

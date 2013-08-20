@@ -1,0 +1,11 @@
+creator	user_input	locale	user_location	type	name	coordinate	distance_tolerance	max_result_index	street	housenumber	zip	city	state	country
+christoph	Dorfstr. 7 Adelboden	de_DE				7.561036,46.493751	10	0
+
+christoph	Gelting-Geretsried	de_DE				11.424227,47.894976	10	1			82538	Geretsried		Deutschland
+christoph	Gelting/Geretsried	de_DE				11.424227,47.894976	10	1			82538	Geretsried		Deutschland
+
+christoph	Via R. Leoncavallo 48 Brissago	de_DE				8.7077505,46.1165877	200	0
+christoph	Via Leoncavallo 48 Brissago - Lago Maggiore	de_DE				8.7077505,46.1165877	200	0
+
+#https://issues.apache.org/jira/browse/SOLR-5152
+#christoph Via R. Leoncavallo 48 Brissago - Lago Maggiore de_DE 8.7077505,46.1165877 200 0

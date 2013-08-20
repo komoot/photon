@@ -1,0 +1,5 @@
+creator	user_input	locale	user_location	type	name	coordinate	distance_tolerance	max_result_index	street	housenumber	zip	city	state	country
+jonas	Friedrichstrasse 2	de_DE				1.0585818,52.3882924	1	0	Friedrichstraße	2	14473	Potsdam		Deutschland
+jonas	Friedrichstra	de_DE				23.0585818,52.3882924	1	0	Friedrichstraße		14473	Potsdam		Deutschland
+jonas	Hansstraße 2	de_DE				13.0585818,52.3882924	1	0	Hansstraße		14473	Potsdam		Deutschland
+jonas	Friedrichstrasse 3	de_DE				23.0585818,52.3882924	1	0	Friedrichstraße		14473	Potsdam		Deutschland

@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<add>
+	<doc>
+		<field name="id">2</field>
+		<field name="category">218</field>
+		<field name="coordinate">53.554669,10.02351</field>
+		<!--<field name="ranking_kmt">475</field>-->
+		<field name="country">Deutschland</field>
+		<field name="places">Hamburg</field>
+		<field name="city">Hamburg</field>
+		<field name="postcode">20099</field>
+		<field name="street">Berliner Tor</field>
+		<field name="name">Berliner Tor</field>
+		<field name="housenumber">33</field>
+	</doc>
+	<doc>
+		<field name="id">3</field>
+		<field name="category">218</field>
+		<field name="coordinate">53.554669,10.02351</field>
+		<!--<field name="ranking_kmt">475</field>-->
+		<field name="country">Deutschland</field>
+		<field name="places">Hamburg</field>
+		<field name="city">Hamburg</field>
+		<field name="postcode">20099</field>
+		<field name="street">Berliner Tor</field>
+		<field name="name">Berliner Tor</field>
+	</doc>
+	<doc>
+		<field name="id">4</field>
+		<field name="category">218</field>
+		<field name="coordinate">52.555585,13.438936</field>
+		<!--<field name="ranking_kmt">499</field>-->
+		<field name="country">Deutschland</field>
+		<field name="places">Berlin</field>
+		<field name="city">Berlin</field>
+		<field name="postcode">13086</field>
+		<field name="street">Hamburger Platz</field>
+		<field name="name">Hamburger Platz</field>
+		<field name="housenumber">4</field>
+	</doc>
+	<doc>
+		<field name="id">5</field>
+		<field name="category">218</field>
+		<field name="coordinate">52.555585,13.438936</field>
+		<!--<field name="ranking_kmt">499</field>-->
+		<field name="country">Deutschland</field>
+		<field name="places">Berlin</field>
+		<field name="city">Berlin</field>
+		<field name="postcode">13086</field>
+		<field name="street">Hamburger Platz</field>
+		<field name="name">Hamburger Platz</field>
+	</doc>
+	<doc>
+		<field name="id">6</field>
+		<field name="category">218</field>
+		<field name="coordinate">53.574566,10.034427</field>
+		<!--<field name="ranking_kmt">475</field>-->
+		<field name="country">Deutschland</field>
+		<field name="places">Hamburg</field>
+		<field name="city">Hamburg</field>
+		<field name="postcode">22083</field>
+		<field name="street">Hamburger Straße</field>
+		<field name="name">Hamburger Straße</field>
+		<field name="housenumber">47</field>
+	</doc>
+	<doc>
+		<field name="id">7</field>
+		<field name="category">218</field>
+		<field name="coordinate">53.574566,10.034427</field>
+		<!--<field name="ranking_kmt">475</field>-->
+		<field name="country">Deutschland</field>
+		<field name="places">Hamburg</field>
+		<field name="city">Hamburg</field>
+		<field name="postcode">22083</field>
+		<field name="street">Hamburger Straße</field>
+		<field name="name">Hamburger Straße</field>
+	</doc>
+	<doc>
+		<field name="id">9</field>
+		<field name="category">218</field>
+		<field name="coordinate">52.438733,13.272682</field>
+		<!--<field name="ranking_kmt">499</field>-->
+		<field name="country">Deutschland</field>
+		<field name="places">Berlin</field>
+		<field name="city">Berlin</field>
+		<field name="postcode">14169</field>
+		<field name="street">Berliner Straße</field>
+		<field name="name">Berliner Straße</field>
+		<field name="housenumber">56</field>
+	</doc>
+	<doc>
+		<field name="id">10</field>
+		<field name="category">218</field>
+		<field name="coordinate">52.438733,13.272682</field>
+		<!--<field name="ranking_kmt">499</field>-->
+		<field name="country">Deutschland</field>
+		<field name="places">Berlin</field>
+		<field name="city">Berlin</field>
+		<field name="postcode">14169</field>
+		<field name="street">Berliner Straße</field>
+		<field name="name">Berliner Straße</field>
+	</doc>
+</add>

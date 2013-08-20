@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<add>
+  <doc>
+    <field name="id">51072912</field>
+    <field name="coordinate">48.799708,2.067214</field>
+    <field name="osm_id">27811</field>
+    <field name="name">Saint-Cyr-l'École</field>
+
+
+
+
+    <field name="postcode">78210</field>
+    <field name="country">France</field>
+    <field name="country_de">Frankreich</field>
+    <field name="country_en">France</field>
+    <field name="city">Saint-Cyr-l'École</field>
+
+
+    <field name="places">Versailles, Yvelines, Île-de-France</field>
+    <field name="ranking_kmt">14</field>
+    <field name="type">CITY</field>
+    <field name="category">218</field>
+  </doc>
+  <doc>
+    <field name="id">51150532</field>
+    <field name="coordinate">49.487711,-1.419478</field>
+    <field name="osm_id">1067805</field>
+    <field name="name">Saint-Cyr</field>
+
+
+
+
+    <field name="postcode">50310</field>
+    <field name="country">France</field>
+    <field name="country_de">Frankreich</field>
+    <field name="country_en">France</field>
+    <field name="city">Saint-Cyr</field>
+
+
+    <field name="places">Cherbourg, Manche, Basse-Normandie</field>
+    <field name="ranking_kmt">14</field>
+    <field name="type">CITY</field>
+    <field name="category">218</field>
+  </doc>
+  <doc>
+    <field name="id">51094319</field>
+    <field name="coordinate">46.716681,0.453752</field>
+    <field name="osm_id">142078</field>
+    <field name="name">Saint-Cyr</field>
+
+
+
+
+    <field name="postcode">86130</field>
+    <field name="country">France</field>
+    <field name="country_de">Frankreich</field>
+    <field name="country_en">France</field>
+    <field name="city">Saint-Cyr</field>
+
+
+    <field name="places">Poitiers, Vienne, Poitou-Charentes</field>
+    <field name="ranking_kmt">14</field>
+    <field name="type">CITY</field>
+    <field name="category">218</field>
+  </doc>
+  <doc>
+    <field name="id">51099831</field>
+    <field name="coordinate">46.458921,-1.336856</field>
+    <field name="osm_id">169140</field>
+    <field name="name">Saint-Cyr-en-Talmondais</field>
+
+
+
+
+    <field name="postcode">85540</field>
+    <field name="country">France</field>
+    <field name="country_de">Frankreich</field>
+    <field name="country_en">France</field>
+    <field name="city">Saint-Cyr-en-Talmondais</field>
+
+
+    <field name="places">Les Sables-d'Olonne, Vendée, Pays de la Loire</field>
+    <field name="ranking_kmt">14</field>
+    <field name="type">CITY</field>
+    <field name="category">218</field>
+  </doc>
+</add>

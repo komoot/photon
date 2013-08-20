@@ -1,0 +1,3 @@
+creator	user_input	locale	user_location	type	name	coordinate	distance_tolerance	max_result_index	street	housenumber	zip	city	state	country
+richard	55 Rue du Faubourg Saint-Honoré, 75008 Paris	fr_FR				2.316389,48.870278	1	1	Rue du Faubourg Saint-Honoré	55	75008	Paris		France
+richard	55 Rue du Faubourg Saint-Honoré, Paris	fr_FR				2.316389,48.870278	1	1	Rue du Faubourg Saint-Honoré	55	75008	Paris		France

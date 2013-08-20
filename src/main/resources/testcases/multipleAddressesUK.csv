@@ -1,0 +1,6 @@
+creator	user_input	locale	user_location	type	name	coordinate	distance_tolerance	max_result_index	street	housenumber	zip	city	state	country
+richard	10 Downing Street, London SW1A 2AA	en_GB				-0.12764,51.503396	1	1	Downing Street	10	SW1A 2AA	London		United Kingdom
+richard	150 London Wall, London EC2Y 5HN	en_GB				-0.096389,51.517778	1	1	London Wall	150	EC2Y 5HN	London		United Kingdom
+richard	10 Downing Street, London	en_GB				-0.12764,51.503396	1	1	Downing Street	10	SW1A 2AA	London		United Kingdom
+richard	20 Deans Yd, London	en_GB				-0.1275,51.499444	1	1	Deans Yd	20	SW1P 3PA	London		United Kingdom
+richard	150 London Wall, London	en_GB				-0.096389,51.517778	1	1	London Wall	150	EC2Y 5HN	London		United Kingdom

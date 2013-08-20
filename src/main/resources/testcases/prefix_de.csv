@@ -1,0 +1,33 @@
+creator	user_input	locale	user_location	type	name	coordinate	distance_tolerance	max_result_index	street	housenumber	zip	city	state	country
+richard	Bad St. Leonhard im Lavanttal	de_DE				14.7887727,46.9646368	1000	1			9462	Bad St. Leonhard im Lavanttal		Österreich
+richard	Bad St Leonhard im Lavanttal	de_DE				14.7887727,46.9646368	1000	1			9462	Bad St. Leonhard im Lavanttal		Österreich
+richard	Bad Sankt Leonhard im Lavanttal	de_DE				14.7887727,46.9646368	1000	1			9462	Bad St. Leonhard im Lavanttal		Österreich
+richard	Sankt Leonhard im Lavanttal	de_DE				14.7887727,46.9646368	1000	1			9462	Bad St. Leonhard im Lavanttal		Österreich
+richard	St. Leonhard im Lavanttal	de_DE				14.7887727,46.9646368	1000	1			9462	Bad St. Leonhard im Lavanttal		Österreich
+richard	St Leonhard im Lavanttal	de_DE				14.7887727,46.9646368	1000	1			9462	Bad St. Leonhard im Lavanttal		Österreich
+richard	Bad St. Leonhard	de_DE				14.7887727,46.9646368	1000	1			9462	Bad St. Leonhard im Lavanttal		Österreich
+richard	Bad St Leonhard	de_DE				14.7887727,46.9646368	1000	1			9462	Bad St. Leonhard im Lavanttal		Österreich
+richard	Bad Sankt Leonhard	de_DE				14.7887727,46.9646368	1000	1			9462	Bad St. Leonhard im Lavanttal		Österreich
+richard	Sankt Leonhard	de_DE				14.7887727,46.9646368	1000	1			9462	Bad St. Leonhard im Lavanttal		Österreich
+richard	St. Leonhard	de_DE				14.7887727,46.9646368	1000	1			9462	Bad St. Leonhard im Lavanttal		Österreich
+richard	St Leonhard	de_DE				14.7887727,46.9646368	1000	1			9462	Bad St. Leonhard im Lavanttal		Österreich
+richard	St. Sixtus	de_DE				7.6767178,52.850579	100	1			49757	Werlte		Deutschland
+richard	St. Sixtus Werlte	de_DE				7.6767178,52.850579	100	1			49757	Werlte		Deutschland
+richard	Sankt Sixtus	de_DE				7.6767178,52.850579	100	1			49757	Werlte		Deutschland
+richard	Sankt Sixtus Werlte	de_DE				7.6767178,52.850579	100	1			49757	Werlte		Deutschland
+richard	Sankt Wendel	de_DE				7.1697887,49.4670491	1000	1			66606	Sankt Wendel		Deutschland
+richard	St Wendel	de_DE				7.1697887,49.4670491	1000	1			66606	Sankt Wendel		Deutschland
+richard	St. Wendel	de_DE				7.1697887,49.4670491	1000	1			66606	Sankt Wendel		Deutschland
+richard	Bad Essen	de_DE				8.3436635,52.3197337	1000	1			49152	Bad Essen		Deutschland
+richard	Bad-Essen	de_DE				8.3436635,52.3197337	1000	1			49152	Bad Essen		Deutschland
+richard	Essen	de_DE				7.012273,51.4552058	1000	1				Essen		Deutschland
+richard	Neu-Ulm	de_DE				10.00589,48.3954965	100	1				Neu-Ulm		Deutschland
+richard	Neu Ulm	de_DE				10.00589,48.3954965	100	1				Neu-Ulm		Deutschland
+richard	Ulm	de_DE				9.9910464,48.398312	100	1				Ulm		Deutschland
+richard	Groß Niendorf	de_DE				10.2447661,53.8475069	1000	1				Groß Niendorf		Deutschland
+richard	Groß-Niendorf	de_DE				10.2447661,53.8475069	1000	1				Groß Niendorf		Deutschland
+richard	Niendorf	de_DE				10.8242854,53.9929942	1000	1				Niendorf		Deutschland
+richard	Altmünster	de_DE				13.7652213,47.9016069	1000	1				Altmünster		Österreich
+richard	Münster	de_DE				7.6251879,51.9625101	1000	1				Münster		Deutschland
+richard	Groß Berßen	de_DE				7.4940889,52.7746202	500	1				Groß Berßen		Deutschland
+richard	Klein Berßen	de_DE				7.462157,52.7676447	500	1				Klein Berßen		Deutschland

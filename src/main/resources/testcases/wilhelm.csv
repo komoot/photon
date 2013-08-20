@@ -1,0 +1,7 @@
+creator	user_input	locale	user_location	type	name	coordinate	distance_tolerance	max_result_index	street	housenumber	zip	city	state	country
+christoph	Friedrich-Wilhelm-Boelke-Straße	de_DE				13.058315,52.387785	10	0	Friedrich-Wilhelm-Boelke-Straße					Deutschland
+christoph	Friedrich-Wilhelm-Boelke Straße	de_DE				13.058315,52.387785	10	0	Friedrich-Wilhelm-Boelke-Straße					Deutschland
+christoph	Friedrich Wilhelm-Boelke Straße	de_DE				13.058315,52.387785	10	0	Friedrich-Wilhelm-Boelke-Straße					Deutschland
+christoph	Friedrich Wilhelm-Boelke	de_DE				13.058315,52.387785	10	0	Friedrich-Wilhelm-Boelke-Straße					Deutschland
+christoph	Wilhelm-Boelke	de_DE				13.058315,52.387785	10	0	Friedrich-Wilhelm-Boelke-Straße					Deutschland
+christoph	Wilhelm Boelke	de_DE				13.058315,52.387785	10	0	Friedrich-Wilhelm-Boelke-Straße					Deutschland

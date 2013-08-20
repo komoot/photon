@@ -1,0 +1,10 @@
+creator	user_input	locale	user_location	type	name	coordinate	distance_tolerance	max_result_index	street	housenumber	zip	city	state	country
+christoph	bar blvd					0,0	1	0	bar blvd
+christoph	bumm BOULEVARD					1,1	1	0	bumm BOULEVARD
+christoph	blub rd					2,2	1	0	blub rd
+christoph	foo road					3,3	1	0	foo road
+
+christoph	bar BOULEVARD					0,0	1	0	bar blvd
+christoph	bumm blvd					1,1	1	0	bumm BOULEVARD
+christoph	blub road					2,2	1	0	blub rd
+christoph	foo rd					3,3	1	0	foo road

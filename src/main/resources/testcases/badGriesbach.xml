@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<add>
+	<doc>
+		<field name="id">20304342</field>
+		<field name="coordinate">48.087509,8.087547</field>
+		<field name="osm_id">30664508</field>
+		<field name="name">Griesbach</field>
+
+
+		<field name="street">Griesbach</field>
+
+		<field name="postcode">79263</field>
+		<field name="country">Deutschland</field>
+		<field name="country_de">Deutschland</field>
+		<field name="country_en">Germany</field>
+		<field name="city">Simonswald</field>
+
+
+		<field name="places">Altsimonswald, Simonswald, VVG der Stadt Waldkirch, Landkreis Emmendingen, Regierungsbezirk
+			Freiburg, Baden-Württemberg
+		</field>
+		<field name="ranking_kmt">4</field>
+		<field name="type">STREET</field>
+		<field name="category">218</field>
+	</doc>
+	<doc>
+		<field name="id">9160325</field>
+		<field name="coordinate">50.672621,11.251757</field>
+		<field name="osm_id">1509038840</field>
+		<field name="name">Griesbachfelsen</field>
+
+
+		<field name="postcode"/>
+		<field name="country">Deutschland</field>
+		<field name="country_de">Deutschland</field>
+		<field name="country_en">Germany</field>
+		<field name="city">Bad Blankenburg</field>
+		<field name="city_de">Bad Blankenburg</field>
+
+		<field name="places">Bad Blankenburg, Saalfeld-Rudolstadt, Thüringen</field>
+		<field name="ranking_kmt">10</field>
+
+		<field name="category">218</field>
+	</doc>
+	<doc>
+		<field name="id">26277907</field>
+		<field name="coordinate">48.772087,9.922569</field>
+		<field name="osm_id">58659237</field>
+		<field name="name">Griesbach</field>
+
+
+		<field name="street">Beuren</field>
+
+		<field name="postcode">73540</field>
+		<field name="country">Deutschland</field>
+		<field name="country_de">Deutschland</field>
+		<field name="country_en">Germany</field>
+		<field name="city">Heubach</field>
+
+
+		<field name="places">Heubach, Verwaltungsverband Rosenstein, Ostalbkreis, Regierungsbezirk Stuttgart,
+			Baden-Württemberg
+		</field>
+		<field name="ranking_kmt">0</field>
+
+		<field name="category">218</field>
+	</doc>
+	<doc>
+		<field name="id">23161103</field>
+		<field name="coordinate">48.089354,8.095749</field>
+		<field name="osm_id">40756897</field>
+		<field name="name">Griesbach</field>
+
+
+		<field name="street">unterer Wolfsgrubenweg</field>
+
+		<field name="postcode">79263</field>
+		<field name="country">Deutschland</field>
+		<field name="country_de">Deutschland</field>
+		<field name="country_en">Germany</field>
+		<field name="city">Simonswald</field>
+
+
+		<field name="places">Altsimonswald, Simonswald, VVG der Stadt Waldkirch, Landkreis Emmendingen, Regierungsbezirk
+			Freiburg, Baden-Württemberg
+		</field>
+		<field name="ranking_kmt">0</field>
+
+		<field name="category">218</field>
+	</doc>
+	<doc>
+		<field name="id">33293361</field>
+		<field name="coordinate">50.682857,11.261633</field>
+		<field name="osm_id">111345670</field>
+		<field name="name">Griesbachstraße</field>
+
+
+		<field name="street">Griesbachstraße</field>
+
+		<field name="postcode">07422</field>
+		<field name="country">Deutschland</field>
+		<field name="country_de">Deutschland</field>
+		<field name="country_en">Germany</field>
+		<field name="city">Bad Blankenburg</field>
+		<field name="city_de">Bad Blankenburg</field>
+
+		<field name="places">Bad Blankenburg, Saalfeld-Rudolstadt, Thüringen</field>
+		<field name="ranking_kmt">4</field>
+		<field name="type">STREET</field>
+		<field name="category">218</field>
+	</doc>
+	<doc>
+		<field name="id">29683542</field>
+		<field name="coordinate">48.142466,10.260036</field>
+		<field name="osm_id">86630414</field>
+		<field name="name">Griesbachstraße</field>
+
+
+		<field name="street">Griesbachstraße</field>
+
+		<field name="postcode">87727</field>
+		<field name="country">Deutschland</field>
+		<field name="country_de">Deutschland</field>
+		<field name="country_en">Germany</field>
+		<field name="city">Babenhausen</field>
+
+
+		<field name="places">Babenhausen (Schwaben), Babenhausen, Babenhausen (VGem), Unterallgäu, Regierungsbezirk
+			Schwaben, Bayern
+		</field>
+		<field name="ranking_kmt">4</field>
+		<field name="type">STREET</field>
+		<field name="category">218</field>
+	</doc>
+	<doc>
+		<field name="id">15030783</field>
+		<field name="coordinate">49.000761,8.367415</field>
+		<field name="osm_id">3959173</field>
+		<field name="name">Griesbachstraße</field>
+
+
+		<field name="street">Griesbachstraße</field>
+
+		<field name="postcode">76185</field>
+		<field name="country">Deutschland</field>
+		<field name="country_de">Deutschland</field>
+		<field name="country_en">Germany</field>
+		<field name="city">Karlsruhe</field>
+		<field name="city_de">Karlsruhe</field>
+		<field name="city_en">Karlsruhe</field>
+		<field name="places">Grünwinkel, Karlsruhe, Karlsruhe, Regierungsbezirk Karlsruhe, Baden-Württemberg</field>
+		<field name="ranking_kmt">4</field>
+		<field name="type">STREET</field>
+		<field name="category">218</field>
+	</doc>
+	<doc>
+		<field name="id">51147220</field>
+		<field name="coordinate">48.451335,13.193105</field>
+		<field name="osm_id">958091</field>
+		<field name="name">Bad Griesbach</field>
+
+
+		<field name="postcode"/>
+		<field name="country">Deutschland</field>
+		<field name="country_de">Deutschland</field>
+		<field name="country_en">Germany</field>
+		<field name="city">Bad Griesbach</field>
+
+
+		<field name="places">Landkreis Passau, Regierungsbezirk Niederbayern, Bayern</field>
+		<field name="ranking_kmt">14</field>
+		<field name="type">CITY</field>
+		<field name="category">218</field>
+	</doc>
+</add>

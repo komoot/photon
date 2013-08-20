@@ -1,0 +1,19 @@
+creator	user_input	locale	user_location	type	name	coordinate	distance_tolerance	max_result_index	street	housenumber	zip	city	state	country
+#city not hotel														
+jonas	berlin	de_DE			Berlin	21.870263,4.108951	1	0				Berlin		Deutschland
+jonas	berl	de_DE				21.870263,4.108951	1	0				Berlin		Deutschland
+jonas	ber	de_DE				21.870263,4.108951	1	0				Berlin		Deutschland
+jonas	holzgasse Reykjavik	en_EN				-21.870263,64.108951	1	0				Reykjavik		Iceland
+#hotel														
+jonas	hotel berlin	de_DE				22.870263,4.108951	1	0				Berlin		Deutschland
+jonas	hotel	de_DE				22.870263,4.108951	1	0				Berlin		Deutschland
+jonas	forster strasse 51	de_DE				22.870263,4.108951	1	0	Forster Straße	51		Berlin		Deutschland
+
+#international														
+jonas	meine strasse, iceland	en_EN				-21.870263,64.108951	1	0	meine strasse					Iceland
+jonas	meine strasse 45, island	de_DE				-21.870263,64.108951	1	0	meine strasse	45				Island
+jonas	meine strasse, island	de_DE				-21.870263,64.108951	1	0	meine strasse					Island
+jonas	iceland brandenburg	de_DE				-21.870263,4.108951	1	0						Deutschland
+jonas	grünau	de_DE			Grünau	22.870263,4.108951	1	0						Deutschland
+jonas	grunau	de_DE			Grünau	22.870263,4.108951	1	0						Deutschland
+jonas	forsterstrasse 51	de_DE				22.870263,4.108951	1	0	Forster Straße	51		Berlin		Deutschland

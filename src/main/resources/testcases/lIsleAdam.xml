@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<add>
+  <doc>
+    <field name="id">51083873</field>
+    <field name="coordinate">49.112333,2.217751</field>
+    <field name="osm_id">73067</field>
+    <field name="name">L'Isle-Adam</field>
+
+
+
+
+    <field name="postcode">95290</field>
+    <field name="country">France</field>
+    <field name="country_de">Frankreich</field>
+    <field name="country_en">France</field>
+    <field name="city">L'Isle-Adam</field>
+
+
+    <field name="places">Pontoise, Val-d'Oise, Île-de-France</field>
+    <field name="ranking_kmt">14</field>
+    <field name="type">CITY</field>
+    <field name="category">218</field>
+  </doc>
+  <doc>
+    <field name="id">15182629</field>
+    <field name="coordinate">51.540548,-9.100405</field>
+    <field name="osm_id">4554459</field>
+    <field name="name">Adam's Island</field>
+
+
+
+
+    <field name="postcode"/>
+    <field name="country">Ireland</field>
+    <field name="country_de">Irland</field>
+    <field name="country_en">Ireland</field>
+    <field name="city"/>
+
+
+    <field name="places">Ireland</field>
+    <field name="ranking_kmt">20</field>
+
+    <field name="category">218</field>
+  </doc>
+  <doc>
+    <field name="id">28177177</field>
+    <field name="coordinate">47.322929,22.252681</field>
+    <field name="osm_id">75500975</field>
+    <field name="name">Adamut</field>
+
+
+
+
+    <field name="postcode"/>
+    <field name="country">România</field>
+    <field name="country_de">Rumänien</field>
+    <field name="country_en">Romania</field>
+    <field name="city"/>
+
+
+    <field name="places">România</field>
+    <field name="ranking_kmt">18</field>
+
+    <field name="category">218</field>
+  </doc>
+  <doc>
+    <field name="id">51261253</field>
+    <field name="coordinate">50.256423,22.699477</field>
+    <field name="osm_id">2971081</field>
+    <field name="name">gmina Adamówka</field>
+
+
+
+
+    <field name="postcode"/>
+    <field name="country">Polska</field>
+    <field name="country_de">Polen</field>
+    <field name="country_en">Poland</field>
+    <field name="city"/>
+
+
+    <field name="places">powiat przeworski, województwo podkarpackie</field>
+    <field name="ranking_kmt">16</field>
+
+    <field name="category">218</field>
+  </doc>
+  <doc>
+    <field name="id">51109219</field>
+    <field name="coordinate">38.027507,-4.524944</field>
+    <field name="osm_id">343526</field>
+    <field name="name">Adamuz</field>
+
+
+
+
+    <field name="postcode"/>
+    <field name="country">España</field>
+    <field name="country_de">Spanien</field>
+    <field name="country_en">Spain</field>
+    <field name="city">Adamuz</field>
+
+
+    <field name="places">Córdoba, Andalucía, España</field>
+    <field name="ranking_kmt">14</field>
+    <field name="type">CITY</field>
+    <field name="category">218</field>
+  </doc>
+</add>

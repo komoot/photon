@@ -1,0 +1,46 @@
+<?xml version='1.0' encoding='utf-8'?>
+<add>
+	<doc>
+		<field name="id">32543216</field>
+		<field name="coordinate">52.553232,13.325802</field>
+		<field name="osm_id">106088185</field>
+		<field name="name">32</field>
+		<field name="postcode">13351</field>
+		<field name="country">Deutschland</field>
+		<field name="country_de">Deutschland</field>
+		<field name="country_en">Germany</field>
+		<field name="city">Berlin</field>
+		<field name="city_de">Berlin</field>
+		<field name="city_en">Berlin</field>
+		<field name="places">Wedding, Mitte, Berlin</field>
+		<field name="places_de">Wedding, Mitte, Berlin</field>
+		<field name="places_en">Berlin</field>
+		<field name="secondary_places">Wedding, Potsdam, Oberhavel, Oberhavel, Teltow-Fläming, Barnim, Teltow-Fläming
+		</field>
+		<field name="ranking_kmt">8</field>
+	</doc>
+	<doc>
+		<field name="id">38910432</field>
+		<field name="coordinate">52.557845,13.386045</field>
+		<field name="osm_id">149810698</field>
+		<field name="name">Glaskasten</field>
+		<field name="street">Prinzenallee</field>
+		<field name="housenumber">32</field>
+		<field name="postcode">13359</field>
+		<field name="country">Deutschland</field>
+		<field name="country_de">Deutschland</field>
+		<field name="country_en">Germany</field>
+		<field name="city">Berlin</field>
+		<field name="city_de">Berlin</field>
+		<field name="city_en">Berlin</field>
+		<field name="places">Barnim, Gesundbrunnen, Mitte, Berlin</field>
+		<field name="places_de">Gesundbrunnen, Mitte, Berlin</field>
+		<field name="places_en">Berlin</field>
+		<field name="secondary_places">Schönholz, Gesundbrunnen, Dorotheenstadt, Friedrichswerder, Alt-Berlin,
+			Nikolaiviertel, Friedrichstadt, Spandauer Vorstadt, Oranienburger Vorstadt, Oberhavel, Potsdam, Barnim,
+			Oberhavel, Teltow-Fläming, Teltow-Fläming
+		</field>
+		<field name="secondary_places_de">Nikolaiviertel</field>
+		<field name="ranking_kmt">0</field>
+	</doc>
+</add>

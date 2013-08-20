@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<add>
+<doc>
+    <field name="id">51087590</field>
+    <field name="coordinate">44.773787,-0.559503</field>
+    <field name="osm_id">105273</field>
+    <field name="name">Villenave-d'Ornon</field>
+
+
+
+
+    <field name="postcode">33140</field>
+    <field name="country">France</field>
+    <field name="country_de">Frankreich</field>
+    <field name="country_en">France</field>
+    <field name="city">Villenave-d'Ornon</field>
+
+
+    <field name="places">Bordeaux, Gironde, Aquitaine</field>
+    <field name="ranking_kmt">14</field>
+    <field name="type">CITY</field>
+    <field name="category">218</field>
+</doc>
+<doc>
+    <field name="id">51084776</field>
+    <field name="coordinate">43.968339,-0.809046</field>
+    <field name="osm_id">75963</field>
+    <field name="name">Villenave</field>
+
+
+
+
+    <field name="postcode">40110</field>
+    <field name="country">France</field>
+    <field name="country_de">Frankreich</field>
+    <field name="country_en">France</field>
+    <field name="city">Villenave</field>
+
+
+    <field name="places">Dax, Landes, Aquitaine</field>
+    <field name="ranking_kmt">14</field>
+    <field name="type">CITY</field>
+    <field name="category">218</field>
+    </doc>
+    <doc>
+    <field name="id">4000809</field>
+    <field name="coordinate">42.869952,0.002708</field>
+    <field name="osm_id">727796166</field>
+    <field name="name">Villenave</field>
+
+
+
+
+    <field name="postcode"/>
+    <field name="country">France</field>
+    <field name="country_de">Frankreich</field>
+    <field name="country_en">France</field>
+    <field name="city">Luz-Saint-Sauveur</field>
+
+
+    <field name="places">Argelès-Gazost, Hautes-Pyrénées, Midi-Pyrénées</field>
+    <field name="ranking_kmt">11</field>
+
+    <field name="category">218</field>
+    </doc>
+    <doc>
+    <field name="id">10097244</field>
+    <field name="coordinate">43.502906,-1.183816</field>
+    <field name="osm_id">1717712643</field>
+    <field name="name">Villenave</field>
+
+
+
+
+    <field name="postcode"/>
+    <field name="country">France</field>
+    <field name="country_de">Frankreich</field>
+    <field name="country_en">France</field>
+    <field name="city">Guiche</field>
+
+
+    <field name="places">Guiche, Bayonne, Pyrénées-Atlantiques, Aquitaine</field>
+    <field name="ranking_kmt">10</field>
+
+    <field name="category">218</field>
+   </doc>
+   <doc>
+    <field name="id">10297755</field>
+    <field name="coordinate">43.478066,-1.190214</field>
+    <field name="osm_id">1735126597</field>
+    <field name="name">Villenave</field>
+
+
+
+
+    <field name="postcode"/>
+    <field name="country">France</field>
+    <field name="country_de">Frankreich</field>
+    <field name="country_en">France</field>
+    <field name="city">Bardos</field>
+
+
+    <field name="places">Bardos, Bayonne, Pyrénées-Atlantiques, Aquitaine</field>
+    <field name="ranking_kmt">10</field>
+
+    <field name="category">218</field>
+    </doc>
+</add>

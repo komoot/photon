@@ -1,0 +1,15 @@
+creator	user_input	locale	user_location	type	name	coordinate	distance_tolerance	max_result_index	street	housenumber	zip	city	state	country
+richard	Pollard Street	en_GB				-2.2201679,53.4804265	200	1	Pollard Street		M4 7LL	Manchester		United Kingdom
+richard	Pollard St	en_GB				-2.2201679,53.4804265	200	1	Pollard Street		M4 7LL	Manchester		United Kingdom
+richard	Pollard St.	en_GB				-2.2201679,53.4804265	200	1	Pollard Street		M4 7LL	Manchester		United Kingdom
+richard	St Ives	en_GB				-5.4800019,50.214344	1000	1			TR26	St Ives		United Kingdom
+richard	St. Ives	en_GB				-5.4800019,50.214344	1000	1			TR26	St Ives		United Kingdom
+richard	Saint Ives	en_GB				-5.4800019,50.214344	1000	1			TR26	St Ives		United Kingdom
+richard	Hyde Road	en_GB				-2.1881746,53.4637594	200	1	Hyde Road		M14	Manchester		United Kingdom
+richard	Hyde Rd	en_GB				-2.1881746,53.4637594	200	1	Hyde Road		M14	Manchester		United Kingdom
+richard	Polygon Avenue	en_GB				-2.2212813,53.4680642	200	1	Polygon Avenue		M13	Manchester		United Kingdom
+richard	Polygon Ave	en_GB				-2.2212813,53.4680642	200	1	Polygon Avenue		M13	Manchester		United Kingdom
+richard	Oldham Place	en_GB				-2.9744906,53.4030792	200	1	Oldham Place		L3 5SH	Liverpool		United Kingdom
+richard	Oldham Pl	en_GB				-2.9744906,53.4030792	200	1	Oldham Place		L3 5SH	Liverpool		United Kingdom
+richard	Westy Lane	en_GB				-2.5642805,53.3849542	200	1	Westy Lane			Warrington		United Kingdom
+richard	Westy Ln	en_GB				-2.5642805,53.3849542	200	1	Westy Lane			Warrington		United Kingdom

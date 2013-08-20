@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<add>
+  <doc>
+    <field name="id">51082846</field>
+    <field name="coordinate">52.519854,13.438596</field>
+    <field name="osm_id">62422</field>
+    <field name="name">Berlin</field>
+    <field name="name_de">Berlin</field>
+    <field name="name_en">Berlin</field>
+
+
+    <field name="postcode"/>
+    <field name="country">Deutschland</field>
+    <field name="country_de">Deutschland</field>
+    <field name="country_en">Germany</field>
+    <field name="city">Berlin</field>
+    <field name="city_de">Berlin</field>
+    <field name="city_en">Berlin</field>
+    <field name="places"/>
+    <field name="ranking_kmt">23</field>
+    <field name="type">CITY</field>
+    <field name="category">218</field>
+  </doc>
+  <doc>
+    <field name="id">221657</field>
+    <field name="coordinate">54.036361,10.446131</field>
+    <field name="osm_id">50798110</field>
+    <field name="name">Berlin</field>
+    <field name="name_de">Berlin</field>
+
+
+
+    <field name="postcode">23823</field>
+    <field name="country">Deutschland</field>
+    <field name="country_de">Deutschland</field>
+    <field name="country_en">Germany</field>
+    <field name="city">Berlin</field>
+    <field name="city_de">Berlin</field>
+
+    <field name="places">Trave-Land, Kreis Segeberg, Schleswig-Holstein</field>
+    <field name="ranking_kmt">11</field>
+    <field name="type">CITY</field>
+    <field name="category">218</field>
+  </doc>
+  <doc>
+    <field name="id">329994</field>
+    <field name="coordinate">52.517037,13.388860</field>
+    <field name="osm_id">240109189</field>
+    <field name="name">Berlin</field>
+    <field name="name_de">Berlin</field>
+    <field name="name_en">Berlin</field>
+
+
+    <field name="postcode"/>
+    <field name="country">Deutschland</field>
+    <field name="country_de">Deutschland</field>
+    <field name="country_en">Germany</field>
+    <field name="city">Berlin</field>
+    <field name="city_de">Berlin</field>
+    <field name="city_en">Berlin</field>
+    <field name="places">Berlin</field>
+    <field name="ranking_kmt">15</field>
+    <field name="type">CITY</field>
+    <field name="category">218</field>
+    </doc>
+</add>

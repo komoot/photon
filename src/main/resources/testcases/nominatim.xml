@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<add>
+	<doc>
+		<field name="id">23506999</field>
+		<field name="coordinate">64.108951,-21.870263</field>
+		<field name="osm_id">227235045</field>
+		<field name="street">holzgasse</field>
+		<field name="housenumber">1</field>
+		<field name="postcode">200</field>
+		<field name="country">Üsland</field>
+		<field name="country_de">Island</field>
+		<field name="country_en">Iceland</field>
+		<field name="country_fr">Islande</field>
+		<field name="country_it">Islanda</field>
+		<field name="places">Reyükjavik</field>
+		<field name="places_de">Reykjavik</field>
+		<field name="places_en">Reykjavik</field>
+		<field name="places_fr">Reykjavik</field>
+		<field name="secondary_places"/>
+		<field name="secondary_places_en"/>
+		<field name="secondary_places_fr"/>
+		<field name="city">Reyükjavik</field>
+		<field name="city_de">Reykjavik</field>
+		<field name="city_en">Reykjavik</field>
+		<field name="city_fr">Reykjavik</field>
+		<field name="city_it"/>
+	</doc>
+	<doc>
+		<field name="id">235069</field>
+		<field name="coordinate">64.108951,-21.870263</field>
+		<field name="osm_id">227235045</field>
+		<field name="street">meine strasse</field>
+		<field name="housenumber">45</field>
+		<field name="postcode">200</field>
+		<field name="country">Üsland</field>
+		<field name="country_de">Island</field>
+		<field name="country_en">Iceland</field>
+		<field name="country_fr">Islande</field>
+		<field name="country_it">Islanda</field>
+		<field name="places">Reykjavik</field>
+		<field name="places_en">Reykjavik</field>
+		<field name="places_fr">Reykjavik</field>
+		<field name="secondary_places"/>
+		<field name="city">Reyükjavik</field>
+		<field name="city_de">Reykjavik</field>
+		<field name="city_en">Reykjavik</field>
+		<field name="city_fr">Reykjavik</field>
+		<field name="city_it"/>
+	</doc>
+	<doc>
+		<field name="id">2350691</field>
+		<field name="coordinate">64.108951,-21.870263</field>
+		<field name="osm_id">227235045</field>
+		<field name="name"/>
+		<field name="street">meine strasse</field>
+		<field name="housenumber">43</field>
+		<field name="postcode">200</field>
+		<field name="country">Üsland</field>
+		<field name="country_de">Island</field>
+		<field name="country_en">Iceland</field>
+		<field name="country_fr">Islande</field>
+		<field name="country_it">Islanda</field>
+		<field name="places">Reykjavik</field>
+		<field name="places_en">Reykjavik</field>
+		<field name="places_fr">Reykjavik</field>
+		<field name="city">Reyükjavik</field>
+		<field name="city_de">Reykjavik</field>
+		<field name="city_en">Reykjavik</field>
+		<field name="city_fr">Reykjavik</field>
+		<field name="city_it"/>
+	</doc>
+	<doc>
+		<field name="id">666</field>
+		<field name="coordinate">4.108951,-21.870263</field>
+		<field name="osm_id">227235045</field>
+		<field name="name">Iceland Brandenburg</field>
+		<field name="street">helmstrasse</field>
+		<field name="housenumber">45</field>
+		<field name="postcode">200</field>
+		<field name="country">Deutschland</field>
+		<field name="places">Brandenburg</field>
+		<field name="city">Potsdam</field>
+		<field name="city_fr"/>
+		<field name="city_it"/>
+	</doc>
+	<doc>
+		<field name="id">6662</field>
+		<field name="coordinate">4.108951,21.870263</field>
+		<field name="osm_id">227235045</field>
+		<field name="name">Berlin</field>
+		<field name="country">Deutschland</field>
+		<field name="city">Berlin</field>
+		<field name="ranking_kmt">23</field>
+	</doc>
+	<doc>
+		<field name="id">6663</field>
+		<field name="coordinate">4.108951,22.870263</field>
+		<field name="osm_id">227235045</field>
+		<field name="name">Hotel Berlin</field>
+		<field name="street">Berliner Straße</field>
+		<field name="housenumber">45</field>
+		<field name="postcode">200</field>
+		<field name="country">Deutschland</field>
+		<field name="places">Berlin</field>
+		<field name="city">Berlin</field>
+		<field name="ranking_kmt">0</field>
+	</doc>
+	<doc>
+		<field name="id">12345678</field>
+		<field name="coordinate">4.108951,22.870263</field>
+		<field name="osm_id">123</field>
+		<field name="street">Forster Straße</field>
+		<field name="housenumber">51</field>
+		<field name="postcode">200</field>
+		<field name="country">Deutschland</field>
+		<field name="places">Berlin</field>
+		<field name="city">Berlin</field>
+	</doc>
+
+	<doc>
+		<field name="id">9876545</field>
+		<field name="coordinate">4.108951,22.870263</field>
+		<field name="osm_id">123</field>
+		<field name="name">Grünau</field>
+		<field name="housenumber">51</field>
+		<field name="postcode">200</field>
+		<field name="country">Deutschland</field>
+		<field name="places">Berlin</field>
+		<field name="city_fr"/>
+		<field name="city_it"/>
+	</doc>
+	<doc>
+		<field name="category">218</field>
+		<field name="city">Berlin</field>
+		<field name="city_de">Berlin</field>
+		<field name="city_en">Berlin</field>
+		<field name="city_fr">Berlin</field>
+		<field name="city_it">Berlino</field>
+		<field name="coordinate">52.483840,13.435948</field>
+		<field name="country">Deutschland</field>
+		<field name="country_de">Deutschland</field>
+		<field name="country_en">Germany</field>
+		<field name="country_fr">Allemagne</field>
+		<field name="country_it">Germania</field>
+		<field name="housenumber">40</field>
+		<field name="id">20161876</field>
+		<field name="name">Fuldastraße</field>
+
+
+		<field name="osm_id">79426218</field>
+		<field name="places">Donaukiez, Neukölln, Neukölln, Berlin</field>
+		<field name="places_de">Neukölln, Neukölln, Berlin</field>
+		<field name="places_en">Berlin</field>
+		<field name="places_fr">Berlin</field>
+		<field name="places_it">Berlino</field>
+		<field name="postcode">12045</field>
+		<field name="secondary_places">
+			Rixdorf, Luisenstadt, Stralauer Vorstadt, Neukölln am Wasser, Nikolaiviertel,
+			Alt-Berlin, Friedrichswerder, Teltow-Fläming, Barnim, Potsdam,
+			Barnim, Teltow-Fläming
+		</field>
+		<field name="secondary_places_de">Nikolaiviertel</field>
+
+
+		<field name="street">Fuldastraße</field>
+		<field name="type">STREET</field>
+	</doc>
+
+</add>
