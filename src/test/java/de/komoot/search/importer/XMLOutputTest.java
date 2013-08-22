@@ -1,8 +1,11 @@
-package nominatim;
+package de.komoot.search.importer;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.PrecisionModel;
+import de.komoot.search.importer.Constants;
+import de.komoot.search.importer.NominatimXMLHandler;
+import de.komoot.search.importer.XMLModel;
 import de.komoot.search.importer.XMLWriter;
 import de.komoot.search.importer.model.I18nName;
 import de.komoot.search.importer.model.NominatimEntry;

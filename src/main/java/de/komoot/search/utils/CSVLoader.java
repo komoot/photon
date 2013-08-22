@@ -1,10 +1,9 @@
 package de.komoot.search.utils;
 
-import de.komoot.spring.utils.CSVReader;
-
 import java.io.*;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -29,7 +28,7 @@ public class CSVLoader {
 	}
 
 	private CSVFile loadTest(File file) throws FileNotFoundException, IOException {
-		CSVReader csvReader = new CSVReader(new FileInputStream(file));
+		CSVReader csvReader = new CSVReader(new FileInputStream(file), Charset.forName("UTF-8"));
 		CSVFile test = new CSVFile(csvReader, file.getName());
 		return test;
 	}

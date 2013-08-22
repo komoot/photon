@@ -1,11 +1,11 @@
 package de.komoot.search;
 
+import de.komoot.search.model.SolrDocument;
 import de.komoot.search.utils.CSVLine;
 import de.komoot.search.utils.CSVLoader;
 import de.komoot.search.utils.Constants;
-import de.komoot.solrsearcher.SolrSearchResult;
-import de.komoot.solrsearcher.SolrSearcherNominatim;
-import org.apache.commons.lang.LocaleUtils;
+import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.client.solrj.impl.CommonsHttpSolrServer;
 import org.junit.*;
 import org.junit.runner.*;
 import org.junit.runners.*;
@@ -34,11 +34,11 @@ public class LiveSolrTest {
 	private final String SOLR_URL = "http://christoph.komoot.de:8983/solr/";
 
 	private final String testCase;
-	private SolrSearcherNominatim cut;
+	private CommonsHttpSolrServer searcher;
 
 	@Before
 	public void initialize() throws MalformedURLException {
-		cut = AbstractSolrTest.getSearcher(SOLR_URL);
+		searcher = AbstractSolrTest.getSearcher(SOLR_URL);
 	}
 
 	public LiveSolrTest(String testCase) {
@@ -54,7 +54,7 @@ public class LiveSolrTest {
 	}
 
 	@Test
-	public void test() throws IOException, URISyntaxException {
+	public void test() throws IOException, URISyntaxException, SolrServerException {
 		LOGGER.info("running live test of " + this.testCase);
 
 		CSVLoader csvLoader = new CSVLoader("/testcases/" + testCase + ".csv");
@@ -63,7 +63,7 @@ public class LiveSolrTest {
 		boolean success = true;
 		for(CSVLine line : lines) {
 			LOGGER.info(String.format("search for [%s]", line.get(Constants.COLUMNS.USER_INPUT)));
-			List<SolrSearchResult> results = cut.search(line.get(Constants.COLUMNS.USER_INPUT), LocaleUtils.toLocale(line.get(Constants.COLUMNS.LOCALE)));
+			List<SolrDocument> results = AbstractSolrTest.search(line);
 			success = success && isSuccessful(results, line);
 		}
 

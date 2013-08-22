@@ -1,10 +1,10 @@
 package de.komoot.search.importer;
 
 import com.neovisionaries.i18n.CountryCode;
-import de.komoot.search.importer.model.OSM_TYPE;
 import de.komoot.search.importer.model.I18nName;
 import de.komoot.search.importer.model.NominatimEntry;
 import de.komoot.search.importer.model.NominatimEntryParent;
+import de.komoot.search.importer.model.OSM_TYPE;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,7 +51,7 @@ public class IndexCrawler {
 
 		CountryCode country = getCountry(entry, parents);
 		if(country == null) {
-			LOGGER.error("unexpected: no country was defined for %s", entry);
+			LOGGER.error(String.format("unexpected: no country was defined for %s", entry));
 		}
 
 		// adopt information of parents

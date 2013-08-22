@@ -1,4 +1,4 @@
-package nominatim;
+package de.komoot.search.importer;
 
 /**
  * @author christoph

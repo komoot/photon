@@ -1,6 +1,7 @@
-package nominatim;
+package de.komoot.search.importer;
 
 import com.neovisionaries.i18n.CountryCode;
+import de.komoot.search.importer.Constants;
 import de.komoot.search.importer.NominatimImporter;
 import de.komoot.search.importer.model.I18nName;
 import de.komoot.search.importer.model.NominatimEntry;

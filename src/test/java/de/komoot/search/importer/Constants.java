@@ -1,4 +1,4 @@
-package nominatim;
+package de.komoot.search.importer;
 
 import de.komoot.search.importer.model.I18nName;
 

@@ -11,7 +11,7 @@ import java.io.File;
  * @author christoph
  */
 public class CommandLineOptions {
-	@Parameter(names = "-d", description = "database host", required = true)
+	@Parameter(names = "-h", description = "database host", required = true)
 	public String host;
 
 	@Parameter(names = "-d", description = "database name", required = true)
@@ -20,7 +20,7 @@ public class CommandLineOptions {
 	@Parameter(names = "-u", description = "database username", required = true)
 	public String username;
 
-	@Parameter(names = "-p", description = "database password", required = true)
+	@Parameter(names = "-P", description = "database password", required = true)
 	public String password;
 
 	@Parameter(names = "-p", description = "database port", required = false)

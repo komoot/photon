@@ -3,13 +3,9 @@ package de.komoot.search.utils;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.vividsolutions.jts.geom.Coordinate;
-import de.komoot.geo.slim.jts.GeometryCommons;
 import de.komoot.search.model.SolrDocument;
 import de.komoot.search.utils.Constants.COLUMNS;
-import de.komoot.solrsearcher.SolrSearchResult;
-import org.geotools.referencing.crs.DefaultGeographicCRS;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -22,8 +18,6 @@ import static org.springframework.util.StringUtils.hasText;
 public class ResultEvaluator {
 	public static final double MINIMUM_SIMILARITY_NAME = 0.8;
 	public static final double MIN_FIELD_SIMILARITY = 0.9;
-
-	private final static GeometryCommons geoCommons = new GeometryCommons(DefaultGeographicCRS.WGS84);
 
 	private static int minimum(int a, int b, int c) {
 		return Math.min(Math.min(a, b), c);
@@ -115,7 +109,7 @@ public class ResultEvaluator {
 					case COORDINATE:
 						if(false == expectedValue.equals(COLUMNS.COORDINATE.getDefaultValue()) && getCoordinate(result) != null) {
 							Double maxDistance = Double.parseDouble(line.get(COLUMNS.DISTANCE_TOLERANCE));
-							double distance = geoCommons.distance3d(line.getCoordinate(), getCoordinate(result));
+							double distance = distance(line.getCoordinate(), getCoordinate(result));
 							report.put(column, distance < maxDistance);
 						}
 						continue;
@@ -142,48 +136,6 @@ public class ResultEvaluator {
 	private static Coordinate getCoordinate(SolrDocument result) {
 		String[] yx = result.getCoordinate().split(",");
 		return new Coordinate(Double.parseDouble(yx[0]), Double.parseDouble(yx[1]));
-	}
-
-	/**
-	 * get those results that have the target location or a similar name.
-	 *
-	 * @param results
-	 * @param line
-	 * @return
-	 */
-	public static List<SolrSearchResult> getHits(List<SolrSearchResult> results, CSVLine line) {
-		if(results == null) {
-			return Collections.emptyList();
-		}
-
-		Coordinate targetCoord = null;
-		if(line.get(COLUMNS.COORDINATE) != COLUMNS.COORDINATE.getDefaultValue()) {
-			targetCoord = line.getCoordinate();
-		}
-
-		Double maxDistance = Double.parseDouble(line.get(COLUMNS.DISTANCE_TOLERANCE));
-
-		List<SolrSearchResult> hits = Lists.newArrayList();
-
-		for(int i = 0; i < results.size(); i++) {
-			if(i <= Integer.parseInt(line.get(COLUMNS.MAX_RESULT_INDEX))) {
-				SolrSearchResult result = results.get(i);
-
-				boolean coordMatched = true;
-
-				// test coordinate only if provided
-				if(targetCoord != null) {
-					double distance = geoCommons.distance3d(result.getCoordinate().getCoordinate(), targetCoord);
-					coordMatched = distance < maxDistance;
-				}
-
-				if(coordMatched) {
-					hits.add(result);
-				}
-			}
-		}
-
-		return hits;
 	}
 
 	/**
@@ -214,5 +166,16 @@ public class ResultEvaluator {
 			return 0;
 		}
 		return 1 - ((double) levDistance) / denominator;
+	}
+
+	public static double distance(Coordinate c0, Coordinate c1) {
+		double dLon = (c1.x - c0.y) * (Math.PI / 180d);
+		double dLat = (c0.y - c1.y) * (Math.PI / 180d);
+
+		double a = Math.pow(Math.sin(dLat / 2D), 2D) + Math.cos(c0.y * (Math.PI / 180D)) *
+				Math.cos(c1.y * (Math.PI / 180D)) * Math.pow(Math.sin(dLon / 2D), 2D);
+		double c = 2.0 * Math.atan2(Math.sqrt(a), Math.sqrt(1D - a));
+
+		return 6378137.0 * c;
 	}
 }

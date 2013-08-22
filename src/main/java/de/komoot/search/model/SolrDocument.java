@@ -1,6 +1,5 @@
 package de.komoot.search.model;
 
-import de.komoot.solrsearcher.model.DocumentFieldI18n;
 import org.apache.solr.client.solrj.beans.Field;
 
 /**

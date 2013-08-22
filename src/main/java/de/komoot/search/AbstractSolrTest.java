@@ -3,8 +3,8 @@ package de.komoot.search;
 import de.komoot.search.model.SolrDocument;
 import de.komoot.search.utils.CSVFile;
 import de.komoot.search.utils.CSVLine;
+import de.komoot.search.utils.CSVReader;
 import de.komoot.search.utils.Constants.COLUMNS;
-import de.komoot.spring.utils.CSVReader;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.lang.LocaleUtils;
 import org.apache.solr.client.solrj.SolrQuery;
@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
+import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Locale;
 
@@ -32,8 +33,6 @@ public abstract class AbstractSolrTest extends SolrSearcherTester {
 	private CommonsHttpSolrServer solrSearcher;
 	private CSVFile csvFile;
 
-	// protected static String SOLR_URL = "http://144.76.104.66:8080/solr/";
-	// protected static String SOLR_URL = "http://sulz.komoot.de:8080/solr/";
 	protected static String SOLR_URL = "http://christoph.komoot.de:8983/solr/";
 
 	/**
@@ -62,7 +61,7 @@ public abstract class AbstractSolrTest extends SolrSearcherTester {
 
 		solrSearcher = getSearcher(SOLR_URL);
 		InputStream resource = this.getClass().getResourceAsStream(getTestcases());
-		CSVReader csvReader = new CSVReader(resource);
+		CSVReader csvReader = new CSVReader(resource, Charset.forName("UTF-8"));
 		csvFile = new CSVFile(csvReader, getTestcases());
 	}
 
@@ -76,16 +75,8 @@ public abstract class AbstractSolrTest extends SolrSearcherTester {
 
 		List<CSVLine> lines = csvFile.getLines();
 		for(CSVLine line : lines) {
-			SolrQuery solrQuery = new SolrQuery();
-			solrQuery.setQuery(line.get(COLUMNS.USER_INPUT));
-			Locale locale = LocaleUtils.toLocale(line.get(COLUMNS.LOCALE));
-			if(false == Locale.GERMAN.getLanguage().equals(locale.getLanguage())) {
-				solrQuery.setParam("qt", "english");
-			}
+			List<SolrDocument> docs = search(line);
 
-			QueryResponse response = solrSearcher.query(solrQuery);
-
-			List<SolrDocument> docs = response.getBeans(SolrDocument.class);
 			LOGGER.info("testcase " + line.toString());
 			if(false == isSuccessful(docs, line)) {
 				failed++;
@@ -94,5 +85,17 @@ public abstract class AbstractSolrTest extends SolrSearcherTester {
 		if(failed > 0) {
 			fail("some tests failed: " + failed + " of " + lines.size());
 		}
+	}
+
+	public static List<SolrDocument> search(CSVLine line) throws SolrServerException, MalformedURLException {
+		SolrQuery solrQuery = new SolrQuery();
+		solrQuery.setQuery(line.get(COLUMNS.USER_INPUT));
+		Locale locale = LocaleUtils.toLocale(line.get(COLUMNS.LOCALE));
+		if(false == Locale.GERMAN.getLanguage().equals(locale.getLanguage())) {
+			solrQuery.setParam("qt", "english");
+		}
+
+		QueryResponse response = getSearcher(SOLR_URL).query(solrQuery);
+		return response.getBeans(SolrDocument.class);
 	}
 }

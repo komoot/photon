@@ -1,7 +1,5 @@
 package de.komoot.search.utils;
 
-import de.komoot.spring.utils.CSVReader;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
