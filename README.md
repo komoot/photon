@@ -3,7 +3,7 @@ _NAME_
 
 _NAME_ is an open source geocoder built for [OpenStreetMap](http://www.osm.org) data. It is based on [Apache Solr](http://lucene.apache.org/solr/) - an efficient and highly scalable search platform.
 
-_NAME_ was developed by [komoot](http://www.komoot.de) and provides multilingual and search-as-you-type geocoder, a real life demo can be seen on [www.komoot.de](http://www.komoot.de)
+_NAME_ was developed by [komoot](http://www.komoot.de) and provides multilingual (currently english and german) and search-as-you-type geocoder, a real life demo can be seen on [www.komoot.de](http://www.komoot.de)
 
 
 The project consistes of three parts:
