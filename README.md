@@ -19,7 +19,7 @@ _NAME_ needs a dataset (addresses, streets, cities, ...). Solr provides numerous
 Once you have a nominatim database you can run the _NominatorImporter_ to create the solr index
 
 ```bash
-mvn compile exec:java -Dexec.mainClass=de.komoot.search.importer.NominatimImporter -Dexec.args="...args..."
+mvn compile exec:java -Dexec.mainClass=de.komoot.photon.importer.NominatimImporter -Dexec.args="...args..."
 ```
 
 command line arguments
@@ -34,7 +34,7 @@ command line arguments
 A complete example:
 
 ```bash
-mvn compile exec:java -Dexec.mainClass=de.komoot.search.importer.NominatimImporter -Dexec.args="-h localhost -d nominatim_island -u christoph -P christoph -f /Users/christoph/iceland.solr.xml.gz" > /home/christoph/island_import.log
+mvn compile exec:java -Dexec.mainClass=de.komoot.photon.importer.NominatimImporter -Dexec.args="-h localhost -d nominatim_island -u christoph -P christoph -f /Users/christoph/iceland.solr.xml.gz" > /home/christoph/island_import.log
 ```
 
 This will take some time (Europe ~ 12 hours). 
