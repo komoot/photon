@@ -1,4 +1,4 @@
-# PHOTON
+# photon
 
 _Photon_ is an open source geocoder built for [OpenStreetMap](http://www.osm.org) data. It is based on [Apache Solr](http://lucene.apache.org/solr/) - an efficient and highly scalable search platform.
 
