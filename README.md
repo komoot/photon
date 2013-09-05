@@ -72,7 +72,7 @@ Now solr is up and running and filled with data. You can start searching for pla
 
 Join us in improving _photon_ and feel free to contact us!
 
-For developping we used a test-based approch, the test environment and testcases are located in [src/main/java/de/komoot/search/tests/](src/main/java/de/komoot/search/tests/). Every test consists of a xml file (test data) and csv file (test definition).
+For developing we used a test-based approch, the test environment and testcases are located in [src/main/java/de/komoot/search/tests/](src/main/java/de/komoot/search/tests/). Every test consists of a xml file (test data) and csv file (test definition).
 
 ## Licence
-_Photon_ software is open soucre and licensed under [Apache License, Version 2.0](http://opensource.org/licenses/Apache-2.0)
+_Photon_ software is open source and licensed under [Apache License, Version 2.0](http://opensource.org/licenses/Apache-2.0)
