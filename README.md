@@ -1,9 +1,8 @@
-_NAME_
-=============
+# PHOTON
 
-_NAME_ is an open source geocoder built for [OpenStreetMap](http://www.osm.org) data. It is based on [Apache Solr](http://lucene.apache.org/solr/) - an efficient and highly scalable search platform.
+_Photon_ is an open source geocoder built for [OpenStreetMap](http://www.osm.org) data. It is based on [Apache Solr](http://lucene.apache.org/solr/) - an efficient and highly scalable search platform.
 
-_NAME_ was developed by [komoot](http://www.komoot.de) and provides multilingual (currently english and german) and search-as-you-type geocoder, a real life demo can be seen on [www.komoot.de](http://www.komoot.de)
+_Photon_ was developed by [komoot](http://www.komoot.de) and provides multilingual (currently english and german) and search-as-you-type geocoder, a real life demo can be seen on [www.komoot.de](http://www.komoot.de)
 
 
 The project consistes of three parts:
@@ -14,7 +13,7 @@ The project consistes of three parts:
 
 ## How to use
 ### Import data
-_NAME_ needs a dataset (addresses, streets, cities, ...). Solr provides numerous input formats, including xml. Currently you cannot convert an OpenStreetMap planet file to use it with _NAME_. Instead you can use the _NominatorImporter_ included in this project to dump a nominatim database to a xml file. Refer to Nominatim's [Installation Guide](http://wiki.openstreetmap.org/wiki/Nominatim/Installation) how to setup and fill a postgis database. It takes up to 10 days and sufficient RAM to import the entire world, you might prefer taking a smaller region.
+_Photon_ needs a dataset (addresses, streets, cities, ...). Solr provides numerous input formats, including xml. Currently you cannot convert an OpenStreetMap planet file to use it with _photon_. Instead you can use the _NominatorImporter_ included in this project to dump a nominatim database to a xml file. Refer to Nominatim's [Installation Guide](http://wiki.openstreetmap.org/wiki/Nominatim/Installation) how to setup and fill a postgis database. It takes up to 10 days and sufficient RAM to import the entire world, you might prefer taking a smaller region.
 
 Once you have a nominatim database you can run the _NominatorImporter_ to create the solr index
 
@@ -39,7 +38,7 @@ mvn compile exec:java -Dexec.mainClass=de.komoot.photon.importer.NominatimImport
 
 This will take some time (Europe ~ 12 hours). 
 
-If you just want to check out _NAME_ you can use our example dump of Iceland too ([src/main/solrindex/iceland.solr.xml.gz](src/main/solrindex/iceland.solr.xml.gz)). 
+If you just want to check out _photon_ you can use our example dump of Iceland too ([src/main/solrindex/iceland.solr.xml.gz](src/main/solrindex/iceland.solr.xml.gz)). 
 
 ### Setup Solr
 You need to install Apache Solr (tested with version 4.4). Using Mac OS X and homebrew you can type:
@@ -71,6 +70,6 @@ Now solr is up and running and filled with data. You can start searching for pla
 
 ## How to contribute
 
-Join us in improving _NAME_ and feel free to contact us!
+Join us in improving _photon_ and feel free to contact us!
 
 For developping we used a test-based approch, the test environment and testcases are located in [src/main/java/de/komoot/search/tests/](src/main/java/de/komoot/search/tests/). Every test consists of a xml file (test data) and csv file (test definition).
