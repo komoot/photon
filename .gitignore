@@ -2,3 +2,5 @@ target/
 
 .idea/
 *.iml
+
+src/main/java/de/komoot/photon/.DS_Store
