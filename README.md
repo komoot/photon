@@ -38,7 +38,7 @@ mvn compile exec:java -Dexec.mainClass=de.komoot.photon.importer.NominatimImport
 
 This will take some time (Europe ~ 12 hours). 
 
-If you just want to check out _photon_ you can use our example dump of Iceland too ([src/main/solrindex/iceland.solr.xml.gz](src/main/solrindex/iceland.solr.xml.gz)). 
+If you just want to check out _photon_ you can use our example dump of Iceland too: [src/main/solrindex/iceland.solr.xml.gz](src/main/solrindex/iceland.solr.xml.gz) (©&nbsp;[OpenStreetMap contributors](http://www.openstreetmap.org/copyright)). 
 
 ### Setup Solr
 You need to install Apache Solr (tested with version 4.4). Using Mac OS X and homebrew you can type:
