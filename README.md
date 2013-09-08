@@ -53,6 +53,12 @@ Start solr and pass the configuration directory that is part of the project [src
 solr /Users/christoph/komoot/solr4/src/main/solrconfig/
 ```
 
+On other systems you might want to start solr that way:
+
+```bash
+java -Dsolr.solr.home=/Users/christoph/komoot/solr4/src/main/solrconfig/ -jar start.jar
+```
+
 Check Solr's admin interface on [http://localhost:8983/solr/](http://localhost:8983/solr/)
 
 You can already query for places but no search results will be found as we have not imported any data yet. To do so we need to type:
