@@ -47,7 +47,7 @@ You need to install Apache Solr (tested with version 4.4). Using Mac OS X and ho
 brew install solr
 ```
 
-Start solr and pass the configuration directory that ist part of the project [src/main/solrconfig/](src/main/solrconfig/)
+Start solr and pass the configuration directory that is part of the project [src/main/solrconfig/](src/main/solrconfig/)
 
 ```bash
 solr /Users/christoph/komoot/solr4/src/main/solrconfig/

@@ -91,7 +91,7 @@ public class IndexCrawler {
 				if(addressItem.isAddress()) {
 					// was already evaluated, there is no city
 					if(addressItem.isCity()) {
-						LOGGER.info(String.format("you were wrong entry [%s] address item [%s]", entry, addressItem));
+						// LOGGER.info(String.format("you were wrong entry [%s] address item [%s]", entry, addressItem));
 					}
 					continue;
 				}
