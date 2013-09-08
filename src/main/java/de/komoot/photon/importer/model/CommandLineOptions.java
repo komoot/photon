@@ -20,7 +20,7 @@ public class CommandLineOptions {
 	@Parameter(names = "-u", description = "database username", required = true)
 	public String username;
 
-	@Parameter(names = "-P", description = "database password", required = true)
+	@Parameter(names = "-P", description = "database password", required = false)
 	public String password;
 
 	@Parameter(names = "-p", description = "database port", required = false)
