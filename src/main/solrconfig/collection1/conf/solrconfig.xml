@@ -63,12 +63,11 @@
 	</query>
 
 	<requestDispatcher handleSelect="true">
-		<requestParsers enableRemoteStreaming="true" multipartUploadLimitInKB="4096000" formdataUploadLimitInKB="2048"
-						addHttpRequestToContext="false"/>
+		<requestParsers enableRemoteStreaming="true" multipartUploadLimitInKB="4096000" formdataUploadLimitInKB="2048" addHttpRequestToContext="false"/>
 		<httpCaching never304="true"/>
 	</requestDispatcher>
 
-	<requestHandler name="search" class="solr.SearchHandler" default="true">
+	<requestHandler name="german" class="solr.SearchHandler">
 		<lst name="defaults">
 			<str name="wt">json</str>
 			<str name="echoParams">explicit</str>
@@ -91,7 +90,7 @@
 		</lst>
 	</requestHandler>
 
-	<requestHandler name="english" class="solr.SearchHandler">
+	<requestHandler name="english" class="solr.SearchHandler" default="true">
 		<lst name="defaults">
 			<str name="wt">json</str>
 			<str name="echoParams">explicit</str>
