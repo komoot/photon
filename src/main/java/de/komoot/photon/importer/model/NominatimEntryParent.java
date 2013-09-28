@@ -2,10 +2,11 @@ package de.komoot.photon.importer.model;
 
 import com.neovisionaries.i18n.CountryCode;
 import de.komoot.photon.importer.InternationalAdminLevel;
+import de.komoot.photon.importer.Utils;
 import org.springframework.util.StringUtils;
 
 import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.util.List;
 
 /**
  * parent of a nominatim entry that has only a subset of fields of its child.
@@ -37,7 +38,7 @@ public class NominatimEntryParent {
 	public NominatimEntryParent() {
 	}
 
-	public NominatimEntryParent(ResultSet res) {
+	public NominatimEntryParent(ResultSet res, List<String> languages) {
 		try {
 			this.adminLevel = res.getInt("admin_level");
 			this.placeId = res.getLong("place_id");
@@ -48,16 +49,16 @@ public class NominatimEntryParent {
 			this.osmKey = res.getString("class");
 			this.osmValue = res.getString("type");
 
-			this.name = new I18nName(res.getString("name"), res.getString("name_de"), res.getString("name_en"), res.getString("name_fr"), res.getString("name_it"));
+			this.name = Utils.createI18nName(res, "name", languages);
 
 			if(this.name.isNameless()) {
-				this.name = new I18nName(res.getString("place_name"), null, null, null, null);
+				this.name = new I18nName(res.getString("place_name"));
 
 				if(this.name.isNameless()) {
-					this.name = new I18nName(res.getString("short_name"), null, null, null, null);
+					this.name = new I18nName(res.getString("short_name"));
 
 					if(this.name.isNameless()) {
-						this.name = new I18nName(res.getString("official_name"), null, null, null, null);
+						this.name = new I18nName(res.getString("official_name"));
 					}
 				}
 			}
@@ -72,24 +73,22 @@ public class NominatimEntryParent {
 			}
 
 			if(isPostcode()) {
-				if(name.locale != null) {
-					this.postcode = name.locale;
+				if(name.getName() != null) {
+					this.postcode = name.getName();
 				} else {
 					this.postcode = res.getString("name_ref");
 				}
 			}
 
 			if(isStreet()) {
-				if(name.locale != null) {
-					street = name.locale;
+				if(name.getName() != null) {
+					street = name.getName();
 				}
 			}
 
 			if(getHouseNumber()) {
 				this.houseNumber = res.getString("name_ref");
 			}
-		} catch(SQLException e) {
-			e.printStackTrace();
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
@@ -106,6 +105,7 @@ public class NominatimEntryParent {
 	}
 
 	public boolean isCountry() {
+		// decide by osm tag value
 		if("country_code".equals(osmValue) && "place".equals(osmKey)) {
 			return true;
 		}

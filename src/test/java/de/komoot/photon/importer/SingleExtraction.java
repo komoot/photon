@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Arrays;
 
 import static org.junit.Assert.*;
 
@@ -19,15 +20,15 @@ public class SingleExtraction {
 	@Test
 	public void getSingleEntry() throws SQLException, IOException, XMLStreamException {
 		File file = new File("/Users/christoph/Desktop/single.xml.gz");
-		NominatimImporter importer = new NominatimImporter("localhost", 10008, "nominatim_eu2", "christoph", "christoph", file);
+		NominatimImporter importer = new NominatimImporter("localhost", 10008, "nominatim_eu2", "christoph", "christoph", file, Arrays.asList("en", "de", "es"));
 		NominatimEntry entry = importer.getSingleEntry(37736073, "W");
 
 		if(entry == null) {
 			fail("could not find item");
 		}
 
-		XMLWriter xmlWriter = new XMLWriter(new FileOutputStream(file));
-		xmlWriter.write(entry);
-		xmlWriter.finish();
+		XMLExporter xmlExporter = new XMLExporter(new FileOutputStream(file));
+		xmlExporter.write(entry);
+		xmlExporter.finish();
 	}
 }

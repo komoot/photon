@@ -98,7 +98,7 @@ public class InternationalAdminLevel {
 		}
 
 		for(CityException exception : exceptions) {
-			if(exception.adminLevel == entry.getAdminLevel() && exception.name.equals(entry.getName().locale)) {
+			if(exception.adminLevel == entry.getAdminLevel() && exception.name.equals(entry.getName().getName())) {
 				return true;
 			}
 		}

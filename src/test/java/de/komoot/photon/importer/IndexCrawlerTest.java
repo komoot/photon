@@ -12,16 +12,14 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-/**
- * @author christoph
- */
+/** @author christoph */
 public class IndexCrawlerTest extends Constants {
 
 	private NominatimImporter importer;
 
 	@Before
 	public void setUp() throws Exception {
-		importer = new NominatimImporter("localhost", 10008, "nominatim_eu2", "christoph", "christoph", new File("/dev/null"));
+		importer = new NominatimImporter("localhost", 10008, "nominatim_eu2", "christoph", "christoph", new File("/dev/null"), Arrays.asList("en", "de", "fr", "it"));
 	}
 
 	@Test
@@ -101,19 +99,19 @@ public class IndexCrawlerTest extends Constants {
 	}
 
 	private boolean contains(I18nName expected, I18nName actual) {
-		if(expected.locale != null && false == expected.locale.equals(actual.locale)) {
+		if(expected.getName() != null && false == expected.getName().equals(actual.getName())) {
 			return false;
 		}
-		if(expected.de != null && false == expected.de.equals(actual.de)) {
+		if(expected.get("de") != null && false == expected.get("de").equals(actual.get("de"))) {
 			return false;
 		}
-		if(expected.en != null && false == expected.en.equals(actual.en)) {
+		if(expected.get("en") != null && false == expected.get("en").equals(actual.get("en"))) {
 			return false;
 		}
-		if(expected.fr != null && false == expected.fr.equals(actual.fr)) {
+		if(expected.get("fr") != null && false == expected.get("fr").equals(actual.get("fr"))) {
 			return false;
 		}
-		if(expected.it != null && false == expected.it.equals(actual.it)) {
+		if(expected.get("it") != null && false == expected.get("it").equals(actual.get("it"))) {
 			return false;
 		}
 
@@ -128,15 +126,15 @@ public class IndexCrawlerTest extends Constants {
 
 		assertEquals(msg, expected.isNameless(), actual.isNameless());
 
-		if(expected.locale != null)
-			assertEquals(msg, expected.locale, actual.locale);
-		if(expected.de != null)
-			assertEquals(msg, expected.de, actual.de);
-		if(expected.en != null)
-			assertEquals(msg, expected.en, actual.en);
-		if(expected.fr != null)
-			assertEquals(msg, expected.fr, actual.fr);
-		if(expected.it != null)
-			assertEquals(msg, expected.it, actual.it);
+		if(expected.getName() != null)
+			assertEquals(msg, expected.getName(), actual.getName());
+		if(expected.get("de") != null)
+			assertEquals(msg, expected.get("de"), actual.get("de"));
+		if(expected.get("en") != null)
+			assertEquals(msg, expected.get("en"), actual.get("en"));
+		if(expected.get("fr") != null)
+			assertEquals(msg, expected.get("fr"), actual.get("fr"));
+		if(expected.get("it") != null)
+			assertEquals(msg, expected.get("it"), actual.get("it"));
 	}
 }

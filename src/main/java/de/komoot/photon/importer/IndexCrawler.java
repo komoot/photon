@@ -28,16 +28,24 @@ public class IndexCrawler {
 	private final PreparedStatement statementSingleOSM;
 	private final PreparedStatement statementAddresses;
 
-	private static final String SQL_HSTORE_NAME = "name->'name' as name, name->'name:en' as name_en, name->'name:fr' as name_fr, name->'name:de' as name_de, name->'name:it' as name_it, name->'ref' as name_ref, name->'place_name' as place_name, name->'short_name' as short_name, name->'official_name' as official_name  ";
-	private static final String SQL_TEMPLATE = "SELECT place_id, partition, osm_type, osm_id, class, type, " + SQL_HSTORE_NAME + ", admin_level, housenumber, street, addr_place, isin, postcode, country_code, extratags, st_astext(centroid) as centroid, parent_place_id, linked_place_id, rank_address, rank_search, importance, indexed_status, indexed_date, wikipedia, geometry_sector, calculated_country_code FROM placex ";
+	private static final String SQL_TEMPLATE_HSTORE_NAME = "name->'name' as name, name->'ref' as name_ref, name->'place_name' as place_name, name->'short_name' as short_name, name->'official_name' as official_name  ";
+	private static final String SQL_TEMPLATE = "SELECT place_id, partition, osm_type, osm_id, class, type, %s , admin_level, housenumber, street, addr_place, isin, postcode, country_code, extratags, st_astext(centroid) as centroid, parent_place_id, linked_place_id, rank_address, rank_search, importance, indexed_status, indexed_date, wikipedia, geometry_sector, calculated_country_code FROM placex ";
+	private final List<String> languages;
 
-	public IndexCrawler(Connection connection) throws SQLException {
+	public IndexCrawler(Connection connection, List<String> languages) throws SQLException {
 		this.connection = connection;
 		this.connection.setAutoCommit(false);
+		this.languages = languages;
 
-		statementSingle = connection.prepareStatement(SQL_TEMPLATE + " WHERE place_id = ? ");
-		statementSingleOSM = connection.prepareStatement(SQL_TEMPLATE + " WHERE osm_id = ? AND osm_type = ? ");
-		statementAddresses = connection.prepareStatement("SELECT place_id, osm_type, osm_id, " + SQL_HSTORE_NAME + " , class, type, admin_level, rank_address FROM get_addressdata(?) WHERE isaddress ORDER BY rank_address DESC ");
+		StringBuilder sqlSelectNames = new StringBuilder(SQL_TEMPLATE_HSTORE_NAME);
+		for(String language : languages) {
+			sqlSelectNames.append(" , name->'name:").append(language).append("' as name_").append(language);
+		}
+
+		String sql = String.format(SQL_TEMPLATE, sqlSelectNames.toString());
+		statementSingle = connection.prepareStatement(sql + " WHERE place_id = ? ");
+		statementSingleOSM = connection.prepareStatement(sql + " WHERE osm_id = ? AND osm_type = ? ");
+		statementAddresses = connection.prepareStatement("SELECT place_id, osm_type, osm_id, " + sqlSelectNames + " , class, type, admin_level, rank_address FROM get_addressdata(?) WHERE isaddress ORDER BY rank_address DESC ");
 	}
 
 	/**
@@ -94,7 +102,7 @@ public class IndexCrawler {
 
 		List<NominatimEntryParent> parents = new ArrayList<NominatimEntryParent>();
 		while(resultSet.next()) {
-			NominatimEntryParent addressItem = new NominatimEntryParent(resultSet);
+			NominatimEntryParent addressItem = new NominatimEntryParent(resultSet, languages);
 			parents.add(addressItem);
 		}
 		return parents;
@@ -158,7 +166,7 @@ public class IndexCrawler {
 		ResultSet resultSet = statementSingleOSM.executeQuery();
 
 		if(resultSet.next()) {
-			NominatimEntry entry = new NominatimEntry(resultSet);
+			NominatimEntry entry = new NominatimEntry(resultSet, languages);
 			completeInformation(entry);
 			return entry;
 		} else {

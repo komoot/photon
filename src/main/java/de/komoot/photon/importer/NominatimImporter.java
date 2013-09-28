@@ -12,6 +12,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Entry point for the import of geo-spatial data from a nominatim database to convert it to a XML Solr file.
@@ -23,6 +25,7 @@ public class NominatimImporter {
 	private final IndexCrawler indexCrawler;
 	private final Connection connection;
 	private final File targetFile;
+	private final List<String> languages;
 
 	/**
 	 * @param host       database host
@@ -31,11 +34,13 @@ public class NominatimImporter {
 	 * @param username   db username
 	 * @param password   db username's password
 	 * @param targetFile compressed output file (xml.gz)
+	 * @param languages
 	 */
-	public NominatimImporter(String host, int port, String database, String username, String password, File targetFile) {
+	public NominatimImporter(String host, int port, String database, String username, String password, File targetFile, List<String> languages) {
 		LOGGER.info(String.format("connecting to database [%s] host [%s] port [%d], output file: %s", database, host, port, targetFile.getPath()));
 
 		this.targetFile = targetFile;
+		this.languages = languages;
 		try {
 			Class.forName("org.postgresql.Driver");
 		} catch(ClassNotFoundException e) {
@@ -44,21 +49,21 @@ public class NominatimImporter {
 
 		try {
 			connection = DriverManager.getConnection(String.format("jdbc:postgresql://%s:%d/%s", host, port, database), username, password);
-			indexCrawler = new IndexCrawler(connection);
+			indexCrawler = new IndexCrawler(connection, languages);
 		} catch(SQLException e) {
 			throw new RuntimeException("cannot connect to database", e);
 		}
 	}
 
 	/**
-	 * start conversion nominatim -> solr XML
+	 * starting reading nominatim database
 	 *
 	 * @param onlyBerlin
 	 */
 	public void run(boolean onlyBerlin) throws Exception {
 		long startTime = System.currentTimeMillis();
 
-		XMLWriter xmlWriter = new XMLWriter(new FileOutputStream(targetFile));
+		XMLExporter xmlExporter = new XMLExporter(new FileOutputStream(targetFile));
 
 		LOGGER.info("retrieving all items from nominatim database");
 		ResultSet resultSet = indexCrawler.getAllRecords(onlyBerlin);
@@ -71,15 +76,15 @@ public class NominatimImporter {
 				time = System.currentTimeMillis();
 			}
 
-			NominatimEntry entry = new NominatimEntry(resultSet);
+			NominatimEntry entry = new NominatimEntry(resultSet, languages);
 			indexCrawler.completeInformation(entry);
 
-			xmlWriter.write(entry);
+			xmlExporter.write(entry);
 
 			counter++;
 		}
 
-		xmlWriter.finish();
+		xmlExporter.finish();
 
 		long elapsedSeconds = (System.currentTimeMillis() - startTime) / 1000;
 		double speed = counter * 1. / elapsedSeconds;
@@ -101,7 +106,7 @@ public class NominatimImporter {
 		CommandLineOptions options = new CommandLineOptions();
 		new JCommander(options, args);
 
-		NominatimImporter nominatimImporter = new NominatimImporter(options.host, options.port, options.database, options.username, options.password, options.outputFile);
+		NominatimImporter nominatimImporter = new NominatimImporter(options.host, options.port, options.database, options.username, options.password, options.outputFile, Collections.unmodifiableList(options.languages));
 		nominatimImporter.run(options.onlyBerlin);
 	}
 }

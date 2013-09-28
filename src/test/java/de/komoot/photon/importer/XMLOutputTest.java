@@ -25,7 +25,7 @@ public class XMLOutputTest extends Constants {
 	private final static Logger LOGGER = LoggerFactory.getLogger(XMLOutputTest.class);
 
 	private ByteArrayOutputStream outputStream;
-	private XMLWriter cut;
+	private XMLExporter cut;
 	private SAXParserFactory spf = SAXParserFactory.newInstance();
 
 	@Test
@@ -130,7 +130,7 @@ public class XMLOutputTest extends Constants {
 
 		outputStream = new ByteArrayOutputStream();
 
-		cut = new XMLWriter(outputStream);
+		cut = new XMLExporter(outputStream);
 		cut.write(entry);
 		cut.finish();
 

@@ -20,19 +20,19 @@ import java.util.List;
  */
 public class NominatimEntry extends NominatimEntryParent {
 	protected final static Logger LOGGER = LoggerFactory.getLogger(NominatimEntry.class);
-	protected static WKTReader wktReader = new WKTReader();
+	protected final static WKTReader wktReader = new WKTReader();
 	protected Geometry centroid;
 	protected double importance;
 	protected Long parentId;
 	protected int rankSearch;
-	protected List<I18nName> places = new ArrayList<I18nName>();
+	protected List<I18nName> places = new ArrayList<>();
 
 	/** constructor only used for testing */
 	public NominatimEntry() {
 	}
 
-	public NominatimEntry(ResultSet res) {
-		super(res);
+	public NominatimEntry(ResultSet res, List<String> languages) {
+		super(res, languages);
 		try {
 			this.countryCode = res.getString("country_code");
 			this.calculatedCountryCode = res.getString("calculated_country_code");
@@ -110,7 +110,7 @@ public class NominatimEntry extends NominatimEntryParent {
 
 	@Override
 	public String toString() {
-		return String.format("NominatimEntry [%s] (%d, %d (%s), %s -> %s)", name != null && name.locale != null ? name.locale : "-noname-", placeId, osmId, osmType, osmKey, osmValue);
+		return String.format("NominatimEntry [%s] (%d, %d (%s), %s -> %s)", name != null && name.getName() != null ? name.getName() : "-noname-", placeId, osmId, osmType, osmKey, osmValue);
 	}
 
 	public void addPlace(I18nName place) {

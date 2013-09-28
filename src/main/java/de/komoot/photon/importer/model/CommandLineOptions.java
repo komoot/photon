@@ -4,6 +4,8 @@ import com.beust.jcommander.Parameter;
 import com.beust.jcommander.converters.FileConverter;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * used for CommandLineOptions for JCommander
@@ -28,6 +30,9 @@ public class CommandLineOptions {
 
 	@Parameter(names = "-b", description = "limit the import to extent of berlin", required = false)
 	public boolean onlyBerlin = false;
+
+	@Parameter(names = "-l", variableArity = true)
+	public List<String> languages = new ArrayList<>();
 
 	@Parameter(names = "-f", description = "file to save the output, e.g. europe.solr.data.xml.gz", required = true, converter = FileConverter.class)
 	public File outputFile;

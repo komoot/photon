@@ -103,38 +103,16 @@
 		<field name="postcode" type="postcode" indexed="true" stored="true" omitNorms="true"/>
 
 		<field name="name" type="text" indexed="true" stored="true"/>
-		<field name="name_de" type="text" indexed="true" stored="true"/>
-		<field name="name_en" type="text" indexed="true" stored="true"/>
-		<field name="name_fr" type="text" indexed="false" stored="false"/>
-		<field name="name_it" type="text" indexed="false" stored="false"/>
+		<dynamicField name="name_*" type="text" indexed="true" stored="true"/>
 
 		<field name="city" type="text" indexed="true" stored="true"/>
-		<field name="city_de" type="text" indexed="true" stored="true"/>
-		<field name="city_en" type="text" indexed="true" stored="true"/>
-		<field name="city_fr" type="text" indexed="false" stored="false"/>
-		<field name="city_it" type="text" indexed="false" stored="false"/>
+		<dynamicField name="city_*" type="text" indexed="true" stored="true"/>
 
 		<field name="country" type="text" indexed="true" stored="true"/>
-		<field name="country_de" type="text" indexed="true" stored="true"/>
-		<field name="country_en" type="text" indexed="true" stored="true"/>
-		<field name="country_fr" type="text" indexed="false" stored="false"/>
-		<field name="country_it" type="text" indexed="false" stored="false"/>
+		<dynamicField name="country_*" type="text" indexed="true" stored="true"/>
 
 		<field name="places" type="text_places" indexed="true" stored="false"/>
-		<field name="places_de" type="text_places" indexed="true" stored="false"/>
-		<field name="places_en" type="text_places" indexed="true" stored="false"/>
-		<field name="places_fr" type="text_places" indexed="false" stored="false"/>
-		<field name="places_it" type="text_places" indexed="false" stored="false"/>
-
-		<!--
-		if more languages will be added, it might be useful to use dynamic fields
-		http://wiki.apache.org/solr/SchemaXml#Dynamic_fields
-
-		<dynamicField name="*_de" type="text" indexed="true" stored="true"/>
-		<dynamicField name="*_en" type="text" indexed="true" stored="true"/>
-		<dynamicField name="*_fr" type="text" indexed="false" stored="false"/>
-		<dynamicField name="*_it" type="text" indexed="false" stored="false"/>
-		-->
+		<dynamicField name="places_*" type="text" indexed="true" stored="false"/>
 
 		<dynamicField name="*_coordinate" type="tdouble" indexed="true" stored="false"/>
 	</fields>
