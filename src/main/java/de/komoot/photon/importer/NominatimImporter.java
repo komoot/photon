@@ -71,7 +71,7 @@ public class NominatimImporter {
 		long time = System.currentTimeMillis();
 
 		while(resultSet.next()) {
-			if(counter % 10000 == 0) {
+			if(counter % 10000 == 0 && counter > 0) {
 				LOGGER.info(String.format("progress: %10d entries [%.1f / second]", counter, 10000000. / (1. * System.currentTimeMillis() - time)));
 				time = System.currentTimeMillis();
 			}
@@ -87,7 +87,7 @@ public class NominatimImporter {
 		xmlExporter.finish();
 
 		long elapsedSeconds = (System.currentTimeMillis() - startTime) / 1000;
-		double speed = counter * 1. / elapsedSeconds;
+		double speed = counter * 1. / (elapsedSeconds + 0.01);
 		LOGGER.info(String.format("finished %d entries after %d seconds [%.1f / second]", counter, elapsedSeconds, speed));
 	}
 

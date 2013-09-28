@@ -138,13 +138,20 @@ public class IndexCrawler {
 	 */
 	public ResultSet getAllRecords(boolean onlyBerlin) throws SQLException {
 		PreparedStatement statementAll;
-		String sql = SQL_TEMPLATE + " WHERE osm_type <> 'P' AND (name IS NOT NULL OR housenumber IS NOT NULL OR street IS NOT NULL OR postcode IS NOT NULL) AND centroid IS NOT NULL ";
+
+		StringBuilder sqlSelectNames = new StringBuilder(SQL_TEMPLATE_HSTORE_NAME);
+		for(String language : languages) {
+			sqlSelectNames.append(" , name->'name:").append(language).append("' as name_").append(language);
+		}
+
+		String sql = String.format(SQL_TEMPLATE, sqlSelectNames.toString());
+		sql += " WHERE osm_type <> 'P' AND (name IS NOT NULL OR housenumber IS NOT NULL OR street IS NOT NULL OR postcode IS NOT NULL) AND centroid IS NOT NULL ";
 
 		if(onlyBerlin) {
 			sql += "AND st_contains(ST_GeomFromText('POLYGON ((12.718964 52.880734,13.92746 52.880734,13.92746 52.160455,12.718964 52.160455,12.718964 52.880734))', 4326), centroid) ";
 		}
 
-		sql += " ORDER BY st_x(ST_SnapToGrid(centroid, 0.1)), st_y(ST_SnapToGrid(centroid, 0.1)) "; // should be nice for performance reasons ...?
+		sql += " ORDER BY st_x(ST_SnapToGrid(centroid, 0.1)), st_y(ST_SnapToGrid(centroid, 0.1)) "; // for performance reasons
 
 		statementAll = connection.prepareStatement(sql);
 		statementAll.setFetchSize(100000);
