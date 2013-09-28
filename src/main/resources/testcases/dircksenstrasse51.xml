@@ -16,11 +16,6 @@
 		<field name="places">Scheunenviertel, Mitte, Mitte, Berlin</field>
 		<field name="places_de">Mitte, Mitte, Berlin</field>
 		<field name="places_en">Berlin</field>
-		<field name="secondary_places">Mitte, Spandauer Vorstadt, Nikolaiviertel, Friedrichswerder, Neukölln am Wasser,
-			Alt-Berlin, Friedrichstadt, Oranienburger Vorstadt, Luisenstadt, Dorotheenstadt, Potsdam, Teltow-Fläming,
-			Barnim, Oberhavel, Oberhavel, Teltow-Fläming
-		</field>
-		<field name="secondary_places_de">Mitte, Nikolaiviertel</field>
 		<field name="ranking_kmt">0</field>
 	</doc>
 	<doc>
@@ -38,8 +33,6 @@
 		<field name="places">Wedding, Mitte, Berlin</field>
 		<field name="places_de">Wedding, Mitte, Berlin</field>
 		<field name="places_en">Berlin</field>
-		<field name="secondary_places">Wedding, Potsdam, Oberhavel, Oberhavel, Teltow-Fläming, Barnim, Teltow-Fläming
-		</field>
 		<field name="ranking_kmt">8</field>
 	</doc>
 </add>

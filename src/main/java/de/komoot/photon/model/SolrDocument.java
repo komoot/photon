@@ -2,9 +2,7 @@ package de.komoot.photon.model;
 
 import org.apache.solr.client.solrj.beans.Field;
 
-/**
- * solr document
- */
+/** solr document */
 public class SolrDocument {
 	@Field
 	public String category;
@@ -66,18 +64,6 @@ public class SolrDocument {
 	public String places_it;
 
 	@Field
-	public String secondary_places;
-	@Field
-	public String secondary_places_de;
-
-	@Field
-	public String secondary_places_en;
-	@Field
-	public String secondary_places_fr;
-	@Field
-	public String secondary_places_it;
-
-	@Field
 	public String type;
 
 	public String getCoordinate() {
@@ -114,9 +100,5 @@ public class SolrDocument {
 
 	public DocumentFieldI18n getPlaces() {
 		return new DocumentFieldI18n(places, places_de, places_en, places_fr, places_it);
-	}
-
-	public DocumentFieldI18n getSecondaryPlaces() {
-		return new DocumentFieldI18n(secondary_places, secondary_places_de, secondary_places_en, secondary_places_fr, secondary_places_it);
 	}
 }

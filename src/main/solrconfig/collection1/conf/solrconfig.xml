@@ -85,7 +85,6 @@
 				name^2.4 name_de^1.5 street^2 housenumber^3
 				city city_de
 				places^0.8 places_de^0.8 postcode^0.6
-				secondary_places^0.5 secondary_places_de^0.5
 			</str>
 		</lst>
 	</requestHandler>
@@ -108,7 +107,6 @@
 				name^2.4 name_en^1.5 street^2 housenumber^3
 				city city_en
 				places^0.8 places_en^0.8 postcode^0.6
-				secondary_places^0.5 secondary_places_en^0.5
 			</str>
 		</lst>
 	</requestHandler>

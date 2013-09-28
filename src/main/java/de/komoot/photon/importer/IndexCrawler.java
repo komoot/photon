@@ -29,7 +29,7 @@ public class IndexCrawler {
 	private final PreparedStatement statementAddresses;
 
 	private static final String SQL_HSTORE_NAME = "name->'name' as name, name->'name:en' as name_en, name->'name:fr' as name_fr, name->'name:de' as name_de, name->'name:it' as name_it, name->'ref' as name_ref, name->'place_name' as place_name, name->'short_name' as short_name, name->'official_name' as official_name  ";
-	private static final String SQL_TEMPLATE = "SELECT place_id, partition, osm_type, osm_id, class, type, " + SQL_HSTORE_NAME + ", admin_level, housenumber, street, addr_place, isin, postcode, country_code, extratags, st_astext(centroid) as centroid, parent_place_id, linked_place_id, rank_address, rank_search, importance, indexed_status, indexed_date, wikipedia, geometry_sector, calculated_country_code, TRUE as isaddress FROM placex ";
+	private static final String SQL_TEMPLATE = "SELECT place_id, partition, osm_type, osm_id, class, type, " + SQL_HSTORE_NAME + ", admin_level, housenumber, street, addr_place, isin, postcode, country_code, extratags, st_astext(centroid) as centroid, parent_place_id, linked_place_id, rank_address, rank_search, importance, indexed_status, indexed_date, wikipedia, geometry_sector, calculated_country_code FROM placex ";
 
 	public IndexCrawler(Connection connection) throws SQLException {
 		this.connection = connection;
@@ -37,7 +37,7 @@ public class IndexCrawler {
 
 		statementSingle = connection.prepareStatement(SQL_TEMPLATE + " WHERE place_id = ? ");
 		statementSingleOSM = connection.prepareStatement(SQL_TEMPLATE + " WHERE osm_id = ? AND osm_type = ? ");
-		statementAddresses = connection.prepareStatement("SELECT place_id, osm_type, osm_id, " + SQL_HSTORE_NAME + " , class, type, admin_level, rank_address, isaddress FROM get_addressdata(?) ORDER BY rank_address DESC, isaddress DESC ");
+		statementAddresses = connection.prepareStatement("SELECT place_id, osm_type, osm_id, " + SQL_HSTORE_NAME + " , class, type, admin_level, rank_address FROM get_addressdata(?) WHERE isaddress ORDER BY rank_address DESC ");
 	}
 
 	/**
@@ -75,30 +75,7 @@ public class IndexCrawler {
 				}
 
 				if(addressItem.getName() != null && addressItem.getName().isNameless() == false) {
-					if(addressItem.isAddress()) {
-						entry.addPlace(addressItem.getName());
-					} else {
-						entry.addSecondaryPlace(addressItem.getName());
-					}
-				}
-			}
-		}
-
-		if(entry.getCity() == null || entry.getCity().isNameless()) {
-			// no city found in index, take the best match in secondary places
-
-			for(NominatimEntryParent addressItem : parents) {
-				if(addressItem.isAddress()) {
-					// was already evaluated, there is no city
-					if(addressItem.isCity()) {
-						// LOGGER.info(String.format("you were wrong entry [%s] address item [%s]", entry, addressItem));
-					}
-					continue;
-				}
-
-				if(addressItem.isCity() && false == addressItem.getName().isNameless()) {
-					entry.setCity(addressItem.getName());
-					break;
+					entry.addPlace(addressItem.getName());
 				}
 			}
 		}

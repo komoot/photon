@@ -16,9 +16,6 @@
 		<field name="places_de">Reykjavik</field>
 		<field name="places_en">Reykjavik</field>
 		<field name="places_fr">Reykjavik</field>
-		<field name="secondary_places"/>
-		<field name="secondary_places_en"/>
-		<field name="secondary_places_fr"/>
 		<field name="city">Reyükjavik</field>
 		<field name="city_de">Reykjavik</field>
 		<field name="city_en">Reykjavik</field>
@@ -40,7 +37,6 @@
 		<field name="places">Reykjavik</field>
 		<field name="places_en">Reykjavik</field>
 		<field name="places_fr">Reykjavik</field>
-		<field name="secondary_places"/>
 		<field name="city">Reyükjavik</field>
 		<field name="city_de">Reykjavik</field>
 		<field name="city_en">Reykjavik</field>
@@ -145,8 +141,6 @@
 		<field name="housenumber">40</field>
 		<field name="id">20161876</field>
 		<field name="name">Fuldastraße</field>
-
-
 		<field name="osm_id">79426218</field>
 		<field name="places">Donaukiez, Neukölln, Neukölln, Berlin</field>
 		<field name="places_de">Neukölln, Neukölln, Berlin</field>
@@ -154,14 +148,6 @@
 		<field name="places_fr">Berlin</field>
 		<field name="places_it">Berlino</field>
 		<field name="postcode">12045</field>
-		<field name="secondary_places">
-			Rixdorf, Luisenstadt, Stralauer Vorstadt, Neukölln am Wasser, Nikolaiviertel,
-			Alt-Berlin, Friedrichswerder, Teltow-Fläming, Barnim, Potsdam,
-			Barnim, Teltow-Fläming
-		</field>
-		<field name="secondary_places_de">Nikolaiviertel</field>
-
-
 		<field name="street">Fuldastraße</field>
 		<field name="type">STREET</field>
 	</doc>

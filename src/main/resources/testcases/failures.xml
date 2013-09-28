@@ -23,11 +23,6 @@
 		</field>
 		<field name="postcode">82538</field>
 		<field name="ranking_kmt">8</field>
-		<field name="secondary_places">
-			Farchet, Waldram, Nantwein, Weidach, Achmühle, Buchberg, Dorfen, Meilenberg, Bolzwang, Puppling,
-			Schwaigwall,
-			Adelsreuth, Schlederloh, Unterherrnhausen, Attenhausen, Baierlach, Höhenrain, Degerndorf, Sonderham
-		</field>
 	</doc>
 
 	<doc>
@@ -50,13 +45,6 @@
 		<field name="places_de">Bern</field>
 		<field name="places_fr">Berne</field>
 		<field name="places_it">Berna</field>
-		<field name="secondary_places">Bezirk See;District du Lac, Amtsbezirk Niedersimmental, Valais - Wallis, Fribourg
-			- Freiburg, Schweiz, Suisse, Svizzera, Svizra
-		</field>
-		<field name="secondary_places_de">Wallis, Freiburg, Schweiz</field>
-		<field name="secondary_places_en">Switzerland</field>
-		<field name="secondary_places_fr">Valais, Fribourg, Suisse</field>
-		<field name="secondary_places_it">Vallese, Friburgo, Svizzera</field>
 		<field name="ranking_kmt">0</field>
 	</doc>
 	<doc>

@@ -16,8 +16,6 @@
 		<field name="places">Grunewald, Grunewald, Charlottenburg-Wilmersdorf, Berlin</field>
 		<field name="places_de">Grunewald, Charlottenburg-Wilmersdorf, Berlin</field>
 		<field name="places_en">Berlin</field>
-		<field name="secondary_places">Grunewald, Potsdam, Potsdam</field>
-		<field name="secondary_places_de">Potsdam</field>
 		<field name="ranking_kmt">0</field>
 	</doc>
 	<doc>
@@ -36,10 +34,6 @@
 		</field>
 		<field name="places_de">Landkreis Calw, Baden-Württemberg</field>
 		<field name="places_en">Baden-Württemberg</field>
-		<field name="secondary_places">Sommerberg, Agenbach, Meistern, Lautenhof, Christophshof, Hünerberg,
-			Hofstett, Baden-Württemberg
-		</field>
-		<field name="secondary_places_de">Baden-Württemberg</field>
 		<field name="ranking_kmt">4</field>
 		<field name="type">STREET</field>
 	</doc>

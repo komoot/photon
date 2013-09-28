@@ -20,7 +20,6 @@
 		<field name="country">Deutschland</field>
 		<field name="places">Wilhelm</field>
 		<field name="city">Friedrich</field>
-		<field name="secondary_places">Boelcke</field>
 		<field name="postcode">14473</field>
 		<field name="street"></field>
 		<field name="housenumber">2</field>

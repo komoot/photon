@@ -15,8 +15,6 @@
 		<field name="places">Wedding, Mitte, Berlin</field>
 		<field name="places_de">Wedding, Mitte, Berlin</field>
 		<field name="places_en">Berlin</field>
-		<field name="secondary_places">Wedding, Potsdam, Oberhavel, Oberhavel, Teltow-Fläming, Barnim, Teltow-Fläming
-		</field>
 		<field name="ranking_kmt">8</field>
 	</doc>
 	<doc>
@@ -36,11 +34,6 @@
 		<field name="places">Barnim, Gesundbrunnen, Mitte, Berlin</field>
 		<field name="places_de">Gesundbrunnen, Mitte, Berlin</field>
 		<field name="places_en">Berlin</field>
-		<field name="secondary_places">Schönholz, Gesundbrunnen, Dorotheenstadt, Friedrichswerder, Alt-Berlin,
-			Nikolaiviertel, Friedrichstadt, Spandauer Vorstadt, Oranienburger Vorstadt, Oberhavel, Potsdam, Barnim,
-			Oberhavel, Teltow-Fläming, Teltow-Fläming
-		</field>
-		<field name="secondary_places_de">Nikolaiviertel</field>
 		<field name="ranking_kmt">0</field>
 	</doc>
 </add>

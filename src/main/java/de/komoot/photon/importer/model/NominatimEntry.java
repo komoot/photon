@@ -26,11 +26,8 @@ public class NominatimEntry extends NominatimEntryParent {
 	protected Long parentId;
 	protected int rankSearch;
 	protected List<I18nName> places = new ArrayList<I18nName>();
-	protected List<I18nName> secondaryPlaces = new ArrayList<I18nName>();
 
-	/**
-	 * constructor only used for testing
-	 */
+	/** constructor only used for testing */
 	public NominatimEntry() {
 	}
 
@@ -41,7 +38,7 @@ public class NominatimEntry extends NominatimEntryParent {
 			this.calculatedCountryCode = res.getString("calculated_country_code");
 			String c = res.getString("centroid");
 			this.centroid = wktReader.read(c);
-			this.housenumber = res.getString("housenumber");
+			this.houseNumber = res.getString("housenumber");
 			this.importance = res.getDouble("importance");
 
 			String streetColumn = res.getString("street");
@@ -88,7 +85,7 @@ public class NominatimEntry extends NominatimEntryParent {
 	}
 
 	public String getHousenumber() {
-		return housenumber;
+		return houseNumber;
 	}
 
 	public List<I18nName> getPlaces() {
@@ -107,10 +104,6 @@ public class NominatimEntry extends NominatimEntryParent {
 		return rankSearch;
 	}
 
-	public List<I18nName> getSecondaryPlaces() {
-		return secondaryPlaces;
-	}
-
 	public String getStreet() {
 		return street;
 	}
@@ -122,10 +115,6 @@ public class NominatimEntry extends NominatimEntryParent {
 
 	public void addPlace(I18nName place) {
 		this.places.add(place);
-	}
-
-	public void addSecondaryPlace(I18nName place) {
-		this.secondaryPlaces.add(place);
 	}
 
 	/**
@@ -183,8 +172,8 @@ public class NominatimEntry extends NominatimEntryParent {
 		if(street == null) {
 			street = parent.street;
 		}
-		if(housenumber == null) {
-			housenumber = parent.housenumber;
+		if(houseNumber == null) {
+			houseNumber = parent.houseNumber;
 		}
 		if(postcode == null) {
 			postcode = parent.postcode;

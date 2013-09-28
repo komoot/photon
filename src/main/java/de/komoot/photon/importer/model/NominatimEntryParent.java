@@ -20,7 +20,7 @@ public class NominatimEntryParent {
 	protected int adminLevel;
 	protected String calculatedCountryCode;
 	protected String countryCode;
-	protected String housenumber;
+	protected String houseNumber;
 	protected String osmKey;
 	protected I18nName name;
 	protected long osmId;
@@ -31,12 +31,9 @@ public class NominatimEntryParent {
 	protected String street;
 	protected String osmValue;
 	protected CountryCode country;
-	protected boolean address = true;
 	protected I18nName city;
 
-	/**
-	 * constructor only used for testing
-	 */
+	/** constructor only used for testing */
 	public NominatimEntryParent() {
 	}
 
@@ -44,7 +41,6 @@ public class NominatimEntryParent {
 		try {
 			this.adminLevel = res.getInt("admin_level");
 			this.placeId = res.getLong("place_id");
-			this.address = res.getBoolean("isaddress");
 
 			this.osmId = res.getLong("osm_id");
 			this.osmType = OSM_TYPE.get(res.getString("osm_type"));
@@ -89,8 +85,8 @@ public class NominatimEntryParent {
 				}
 			}
 
-			if(isHousenumber()) {
-				this.housenumber = res.getString("name_ref");
+			if(getHouseNumber()) {
+				this.houseNumber = res.getString("name_ref");
 			}
 		} catch(SQLException e) {
 			e.printStackTrace();
@@ -130,12 +126,12 @@ public class NominatimEntryParent {
 		return "highway".equals(this.osmKey);
 	}
 
-	public boolean isHousenumber() {
+	public boolean getHouseNumber() {
 		return "house_number".equals(osmValue) && "place".equals(osmKey);
 	}
 
 	public void updateAddressInformation() {
-		if(isCity() && address) {
+		if(isCity()) {
 			if(this.name.isNameless()) {
 				NominatimEntry.LOGGER.warn(String.format("Unexpected data: a city does not have a name [%s]", this));
 			} else {
@@ -209,9 +205,5 @@ public class NominatimEntryParent {
 	public void setCountry(CountryCode country) {
 		this.country = country;
 		this.updateAddressInformation();
-	}
-
-	public boolean isAddress() {
-		return address;
 	}
 }

@@ -62,7 +62,6 @@ public class XMLWriter {
 		write("city", entry.getCity());
 
 		write("places", entry.getPlaces());
-		write("secondary_places", entry.getSecondaryPlaces());
 
 		write("ranking_kmt", 30 - entry.getRankSearch());
 
