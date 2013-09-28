@@ -2,9 +2,8 @@
 <add>
 	<doc>
 		<field name="id">2</field>
-		<field name="category">218</field>
 		<field name="coordinate">52.5060536,13.3207552</field>
-		<field name="ranking_kmt">299</field>
+		<field name="ranking">299</field>
 		<field name="country">Deutschland</field>
 		<field name="places">Berlin</field>
 		<field name="city">Berlin</field>
@@ -14,9 +13,8 @@
 	</doc>
 	<doc>
 		<field name="id">3</field>
-		<field name="category">218</field>
 		<field name="coordinate">52.5060536,13.3207552</field>
-		<field name="ranking_kmt">299</field>
+		<field name="ranking">299</field>
 		<field name="country">Deutschland</field>
 		<field name="places">Berlin</field>
 		<field name="city">Berlin</field>

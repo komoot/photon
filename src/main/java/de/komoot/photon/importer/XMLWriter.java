@@ -66,7 +66,7 @@ public class XMLWriter {
 
 		write("places", entry.getPlaces());
 
-		write("ranking_kmt", 30 - entry.getRankSearch());
+		write("ranking", 30 - entry.getRankSearch());
 
 		ENTRY_TYPE type = entry.getType();
 		write("type", type == null ? null : type.toString());

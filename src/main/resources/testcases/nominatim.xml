@@ -86,7 +86,7 @@
 		<field name="name">Berlin</field>
 		<field name="country">Deutschland</field>
 		<field name="city">Berlin</field>
-		<field name="ranking_kmt">23</field>
+		<field name="ranking">23</field>
 	</doc>
 	<doc>
 		<field name="id">6663</field>
@@ -99,7 +99,7 @@
 		<field name="country">Deutschland</field>
 		<field name="places">Berlin</field>
 		<field name="city">Berlin</field>
-		<field name="ranking_kmt">0</field>
+		<field name="ranking">0</field>
 	</doc>
 	<doc>
 		<field name="id">12345678</field>
@@ -126,7 +126,6 @@
 		<field name="city_it"/>
 	</doc>
 	<doc>
-		<field name="category">218</field>
 		<field name="city">Berlin</field>
 		<field name="city_de">Berlin</field>
 		<field name="city_en">Berlin</field>

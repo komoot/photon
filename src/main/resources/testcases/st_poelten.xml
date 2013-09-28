@@ -12,7 +12,7 @@
     <field name="city">St. Pölten</field>
     <field name="city_de">St. Pölten</field>
     <field name="places">St.Pölten (Stadt), Niederösterreich</field>
-    <field name="ranking_kmt">14</field>
+    <field name="ranking">14</field>
     <field name="type">CITY</field>
     <field name="category">218</field>
   </doc>
@@ -28,7 +28,7 @@
     <field name="country_en">United Kingdom</field>
     <field name="city">Exeter District</field>
     <field name="places">Polsloe Ward, Exeter District, Devon, South West England, England, United Kingdom</field>
-    <field name="ranking_kmt">0</field>
+    <field name="ranking">0</field>
     <field name="category">218</field>
   </doc>
 </add>

@@ -17,7 +17,7 @@
 
 
     <field name="places">Le Blanc, Indre, Centre</field>
-    <field name="ranking_kmt">14</field>
+    <field name="ranking">14</field>
     <field name="type">CITY</field>
     <field name="category">218</field>
 </doc>
@@ -38,7 +38,7 @@
 
 
     <field name="places">Arfeuilles, Vichy, Allier, Auvergne</field>
-    <field name="ranking_kmt">10</field>
+    <field name="ranking">10</field>
 
     <field name="category">218</field>
    </doc>
@@ -59,7 +59,7 @@
 
 
     <field name="places">Coux, Privas, Ardèche, Rhône-Alpes</field>
-    <field name="ranking_kmt">10</field>
+    <field name="ranking">10</field>
 
     <field name="category">218</field>
     </doc>
@@ -80,7 +80,7 @@
 
 
     <field name="places">Salamanca, Salamanca, Castilla y León, España</field>
-    <field name="ranking_kmt">12</field>
+    <field name="ranking">12</field>
 
     <field name="category">218</field>
     </doc>

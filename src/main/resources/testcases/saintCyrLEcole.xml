@@ -17,7 +17,7 @@
 
 
     <field name="places">Versailles, Yvelines, Île-de-France</field>
-    <field name="ranking_kmt">14</field>
+    <field name="ranking">14</field>
     <field name="type">CITY</field>
     <field name="category">218</field>
   </doc>
@@ -38,7 +38,7 @@
 
 
     <field name="places">Cherbourg, Manche, Basse-Normandie</field>
-    <field name="ranking_kmt">14</field>
+    <field name="ranking">14</field>
     <field name="type">CITY</field>
     <field name="category">218</field>
   </doc>
@@ -59,7 +59,7 @@
 
 
     <field name="places">Poitiers, Vienne, Poitou-Charentes</field>
-    <field name="ranking_kmt">14</field>
+    <field name="ranking">14</field>
     <field name="type">CITY</field>
     <field name="category">218</field>
   </doc>
@@ -80,7 +80,7 @@
 
 
     <field name="places">Les Sables-d'Olonne, Vendée, Pays de la Loire</field>
-    <field name="ranking_kmt">14</field>
+    <field name="ranking">14</field>
     <field name="type">CITY</field>
     <field name="category">218</field>
   </doc>

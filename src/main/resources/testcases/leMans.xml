@@ -13,8 +13,7 @@
 		<field name="country_en">Poland</field>
 		<field name="city"/>
 		<field name="places"/>
-		<field name="ranking_kmt">22</field>
-		<field name="category">218</field>
+		<field name="ranking">22</field>
 	</doc>
 	<doc>
 		<field name="id">16590644</field>
@@ -27,8 +26,7 @@
 		<field name="country_en">Italy</field>
 		<field name="city"/>
 		<field name="places"/>
-		<field name="ranking_kmt">22</field>
-		<field name="category">218</field>
+		<field name="ranking">22</field>
 	</doc>
 	<doc>
 		<field name="id">51187861</field>
@@ -41,7 +39,6 @@
 		<field name="country_en">France</field>
 		<field name="city">Le Mans</field>
 		<field name="places">Sarthe, Pays de la Loire</field>
-		<field name="ranking_kmt">16</field>
-		<field name="category">218</field>
+		<field name="ranking">16</field>
 	</doc>
 </add>

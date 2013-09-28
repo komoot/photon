@@ -17,7 +17,7 @@
 
 
     <field name="places">Pontoise, Val-d'Oise, Île-de-France</field>
-    <field name="ranking_kmt">14</field>
+    <field name="ranking">14</field>
     <field name="type">CITY</field>
     <field name="category">218</field>
   </doc>
@@ -38,7 +38,7 @@
 
 
     <field name="places">Ireland</field>
-    <field name="ranking_kmt">20</field>
+    <field name="ranking">20</field>
 
     <field name="category">218</field>
   </doc>
@@ -59,7 +59,7 @@
 
 
     <field name="places">România</field>
-    <field name="ranking_kmt">18</field>
+    <field name="ranking">18</field>
 
     <field name="category">218</field>
   </doc>
@@ -80,7 +80,7 @@
 
 
     <field name="places">powiat przeworski, województwo podkarpackie</field>
-    <field name="ranking_kmt">16</field>
+    <field name="ranking">16</field>
 
     <field name="category">218</field>
   </doc>
@@ -101,7 +101,7 @@
 
 
     <field name="places">Córdoba, Andalucía, España</field>
-    <field name="ranking_kmt">14</field>
+    <field name="ranking">14</field>
     <field name="type">CITY</field>
     <field name="category">218</field>
   </doc>

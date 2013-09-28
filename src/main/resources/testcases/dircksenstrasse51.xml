@@ -16,7 +16,7 @@
 		<field name="places">Scheunenviertel, Mitte, Mitte, Berlin</field>
 		<field name="places_de">Mitte, Mitte, Berlin</field>
 		<field name="places_en">Berlin</field>
-		<field name="ranking_kmt">0</field>
+		<field name="ranking">0</field>
 	</doc>
 	<doc>
 		<field name="id">32411556</field>
@@ -33,6 +33,6 @@
 		<field name="places">Wedding, Mitte, Berlin</field>
 		<field name="places_de">Wedding, Mitte, Berlin</field>
 		<field name="places_en">Berlin</field>
-		<field name="ranking_kmt">8</field>
+		<field name="ranking">8</field>
 	</doc>
 </add>

@@ -9,7 +9,7 @@
 		<field name="country">United Kingdom</field>
 		<field name="country_de">Vereinigtes Königreich Großbritannien und Nordirland</field>
 		<field name="city">Manchester</field>
-		<field name="ranking_kmt">30</field>
+		<field name="ranking">30</field>
 	</doc>
 	<doc>
 		<field name="id">12</field>
@@ -19,7 +19,7 @@
 		<field name="country">United Kingdom</field>
 		<field name="country_de">Vereinigtes Königreich Großbritannien und Nordirland</field>
 		<field name="city">St Ives</field>
-		<field name="ranking_kmt">30</field>
+		<field name="ranking">30</field>
 	</doc>
 	<doc>
 		<field name="id">13</field>
@@ -30,7 +30,7 @@
 		<field name="country">United Kingdom</field>
 		<field name="country_de">Vereinigtes Königreich Großbritannien und Nordirland</field>
 		<field name="city">Manchester</field>
-		<field name="ranking_kmt">30</field>
+		<field name="ranking">30</field>
 	</doc>
 	<doc>
 		<field name="id">14</field>
@@ -41,7 +41,7 @@
 		<field name="country">United Kingdom</field>
 		<field name="country_de">Vereinigtes Königreich Großbritannien und Nordirland</field>
 		<field name="city">Manchester</field>
-		<field name="ranking_kmt">30</field>
+		<field name="ranking">30</field>
 	</doc>
 	<doc>
 		<field name="id">15</field>
@@ -52,7 +52,7 @@
 		<field name="country">United Kingdom</field>
 		<field name="country_de">Vereinigtes Königreich Großbritannien und Nordirland</field>
 		<field name="city">Liverpool</field>
-		<field name="ranking_kmt">30</field>
+		<field name="ranking">30</field>
 	</doc>
 	<doc>
 		<field name="id">16</field>
@@ -62,7 +62,7 @@
 		<field name="country">United Kingdom</field>
 		<field name="country_de">Vereinigtes Königreich Großbritannien und Nordirland</field>
 		<field name="city">Warrington</field>
-		<field name="ranking_kmt">30</field>
+		<field name="ranking">30</field>
 	</doc>
-	
+
 </add>

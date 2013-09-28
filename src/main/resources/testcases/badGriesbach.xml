@@ -19,9 +19,8 @@
 		<field name="places">Altsimonswald, Simonswald, VVG der Stadt Waldkirch, Landkreis Emmendingen, Regierungsbezirk
 			Freiburg, Baden-Württemberg
 		</field>
-		<field name="ranking_kmt">4</field>
+		<field name="ranking">4</field>
 		<field name="type">STREET</field>
-		<field name="category">218</field>
 	</doc>
 	<doc>
 		<field name="id">9160325</field>
@@ -38,9 +37,8 @@
 		<field name="city_de">Bad Blankenburg</field>
 
 		<field name="places">Bad Blankenburg, Saalfeld-Rudolstadt, Thüringen</field>
-		<field name="ranking_kmt">10</field>
+		<field name="ranking">10</field>
 
-		<field name="category">218</field>
 	</doc>
 	<doc>
 		<field name="id">26277907</field>
@@ -61,9 +59,8 @@
 		<field name="places">Heubach, Verwaltungsverband Rosenstein, Ostalbkreis, Regierungsbezirk Stuttgart,
 			Baden-Württemberg
 		</field>
-		<field name="ranking_kmt">0</field>
+		<field name="ranking">0</field>
 
-		<field name="category">218</field>
 	</doc>
 	<doc>
 		<field name="id">23161103</field>
@@ -84,9 +81,8 @@
 		<field name="places">Altsimonswald, Simonswald, VVG der Stadt Waldkirch, Landkreis Emmendingen, Regierungsbezirk
 			Freiburg, Baden-Württemberg
 		</field>
-		<field name="ranking_kmt">0</field>
+		<field name="ranking">0</field>
 
-		<field name="category">218</field>
 	</doc>
 	<doc>
 		<field name="id">33293361</field>
@@ -105,9 +101,8 @@
 		<field name="city_de">Bad Blankenburg</field>
 
 		<field name="places">Bad Blankenburg, Saalfeld-Rudolstadt, Thüringen</field>
-		<field name="ranking_kmt">4</field>
+		<field name="ranking">4</field>
 		<field name="type">STREET</field>
-		<field name="category">218</field>
 	</doc>
 	<doc>
 		<field name="id">29683542</field>
@@ -128,9 +123,8 @@
 		<field name="places">Babenhausen (Schwaben), Babenhausen, Babenhausen (VGem), Unterallgäu, Regierungsbezirk
 			Schwaben, Bayern
 		</field>
-		<field name="ranking_kmt">4</field>
+		<field name="ranking">4</field>
 		<field name="type">STREET</field>
-		<field name="category">218</field>
 	</doc>
 	<doc>
 		<field name="id">15030783</field>
@@ -149,9 +143,8 @@
 		<field name="city_de">Karlsruhe</field>
 		<field name="city_en">Karlsruhe</field>
 		<field name="places">Grünwinkel, Karlsruhe, Karlsruhe, Regierungsbezirk Karlsruhe, Baden-Württemberg</field>
-		<field name="ranking_kmt">4</field>
+		<field name="ranking">4</field>
 		<field name="type">STREET</field>
-		<field name="category">218</field>
 	</doc>
 	<doc>
 		<field name="id">51147220</field>
@@ -168,8 +161,7 @@
 
 
 		<field name="places">Landkreis Passau, Regierungsbezirk Niederbayern, Bayern</field>
-		<field name="ranking_kmt">14</field>
+		<field name="ranking">14</field>
 		<field name="type">CITY</field>
-		<field name="category">218</field>
 	</doc>
 </add>

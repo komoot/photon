@@ -5,8 +5,6 @@ import org.apache.solr.client.solrj.beans.Field;
 /** solr document */
 public class SolrDocument {
 	@Field
-	public String category;
-	@Field
 	public String coordinate;
 	@Field
 	public long id;

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <add>
 	<doc>
-		<field name="category">218</field>
 		<field name="city">Geretsried</field>
 
 
@@ -22,7 +21,7 @@
 			Free State of Bavaria, Bavière, Baviera
 		</field>
 		<field name="postcode">82538</field>
-		<field name="ranking_kmt">8</field>
+		<field name="ranking">8</field>
 	</doc>
 
 	<doc>
@@ -45,10 +44,9 @@
 		<field name="places_de">Bern</field>
 		<field name="places_fr">Berne</field>
 		<field name="places_it">Berna</field>
-		<field name="ranking_kmt">0</field>
+		<field name="ranking">0</field>
 	</doc>
 	<doc>
-		<field name="category">218</field>
 		<field name="city">Brissago</field>
 		<field name="city_de"/>
 		<field name="city_en"/>
@@ -63,7 +61,7 @@
 			Alpe di Naccio, Brissago, Circolo dell'Isole, Distretto di Locarno, Ticino
 		</field>
 		<field name="postcode">6614</field>
-		<field name="ranking_kmt">4</field>
+		<field name="ranking">4</field>
 		<field name="street">Via R. Leoncavallo</field>
 		<field name="type">STREET</field>
 	</doc>

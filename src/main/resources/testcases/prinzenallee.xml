@@ -15,7 +15,7 @@
 		<field name="places">Wedding, Mitte, Berlin</field>
 		<field name="places_de">Wedding, Mitte, Berlin</field>
 		<field name="places_en">Berlin</field>
-		<field name="ranking_kmt">8</field>
+		<field name="ranking">8</field>
 	</doc>
 	<doc>
 		<field name="id">38910432</field>
@@ -34,6 +34,6 @@
 		<field name="places">Barnim, Gesundbrunnen, Mitte, Berlin</field>
 		<field name="places_de">Gesundbrunnen, Mitte, Berlin</field>
 		<field name="places_en">Berlin</field>
-		<field name="ranking_kmt">0</field>
+		<field name="ranking">0</field>
 	</doc>
 </add>

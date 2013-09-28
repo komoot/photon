@@ -2,9 +2,8 @@
 <add>
 	<doc>
 		<field name="id">2</field>
-		<field name="category">218</field>
 		<field name="coordinate">53.554669,10.02351</field>
-		<!--<field name="ranking_kmt">475</field>-->
+		<!--<field name="ranking">475</field>-->
 		<field name="country">Deutschland</field>
 		<field name="places">Hamburg</field>
 		<field name="city">Hamburg</field>
@@ -15,9 +14,8 @@
 	</doc>
 	<doc>
 		<field name="id">3</field>
-		<field name="category">218</field>
 		<field name="coordinate">53.554669,10.02351</field>
-		<!--<field name="ranking_kmt">475</field>-->
+		<!--<field name="ranking">475</field>-->
 		<field name="country">Deutschland</field>
 		<field name="places">Hamburg</field>
 		<field name="city">Hamburg</field>
@@ -27,9 +25,8 @@
 	</doc>
 	<doc>
 		<field name="id">4</field>
-		<field name="category">218</field>
 		<field name="coordinate">52.555585,13.438936</field>
-		<!--<field name="ranking_kmt">499</field>-->
+		<!--<field name="ranking">499</field>-->
 		<field name="country">Deutschland</field>
 		<field name="places">Berlin</field>
 		<field name="city">Berlin</field>
@@ -40,9 +37,8 @@
 	</doc>
 	<doc>
 		<field name="id">5</field>
-		<field name="category">218</field>
 		<field name="coordinate">52.555585,13.438936</field>
-		<!--<field name="ranking_kmt">499</field>-->
+		<!--<field name="ranking">499</field>-->
 		<field name="country">Deutschland</field>
 		<field name="places">Berlin</field>
 		<field name="city">Berlin</field>
@@ -52,9 +48,8 @@
 	</doc>
 	<doc>
 		<field name="id">6</field>
-		<field name="category">218</field>
 		<field name="coordinate">53.574566,10.034427</field>
-		<!--<field name="ranking_kmt">475</field>-->
+		<!--<field name="ranking">475</field>-->
 		<field name="country">Deutschland</field>
 		<field name="places">Hamburg</field>
 		<field name="city">Hamburg</field>
@@ -65,9 +60,8 @@
 	</doc>
 	<doc>
 		<field name="id">7</field>
-		<field name="category">218</field>
 		<field name="coordinate">53.574566,10.034427</field>
-		<!--<field name="ranking_kmt">475</field>-->
+		<!--<field name="ranking">475</field>-->
 		<field name="country">Deutschland</field>
 		<field name="places">Hamburg</field>
 		<field name="city">Hamburg</field>
@@ -77,9 +71,8 @@
 	</doc>
 	<doc>
 		<field name="id">9</field>
-		<field name="category">218</field>
 		<field name="coordinate">52.438733,13.272682</field>
-		<!--<field name="ranking_kmt">499</field>-->
+		<!--<field name="ranking">499</field>-->
 		<field name="country">Deutschland</field>
 		<field name="places">Berlin</field>
 		<field name="city">Berlin</field>
@@ -90,9 +83,8 @@
 	</doc>
 	<doc>
 		<field name="id">10</field>
-		<field name="category">218</field>
 		<field name="coordinate">52.438733,13.272682</field>
-		<!--<field name="ranking_kmt">499</field>-->
+		<!--<field name="ranking">499</field>-->
 		<field name="country">Deutschland</field>
 		<field name="places">Berlin</field>
 		<field name="city">Berlin</field>

@@ -17,7 +17,7 @@
 
 
     <field name="places"/>
-    <field name="ranking_kmt">26</field>
+    <field name="ranking">26</field>
     <field name="type">COUNTRY</field>
     <field name="category">218</field>
     </doc>
@@ -38,7 +38,7 @@
 
 
     <field name="places"/>
-    <field name="ranking_kmt">24</field>
+    <field name="ranking">24</field>
 
     <field name="category">218</field>
     </doc>
@@ -59,7 +59,7 @@
 
 
     <field name="places">España</field>
-    <field name="ranking_kmt">22</field>
+    <field name="ranking">22</field>
 
     <field name="category">218</field>
     </doc>
@@ -80,7 +80,7 @@
 
     <field name="city_en">Caen</field>
     <field name="places">Caen, Calvados, Basse-Normandie</field>
-    <field name="ranking_kmt">14</field>
+    <field name="ranking">14</field>
     <field name="type">CITY</field>
     <field name="category">218</field>
     </doc>

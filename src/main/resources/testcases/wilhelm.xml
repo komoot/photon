@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <add>
 	<doc>
-		<field name="category">218</field>
 		<field name="city">Potsdam</field>
 		<field name="city_de">Potsdam</field>
 		<field name="city_en">Potsdam</field>
@@ -19,7 +18,7 @@
 			Templiner Vorstadt, Potsdam, Potsdam, Brandenburg-Südwest-Südost, Brandenburg
 		</field>
 		<field name="postcode">14473</field>
-		<field name="ranking_kmt">4</field>
+		<field name="ranking">4</field>
 		<field name="street">Friedrich-Wilhelm-Boelcke-Straße</field>
 		<field name="type">fieldEET</field>
 	</doc>

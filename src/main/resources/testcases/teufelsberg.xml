@@ -16,7 +16,7 @@
 		<field name="places">Grunewald, Grunewald, Charlottenburg-Wilmersdorf, Berlin</field>
 		<field name="places_de">Grunewald, Charlottenburg-Wilmersdorf, Berlin</field>
 		<field name="places_en">Berlin</field>
-		<field name="ranking_kmt">0</field>
+		<field name="ranking">0</field>
 	</doc>
 	<doc>
 		<field name="id">26037027</field>
@@ -34,7 +34,7 @@
 		</field>
 		<field name="places_de">Landkreis Calw, Baden-Württemberg</field>
 		<field name="places_en">Baden-Württemberg</field>
-		<field name="ranking_kmt">4</field>
+		<field name="ranking">4</field>
 		<field name="type">STREET</field>
 	</doc>
 
@@ -50,9 +50,8 @@
 		<field name="city">St. Pölten</field>
 		<field name="city_de">St. Pölten</field>
 		<field name="places">St.Pölten (Stadt), Niederösterreich</field>
-		<field name="ranking_kmt">14</field>
+		<field name="ranking">14</field>
 		<field name="type">CITY</field>
-		<field name="category">218</field>
 	</doc>
 	<doc>
 		<field name="id">2497383</field>
@@ -66,7 +65,6 @@
 		<field name="country_en">United Kingdom</field>
 		<field name="city">Exeter District</field>
 		<field name="places">Polsloe Ward, Exeter District, Devon, South West England, England, United Kingdom</field>
-		<field name="ranking_kmt">0</field>
-		<field name="category">218</field>
+		<field name="ranking">0</field>
 	</doc>
 </add>

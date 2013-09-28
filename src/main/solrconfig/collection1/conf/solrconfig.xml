@@ -75,9 +75,9 @@
 
 			<str name="defType">edismax</str>
 			<str name="q.alt">*:*</str>
-			<str name="fl">id, coordinate, name*, street, housenumber, postcode, country*, city*, type, category</str>
+			<str name="fl">id, coordinate, name*, street, housenumber, postcode, country*, city*, type</str>
 			<str name="mm">0&lt;75% 4&lt;65%</str>
-			<str name="bf">div(ranking_kmt,2)</str>
+			<str name="bf">div(ranking,2)</str>
 			<str name="pf">name^1.5 name_de street</str>
 			<str name="pf2">name^1 name_de^0.5 street</str>
 			<str name="sort">score desc,housenumber asc</str>
@@ -97,11 +97,11 @@
 
 			<str name="defType">edismax</str>
 			<str name="q.alt">*:*</str>
-			<str name="fl">id, coordinate, name*, street, housenumber, postcode, country*, city*, type, category</str>
+			<str name="fl">id, coordinate, name*, street, housenumber, postcode, country*, city*, type</str>
 			<str name="mm">0&lt;75% 4&lt;65%</str>
 			<str name="pf">name^1.5 name_en street</str>
 			<str name="pf2">name^1 name_en^0.5 street</str>
-			<str name="bf">div(ranking_kmt,2)</str>
+			<str name="bf">div(ranking,2)</str>
 			<str name="sort">score desc,housenumber asc</str>
 			<str name="qf">
 				name^2.4 name_en^1.5 street^2 housenumber^3

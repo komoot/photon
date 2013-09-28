@@ -2,9 +2,8 @@
 <add>
 	<doc>
 		<field name="id">9</field>
-		<field name="category">218</field>
 		<field name="coordinate">52.3882924,23.0585818</field>
-		<field name="ranking_kmt">4</field>
+		<field name="ranking">4</field>
 		<field name="country">Deutschland</field>
 		<field name="places">Brandenburg</field>
 		<field name="city">Potsdam</field>
@@ -15,9 +14,8 @@
 	</doc>
 	<doc>
 		<field name="id">8</field>
-		<field name="category">218</field>
 		<field name="coordinate">52.3882924,1.0585818</field>
-		<field name="ranking_kmt">0</field>
+		<field name="ranking">0</field>
 		<field name="country">Deutschland</field>
 		<field name="places">Brandenburg</field>
 		<field name="city">Potsdam</field>
@@ -27,9 +25,8 @@
 	</doc>
 	<doc>
 		<field name="id">7</field>
-		<field name="category">218</field>
 		<field name="coordinate">52.3882924,13.0585818</field>
-		<field name="ranking_kmt">0</field>
+		<field name="ranking">0</field>
 		<field name="country">Deutschland</field>
 		<field name="places">Brandenburg</field>
 		<field name="city">Potsdam</field>

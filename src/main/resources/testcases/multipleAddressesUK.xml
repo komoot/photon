@@ -2,9 +2,8 @@
 <add>
 	<doc>
 		<field name="id">1</field>
-		<field name="category">218</field>
 		<field name="coordinate">51.503396,-0.12764</field>
-		<field name="ranking_kmt">299</field>
+		<field name="ranking">299</field>
 		<field name="country">United Kingdom</field>
 		<field name="city">London</field>
 		<field name="places">City of Westminster</field>
@@ -14,9 +13,8 @@
 	</doc>
 	<doc>
 		<field name="id">2</field>
-		<field name="category">218</field>
 		<field name="coordinate">51.503396,-0.12764</field>
-		<field name="ranking_kmt">299</field>
+		<field name="ranking">299</field>
 		<field name="country">United Kingdom</field>
 		<field name="city">London</field>
 		<field name="places">City of Westminster</field>
@@ -25,9 +23,8 @@
 	</doc>
 	<doc>
 		<field name="id">3</field>
-		<field name="category">218</field>
 		<field name="coordinate">51.499444,-0.1275</field>
-		<field name="ranking_kmt">299</field>
+		<field name="ranking">299</field>
 		<field name="country">United Kingdom</field>
 		<field name="city">London</field>
 		<field name="places"></field>
@@ -37,9 +34,8 @@
 	</doc>
 	<doc>
 		<field name="id">4</field>
-		<field name="category">218</field>
 		<field name="coordinate">51.499444,-0.1275</field>
-		<field name="ranking_kmt">299</field>
+		<field name="ranking">299</field>
 		<field name="country">United Kingdom</field>
 		<field name="city">London</field>
 		<field name="places"></field>
@@ -48,9 +44,8 @@
 	</doc>
 	<doc>
 		<field name="id">5</field>
-		<field name="category">218</field>
 		<field name="coordinate">51.517778,-0.096389</field>
-		<field name="ranking_kmt">299</field>
+		<field name="ranking">299</field>
 		<field name="country">United Kingdom</field>
 		<field name="city">London</field>
 		<field name="places"></field>
@@ -60,9 +55,8 @@
 	</doc>
 	<doc>
 		<field name="id">6</field>
-		<field name="category">218</field>
 		<field name="coordinate">51.517778,-0.096389</field>
-		<field name="ranking_kmt">299</field>
+		<field name="ranking">299</field>
 		<field name="country">United Kingdom</field>
 		<field name="city">London</field>
 		<field name="places"></field>

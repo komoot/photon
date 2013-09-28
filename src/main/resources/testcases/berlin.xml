@@ -17,7 +17,7 @@
     <field name="city_de">Berlin</field>
     <field name="city_en">Berlin</field>
     <field name="places"/>
-    <field name="ranking_kmt">23</field>
+    <field name="ranking">23</field>
     <field name="type">CITY</field>
     <field name="category">218</field>
   </doc>
@@ -38,7 +38,7 @@
     <field name="city_de">Berlin</field>
 
     <field name="places">Trave-Land, Kreis Segeberg, Schleswig-Holstein</field>
-    <field name="ranking_kmt">11</field>
+    <field name="ranking">11</field>
     <field name="type">CITY</field>
     <field name="category">218</field>
   </doc>
@@ -59,7 +59,7 @@
     <field name="city_de">Berlin</field>
     <field name="city_en">Berlin</field>
     <field name="places">Berlin</field>
-    <field name="ranking_kmt">15</field>
+    <field name="ranking">15</field>
     <field name="type">CITY</field>
     <field name="category">218</field>
     </doc>

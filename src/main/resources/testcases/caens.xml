@@ -17,7 +17,7 @@
     <str name="city_de"/>
     <str name="city_en"/>
     <str name="places"/>
-    <int name="ranking_kmt">26</int>
+    <int name="ranking">26</int>
     <str name="type">COUNTRY</str>
     <str name="category">218</str>
     </doc>
@@ -38,7 +38,7 @@
     <str name="city_de"/>
     <str name="city_en"/>
     <str name="places"/>
-    <int name="ranking_kmt">24</int>
+    <int name="ranking">24</int>
     <str name="type"/>
     <str name="category">218</str>
     </doc>
@@ -59,7 +59,7 @@
     <str name="city_de"/>
     <str name="city_en"/>
     <str name="places">España</str>
-    <int name="ranking_kmt">22</int>
+    <int name="ranking">22</int>
     <str name="type"/>
     <str name="category">218</str>
     </doc>
@@ -80,7 +80,7 @@
     <str name="city_de"/>
     <str name="city_en">Caen</str>
     <str name="places">Caen, Calvados, Basse-Normandie</str>
-    <int name="ranking_kmt">14</int>
+    <int name="ranking">14</int>
     <str name="type">CITY</str>
     <str name="category">218</str>
     </doc>
