@@ -2,9 +2,8 @@
 
 _Photon_ is an open source geocoder built for [OpenStreetMap](http://www.osm.org) data. It is based on [Apache Solr](http://lucene.apache.org/solr/) - an efficient and highly scalable search platform.
 
-_Photon_ was developed by [komoot](http://www.komoot.de) and provides multilingual (currently english and german) and search-as-you-type geocoder. Its used in production with thousands of requests per minute at
+_Photon_ was developed by [komoot](http://www.komoot.de) and provides search-as-you-type and multilingual support. Its used in production with thousands of requests per minute at
  [www.komoot.de](http://www.komoot.de).
-
 
 The project consistes of three parts:
 
@@ -30,11 +29,12 @@ command line arguments
  - ```-P``` password of database user
  - ```-p``` database port, optional default value is 5432
  - ```-f``` path of xml output file, e.g. _/Users/christoph/berlin.sorl.xml.gz_
+ - ```-l``` languages to import, e.g. _de en es_
 
 A complete example:
 
 ```bash
-mvn compile exec:java -Dexec.mainClass=de.komoot.photon.importer.NominatimImporter -Dexec.args="-h localhost -d nominatim_island -u christoph -P christoph -f /Users/christoph/iceland.solr.xml.gz" > /home/christoph/island_import.log
+mvn compile exec:java -Dexec.mainClass=de.komoot.photon.importer.NominatimImporter -Dexec.args="-h localhost -d nominatim_island -u christoph -P christoph -f /Users/christoph/iceland.solr.xml.gz -l en de es" > /home/christoph/island_import.log
 ```
 
 This will take some time (Europe ~ 12 hours). 
