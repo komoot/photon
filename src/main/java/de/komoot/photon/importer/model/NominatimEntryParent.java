@@ -190,8 +190,16 @@ public class NominatimEntryParent {
 		this.osmId = osmId;
 	}
 
+	public String getOsmKey() {
+		return osmKey;
+	}
+
 	public OSM_TYPE getOsmType() {
 		return osmType;
+	}
+
+	public String getOsmValue() {
+		return osmValue;
 	}
 
 	public long getPlaceId() {

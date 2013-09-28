@@ -53,6 +53,9 @@ public class XMLWriter {
 
 		write("name", entry.getName());
 
+		write("osm_key", entry.getOsmKey());
+		write("osm_value", entry.getOsmValue());
+
 		// Address
 		write("street", entry.getStreet());
 		write("housenumber", entry.getHousenumber());
