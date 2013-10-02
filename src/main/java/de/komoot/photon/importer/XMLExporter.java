@@ -3,7 +3,6 @@ package de.komoot.photon.importer;
 import com.google.common.base.Joiner;
 import com.google.common.collect.HashMultimap;
 import com.vividsolutions.jts.geom.Coordinate;
-import de.komoot.photon.importer.model.ENTRY_TYPE;
 import de.komoot.photon.importer.model.I18nName;
 import de.komoot.photon.importer.model.NominatimEntry;
 
@@ -65,9 +64,6 @@ public class XMLExporter implements Exporter {
 			write("places", entry.getPlaces());
 
 			write("ranking", 30 - entry.getRankSearch());
-
-			ENTRY_TYPE type = entry.getType();
-			write("type", type == null ? null : type.toString());
 
 			writer.writeEndElement();
 		} catch(XMLStreamException | IOException e) {
