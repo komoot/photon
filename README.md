@@ -2,7 +2,7 @@
 
 _Photon_ is an open source geocoder built for [OpenStreetMap](http://www.osm.org) data. It is based on [Apache Solr](http://lucene.apache.org/solr/) - an efficient and highly scalable search platform.
 
-_Photon_ was developed by [komoot](http://www.komoot.de) and provides search-as-you-type and multilingual support. Its used in production with thousands of requests per minute at
+_Photon_ was developed by [komoot](http://www.komoot.de) and provides search-as-you-type and multilingual support. It's used in production with thousands of requests per minute at
  [www.komoot.de](http://www.komoot.de).
 
 The project consistes of three parts:
