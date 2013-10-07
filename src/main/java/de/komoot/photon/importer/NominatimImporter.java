@@ -63,7 +63,7 @@ public class NominatimImporter {
 	public void run(boolean onlyBerlin) throws Exception {
 		long startTime = System.currentTimeMillis();
 
-		XMLExporter xmlExporter = new XMLExporter(new FileOutputStream(targetFile));
+		Exporter exporter = new XMLExporter(new FileOutputStream(targetFile));
 
 		LOGGER.info("retrieving all items from nominatim database");
 		ResultSet resultSet = indexCrawler.getAllRecords(onlyBerlin);
@@ -79,12 +79,12 @@ public class NominatimImporter {
 			NominatimEntry entry = new NominatimEntry(resultSet, languages);
 			indexCrawler.completeInformation(entry);
 
-			xmlExporter.write(entry);
+			exporter.write(entry);
 
 			counter++;
 		}
 
-		xmlExporter.finish();
+		exporter.finish();
 
 		long elapsedSeconds = (System.currentTimeMillis() - startTime) / 1000;
 		double speed = counter * 1. / (elapsedSeconds + 0.01);
