@@ -75,6 +75,31 @@ Now solr is up and running and filled with data. You can start searching for pla
 
 [http://localhost:8983/solr/collection1/select?q=reykjavik](http://localhost:8983/solr/collection1/select?q=reykjavik&wt=json&indent=true)
 
+## Run the demo UI
+
+The python demo UI is located in `src/main/python/demo`.
+
+It has been developped with python3.3 (but should work with python2.x). We suggest to use virtualenv for the installation.
+
+* Get the virtualenv system packages:
+  ```
+  sudo apt-get install python-pip python-virtualenv virtualenvwrapper
+  ```
+* Create a virtualenv:
+ ```
+ mkvirtualenv -p python3.3 photon
+ ```
+* Install dependencies:
+ ```
+ cd src/main/python/demo
+ pip install -r requirements.txt
+ ```
+* Run the server
+ ```
+ make serve
+ ```
+* Go to http://localhost:5001/ and test it!
+
 ## How to contribute
 
 Join us in improving _photon_ and feel free to contact us!
