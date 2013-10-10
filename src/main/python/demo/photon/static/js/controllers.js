@@ -49,17 +49,15 @@ angular.module('photon.controllers', [])
     $scope.getTitle = function (hit) {
         var title = [];
         var hl = $scope.highlight[hit.id];
-        if (hl.name) {
-            title.push(hl.name.join(' '));
-        } else if (hit.name) {
-            title.push(hit.name);
+        var fields = ['name', 'street', 'city', 'country'], field;
+        for (var i = 0; i < fields.length; i++) {
+            field = fields[i];
+            if (hl[field]) {
+                title.push(hl[field].join(' '));
+            } else if (hit[field]) {
+                title.push(hit[field]);
+            }
         }
-        if (hl.street) {
-            title.push(hl.street.join(' '));
-        } else {
-            title.push(hit.street);
-        }
-        title.push(hit.country);
         return title.join(', ');
     };
 
