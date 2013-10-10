@@ -1,0 +1,8 @@
+Flask==0.10.1
+itsdangerous==0.23
+Jinja2==2.7.1
+MarkupSafe==0.18
+pysolr==3.1.0
+requests==2.0.0
+simplejson==3.3.1
+Werkzeug==0.9.4
