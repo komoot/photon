@@ -1,0 +1,68 @@
+/* Generic */
+body {
+    padding: 0;
+    margin: 0;
+}
+ol, ul {
+    list-style: none;
+}
+div, ul, li, a, section, nav,
+h1, h2, h3, h4, h5, h6,
+hr, input, textarea, footer, header {
+    -moz-box-sizing:border-box;
+    -webkit-box-sizing:border-box;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: "Open Sans", sans-serif;
+    color: #333;
+}
+input[type="submit"],
+.button {
+    border: none;
+    border-radius: 2px;
+    padding: 0 20px;
+    text-decoration: none;
+    color: #fff;
+    font-size: 1em;
+    background-color: #444;
+    display: inline-block;
+    margin-top: 20px;
+    height: 40px;
+    line-height: 40px;
+    text-align: center;
+    cursor: pointer;
+}
+
+
+/* MAP */
+#map {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+#searchBox, #searchResults {
+    z-index: 1000;
+    position: absolute;
+    left: 50px;
+    width: 400px;
+    padding: 0 5px;
+}
+#searchBox {
+    height: 50px;
+}
+#searchResults {
+    top: 50px;
+    background-color: #fff;
+}
+#searchResults li:hover {
+    background-color: #eee;
+    cursor: pointer;
+}
+.highlight {
+    font-weight: bold;
+}
