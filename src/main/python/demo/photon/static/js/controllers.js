@@ -51,7 +51,7 @@ angular.module('photon.controllers', [])
         var hl = $scope.highlight[hit.id];
         if (hl.name) {
             title.push(hl.name.join(' '));
-        } else {
+        } else if (hit.name) {
             title.push(hit.name);
         }
         if (hl.street) {
