@@ -89,6 +89,29 @@
 		</lst>
 	</requestHandler>
 
+	<requestHandler name="german_location_bias" class="solr.SearchHandler">
+		<lst name="defaults">
+			<str name="wt">json</str>
+			<str name="echoParams">explicit</str>
+			<int name="rows">60</int>
+
+			<str name="defType">edismax</str>
+			<str name="q.alt">*:*</str>
+			<str name="fl">id, coordinate, name*, street, housenumber, postcode, country*, city*, type</str>
+			<str name="mm">0&lt;75% 4&lt;65%</str>
+			<str name="bf">sum(div(ranking,2),recip(geodist(),0.001,1,1))</str>
+			<str name="pf">name^1.5 name_de street</str>
+			<str name="pf2">name^1 name_de^0.5 street</str>
+			<str name="sort">score desc,housenumber asc</str>
+			<str name="sfield">coordinate</str>
+			<str name="qf">
+				name^2.4 name_de^1.5 street^2 housenumber^3
+				city city_de
+				places^0.8 places_de^0.8 postcode^0.6
+			</str>
+		</lst>
+	</requestHandler>
+
 	<requestHandler name="english" class="solr.SearchHandler" default="true">
 		<lst name="defaults">
 			<str name="wt">json</str>
@@ -103,6 +126,29 @@
 			<str name="pf2">name^1 name_en^0.5 street</str>
 			<str name="bf">div(ranking,2)</str>
 			<str name="sort">score desc,housenumber asc</str>
+			<str name="qf">
+				name^2.4 name_en^1.5 street^2 housenumber^3
+				city city_en
+				places^0.8 places_en^0.8 postcode^0.6
+			</str>
+		</lst>
+	</requestHandler>
+
+	<requestHandler name="english_location_bias" class="solr.SearchHandler" default="true">
+		<lst name="defaults">
+			<str name="wt">json</str>
+			<str name="echoParams">explicit</str>
+			<int name="rows">60</int>
+
+			<str name="defType">edismax</str>
+			<str name="q.alt">*:*</str>
+			<str name="fl">id, coordinate, name*, street, housenumber, postcode, country*, city*, type</str>
+			<str name="mm">0&lt;75% 4&lt;65%</str>
+			<str name="pf">name^1.5 name_en street</str>
+			<str name="pf2">name^1 name_en^0.5 street</str>
+			<str name="bf">sum(div(ranking,2),recip(geodist(),0.001,1,1))</str>
+			<str name="sort">score desc,housenumber asc</str>
+			<str name="sfield">coordinate</str>
 			<str name="qf">
 				name^2.4 name_en^1.5 street^2 housenumber^3
 				city city_en
