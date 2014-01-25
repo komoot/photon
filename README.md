@@ -11,6 +11,18 @@ The project consistes of three parts:
 2. Converter that creates a solr xml file from a [Nominatim](http://wiki.openstreetmap.org/wiki/Nominatim) database (Java)
 3. Testing environment for developing (Java)
 
+## Feature overview
+- performance (< 50ms per request)
+- [highly scalable](http://lucene.apache.org/solr/features.html)
+- OSM data import (via [Nominatim](https://github.com/twain47/Nominatim))
+- search-as-you-type
+
+### Missing features
+- location bias
+- spellchecker
+- reverse geocoding
+- continuous data updates
+
 ## How to use
 ### Import data
 _Photon_ needs a dataset (addresses, streets, cities, ...). Solr provides numerous input formats, including xml. Currently you cannot convert an OpenStreetMap planet file to use it with _photon_. Instead you can use the _NominatorImporter_ included in this project to dump a nominatim database to a xml file. Refer to Nominatim's [Installation Guide](http://wiki.openstreetmap.org/wiki/Nominatim/Installation) how to setup and fill a postgis database. It takes up to 10 days and sufficient RAM to import the entire world, you might prefer taking a smaller region.
