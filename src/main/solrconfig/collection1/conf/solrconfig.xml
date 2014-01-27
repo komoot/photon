@@ -89,7 +89,7 @@
 		</lst>
 	</requestHandler>
 
-	<requestHandler name="german_location_bias" class="solr.SearchHandler">
+	<requestHandler name="german_loc" class="solr.SearchHandler">
 		<lst name="defaults">
 			<str name="wt">json</str>
 			<str name="echoParams">explicit</str>
@@ -99,7 +99,7 @@
 			<str name="q.alt">*:*</str>
 			<str name="fl">id, coordinate, name*, street, housenumber, postcode, country*, city*, type</str>
 			<str name="mm">0&lt;75% 4&lt;65%</str>
-			<str name="bf">sum(div(ranking,2),recip(geodist(),0.001,1,1))</str>
+			<str name="bf">sum(div(ranking,2),recip(geodist(),0.001,2,1))</str>
 			<str name="pf">name^1.5 name_de street</str>
 			<str name="pf2">name^1 name_de^0.5 street</str>
 			<str name="sort">score desc,housenumber asc</str>
@@ -134,7 +134,7 @@
 		</lst>
 	</requestHandler>
 
-	<requestHandler name="english_location_bias" class="solr.SearchHandler" default="true">
+	<requestHandler name="english_loc" class="solr.SearchHandler" default="true">
 		<lst name="defaults">
 			<str name="wt">json</str>
 			<str name="echoParams">explicit</str>
@@ -146,7 +146,7 @@
 			<str name="mm">0&lt;75% 4&lt;65%</str>
 			<str name="pf">name^1.5 name_en street</str>
 			<str name="pf2">name^1 name_en^0.5 street</str>
-			<str name="bf">sum(div(ranking,2),recip(geodist(),0.001,1,1))</str>
+			<str name="bf">sum(div(ranking,2),recip(geodist(),0.001,2,1))</str>
 			<str name="sort">score desc,housenumber asc</str>
 			<str name="sfield">coordinate</str>
 			<str name="qf">
