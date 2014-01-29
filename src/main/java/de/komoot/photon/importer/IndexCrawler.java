@@ -132,11 +132,10 @@ public class IndexCrawler {
 	/**
 	 * get all records for xml conversions
 	 *
-	 * @param onlyBerlin
 	 * @return
 	 * @throws SQLException
 	 */
-	public ResultSet getAllRecords(boolean onlyBerlin) throws SQLException {
+	public ResultSet getAllRecords() throws SQLException {
 		PreparedStatement statementAll;
 
 		StringBuilder sqlSelectNames = new StringBuilder(SQL_TEMPLATE_HSTORE_NAME);
@@ -146,10 +145,6 @@ public class IndexCrawler {
 
 		String sql = String.format(SQL_TEMPLATE, sqlSelectNames.toString());
 		sql += " WHERE osm_type <> 'P' AND (name IS NOT NULL OR housenumber IS NOT NULL OR street IS NOT NULL OR postcode IS NOT NULL) AND centroid IS NOT NULL ";
-
-		if(onlyBerlin) {
-			sql += "AND st_contains(ST_GeomFromText('POLYGON ((12.718964 52.880734,13.92746 52.880734,13.92746 52.160455,12.718964 52.160455,12.718964 52.880734))', 4326), centroid) ";
-		}
 
 		sql += " ORDER BY st_x(ST_SnapToGrid(centroid, 0.1)), st_y(ST_SnapToGrid(centroid, 0.1)) "; // for performance reasons, ~15% faster
 
