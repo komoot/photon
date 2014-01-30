@@ -42,6 +42,7 @@ command line arguments
  - ```-p``` database port, optional default value is 5432
  - ```-f``` path of xml output file, e.g. _/Users/christoph/berlin.sorl.xml.gz_
  - ```-l``` languages to import, e.g. _de en es_
+ - ```-o``` optional polygon delimiter to import, in WKT format, e.g _-71.1 42.3,-71.1 42.3,-71.1 42.3_
 
 A complete example:
 
@@ -49,9 +50,9 @@ A complete example:
 mvn compile exec:java -Dexec.mainClass=de.komoot.photon.importer.NominatimImporter -Dexec.args="-h localhost -d nominatim_island -u christoph -P christoph -f /Users/christoph/iceland.solr.xml.gz -l en de es" > /home/christoph/island_import.log
 ```
 
-This will take some time (Europe ~ 12 hours). 
+This will take some time (Europe ~ 12 hours).
 
-If you just want to check out _photon_ you can use our example dump of Iceland too: [src/main/solrindex/iceland.solr.xml.gz](src/main/solrindex/iceland.solr.xml.gz) (©&nbsp;[OpenStreetMap contributors](http://www.openstreetmap.org/copyright)). 
+If you just want to check out _photon_ you can use our example dump of Iceland too: [src/main/solrindex/iceland.solr.xml.gz](src/main/solrindex/iceland.solr.xml.gz) (©&nbsp;[OpenStreetMap contributors](http://www.openstreetmap.org/copyright)).
 
 ### Setup Solr
 You need to install Apache Solr (tested with version 4.4). Using Mac OS X and homebrew you can type:

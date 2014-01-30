@@ -28,8 +28,8 @@ public class CommandLineOptions {
 	@Parameter(names = "-p", description = "database port", required = false)
 	public Integer port = 5432;
 
-	@Parameter(names = "-b", description = "limit the import to extent of berlin", required = false)
-	public boolean onlyBerlin = false;
+    @Parameter(names = "-o",  description = "limit the import to extent of specified polygon (WKT format)", required = false)
+	public String polygon = null;
 
 	@Parameter(names = "-l", variableArity = true)
 	public List<String> languages = new ArrayList<>();

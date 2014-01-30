@@ -58,13 +58,13 @@ public class NominatimImporter {
 	/**
 	 * starting reading nominatim database
 	 */
-	public void run() throws Exception {
+	public void run(String polygon) throws Exception {
 		long startTime = System.currentTimeMillis();
 
 		Exporter exporter = new XMLExporter(new FileOutputStream(targetFile));
 
 		LOGGER.info("retrieving all items from nominatim database");
-		ResultSet resultSet = indexCrawler.getAllRecords();
+		ResultSet resultSet = indexCrawler.getAllRecords(polygon);
 		long counter = 0;
 		long time = System.currentTimeMillis();
 
@@ -105,6 +105,6 @@ public class NominatimImporter {
 		new JCommander(options, args);
 
 		NominatimImporter nominatimImporter = new NominatimImporter(options.host, options.port, options.database, options.username, options.password, options.outputFile, Collections.unmodifiableList(options.languages));
-		nominatimImporter.run();
+		nominatimImporter.run(options.polygon);
 	}
 }
