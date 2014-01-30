@@ -42,7 +42,7 @@ command line arguments
  - ```-p``` database port, optional default value is 5432
  - ```-f``` path of xml output file, e.g. _/Users/christoph/berlin.sorl.xml.gz_
  - ```-l``` languages to import, e.g. _de en es_
- - ```-o``` optional polygon delimiter to import, in WKT format, e.g _-71.1 42.3,-71.1 42.3,-71.1 42.3_
+ - ```-o``` optional polygon delimiter to import, in WKT format, e.g _-91.1 42.3,-90.1 42.3,-90.1 43.3,-91.1 42.3_
 
 A complete example:
 
