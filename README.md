@@ -52,7 +52,7 @@ mvn compile exec:java -Dexec.mainClass=de.komoot.photon.importer.NominatimImport
 
 This will take some time (Europe ~ 12 hours).
 
-If you just want to check out _photon_ you can use our example dump of Iceland too: [src/main/solrindex/iceland.solr.xml.gz](src/main/solrindex/iceland.solr.xml.gz) (©&nbsp;[OpenStreetMap contributors](http://www.openstreetmap.org/copyright)).
+If you just want to check out _photon_ you can use our example dump of Iceland too: [sample_data/iceland.solr.xml.gz](sample_data/iceland.solr.xml.gz) (©&nbsp;[OpenStreetMap contributors](http://www.openstreetmap.org/copyright)).
 
 ### Setup Solr
 You need to install Apache Solr (tested with version 4.4). Using Mac OS X and homebrew you can type:
@@ -61,16 +61,16 @@ You need to install Apache Solr (tested with version 4.4). Using Mac OS X and ho
 brew install solr
 ```
 
-Start solr and pass the configuration directory that is part of the project [src/main/solrconfig/](src/main/solrconfig/)
+Start solr and pass the configuration directory that is part of the project [solrconfig/](solrconfig/)
 
 ```bash
-solr /Users/christoph/komoot/solr4/src/main/solrconfig/
+solr /Users/christoph/komoot/solr4/solrconfig/
 ```
 
 On other systems you might want to start solr that way:
 
 ```bash
-java -Dsolr.solr.home=/Users/christoph/komoot/solr4/src/main/solrconfig/ -jar start.jar
+java -Dsolr.solr.home=/Users/christoph/komoot/solr4/solrconfig/ -jar start.jar
 ```
 
 Check Solr's admin interface on [http://localhost:8983/solr/](http://localhost:8983/solr/)
@@ -88,11 +88,11 @@ Now solr is up and running and filled with data. You can start searching for pla
 
 [/select?q=reykjavik](http://localhost:8983/solr/collection1/select?q=reykjavik&wt=json&indent=true)
 
-To find places in german (de) you can select another _request handler_ defined in [solrconfig.xml](/src/main/solrconfig/collection1/conf/solrconfig.xml?source=c):
+To find places in german (de) you can select another _request handler_ defined in [solrconfig.xml](/solrconfig/collection1/conf/solrconfig.xml?source=c):
 
 [/select?q=reykjavik&qt=de](http://localhost:8983/solr/collection1/select?q=reykjavik&wt=json&indent=true&qt=de)
 
-You can add further languages of choice in [solrconfig.xml](/src/main/solrconfig/collection1/conf/solrconfig.xml?source=c).
+You can add further languages of choice in [solrconfig.xml](/solrconfig/collection1/conf/solrconfig.xml?source=c).
 
 If you want to take better account of results that are nearby a location (e.g. lat=50.0 lon=10.0), you can use a request handler with location bias:
 

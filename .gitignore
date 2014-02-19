@@ -5,6 +5,6 @@ target/
 
 src/main/java/de/komoot/photon/.DS_Store
 
-src/main/solrconfig/collection1/conf/solrconfig_spell.xml
+solrconfig/collection1/conf/solrconfig_spell.xml
 
-src/main/solrconfig/collection1/data/
+solrconfig/collection1/data/
