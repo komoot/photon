@@ -134,7 +134,7 @@
 		</lst>
 	</requestHandler>
 
-	<requestHandler name="english_loc" class="solr.SearchHandler" default="true">
+	<requestHandler name="english_loc" class="solr.SearchHandler">
 		<lst name="defaults">
 			<str name="wt">json</str>
 			<str name="echoParams">explicit</str>
