@@ -88,15 +88,15 @@ Now solr is up and running and filled with data. You can start searching for pla
 
 [/select?q=reykjavik](http://localhost:8983/solr/collection1/select?q=reykjavik&wt=json&indent=true)
 
-To find places in german you can select another _request handler_ defined in [solrconfig.xml](/src/main/solrconfig/collection1/conf/solrconfig.xml?source=c):
+To find places in german (de) you can select another _request handler_ defined in [solrconfig.xml](/src/main/solrconfig/collection1/conf/solrconfig.xml?source=c):
 
-[/select?q=reykjavik&qt=german](http://localhost:8983/solr/collection1/select?q=reykjavik&wt=json&indent=true&qt=german)
+[/select?q=reykjavik&qt=de](http://localhost:8983/solr/collection1/select?q=reykjavik&wt=json&indent=true&qt=de)
 
 You can add further languages of choice in [solrconfig.xml](/src/main/solrconfig/collection1/conf/solrconfig.xml?source=c).
 
 If you want to take better account of results that are nearby a location (e.g. lat=50.0 lon=10.0), you can use a request handler with location bias:
 
-[/select?q=reykjavik&qt=english_loc&pt=50.0,10.0](http://localhost:8983/solr/collection1/select?q=reykjavik&wt=json&indent=true&qt=english_loc&pt=50.0,10.0)
+[/select?q=reykjavik&qt=en_loc&pt=50.0,10.0](http://localhost:8983/solr/collection1/select?q=reykjavik&wt=json&indent=true&qt=en_loc&pt=50.0,10.0)
 
 
 ## Run the demo UI
