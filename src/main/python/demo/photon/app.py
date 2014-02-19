@@ -31,7 +31,7 @@ def api():
         lon = float(request.args.get('lon'))
         lat = float(request.args.get('lat'))
         params['qt'] = '{lang}_loc'.format(lang=lang)
-        params['pt'] = '{lon},{lat}'.format(lon=lon, lat=lat)
+        params['pt'] = '{lat},{lon}'.format(lon=lon, lat=lat)
     except (TypeError, ValueError):
         params['qt'] = '{lang}'.format(lang=lang)
 
@@ -48,7 +48,7 @@ def api():
     return json.dumps(to_geo_json(results.docs))
 
 
-def to_geo_json(docs):
+def to_geo_json(docs, lang='en'):
     features = []
 
     for doc in docs:
