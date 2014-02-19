@@ -10,6 +10,7 @@ DEBUG = os.environ.get('DEBUG', False)
 PORT = os.environ.get('PHOTON_PORT', 5001)
 solr = pysolr.Solr(os.environ.get("SOLR_ENDPOINT", 'http://localhost:8983/solr/'), timeout=10)
 
+
 @app.route('/')
 def index():
     return render_template('index.html')
