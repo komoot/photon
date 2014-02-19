@@ -1,0 +1,3 @@
+[submodule "website/photon/static/leaflet.photon"]
+	path = website/photon/static/leaflet.photon
+	url = https://github.com/komoot/leaflet.photon.git
