@@ -61,7 +61,7 @@ def to_geo_json(docs):
             "type": "Feature",
             "geometry": {
                 "type": "Point",
-                "coordinates": [float(el) for el in doc['coordinate'].split(',')]
+                "coordinates": [float(el) for el in doc['coordinate'].split(',')].reverse()
             },
             "properties": properties
         }
