@@ -13,7 +13,7 @@ import java.util.Map;
  * @author christoph
  */
 public class I18nName {
-	public static final I18nName LONDON = new I18nName("London", "London", "London", "Londres", "Londra");
+    public static final I18nName LONDON = new I18nName("London", "London", "London", "Londres", "Londra", "Londres", "Londres", "ロンドン", "倫敦");
 	private static final Map<String, String> emptyTranslations = Collections.emptyMap();
 
 	private final String name;
@@ -47,13 +47,17 @@ public class I18nName {
 	}
 
 	@Deprecated
-	public I18nName(String name, String de, String en, String fr, String it) {
+	public I18nName(String name, String de, String en, String fr, String it, String es, String pt, String ja, String zh) {
 		this.name = name;
 		ImmutableMap.Builder<String, String> builder = new ImmutableMap.Builder<>();
 		if(de != null) builder.put("de", de);
 		if(en != null) builder.put("en", en);
 		if(fr != null) builder.put("fr", fr);
 		if(it != null) builder.put("it", it);
+		if(es != null) builder.put("es", es);
+		if(pt != null) builder.put("pt", pt);
+		if(ja != null) builder.put("ja", ja);
+		if(zh != null) builder.put("zh", zh);
 		this.translations = builder.build();
 	}
 
