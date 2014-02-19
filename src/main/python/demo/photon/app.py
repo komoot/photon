@@ -45,7 +45,7 @@ def api():
         abort(400, "missing search term 'q': /?q=berlin")
 
     results = solr.search(query, **params)
-    return json.dumps(to_geo_json(results.docs))
+    return json.dumps(to_geo_json(results.docs, lang=lang))
 
 
 def to_geo_json(docs, lang='en'):
@@ -53,9 +53,14 @@ def to_geo_json(docs, lang='en'):
 
     for doc in docs:
         properties = {}
-        for attr in ['name', 'osm_id', 'osm_key', 'osm_value', 'street', 'city', 'postcode', 'country']:
+        for attr in ['osm_id', 'osm_key', 'osm_value', 'street', 'city', 'postcode']:
             if attr in doc:
                 properties[attr] = doc[attr]
+
+        # language specific mapping
+        for attr in ['name', 'country']:
+            lang_attr = attr + "_" + lang
+            properties[attr] = doc.get(lang_attr) or doc.get(attr)
 
         coordinates = [float(el) for el in doc['coordinate'].split(',')]
         coordinates.reverse()
