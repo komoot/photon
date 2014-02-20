@@ -108,7 +108,6 @@ header, footer {
     text-align: center;
 }
 header {
-    margin-bottom: 40px;
     color: #212121;
 }
 footer {
@@ -167,13 +166,16 @@ input[type="submit"],
 /* ************************************************* */
 /* ************************ MAP ******************* */
 /* ************************************************* */
-.map,
-.map-wrapper {
+.map {
     width: 100%;
     height: 400px;
 }
-.highlight {
-    font-weight: bold;
+.map-wrapper h2 {
+    background-color: #23455D;
+    color: #f1f1f1;
+}
+.photon-autocomplete li.on {
+    background-color: #e0b3a2;
 }
 
 
@@ -186,5 +188,23 @@ h2 {
     text-align: center;
 }
 pre {
-    background-color: #f9f9f9;
+    background-color: #f5f5f5;
+    border: 1px solid #eee;
+    color: #444;
+    padding: 10px
+}
+.highlights {
+    background-color: #6A8090;
+    padding-top: 40px;
+    padding-bottom: 40px;
+}
+.highlights ul li {
+    display: inline-block;
+    text-align: center;
+    color: #f1f1f1;
+    width: 33%;
+}
+.api h2 {
+    background-color: #AECDBF;
+    color: #f1f1f1;
 }
