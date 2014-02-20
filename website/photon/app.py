@@ -36,7 +36,7 @@ def api():
         params['qt'] = '{lang}'.format(lang=lang)
 
     try:
-        params['rows'] = int(request.args.get('limit'))
+        params['rows'] = min(int(request.args.get('limit')), 50)
     except (TypeError, ValueError):
         params['rows'] = 15
 
