@@ -49,12 +49,19 @@ def api():
     return Response(data, mimetype='application/json')
 
 
+def housenumber_first(lang):
+    if lang in ['de', 'it']:
+        return False
+
+    return True
+
+
 def to_geo_json(docs, lang='en'):
     features = []
 
     for doc in docs:
         properties = {}
-        for attr in ['osm_id', 'osm_key', 'osm_value', 'street', 'postcode']:
+        for attr in ['osm_id', 'osm_key', 'osm_value', 'street', 'postcode', 'housenumber']:
             if attr in doc:
                 properties[attr] = doc[attr]
 
@@ -64,6 +71,12 @@ def to_geo_json(docs, lang='en'):
             value = doc.get(lang_attr) or doc.get(attr)
             if value:
                 properties[attr] = value
+
+        if not 'name' in properties and 'housenumber' in properties:
+            if housenumber_first(lang):
+                properties['name'] = properties['housenumber'] + ' ' + properties['street']
+            else:
+                properties['name'] = properties['street'] + ' ' + properties['housenumber']
 
         coordinates = [float(el) for el in doc['coordinate'].split(',')]
         coordinates.reverse()

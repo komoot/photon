@@ -4,7 +4,6 @@ import requests
 
 
 class PhotonImplementationTest(unittest.TestCase):
-
     URL = "http://photon.komoot.de/api/"
 
     def assertMatch(self, search, expected, limit=1, comment=None, lang=None, center=None):
@@ -37,7 +36,6 @@ class PhotonImplementationTest(unittest.TestCase):
 
 
 class MainCitiesTest(PhotonImplementationTest):
-
     def test_berlin(self):
         self.assertMatch("berlin", {'name': 'Berlin'})
 
@@ -47,6 +45,13 @@ class MainCitiesTest(PhotonImplementationTest):
     def test_new_york(self):
         self.assertMatch("new york", {'name': 'New York'})
 
+    def test_vienna(self):
+        self.assertMatch("vienna", {'name': 'Vienna', 'country': 'Austria'})
+
+    def test_milan(self):
+        self.assertMatch("milan", {'name': 'Milan', 'country': 'Italy'})
+        self.assertMatch("milano", {'name': 'Milan', 'country': 'Italy'})
+
 
 POTSDAM = [52.3879, 13.0582]
 BERLIN = [52.519854, 13.438596]
@@ -54,25 +59,26 @@ MUNICH = [43.731245, 7.419744]
 
 
 class LocationBiasTest(PhotonImplementationTest):
-
     def test_ber_from_potsdam(self):
-        self.assertMatch("ber", {'name': 'Berlin'}, center=POTSDAM, limit=3, comment="I can find Berlin from Potsdam typing 'ber'")
+        self.assertMatch("ber", {'name': 'Berlin'}, center=POTSDAM, limit=3,
+                         comment="I can find Berlin from Potsdam typing 'ber'")
 
     def test_friedrichstrasse_from_potsdam(self):
-        self.assertMatch("Friedrichstraße", {'name': 'Friedrichstraße', 'city': 'Werder (Havel)'}, center=POTSDAM, limit=1, comment="'Friedrichstraße' gives me Werder's street when I'm in Potsdam")
+        self.assertMatch("Friedrichstraße", {'name': 'Friedrichstraße', 'city': 'Werder (Havel)'}, center=POTSDAM,
+                         limit=1, comment="'Friedrichstraße' gives me Werder's street when I'm in Potsdam")
 
     def test_friedrichstrasse_from_berlin(self):
-        self.assertMatch("Friedrichstraße", {'name': 'Friedrichstraße', 'city': 'Berlin'}, center=BERLIN, limit=1, comment="'Friedrichstraße' gives me Berlin's street when I'm in Berlin")
+        self.assertMatch("Friedrichstraße", {'name': 'Friedrichstraße', 'city': 'Berlin'}, center=BERLIN, limit=1,
+                         comment="'Friedrichstraße' gives me Berlin's street when I'm in Berlin")
 
 
 class SmallPlacesTest(PhotonImplementationTest):
-
     def test_port_aux_cerises(self):
-        self.assertMatch("port aux cerises", {'osm_id': 833452505}, limit=2, comment="I can find 'Port aux Cerises' harbour")
+        self.assertMatch("port aux cerises", {'osm_id': 833452505}, limit=2,
+                         comment="I can find 'Port aux Cerises' harbour")
 
 
 class LangTest(PhotonImplementationTest):
-
     def test_munchen_without_lang(self):
         self.assertMatch("munchen", {'name': 'München'})
 
@@ -83,10 +89,12 @@ class LangTest(PhotonImplementationTest):
         self.assertMatch("Munich", {'name': 'Munich'}, lang="fr")
 
     def test_munchen_with_lang_it(self):
-        self.assertMatch("Monaco", {'osm_id': 36990}, lang="it", limit=2, comment="'Monaco' should hit Munich in the two first results when lang is italian")
+        self.assertMatch("Monaco", {'osm_id': 36990}, lang="it", limit=2,
+                         comment="'Monaco' should hit Munich in the two first results when lang is italian")
 
     def test_munchen_with_lang_itand_geolocation_bias(self):
-        self.assertMatch("Monaco", {'osm_id': 36990}, lang="it", limit=1, center=MUNICH, comment="'Monaco' should hit Munich as first result when lang is italian and center is close to Munich")
+        self.assertMatch("Monaco", {'osm_id': 36990}, lang="it", limit=1, center=MUNICH,
+                         comment="'Monaco' should hit Munich as first result when lang is italian and center is close to Munich")
 
 
 if __name__ == '__main__':
