@@ -85,3 +85,5 @@ with open(output_xml, 'w') as f:
             doc[elem.attrib['name']] = elem.text
 
             f.write("</add>")
+
+        elem.clear()
