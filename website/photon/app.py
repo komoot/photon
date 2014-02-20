@@ -53,12 +53,12 @@ def to_geo_json(docs, lang='en'):
 
     for doc in docs:
         properties = {}
-        for attr in ['osm_id', 'osm_key', 'osm_value', 'street', 'city', 'postcode']:
+        for attr in ['osm_id', 'osm_key', 'osm_value', 'street', 'postcode']:
             if attr in doc:
                 properties[attr] = doc[attr]
 
         # language specific mapping
-        for attr in ['name', 'country']:
+        for attr in ['name', 'country', 'city']:
             lang_attr = attr + "_" + lang
             properties[attr] = doc.get(lang_attr) or doc.get(attr)
 
