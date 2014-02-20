@@ -1,6 +1,6 @@
 import unittest
 
-from test.base import PhotonImplementationTest
+from test.base import PhotonImplementationTest, BERLIN
 
 
 class Addresses(PhotonImplementationTest):
@@ -8,7 +8,7 @@ class Addresses(PhotonImplementationTest):
         self.assertMatch("dircksenstr 51", {'osm_id': 1552576044})
 
     def test_berlin_2(self):
-        self.assertMatch("Rosa-Luxemburg-Straße 22", {'osm_id': 736787797})
+        self.assertMatch("Rosa-Luxemburg-Straße 22", {'osm_id': 736787797}, center=BERLIN)
 
     def test_au(self):
         self.assertMatch("Jaghausen 4", {'osm_id': 135405796})

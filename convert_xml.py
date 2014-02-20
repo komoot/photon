@@ -1,6 +1,7 @@
 # script to convert solr xml to check out other approaches
 
 import xml.etree.cElementTree as et
+from xml.sax.saxutils import escape
 
 
 def get_search_field(doc, lang, housenumber_first=False):
@@ -69,7 +70,8 @@ with open(output_xml, 'w') as f:
             doc['search_it'] = get_search_field(doc, 'it', housenumber_first=True)
 
             f.write('\t<doc>\n{}\t</doc>\n'.format(
-                "".join(["""\t\t<field name="{0}">{1}</field>\n""".format(*field) for field in doc.items()]))
+                "".join(["""\t\t<field name="{0}">{1}</field>\n""".format(field[0], escape(field[1])) for field in
+                         doc.items()]))
             )
             doc = {}
         elif 'name' in elem.attrib:
