@@ -3,7 +3,7 @@ import os
 
 import simplejson
 import pysolr
-from flask import Flask, render_template, request, abort
+from flask import Flask, render_template, request, abort, Response
 
 
 app = Flask(__name__)
@@ -45,7 +45,8 @@ def api():
         abort(400, "missing search term 'q': /?q=berlin")
 
     results = solr.search(query, **params)
-    return json.dumps(to_geo_json(results.docs, lang=lang))
+    data = json.dumps(to_geo_json(results.docs, lang=lang))
+    return Response(data, mimetype='application/json')
 
 
 def to_geo_json(docs, lang='en'):
@@ -60,7 +61,9 @@ def to_geo_json(docs, lang='en'):
         # language specific mapping
         for attr in ['name', 'country', 'city']:
             lang_attr = attr + "_" + lang
-            properties[attr] = doc.get(lang_attr) or doc.get(attr)
+            value = doc.get(lang_attr) or doc.get(attr)
+            if value:
+                properties[attr] = value
 
         coordinates = [float(el) for el in doc['coordinate'].split(',')]
         coordinates.reverse()
