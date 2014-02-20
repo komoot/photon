@@ -41,7 +41,7 @@ def get_search_field(doc, lang, housenumber_first=False):
             unified_places.add(p)
 
     if len(unified_places):
-        field += list(places)
+        field += list(unified_places)
 
     return "; ".join(filter(None, field))
 
