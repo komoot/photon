@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Photon demo</title>
+    <title>Photon, search-as-you-type with OpenStreetMap</title>
     <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.css"/>
     <link rel="stylesheet" href="/static/leaflet.photon/leaflet.photon.css">
     <link rel="stylesheet" href="/static/css/app.css">
@@ -10,83 +10,131 @@
 <body>
 <header>
     <a class="branding">Photon</a>
-    <small>open fast geosearching</small>
+    <small>search-as-you-type with OpenStreetMap</small>
 </header>
-<div class="highlights" id="highlights">
-    <div class="row">
-        <ul>
-            <li>built on top of Lucene</li>
-            <li>OpenStreetMap data and ecosystem</li>
-            <li>Fast</li>
-            <li>Fuzzy</li>
-            <li>Open Source</li>
-            <li>Scalable (support search as you type)</li>
-        </ul>
-    </div>
+<div class="highlights wrapper" id="highlights">
+  <div class="row">
+    <ul>
+      <li><img src="{{ url_for('static', filename='img/osm.svg') }}" /><p>Made with OpenStreetMap</p></li>
+      <li><img src="{{ url_for('static', filename='img/opensource.svg') }}" /><p>Open Source</p></li>
+      <li><img src="{{ url_for('static', filename='img/solr.svg') }}" /><p>Powered by SolR</p></li>
+    </ul>
+  </div>
 </div>
-<div class="wrapper">
-    <div class="row">
-        <h2>Made to be intuitive</h2>
-    </div>
-    <div class="map-wrapper">
-        <div class="map" id="map"></div>
-    </div>
+<div class="wrapper map-wrapper">
+    <div class="map" id="map"></div>
 </div>
 <div class="wraper api" id="api">
-    <div class="row">
-        <h2>A simple API</h2>
-        <ul>
-            <li>
-                <h4>Search</h4>
-                <pre>http://photon.komoot.de/api/?q=berlin</pre>
-                    <pre>{ "type": "FeatureCollection",
-  "features": [
-    { "type": "Feature",
-      "geometry": {"type": "Point", "coordinates": [102.0, 0.5]},
-      "properties": {"prop0": "value0"}
-      },
-    { "type": "Feature",
-      "geometry": {
-        "type": "LineString",
-        "coordinates": [
-          [102.0, 0.0], [103.0, 1.0], [104.0, 0.0], [105.0, 1.0]
-          ]
-        },
-      "properties": {
-        "prop0": "value0",
-        "prop1": 0.0
-        }
-      },
-    { "type": "Feature",
-       "geometry": {
-         "type": "Polygon",
-         "coordinates": [
-           [ [100.0, 0.0], [101.0, 0.0], [101.0, 1.0],
-             [100.0, 1.0], [100.0, 0.0] ]
-           ]
-       },
-       "properties": {
-         "prop0": "value0",
-         "prop1": {"this": "that"}
-         }
-       }
-     ]
-   }</pre>
-            </li>
-            <li>
-                <h4>Search, with priority to a geo position</h4>
-                <pre>http://photon.komoot.de/api/?q=berlin&amp;lat=52.3879&amp;lng=13.0582</pre>
-            </li>
-            <li>
-                <h4>Limit number of results</h4>
-                <pre>http://photon.komoot.de/api/?q=berlin&amp;limit=1</pre>
-            </li>
-            <li>
-                <h4>Force preferred language</h4>
-                <pre>http://photon.komoot.de/api/?q=berlin&amp;lang=de</pre>
-            </li>
-        </ul>
-    </div>
+  <h2>A simple API</h2>
+  <div class="row">
+    <ul>
+      <li>
+          <h4>Search</h4>
+          <pre>http://photon.komoot.de/api/?q=berlin</pre>
+      </li>
+      <li>
+          <h4>Search, with priority to a geo position</h4>
+          <pre>http://photon.komoot.de/api/?q=berlin&amp;lat=52.3879&amp;lng=13.0582</pre>
+      </li>
+      <li>
+          <h4>Limit number of results</h4>
+          <pre>http://photon.komoot.de/api/?q=berlin&amp;limit=1</pre>
+      </li>
+      <li>
+          <h4>Force preferred language</h4>
+          <pre>http://photon.komoot.de/api/?q=berlin&amp;lang=de</pre>
+      </li>
+      <li>
+        <h4>All good GeoJSON</h4>
+        <pre>
+{
+"features": [
+  {
+    "geometry": {
+      "coordinates": [
+        13.438596,
+        52.519854
+      ],
+      "type": "Point"
+    },
+    "properties": {
+      "city": "Berlin",
+      "country": "Germany",
+      "name": "Berlin"
+    },
+    "type": "Feature"
+  },
+  {
+    "geometry": {
+      "coordinates": [
+        13.38886,
+        52.517037
+      ],
+      "type": "Point"
+    },
+    "properties": {
+      "city": "Berlin",
+      "country": "Germany",
+      "name": "Berlin"
+    },
+    "type": "Feature"
+  },
+  {
+    "geometry": {
+      "coordinates": [
+        61.195088,
+        54.005826
+      ],
+      "type": "Point"
+    },
+    "properties": {
+      "country": "Russia",
+      "name": "Berlin",
+      "postcode": "457130"
+    },
+    "type": "Feature"
+  },
+  {
+    "geometry": {
+      "coordinates": [
+        31.219556,
+        30.055073
+      ],
+      "type": "Point"
+    },
+    "properties": {
+      "street": "شارع برلين",
+      "city": "القاهرة",
+      "country": "Egypt",
+      "name": "Berlin",
+      "postcode": "11211"
+    },
+    "type": "Feature"
+  },
+  {
+    "geometry": {
+      "coordinates": [
+        41.642114,
+        41.649545
+      ],
+      "type": "Point"
+    },
+    "properties": {
+      "street": "ვახტანგ გორგასლის ქუჩა (Vakhtang Gorgasali Street)",
+      "city": "Batumi",
+      "country": "Georgia",
+      "name": "Berlin",
+      "postcode": "6000"
+    },
+    "type": "Feature"
+  }
+],
+"type": "FeatureCollection"
+}
+        </pre>
+      </li>
+    </ul>
+  </div>
 </div>
 <footer>
     An OpenStreetMap project run by <a href="http://www.komoot.de">Komoot</a>
