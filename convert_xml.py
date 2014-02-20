@@ -60,7 +60,7 @@ with open(output_xml, 'w') as f:
     for event, elem in xml_iter:
         count += 1
 
-        if not count % 10000:
+        if not count % 100000:
             print("progress: {:,}".format(count))
 
         if elem.tag == 'doc':
@@ -69,12 +69,18 @@ with open(output_xml, 'w') as f:
             doc['search_fr'] = get_search_field(doc, 'fr')
             doc['search_it'] = get_search_field(doc, 'it', housenumber_first=True)
 
-            f.write('\t<doc>\n{}\t</doc>\n'.format(
-                "".join(["""\t\t<field name="{0}">{1}</field>\n""".format(field[0], escape(field[1])) for field in
-                         doc.items()]))
-            )
+            f.write("\t<doc>\n")
+
+            for field in doc.items():
+                if field[0] is None or field[1] is None:
+                    continue
+
+                f.write("""\t\t<field name="{0}">{1}</field>\n""".format(field[0], escape(field[1])))
+
+            f.write("\t</doc>\n")
+
             doc = {}
         elif 'name' in elem.attrib:
             doc[elem.attrib['name']] = elem.text
 
-    f.write("</add>")
+            f.write("</add>")
