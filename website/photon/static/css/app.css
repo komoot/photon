@@ -201,8 +201,11 @@ pre {
 .highlights ul li {
     display: inline-block;
     text-align: center;
-    color: #f1f1f1;
     width: 33%;
+}
+.highlights ul li a {
+    text-decoration: none;
+    color: #f1f1f1;
 }
 .api h2 {
     background-color: #AECDBF;
