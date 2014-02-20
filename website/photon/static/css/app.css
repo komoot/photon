@@ -122,6 +122,15 @@ footer a {
     font-size: 2em;
     font-family: 'droid_sansbold';
     font-weight: normal;
+    letter-spacing: -1px;
+}
+header .get-in-touch {
+    float: right;
+    width: 200px;
+    line-height: 50px;
+    height: 50px;
+    margin-right: 10px;
+    background-color: #ABBCC7;
 }
 
 
@@ -153,13 +162,18 @@ input[type="submit"],
     text-decoration: none;
     color: #fff;
     font-size: 1em;
-    background-color: #444;
+    background-color: #E0B3A2;
     display: inline-block;
     margin-top: 20px;
     height: 40px;
     line-height: 40px;
     text-align: center;
     cursor: pointer;
+}
+input[type="submit"]:hover,
+.button:hover {
+    background-color: #666;
+    color: #fff;
 }
 
 

@@ -8,7 +8,8 @@ function showSearchPoints (geojson) {
     searchPoints.clearLayers();
     searchPoints.addData(geojson);
 }
-var map = L.map('map', {scrollWheelZoom: false, photonControl: true, photonControlOptions: {resultsHandler: showSearchPoints}});
+var map = L.map('map', {scrollWheelZoom: false, zoomControl: false, photonControl: true, photonControlOptions: {resultsHandler: showSearchPoints, placeholder: 'Try me…', position: 'topleft'}});
 map.setView(startPoint, 12);
 searchPoints.addTo(map);
 var tilelayer = L.tileLayer('http://{s}.tile.komoot.de/komoot/{z}/{x}/{y}.png', {maxZoom: 20, attribution: 'Data \u00a9 <a href="http://www.openstreetmap.org/copyright"> OpenStreetMap Contributors </a> Tiles \u00a9 Komoot'}).addTo(map);
+var zoomControl = new L.Control.Zoom({position: 'topright'}).addTo(map);
