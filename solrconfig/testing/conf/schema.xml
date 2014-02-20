@@ -105,29 +105,29 @@
     <fields>
         <field name="id" type="long" indexed="true" stored="true" required="true"/>
         <field name="coordinate" type="location" indexed="true" stored="true" required="false" multiValued="false"/>
-        <field name="ranking" type="int" indexed="true" stored="true" required="false"/>
+        <field name="ranking" type="int" indexed="false" stored="true" required="false"/>
         <field name="osm_id" type="long" indexed="true" stored="true"/>
 
         <field name="osm_key" type="string" indexed="false" stored="true" omitNorms="true"/>
         <field name="osm_value" type="string" indexed="false" stored="true" omitNorms="true"/>
 
 
-        <field name="street" type="street" indexed="true" stored="true"/>
-        <field name="housenumber" type="housenumber" indexed="true" stored="true"/>
-        <field name="postcode" type="postcode" indexed="true" stored="true" omitNorms="true"/>
+        <field name="street" type="street" indexed="false" stored="true"/>
+        <field name="housenumber" type="housenumber" indexed="false" stored="true"/>
+        <field name="postcode" type="postcode" indexed="false" stored="true" omitNorms="true"/>
 
-        <field name="name" type="text" indexed="true" stored="true"/>
-        <dynamicField name="name_*" type="text" indexed="true" stored="true"/>
+        <field name="name" type="text" indexed="false" stored="true"/>
+        <dynamicField name="name_*" type="text" indexed="false" stored="true"/>
 
-        <field name="city" type="text" indexed="true" stored="true"/>
-        <dynamicField name="city_*" type="text" indexed="true" stored="true"/>
+        <field name="city" type="text" indexed="false" stored="true"/>
+        <dynamicField name="city_*" type="text" indexed="false" stored="true"/>
 
-        <field name="country" type="text" indexed="true" stored="true"/>
-        <dynamicField name="country_*" type="text" indexed="true" stored="true"/>
+        <field name="country" type="text" indexed="false" stored="true"/>
+        <dynamicField name="country_*" type="text" indexed="false" stored="true"/>
 
-        <field name="places" type="text_places" indexed="true" stored="false"/>
+        <field name="places" type="text_places" indexed="false" stored="false"/>
 
-        <dynamicField name="places_*" type="text" indexed="true" stored="false"/>
+        <dynamicField name="places_*" type="text" indexed="false" stored="false"/>
 
         <field name="search*" type="text" indexed="true" stored="false"/>
 
