@@ -60,7 +60,7 @@ with open(output_xml, 'w') as f:
         count += 1
 
         if not count % 10000:
-            print("progress: {:10d}".format(count))
+            print("progress: {:,}".format(count))
 
         if elem.tag == 'doc':
             doc['search_de'] = get_search_field(doc, 'de', housenumber_first=True)

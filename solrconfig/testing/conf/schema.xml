@@ -129,7 +129,7 @@
 
         <dynamicField name="places_*" type="text" indexed="false" stored="false"/>
 
-        <field name="search*" type="text" indexed="true" stored="false"/>
+        <field name="search_*" type="text" indexed="true" stored="false"/>
 
         <dynamicField name="*_coordinate" type="tdouble" indexed="true" stored="false"/>
     </fields>
