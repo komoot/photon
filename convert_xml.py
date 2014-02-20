@@ -1,11 +1,6 @@
 # script to convert solr xml to check out other approaches
 
-import xml.etree.cElementTree as ET
-
-input_xml = 'sample_data/iceland.solr.xml'
-iter = ET.iterparse(input_xml)
-
-output_xml = input_xml.replace('.xml', '.extended.xml')
+import xml.etree.cElementTree as et
 
 
 def get_search_field(doc, lang, housenumber_first=False):
@@ -50,13 +45,18 @@ def get_search_field(doc, lang, housenumber_first=False):
     return "; ".join(filter(None, field))
 
 
+input_xml = 'sample_data/iceland.solr.xml'
+xml_iter = et.iterparse(input_xml)
+
+output_xml = input_xml.replace('.xml', '.extended.xml')
+
 count = 0
 with open(output_xml, 'w') as f:
     f.write("<?xml version='1.0' encoding='utf-8'?>\n<add>\n")
 
     doc = {}
 
-    for event, elem in iter:
+    for event, elem in xml_iter:
         count += 1
 
         if not count % 10000:

@@ -13,128 +13,97 @@
     <small>search-as-you-type with OpenStreetMap</small>
 </header>
 <div class="highlights wrapper" id="highlights">
-  <div class="row">
-    <ul>
-      <li><a href="http://osm.org"><img src="{{ url_for('static', filename='img/osm.svg') }}" /><p>Made with OpenStreetMap</p></a></li>
-      <li><a href="https://github.com/komoot/photon"><img src="{{ url_for('static', filename='img/opensource.svg') }}" /><p>Open Source</p></a></li>
-      <li><a href="http://lucene.apache.org/solr/"><img src="{{ url_for('static', filename='img/solr.svg') }}" /><p>Powered by SolR</p></a></li>
-    </ul>
-  </div>
+    <div class="row">
+        <ul>
+            <li><a href="http://osm.org"><img src="{{ url_for('static', filename='img/osm.svg') }}"/>
+
+                <p>Made with OpenStreetMap</p></a></li>
+            <li><a href="https://github.com/komoot/photon"><img
+                    src="{{ url_for('static', filename='img/opensource.svg') }}"/>
+
+                <p>Open Source</p></a></li>
+            <li><a href="http://lucene.apache.org/solr/"><img src="{{ url_for('static', filename='img/solr.svg') }}"/>
+
+                <p>Powered by SolR</p></a></li>
+        </ul>
+    </div>
 </div>
 <div class="wrapper map-wrapper">
     <div class="map" id="map"></div>
 </div>
 <div class="wraper api" id="api">
-  <h2>A simple API</h2>
-  <div class="row">
-    <ul>
-      <li>
-          <h4>Search</h4>
-          <pre>http://photon.komoot.de/api/?q=berlin</pre>
-      </li>
-      <li>
-          <h4>Search, with priority to a geo position</h4>
-          <pre>http://photon.komoot.de/api/?q=berlin&amp;lat=52.3879&amp;lng=13.0582</pre>
-      </li>
-      <li>
-          <h4>Limit number of results</h4>
-          <pre>http://photon.komoot.de/api/?q=berlin&amp;limit=1</pre>
-      </li>
-      <li>
-          <h4>Force preferred language</h4>
-          <pre>http://photon.komoot.de/api/?q=berlin&amp;lang=de</pre>
-      </li>
-      <li>
-        <h4>All good GeoJSON</h4>
-        <pre>
+    <h2>A simple API</h2>
+
+    <div class="row">
+        <ul>
+            <li>
+                <h4>Search</h4>
+                <pre>photon.komoot.de/api/?q=berlin</pre>
+            </li>
+            <li>
+                <h4>Search, with priority to a geo position</h4>
+                <pre>photon.komoot.de/api/?q=berlin&amp;lat=52.3879&amp;lng=13.0582</pre>
+            </li>
+            <li>
+                <h4>Limit number of results</h4>
+                <pre>photon.komoot.de/api/?q=berlin&amp;limit=1</pre>
+            </li>
+            <li>
+                <h4>Force preferred language</h4>
+                <pre>photon.komoot.de/api/?q=berlin&amp;<b>lang=de</b></pre>
+            </li>
+            <li>
+                <h4>All good GeoJSON</h4>
+<pre>
 {
-"features": [
-  {
-    "geometry": {
-      "coordinates": [
-        13.438596,
-        52.519854
-      ],
-      "type": "Point"
-    },
-    "properties": {
-      "city": "Berlin",
-      "country": "Germany",
-      "name": "Berlin"
-    },
-    "type": "Feature"
-  },
-  {
-    "geometry": {
-      "coordinates": [
-        13.38886,
-        52.517037
-      ],
-      "type": "Point"
-    },
-    "properties": {
-      "city": "Berlin",
-      "country": "Germany",
-      "name": "Berlin"
-    },
-    "type": "Feature"
-  },
-  {
-    "geometry": {
-      "coordinates": [
-        61.195088,
-        54.005826
-      ],
-      "type": "Point"
-    },
-    "properties": {
-      "country": "Russia",
-      "name": "Berlin",
-      "postcode": "457130"
-    },
-    "type": "Feature"
-  },
-  {
-    "geometry": {
-      "coordinates": [
-        31.219556,
-        30.055073
-      ],
-      "type": "Point"
-    },
-    "properties": {
-      "street": "شارع برلين",
-      "city": "القاهرة",
-      "country": "Egypt",
-      "name": "Berlin",
-      "postcode": "11211"
-    },
-    "type": "Feature"
-  },
-  {
-    "geometry": {
-      "coordinates": [
-        41.642114,
-        41.649545
-      ],
-      "type": "Point"
-    },
-    "properties": {
-      "street": "ვახტანგ გორგასლის ქუჩა (Vakhtang Gorgasali Street)",
-      "city": "Batumi",
-      "country": "Georgia",
-      "name": "Berlin",
-      "postcode": "6000"
-    },
-    "type": "Feature"
-  }
-],
-"type": "FeatureCollection"
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "coordinates": [
+          13.438596,
+          52.519854
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "city": "Berlin",
+        "country": "Germany",
+        "name": "Berlin"
+      }
+    },{
+    "type": "Feature",
+      "geometry": {
+        "coordinates": [
+          61.195088,
+          54.005826
+        ],
+        "type": "Point"
+      },
+      "properties": {
+        "country": "Russia",
+        "name": "Berlin",
+        "postcode": "457130"
+      }
+    }
+  ]
 }
-        </pre>
-      </li>
-    </ul>
-  </div>
+</pre>
+            </li>
+        </ul>
+    </div>
+</div>
+<div class="wrapper tou">
+    <h2>Terms of Use</h2>
+
+    <div class="row">
+        <p>You can use the API for your project, but please be fair and use it reasonably and with care - extensive
+            usage will be throttled. We do not guarantee for the availability and usage might be subject of change in
+            the future.</p>
+
+        <p>Have fun with photon and make OSM grow!</p>
+    </div>
 </div>
 <footer>
     An OpenStreetMap project run by <a href="http://www.komoot.de">Komoot</a>

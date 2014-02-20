@@ -5,23 +5,16 @@
 @font-face {
     font-family: 'droid_sansbold';
     src: url('../font/droidsans-bold-webfont.eot');
-    src: url('../font/droidsans-bold-webfont.eot?#iefix') format('embedded-opentype'),
-         url('../font/droidsans-bold-webfont.woff') format('woff'),
-         url('../font/droidsans-bold-webfont.ttf') format('truetype'),
-         url('../font/droidsans-bold-webfont.svg#droid_sansbold') format('svg');
+    src: url('../font/droidsans-bold-webfont.eot?#iefix') format('embedded-opentype'), url('../font/droidsans-bold-webfont.woff') format('woff'), url('../font/droidsans-bold-webfont.ttf') format('truetype'), url('../font/droidsans-bold-webfont.svg#droid_sansbold') format('svg');
     font-weight: normal;
     font-style: normal;
 
 }
 
-
 @font-face {
     font-family: 'droid_sansregular';
     src: url('../font/droidsans-webfont.eot');
-    src: url('../font/droidsans-webfont.eot?#iefix') format('embedded-opentype'),
-         url('../font/droidsans-webfont.woff') format('woff'),
-         url('../font/droidsans-webfont.ttf') format('truetype'),
-         url('../font/droidsans-webfont.svg#droid_sansregular') format('svg');
+    src: url('../font/droidsans-webfont.eot?#iefix') format('embedded-opentype'), url('../font/droidsans-webfont.woff') format('woff'), url('../font/droidsans-webfont.ttf') format('truetype'), url('../font/droidsans-webfont.svg#droid_sansregular') format('svg');
     font-weight: normal;
     font-style: normal;
 
@@ -32,14 +25,16 @@ body {
     padding: 0;
     margin: 0;
 }
+
 ol, ul {
     list-style: none;
 }
+
 div, ul, li, a, section, nav,
 h1, h2, h3, h4, h5, h6,
 hr, input, textarea, footer, header {
-    -moz-box-sizing:border-box;
-    -webkit-box-sizing:border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
     box-sizing: border-box;
     margin: 0;
     padding: 0;
@@ -54,6 +49,7 @@ hr, input, textarea, footer, header {
     width: 100%;
     clear: both;
 }
+
 .wrapper:after {
     visibility: hidden;
     display: block;
@@ -62,6 +58,7 @@ hr, input, textarea, footer, header {
     clear: both;
     height: 0;
 }
+
 .row {
     width: 100%;
     max-width: 1200px;
@@ -70,34 +67,39 @@ hr, input, textarea, footer, header {
     margin-right: auto;
     margin-top: 40px;
 }
+
 .col {
     float: left;
 }
+
 .col + .col {
     padding-left: 40px;
 }
+
 .half {
     width: 50%;
 }
+
 .third {
     width: 33.33%;
 }
+
 .two-third {
     width: 66.66%
 }
+
 .quarter {
     width: 25%;
 }
+
 .wide {
     width: 100%;
     padding-right: inherit;
 }
+
 .mshow, .tshow {
     display: none;
 }
-
-
-
 
 /* ************************************************* */
 /* ***************** HEADER/FOOTER ***************** */
@@ -107,23 +109,26 @@ header, footer {
     line-height: 100px;
     text-align: center;
 }
+
 header {
     color: #212121;
 }
+
 footer {
     background-color: #212121;
     color: #FDFDFD;
     margin-top: 40px;
 }
+
 footer a {
     color: #FDFDFD;
 }
+
 .branding {
     font-size: 2em;
     font-family: 'droid_sansbold';
     font-weight: normal;
 }
-
 
 /* ************************************************* */
 /* ********************** FORMS ******************** */
@@ -145,6 +150,7 @@ input[type="url"], textarea {
     padding: 7px;
     width: 100%;
 }
+
 input[type="submit"],
 .button {
     border: none;
@@ -162,7 +168,6 @@ input[type="submit"],
     cursor: pointer;
 }
 
-
 /* ************************************************* */
 /* ************************ MAP ******************* */
 /* ************************************************* */
@@ -170,14 +175,15 @@ input[type="submit"],
     width: 100%;
     height: 400px;
 }
+
 .map-wrapper h2 {
     background-color: #23455D;
     color: #f1f1f1;
 }
+
 .photon-autocomplete li.on {
     background-color: #e0b3a2;
 }
-
 
 /* ************************************************* */
 /* ********************** CONTENT ****************** */
@@ -187,26 +193,31 @@ h2 {
     line-height: 100px;
     text-align: center;
 }
+
 pre {
     background-color: #f5f5f5;
     border: 1px solid #eee;
     color: #444;
-    padding: 10px
+    padding: 10px;
 }
+
 .highlights {
     background-color: #6A8090;
     padding-top: 40px;
     padding-bottom: 40px;
 }
+
 .highlights ul li {
     display: inline-block;
     text-align: center;
     width: 33%;
 }
+
 .highlights ul li a {
     text-decoration: none;
     color: #f1f1f1;
 }
+
 .api h2 {
     background-color: #AECDBF;
     color: #f1f1f1;
