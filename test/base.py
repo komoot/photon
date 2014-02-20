@@ -50,6 +50,7 @@ class MainCitiesTest(PhotonImplementationTest):
 
 POTSDAM = [52.3879, 13.0582]
 BERLIN = [52.519854, 13.438596]
+MUNICH = [43.731245, 7.419744]
 
 
 class LocationBiasTest(PhotonImplementationTest):
@@ -76,7 +77,16 @@ class LangTest(PhotonImplementationTest):
         self.assertMatch("munchen", {'name': 'München'})
 
     def test_munchen_with_lang_de(self):
-        self.assertMatch("munchen", {'name': 'München'})
+        self.assertMatch("munchen", {'name': 'München'}, lang="de")
+
+    def test_munchen_with_lang_fr(self):
+        self.assertMatch("Munich", {'name': 'Munich'}, lang="fr")
+
+    def test_munchen_with_lang_it(self):
+        self.assertMatch("Monaco", {'osm_id': 36990}, lang="it", limit=2, comment="'Monaco' should hit Munich in the two first results when lang is italian")
+
+    def test_munchen_with_lang_itand_geolocation_bias(self):
+        self.assertMatch("Monaco", {'osm_id': 36990}, lang="it", limit=1, center=MUNICH, comment="'Monaco' should hit Munich as first result when lang is italian and center is close to Munich")
 
 
 if __name__ == '__main__':
