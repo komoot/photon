@@ -46,7 +46,8 @@ def get_search_field(doc, lang, housenumber_first=False):
     return "; ".join(filter(None, field))
 
 
-input_xml = 'sample_data/iceland.solr.xml'
+input_xml = '/home/photon/data/solr-131012.xml'
+#input_xml = 'sample_data/iceland.solr.xml'
 xml_iter = et.iterparse(input_xml)
 
 output_xml = input_xml.replace('.xml', '.extended.xml')
