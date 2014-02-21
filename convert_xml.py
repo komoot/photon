@@ -41,7 +41,7 @@ def get_search_field(doc, lang, housenumber_first=False):
             unified_places.add(p)
 
     if len(unified_places):
-        field += list(places)
+        field += list(unified_places)
 
     return "; ".join(filter(None, field))
 
@@ -84,6 +84,6 @@ with open(output_xml, 'w') as f:
         elif 'name' in elem.attrib:
             doc[elem.attrib['name']] = elem.text
 
-            f.write("</add>")
-
         elem.clear()
+        
+    f.write("</add>")

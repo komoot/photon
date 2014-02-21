@@ -105,7 +105,7 @@
     <fields>
         <field name="id" type="long" indexed="true" stored="true" required="true"/>
         <field name="coordinate" type="location" indexed="true" stored="true" required="false" multiValued="false"/>
-        <field name="ranking" type="int" indexed="false" stored="true" required="false"/>
+        <field name="ranking" type="int" indexed="true" stored="true" required="false"/>
         <field name="osm_id" type="long" indexed="true" stored="true"/>
 
         <field name="osm_key" type="string" indexed="false" stored="true" omitNorms="true"/>
