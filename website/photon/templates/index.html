@@ -10,98 +10,117 @@
 <body>
 <header>
     <a class="branding">Photon</a>
-    <small>search-as-you-type with OpenStreetMap</small>
     <a href="mailto:photon@komoot.de" class="button get-in-touch">Get in touch</a>
 </header>
-<div class="highlights wrapper" id="highlights">
-    <div class="row">
-        <ul>
-            <li><a href="http://osm.org"><img src="{{ url_for('static', filename='img/osm.svg') }}"/>
-
-                <p>Made with OpenStreetMap</p></a></li>
-            <li><a href="https://github.com/komoot/photon"><img
-                    src="{{ url_for('static', filename='img/opensource.svg') }}"/>
-
-                <p>Open Source</p></a></li>
-            <li><a href="http://lucene.apache.org/solr/"><img src="{{ url_for('static', filename='img/solr.svg') }}"/>
-
-                <p>Powered by SolR</p></a></li>
-        </ul>
+<div class="wrapper map-wrapper">
+    <div class="col two-third twide">
+      <div class="map" id="map"></div>
+    </div>
+    <div class="col third content twide">
+      <h2>Search as you type with OpenStreetMap</h2>
+      <ul>
+        <li>Typeahead suggestion</li>
+        <li>Fast</li>
+        <li>Typo tolerance</li>
+        <li>Scalable</li>
+        <li>Minutely up to date OSM data</li>
+      </ul>
     </div>
 </div>
-<div class="wrapper map-wrapper">
-    <div class="map" id="map"></div>
-</div>
-<div class="wraper api" id="api">
-    <h2>A simple API</h2>
-
+<div class="highlights wrapper" id="highlights">
     <div class="row">
-        <ul>
-            <li>
-                <h4>Search</h4>
-                <pre>photon.komoot.de/api/?q=berlin</pre>
-            </li>
-            <li>
-                <h4>Search, with priority to a geo position</h4>
-                <pre>photon.komoot.de/api/?q=berlin&amp;lat=52.3879&amp;lng=13.0582</pre>
-            </li>
-            <li>
-                <h4>Limit number of results</h4>
-                <pre>photon.komoot.de/api/?q=berlin&amp;limit=1</pre>
-            </li>
-            <li>
-                <h4>Force preferred language</h4>
-                <pre>photon.komoot.de/api/?q=berlin&amp;<b>lang=de</b></pre>
-            </li>
-            <li>
-                <h4>All good GeoJSON</h4>
-<pre>
-{
-  "type": "FeatureCollection",
-  "features": [
-    {
+        <div class="col third">
+            <a href="http://osm.org">
+                <img src="{{ url_for('static', filename='img/osm.svg') }}"/>
+                <p>Made with OpenStreetMap</p>
+            </a>
+        </div>
+        <div class="col third">
+            <a href="https://github.com/komoot/photon">
+                <img src="{{ url_for('static', filename='img/opensource.svg') }}"/>
+                <p>Open Source</p>
+            </a>
+        </div>
+        <div class="col third">
+            <a href="http://lucene.apache.org/solr/">
+                <img src="{{ url_for('static', filename='img/solr.svg') }}"/>
+                <p>Powered by SolR</p>
+            </a>
+        </div>
+    </div>
+</div>
+<div class="wrapper api" id="api">
+    <div class="row">
+      <div class="col third content mwide">
+          <h2>A simple API</h2>
+      </div>
+      <div class="col two-third content mwide">
+            <ul>
+              <li>
+                  <h4>Search</h4>
+                  <pre>photon.komoot.de/api/?<strong>q=berlin</strong></pre>
+              </li>
+              <li>
+                  <h4>Search, with priority to a geo position</h4>
+                  <pre>photon.komoot.de/api/?q=berlin&amp;<strong>lat=52.3879&amp;lon=13.0582</strong></pre>
+              </li>
+              <li>
+                  <h4>Limit number of results</h4>
+                  <pre>photon.komoot.de/api/?q=berlin&amp;<strong>limit=1</strong></pre>
+              </li>
+              <li>
+                  <h4>Force preferred language</h4>
+                  <pre>photon.komoot.de/api/?q=berlin&amp;<strong>lang=de</strong></pre>
+              </li>
+              <li>
+                  <h4>All good GeoJSON</h4>
+  <pre>
+  {
+    "type": "FeatureCollection",
+    "features": [
+      {
+        "type": "Feature",
+        "geometry": {
+          "coordinates": [
+            13.438596,
+            52.519854
+          ],
+          "type": "Point"
+        },
+        "properties": {
+          "city": "Berlin",
+          "country": "Germany",
+          "name": "Berlin"
+        }
+      },{
       "type": "Feature",
-      "geometry": {
-        "coordinates": [
-          13.438596,
-          52.519854
-        ],
-        "type": "Point"
-      },
-      "properties": {
-        "city": "Berlin",
-        "country": "Germany",
-        "name": "Berlin"
+        "geometry": {
+          "coordinates": [
+            61.195088,
+            54.005826
+          ],
+          "type": "Point"
+        },
+        "properties": {
+          "country": "Russia",
+          "name": "Berlin",
+          "postcode": "457130"
+        }
       }
-    },{
-    "type": "Feature",
-      "geometry": {
-        "coordinates": [
-          61.195088,
-          54.005826
-        ],
-        "type": "Point"
-      },
-      "properties": {
-        "country": "Russia",
-        "name": "Berlin",
-        "postcode": "457130"
-      }
-    }
-  ]
-}
-</pre>
-            </li>
-        </ul>
+    ]
+  }
+  </pre>
+              </li>
+          </ul>
+      </div>
     </div>
 </div>
 <div class="wrapper tou">
-    <h2>Terms of Use</h2>
 
-    <div class="row">
+    <div class="row content">
+      <h2>Terms of Use</h2>
         <p>You can use the API for your project, but please be fair - extensive usage will be throttled. We do not
             guarantee for the availability and usage might be subject of change in the future.</p>
-
         <p>Have fun with photon and make OSM grow!</p>
     </div>
 </div>
