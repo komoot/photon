@@ -70,7 +70,7 @@
                 <filter class="solr.WordDelimiterFilterFactory" generateWordParts="1" generateNumberParts="1"
                         catenateAll="5" splitOnCaseChange="1" preserveOriginal="1"/>
                 <filter class="solr.LowerCaseFilterFactory"/>
-                <filter class="solr.EdgeNGramFilterFactory" minGramSize="2" maxGramSize="40" side="front"/>
+                <filter class="solr.EdgeNGramFilterFactory" minGramSize="3" maxGramSize="40" side="front"/>
             </analyzer>
             <analyzer type="query">
                 <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-ISOLatin1Accent.txt"/>
