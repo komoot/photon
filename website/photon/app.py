@@ -79,7 +79,7 @@ def api():
                         "lat": lat,
                         "lon": lon
                     },
-                    "script": "_score / ((doc['coordinate'].distanceInKm(lat, lon)/1000 + 1) + 0.5)"
+                    "script": "_score / ((3*doc['coordinate'].distanceInKm(lat, lon)/1000 + 1) + 0.5)"
                 }
             }
         }
