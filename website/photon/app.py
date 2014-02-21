@@ -33,9 +33,9 @@ def api():
     try:
         lon = float(request.args.get('lon'))
         lat = float(request.args.get('lat'))
-        params['pt'] = '{lat},{lon}'.format(lon=lon, lat=lat)
     except (TypeError, ValueError):
-        pass
+        lon = lat = None
+
     try:
         limit = min(int(request.args.get('limit')), 50)
     except (TypeError, ValueError):
@@ -45,33 +45,48 @@ def api():
     if not query:
         abort(400, "missing search term 'q': /?q=berlin")
 
-    results = es.search(index="photon", body={
-        "query": {
-            "dis_max": {
-                "queries": [
-                    {
-                        "match": {
-                            "collector.{0}".format(lang): {
-                                "query": query,
-                                "operator": "or",
-                                "analyzer": "raw_stringanalyser"
-                            }
-                        }
-                    },
-                    {
-                        "match": {
-                            "collector.{0}.raw".format(lang): {
-                                "query": query,
-                                "operator": "or",
-                                "analyzer": "raw_stringanalyser"
-                            }
+    req_body = {
+        "dis_max": {
+            "queries": [
+                {
+                    "match": {
+                        "collector.{0}".format(lang): {
+                            "query": query,
+                            "operator": "or",
+                            "analyzer": "raw_stringanalyser"
                         }
                     }
-                ]
+                },
+                {
+                    "match": {
+                        "collector.{0}.raw".format(lang): {
+                            "query": query,
+                            "operator": "or",
+                            "analyzer": "raw_stringanalyser"}
+                    }
+                }
+            ]
+        }
+    }
+
+    if lon is not None and lat is not None:
+        req_body = {
+            "function_score": {
+                "boost_mode": "replace",
+                "query": req_body,
+                "script_score": {
+                    "params": {
+                        "lat": 2,
+                        "lon": 3.1
+                    },
+                    "script": "_score / (doc['coordinate'].distance(lat, lon)/1000 + 1) + 0.5"
+                }
             }
-        },
-        "size": limit
-    })
+        }
+
+    body = {"query": req_body, "size": limit}
+    print(json.dumps(body))
+    results = es.search(index="photon", body=body)
 
     data = json.dumps(to_geo_json(results['hits']['hits'], lang=lang))
     return Response(data, mimetype='application/json')
