@@ -39,7 +39,6 @@ hr, input, textarea, footer, header {
     margin: 0;
     padding: 0;
     font-family: "droid_sansregular", sans-serif;
-    color: #333;
 }
 
 /* ************************************************* */
@@ -190,11 +189,6 @@ input[type="submit"]:hover,
     height: 400px;
 }
 
-.map-wrapper h2 {
-    background-color: #23455D;
-    color: #f1f1f1;
-}
-
 .photon-autocomplete li.on {
     background-color: #e0b3a2;
 }
@@ -203,36 +197,104 @@ input[type="submit"]:hover,
 /* ********************** CONTENT ****************** */
 /* ************************************************* */
 h2 {
-    height: 100px;
-    line-height: 100px;
+    min-height: 100px;
+    line-height: 30px;
     text-align: center;
 }
-
+.map-wrapper {
+    background-color: #6A8090;
+    color: #eee;
+}
+.map-wrapper h2 {
+    text-align: left;
+    color: #eee;
+}
 pre {
     background-color: #f5f5f5;
     border: 1px solid #eee;
     color: #444;
     padding: 10px;
 }
-
+pre strong {
+    color: #666;
+}
 .highlights {
-    background-color: #6A8090;
-    padding-top: 40px;
-    padding-bottom: 40px;
+    margin-bottom: 40px;
 }
-
-.highlights ul li {
-    display: inline-block;
-    text-align: center;
-    width: 33%;
-}
-
-.highlights ul li a {
+.highlights h2 a {
+    color: #999;
     text-decoration: none;
-    color: #f1f1f1;
+}
+.highlights img {
+    vertical-align: top;
+    height: 64px;
+    margin-right: 20px;
+}
+.highlights .col.third {
+    text-align: center;
 }
 
-.api h2 {
+.highlights a {
+    text-decoration: none;
+    color: #666;
+}
+
+.api {
     background-color: #AECDBF;
     color: #f1f1f1;
+}
+.wrapper .content {
+    padding: 40px;
+}
+.api .content ul {
+    background-color: #fff;
+    padding: 20px;
+}
+.api h4 {
+    color: #333;
+}
+
+
+/* ************************************************* */
+/* ********************* MOBILE ******************** */
+/* ************************************************* */
+@media only screen and (max-width:770px) {
+    .row {
+        padding-left: 5px;
+        padding-right: 5px;
+    }
+    .twide {
+        width: 100%;
+        padding-left: 0!important;
+    }
+    .tthird {
+        width: 33.3333%;
+    }
+    .tshow {
+        display: inherit;
+    }
+    .thide {
+        display: none;
+    }
+    .wrapper .content {
+        padding: 0;
+    }
+}
+@media only screen and (max-width: 639px) {
+    .mwide {
+        padding-left: 0!important;
+        width: 100%;
+    }
+    .mwide + .mwide {
+        margin-top: 20px;
+    }
+    .mthird {
+        width: 33.3333%;
+    }
+    .mshow {
+        display: inherit;
+    }
+    .mhide {
+        display: none;
+    }
 }
