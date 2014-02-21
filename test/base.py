@@ -48,6 +48,9 @@ class MainCitiesTest(PhotonImplementationTest):
     def test_vienna(self):
         self.assertMatch("vienna", {'name': 'Vienna', 'country': 'Austria'})
 
+    def test_toulouse(self):
+        self.assertMatch("toulouse", {'name': 'Toulouse', 'country': 'France'})
+
     def test_milan(self):
         self.assertMatch("milan", {'name': 'Milan', 'country': 'Italy'})
         self.assertMatch("milano", {'name': 'Milan', 'country': 'Italy'})
@@ -56,6 +59,7 @@ class MainCitiesTest(PhotonImplementationTest):
 POTSDAM = [52.3879, 13.0582]
 BERLIN = [52.519854, 13.438596]
 MUNICH = [43.731245, 7.419744]
+AUCKLAND = [-36.853467, 174.765551]
 
 
 class LocationBiasTest(PhotonImplementationTest):
@@ -70,6 +74,9 @@ class LocationBiasTest(PhotonImplementationTest):
     def test_friedrichstrasse_from_berlin(self):
         self.assertMatch("Friedrichstraße", {'name': 'Friedrichstraße', 'city': 'Berlin'}, center=BERLIN, limit=1,
                          comment="'Friedrichstraße' gives me Berlin's street when I'm in Berlin")
+
+    def test_paris_from_new_zeland(self):
+        self.assertMatch("paris", {"name": "Paris"}, center=AUCKLAND, limit=1, comment="'Paris' from Auclkand still gives Paris")
 
 
 class SmallPlacesTest(PhotonImplementationTest):
