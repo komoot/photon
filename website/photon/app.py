@@ -76,8 +76,8 @@ def api():
                 "query": req_body,
                 "script_score": {
                     "params": {
-                        "lat": 2,
-                        "lon": 3.1
+                        "lat": lat,
+                        "lon": lon
                     },
                     "script": "_score / (doc['coordinate'].distance(lat, lon)/1000 + 1) + 0.5"
                 }
