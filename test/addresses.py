@@ -22,6 +22,15 @@ class Addresses(PhotonImplementationTest):
     def test_birmingham(self):
         self.assertMatch("9 Ivor Road Birmingham", {'osm_id': 144738133})
 
+    def test_22_rue_vicq_d(self):
+        self.assertMatch("22 rue vicq d'", {'housenumber': '22', "osm_value": "house", "street": "Rue Vicq d'Azir", "city": "Paris"})
+
+    def test_22_rue_vicq_d_a(self):
+        self.assertMatch("22 rue vicq d'a", {'housenumber': '22', "osm_value": "house", "street": "Rue Vicq d'Azir", "city": "Paris"})
+
+    def test_22_rue_vicq_d_azir(self):
+        self.assertMatch("22 rue vicq d'azir", {'housenumber': '22', "osm_value": "house", "street": "Rue Vicq d'Azir", "city": "Paris"})
+
 
 if __name__ == '__main__':
     unittest.main(verbosity=2)
