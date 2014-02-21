@@ -3,6 +3,7 @@ import os
 
 import simplejson
 import pysolr
+import elasticsearch
 from flask import Flask, render_template, request, abort, Response
 
 
@@ -13,6 +14,8 @@ SUPPORTED_LANGUAGES = ['de', 'en', 'fr', 'it']
 
 solr = pysolr.Solr(os.environ.get("SOLR_ENDPOINT", 'http://localhost:8983/solr/testing'), timeout=10)
 
+es = elasticsearch.Elasticsearch()
+
 
 @app.route('/')
 def index():
@@ -21,6 +24,61 @@ def index():
 
 @app.route('/api/')
 def api():
+    params = {}
+
+    lang = request.args.get('lang')
+    if lang is None or lang not in SUPPORTED_LANGUAGES:
+        lang = 'en'
+
+    try:
+        lon = float(request.args.get('lon'))
+        lat = float(request.args.get('lat'))
+        params['pt'] = '{lat},{lon}'.format(lon=lon, lat=lat)
+    except (TypeError, ValueError):
+        pass
+    try:
+        limit = min(int(request.args.get('limit')), 50)
+    except (TypeError, ValueError):
+        limit = 15
+
+    query = request.args.get('q')
+    if not query:
+        abort(400, "missing search term 'q': /?q=berlin")
+
+    results = es.search(index="photon", body={
+        "query": {
+            "dis_max": {
+                "queries": [
+                    {
+                        "match": {
+                            "collector.{0}".format(lang): {
+                                "query": query,
+                                "operator": "or",
+                                "analyzer": "raw_stringanalyser"
+                            }
+                        }
+                    },
+                    {
+                        "match": {
+                            "collector.{0}.raw".format(lang): {
+                                "query": query,
+                                "operator": "or",
+                                "analyzer": "raw_stringanalyser"
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        "size": limit
+    })
+
+    data = json.dumps(to_geo_json(results['hits']['hits'], lang=lang))
+    return Response(data, mimetype='application/json')
+
+
+@app.route('/api/solr/')
+def api_solr():
     params = {}
 
     lang = request.args.get('lang')
@@ -45,7 +103,7 @@ def api():
         abort(400, "missing search term 'q': /?q=berlin")
 
     results = solr.search(query, **params)
-    data = json.dumps(to_geo_json(results.docs, lang=lang))
+    data = json.dumps(to_geo_json_solr(results.docs, lang=lang))
     return Response(data, mimetype='application/json')
 
 
@@ -56,7 +114,55 @@ def housenumber_first(lang):
     return True
 
 
-def to_geo_json(docs, lang='en'):
+def to_geo_json(hits, lang='en'):
+    features = []
+
+    for hit in hits:
+        source = hit['_source']
+
+        properties = {}
+
+        if 'osm_id' in source:
+            properties['osm_id'] = int(source['osm_id'])
+
+        for attr in ['osm_key', 'osm_value', 'street', 'postcode', 'housenumber']:
+            if attr in source:
+                properties[attr] = source[attr]
+
+        # language specific mapping
+        for attr in ['name', 'country', 'city']:
+            obj = source.get(attr, {})
+            value = obj.get(lang) or obj.get('default')
+            if value:
+                properties[attr] = value
+
+        if not 'name' in properties and 'housenumber' in properties:
+            if housenumber_first(lang):
+                properties['name'] = properties['housenumber'] + ' ' + properties['street']
+            else:
+                properties['name'] = properties['street'] + ' ' + properties['housenumber']
+
+        coordinates = [float(el) for el in source['coordinate'].split(',')]
+        coordinates.reverse()
+
+        feature = {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": coordinates
+            },
+            "properties": properties
+        }
+
+        features.append(feature)
+
+    return {
+        "type": "FeatureCollection",
+        "features": features
+    }
+
+
+def to_geo_json_solr(docs, lang='en'):
     features = []
 
     for doc in docs:

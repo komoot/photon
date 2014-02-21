@@ -14,17 +14,17 @@
 </header>
 <div class="wrapper map-wrapper">
     <div class="col two-third twide">
-      <div class="map" id="map"></div>
+        <div class="map" id="map"></div>
     </div>
     <div class="col third content twide">
-      <h2>Search as you type with OpenStreetMap</h2>
-      <ul>
-        <li>Typeahead suggestion</li>
-        <li>Fast</li>
-        <li>Typo tolerance</li>
-        <li>Scalable</li>
-        <li>Minutely up to date OSM data</li>
-      </ul>
+        <h2>Search as you type with OpenStreetMap</h2>
+        <ul>
+            <li>Typeahead suggestion</li>
+            <li>Fast</li>
+            <li>Typo tolerance</li>
+            <li>Scalable</li>
+            <li>Minutely up to date OSM data</li>
+        </ul>
     </div>
 </div>
 <div class="highlights wrapper" id="highlights">
@@ -32,18 +32,21 @@
         <div class="col third">
             <a href="http://osm.org">
                 <img src="{{ url_for('static', filename='img/osm.svg') }}"/>
+
                 <p>Made with OpenStreetMap</p>
             </a>
         </div>
         <div class="col third">
             <a href="https://github.com/komoot/photon">
                 <img src="{{ url_for('static', filename='img/opensource.svg') }}"/>
+
                 <p>Open Source</p>
             </a>
         </div>
         <div class="col third">
             <a href="http://lucene.apache.org/solr/">
                 <img src="{{ url_for('static', filename='img/solr.svg') }}"/>
+
                 <p>Powered by SolR</p>
             </a>
         </div>
@@ -51,29 +54,29 @@
 </div>
 <div class="wrapper api" id="api">
     <div class="row">
-      <div class="col third content mwide">
-          <h2>A simple API</h2>
-      </div>
-      <div class="col two-third content mwide">
+        <div class="col third content mwide">
+            <h2>A simple API</h2>
+        </div>
+        <div class="col two-third content mwide">
             <ul>
-              <li>
-                  <h4>Search</h4>
-                  <pre>photon.komoot.de/api/?<strong>q=berlin</strong></pre>
-              </li>
-              <li>
-                  <h4>Search, with priority to a geo position</h4>
-                  <pre>photon.komoot.de/api/?q=berlin&amp;<strong>lat=52.3879&amp;lon=13.0582</strong></pre>
-              </li>
-              <li>
-                  <h4>Limit number of results</h4>
-                  <pre>photon.komoot.de/api/?q=berlin&amp;<strong>limit=1</strong></pre>
-              </li>
-              <li>
-                  <h4>Force preferred language</h4>
-                  <pre>photon.komoot.de/api/?q=berlin&amp;<strong>lang=de</strong></pre>
-              </li>
-              <li>
-                  <h4>All good GeoJSON</h4>
+                <li>
+                    <h4>Search</h4>
+                    <pre>photon.komoot.de/api/?<strong>q=berlin</strong></pre>
+                </li>
+                <li>
+                    <h4>Search, with priority to a geo position</h4>
+                    <pre>photon.komoot.de/api/?q=berlin&amp;<strong>lat=52.3879&amp;lon=13.0582</strong></pre>
+                </li>
+                <li>
+                    <h4>Limit number of results</h4>
+                    <pre>photon.komoot.de/api/?q=berlin&amp;<strong>limit=1</strong></pre>
+                </li>
+                <li>
+                    <h4>Force preferred language</h4>
+                    <pre>photon.komoot.de/api/?q=berlin&amp;<strong>lang=de</strong></pre>
+                </li>
+                <li>
+                    <h4>All good GeoJSON</h4>
   <pre>
   {
     "type": "FeatureCollection",
@@ -110,17 +113,19 @@
     ]
   }
   </pre>
-              </li>
-          </ul>
-      </div>
+                </li>
+            </ul>
+        </div>
     </div>
 </div>
 <div class="wrapper tou">
 
     <div class="row content">
-      <h2>Terms of Use</h2>
+        <h2>Terms of Use</h2>
+
         <p>You can use the API for your project, but please be fair - extensive usage will be throttled. We do not
             guarantee for the availability and usage might be subject of change in the future.</p>
+
         <p>Have fun with photon and make OSM grow!</p>
     </div>
 </div>

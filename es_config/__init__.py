@@ -20,61 +20,76 @@ def init_elasticsearch(index, force=False):
                 'osm_key': {"type": "string", "index": "no", "store": True},
                 'osm_value': {"type": "string", "index": "no", "store": True},
 
-                'street': {"type": "string", "index": "no", "store": True, "boost": 1.2, "copy_to": ["collector.en", "collector.de", "collector.fr", "collector.it", ]},
-                'housenumber': {"type": "string", "index": "no", "store": True, "copy_to": ["collector.en", "collector.de", "collector.fr", "collector.it", ]},
-                'postcode': {"type": "string", "index": "no", "store": True, "copy_to": ["collector.en", "collector.de", "collector.fr", "collector.it", ]},
+                'street': {"type": "string", "index": "no", "store": True,
+                           "copy_to": ["collector.en", "collector.de", "collector.fr", "collector.it", ]},
+                'housenumber': {"type": "string", "index": "no", "store": True,
+                                "copy_to": ["collector.en", "collector.de", "collector.fr", "collector.it", ]},
+                'postcode': {"type": "string", "index": "no", "store": True,
+                             "copy_to": ["collector.en", "collector.de", "collector.fr", "collector.it", ]},
 
                 'name': {
                     "type": "object",
                     "properties": {
-                        "default": {"type": "string", "store": True, "index": "no", "boost": 1.7, "copy_to": ["collector.en", "collector.de", "collector.fr", "collector.it", ]},
-                        "en": {"type": "string", "store": True, "index": "no", "boost": 1.7, "copy_to": ["collector.en", ]},
-                        "de": {"type": "string", "store": True, "index": "no", "boost": 1.7, "copy_to": ["collector.de", ]},
-                        "fr": {"type": "string", "store": True, "index": "no", "boost": 1.7, "copy_to": ["collector.fr", ]},
-                        "it": {"type": "string", "store": True, "index": "no", "boost": 1.7, "copy_to": ["collector.it", ]},
+                        "default": {"type": "string", "store": True, "index": "no",
+                                    "copy_to": ["collector.en", "collector.de", "collector.fr", "collector.it", ]},
+                        "en": {"type": "string", "store": True, "index": "no", "copy_to": ["collector.en", ]},
+                        "de": {"type": "string", "store": True, "index": "no", "copy_to": ["collector.de", ]},
+                        "fr": {"type": "string", "store": True, "index": "no", "copy_to": ["collector.fr", ]},
+                        "it": {"type": "string", "store": True, "index": "no", "copy_to": ["collector.it", ]},
                     }
                 },
 
                 'city': {
                     "type": "object",
                     "properties": {
-                        "default": {"type": "string", "store": True, "index": "no", "boost": 1.7, "copy_to": ["collector.en", "collector.de", "collector.fr", "collector.it", ]},
-                        "en": {"type": "string", "store": True, "index": "no", "boost": 1.7, "copy_to": ["collector.en", ]},
-                        "de": {"type": "string", "store": True, "index": "no", "boost": 1.7, "copy_to": ["collector.de", ]},
-                        "fr": {"type": "string", "store": True, "index": "no", "boost": 1.7, "copy_to": ["collector.fr", ]},
-                        "it": {"type": "string", "store": True, "index": "no", "boost": 1.7, "copy_to": ["collector.it", ]},
+                        "default": {"type": "string", "store": True, "index": "no",
+                                    "copy_to": ["collector.en", "collector.de", "collector.fr", "collector.it", ]},
+                        "en": {"type": "string", "store": True, "index": "no", "copy_to": ["collector.en", ]},
+                        "de": {"type": "string", "store": True, "index": "no", "copy_to": ["collector.de", ]},
+                        "fr": {"type": "string", "store": True, "index": "no", "copy_to": ["collector.fr", ]},
+                        "it": {"type": "string", "store": True, "index": "no", "copy_to": ["collector.it", ]},
                     }
                 },
 
                 'country': {
                     "type": "object",
                     "properties": {
-                        "default": {"type": "string", "store": True, "index": "no", "boost": 1.7, "copy_to": ["collector.en", "collector.de", "collector.fr", "collector.it", ]},
-                        "en": {"type": "string", "store": True, "index": "no", "boost": 1.7, "copy_to": ["collector.en", ]},
-                        "de": {"type": "string", "store": True, "index": "no", "boost": 1.7, "copy_to": ["collector.de", ]},
-                        "fr": {"type": "string", "store": True, "index": "no", "boost": 1.7, "copy_to": ["collector.fr", ]},
-                        "it": {"type": "string", "store": True, "index": "no", "boost": 1.7, "copy_to": ["collector.it", ]},
+                        "default": {"type": "string", "store": True, "index": "no",
+                                    "copy_to": ["collector.en", "collector.de", "collector.fr", "collector.it", ]},
+                        "en": {"type": "string", "store": True, "index": "no", "copy_to": ["collector.en", ]},
+                        "de": {"type": "string", "store": True, "index": "no", "copy_to": ["collector.de", ]},
+                        "fr": {"type": "string", "store": True, "index": "no", "copy_to": ["collector.fr", ]},
+                        "it": {"type": "string", "store": True, "index": "no", "copy_to": ["collector.it", ]},
                     }
                 },
 
                 'context': {
                     "type": "object",
                     "properties": {
-                        "default": {"type": "string", "store": True, "index": "no", "boost": 1.7, "copy_to": ["collector.en", "collector.de", "collector.fr", "collector.it", ]},
-                        "en": {"type": "string", "store": True, "index": "no", "boost": 1.7, "copy_to": ["collector.en", ]},
-                        "de": {"type": "string", "store": True, "index": "no", "boost": 1.7, "copy_to": ["collector.de", ]},
-                        "fr": {"type": "string", "store": True, "index": "no", "boost": 1.7, "copy_to": ["collector.fr", ]},
-                        "it": {"type": "string", "store": True, "index": "no", "boost": 1.7, "copy_to": ["collector.it", ]},
+                        "default": {"type": "string", "store": True, "index": "no",
+                                    "copy_to": ["collector.en", "collector.de", "collector.fr", "collector.it", ]},
+                        "en": {"type": "string", "store": True, "index": "no", "copy_to": ["collector.en", ]},
+                        "de": {"type": "string", "store": True, "index": "no", "copy_to": ["collector.de", ]},
+                        "fr": {"type": "string", "store": True, "index": "no", "copy_to": ["collector.fr", ]},
+                        "it": {"type": "string", "store": True, "index": "no", "copy_to": ["collector.it", ]},
                     }
                 },
 
                 'collector': {
                     "type": "object",
                     "properties": {
-                        "en": {"type": "string", "analyzer": "stringanalyser", "fields": {"raw": {"type": "string", "index": "not_analyzed"}}},
-                        "de": {"type": "string", "analyzer": "stringanalyser", "fields": {"raw": {"type": "string", "index": "not_analyzed"}}},
-                        "fr": {"type": "string", "analyzer": "stringanalyser", "fields": {"raw": {"type": "string", "index": "not_analyzed"}}},
-                        "it": {"type": "string", "analyzer": "stringanalyser", "fields": {"raw": {"type": "string", "index": "not_analyzed"}}},
+                        "en": {"type": "string", "analyzer": "stringanalyser",
+                               "fields": {"raw": {"type": "string", "index_analyzer": "raw_stringanalyser",
+                                                  "search_analyzer": "raw_stringanalyser"}}},
+                        "de": {"type": "string", "analyzer": "stringanalyser",
+                               "fields": {"raw": {"type": "string", "index_analyzer": "raw_stringanalyser",
+                                                  "search_analyzer": "raw_stringanalyser"}}},
+                        "fr": {"type": "string", "analyzer": "stringanalyser",
+                               "fields": {"raw": {"type": "string", "index_analyzer": "raw_stringanalyser",
+                                                  "search_analyzer": "raw_stringanalyser"}}},
+                        "it": {"type": "string", "analyzer": "stringanalyser",
+                               "fields": {"raw": {"type": "string", "index_analyzer": "raw_stringanalyser",
+                                                  "search_analyzer": "raw_stringanalyser"}}},
                     }
                 },
 
@@ -87,6 +102,11 @@ def init_elasticsearch(index, force=False):
                 "stringanalyser": {
                     "tokenizer": "standard",
                     "filter": ["lowercase", "asciifolding", "word_delimiter", "photonngram"],
+                    "char_filter": ["punctuationgreedy", ]
+                },
+                "raw_stringanalyser": {
+                    "tokenizer": "standard",
+                    "filter": ["lowercase", "asciifolding", "word_delimiter"],
                     "char_filter": ["punctuationgreedy", ]
                 },
             },
@@ -111,5 +131,4 @@ def init_elasticsearch(index, force=False):
 
 
 if __name__ == "__main__":
-
     init_elasticsearch("photon")
