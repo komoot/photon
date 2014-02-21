@@ -84,6 +84,6 @@ with open(output_xml, 'w') as f:
         elif 'name' in elem.attrib:
             doc[elem.attrib['name']] = elem.text
 
-            f.write("</add>")
-
         elem.clear()
+        
+    f.write("</add>")
