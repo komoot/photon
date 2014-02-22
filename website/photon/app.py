@@ -88,7 +88,8 @@ def api():
     print(json.dumps(body))
     results = es.search(index="photon", body=body)
 
-    data = json.dumps(to_geo_json(results['hits']['hits'], lang=lang))
+    debug = 'debug' in request.args
+    data = json.dumps(to_geo_json(results['hits']['hits'], lang=lang, debug=debug), indent=4 if debug else None)
     return Response(data, mimetype='application/json')
 
 
@@ -129,7 +130,7 @@ def housenumber_first(lang):
     return True
 
 
-def to_geo_json(hits, lang='en'):
+def to_geo_json(hits, lang='en', debug=False):
     features = []
 
     for hit in hits:
