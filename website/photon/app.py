@@ -84,7 +84,7 @@ def query_index(query, lang, lon, lat, match_all=True, limit=15):
                         "lat": lat,
                         "lon": lon
                     },
-                    "script": "_score / ((1*doc['coordinate'].distanceInKm(lat, lon)/1000 + 1) + 0.5)"
+                    "script": "_score / ((0.5 * doc['coordinate'].distanceInKm(lat, lon)/1000 + 1) + 0.5)"
                 }
             }
         }
