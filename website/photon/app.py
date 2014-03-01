@@ -50,7 +50,8 @@ def api():
                     "match": {
                         "collector.{0}".format(lang): {
                             "query": query,
-                            "minimum_should_match": "0<75% 4<65%",
+                            # "minimum_should_match": "0<75% 4<65%",
+                            "operator": "and",
                             "analyzer": "raw_stringanalyser"
                         }
                     }
@@ -59,7 +60,8 @@ def api():
                     "match": {
                         "collector.{0}.raw".format(lang): {
                             "query": query,
-                            "minimum_should_match": "0<75% 4<65%",
+                            "operator": "and",
+                            # "minimum_should_match": "0<75% 4<65%",
                             "analyzer": "raw_stringanalyser"}
                     }
                 }
@@ -83,6 +85,7 @@ def api():
         }
 
     body = {"query": req_body, "size": limit}
+    print(body)
     results = es.search(index="photon", body=body)
 
     debug = 'debug' in request.args
