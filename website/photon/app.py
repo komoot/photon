@@ -24,8 +24,6 @@ def index():
 
 @app.route('/api/')
 def api():
-    params = {}
-
     lang = request.args.get('lang')
     if lang is None or lang not in SUPPORTED_LANGUAGES:
         lang = 'en'
@@ -52,7 +50,7 @@ def api():
                     "match": {
                         "collector.{0}".format(lang): {
                             "query": query,
-                            "operator": "or",
+                            "minimum_should_match": "0<75% 4<65%",
                             "analyzer": "raw_stringanalyser"
                         }
                     }
@@ -61,7 +59,7 @@ def api():
                     "match": {
                         "collector.{0}.raw".format(lang): {
                             "query": query,
-                            "operator": "or",
+                            "minimum_should_match": "0<75% 4<65%",
                             "analyzer": "raw_stringanalyser"}
                     }
                 }
@@ -85,7 +83,6 @@ def api():
         }
 
     body = {"query": req_body, "size": limit}
-    print(json.dumps(body))
     results = es.search(index="photon", body=body)
 
     debug = 'debug' in request.args
