@@ -22,6 +22,77 @@ def index():
     return render_template('index.html')
 
 
+def query_index(query, lang, lon, lat, match_all=True, limit=15):
+    if match_all:
+        req_body = {
+            "dis_max": {
+                "queries": [
+                    {
+                        "match": {
+                            "collector.{0}".format(lang): {
+                                "query": query,
+                                'operator': 'and',
+                                "analyzer": "raw_stringanalyser"
+                            }
+                        }
+                    },
+                    {
+                        "match": {
+                            "collector.{0}.raw".format(lang): {
+                                "query": query,
+                                'operator': 'and',
+                                "analyzer": "raw_stringanalyser"
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+    else:
+        req_body = {
+            "dis_max": {
+                "queries": [
+                    {
+                        "match": {
+                            "collector.{0}".format(lang): {
+                                "query": query,
+                                "analyzer": "raw_stringanalyser",
+                                'minimum_should_match': -1
+                            }
+                        }
+                    },
+                    {
+                        "match": {
+                            "collector.{0}.raw".format(lang): {
+                                "query": query,
+                                "analyzer": "raw_stringanalyser",
+                                'minimum_should_match': -1
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+
+    if lon is not None and lat is not None:
+        req_body = {
+            "function_score": {
+                "boost_mode": "replace",
+                "query": req_body,
+                "script_score": {
+                    "params": {
+                        "lat": lat,
+                        "lon": lon
+                    },
+                    "script": "_score / ((1*doc['coordinate'].distanceInKm(lat, lon)/1000 + 1) + 0.5)"
+                }
+            }
+        }
+
+    body = {"query": req_body, "size": limit}
+    return es.search(index="photon", body=body)
+
+
 @app.route('/api/')
 def api():
     lang = request.args.get('lang')
@@ -43,53 +114,15 @@ def api():
     if not query:
         abort(400, "missing search term 'q': /?q=berlin")
 
-    req_body = {
-        "dis_max": {
-            "queries": [
-                {
-                    "match": {
-                        "collector.{0}".format(lang): {
-                            "query": query,
-                            # "minimum_should_match": "0<75% 4<65%",
-                            "operator": "and",
-                            "analyzer": "raw_stringanalyser"
-                        }
-                    }
-                },
-                {
-                    "match": {
-                        "collector.{0}.raw".format(lang): {
-                            "query": query,
-                            "operator": "and",
-                            # "minimum_should_match": "0<75% 4<65%",
-                            "analyzer": "raw_stringanalyser"}
-                    }
-                }
-            ]
-        }
-    }
+    results = query_index(query, lang, lon, lat, limit=limit)
 
-    if lon is not None and lat is not None:
-        req_body = {
-            "function_score": {
-                "boost_mode": "replace",
-                "query": req_body,
-                "script_score": {
-                    "params": {
-                        "lat": lat,
-                        "lon": lon
-                    },
-                    "script": "_score / ((1*doc['coordinate'].distanceInKm(lat, lon)/1000 + 1) + 0.5)"
-                }
-            }
-        }
-
-    body = {"query": req_body, "size": limit}
-    print(body)
-    results = es.search(index="photon", body=body)
+    if results['hits']['total'] < 1:
+        # no result could be found, query index again and don't expect to match all search terms
+        results = query_index(query, lang, lon, lat, match_all=False, limit=limit)
 
     debug = 'debug' in request.args
-    data = json.dumps(to_geo_json(results['hits']['hits'], lang=lang, debug=debug), indent=4 if debug else None)
+    data = to_geo_json(results['hits']['hits'], lang=lang, debug=debug)
+    data = json.dumps(data, indent=4 if debug else None)
     return Response(data, mimetype='application/json')
 
 
