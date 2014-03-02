@@ -40,6 +40,7 @@ def query_index(query, lang, lon, lat, match_all=True, limit=15):
                         "match": {
                             "collector.{0}.raw".format(lang): {
                                 "query": query,
+                                "boost": 1.6,
                                 'operator': 'and',
                                 "analyzer": "raw_stringanalyser"
                             }
@@ -90,6 +91,7 @@ def query_index(query, lang, lon, lat, match_all=True, limit=15):
         }
 
     body = {"query": req_body, "size": limit}
+    print(body)
     return es.search(index="photon", body=body)
 
 
