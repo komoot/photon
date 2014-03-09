@@ -30,20 +30,22 @@ def init_elasticsearch(index, force=False):
                 'name': {
                     "type": "object",
                     "properties": {
-                        "default": {"type": "string", "store": True, "analyzer": "stringanalyser",
+                        "default": {"type": "string", "store": True, "analyzer": "stringanalyser", "fields": {
+                            "raw": {"type": "string", "index_analyzer": "raw_stringanalyser",
+                                    "search_analyzer": "raw_stringanalyser"}},
                                     "copy_to": ["collector.en", "collector.de", "collector.fr", "collector.it", ]},
                         "en": {"type": "string", "store": True, "analyzer": "stringanalyser", "fields": {
-                        "raw": {"type": "string", "index_analyzer": "raw_stringanalyser",
-                                "search_analyzer": "raw_stringanalyser"}}, "copy_to": ["collector.en", ]},
+                            "raw": {"type": "string", "index_analyzer": "raw_stringanalyser",
+                                    "search_analyzer": "raw_stringanalyser"}}, "copy_to": ["collector.en", ]},
                         "de": {"type": "string", "store": True, "analyzer": "stringanalyser", "fields": {
-                        "raw": {"type": "string", "index_analyzer": "raw_stringanalyser",
-                                "search_analyzer": "raw_stringanalyser"}}, "copy_to": ["collector.de", ]},
+                            "raw": {"type": "string", "index_analyzer": "raw_stringanalyser",
+                                    "search_analyzer": "raw_stringanalyser"}}, "copy_to": ["collector.de", ]},
                         "fr": {"type": "string", "store": True, "analyzer": "stringanalyser", "fields": {
-                        "raw": {"type": "string", "index_analyzer": "raw_stringanalyser",
-                                "search_analyzer": "raw_stringanalyser"}}, "copy_to": ["collector.fr", ]},
+                            "raw": {"type": "string", "index_analyzer": "raw_stringanalyser",
+                                    "search_analyzer": "raw_stringanalyser"}}, "copy_to": ["collector.fr", ]},
                         "it": {"type": "string", "store": True, "analyzer": "stringanalyser", "fields": {
-                        "raw": {"type": "string", "index_analyzer": "raw_stringanalyser",
-                                "search_analyzer": "raw_stringanalyser"}}, "copy_to": ["collector.it", ]},
+                            "raw": {"type": "string", "index_analyzer": "raw_stringanalyser",
+                                    "search_analyzer": "raw_stringanalyser"}}, "copy_to": ["collector.it", ]},
                     }
                 },
 
