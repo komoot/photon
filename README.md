@@ -50,7 +50,7 @@ A complete example:
 mvn compile exec:java -Dexec.mainClass=de.komoot.photon.importer.NominatimImporter -Dexec.args="-h localhost -d nominatim_island -u christoph -P christoph -f /Users/christoph/iceland.solr.xml.gz -l en de es" > /home/christoph/island_import.log
 ```
 
-This will take some time (Europe ~ 12 hours).
+This will take some time. An Import of the enitire world took 11 days with the following configuration: Intel Xeon W3565 2.3 Ghz+ (4 cores / 8 threads), 48 GB RAM, 2 x 2 SATA software raid). Disk I/O will clearly be the bottleneck on systems without SSD.
 
 If you just want to check out _photon_ you can use our example dump of Iceland too: [sample_data/iceland.solr.xml.gz](sample_data/iceland.solr.xml.gz) (©&nbsp;[OpenStreetMap contributors](http://www.openstreetmap.org/copyright)).
 
