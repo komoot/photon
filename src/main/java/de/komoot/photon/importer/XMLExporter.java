@@ -64,6 +64,7 @@ public class XMLExporter implements Exporter {
 			write("places", entry.getPlaces());
 
 			write("ranking", 30 - entry.getRankSearch());
+			write("importance", entry.getImportance());
 
 			writer.writeEndElement();
 		} catch(XMLStreamException | IOException e) {
