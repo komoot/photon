@@ -47,6 +47,7 @@ public class XMLExporter implements Exporter {
 			write("coordinate", String.format(Locale.ENGLISH, "%f,%f", centroid.y, centroid.x));
 
 			write("osm_id", entry.getOsmId());
+			write("osm_type", entry.getOsmType() == null ? "" : entry.getOsmType().name());
 
 			write("name", entry.getName());
 
