@@ -68,6 +68,10 @@ public class NominatimEntry extends NominatimEntryParent {
 		updateAddressInformation();
 	}
 
+	public double getImportance() {
+	    return importance;
+	}
+
 	public Geometry getCentroid() {
 		return centroid;
 	}
