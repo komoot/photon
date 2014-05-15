@@ -78,20 +78,24 @@ def query_index(query, lang, lon, lat, match_all=True, limit=15):
     if lon is not None and lat is not None:
         req_body = {
             "function_score": {
-                "boost_mode": "replace",
+                "score_mode": "multiply",
                 "query": req_body,
-                "script_score": {
-                    "params": {
-                        "lat": lat,
-                        "lon": lon
-                    },
-                    "script": "_score / ((0.5 * doc['coordinate'].distanceInKm(lat, lon)/1000 + 1) + 0.5)"
-                }
+                "functions": [
+                    {
+                        "exp" :{
+                            "coordinate": {
+                                "origin": "%f, %f" % (lat, lon),
+                                "scale": "2km"
+                            }
+                        }
+
+                    }
+                ],
             }
         }
 
     body = {"query": req_body, "size": limit}
-    print(body)
+    print(json.dumps(body))
     return es.search(index="photon", body=body)
 
 
