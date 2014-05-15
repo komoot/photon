@@ -1,6 +1,6 @@
 import unittest
 
-from test.base import PhotonImplementationTest, BERLIN
+from base import PhotonImplementationTest, BERLIN
 
 
 class Addresses(PhotonImplementationTest):
