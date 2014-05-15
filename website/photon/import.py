@@ -5,6 +5,7 @@ This is just a raw importer for the sprint.
 import os
 import psycopg2
 import psycopg2.extras
+import simplejson
 
 from elasticsearch import Elasticsearch
 from elasticsearch.helpers import bulk_index
@@ -96,10 +97,22 @@ class NominatimExporter(object):
             'fr': raw['name_fr'],
             'en': raw['name_en'],
         }
+        row['id'] = '_'.join([raw['osm_type'], str(raw['osm_id'])])
         return row
 
 
-class ESImporter(object):
+class BaseConsumer(object):
+
+    def __iter__(self):
+        credentials = {
+            'dbname': os.environ.get('DBNAME', 'nominatim')
+        }
+        with NominatimExporter(credentials) as exporter:
+            for raw in exporter:
+                yield exporter.to_json(raw)
+
+
+class ESImporter(BaseConsumer):
 
     INDEX_CHUNK_SIZE = 10000
     ES_INDEX = "photon"
@@ -109,11 +122,6 @@ class ESImporter(object):
         data = []
         print('Starting with ES index', self.ES_INDEX)
         for row in self:
-            if self.exclude_row(row):
-                continue
-            row = self.format(row)
-            if row is None:
-                continue
             data.append(row)
             count += 1
             if count >= self.INDEX_CHUNK_SIZE:
@@ -149,15 +157,21 @@ class ESImporter(object):
     def set_id(self, row, *args):
         row['_id'] = self.join(args, "_")
 
-    def __iter__(self):
-        credentials = {
-            'dbname': os.environ.get('DBNAME', 'nominatim')
-        }
-        with NominatimExporter(credentials) as exporter:
-            for raw in exporter:
-                yield exporter.to_json(raw)
+
+class JSONBatchDump(BaseConsumer):
+    """Format for ES batch import."""
+
+    def __call__(self):
+        data = []
+        print('Starting export')
+        for row in self:
+            data.append('{"index": {}}')
+            data.append(simplejson.dumps(row))
+        with open('dump.eson', mode='w', encoding='utf-8') as f:
+            f.write('\n'.join(data))
+        print('Done!')
 
 
 if __name__ == "__main__":
-    importer = ESImporter()
+    importer = JSONBatchDump()
     importer()
