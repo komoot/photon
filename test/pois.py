@@ -1,6 +1,6 @@
 import unittest
 
-from test.base import PhotonImplementationTest
+from base import PhotonImplementationTest
 
 
 class Pois(PhotonImplementationTest):
