@@ -6,7 +6,7 @@ Precise geographic location may be tricky to test against non-OSM geocoders, as 
 There is no testing around house numbers yet because of the scarcity of data sources.
 
 ##### Test queries format
-The queries are written in separate CSV files. The files are using semicolons as separators, and are encoded as UTF-8. The schema used is: `comment;tried_query;tried_location;tried_language;expected_location;expected_location_tolerance;expected_name;expected_type;expected_housenumber;expected_street;expected_city;expected_postcode;expected_country`.
+The queries are written in separate CSV files. The files are using semicolons as separators, and are encoded as UTF-8. The schema used is: `comment;tried_query;tried_location;tried_language;expected_maximum_position;expected_location;expected_location_tolerance;expected_name;expected_type;expected_housenumber;expected_street;expected_city;expected_postcode;expected_country`.
 
 Each test uses the `tried_*` parameters that are filled, and is checking the result against the `expected_*` parameters that are filled.
 
