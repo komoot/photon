@@ -24,7 +24,7 @@ class Dataset:
   def import_csv(path):
     sets = []
     with open(path, "r") as source:
-      rows = csv.reader(source, delimiter = "\t")
+      rows = csv.reader(source, delimiter = ";")
       attributes = []
       for row in rows:
         if len(attributes) == 0:
@@ -33,11 +33,6 @@ class Dataset:
           data = dict()
           for i, attribute in enumerate(attributes):
             data[attribute] = row[i]
-            if attribute == "coordinate":
-              coordinates = row[i].split(",")
-              if len(coordinates) == 2:
-                data["latitude"] = coordinates[0]
-                data["longitude"] = coordinates[1]
           sets.append(data)
 
     return sets
