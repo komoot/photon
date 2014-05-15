@@ -1,0 +1,10 @@
+comment;tried_query;tried_location;tried_language;expected_location;expected_location_tolerance;expected_name;expected_type;expected_housenumber;expected_street;expected_city;expected_postcode;expected_country
+;paris france;;;;;;;;;Paris;;France
+;courbevoie france;;;;;;;;;Paris;;France
+;ile de france;;;;;;;;;Paris;;France
+;hauts de seine france;;;;;;;;;Paris;;France
+;rue des pyrénées paris france;;;;;;;;Rue des Pyrénées;Paris;;France
+;eiffel tower paris;;;;;;;;;Paris;;France
+;grands boulevards paris;;;;;;;;;Paris;;France
+;cimetière du père lachaise;;;;;;;;;Paris;75020;France
+;rue de lourmel;;;;;;;;Rue de Lourmel;Paris;75015;France
