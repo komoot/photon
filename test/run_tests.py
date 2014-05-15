@@ -12,12 +12,17 @@ queries_folder_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 
 URL = "http://photon.komoot.de/api/"
 
 class CSVDatasetTests(unittest.TestCase):
-    def assertMatch(self, search, expected, limit=1, comment=None, lang=None):
+    def assertMatch(self, search, expected, limit=1, comment=None, lang=None, center=None):
         params = {"q": search, "limit": limit}
         if lang:
             params['lang'] = lang
+        if center:
+            params['lat'], params['lon'] = center.split(',')
+
         results = requests.get(URL, params=params).json()
         
+        self.assertTrue(len(results['features']) > 0, "The service returned 0 results")
+
         data = results['features'][0]['properties']
 
         if expected.get('expected_city'):
@@ -47,7 +52,10 @@ class CSVDatasetTests(unittest.TestCase):
     def tests_from_datasets(self):
         for testset in Dataset.import_from_path(queries_folder_path):
             print('Testing query: %s' % testset['tried_query'])
-            self.assertMatch(testset['tried_query'], testset)
+            try:
+                self.assertMatch(testset['tried_query'], testset, center=testset.get('tried_location', None))
+            except AssertionError as e:
+                print("### FAIL: %s" % e)
 
 
 if __name__ == '__main__':
