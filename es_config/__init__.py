@@ -110,13 +110,13 @@ def init_elasticsearch(index, force=False):
             "analyzer": {
                 "stringanalyser": {
                     "tokenizer": "standard",
-                    "filter": ["lowercase", "asciifolding", "word_delimiter", "photonngram"],
-                    "char_filter": ["punctuationgreedy", ]
+                    "filter": ["word_delimiter", "lowercase", "asciifolding", "photonngram"],
+                    "char_filter": ["punctuationgreedy"]
                 },
                 "raw_stringanalyser": {
                     "tokenizer": "standard",
-                    "filter": ["lowercase", "asciifolding", "word_delimiter"],
-                    "char_filter": ["punctuationgreedy", ]
+                    "filter": ["word_delimiter", "lowercase", "asciifolding"],
+                    "char_filter": ["punctuationgreedy"]
                 },
             },
             "filter": {
