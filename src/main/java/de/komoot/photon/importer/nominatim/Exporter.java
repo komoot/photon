@@ -1,5 +1,11 @@
 package de.komoot.photon.importer.nominatim;
 
+import de.komoot.photon.importer.model.PhotonDoc;
+import org.apache.commons.dbcp.BasicDataSource;
+import org.postgis.jts.JtsWrapper;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
+
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -7,65 +13,70 @@ import java.sql.Statement;
 
 /**
  * Export nominatim data
+ *
  * @author felix
  */
 public class Exporter {
-    private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(Exporter.class);
+	private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(Exporter.class);
 
-    private Connection pgConnection;
-    private int fetchSize = 10000;
+	private Connection pgConnection;
+	private int fetchSize = 10000;
+	private final JdbcTemplate template;
 
-    public void export() {
+	public void export() {
 
-        long counter = 0;
-        long time = System.currentTimeMillis();
+		template.query("SELECT place_id, osm_type, osm_id, class, type, name, housenumber, postcode, extratags, ST_Envelope(geometry), parent_place_id, linked_place_id, rank_search, importance, calculated_country_code, centroid FROM placex WHERE linked_place_id IS NULL; ", new RowMapper<PhotonDoc>() {
+			@Override
+			public PhotonDoc mapRow(ResultSet rs, int rowNum) throws SQLException {
 
-        try {
-            Statement query = this.pgConnection.createStatement();
+				return null;
+			}
+		});
 
-            query.setFetchSize(this.fetchSize);
+		long counter = 0;
+		long time = System.currentTimeMillis();
 
-            ResultSet results = query.executeQuery("SELECT placex.place_id as place_id," +
-                    "name, housenumber, st_y(centroid) as lat, st_x(centroid) as lon, admin_level from placex limit 100;");
-            while (results.next()) {
-                if(counter % 10000 == 0 && counter > 0) {
-                    LOGGER.info(String.format("progress: %10d entries [%.1f / second]", counter, 10000000. / (1. * System.currentTimeMillis() - time)));
-                    time = System.currentTimeMillis();
-                }
+		try {
+			Statement query = this.pgConnection.createStatement();
+			query.setFetchSize(this.fetchSize);
 
-                Statement detailQuery = this.pgConnection.createStatement();
-                ResultSet detailResults = detailQuery.executeQuery("SELECT place_id, osm_type, osm_id, name->'name' as name, name->'ref' as name_ref, name->'place_name' as place_name, name->'short_name' as short_name, name->'official_name' as official_name, class," +
-                        " type, admin_level, rank_address FROM get_addressdata("+results.getString("place_id")+") WHERE isaddress ORDER BY rank_address DESC");
-                while(detailResults.next())
-                {
-                    LOGGER.info(String.format("%s - %s - %s", detailResults.getString("name"), detailResults.getString("admin_level"), detailResults.getString("rank_address")));
-                }
+			ResultSet results = query.executeQuery("SELECT placex.place_id as place_id, name, housenumber, st_y(centroid) as lat, st_x(centroid) as lon, admin_level from placex limit 20;");
+			while(results.next()) {
+				if(counter % 10000 == 0 && counter > 0) {
+					LOGGER.info(String.format("progress: %10d entries [%.1f / second]", counter, 10000000. / (1. * System.currentTimeMillis() - time)));
+					time = System.currentTimeMillis();
+				}
 
-                LOGGER.info(results.getString(1));
-            }
+				Statement detailQuery = this.pgConnection.createStatement();
+				ResultSet detailResults = detailQuery.executeQuery("SELECT place_id, osm_type, osm_id, name->'name' as name, name->'ref' as name_ref, name->'place_name' as place_name, name->'short_name' as short_name, name->'official_name' as official_name, class," +
+						" type, admin_level, rank_address FROM get_addressdata(" + results.getString("place_id") + ") WHERE isaddress ORDER BY rank_address DESC");
+				while(detailResults.next()) {
+					LOGGER.info(String.format("%s - %s - %s", detailResults.getString("name"), detailResults.getString("admin_level"), detailResults.getString("rank_address")));
+				}
 
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+				LOGGER.info(results.getString(1));
+			}
+		} catch(SQLException e) {
+			e.printStackTrace();
+		}
+	}
 
-    }
+	/**
+	 * @param host     database host
+	 * @param port     database port
+	 * @param database database name
+	 * @param username db username
+	 * @param password db username's password
+	 */
+	public Exporter(String host, int port, String database, String username, String password) {
+		BasicDataSource dataSource = new BasicDataSource();
 
+		dataSource.setUrl(String.format("jdbc:postgresql://%s:%d/%s", host, port, database));
+		dataSource.setUsername(username);
+		dataSource.setPassword(password);
+		dataSource.setDriverClassName(JtsWrapper.class.getCanonicalName());
+		dataSource.setDefaultAutoCommit(false);
 
-
-    /**
-     * @param host       database host
-     * @param port       database port
-     * @param database   database name
-     * @param username   db username
-     * @param password   db username's password
-     */
-    public Exporter(String host, int port, String database, String username, String password){
-        this.pgConnection = new PostgresConnector().connect(host,port,database,username,password);
-        try {
-            this.pgConnection.setAutoCommit(false);
-        } catch (SQLException e) {
-            LOGGER.error("cant disable autcommitting");
-        }
-    }
-
+		template = new JdbcTemplate(dataSource);
+	}
 }
