@@ -1,6 +1,8 @@
 target/
 data/
 
+dependency-reduced-pom.xml
+
 .idea/
 *.iml
 

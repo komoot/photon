@@ -45,7 +45,7 @@ public class Exporter {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            e.printStackTrace();
         }
 
     }
