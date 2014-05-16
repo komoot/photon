@@ -84,9 +84,9 @@ def query_index(query, lang, lon, lat, match_all=True, limit=15):
                 "query": req_body,
                 "functions": [
                     {
-                        "exp" :{
+                        "exp": {
                             "coordinate": {
-                                "origin": "%f, %f" % (lat, lon),
+                                "origin": "{0}, {1}".format(repr(lat), repr(lon)),
                                 "scale": "2km"
                             }
                         }
