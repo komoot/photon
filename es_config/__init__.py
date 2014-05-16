@@ -1,3 +1,4 @@
+import time
 from elasticsearch import Elasticsearch
 from elasticsearch.exceptions import NotFoundError
 
@@ -9,8 +10,11 @@ def init_elasticsearch(index, force=False):
         print('Deleted existing index:', index)
     except NotFoundError:
         pass
+        
     mappings = {
         'place': {
+            "dynamic": False,
+            "_all": {"enabled": False},
             "_boost": {"name": "ranking", "null_value": 1.0},
             "_id": {"path": "id"},
             'properties': {
@@ -110,13 +114,13 @@ def init_elasticsearch(index, force=False):
             "analyzer": {
                 "stringanalyser": {
                     "tokenizer": "standard",
-                    "filter": ["lowercase", "asciifolding", "word_delimiter", "photonngram"],
-                    "char_filter": ["punctuationgreedy", ]
+                    "filter": ["word_delimiter", "lowercase", "asciifolding", "photonngram"],
+                    "char_filter": ["punctuationgreedy"]
                 },
                 "raw_stringanalyser": {
                     "tokenizer": "standard",
-                    "filter": ["lowercase", "asciifolding", "word_delimiter"],
-                    "char_filter": ["punctuationgreedy", ]
+                    "filter": ["word_delimiter", "lowercase", "asciifolding"],
+                    "char_filter": ["punctuationgreedy"]
                 },
             },
             "filter": {
@@ -137,7 +141,15 @@ def init_elasticsearch(index, force=False):
 
     es.indices.create(index, body={'mappings': mappings, 'settings': {'index': index_settings}})
     print('index created:', index)
+    es.indices.put_alias(index, body={
+	"actions" : [{
+            "add" : {
+                 "index" : index,
+                 "alias" : "photon"
+            }
+        }]})
+
 
 
 if __name__ == "__main__":
-    init_elasticsearch("photon")
+    init_elasticsearch("photon_" + time.strftime("%Y-%m-%d"))
