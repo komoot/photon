@@ -231,7 +231,9 @@ def to_geo_json(hits, lang='en', debug=False):
 
         if not 'name' in properties and 'housenumber' in properties:
             if housenumber_first(lang):
-                properties['name'] = properties['housenumber'] + ' ' + properties['street']
+                housenumber = properties['housenumber'] or ''
+                street = properties['street'] or ''
+                properties['name'] = housenumber + ' ' + street
             else:
                 properties['name'] = properties['street'] + ' ' + properties['housenumber']
 

@@ -61,7 +61,7 @@ class NominatimExporter(object):
 
     def add_parent(self, child, row):
         if child['parent_place_id']:
-            sql = """SELECT parent_place_id, type, class, {name}, admin_level FROM placex WHERE place_id={parent_place_id}"""
+            sql = """SELECT parent_place_id, type as osm_value, class as osm_key, {name}, admin_level FROM placex WHERE place_id={parent_place_id}"""
             sql = sql.format(**{
                 'parent_place_id': child['parent_place_id'],
                 'name': self.get_name_clause()
@@ -74,9 +74,16 @@ class NominatimExporter(object):
             self.add_parent(parent, row)
 
     def add_parent_data(self, parent, row):
+        parent = dict(parent)
         name = parent['name']
         if name and not name in row['context_name']:
             row["context_name"].append(name)
+        if (parent.get('osm_key') == "boundary"
+           and parent.get('osm_value') == "administrative"
+           and parent.get('admin_level') == 8):
+            row['city'] = {
+                'default': name
+            }
 
     def __exit__(self, *args):
         self.cur.close()
@@ -171,5 +178,5 @@ class JSONBatchDump(BaseConsumer):
 
 
 if __name__ == "__main__":
-    importer = ESImporter()
+    importer = JSONBatchDump()
     importer()
