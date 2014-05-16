@@ -29,16 +29,16 @@ def assertMatch(search, expected, limit=1, comment=None, lang=None,
 
     if expected.get('expected_city'):
         assert 'city' in data, 'There is no city property in the result'
-        assert data['city'] == expected['expected_city'], 'Returned city is not the expected city'
+        assert data.get('city') == expected['expected_city'], 'Returned city is not the expected city'
 
     if expected.get('expected_country'):
-        assert data['country'] == expected['expected_country'], 'Returned country is not the expected country'
+        assert data.get('country') == expected['expected_country'], 'Returned country is not the expected country'
 
     if expected.get('expected_street'):
-        assert data['street'] == expected['expected_street'], 'Returned street is not the expected street'
+        assert data.get('street') == expected['expected_street'], 'Returned street is not the expected street'
 
     if expected.get('expected_postcode'):
-        assert data['postcode'] == expected['expected_postcode'], 'Returned postcode is not the expected postcode'
+        assert data.get('postcode') == expected['expected_postcode'], 'Returned postcode is not the expected postcode'
 
     # def assertExpected(expected):
     #     found = False
