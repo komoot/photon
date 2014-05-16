@@ -13,6 +13,8 @@ def init_elasticsearch(index, force=False):
         
     mappings = {
         'place': {
+            "dynamic": False,
+            "_all": {"enabled": False},
             "_boost": {"name": "ranking", "null_value": 1.0},
             "_id": {"path": "id"},
             'properties': {
