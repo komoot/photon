@@ -3,6 +3,9 @@ package de.komoot.photon.importer;
 import com.beust.jcommander.JCommander;
 import de.komoot.photon.importer.elasticsearch.Server;
 import de.komoot.photon.importer.nominatim.NominatimSource;
+import de.komoot.photon.importer.nominatim.NominatimUpdater;
+import de.komoot.photon.importer.elasticsearch.Importer;
+import de.komoot.photon.importer.elasticsearch.Updater;
 import org.elasticsearch.client.Client;
 import spark.Request;
 import spark.Response;
@@ -30,7 +33,15 @@ public class App {
 			nominatimSource.export();
 		}
 
-		get(new Route("/", "text/html") {
+        final NominatimUpdater nominatimUpdater = new NominatimUpdater(jct.getHost(), jct.getPort(), jct.getDatabase(), jct.getUser(), jct.getPassword());
+        Updater updater = new Updater(esNodeClient);
+        nominatimUpdater.setUpdater(updater);
+
+
+
+
+        get(new Route("/", "text/html") {
+
 			@Override
 			public Object handle(Request request, Response response) {
 				return "hallihallo";
@@ -47,7 +58,15 @@ public class App {
 		get(new Route("/update", "text/html") {
 			@Override
 			public Object handle(Request request, Response response) {
-				return "hallihallo";
+                Thread nominatimUpdaterThread = new Thread(){
+                    @Override
+                    public void run(){
+                       nominatimUpdater.update();
+
+                    }
+                };
+                nominatimUpdaterThread.start();
+                return "hallihallo";
 			}
 		});
 

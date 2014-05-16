@@ -11,5 +11,5 @@ import lombok.Data;
 public class UpdateRow {
 
     public Long placeId;
-    public Integer indexStatus; // 1 - index, 2 - update, 100 - delete
+    public Integer indexdStatus; // 1 - index, 2 - update, 100 - delete
 }

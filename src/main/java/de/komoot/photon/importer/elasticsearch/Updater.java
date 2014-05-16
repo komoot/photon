@@ -1,9 +1,12 @@
 package de.komoot.photon.importer.elasticsearch;
 
+import de.komoot.photon.importer.Utils;
 import de.komoot.photon.importer.model.PhotonDoc;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.client.Client;
+
+import java.io.IOException;
 
 /**
  * Updater for elasticsearch
@@ -25,15 +28,25 @@ public class Updater implements de.komoot.photon.importer.Updater {
     }
 
     public void create(PhotonDoc doc) {
-        this.bulkRequest.add(this.esClient.prepareIndex().setSource(doc).setId(String.valueOf(doc.getPlaceId())));
+        try {
+            this.bulkRequest.add(this.esClient.prepareIndex("photon", "place").setSource(Utils.convert(doc)).setId(String.valueOf(doc.getPlaceId())));
+        } catch (IOException e)
+        {
+
+        }
     }
 
     public void update(PhotonDoc doc) {
-        this.bulkRequest.add(this.esClient.prepareUpdate().setDoc(doc).setId(String.valueOf(doc.getPlaceId())));
-    }
+        try {
+            this.bulkRequest.add(this.esClient.prepareUpdate("photon", "place",String.valueOf(doc.getPlaceId())).setDoc(Utils.convert(doc)));
+        }catch (IOException e)
+        {
+
+        }
+            }
 
     public void delete(Long id) {
-        this.bulkRequest.add(this.esClient.prepareDelete().setId(String.valueOf(id)));
+        this.bulkRequest.add(this.esClient.prepareDelete("photon", "place", String.valueOf(id)));
     }
 
     private void updateDocuments(){
