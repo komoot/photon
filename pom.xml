@@ -89,7 +89,7 @@
 			<version>2.0.2</version>
 		</dependency>
 		<dependency>
-			<groupId>org.postgis</groupId>
+			<groupId>postgis</groupId>
 			<artifactId>postgis-jdbc-jts</artifactId>
 			<version>1.1.5</version>
 		</dependency>
