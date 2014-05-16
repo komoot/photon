@@ -2,7 +2,7 @@ package de.komoot.photon.importer;
 
 import com.beust.jcommander.JCommander;
 import de.komoot.photon.importer.elasticsearch.Server;
-import de.komoot.photon.importer.nominatim.Exporter;
+import de.komoot.photon.importer.nominatim.NominatimSource;
 import org.elasticsearch.client.Client;
 
 public class App {
@@ -19,8 +19,8 @@ public class App {
 		Client esNodeClient = esNode.getClient();
 
 		if(jct.isIndexer()) {
-			Exporter exporter = new Exporter(jct.getHost(), jct.getPort(), jct.getDatabase(), jct.getUser(), jct.getPassword());
-			exporter.export();
+			NominatimSource nominatimSource = new NominatimSource(jct.getHost(), jct.getPort(), jct.getDatabase(), jct.getUser(), jct.getPassword());
+			nominatimSource.export();
 		}
 
 		esNode.shutdown();
