@@ -4,7 +4,7 @@ import com.neovisionaries.i18n.CountryCode;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Point;
-import de.komoot.photon.importer.elasticsearch.Importer;
+import de.komoot.photon.importer.Importer;
 import de.komoot.photon.importer.model.PhotonDoc;
 import de.komoot.photon.importer.nominatim.model.AddressRow;
 import org.apache.commons.dbcp.BasicDataSource;
