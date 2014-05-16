@@ -9,6 +9,9 @@ def init_elasticsearch(index, force=False):
         print('Deleted existing index:', index)
     except NotFoundError:
         pass
+
+    decompound_de = [line.strip() for line in open('decompound/de.txt')]
+
     mappings = {
         'place': {
             "_boost": {"name": "ranking", "null_value": 1.0},
@@ -118,6 +121,11 @@ def init_elasticsearch(index, force=False):
                     "filter": ["lowercase", "asciifolding", "word_delimiter"],
                     "char_filter": ["punctuationgreedy", ]
                 },
+                "analyser_de" : {
+                    "tokenizer" : "standard",
+                    "filter": ["decompound_de"],
+                    "char_filter": ["punctuationgreedy"]
+                }
             },
             "filter": {
                 "photonngram": {
@@ -125,16 +133,20 @@ def init_elasticsearch(index, force=False):
                     "min_gram": 2,
                     "max_gram": 15
                 },
+                "decompound_de": {
+                    "type" : "dictionary_decompounder",
+                    "word_list": decompound_de
+                }
             },
             "char_filter": {
                 "punctuationgreedy": {
                     "type": "pattern_replace",
                     "pattern": "[\.,]"
-                },
-            },
+                }
+            }
         }
     }
-
+    
     es.indices.create(index, body={'mappings': mappings, 'settings': {'index': index_settings}})
     print('index created:', index)
 
