@@ -4,6 +4,7 @@ import com.neovisionaries.i18n.CountryCode;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Point;
+import de.komoot.photon.importer.Importer;
 import de.komoot.photon.importer.model.PhotonDoc;
 import lombok.extern.log4j.Log4j;
 import org.apache.commons.dbcp.BasicDataSource;
@@ -26,6 +27,12 @@ public class NominatimSource {
 	private Connection pgConnection;
 	private int fetchSize = 10000;
 	private final JdbcTemplate template;
+
+    private Importer importer;
+
+    public void setImporter(Importer importer){
+        this.importer = importer;
+    }
 
 	private final RowMapper<PhotonDoc> placeRowMapper = new RowMapper<PhotonDoc>() {
 		@Override
@@ -74,9 +81,14 @@ public class NominatimSource {
 			@Override
 			public void processRow(ResultSet rs) throws SQLException {
 				PhotonDoc doc = placeRowMapper.mapRow(rs, 0);
-				log.info(doc);
+
+                importer.addDocument(doc);
+
+
 			}
 		});
+
+        importer.finish();
 
 		//		long counter = 0;
 		//		long time = System.currentTimeMillis();

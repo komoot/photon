@@ -1,0 +1,53 @@
+package de.komoot.photon.importer.elasticsearch;
+
+import de.komoot.photon.importer.model.PhotonDoc;
+import org.elasticsearch.action.bulk.BulkRequestBuilder;
+import org.elasticsearch.action.bulk.BulkResponse;
+import org.elasticsearch.client.Client;
+
+/**
+ * Updater for elasticsearch
+ *
+ * @author felix
+ */
+public class Updater implements de.komoot.photon.importer.Updater {
+    private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(Importer.class);
+
+    private int documentCount = 0;
+
+    private Client esClient;
+    private BulkRequestBuilder bulkRequest;
+
+
+    public void finish(){
+        this.updateDocuments();
+
+    }
+
+    public void create(PhotonDoc doc) {
+        this.bulkRequest.add(this.esClient.prepareIndex().setSource(doc).setId(String.valueOf(doc.getPlaceId())));
+    }
+
+    public void update(PhotonDoc doc) {
+        this.bulkRequest.add(this.esClient.prepareUpdate().setDoc(doc).setId(String.valueOf(doc.getPlaceId())));
+    }
+
+    public void delete(Long id) {
+        this.bulkRequest.add(this.esClient.prepareDelete().setId(String.valueOf(id)));
+    }
+
+    private void updateDocuments(){
+        BulkResponse bulkResponse = bulkRequest.execute().actionGet();
+        if (bulkResponse.hasFailures()) {
+            LOGGER.error("Error while Bulkupdate");
+        }
+        this.bulkRequest = this.esClient.prepareBulk();
+    }
+
+    public Updater(Client esClient){
+        this.esClient = esClient;
+        this.bulkRequest = esClient.prepareBulk();
+
+    }
+
+}
