@@ -15,10 +15,10 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.RowMapper;
 
-import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Export nominatim data
@@ -95,7 +95,9 @@ public class NominatimSource {
 	}
 
 	public void export() {
-		template.query("SELECT " + selectColumns + " FROM placex WHERE linked_place_id IS NULL LIMIT 10; ", new RowCallbackHandler() {
+		final AtomicLong counter = new AtomicLong();
+
+		template.query("SELECT " + selectColumns + " FROM placex WHERE linked_place_id IS NULL AND st_contains(st_Setsrid('POLYGON ((5 47, 11 47, 11 49, 5 49, 5 47))'::geometry, 4326), centroid); ", new RowCallbackHandler() {
 			@Override
 			public void processRow(ResultSet rs) throws SQLException {
 				PhotonDoc doc = placeRowMapper.mapRow(rs, 0);
@@ -121,11 +123,15 @@ public class NominatimSource {
 
 				importer.addDocument(doc);
 
-				try {
-					LOGGER.warn(de.komoot.photon.importer.Utils.convert(doc).string());
-				} catch(IOException e) {
-					LOGGER.error("TODO: add description", e);
+				if(counter.getAndIncrement() % 1000 == 0) {
+					LOGGER.info(String.format("imported %d documents.", counter.longValue()));
+					//					try {
+					//						LOGGER.warn(de.komoot.photon.importer.Utils.convert(doc).string());
+					//					} catch(IOException e) {
+					//						LOGGER.error("TODO: add description", e);
+					//					}
 				}
+
 				//log.info(doc);
 			}
 		});
