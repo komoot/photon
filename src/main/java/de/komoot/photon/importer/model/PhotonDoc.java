@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * date: 16.05.14
+ * data graped from nominatim
  *
  * @author christoph
  */

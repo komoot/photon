@@ -47,7 +47,7 @@ public class NominatimSource {
 				importance = 0.75 - rankSearch / 40d;
 			}
 
-			Geometry geometry = Utils.extractGeometry(rs, "bbox");
+			Geometry geometry = DBUtils.extractGeometry(rs, "bbox");
 			Envelope envelope = geometry != null ? geometry.getEnvelopeInternal() : null;
 
 			PhotonDoc doc = new PhotonDoc(
@@ -56,14 +56,14 @@ public class NominatimSource {
 					rs.getLong("osm_id"),
 					rs.getString("class"),
 					rs.getString("type"),
-					Utils.getMap(rs, "name"),
+					DBUtils.getMap(rs, "name"),
 					rs.getString("housenumber"),
-					Utils.getMap(rs, "extratags"),
+					DBUtils.getMap(rs, "extratags"),
 					envelope,
 					rs.getLong("parent_place_id"),
 					importance,
 					CountryCode.getByCode(rs.getString("calculated_country_code")),
-					(Point) Utils.extractGeometry(rs, "centroid"),
+					(Point) DBUtils.extractGeometry(rs, "centroid"),
 					rs.getLong("linked_place_id")
 			);
 
@@ -84,7 +84,7 @@ public class NominatimSource {
 			public AddressRow mapRow(ResultSet rs, int rowNum) throws SQLException {
 				return new AddressRow(
 						rs.getLong("place_id"),
-						Utils.getMap(rs, "name"),
+						DBUtils.getMap(rs, "name"),
 						rs.getString("class"),
 						rs.getString("type"),
 						rs.getInt("rank_address"),
@@ -108,7 +108,6 @@ public class NominatimSource {
 						if(doc.getCity() != null) {
 							doc.getContext().add(doc.getCity());
 						}
-
 						doc.setCity(address.getName());
 					} else if(address.isStreet() && doc.getStreet() == null) {
 						doc.setStreet(address.getName());
@@ -127,11 +126,6 @@ public class NominatimSource {
 
 				if(counter.incrementAndGet() % 1000 == 0) {
 					LOGGER.info(String.format("imported %d documents.", counter.longValue()));
-					//					try {
-					//						LOGGER.warn(de.komoot.photon.importer.Utils.convert(doc).string());
-					//					} catch(IOException e) {
-					//						LOGGER.error("TODO: add description", e);
-					//					}
 				}
 
 				//log.info(doc);

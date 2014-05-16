@@ -37,6 +37,41 @@ public class App {
 			}
 		});
 
+		get(new Route("/bulk_import", "text/html") {
+			@Override
+			public Object handle(Request request, Response response) {
+				return "hallihallo";
+			}
+		});
+
+		get(new Route("/update", "text/html") {
+			@Override
+			public Object handle(Request request, Response response) {
+				return "hallihallo";
+			}
+		});
+
+		get(new Route("/create_dump", "text/html") {
+			@Override
+			public Object handle(Request request, Response response) {
+				return "hallihallo";
+			}
+		});
+
+		get(new Route("/import_dump", "text/html") {
+			@Override
+			public Object handle(Request request, Response response) {
+				return "hallihallo";
+			}
+		});
+
+		get(new Route("/geocode", "text/html") {
+			@Override
+			public Object handle(Request request, Response response) {
+				return "hallihallo";
+			}
+		});
+
 		//esNode.shutdown();
 	}
 }

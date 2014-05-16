@@ -6,7 +6,7 @@ import java.util.Arrays;
 import java.util.Map;
 
 /**
- * date: 16.05.14
+ * representation of an address as returned by nominatim's get_addressdata PL/pgSQL function
  *
  * @author christoph
  */
