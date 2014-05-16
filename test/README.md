@@ -14,6 +14,8 @@ The `comment` field is optional and used to write comments about the specific te
 
 The `expected_type` should be ignored in Photon right now, until such a type is implemented.
 
+If an `expected_*` field contains the text "NULL", then it checks the fact that the returned value is null or missing in the object.
+
 ### Test suites
 
 ##### Basic matching
