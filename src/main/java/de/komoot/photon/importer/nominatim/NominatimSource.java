@@ -4,9 +4,9 @@ import com.neovisionaries.i18n.CountryCode;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Point;
-import de.komoot.photon.importer.Importer;
+import de.komoot.photon.importer.elasticsearch.Importer;
 import de.komoot.photon.importer.model.PhotonDoc;
-import lombok.extern.log4j.Log4j;
+import de.komoot.photon.importer.nominatim.model.AddressRow;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.postgis.jts.JtsWrapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -16,23 +16,24 @@ import org.springframework.jdbc.core.RowMapper;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 /**
  * Export nominatim data
  *
  * @author felix, christoph
  */
-@Log4j
+//@Log4j
 public class NominatimSource {
 	private Connection pgConnection;
 	private int fetchSize = 10000;
 	private final JdbcTemplate template;
 
-    private Importer importer;
+	private Importer importer;
 
-    public void setImporter(Importer importer){
-        this.importer = importer;
-    }
+	public void setImporter(Importer importer) {
+		this.importer = importer;
+	}
 
 	private final RowMapper<PhotonDoc> placeRowMapper = new RowMapper<PhotonDoc>() {
 		@Override
@@ -76,19 +77,38 @@ public class NominatimSource {
 		return template.queryForObject("SELECT " + selectColumns + " FROM placex WHERE place_id = ?", new Object[]{placeId}, placeRowMapper);
 	}
 
+	public List<AddressRow> getAddresses(long placeId) {
+		return template.query("SELECT place_id, name, class, type, rank_address FROM get_addressdata(?) WHERE isaddress ORDER BY rank_address DESC", new Object[]{placeId}, new RowMapper<AddressRow>() {
+			@Override
+			public AddressRow mapRow(ResultSet rs, int rowNum) throws SQLException {
+				return new AddressRow(
+						rs.getLong("place_id"),
+						Utils.getMap(rs, "name"),
+						rs.getString("class"),
+						rs.getString("type"),
+						rs.getInt("rank_address")
+				);
+			}
+		});
+	}
+
 	public void export() {
 		template.query("SELECT " + selectColumns + " FROM placex WHERE linked_place_id IS NULL LIMIT 10; ", new RowCallbackHandler() {
 			@Override
 			public void processRow(ResultSet rs) throws SQLException {
 				PhotonDoc doc = placeRowMapper.mapRow(rs, 0);
 
-                importer.addDocument(doc);
+				final List<AddressRow> addresses = getAddresses(doc.getPlaceId());
+				for(AddressRow address : addresses) {
 
+				}
 
+				importer.addDocument(doc);
+				//log.info(doc);
 			}
 		});
 
-        importer.finish();
+		importer.finish();
 
 		//		long counter = 0;
 		//		long time = System.currentTimeMillis();

@@ -1,7 +1,6 @@
 package de.komoot.photon.importer.nominatim;
 
 import com.vividsolutions.jts.geom.Geometry;
-import lombok.extern.log4j.Log4j;
 import org.elasticsearch.common.collect.Maps;
 import org.openstreetmap.osmosis.hstore.PGHStore;
 import org.postgis.jts.JtsGeometry;
@@ -16,7 +15,6 @@ import java.util.Map;
  *
  * @author christoph
  */
-@Log4j
 public class Utils {
 	public static Map<String, String> getMap(ResultSet rs, String columnName) throws SQLException {
 		Map<String, String> tags = Maps.newHashMap();
@@ -35,7 +33,7 @@ public class Utils {
 	public static <T extends Geometry> T extractGeometry(ResultSet rs, String columnName) throws SQLException {
 		JtsGeometry geom = (JtsGeometry) rs.getObject(columnName);
 		if(geom == null) {
-			log.info("no geometry found in column " + columnName);
+			//info("no geometry found in column " + columnName);
 			return null;
 		}
 		return (T) geom.getGeometry();
