@@ -96,6 +96,33 @@ def query_index(query, lang, lon, lat, match_all=True, limit=15):
             }
         }
 
+    req_body = {
+        "filtered": {
+            "query": req_body,
+            "filter": {
+                "or": {
+                    "filters": [
+                        {
+                            "missing": {
+                                "field": "housenumber"
+                            }
+                        },
+                        {
+                            "query": {
+                                "match": {
+                                    "housenumber": {
+                                        "query": query,
+                                        "analyzer": "standard"
+                                    }
+                                }
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    }
+
     body = {"query": req_body, "size": limit}
     print(json.dumps(body))
     return es.search(index="photon", body=body)
