@@ -6,12 +6,29 @@ import requests
 
 from dataset import Dataset
 
-queries_folder = 'iledefrance'
-queries_folder_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), queries_folder)
-
 URL = "http://photon.komoot.de/api/"
 
 class CSVDatasetTests(unittest.TestCase):
+    QUERIES = 'queries'
+
+    def setUp(self):
+        self.QUERIES_PATH = os.path.join(os.path.dirname(os.path.realpath(__file__)), self.QUERIES)
+
+
+    def test_from_datasets(self):
+        for testset in Dataset.import_from_path(self.QUERIES_PATH):
+            print('Testing query: %s' % testset['tried_query'])
+            try:
+                self.assertMatch(testset['tried_query'], testset, center=testset.get('tried_location', None))
+            except AssertionError as e:
+                print("### FAIL: %s" % e)
+
+    def test_housenumbers_are_missing(self):
+        results = requests.get(URL, params={'q': 'rue bergère paris'}).json()
+        for result in results['features']:
+            self.assertFalse(result['properties'].get('housenumber'), 'There shouldn\'t be a housenumber in the result')
+
+
     def assertMatch(self, search, expected, limit=1, comment=None, lang=None, center=None):
         params = {"q": search, "limit": limit}
         if lang:
@@ -25,38 +42,32 @@ class CSVDatasetTests(unittest.TestCase):
 
         data = results['features'][0]['properties']
 
-        if expected.get('expected_city'):
-            self.assertTrue('city' in data, 'There is no city property in the result')
-            self.assertEqual(data['city'], expected['expected_city'], 'Returned city is not the expected city')
-        if expected.get('expected_country'):
-            self.assertEqual(data['country'], expected['expected_country'], 'Returned country is not the expected country')
-        if expected.get('expected_street'):
-            self.assertEqual(data['street'], expected['expected_street'], 'Returned street is not the expected street')
-        if expected.get('expected_postcode'):
-            self.assertEqual(data['postcode'], expected['expected_postcode'], 'Returned postcode is not the expected postcode')
-            
-        def assertExpected(expected):
-            found = False
-            for r in results['features']:
-                found = True
-                for key, value in expected.items():
-                    if not key in r['properties'] or not r['properties'][key] == value:
-                        found = False
-            if not found:
-                if comment:
-                    msg = "{}\nResults were:\n{}".format(comment, results)
+        def assert_property(expected_property_name):
+            expected_value = expected.get(expected_property_name) 
+            # This shortcut is based on the "happy coincidence" that photon's result properties match the names of the
+            # expected properties in the CSV.  
+            result_property_name = expected_property_name[len('expected_'):]
+            if expected_value:
+                if expected_value == 'NULL':
+                    self.assertFalse(data.get(result_property_name), 'There is a %s property in the result, but it should\'t' % result_property_name)
                 else:
-                    msg = "{expected} not found in {results}".format(results=results, expected=expected)
-                self.fail(msg)
+                    self.assertTrue(result_property_name in data, 'There is no %s property in the result' % result_property_name)
+                    self.assertEqual(str(data[result_property_name]), str(expected[expected_property_name]), 'Returned %s is not the expected %s' % (result_property_name, result_property_name))
 
-    def tests_from_datasets(self):
-        for testset in Dataset.import_from_path(queries_folder_path):
-            print('Testing query: %s' % testset['tried_query'])
-            try:
-                self.assertMatch(testset['tried_query'], testset, center=testset.get('tried_location', None))
-            except AssertionError as e:
-                print("### FAIL: %s" % e)
+        assert_property('expected_city')
+        assert_property('expected_country')
+        assert_property('expected_street')
+        assert_property('expected_postcode')
+        assert_property('expected_housenumber')
 
 
 if __name__ == '__main__':
+    # TODO: Clean arguments parsing:
+    # - an argument for the queries folder
+    # - an argument to define the geocoder implementation (photon/nominatim/...)
+    # - an argument to define the URL of the service
+    if len(sys.argv) > 1:
+        CSVDatasetTests.QUERIES = sys.argv.pop()
+    else:
+        CSVDatasetTests.QUERIES = 'queries'
     unittest.main(verbosity=2)

@@ -45,7 +45,7 @@ class NominatimExporter(object):
             name->'official_name' as official_name, name->'alt_name' as alt_name,
             (extratags->'place') as extra_place
             FROM placex
-            ORDER BY place_id
+            ORDER BY geometry
             """
         self.cur.execute(sql)
         print('Query executed with itersize', self.cur.itersize)
@@ -88,11 +88,9 @@ class NominatimExporter(object):
     def to_json(self, raw):
         row = dict(raw)
         self.add_parents(row)
-        row['coordinate'] = {
-            'lat': raw['lat'],
-            'lon': raw['lon']
-        }
+        row['coordinate'] = ','.join([repr(raw['lat']), repr(raw['lon'])])
         row['name'] = {
+            'default': raw['name'],
             'de': raw['name_de'],
             'fr': raw['name_fr'],
             'en': raw['name_en'],
@@ -173,5 +171,5 @@ class JSONBatchDump(BaseConsumer):
 
 
 if __name__ == "__main__":
-    importer = JSONBatchDump()
+    importer = ESImporter()
     importer()

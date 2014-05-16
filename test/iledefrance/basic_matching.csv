@@ -1,10 +1,12 @@
 comment;tried_query;tried_location;tried_language;expected_maximum_position;expected_location;expected_location_tolerance;expected_name;expected_type;expected_housenumber;expected_street;expected_city;expected_postcode;expected_country
-;paris france;;;;;;;;;;Paris;;France
-;courbevoie france;;;;;;;;;;Courbevoie;92400;France
-;ile de france;;;;;;;;;;;;France
-;hauts de seine france;;;;;;;;;;;;France
-;rue des pyrénées paris france;;;;;;;;;Rue des Pyrénées;Paris;;France
-;eiffel tower paris;;;;;;;;;;Paris;;France
-;grands boulevards paris;;;;;;;;;;Paris;;France
-;cimetière du père lachaise;;;;;;;;;;Paris;75020;France
-;rue de lourmel paris;;;;;;;;;Rue de Lourmel;Paris;75015;France
+;paris france;;;;;;;;NULL;;Paris;;France
+;courbevoie france;;;;;;;;NULL;;Courbevoie;92400;France
+;ile de france;;;;;;;;NULL;;;;France
+;hauts de seine france;;;;;;;;NULL;;;;France
+;rue des pyrénées paris france;;;;;;;;NULL;Rue des Pyrénées;Paris;;France
+;eiffel tower paris;;;;;;;;NULL;;Paris;;France
+;grands boulevards paris;;;;;;;;NULL;;Paris;;France
+;cimetière du père lachaise;;;;;;;;NULL;;Paris;75020;France
+;rue de lourmel paris;;;;;;;;NULL;Rue de Lourmel;Paris;75015;France
+;25 rue bergère paris;;;;;;;;25;Rue Bergère;Paris;75015;France
+;rue bergère paris;;;;;;;;NULL;Rue Bergère;Paris;75015;France
