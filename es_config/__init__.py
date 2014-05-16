@@ -22,6 +22,7 @@ def init_elasticsearch(index, force=False):
                 'osm_id': {"type": "long", "index": "not_analyzed"},
 
                 'osm_key': {"type": "string", "index": "no"},
+                'osm_type': {"type": "string", "index": "no"},
                 'osm_value': {"type": "string", "index": "no"},
 
                 'street': {"type": "string", "index": "no", 
