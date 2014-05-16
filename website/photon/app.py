@@ -10,6 +10,7 @@ from flask import Flask, render_template, request, abort, Response
 app = Flask(__name__)
 DEBUG = os.environ.get('DEBUG', False)
 PORT = os.environ.get('PHOTON_PORT', 5001)
+HOST = os.environ.get('PHOTON_HOST', '0.0.0.0')
 SUPPORTED_LANGUAGES = ['de', 'en', 'fr', 'it']
 
 solr = pysolr.Solr(os.environ.get("SOLR_ENDPOINT", 'http://localhost:8983/solr/testing'), timeout=10)
@@ -23,64 +24,30 @@ def index():
 
 
 def query_index(query, lang, lon, lat, match_all=True, limit=15):
-    if match_all:
-        req_body = {
-            "dis_max": {
-                "queries": [
-                    {
-                        "match": {
-                            "collector.{0}".format(lang): {
-                                "query": query,
-                                'operator': 'and',
-                                "analyzer": "raw_stringanalyser",
-                                "fuzziness": 2
-                            }
-                        }
-                    },
-                    {
-                        "match": {
-                            "collector.{0}.raw".format(lang): {
-                                "query": query,
-                                "boost": 1.6,
-                                'operator': 'and',
-                                "analyzer": "raw_stringanalyser",
-                                "fuzziness": 2
-                            }
-                        }
-                    }
-                ]
-            }
+
+    req_body = {
+        "multi_match": {
+            "query": query,
+            "type": "best_fields",
+            "analyzer": "raw_stringanalyser",
+            'operator': 'and' if match_all else 'or',
+            "fields": [
+                "name.{0}^3".format(lang),
+                "name.{0}.raw^5".format(lang),
+                "name.default^2",
+                "name.default.raw^5",
+                "collector.{0}.raw".format(lang),
+                "collector.{0}".format(lang)
+            ],
+            "fuzziness": 1,
         }
-    else:
-        req_body = {
-            "dis_max": {
-                "queries": [
-                    {
-                        "match": {
-                            "collector.{0}".format(lang): {
-                                "query": query,
-                                "analyzer": "raw_stringanalyser",
-                                'minimum_should_match': -1
-                            }
-                        }
-                    },
-                    {
-                        "match": {
-                            "collector.{0}.raw".format(lang): {
-                                "query": query,
-                                "analyzer": "raw_stringanalyser",
-                                'minimum_should_match': -1
-                            }
-                        }
-                    }
-                ]
-            }
-        }
+    }
 
     if lon is not None and lat is not None:
         req_body = {
             "function_score": {
-                "score_mode": "multiply",
+                "score_mode": "multiply",  # How functions score are mixed
+                "boost_mode": "sum",  # how total will be mixed to search score
                 "query": req_body,
                 "functions": [
                     {
@@ -91,6 +58,11 @@ def query_index(query, lang, lon, lat, match_all=True, limit=15):
                             }
                         }
 
+                    },
+                    {
+                        "script_score": {
+                            "script": "_score * doc['ranking'].value"
+                        }
                     }
                 ],
             }
@@ -209,7 +181,6 @@ def housenumber_first(lang):
 
 def to_geo_json(hits, lang='en', debug=False):
     features = []
-
     for hit in hits:
         source = hit['_source']
 
@@ -230,12 +201,13 @@ def to_geo_json(hits, lang='en', debug=False):
                 properties[attr] = value
 
         if not 'name' in properties and 'housenumber' in properties:
+            housenumber = properties['housenumber'] or ''
+            street = properties['street'] or ''
+
             if housenumber_first(lang):
-                housenumber = properties['housenumber'] or ''
-                street = properties['street'] or ''
                 properties['name'] = housenumber + ' ' + street
             else:
-                properties['name'] = properties['street'] + ' ' + properties['housenumber']
+                properties['name'] = street + ' ' + housenumber
 
         coordinates = [float(el) for el in source['coordinate'].split(',')]
         coordinates.reverse()
@@ -313,4 +285,4 @@ def search():
 
 
 if __name__ == "__main__":
-    app.run(debug=DEBUG, port=PORT)
+    app.run(debug=DEBUG, port=PORT, host=HOST)

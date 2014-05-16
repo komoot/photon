@@ -15,7 +15,6 @@ def init_elasticsearch(index, force=False):
         'place': {
             "dynamic": False,
             "_all": {"enabled": False},
-            "_boost": {"name": "ranking", "null_value": 1.0},
             "_id": {"path": "id"},
             'properties': {
                 'coordinate': {"type": "geo_point"},
@@ -36,20 +35,19 @@ def init_elasticsearch(index, force=False):
                     "properties": {
                         "default": {"type": "string",  "analyzer": "stringanalyser", "fields": {
                             "raw": {"type": "string", "index_analyzer": "raw_stringanalyser",
-                                    "search_analyzer": "raw_stringanalyser"}},
-                                    "copy_to": ["collector.en", "collector.de", "collector.fr", "collector.it"]},
+                                    "search_analyzer": "raw_stringanalyser"}}},
                         "en": {"type": "string",  "analyzer": "stringanalyser", "fields": {
                             "raw": {"type": "string", "index_analyzer": "raw_stringanalyser",
-                                    "search_analyzer": "raw_stringanalyser"}}, "copy_to": ["collector.en"]},
+                                    "search_analyzer": "raw_stringanalyser"}}},
                         "de": {"type": "string",  "analyzer": "stringanalyser", "fields": {
                             "raw": {"type": "string", "index_analyzer": "raw_stringanalyser",
-                                    "search_analyzer": "raw_stringanalyser"}}, "copy_to": ["collector.de"]},
+                                    "search_analyzer": "raw_stringanalyser"}}},
                         "fr": {"type": "string",  "analyzer": "stringanalyser", "fields": {
                             "raw": {"type": "string", "index_analyzer": "raw_stringanalyser",
-                                    "search_analyzer": "raw_stringanalyser"}}, "copy_to": ["collector.fr"]},
+                                    "search_analyzer": "raw_stringanalyser"}}},
                         "it": {"type": "string",  "analyzer": "stringanalyser", "fields": {
                             "raw": {"type": "string", "index_analyzer": "raw_stringanalyser",
-                                    "search_analyzer": "raw_stringanalyser"}}, "copy_to": ["collector.it"]},
+                                    "search_analyzer": "raw_stringanalyser"}}},
                     }
                 },
 
