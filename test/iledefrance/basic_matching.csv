@@ -8,3 +8,5 @@ comment;tried_query;tried_location;tried_language;expected_maximum_position;expe
 ;grands boulevards paris;;;;;;;;NULL;;Paris;;France
 ;cimetière du père lachaise;;;;;;;;NULL;;Paris;75020;France
 ;rue de lourmel paris;;;;;;;;NULL;Rue de Lourmel;Paris;75015;France
+;25 rue bergère paris;;;;;;;;25;Rue Bergère;Paris;75015;France
+;rue bergère paris;;;;;;;;NULL;Rue Bergère;Paris;75015;France

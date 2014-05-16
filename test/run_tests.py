@@ -15,13 +15,18 @@ class CSVDatasetTests(unittest.TestCase):
         self.QUERIES_PATH = os.path.join(os.path.dirname(os.path.realpath(__file__)), self.QUERIES)
 
 
-    def tests_from_datasets(self):
+    def test_from_datasets(self):
         for testset in Dataset.import_from_path(self.QUERIES_PATH):
             print('Testing query: %s' % testset['tried_query'])
             try:
                 self.assertMatch(testset['tried_query'], testset, center=testset.get('tried_location', None))
             except AssertionError as e:
                 print("### FAIL: %s" % e)
+
+    def test_housenumbers_are_missing(self):
+        results = requests.get(URL, params={'q': 'rue bergère paris'}).json()
+        for result in results['features']:
+            self.assertFalse(result['properties'].get('housenumber'), 'There shouldn\'t be a housenumber in the result')
 
 
     def assertMatch(self, search, expected, limit=1, comment=None, lang=None, center=None):
@@ -47,7 +52,7 @@ class CSVDatasetTests(unittest.TestCase):
                     self.assertFalse(data.get(result_property_name), 'There is a %s property in the result, but it should\'t' % result_property_name)
                 else:
                     self.assertTrue(result_property_name in data, 'There is no %s property in the result' % result_property_name)
-                    self.assertEqual(data[result_property_name], expected[expected_property_name], 'Returned %s is not the expected %s' % (result_property_name, result_property_name))
+                    self.assertEqual(str(data[result_property_name]), str(expected[expected_property_name]), 'Returned %s is not the expected %s' % (result_property_name, result_property_name))
 
         assert_property('expected_city')
         assert_property('expected_country')
