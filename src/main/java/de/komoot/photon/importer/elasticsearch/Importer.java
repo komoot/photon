@@ -34,6 +34,8 @@ public class Importer implements de.komoot.photon.importer.Importer {
 	}
 
 	private void saveDocuments() {
+        if(this.documentCount < 1) return;
+
 		BulkResponse bulkResponse = bulkRequest.execute().actionGet();
 		if(bulkResponse.hasFailures()) {
 			LOGGER.error("Error while Bulkimport");
@@ -43,6 +45,7 @@ public class Importer implements de.komoot.photon.importer.Importer {
 
 	public void finish() {
 		this.saveDocuments();
+        this.documentCount = 0;
 	}
 
 	public Importer(Client esClient) {

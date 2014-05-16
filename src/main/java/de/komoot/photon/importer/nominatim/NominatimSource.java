@@ -97,7 +97,7 @@ public class NominatimSource {
 	public void export() {
 		final AtomicLong counter = new AtomicLong();
 
-		template.query("SELECT " + selectColumns + " FROM placex WHERE linked_place_id IS NULL AND st_contains(st_Setsrid('POLYGON ((5 47, 11 47, 11 49, 5 49, 5 47))'::geometry, 4326), centroid); ", new RowCallbackHandler() {
+		template.query("SELECT " + selectColumns + " FROM placex WHERE linked_place_id IS NULL; ", new RowCallbackHandler() {
 			@Override
 			public void processRow(ResultSet rs) throws SQLException {
 				PhotonDoc doc = placeRowMapper.mapRow(rs, 0);
