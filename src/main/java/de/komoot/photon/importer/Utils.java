@@ -26,7 +26,8 @@ public class Utils {
 				.field("osm_id", doc.getOsmId())
 				.field("osm_type", doc.getOsmType())
 				.field("osm_key", doc.getTagKey())
-				.field("osm_value", doc.getTagValue());
+				.field("osm_value", doc.getTagValue())
+				.field("importance", doc.getImportance());
 
 		if(doc.getCentroid() != null) {
 			builder.startObject("coordinate")
