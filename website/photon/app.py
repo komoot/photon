@@ -32,7 +32,8 @@ def query_index(query, lang, lon, lat, match_all=True, limit=15):
                             "collector.{0}".format(lang): {
                                 "query": query,
                                 'operator': 'and',
-                                "analyzer": "raw_stringanalyser"
+                                "analyzer": "raw_stringanalyser",
+                                "fuzziness": 2
                             }
                         }
                     },
@@ -42,7 +43,8 @@ def query_index(query, lang, lon, lat, match_all=True, limit=15):
                                 "query": query,
                                 "boost": 1.6,
                                 'operator': 'and',
-                                "analyzer": "raw_stringanalyser"
+                                "analyzer": "raw_stringanalyser",
+                                "fuzziness": 2
                             }
                         }
                     }
