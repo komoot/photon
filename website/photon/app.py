@@ -32,7 +32,8 @@ def query_index(query, lang, lon, lat, match_all=True, limit=15):
                             "collector.{0}".format(lang): {
                                 "query": query,
                                 'operator': 'and',
-                                "analyzer": "raw_stringanalyser"
+                                "analyzer": "raw_stringanalyser",
+                                "fuzziness": 2
                             }
                         }
                     },
@@ -42,7 +43,8 @@ def query_index(query, lang, lon, lat, match_all=True, limit=15):
                                 "query": query,
                                 "boost": 1.6,
                                 'operator': 'and',
-                                "analyzer": "raw_stringanalyser"
+                                "analyzer": "raw_stringanalyser",
+                                "fuzziness": 2
                             }
                         }
                     }
@@ -94,8 +96,44 @@ def query_index(query, lang, lon, lat, match_all=True, limit=15):
             }
         }
 
+    # if housenumber is not null AND name.default is null, housenumber must
+    # match the request. This will filter out the house from the requests
+    # if the housenumber is not explicitelly in the request
+    req_body = {
+        "filtered": {
+            "query": req_body,
+            "filter": {
+                "or": {
+                    "filters": [
+                        {
+                            "missing": {
+                                "field": "housenumber"
+                            }
+                        },
+                        {
+                            "query": {
+                                "match": {
+                                    "housenumber": {
+                                        "query": query,
+                                        "analyzer": "standard"
+                                    }
+                                }
+                            }
+                        },
+                        {
+                            "exists": {
+                                "field": "name.default"
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    }
+
     body = {"query": req_body, "size": limit}
-    print(json.dumps(body))
+    if DEBUG:
+        print(json.dumps(body))
     return es.search(index="photon", body=body)
 
 
