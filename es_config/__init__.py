@@ -22,8 +22,7 @@ def init_elasticsearch(index, force=False):
 
                 'street': {"type": "string", "index": "no", "store": True,
                            "copy_to": ["collector.en", "collector.de", "collector.fr", "collector.it", ]},
-                'housenumber': {"type": "string", "index": "no", "store": True,
-                                "copy_to": ["collector.en", "collector.de", "collector.fr", "collector.it", ]},
+                'housenumber': {"type": "string", "index": "not_analyzed", "store": True},
                 'postcode': {"type": "string", "index": "no", "store": True,
                              "copy_to": ["collector.en", "collector.de", "collector.fr", "collector.it", ]},
 
