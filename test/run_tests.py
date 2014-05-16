@@ -6,12 +6,23 @@ import requests
 
 from dataset import Dataset
 
-queries_folder = 'iledefrance'
-queries_folder_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), queries_folder)
-
 URL = "http://photon.komoot.de/api/"
 
 class CSVDatasetTests(unittest.TestCase):
+    QUERIES = 'queries'
+
+    def setUp(self):
+        self.QUERIES_PATH = os.path.join(os.path.dirname(os.path.realpath(__file__)), self.QUERIES)
+
+
+    def tests_from_datasets(self):
+        for testset in Dataset.import_from_path(self.QUERIES_PATH):
+            print('Testing query: %s' % testset['tried_query'])
+            try:
+                self.assertMatch(testset['tried_query'], testset, center=testset.get('tried_location', None))
+            except AssertionError as e:
+                print("### FAIL: %s" % e)
+
     def assertMatch(self, search, expected, limit=1, comment=None, lang=None, center=None):
         params = {"q": search, "limit": limit}
         if lang:
@@ -49,14 +60,14 @@ class CSVDatasetTests(unittest.TestCase):
                     msg = "{expected} not found in {results}".format(results=results, expected=expected)
                 self.fail(msg)
 
-    def tests_from_datasets(self):
-        for testset in Dataset.import_from_path(queries_folder_path):
-            print('Testing query: %s' % testset['tried_query'])
-            try:
-                self.assertMatch(testset['tried_query'], testset, center=testset.get('tried_location', None))
-            except AssertionError as e:
-                print("### FAIL: %s" % e)
-
 
 if __name__ == '__main__':
+    # TODO: Clean arguments parsing:
+    # - an argument for the queries folder
+    # - an argument to define the geocoder implementation (photon/nominatim/...)
+    # - an argument to define the URL of the service
+    if len(sys.argv) > 1:
+        CSVDatasetTests.QUERIES = sys.argv.pop()
+    else:
+        CSVDatasetTests.QUERIES = 'queries'
     unittest.main(verbosity=2)
