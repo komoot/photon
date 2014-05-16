@@ -90,6 +90,7 @@ class NominatimExporter(object):
         self.add_parents(row)
         row['coordinate'] = ','.join([repr(raw['lat']), repr(raw['lon'])])
         row['name'] = {
+            'default': raw['name'],
             'de': raw['name_de'],
             'fr': raw['name_fr'],
             'en': raw['name_en'],
@@ -170,5 +171,5 @@ class JSONBatchDump(BaseConsumer):
 
 
 if __name__ == "__main__":
-    importer = JSONBatchDump()
+    importer = ESImporter()
     importer()
