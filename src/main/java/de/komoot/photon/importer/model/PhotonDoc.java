@@ -5,7 +5,9 @@ import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Point;
 import lombok.Data;
 
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * date: 16.05.14
@@ -32,5 +34,5 @@ public class PhotonDoc {
 
 	private Map<String, String> street;
 	private Map<String, String> city;
-	private Map<String, Map<String, String>> context;
+	private Set<Map<String, String>> context = new HashSet<Map<String, String>>();
 }
