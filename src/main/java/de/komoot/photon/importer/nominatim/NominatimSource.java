@@ -114,6 +114,8 @@ public class NominatimSource {
 						doc.setStreet(address.getName());
 					} else if(address.isPostcode() && doc.getPostcode() == null && address.getName() != null) {
 						doc.setPostcode(address.getName().get("ref"));
+					} else if(address.isCountry()) {
+						doc.setCountry(address.getName());
 					} else {
 						if(address.isUsefulForContext()) {
 							doc.getContext().add(address.getName());
@@ -123,7 +125,7 @@ public class NominatimSource {
 
 				importer.addDocument(doc);
 
-				if(counter.getAndIncrement() % 1000 == 0) {
+				if(counter.incrementAndGet() % 1000 == 0) {
 					LOGGER.info(String.format("imported %d documents.", counter.longValue()));
 					//					try {
 					//						LOGGER.warn(de.komoot.photon.importer.Utils.convert(doc).string());
@@ -137,6 +139,7 @@ public class NominatimSource {
 		});
 
 		importer.finish();
+		LOGGER.info("finished import of photon " + counter.longValue() + " documents.");
 	}
 
 	/**

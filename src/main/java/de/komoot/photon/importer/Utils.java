@@ -25,14 +25,15 @@ public class Utils {
 		XContentBuilder builder = XContentFactory.jsonBuilder().startObject()
 				.field("osm_id", doc.getOsmId())
 				.field("osm_type", doc.getOsmType())
-
 				.field("osm_key", doc.getTagKey())
-				.field("osm_value", doc.getTagValue())
+				.field("osm_value", doc.getTagValue());
 
-				.startObject("coordinate")
-				.field("lat", doc.getCentroid().getY())
-				.field("lon", doc.getCentroid().getX())
-				.endObject();
+		if(doc.getCentroid() != null) {
+			builder.startObject("coordinate")
+					.field("lat", doc.getCentroid().getY())
+					.field("lon", doc.getCentroid().getX())
+					.endObject();
+		}
 
 		if(doc.getStreet() != null && doc.getStreet().get("name") != null) {
 			builder.field("street", doc.getStreet().get("name"));
@@ -48,6 +49,7 @@ public class Utils {
 
 		writeIntlNames(builder, doc.getName(), "name");
 		writeIntlNames(builder, doc.getCity(), "city");
+		writeIntlNames(builder, doc.getCountry(), "country");
 		writeIntlNames(builder, doc.getContext(), "context");
 
 		return builder;

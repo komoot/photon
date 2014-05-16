@@ -70,4 +70,11 @@ public class AddressRow {
 
 		return false;
 	}
+
+	public boolean isCountry() {
+		if(adminLevel == 2 && "boundary".equals(osmKey) && "administrative".equals(osmValue)) {
+			return true;
+		}
+		return false;
+	}
 }
