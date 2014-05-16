@@ -96,6 +96,9 @@ def query_index(query, lang, lon, lat, match_all=True, limit=15):
             }
         }
 
+    # if housenumber is not null AND name.default is null, housenumber must
+    # match the request. This will filter out the house from the requests
+    # if the housenumber is not explicitelly in the request
     req_body = {
         "filtered": {
             "query": req_body,
@@ -115,6 +118,11 @@ def query_index(query, lang, lon, lat, match_all=True, limit=15):
                                         "analyzer": "standard"
                                     }
                                 }
+                            }
+                        },
+                        {
+                            "exists": {
+                                "field": "name.default"
                             }
                         }
                     ]
