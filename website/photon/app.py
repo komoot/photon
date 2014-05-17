@@ -8,7 +8,7 @@ from flask import Flask, render_template, request, abort, Response
 
 
 app = Flask(__name__)
-DEBUG = os.environ.get('DEBUG', False)
+DEBUG = os.environ.get('DEBUG', True)
 PORT = os.environ.get('PHOTON_PORT', 5001)
 SUPPORTED_LANGUAGES = ['de', 'en', 'fr', 'it']
 

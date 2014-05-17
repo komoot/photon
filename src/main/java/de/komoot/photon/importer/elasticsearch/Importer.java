@@ -39,8 +39,8 @@ public class Importer implements de.komoot.photon.importer.Importer {
 			final InputStream index_settings = Thread.currentThread().getContextClassLoader().getResourceAsStream("index_settings.json");
 
 			try {
-				this.esClient.admin().indices().prepareCreate("photon").setSettings(IOUtils.toString(mappings)).execute().actionGet();
-				this.esClient.admin().indices().preparePutMapping("photon").setType("place").setSource(IOUtils.toString(index_settings)).execute().actionGet();
+				this.esClient.admin().indices().prepareCreate("photon").setSettings(IOUtils.toString(index_settings)).execute().actionGet();
+				this.esClient.admin().indices().preparePutMapping("photon").setType("place").setSource(IOUtils.toString(mappings)).execute().actionGet();
 			} catch(IOException e) {
 				log.error("cannot setup index, elastic search config files not readable", e);
 			}
