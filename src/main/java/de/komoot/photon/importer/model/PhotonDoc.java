@@ -44,7 +44,7 @@ public class PhotonDoc {
 
 		if(name.isEmpty()) return false;
 
-		if(linkedPlaceId == 0) return false;
+		if(linkedPlaceId > 0) return false;
 
 		return true;
 	}
