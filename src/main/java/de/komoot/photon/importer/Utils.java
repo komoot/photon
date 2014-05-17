@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * date: 16.05.14
+ * helper functions to create convert a photon document to XContentBuilder object / JSON
  *
  * @author christoph
  */

@@ -24,7 +24,7 @@ public class NominatimUpdater {
 	private Integer minRank = 1;
 	private Integer maxRank = 30;
 	private final JdbcTemplate template;
-	private NominatimSource exporter;
+	private NominatimConnector exporter;
 
 	private Updater updater;
 
@@ -94,7 +94,7 @@ public class NominatimUpdater {
 		dataSource.setDriverClassName(JtsWrapper.class.getCanonicalName());
 		dataSource.setDefaultAutoCommit(false);
 
-		exporter = new NominatimSource(host, port, database, username, password);
+		exporter = new NominatimConnector(host, port, database, username, password);
 		template = new JdbcTemplate(dataSource);
 	}
 }

@@ -7,16 +7,16 @@ import com.vividsolutions.jts.geom.Point;
 import de.komoot.photon.importer.Importer;
 import de.komoot.photon.importer.model.PhotonDoc;
 import de.komoot.photon.importer.nominatim.model.AddressRow;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.postgis.jts.JtsWrapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.MessageFormat;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -25,17 +25,12 @@ import java.util.concurrent.atomic.AtomicLong;
  *
  * @author felix, christoph
  */
-//@Log4j
-public class NominatimSource {
-	private final static Logger LOGGER = LoggerFactory.getLogger(NominatimSource.class);
+@Slf4j
+public class NominatimConnector {
 	private final JdbcTemplate template;
-
-	private Importer importer;
-
-	public void setImporter(Importer importer) {
-		this.importer = importer;
-	}
-
+	/**
+	 * maps a placex row in nominatim to a photon doc, some attributes are still missing and can be derived by connected address items.
+	 */
 	private final RowMapper<PhotonDoc> placeRowMapper = new RowMapper<PhotonDoc>() {
 		@Override
 		public PhotonDoc mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -66,16 +61,39 @@ public class NominatimSource {
 					(Point) DBUtils.extractGeometry(rs, "centroid"),
 					rs.getLong("linked_place_id")
 			);
-
 			doc.setPostcode(rs.getString("postcode"));
-
 			return doc;
 		}
 	};
-	private final String selectColumns = "place_id, osm_type, osm_id, class, type, name, housenumber, postcode, extratags, ST_Envelope(geometry) AS bbox, parent_place_id, linked_place_id, rank_search, importance, calculated_country_code, centroid";
+	private final String selectColsPlaceX = "place_id, osm_type, osm_id, class, type, name, housenumber, postcode, extratags, ST_Envelope(geometry) AS bbox, parent_place_id, linked_place_id, rank_search, importance, calculated_country_code, centroid";
+	private Importer importer;
+
+	/**
+	 * @param host     database host
+	 * @param port     database port
+	 * @param database database name
+	 * @param username db username
+	 * @param password db username's password
+	 */
+	public NominatimConnector(String host, int port, String database, String username, String password) {
+		BasicDataSource dataSource = new BasicDataSource();
+
+		dataSource.setUrl(String.format("jdbc:postgres_jts://%s:%d/%s", host, port, database));
+		dataSource.setUsername(username);
+		dataSource.setPassword(password);
+		dataSource.setDriverClassName(JtsWrapper.class.getCanonicalName());
+		dataSource.setDefaultAutoCommit(false);
+
+		template = new JdbcTemplate(dataSource);
+		template.setFetchSize(100000);
+	}
+
+	public void setImporter(Importer importer) {
+		this.importer = importer;
+	}
 
 	public PhotonDoc getByPlaceId(long placeId) {
-		return template.queryForObject("SELECT " + selectColumns + " FROM placex WHERE place_id = ?", new Object[]{placeId}, placeRowMapper);
+		return template.queryForObject("SELECT " + selectColsPlaceX + " FROM placex WHERE place_id = ?", new Object[]{placeId}, placeRowMapper);
 	}
 
 	public List<AddressRow> getAddresses(long placeId) {
@@ -83,7 +101,7 @@ public class NominatimSource {
 			@Override
 			public AddressRow mapRow(ResultSet rs, int rowNum) throws SQLException {
 				Integer adminLevel = rs.getInt("admin_level");
-				if (rs.wasNull()) {
+				if(rs.wasNull()) {
 					adminLevel = null;
 				}
 				return new AddressRow(
@@ -98,14 +116,18 @@ public class NominatimSource {
 		});
 	}
 
-	public void export() {
+	/**
+	 * parses every relevant row in placex, creates a corresponding document and calls the {@link #importer} for every document
+	 */
+	public void readEntireDatabase() {
 		final AtomicLong counter = new AtomicLong();
 
-		template.query("SELECT " + selectColumns + " FROM placex WHERE linked_place_id IS NULL; ", new RowCallbackHandler() {
+		template.query("SELECT " + selectColsPlaceX + " FROM placex WHERE linked_place_id IS NULL LIMIT 100; ", new RowCallbackHandler() {
 			@Override
 			public void processRow(ResultSet rs) throws SQLException {
 				PhotonDoc doc = placeRowMapper.mapRow(rs, 0);
 
+				// finalize document by taking into account the higher level address assigned to this doc.
 				final List<AddressRow> addresses = getAddresses(doc.getPlaceId());
 				for(AddressRow address : addresses) {
 					if(address.isCity()) {
@@ -128,34 +150,14 @@ public class NominatimSource {
 
 				if(!doc.isUsefulForIndex()) return; // do not import document
 
-				importer.addDocument(doc);
+				importer.add(doc);
 				if(counter.incrementAndGet() % 1000 == 0) {
-					LOGGER.info(String.format("imported %d documents.", counter.longValue()));
+					log.info(String.format("created %s documents.", MessageFormat.format("{0}", counter.longValue())));
 				}
 			}
 		});
 
 		importer.finish();
-		LOGGER.info("finished import of photon " + counter.longValue() + " documents.");
-	}
-
-	/**
-	 * @param host     database host
-	 * @param port     database port
-	 * @param database database name
-	 * @param username db username
-	 * @param password db username's password
-	 */
-	public NominatimSource(String host, int port, String database, String username, String password) {
-		BasicDataSource dataSource = new BasicDataSource();
-
-		dataSource.setUrl(String.format("jdbc:postgres_jts://%s:%d/%s", host, port, database));
-		dataSource.setUsername(username);
-		dataSource.setPassword(password);
-		dataSource.setDriverClassName(JtsWrapper.class.getCanonicalName());
-		dataSource.setDefaultAutoCommit(false);
-
-		template = new JdbcTemplate(dataSource);
-		template.setFetchSize(100000);
+		log.info(String.format("finished import of photon %s documents.", MessageFormat.format("{0}", counter.longValue())));
 	}
 }

@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * data graped from nominatim
+ * denormalized doc with all information needed be dumped to elasticsearch
  *
  * @author christoph
  */
