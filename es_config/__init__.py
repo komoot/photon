@@ -12,7 +12,7 @@ def init_elasticsearch(index):
     except NotFoundError:
         pass
 
-    with open("mapppings.json") as f:
+    with open("mappings.json") as f:
         mappings = json.load(f)
 
     with open("index_settings.json") as f:
