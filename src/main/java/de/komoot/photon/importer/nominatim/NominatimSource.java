@@ -151,6 +151,11 @@ public class NominatimSource {
 		dataSource.setPassword(password);
 		dataSource.setDriverClassName(JtsWrapper.class.getCanonicalName());
 		dataSource.setDefaultAutoCommit(false);
+		try {
+			dataSource.setLoginTimeout(5);
+		} catch(SQLException e) {
+			LOGGER.error("could not set login timeout", e);
+		}
 
 		template = new JdbcTemplate(dataSource);
 		template.setFetchSize(100000);
