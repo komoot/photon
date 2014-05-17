@@ -75,6 +75,11 @@ public class AddressRow {
 		if(adminLevel == 2 && "boundary".equals(osmKey) && "administrative".equals(osmValue)) {
 			return true;
 		}
+
+		if("place".equals(osmKey) && "country".equals(osmValue)) {
+			return true;
+		}
+
 		return false;
 	}
 }
