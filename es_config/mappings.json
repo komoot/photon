@@ -354,6 +354,11 @@
       "coordinate": {
         "type": "geo_point"
       },
+      "extent": {
+           "type": "geo_shape",
+           "tree": "quadtree",
+           "precision": "10m"
+      },
       "housenumber": {
         "index": "not_analyzed",
         "type": "string"

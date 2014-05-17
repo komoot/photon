@@ -3,6 +3,7 @@ package de.komoot.photon.importer;
 import com.google.common.base.Joiner;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
+import com.vividsolutions.jts.geom.Envelope;
 import de.komoot.photon.importer.model.PhotonDoc;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
@@ -50,8 +51,24 @@ public class Utils {
 		writeIntlNames(builder, doc.getCountry(), "country");
 		writeIntlNames(builder, doc.getStreet(), "street");
 		writeContext(builder, doc.getContext());
+		writeExtent(builder, doc.getBbox());
 
 		return builder;
+	}
+
+	private static void writeExtent(XContentBuilder builder, Envelope bbox) throws IOException {
+		if(bbox == null) return;
+
+		// http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/mapping-geo-shape-type.html#_envelope
+		builder.startObject("extent");
+		builder.field("type", "envelope");
+
+		builder.startArray("coordinates");
+		builder.startArray().value(bbox.getMinX()).value(bbox.getMinY()).endArray();
+		builder.startArray().value(bbox.getMaxX()).value(bbox.getMaxY()).endArray();
+
+		builder.endArray();
+		builder.endObject();
 	}
 
 	private static void writeName(XContentBuilder builder, Map<String, String> name) throws IOException {

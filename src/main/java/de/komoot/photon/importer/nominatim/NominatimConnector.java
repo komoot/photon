@@ -158,6 +158,6 @@ public class NominatimConnector {
 		});
 
 		importer.finish();
-		log.info(String.format("finished import of photon %s documents.", MessageFormat.format("{0}", counter.longValue())));
+		log.info(String.format("finished import of %s photon documents.", MessageFormat.format("{0}", counter.longValue())));
 	}
 }

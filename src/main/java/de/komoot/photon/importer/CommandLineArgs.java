@@ -11,7 +11,6 @@ import java.io.File;
 
 @Data
 public class CommandLineArgs {
-
 	@Parameter(names = "-index", description = "Start elasticsearch indexing")
 	private boolean indexer = false;
 
