@@ -103,7 +103,7 @@ hr, input, textarea, footer, header {
 /* ************************************************* */
 /* ***************** HEADER/FOOTER ***************** */
 /* ************************************************* */
-header, footer {
+footer {
     height: 100px;
     line-height: 100px;
     text-align: center;
@@ -124,10 +124,8 @@ footer a {
 }
 
 .branding {
-    font-size: 2em;
-    font-family: 'droid_sansbold';
-    font-weight: normal;
-    letter-spacing: -1px;
+    float: left;
+    margin: 10px 0 0 10px;
 }
 
 header .get-in-touch {
@@ -199,7 +197,7 @@ input[type="submit"]:hover,
 /* ********************** CONTENT ****************** */
 /* ************************************************* */
 h2 {
-    min-height: 100px;
+    min-height: 70px;
     line-height: 30px;
     text-align: center;
 }
@@ -229,9 +227,11 @@ pre strong {
     margin-bottom: 40px;
 }
 
-.highlights h2 a {
-    color: #999;
-    text-decoration: none;
+.highlights span.url {
+	color: #999;
+	font-size: 0.9em;
+	margin-top: 10px;
+	display: inline-block;
 }
 
 .highlights img {
@@ -245,6 +245,14 @@ pre strong {
 
 .highlights a {
     text-decoration: none;
+    color: #666;
+}
+
+.highlights a:hover {
+    color: #000;
+}
+
+.highlights a:hover span.url {
     color: #666;
 }
 
@@ -321,7 +329,7 @@ pre strong {
 }
 
 ul.features li {
-    line-height: 2em;
+    line-height: 3em;
 }
 
 ul li span.progress {
@@ -330,4 +338,28 @@ ul li span.progress {
     font-size: 0.75em;
     padding: 2px 4px;
     border-radius: 5px;
+}
+
+header {
+	padding: 20px;
+}
+
+#slogan {
+	font-size: 1.4em;
+	color: #999;
+	margin-top: 10px;
+}
+
+#logo {
+	float: left;
+	height: 110px;
+	margin-right: 35px;
+	margin-left: 10px;
+}
+
+#photon {
+	font-size: 3.4em;
+	font-style: italic;
+	display: inline-block;
+	padding-top: 12px;
 }

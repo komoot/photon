@@ -8,7 +8,7 @@ from flask import Flask, render_template, request, abort, Response
 
 
 app = Flask(__name__)
-DEBUG = os.environ.get('DEBUG', False)
+DEBUG = os.environ.get('DEBUG', True)
 PORT = os.environ.get('PHOTON_PORT', 5001)
 HOST = os.environ.get('PHOTON_HOST', '0.0.0.0')
 SUPPORTED_LANGUAGES = ['de', 'en', 'fr', 'it']
@@ -209,14 +209,13 @@ def to_geo_json(hits, lang='en', debug=False):
             else:
                 properties['name'] = street + ' ' + housenumber
 
-        coordinates = [float(el) for el in source['coordinate'].split(',')]
-        coordinates.reverse()
+        print(source['coordinate'])
 
         feature = {
             "type": "Feature",
             "geometry": {
                 "type": "Point",
-                "coordinates": coordinates
+                "coordinates": [source['coordinate']['lon'], source['coordinate']['lat']]
             },
             "properties": properties
         }

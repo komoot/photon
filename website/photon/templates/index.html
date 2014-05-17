@@ -8,20 +8,27 @@
     <link rel="stylesheet" href="/static/css/app.css">
 </head>
 <body>
+
 <header>
-    <a class="branding">Photon</a>
-    <a href="mailto:photon@komoot.de" class="button get-in-touch">Get in touch</a>
+    <span id="photon">photon</span>
+    <img src="/static/img/photon_logo.png" id="logo"/>
+
+    <div id="slogan">search as you type with OpenStreetMap</div>
+    <!--<div class="col third">-->
+    <!--<a href="mailto:photon@komoot.de" class="button get-in-touch">Get in touch</a>-->
+    <!--</div>-->
 </header>
+
 <div class="wrapper map-wrapper">
     <div class="col two-third twide">
         <div class="map" id="map"></div>
     </div>
     <div class="col third content twide">
-        <h2>Search as you type with OpenStreetMap</h2>
         <ul class="features">
             <li>Typeahead suggestion</li>
             <li>Fast</li>
             <li>Scalable</li>
+            <li>Multilingual</li>
             <li>Typo tolerance <span class="progress">in progress</span></li>
             <li>Minutely up to date OSM data <span class="progress">in progress</span></li>
         </ul>
@@ -33,21 +40,31 @@
             <a href="http://osm.org">
                 <img src="{{ url_for('static', filename='img/osm.svg') }}"/>
 
-                <p>Made with OpenStreetMap</p>
+                <p>
+                    Made with OpenStreetMap
+                    <br><span class="url">osm.org</span>
+                </p>
             </a>
         </div>
         <div class="col third">
             <a href="https://github.com/komoot/photon">
                 <img src="{{ url_for('static', filename='img/opensource.svg') }}"/>
 
-                <p>Open Source</p>
+                <p>
+                    Open Source<br>
+                    <span class="url">github.com/komoot/photon</span>
+                </p>
+
             </a>
         </div>
         <div class="col third">
             <a href="http://www.elasticsearch.org">
                 <img src="{{ url_for('static', filename='img/es.svg') }}"/>
 
-                <p>Powered by ElasticSearch</p>
+                <p>
+                    Powered by ElasticSearch
+                    <br><span class="url">elasticsearch.org</span>
+                </p>
             </a>
         </div>
     </div>
