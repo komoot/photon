@@ -23,7 +23,7 @@ public class AddressRow {
 	static final String[] USEFUL_CONTEXT_KEYS = new String[]{"boundary", "landuse", "place"}; // must be in alphabetic order to speed up lookup
 
 	public boolean isStreet() {
-		return 26 <= rankAddress && rankAddress <= 28;
+		return 26 <= rankAddress && rankAddress < 28;
 	}
 
 	public boolean isCity() {
@@ -75,6 +75,11 @@ public class AddressRow {
 		if(adminLevel == 2 && "boundary".equals(osmKey) && "administrative".equals(osmValue)) {
 			return true;
 		}
+
+		if("place".equals(osmKey) && "country".equals(osmValue)) {
+			return true;
+		}
+
 		return false;
 	}
 }

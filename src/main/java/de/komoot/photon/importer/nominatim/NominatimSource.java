@@ -79,7 +79,7 @@ public class NominatimSource {
 	}
 
 	public List<AddressRow> getAddresses(long placeId) {
-		return template.query("SELECT place_id, name, class, type, rank_address, admin_level FROM get_addressdata(?) WHERE isaddress ORDER BY rank_address DESC", new Object[]{placeId}, new RowMapper<AddressRow>() {
+		return template.query("SELECT place_id, name, class, type, rank_address, admin_level FROM get_addressdata(?) WHERE isaddress AND (place_id IS NULL OR place_id != ?) ORDER BY rank_address DESC", new Object[]{placeId, placeId}, new RowMapper<AddressRow>() {
 			@Override
 			public AddressRow mapRow(ResultSet rs, int rowNum) throws SQLException {
 				return new AddressRow(
@@ -122,13 +122,12 @@ public class NominatimSource {
 					}
 				}
 
-				importer.addDocument(doc);
+				if(!doc.isUsefulForIndex()) return; // do not import document
 
+				importer.addDocument(doc);
 				if(counter.incrementAndGet() % 1000 == 0) {
 					LOGGER.info(String.format("imported %d documents.", counter.longValue()));
 				}
-
-				//log.info(doc);
 			}
 		});
 

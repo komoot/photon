@@ -1,14 +1,13 @@
 package de.komoot.photon.importer.nominatim;
 
 import de.komoot.photon.importer.Updater;
-import de.komoot.photon.importer.Utils;
+import de.komoot.photon.importer.model.PhotonDoc;
 import de.komoot.photon.importer.nominatim.model.UpdateRow;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.postgis.jts.JtsWrapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 
-import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
@@ -29,33 +28,40 @@ public class NominatimUpdater {
 
 	private Updater updater;
 
-    public void setUpdater(Updater updater){
-        this.updater = updater;
-    }
+	public void setUpdater(Updater updater) {
+		this.updater = updater;
+	}
 
 	public void update() {
 		for(Integer rank = this.minRank; rank <= this.maxRank; rank++) {
 			LOGGER.info(String.format("Starting rank %d", rank));
 			for(Map<String, Object> sector : getIndexSectors(rank))
-                for (UpdateRow place : getIndexSectorPlaces(rank, (Integer) sector.get("geometry_sector"))) {
+				for(UpdateRow place : getIndexSectorPlaces(rank, (Integer) sector.get("geometry_sector"))) {
 
-                    template.update("update placex set indexed_status = 0 where place_id = ?", new Object[]{place.getPlaceId()});
+					template.update("update placex set indexed_status = 0 where place_id = ?", new Object[]{place.getPlaceId()});
+					final PhotonDoc updatedDoc = exporter.getByPlaceId(place.getPlaceId());
 
-                    switch ((Integer)place.getIndexdStatus()) {
-                        case 1:
-                            updater.create(exporter.getByPlaceId(place.getPlaceId()));
-                            break;
-                        case 2:
-                            updater.update(exporter.getByPlaceId(place.getPlaceId()));
-                            break;
-                        case 100:
-                            updater.delete(place.getPlaceId());
-                            break;
-                        default:
-                            LOGGER.error(String.format("Unknown index status %d", place.getIndexdStatus()));
-                            break;
-                    }
-                }
+					switch(place.getIndexdStatus()) {
+						case 1:
+							if(updatedDoc.isUsefulForIndex())
+								updater.create(updatedDoc);
+							break;
+						case 2:
+							if(!updatedDoc.isUsefulForIndex())
+								updater.delete(place.getPlaceId());
+
+							updater.updateOrCreate(updatedDoc);
+
+							//							updater.update(updatedDoc);
+							break;
+						case 100:
+							updater.delete(place.getPlaceId());
+							break;
+						default:
+							LOGGER.error(String.format("Unknown index status %d", place.getIndexdStatus()));
+							break;
+					}
+				}
 		}
 
 		updater.finish();
@@ -63,7 +69,7 @@ public class NominatimUpdater {
 
 	private List<Map<String, Object>> getIndexSectors(Integer rank) {
 		return template.queryForList("select geometry_sector,count(*) from placex where rank_search = ? " +
-                "and indexed_status > 0 group by geometry_sector order by geometry_sector;", new Object[]{rank});
+				"and indexed_status > 0 group by geometry_sector order by geometry_sector;", new Object[]{rank});
 	}
 
 	private List<UpdateRow> getIndexSectorPlaces(Integer rank, Integer geometrySector) {
@@ -80,7 +86,7 @@ public class NominatimUpdater {
 	}
 
 	/**
-     */
+	 */
 	public NominatimUpdater(String host, int port, String database, String username, String password) {
 		BasicDataSource dataSource = new BasicDataSource();
 

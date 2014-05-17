@@ -99,6 +99,13 @@ public class App {
 			}
 		});
 
+		get(new Route("/get_dump", "text/html") {
+			@Override
+			public Object handle(Request request, Response response) {
+				return "hallihallo";
+			}
+		});
+
 		//esNode.shutdown();
 	}
 }

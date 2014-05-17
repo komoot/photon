@@ -8,6 +8,7 @@ import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -36,10 +37,6 @@ public class Utils {
 					.endObject();
 		}
 
-		if(doc.getStreet() != null && doc.getStreet().get("name") != null) {
-			builder.field("street", doc.getStreet().get("name"));
-		}
-
 		if(doc.getHouseNumber() != null) {
 			builder.field("housenumber", doc.getHouseNumber());
 		}
@@ -48,15 +45,44 @@ public class Utils {
 			builder.field("postcode", doc.getPostcode());
 		}
 
-		writeIntlNames(builder, doc.getName(), "name");
+		writeName(builder, doc.getName());
 		writeIntlNames(builder, doc.getCity(), "city");
 		writeIntlNames(builder, doc.getCountry(), "country");
-		writeIntlNames(builder, doc.getContext(), "context");
+		writeIntlNames(builder, doc.getStreet(), "street");
+		writeContext(builder, doc.getContext());
 
 		return builder;
 	}
 
-	private static void writeIntlNames(XContentBuilder builder, Set<Map<String, String>> contexts, String name) throws IOException {
+	private static void writeName(XContentBuilder builder, Map<String, String> name) throws IOException {
+		Map<String, String> fNames = filterNames(name);
+
+		if(name.get("alt_name") != null)
+			fNames.put("alt", name.get("alt_name"));
+
+		if(name.get("int_name") != null)
+			fNames.put("int", name.get("int_name"));
+
+		if(name.get("loc_name") != null)
+			fNames.put("loc", name.get("loc_name"));
+
+		if(name.get("old_name") != null)
+			fNames.put("old", name.get("old_name"));
+
+		write(builder, fNames, "name");
+	}
+
+	private static void write(XContentBuilder builder, Map<String, String> fNames, String name) throws IOException {
+		if(fNames.isEmpty()) return;
+
+		builder.startObject(name);
+		for(Map.Entry<String, String> entry : fNames.entrySet()) {
+			builder.field(entry.getKey(), entry.getValue());
+		}
+		builder.endObject();
+	}
+
+	private static void writeContext(XContentBuilder builder, Set<Map<String, String>> contexts) throws IOException {
 		final SetMultimap<String, String> map = HashMultimap.create();
 
 		for(Map<String, String> context : contexts) {
@@ -67,14 +93,14 @@ public class Utils {
 
 		for(String language : languages) {
 			for(Map<String, String> context : contexts) {
-				if(context.get(language) != null) {
-					map.put(language, context.get(language));
+				if(context.get("name:" + language) != null) {
+					map.put(language, context.get("name:" + language));
 				}
 			}
 		}
 
 		if(!map.isEmpty()) {
-			builder.startObject(name);
+			builder.startObject("context");
 			for(String key : map.keys()) {
 				builder.field(key, commaJoiner.join(map.get(key)));
 			}
@@ -82,20 +108,28 @@ public class Utils {
 		}
 	}
 
-	private static void writeIntlNames(XContentBuilder builder, Map<String, String> map, String name) throws IOException {
-		if(map == null || map.isEmpty()) return;
+	private static void writeIntlNames(XContentBuilder builder, Map<String, String> names, String name) throws IOException {
+		Map<String, String> fNames = filterNames(names);
+		write(builder, fNames, name);
+	}
 
-		builder.startObject(name);
-		if(map.get("name") != null) {
-			builder.field("default", map.get("name")); // TODO: consider also short_name, int_ref, ...
+	private static Map<String, String> filterNames(Map<String, String> names) {
+		return filterNames(names, new HashMap<String, String>());
+	}
+
+	private static Map<String, String> filterNames(Map<String, String> names, HashMap<String, String> filteredNames) {
+		if(names == null) return filteredNames;
+
+		if(names.get("name") != null) {
+			filteredNames.put("default", names.get("name"));
 		}
 
 		for(String language : languages) {
-			if(map.get("name:" + language) != null) {
-				builder.field(language, map.get("name:" + language));
+			if(names.get("name:" + language) != null) {
+				filteredNames.put(language, names.get("name:" + language));
 			}
 		}
 
-		builder.endObject();
+		return filteredNames;
 	}
 }

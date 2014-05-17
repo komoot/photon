@@ -36,4 +36,14 @@ public class PhotonDoc {
 	private Map<String, String> city;
 	private Set<Map<String, String>> context = new HashSet<Map<String, String>>();
 	private Map<String, String> country;
+
+	public boolean isUsefulForIndex() {
+		if(houseNumber != null) return true;
+
+		if(name.isEmpty()) return false;
+
+		if(linkedPlaceId != null) return false;
+
+		return true;
+	}
 }

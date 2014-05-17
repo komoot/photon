@@ -1,0 +1,42 @@
+{
+  "analysis": {
+    "filter": {
+      "photonngram": {
+        "max_gram": 15,
+        "type": "edgeNGram",
+        "min_gram": 2
+      }
+    },
+    "char_filter": {
+      "punctuationgreedy": {
+        "pattern": "[\\\\.,]",
+        "type": "pattern_replace"
+      }
+    },
+    "analyzer": {
+      "raw_stringanalyser": {
+        "filter": [
+          "lowercase",
+          "asciifolding",
+          "word_delimiter"
+        ],
+        "char_filter": [
+          "punctuationgreedy"
+        ],
+        "tokenizer": "standard"
+      },
+      "stringanalyser": {
+        "filter": [
+          "lowercase",
+          "asciifolding",
+          "word_delimiter",
+          "photonngram"
+        ],
+        "char_filter": [
+          "punctuationgreedy"
+        ],
+        "tokenizer": "standard"
+      }
+    }
+  }
+}
