@@ -10,6 +10,8 @@ package de.komoot.photon.importer;
 import com.beust.jcommander.Parameter;
 import lombok.Data;
 
+import java.io.File;
+
 @Data
 public class JCommanderStdin {
 
@@ -33,5 +35,9 @@ public class JCommanderStdin {
 
     @Parameter(names="-password", description="Postgres host (default '')")
     private String password = "";
+
+
+    @Parameter(names="-data-dir", description="Data directory (default '.')")
+    private String dataDirectory = new File(".").getAbsolutePath();
 }
 

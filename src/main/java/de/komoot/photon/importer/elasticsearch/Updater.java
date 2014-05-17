@@ -29,6 +29,7 @@ public class Updater implements de.komoot.photon.importer.Updater {
 
     public void create(PhotonDoc doc) {
         try {
+
             this.bulkRequest.add(this.esClient.prepareIndex("photon", "place").setSource(Utils.convert(doc)).setId(String.valueOf(doc.getPlaceId())));
         } catch (IOException e)
         {
@@ -50,6 +51,7 @@ public class Updater implements de.komoot.photon.importer.Updater {
     }
 
     private void updateDocuments(){
+
         BulkResponse bulkResponse = bulkRequest.execute().actionGet();
         if (bulkResponse.hasFailures()) {
             LOGGER.error("Error while Bulkupdate");
