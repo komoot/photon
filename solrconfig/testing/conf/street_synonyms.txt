@@ -1,2 +1,0 @@
-rd, road
-blvd, boulevard
