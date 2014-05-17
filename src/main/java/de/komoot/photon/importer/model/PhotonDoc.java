@@ -38,6 +38,8 @@ public class PhotonDoc {
 	private Map<String, String> country;
 
 	public boolean isUsefulForIndex() {
+		if("place".equals(tagKey) && "houses".equals(tagValue)) return false;
+
 		if(houseNumber != null) return true;
 
 		if(name.isEmpty()) return false;
