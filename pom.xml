@@ -103,7 +103,12 @@
 			<artifactId>guava</artifactId>
 			<version>17.0</version>
 		</dependency>
-	</dependencies>
+        <dependency>
+            <groupId>net.lingala.zip4j</groupId>
+            <artifactId>zip4j</artifactId>
+            <version>1.2.3</version>
+        </dependency>
+    </dependencies>
 
 	<repositories>
 		<repository>

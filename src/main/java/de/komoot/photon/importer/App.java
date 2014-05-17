@@ -12,6 +12,7 @@ import spark.Response;
 import spark.Route;
 
 import static spark.Spark.get;
+import static spark.Spark.setPort;
 
 public class App {
 	private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(App.class);
@@ -21,7 +22,7 @@ public class App {
 		JCommanderStdin jct = new JCommanderStdin();
 		new JCommander(jct, args);
 
-		Server esNode = new Server("photon");
+		final Server esNode = new Server("photon", jct.getDataDirectory());
 		esNode.start();
 
 		Client esNodeClient = esNode.getClient();
@@ -36,7 +37,6 @@ public class App {
         final NominatimUpdater nominatimUpdater = new NominatimUpdater(jct.getHost(), jct.getPort(), jct.getDatabase(), jct.getUser(), jct.getPassword());
         Updater updater = new Updater(esNodeClient);
         nominatimUpdater.setUpdater(updater);
-
 
 
 
@@ -73,6 +73,14 @@ public class App {
 		get(new Route("/create_dump", "text/html") {
 			@Override
 			public Object handle(Request request, Response response) {
+                final String dumpName = (String)request.queryParams("name");
+                Thread nominatimDumpThread = new Thread(){
+                    @Override
+                    public void run(){
+                        esNode.dump(dumpName);
+                    }
+                };
+                nominatimDumpThread.start();
 				return "hallihallo";
 			}
 		});

@@ -1,6 +1,6 @@
 target/
 data/
-
+photon_data/
 dependency-reduced-pom.xml
 
 .idea/
