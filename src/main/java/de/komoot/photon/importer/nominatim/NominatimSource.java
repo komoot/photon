@@ -41,7 +41,7 @@ public class NominatimSource {
 		public PhotonDoc mapRow(ResultSet rs, int rowNum) throws SQLException {
 
 			Double importance = rs.getDouble("importance");
-			if(importance == null) {
+			if(rs.wasNull()) {
 				// https://github.com/komoot/photon/issues/12
 				int rankSearch = rs.getInt("rank_search");
 				importance = 0.75 - rankSearch / 40d;
@@ -82,13 +82,17 @@ public class NominatimSource {
 		return template.query("SELECT place_id, name, class, type, rank_address, admin_level FROM get_addressdata(?) WHERE isaddress AND (place_id IS NULL OR place_id != ?) ORDER BY rank_address DESC", new Object[]{placeId, placeId}, new RowMapper<AddressRow>() {
 			@Override
 			public AddressRow mapRow(ResultSet rs, int rowNum) throws SQLException {
+				Integer adminLevel = rs.getInt("admin_level");
+				if (rs.wasNull()) {
+					adminLevel = null;
+				}
 				return new AddressRow(
 						rs.getLong("place_id"),
 						DBUtils.getMap(rs, "name"),
 						rs.getString("class"),
 						rs.getString("type"),
 						rs.getInt("rank_address"),
-						rs.getInt("admin_level") // TODO: null check
+						adminLevel
 				);
 			}
 		});
