@@ -64,8 +64,8 @@ public class Utils {
 		builder.field("type", "envelope");
 
 		builder.startArray("coordinates");
-		builder.startArray().value(bbox.getMinX()).value(bbox.getMinY()).endArray();
-		builder.startArray().value(bbox.getMaxX()).value(bbox.getMaxY()).endArray();
+		builder.startArray().value(bbox.getMinX()).value(bbox.getMaxY()).endArray();
+		builder.startArray().value(bbox.getMaxX()).value(bbox.getMinY()).endArray();
 
 		builder.endArray();
 		builder.endObject();
