@@ -29,39 +29,39 @@ def query_index(query, lang, lon, lat, match_all=True, limit=15):
         "multi_match": {
             "query": query,
             "type": "best_fields",
-            "analyzer": "raw_stringanalyser",
+            "analyzer": "search_stringanalyser",
             'operator': 'and' if match_all else 'or',
             "fields": [
-                "name.{0}^3".format(lang),
-                "name.{0}.raw^5".format(lang),
-                "name.default^2",
-                "name.default.raw^5",
+                "name.{0}.ngramed^3".format(lang),
+                "name.{0}.raw^10".format(lang),
                 "collector.{0}.raw".format(lang),
                 "collector.{0}".format(lang)
             ],
             "fuzziness": 1,
+            "prefix_length": 3
         }
     }
 
     if lon is not None and lat is not None:
         req_body = {
             "function_score": {
-                "score_mode": "multiply",  # How functions score are mixed
-                "boost_mode": "sum",  # how total will be mixed to search score
+                "score_mode": "multiply",  # How functions score are mixed together
+                "boost_mode": "multiply",  # how total will be mixed to search score
                 "query": req_body,
                 "functions": [
                     {
-                        "exp": {
-                            "coordinate": {
-                                "origin": "{0}, {1}".format(repr(lat), repr(lon)),
-                                "scale": "2km"
+                        "script_score": {
+                            "script": "dist = doc['coordinate'].distanceInKm(lat, lon); 1 / (0.5 - 0.5 * exp(-5*dist/maxDist))",
+                            "params": {
+                                "lon": lon,
+                                "lat": lat,
+                                "maxDist": 100
                             }
                         }
-
                     },
                     {
                         "script_score": {
-                            "script": "_score * doc['ranking'].value"
+                            "script": "(31 - doc['rank_search'].value)"
                         }
                     }
                 ],

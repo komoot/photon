@@ -24,30 +24,45 @@ def init_elasticsearch(index, force=False):
                 'osm_type': {"type": "string", "index": "no"},
                 'osm_value': {"type": "string", "index": "no"},
 
+                'rank_search': {"type": "short", "index": "not_analyzed"},
                 'street': {"type": "string", "index": "no", 
                            "copy_to": ["collector.en", "collector.de", "collector.fr", "collector.it"]},
                 'housenumber': {"type": "string", "index": "not_analyzed"},
-                'postcode': {"type": "string", "index": "no", "store": True,
+                'postcode': {"type": "string", "index": "no",
                              "copy_to": ["collector.en", "collector.de", "collector.fr", "collector.it"]},
 
                 'name': {
                     "type": "object",
                     "properties": {
-                        "default": {"type": "string",  "analyzer": "stringanalyser", "fields": {
-                            "raw": {"type": "string", "index_analyzer": "raw_stringanalyser",
-                                    "search_analyzer": "raw_stringanalyser"}}},
-                        "en": {"type": "string",  "analyzer": "stringanalyser", "fields": {
-                            "raw": {"type": "string", "index_analyzer": "raw_stringanalyser",
-                                    "search_analyzer": "raw_stringanalyser"}}},
-                        "de": {"type": "string",  "analyzer": "stringanalyser", "fields": {
-                            "raw": {"type": "string", "index_analyzer": "raw_stringanalyser",
-                                    "search_analyzer": "raw_stringanalyser"}}},
-                        "fr": {"type": "string",  "analyzer": "stringanalyser", "fields": {
-                            "raw": {"type": "string", "index_analyzer": "raw_stringanalyser",
-                                    "search_analyzer": "raw_stringanalyser"}}},
-                        "it": {"type": "string",  "analyzer": "stringanalyser", "fields": {
-                            "raw": {"type": "string", "index_analyzer": "raw_stringanalyser",
-                                    "search_analyzer": "raw_stringanalyser"}}},
+                        "default": {"type": "string",  "index": "no", "copy_to": ["collector.en", "collector.de", "collector.fr", "collector.it", "name.en", "name.de", "name.fr", "name.it"]},
+                        "en": {"type": "string",  "index": "no",
+                            "fields": {
+                                "raw": {"type": "string", "index_analyzer": "raw_stringanalyser"},
+                                "ngramed": {"type": "string", "index_analyzer": "stringanalyser"},
+                            },
+                            "copy_to": ["collector.en"]
+                        },
+                        "de": {"type": "string",  "index": "no",
+                            "fields": {
+                                "raw": {"type": "string", "index_analyzer": "raw_stringanalyser"},
+                                "ngramed": {"type": "string", "index_analyzer": "stringanalyser"},
+                            },
+                            "copy_to": ["collector.de"]
+                        },
+                        "fr": {"type": "string",  "index": "no",
+                            "fields": {
+                                "raw": {"type": "string", "index_analyzer": "raw_stringanalyser"},
+                                "ngramed": {"type": "string", "index_analyzer": "stringanalyser"},
+                            },
+                            "copy_to": ["collector.fr"]
+                        },
+                        "it": {"type": "string",  "index": "no",
+                            "fields": {
+                                "raw": {"type": "string", "index_analyzer": "raw_stringanalyser"},
+                                "ngramed": {"type": "string", "index_analyzer": "stringanalyser"},
+                            },
+                            "copy_to": ["collector.it"]
+                        },
                     }
                 },
 
@@ -108,25 +123,43 @@ def init_elasticsearch(index, force=False):
             }
         }
     }
+    ngram_min = 2  # including word end delimiter.
     index_settings = {
         "analysis": {
             "analyzer": {
                 "stringanalyser": {
                     "tokenizer": "standard",
-                    "filter": ["word_delimiter", "lowercase", "asciifolding", "photonngram"],
-                    "char_filter": ["punctuationgreedy"]
+                    "filter": ["word_delimiter", "lowercase", "asciifolding", "photonlength", "unique", "wordending", "photonngram"],
+                    "char_filter": ["punctuationgreedy"],
                 },
                 "raw_stringanalyser": {
                     "tokenizer": "standard",
-                    "filter": ["word_delimiter", "lowercase", "asciifolding"],
+                    "filter": ["word_delimiter", "lowercase", "asciifolding", "photonlength", "unique", "wordending",],
+                    "char_filter": ["punctuationgreedy"]
+                },
+                "search_stringanalyser": {
+                    "tokenizer": "standard",
+                    "filter": ["word_delimiter", "lowercase", "asciifolding", "photonlength", "unique", "wordendingautocomplete"],
                     "char_filter": ["punctuationgreedy"]
                 },
             },
             "filter": {
                 "photonngram": {
                     "type": "edgeNGram",
-                    "min_gram": 2,
+                    "min_gram": ngram_min,
                     "max_gram": 15
+                },
+                "photonlength": {
+                    "type": "length",
+                    "min": ngram_min
+                },
+                "wordending": {
+                    "type": 'wordending',
+                    "mode": "default"
+                },
+                "wordendingautocomplete": {
+                    "type": 'wordending',
+                    "mode": "autocomplete"
                 },
             },
             "char_filter": {
@@ -135,6 +168,11 @@ def init_elasticsearch(index, force=False):
                     "pattern": "[\.,]"
                 },
             },
+            "similarity": {
+                "photonsimilarity": {
+                    "type": "BM25",
+                }
+            }
         }
     }
 
