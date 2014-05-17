@@ -122,13 +122,12 @@ public class NominatimSource {
 					}
 				}
 
-				importer.addDocument(doc);
+				if(!doc.isUsefulForIndex()) return; // do not import document
 
+				importer.addDocument(doc);
 				if(counter.incrementAndGet() % 1000 == 0) {
 					LOGGER.info(String.format("imported %d documents.", counter.longValue()));
 				}
-
-				//log.info(doc);
 			}
 		});
 
