@@ -41,7 +41,6 @@
       "postcode": {
         "type": "string",
         "index": "no",
-        "store": true,
         "copy_to": [
           "collector.en",
           "collector.de",

@@ -61,7 +61,7 @@ def query_index(query, lang, lon, lat, match_all=True, limit=15):
                     },
                     {
                         "script_score": {
-                            "script": "(31 - doc['rank_search'].value)"
+                            "script": "1 + doc['importance'].value * 40"
                         }
                     }
                 ],
@@ -208,8 +208,6 @@ def to_geo_json(hits, lang='en', debug=False):
                 properties['name'] = housenumber + ' ' + street
             else:
                 properties['name'] = street + ' ' + housenumber
-
-        print(source['coordinate'])
 
         feature = {
             "type": "Feature",

@@ -17,7 +17,7 @@ class NominatimExporter(object):
 
     ITER_BY = 100
 
-    def __init__(self, credentials, itersize=100, limit=None, **kwargs):
+    def __init__(self, credentials, itersize=1000, limit=None, **kwargs):
         self.credentials = credentials
         print('***************** Export init ***************')
         self.conn = self.create_connexion()
@@ -34,7 +34,7 @@ class NominatimExporter(object):
     def __enter__(self):
         sql = """SELECT osm_type,osm_id,class as osm_key,type as osm_value,admin_level,rank_search,rank_address,
             place_id,parent_place_id,calculated_country_code as country_code, postcode, housenumber,
-            (extratags->'ref') as ref,street,
+            (extratags->'ref') as ref, street,
             ST_X(ST_Centroid(geometry)) as lon,
             ST_Y(ST_Centroid(geometry)) as lat,
             name->'name' as name,
@@ -95,7 +95,10 @@ class NominatimExporter(object):
     def to_json(self, raw):
         row = dict(raw)
         self.add_parents(row)
-        row['coordinate'] = ','.join([repr(raw['lat']), repr(raw['lon'])])
+        row['coordinate'] = {
+            'lon': raw['lon'],
+            'lat': raw['lat']
+        }
         row['name'] = {
             'default': raw['name'],
             'de': raw['name_de'],
@@ -103,6 +106,7 @@ class NominatimExporter(object):
             'en': raw['name_en'],
         }
         row['id'] = '_'.join([raw['osm_type'], str(raw['osm_id'])])
+        row['importance'] = 0.75 - raw['rank_search'] / 40
         return row
 
 
@@ -166,14 +170,30 @@ class ESImporter(BaseConsumer):
 class JSONBatchDump(BaseConsumer):
     """Format for ES batch import."""
 
+    MAX_ROWS = 100000
+
     def __call__(self):
         data = []
+        count = 0
+        index = 0
         print('Starting export')
+
+        def do_write(data, index):
+            with open('dump{}.eson'.format(index), mode='w', encoding='utf-8') as f:
+                f.write('\n'.join(data))
+
         for row in self:
             data.append('{"index": {}}')
             data.append(simplejson.dumps(row))
-        with open('dump.eson', mode='w', encoding='utf-8') as f:
-            f.write('\n'.join(data))
+            count += 1
+            if count % 10000 == 0:
+                print('Processed:', count, index)
+            if count >= self.MAX_ROWS:
+                do_write(data, index)
+                data = []
+                count = 0
+                index += 1
+        do_write(data)
         print('Done!')
 
 
