@@ -79,7 +79,7 @@ public class NominatimSource {
 	}
 
 	public List<AddressRow> getAddresses(long placeId) {
-		return template.query("SELECT place_id, name, class, type, rank_address, admin_level FROM get_addressdata(?) WHERE isaddress ORDER BY rank_address DESC", new Object[]{placeId}, new RowMapper<AddressRow>() {
+		return template.query("SELECT place_id, name, class, type, rank_address, admin_level FROM get_addressdata(?) WHERE isaddress AND place_id != ? ORDER BY rank_address DESC", new Object[]{placeId, placeId}, new RowMapper<AddressRow>() {
 			@Override
 			public AddressRow mapRow(ResultSet rs, int rowNum) throws SQLException {
 				return new AddressRow(
