@@ -101,9 +101,9 @@ If you want to take better account of results that are nearby a location (e.g. l
 
 ## Run the demo UI
 
-The python demo UI is located in `src/main/python/demo`.
+The python demo UI is located in `website/photon`.
 
-It has been developped with python3.3 (but should work with python2.x). We suggest to use virtualenv for the installation.
+It has been developped with python3.4 (but should work with python2.x). We suggest to use virtualenv for the installation.
 
 * Get the virtualenv system packages:
   ```
@@ -111,16 +111,16 @@ It has been developped with python3.3 (but should work with python2.x). We sugge
   ```
 * Create a virtualenv:
  ```
- mkvirtualenv -p python3.3 photon
+ mkvirtualenv -p python3.4 photon
  ```
 * Install dependencies:
  ```
- cd src/main/python/demo
+ cd website/photon
  pip install -r requirements.txt
  ```
 * Run the server
  ```
- make serve
+ python app.py
  ```
 * Go to http://localhost:5001/ and test it!
 
