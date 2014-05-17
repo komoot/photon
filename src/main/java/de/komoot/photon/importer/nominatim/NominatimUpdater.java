@@ -51,8 +51,6 @@ public class NominatimUpdater {
 								updater.delete(place.getPlaceId());
 
 							updater.updateOrCreate(updatedDoc);
-
-							//							updater.update(updatedDoc);
 							break;
 						case 100:
 							updater.delete(place.getPlaceId());

@@ -67,7 +67,7 @@ public class Importer implements de.komoot.photon.importer.Importer {
 				this.esClient.admin().indices().prepareCreate("photon").setSettings(IOUtils.toString(mappings)).execute().actionGet();
 				this.esClient.admin().indices().preparePutMapping("photon").setType("place").setSource(IOUtils.toString(index_settings)).execute().actionGet();
 			} catch(IOException e) {
-				LOGGER.error("cannot setup index, es config files not readable", e);
+				LOGGER.error("cannot setup index, elastic search config files not readable", e);
 			}
 		}
 	}
