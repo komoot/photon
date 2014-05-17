@@ -2,9 +2,12 @@ package de.komoot.photon.importer.elasticsearch;
 
 import de.komoot.photon.importer.Utils;
 import de.komoot.photon.importer.model.PhotonDoc;
+
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.client.Client;
+import org.elasticsearch.indices.IndexMissingException;
+
 import spark.utils.IOUtils;
 
 import java.io.IOException;
@@ -40,7 +43,7 @@ public class Importer implements de.komoot.photon.importer.Importer {
 
 		BulkResponse bulkResponse = bulkRequest.execute().actionGet();
 		if(bulkResponse.hasFailures()) {
-			LOGGER.error("Error while Bulkimport");
+			LOGGER.error("Error while Bulkimport:" + bulkResponse.buildFailureMessage());
 		}
 		this.bulkRequest = this.esClient.prepareBulk();
 	}
@@ -55,9 +58,7 @@ public class Importer implements de.komoot.photon.importer.Importer {
 		this.bulkRequest = esClient.prepareBulk();
 		try {
 			this.esClient.admin().indices().prepareDelete("photon").execute().actionGet();
-		} catch(Exception e) {
-			LOGGER.info("cannot delete index", e);
-		}
+		} catch (IndexMissingException e) { /* ignored */ }
 		if(!this.esClient.admin().indices().prepareExists("photon").execute().actionGet().isExists()) {
 			final InputStream mappings = Thread.currentThread().getContextClassLoader().getResourceAsStream("mappings.json");
 			final InputStream index_settings = Thread.currentThread().getContextClassLoader().getResourceAsStream("index_settings.json");
@@ -66,7 +67,7 @@ public class Importer implements de.komoot.photon.importer.Importer {
 				this.esClient.admin().indices().prepareCreate("photon").setSettings(IOUtils.toString(mappings)).execute().actionGet();
 				this.esClient.admin().indices().preparePutMapping("photon").setType("place").setSource(IOUtils.toString(index_settings)).execute().actionGet();
 			} catch(IOException e) {
-				LOGGER.error("cannot setup index, es config files not readable", e);
+				LOGGER.error("cannot setup index, elastic search config files not readable", e);
 			}
 		}
 	}

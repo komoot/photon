@@ -26,11 +26,11 @@ public class PhotonDoc {
 	private String postcode;
 	final private Map<String, String> extratags;
 	final private Envelope bbox;
-	final private Long parentPlaceId;
+	final private long parentPlaceId; // 0 if unset
 	final private double importance;
 	final private CountryCode countryCode;
 	final private Point centroid;
-	final private Long linkedPlaceId;
+	final private long linkedPlaceId; // 0 if unset
 
 	private Map<String, String> street;
 	private Map<String, String> city;
@@ -38,11 +38,13 @@ public class PhotonDoc {
 	private Map<String, String> country;
 
 	public boolean isUsefulForIndex() {
+		if("place".equals(tagKey) && "houses".equals(tagValue)) return false;
+
 		if(houseNumber != null) return true;
 
 		if(name.isEmpty()) return false;
 
-		if(linkedPlaceId != null) return false;
+		if(linkedPlaceId == 0) return false;
 
 		return true;
 	}
