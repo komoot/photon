@@ -122,7 +122,7 @@ public class NominatimConnector {
 	public void readEntireDatabase() {
 		final AtomicLong counter = new AtomicLong();
 
-		template.query("SELECT " + selectColsPlaceX + " FROM placex WHERE linked_place_id IS NULL; ", new RowCallbackHandler() {
+		template.query("SELECT " + selectColsPlaceX + " FROM placex WHERE linked_place_id IS NULL LIMIT 2000; ", new RowCallbackHandler() {
 			@Override
 			public void processRow(ResultSet rs) throws SQLException {
 				PhotonDoc doc = placeRowMapper.mapRow(rs, 0);
