@@ -28,7 +28,13 @@
       },
       "housenumber": {
         "type": "string",
-        "index": "not_analyzed"
+        "index": "not_analyzed",
+        "copy_to": [
+          "collector.en",
+          "collector.de",
+          "collector.fr",
+          "collector.it"
+        ]
       },
       "coordinate": {
         "type": "geo_point"
