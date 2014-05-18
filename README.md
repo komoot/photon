@@ -56,6 +56,8 @@ java -jar target/photon-importer-0.1-SNAPSHOT.jar -nominatim-import -host localh
 
 The import will take some hours/days, ssd disk are recommended to accelerate nominatim queries.
 
+TODO: missing docu for continuous updates
+
 ### Start Photon
 ```bash
 java -jar target/photon-importer-0.1-SNAPSHOT.jar
