@@ -10,6 +10,7 @@ from flask import Flask, render_template, request, abort, Response
 app = Flask(__name__)
 DEBUG = os.environ.get('DEBUG', True)
 PORT = os.environ.get('PHOTON_PORT', 5001)
+HOST = os.environ.get('PHOTON_HOST', '0.0.0.0')
 SUPPORTED_LANGUAGES = ['de', 'en', 'fr', 'it']
 
 solr = pysolr.Solr(os.environ.get("SOLR_ENDPOINT", 'http://localhost:8983/solr/testing'), timeout=10)
@@ -23,74 +24,45 @@ def index():
 
 
 def query_index(query, lang, lon, lat, match_all=True, limit=15):
-    if match_all:
-        req_body = {
-            "dis_max": {
-                "queries": [
-                    {
-                        "match": {
-                            "collector.{0}".format(lang): {
-                                "query": query,
-                                'operator': 'and',
-                                "analyzer": "raw_stringanalyser",
-                                "fuzziness": 2
-                            }
-                        }
-                    },
-                    {
-                        "match": {
-                            "collector.{0}.raw".format(lang): {
-                                "query": query,
-                                "boost": 1.6,
-                                'operator': 'and',
-                                "analyzer": "raw_stringanalyser",
-                                "fuzziness": 2
-                            }
-                        }
-                    }
-                ]
-            }
+
+    req_body = {
+        "multi_match": {
+            "query": query,
+            "type": "best_fields",
+            "analyzer": "search_stringanalyser",
+            'operator': 'and' if match_all else 'or',
+            "fields": [
+                "name.{0}.ngramed^3".format(lang),
+                "name.{0}.raw^10".format(lang),
+                "collector.{0}.raw".format(lang),
+                "collector.{0}".format(lang)
+            ],
+            "fuzziness": 1,
+            "prefix_length": 3
         }
-    else:
-        req_body = {
-            "dis_max": {
-                "queries": [
-                    {
-                        "match": {
-                            "collector.{0}".format(lang): {
-                                "query": query,
-                                "analyzer": "raw_stringanalyser",
-                                'minimum_should_match': -1
-                            }
-                        }
-                    },
-                    {
-                        "match": {
-                            "collector.{0}.raw".format(lang): {
-                                "query": query,
-                                "analyzer": "raw_stringanalyser",
-                                'minimum_should_match': -1
-                            }
-                        }
-                    }
-                ]
-            }
-        }
+    }
 
     if lon is not None and lat is not None:
         req_body = {
             "function_score": {
-                "score_mode": "multiply",
+                "score_mode": "multiply",  # How functions score are mixed together
+                "boost_mode": "multiply",  # how total will be mixed to search score
                 "query": req_body,
                 "functions": [
                     {
-                        "exp": {
-                            "coordinate": {
-                                "origin": "{0}, {1}".format(repr(lat), repr(lon)),
-                                "scale": "2km"
+                        "script_score": {
+                            "script": "dist = doc['coordinate'].distanceInKm(lat, lon); 1 / (0.5 - 0.5 * exp(-5*dist/maxDist))",
+                            "params": {
+                                "lon": lon,
+                                "lat": lat,
+                                "maxDist": 100
                             }
                         }
-
+                    },
+                    {
+                        "script_score": {
+                            "script": "1 + doc['importance'].value * 40"
+                        }
                     }
                 ],
             }
@@ -122,7 +94,7 @@ def query_index(query, lang, lon, lat, match_all=True, limit=15):
                         },
                         {
                             "exists": {
-                                "field": "name.default"
+                                "field": "name.{0}.raw".format(lang)
                             }
                         }
                     ]
@@ -209,7 +181,6 @@ def housenumber_first(lang):
 
 def to_geo_json(hits, lang='en', debug=False):
     features = []
-
     for hit in hits:
         source = hit['_source']
 
@@ -223,21 +194,20 @@ def to_geo_json(hits, lang='en', debug=False):
                 properties[attr] = source[attr]
 
         # language specific mapping
-        for attr in ['name', 'country', 'city']:
+        for attr in ['name', 'country', 'city', 'street']:
             obj = source.get(attr, {})
             value = obj.get(lang) or obj.get('default')
             if value:
                 properties[attr] = value
 
         if not 'name' in properties and 'housenumber' in properties:
+            housenumber = properties['housenumber'] or ''
+            street = properties['street'] or ''
+
             if housenumber_first(lang):
-                housenumber = properties['housenumber'] or ''
-                street = properties['street'] or ''
                 properties['name'] = housenumber + ' ' + street
             else:
-                properties['name'] = properties['street'] + ' ' + properties['housenumber']
-
-        print(source['coordinate'])
+                properties['name'] = street + ' ' + housenumber
 
         feature = {
             "type": "Feature",
@@ -312,4 +282,4 @@ def search():
 
 
 if __name__ == "__main__":
-    app.run(debug=DEBUG, port=PORT)
+    app.run(debug=DEBUG, port=PORT, host=HOST)

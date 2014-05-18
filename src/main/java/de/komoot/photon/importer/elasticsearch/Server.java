@@ -9,9 +9,14 @@ import org.elasticsearch.action.ActionListener;
 import org.elasticsearch.action.admin.cluster.snapshots.create.CreateSnapshotResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.settings.ImmutableSettings;
+import org.elasticsearch.common.settings.Settings;
+import org.elasticsearch.common.unit.TimeValue;
+import org.elasticsearch.env.Environment;
 import org.elasticsearch.node.Node;
+import org.elasticsearch.plugins.PluginManager;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -36,11 +41,28 @@ public class Server {
 	 * starts the elasticsearch node
 	 */
 	public void start() {
-		ImmutableSettings.Builder settings =
-				ImmutableSettings.settingsBuilder();
-		settings.put("path.home", this.esDirectory.toString());
+		Settings settings = ImmutableSettings.settingsBuilder()
+				.put("path.home", this.esDirectory.toString())
+				.build();
+
+		final String pluginPath = this.getClass().getResource("/elasticsearch-wordending-tokenfilter-0.0.1.zip").toExternalForm();
+		PluginManager pluginManager = new PluginManager(new Environment(settings), pluginPath, PluginManager.OutputMode.VERBOSE, new TimeValue(30000));
+		try {
+			pluginManager.downloadAndExtract("ybon/elasticsearch-wordending-tokenfilter/0.0.1");
+		} catch(IOException e) {
+			log.debug("could not install ybon/elasticsearch-wordending-tokenfilter/0.0.1", e);
+		}
+
+		pluginManager = new PluginManager(new Environment(settings), null, PluginManager.OutputMode.VERBOSE, new TimeValue(30000));
+		for(String pluginName : new String[]{"mobz/elasticsearch-head", "polyfractal/elasticsearch-inquisitor", "elasticsearch/marvel/latest"}) {
+			try {
+				pluginManager.downloadAndExtract(pluginName);
+			} catch(IOException e) {
+			}
+		}
 
 		this.esNode = nodeBuilder().clusterName(this.clusterName).loadConfigSettings(true).settings(settings).node();
+		log.info("started elastic search node");
 	}
 
 	/**
@@ -106,7 +128,7 @@ public class Server {
 		this.dumpDirectory = new File(photonDirectory, "dumps");
 		this.updateDirectory = new File(photonDirectory, "updates");
 
-		for(File directory : new File[]{esDirectory, dumpDirectory, updateDirectory, photonDirectory}) {
+		for(File directory : new File[]{esDirectory, dumpDirectory, updateDirectory, photonDirectory, new File(photonDirectory, "elasticsearch/plugins")}) {
 			if(!directory.exists())
 				directory.mkdirs();
 		}

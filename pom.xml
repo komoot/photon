@@ -99,16 +99,21 @@
 			<version>1.1.5</version>
 		</dependency>
 		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.11</version>
+		</dependency>
+		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
 			<version>17.0</version>
 		</dependency>
-        <dependency>
-            <groupId>net.lingala.zip4j</groupId>
-            <artifactId>zip4j</artifactId>
-            <version>1.2.3</version>
-        </dependency>
-    </dependencies>
+		<dependency>
+			<groupId>net.lingala.zip4j</groupId>
+			<artifactId>zip4j</artifactId>
+			<version>1.2.3</version>
+		</dependency>
+	</dependencies>
 
 	<repositories>
 		<repository>

@@ -1,9 +1,10 @@
 package de.komoot.photon.importer;
 
 import com.beust.jcommander.JCommander;
-import de.komoot.photon.importer.elasticsearch.Importer;
 import de.komoot.photon.importer.elasticsearch.ESUpdater;
+import de.komoot.photon.importer.elasticsearch.Importer;
 import de.komoot.photon.importer.elasticsearch.Server;
+import de.komoot.photon.importer.json.JsonDumper;
 import de.komoot.photon.importer.nominatim.NominatimConnector;
 import de.komoot.photon.importer.nominatim.NominatimUpdater;
 import lombok.extern.slf4j.Slf4j;
@@ -11,6 +12,8 @@ import org.elasticsearch.client.Client;
 import spark.Request;
 import spark.Response;
 import spark.Route;
+
+import java.io.FileNotFoundException;
 
 import static spark.Spark.get;
 
@@ -30,6 +33,17 @@ public class App {
 			NominatimConnector nominatimConnector = new NominatimConnector(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
 			nominatimConnector.setImporter(importer);
 			nominatimConnector.readEntireDatabase();
+		}
+
+		if(args.isJsonDump()) {
+			try {
+				final JsonDumper jsonDumper = new JsonDumper("/tmp/photon_dump", args.getJsonLines());
+				NominatimConnector nominatimConnector = new NominatimConnector(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
+				nominatimConnector.setImporter(jsonDumper);
+				nominatimConnector.readEntireDatabase();
+			} catch(FileNotFoundException e) {
+				log.error("cannot create dump", e);
+			}
 		}
 
 		final NominatimUpdater nominatimUpdater = new NominatimUpdater(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
