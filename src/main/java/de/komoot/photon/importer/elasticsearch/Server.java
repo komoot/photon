@@ -46,7 +46,9 @@ public class Server {
 				.build();
 
 		final Environment environment = new Environment(settings);
-		PluginManager pluginManager = new PluginManager(environment, "http://photon.komoot.de/data/elasticsearch-wordending-tokenfilter-0.0.1.zip", PluginManager.OutputMode.VERBOSE, new TimeValue(30000));
+
+		final String pluginPath = this.getClass().getResource("/elasticsearch-wordending-tokenfilter-0.0.1.zip").toExternalForm();
+		PluginManager pluginManager = new PluginManager(environment, pluginPath, PluginManager.OutputMode.DEFAULT, new TimeValue(30000));
 		try {
 			pluginManager.downloadAndExtract("ybon/elasticsearch-wordending-tokenfilter/0.0.1");
 		} catch(IOException e) {
