@@ -194,7 +194,7 @@ def to_geo_json(hits, lang='en', debug=False):
                 properties[attr] = source[attr]
 
         # language specific mapping
-        for attr in ['name', 'country', 'city']:
+        for attr in ['name', 'country', 'city', 'street']:
             obj = source.get(attr, {})
             value = obj.get(lang) or obj.get('default')
             if value:
