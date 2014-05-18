@@ -74,6 +74,8 @@ class NominatimExporter(object):
             self.add_parent(parent, row)
 
     def add_parent_data(self, parent, row):
+        if not parent:
+            return
         parent = dict(parent)
         name = parent['name']
         if name and not name in row['context_name']:
