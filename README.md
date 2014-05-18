@@ -6,7 +6,7 @@ _Photon_ was started by [komoot](http://www.komoot.de) and provides search-as-yo
 
 The current version is still under heavy development, feel free to test and participate.
 
-## Feature overview
+### Features
 - high performance
 - highly scalability
 - search-as-you-type
@@ -15,22 +15,22 @@ The current version is still under heavy development, feel free to test and part
 - typo tolerance
 - OSM data import (built upon [Nominatim](https://github.com/twain47/Nominatim)) inclusive continuous updates
 
-## Prerequisites
-  - Java 7
+### Prerequisites
+  - Java 6
   - Maven
   - Python 2/3 (currently necessary for API)
   - [Nominatim](https://github.com/twain47/Nominatim) (currently necessary for continuous updates)
 
-## Installation
+### Installation
 ```bash
 git clone git@github.com:komoot/photon.git
 cd photon
 mvn clean package
 ```
 
-# Usage
+## Usage
 
-## Import Data
+### Import Data
 To import worldwide data in four languages (English, German, French, Spanish and Italian) you can use our preprocessed
 dataset. You won't be able to continuously update your data to keep them in sync with the latest OSM changes. However
 you avoid to install and import Nominatim which is time consuming.
@@ -46,7 +46,7 @@ curl http://localhost:4567/dump/import # not working yet!
 ```
 Be aware that you download several GB of data, the import itself will take only a few minutes.
 
-## Import Data (inclusive continuous updates)
+### Import Data (inclusive continuous updates)
 If you need continuous updates or want to import country extracts only, you need to install Nominatim by yourself. Once
 this is done you can start the data importer:
 
@@ -56,12 +56,12 @@ java -jar target/photon-importer-0.1-SNAPSHOT.jar -nominatim-import -host localh
 
 The import will take some hours/days, ssd disk are recommended to accelerate nominatim queries.
 
-## Start Photon
+### Start Photon
 ```bash
 java -jar target/photon-importer-0.1-SNAPSHOT.jar
 ```
 
-## Run the Demo UI
+### Run the Demo UI
 
 The python demo UI is located in `website/photon`.
 
