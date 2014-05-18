@@ -31,7 +31,7 @@ mvn clean package
 ## Usage
 
 ### Import Data
-To import worldwide data in four languages (English, German, French, Spanish and Italian) you can use our preprocessed
+To import worldwide data in four languages (English, German, French and Italian) you can use our preprocessed
 dataset. You won't be able to continuously update your data to keep them in sync with the latest OSM changes. However
 you avoid to install and import Nominatim which is time consuming.
 
