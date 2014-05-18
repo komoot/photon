@@ -30,7 +30,7 @@ def query_index(query, lang, lon, lat, match_all=True, limit=15):
             "query": query,
             "type": "best_fields",
             "analyzer": "search_stringanalyser",
-            'operator': 'and' if match_all else 'or',
+            'minimum_should_match': '100%' if match_all else -1,
             "fields": [
                 "name.{0}.ngramed^3".format(lang),
                 "name.{0}.raw^10".format(lang),
