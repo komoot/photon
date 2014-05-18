@@ -16,6 +16,7 @@ import spark.Route;
 import java.io.FileNotFoundException;
 
 import static spark.Spark.get;
+import static spark.Spark.setPort;
 
 @Slf4j
 public class App {
@@ -49,7 +50,7 @@ public class App {
 		final NominatimUpdater nominatimUpdater = new NominatimUpdater(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
 		Updater updater = new ESUpdater(esNodeClient);
 		nominatimUpdater.setUpdater(updater);
-
+        setPort(2322);
 		get(new Route("/", "text/html") {
 			@Override
 			public Object handle(Request request, Response response) {
