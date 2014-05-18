@@ -109,6 +109,9 @@ class NominatimExporter(object):
         }
         row['id'] = '_'.join([raw['osm_type'], str(raw['osm_id'])])
         row['importance'] = 0.75 - raw['rank_search'] / 40
+        row['context'] = {
+            'default': row['context_name']
+        }
         return row
 
 
