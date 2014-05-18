@@ -14,6 +14,9 @@ public class CommandLineArgs {
 	@Parameter(names = "-index", description = "Start elasticsearch indexing")
 	private boolean indexer = false;
 
+	@Parameter(names = "-json", description = "dump json file (userfull for developing)")
+	private boolean jsonDump = false;
+
 	@Parameter(names = "-server", description = "Run the webserver")
 	private boolean server = false;
 
