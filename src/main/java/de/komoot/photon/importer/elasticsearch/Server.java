@@ -45,15 +45,22 @@ public class Server {
 				.put("path.home", this.esDirectory.toString())
 				.build();
 
-		final Environment environment = new Environment(settings);
-
 		final String pluginPath = this.getClass().getResource("/elasticsearch-wordending-tokenfilter-0.0.1.zip").toExternalForm();
-		PluginManager pluginManager = new PluginManager(environment, pluginPath, PluginManager.OutputMode.DEFAULT, new TimeValue(30000));
+		PluginManager pluginManager = new PluginManager(new Environment(settings), pluginPath, PluginManager.OutputMode.VERBOSE, new TimeValue(30000));
 		try {
 			pluginManager.downloadAndExtract("ybon/elasticsearch-wordending-tokenfilter/0.0.1");
 		} catch(IOException e) {
-			log.debug("could not install wordending-tokenfilter", e);
+			log.debug("could not install ybon/elasticsearch-wordending-tokenfilter/0.0.1", e);
 		}
+
+		pluginManager = new PluginManager(new Environment(settings), null, PluginManager.OutputMode.VERBOSE, new TimeValue(30000));
+		for(String pluginName : new String[]{"mobz/elasticsearch-head", "polyfractal/elasticsearch-inquisitor", "elasticsearch/marvel/latest"}) {
+			try {
+				pluginManager.downloadAndExtract(pluginName);
+			} catch(IOException e) {
+			}
+		}
+
 		this.esNode = nodeBuilder().clusterName(this.clusterName).loadConfigSettings(true).settings(settings).node();
 		log.info("started elastic search node");
 	}
