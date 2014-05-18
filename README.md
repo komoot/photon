@@ -1,15 +1,8 @@
 # photon
 
-_Photon_ is an open source geocoder built for [OpenStreetMap](http://www.osm.org) data. It is based on [Apache Solr](http://lucene.apache.org/solr/) - an efficient and highly scalable search platform.
+_Photon_ is an open source geocoder built for [OpenStreetMap](http://www.osm.org) data. It is based on [elasticsearch](http://elasticsearch.org/) - an efficient, powerful and highly scalable search platform.
 
-_Photon_ was developed by [komoot](http://www.komoot.de) and provides search-as-you-type and multilingual support. It's used in production with thousands of requests per minute at
- [www.komoot.de](http://www.komoot.de).
-
-The project consistes of three parts:
-
-1. Solr configuration
-2. Converter that creates a solr xml file from a [Nominatim](http://wiki.openstreetmap.org/wiki/Nominatim) database (Java)
-3. Testing environment for developing (Java)
+_Photon_ was started by [komoot](http://www.komoot.de) and provides search-as-you-type and multilingual support. It's used in production with thousands of requests per minute at [www.komoot.de](http://www.komoot.de).
 
 ## Feature overview
 - performance (< 50ms per request)
