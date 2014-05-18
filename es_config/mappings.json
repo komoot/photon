@@ -24,7 +24,7 @@
         "index": "no"
       },
       "importance": {
-        "type": "short"
+        "type": "float"
       },
       "housenumber": {
         "type": "string",
