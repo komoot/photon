@@ -94,7 +94,7 @@ def query_index(query, lang, lon, lat, match_all=True, limit=15):
                         },
                         {
                             "exists": {
-                                "field": "name.default"
+                                "field": "name.{0}.raw".format(lang)
                             }
                         }
                     ]
