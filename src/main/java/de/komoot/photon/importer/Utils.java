@@ -9,6 +9,7 @@ import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -99,27 +100,28 @@ public class Utils {
 		builder.endObject();
 	}
 
-	private static void writeContext(XContentBuilder builder, Set<Map<String, String>> contexts) throws IOException {
-		final SetMultimap<String, String> map = HashMultimap.create();
+	protected static void writeContext(XContentBuilder builder, Set<Map<String, String>> contexts) throws IOException {
+		final SetMultimap<String, String> multimap = HashMultimap.create();
 
 		for(Map<String, String> context : contexts) {
 			if(context.get("name") != null) {
-				map.put("default", context.get("name"));
+				multimap.put("default", context.get("name"));
 			}
 		}
 
 		for(String language : languages) {
 			for(Map<String, String> context : contexts) {
 				if(context.get("name:" + language) != null) {
-					map.put(language, context.get("name:" + language));
+					multimap.put(language, context.get("name:" + language));
 				}
 			}
 		}
 
-		if(!map.isEmpty()) {
+		final Map<String, Collection<String>> map = multimap.asMap();
+		if(!multimap.isEmpty()) {
 			builder.startObject("context");
-			for(String key : map.keys()) {
-				builder.field(key, commaJoiner.join(map.get(key)));
+			for(Map.Entry<String, Collection<String>> entry : map.entrySet()) {
+				builder.field(entry.getKey(), commaJoiner.join(entry.getValue()));
 			}
 			builder.endObject();
 		}
