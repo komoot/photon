@@ -17,7 +17,7 @@ public class CommandLineArgs {
 	@Parameter(names = "-json", description = "dump json file (userfull for developing)")
 	private boolean jsonDump = false;
 
-	@Parameter(names = "-json-nb_docs", description = "number of documents per json file")
+	@Parameter(names = "-json-nb-docs", description = "number of documents per json file")
 	private int jsonLines = 100000;
 
 	@Parameter(names = "-server", description = "Run the webserver")
