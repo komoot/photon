@@ -21,8 +21,9 @@ public class JsonDumper implements Importer {
 	private PrintWriter writer = null;
 	private final String filename;
 
-	public JsonDumper(String filename) throws FileNotFoundException {
+	public JsonDumper(String filename, int jsonLines) throws FileNotFoundException {
 		this.filename = filename;
+		this.nbLines = jsonLines;
 	}
 
 	@Override

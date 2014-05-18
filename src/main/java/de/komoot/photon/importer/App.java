@@ -37,7 +37,7 @@ public class App {
 
 		if(args.isJsonDump()) {
 			try {
-				final JsonDumper jsonDumper = new JsonDumper("/tmp/photon_dump");
+				final JsonDumper jsonDumper = new JsonDumper("/tmp/photon_dump", args.getJsonLines());
 				NominatimConnector nominatimConnector = new NominatimConnector(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
 				nominatimConnector.setImporter(jsonDumper);
 				nominatimConnector.readEntireDatabase();
