@@ -29,6 +29,11 @@ public class App {
 
 		Client esNodeClient = esNode.getClient();
 
+		if(args.isRecreate_index()) {
+			Importer importer = new Importer(esNodeClient);
+			importer.recreateIndex();
+		}
+
 		if(args.isIndexer()) {
 			Importer importer = new Importer(esNodeClient);
 			NominatimConnector nominatimConnector = new NominatimConnector(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
@@ -50,7 +55,7 @@ public class App {
 		final NominatimUpdater nominatimUpdater = new NominatimUpdater(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
 		Updater updater = new ESUpdater(esNodeClient);
 		nominatimUpdater.setUpdater(updater);
-        setPort(2322);
+		setPort(2322);
 		get(new Route("/", "text/html") {
 			@Override
 			public Object handle(Request request, Response response) {
