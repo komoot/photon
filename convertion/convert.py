@@ -4,7 +4,7 @@ import json
 import xml.etree.cElementTree as et
 
 
-input_xml = 'convertion/sample1.xml'
+input_xml = '../../../data/komoot_solr.berlin.xml'
 
 I18N_FIELDS = "name", "city", "country", "places"
 int_fields = []
@@ -68,14 +68,14 @@ with open(output_xml, 'w') as f:
                     "lon": float(ll[1])
                 }
             elif attr == "street":
-                doc[attr] = {"default": doc[attr]}
+                doc[attr] = {"default": elem.text}
             else:
                 doc[attr] = elem.text
 
         elif elem.tag == 'doc':
             # document is finished, dump it to json
             count += 1
-            if not count % 1000:
+            if not count % 10000:
                 print("progress: {:,}".format(count))
 
             # check extent
@@ -88,7 +88,7 @@ with open(output_xml, 'w') as f:
 
                 doc["extent"] = {
                     "type": "envelope",
-                    "coordinates": [[ne[0], sw[1]], [sw[0], ne[1]]]
+                    "coordinates": [[sw[0], ne[1]], [ne[0], sw[1]]]
                 }
 
             f.write(INSERT_LINE + "\n")

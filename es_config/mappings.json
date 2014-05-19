@@ -15,7 +15,7 @@
                 "type": "long"
             },
             "category": {
-                "type": "int"
+                "type": "integer"
             },
             "importance": {
                 "type": "float"
