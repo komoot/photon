@@ -60,6 +60,8 @@ public class Utils {
 	private static void writeExtent(XContentBuilder builder, Envelope bbox) throws IOException {
 		if(bbox == null) return;
 
+		if(bbox.getArea() == 0.) return;
+
 		// http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/mapping-geo-shape-type.html#_envelope
 		builder.startObject("extent");
 		builder.field("type", "envelope");
