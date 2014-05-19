@@ -33,13 +33,18 @@ public class Importer implements de.komoot.photon.importer.Importer {
 		} catch(IndexMissingException e) { /* ignored */ }
 
 		final boolean indexExists = this.esClient.admin().indices().prepareExists("photon").execute().actionGet().isExists();
-
 		if(!indexExists) {
 			recreateIndex();
 		}
 	}
 
 	public void recreateIndex() {
+		final boolean indexExists = this.esClient.admin().indices().prepareExists("photon").execute().actionGet().isExists();
+		if(indexExists) {
+			// remove index
+			this.esClient.admin().indices().prepareDelete("photon").execute().actionGet();
+		}
+
 		final InputStream mappings = Thread.currentThread().getContextClassLoader().getResourceAsStream("mappings.json");
 		final InputStream index_settings = Thread.currentThread().getContextClassLoader().getResourceAsStream("index_settings.json");
 
