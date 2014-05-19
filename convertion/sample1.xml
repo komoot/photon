@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='utf-8'?>
+<add>
+	<doc>
+		<field name="id">3</field>
+		<field name="coordinate">52.5743651,13.5191298</field>
+		<field name="category">227</field>
+		<field name="name">Wartenberg</field>
+		<field name="ranking">12.75</field>
+		<field name="osm_id">29421338</field>
+		<field name="city">Berlin</field>
+		<field name="city_en">Berlin</field>
+		<field name="city_de">Berlin</field>
+		<field name="places">Lichtenberg, Berlin, Wartenberg</field>
+		<field name="places_en">Berlin</field>
+		<field name="places_de">Berlin</field>
+	</doc>
+</add>
