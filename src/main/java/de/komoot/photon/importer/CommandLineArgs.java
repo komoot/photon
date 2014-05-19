@@ -14,6 +14,9 @@ public class CommandLineArgs {
 	@Parameter(names = "-nominatim-import", description = "import nominatim database into photon (this will delete previous index)")
 	private boolean indexer = false;
 
+	@Parameter(names = "-recreate_index")
+	private boolean recreate_index = false;
+
 	@Parameter(names = "-json", description = "import nominatim database and dump it to json like files in /tmp/ (useful for developing)")
 	private boolean jsonDump = false;
 
