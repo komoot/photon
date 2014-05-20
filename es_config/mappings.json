@@ -36,7 +36,8 @@
             "extent": {
                 "type": "geo_shape",
                 "tree": "quadtree",
-                "precision": "10m"
+                "precision": "10m",
+                "index": "no"
             },
             "postcode": {
                 "type": "string",
