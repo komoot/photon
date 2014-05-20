@@ -4,7 +4,7 @@ import json
 import xml.etree.cElementTree as et
 
 
-input_xml = '../../../data/komoot_solr.berlin.xml'
+input_xml = '../../../data/komoot_solr.xml'
 
 I18N_FIELDS = "name", "city", "country", "places"
 int_fields = []
@@ -50,8 +50,9 @@ with open(output_xml, 'w') as f:
 
                 if not "default" in doc["context"]:
                     doc["context"]["default"] = ""
-
-                doc["context"]["default"] += ", " + elem.text
+                    
+                if elem.text:
+                    doc["context"]["default"] += ", " + elem.text
             elif attr in int_fields:
                 key, sub_key = nested_keys(attr)
                 if key not in doc:
