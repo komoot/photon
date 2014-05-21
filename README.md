@@ -142,6 +142,8 @@ extension according to the format you want to use: `.py`, `.csv` or `.yml`.
 *Where do I save my file?* Chose the right geographical area, and if you create
 a new area remember to create all levels, like `france/iledefrance/paris`.
 
+Remember to check the test already done to get inspiration.
+
 #### Python
 
 They are normal python tests. Just check that you have two utils in `base.py`:
@@ -160,6 +162,12 @@ Optional columns:
 * `lat`, `lon`: if you want to add a center for the search
 * `comment`: if you want to take control of the ouput of the test in the
 command line
+
+#### YAML
+
+The spec name is the query, then one key is mandatory: `expected`, which then
+has the subkeys you want to test against (`name`, `housenumber`…).
+Optional keys: `limit`, `lang`, `lat` and `lon`.
 
 
 ## Licence

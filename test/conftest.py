@@ -58,10 +58,16 @@ class YamlFile(pytest.File):
 class BaseFlatItem(pytest.Item):
 
     def runtest(self):
-        assert_search(
-            query=self.query,
-            expected=self.expected
-        )
+        kwargs = {
+            'query': self.query,
+            'expected': self.expected,
+            'lang': self.lang
+        }
+        if self.lat and self.lon:
+            kwargs['center'] = [self.lat, self.lon]
+        if self.limit:
+            kwargs['limit'] = self.limit
+        assert_search(**kwargs)
 
     def repr_failure(self, excinfo):
         """ called when self.runtest() raises an exception. """
@@ -77,6 +83,10 @@ class CSVItem(BaseFlatItem):
         super(CSVItem, self).__init__(row.get('comment', ''), parent)
         self.query = row.get('query', '')
         self.expected = {}
+        self.lat = row.get('lat')
+        self.lon = row.get('lon')
+        self.lang = row.get('lang')
+        self.limit = row.get('limit')
         for key, value in row.items():
             if key.startswith('expected_') and value is not None:
                 self.expected[key[9:]] = value
@@ -87,3 +97,7 @@ class YamlItem(BaseFlatItem):
         super(YamlItem, self).__init__(name, parent)
         self.query = name
         self.expected = spec['expected']
+        self.lat = spec.get('lat')
+        self.lon = spec.get('lon')
+        self.lang = spec.get('lang')
+        self.limit = spec.get('limit')
