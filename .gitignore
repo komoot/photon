@@ -5,6 +5,7 @@ dependency-reduced-pom.xml
 
 .idea/
 *.iml
+*.~*
 
 src/main/java/de/komoot/photon/.DS_Store
 
