@@ -61,7 +61,8 @@ class BaseFlatItem(pytest.Item):
         kwargs = {
             'query': self.query,
             'expected': self.expected,
-            'lang': self.lang
+            'lang': self.lang,
+            'comment': self.comment
         }
         if self.lat and self.lon:
             kwargs['center'] = [self.lat, self.lon]
@@ -73,8 +74,14 @@ class BaseFlatItem(pytest.Item):
         """ called when self.runtest() raises an exception. """
         return str(excinfo.value)
 
+    def reportstring(self):
+        s = "Search: {}".format(self.query)
+        if self.comment:
+            s = "{} ({})".format(s, self.comment)
+        return s
+
     def reportinfo(self):
-        return self.fspath, 0, "Search: {}".format(self.query)
+        return self.fspath, 0, self.reportstring()
 
 
 class CSVItem(BaseFlatItem):
@@ -87,6 +94,7 @@ class CSVItem(BaseFlatItem):
         self.lon = row.get('lon')
         self.lang = row.get('lang')
         self.limit = row.get('limit')
+        self.comment = row.get('comment')
         for key, value in row.items():
             if key.startswith('expected_') and value is not None:
                 self.expected[key[9:]] = value
@@ -101,3 +109,4 @@ class YamlItem(BaseFlatItem):
         self.lon = spec.get('lon')
         self.lang = spec.get('lang')
         self.limit = spec.get('limit')
+        self.comment = spec.get('comment')
