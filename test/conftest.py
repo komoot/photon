@@ -60,6 +60,8 @@ class YamlFile(pytest.File):
 class BaseFlatItem(pytest.Item):
 
     def runtest(self):
+        if self.skip is not None:
+            pytest.skip(msg=self.skip)
         kwargs = {
             'query': self.query,
             'expected': self.expected,
@@ -97,6 +99,7 @@ class CSVItem(BaseFlatItem):
         self.lang = row.get('lang')
         self.limit = row.get('limit')
         self.comment = row.get('comment')
+        self.skip = row.get('skip')
         for key, value in row.items():
             if key.startswith('expected_') and value:
                 self.expected[key[9:]] = value
@@ -112,3 +115,4 @@ class YamlItem(BaseFlatItem):
         self.lang = spec.get('lang')
         self.limit = spec.get('limit')
         self.comment = spec.get('comment')
+        self.skip = spec.get('skip')

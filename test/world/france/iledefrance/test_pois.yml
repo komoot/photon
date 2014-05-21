@@ -14,3 +14,9 @@ sacre coeur:
     expected:
         osm_id: 23762981
     comment: Sacré-Cœur in russian
+    skip: Russian search not supported yet
+
+Parigi:
+    expected:
+        name: Parigi
+    lang: it

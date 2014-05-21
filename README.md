@@ -162,6 +162,8 @@ Optional columns:
 * `lat`, `lon`: if you want to add a center for the search
 * `comment`: if you want to take control of the ouput of the test in the
 command line
+* `skip`: add a `skip` message if you want a test to be always skipped (feature
+not supported yet for example)
 
 #### YAML
 
