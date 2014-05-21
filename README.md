@@ -92,9 +92,38 @@ It has been developed with python3.4 (but should work with python2.x). We sugges
 
 Photon comes with a python suite to test search relevance.
 
-First, install pytest: `pip install pytest`, then `cd test`, and run `py.test`.
+### Running
 
-If we want to run only a subset of the tests, run `py.test -m iledefrance` for example.
+First, install `pytest` if not already installed:
+
+    pip install pytest
+
+then:
+
+    cd test
+    py.test
+
+For a global help, type:
+
+    py.test -h
+
+Tests are split by geographical area, so you can run only a subset of all the tests,
+for example because your local database only contains a small area, or because you want
+to focus on some data.
+
+Available subset: `germany`, `france`, `iledefrance`.
+
+If you want to run only a subset of the tests, run for example
+
+    py.test -m iledefrance
+
+What if I want to have details about the failures?
+
+    py.test --tb long
+
+How can I stop at first failing test?
+
+    py.test -x
 
 ## Licence
 _Photon_ software is open source and licensed under [Apache License, Version 2.0](http://opensource.org/licenses/Apache-2.0)
