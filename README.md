@@ -111,7 +111,7 @@ Tests are split by geographical area, so you can run only a subset of all the te
 for example because your local database only contains a small area, or because you want
 to focus on some data.
 
-Available subsets: `germany`, `france`, `iledefrance`.
+Available subsets: `germany`, `france`, `iledefrance`, `italy`.
 
 If you want to run only a subset of the tests, run for example
 
