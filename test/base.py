@@ -52,7 +52,7 @@ def assert_search(query, expected, limit=1,
                 if not key in r['properties'] or not r['properties'][key] == value:
                     found = False
         if not found:
-            raise SearchException(results=str(results))
+            raise SearchException(results=str(results), query=query)
 
     if not isinstance(expected, list):
         expected = [expected]

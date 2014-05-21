@@ -86,4 +86,4 @@ class YamlItem(BaseFlatItem):
     def __init__(self, name, parent, spec):
         super(YamlItem, self).__init__(name, parent)
         self.query = name
-        self.expected = {}
+        self.expected = spec['expected']
