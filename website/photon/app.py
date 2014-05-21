@@ -24,7 +24,6 @@ def index():
 
 
 def query_index(query, lang, lon, lat, match_all=True, limit=15):
-
     req_body = {
         "multi_match": {
             "query": query,
@@ -42,35 +41,36 @@ def query_index(query, lang, lon, lat, match_all=True, limit=15):
         }
     }
 
-    if lon is not None and lat is not None:
-        req_body = {
-            "function_score": {
-                "score_mode": "multiply",  # How functions score are mixed together
-                "boost_mode": "multiply",  # how total will be mixed to search score
-                "query": req_body,
-                "functions": [
-                    {
-                        "script_score": {
-                            "script": "dist = doc['coordinate'].distanceInKm(lat, lon); 1 / (0.5 - 0.5 * exp(-5*dist/maxDist))",
-                            "params": {
-                                "lon": lon,
-                                "lat": lat,
-                                "maxDist": 100
-                            }
-                        }
-                    },
-                    {
-                        "script_score": {
-                            "script": "1 + doc['importance'].value * 40"
-                        }
+    req_body = {
+        "function_score": {
+            "score_mode": "multiply",  # How functions score are mixed together
+            "boost_mode": "multiply",  # how total will be mixed to search score
+            "query": req_body,
+            "functions": [
+                {
+                    "script_score": {
+                        "script": "1 + doc['importance'].value * 40"
                     }
-                ],
-            }
+                }
+            ],
         }
+    }
+
+    if lon is not None and lat is not None:
+        req_body["function_score"]["functions"].append({
+            "script_score": {
+                "script": "dist = doc['coordinate'].distanceInKm(lat, lon); 1 / (0.5 - 0.5 * exp(-5*dist/maxDist))",
+                "params": {
+                    "lon": lon,
+                    "lat": lat,
+                    "maxDist": 100
+                }
+            }
+        })
 
     # if housenumber is not null AND name.default is null, housenumber must
     # match the request. This will filter out the house from the requests
-    # if the housenumber is not explicitelly in the request
+    # if the housenumber is not explicitly in the request
     req_body = {
         "filtered": {
             "query": req_body,
