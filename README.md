@@ -125,5 +125,9 @@ How can I stop at first failing test?
 
     py.test -x
 
+Can I change the photon URL I'm testing against?
+
+    py.test --photon-url http://photon.komoot.de/api/
+
 ## Licence
 _Photon_ software is open source and licensed under [Apache License, Version 2.0](http://opensource.org/licenses/Apache-2.0)
