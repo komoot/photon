@@ -1,4 +1,5 @@
 import csv
+import yaml
 
 import pytest
 
@@ -12,6 +13,8 @@ def pytest_collect_file(parent, path):
     ext = path.ext
     if ext == ".csv":
         f = CSVFile(path, parent)
+    if ext == ".yml":
+        f = YamlFile(path, parent)
     return f
 
 
@@ -44,18 +47,19 @@ class CSVFile(pytest.File):
                 yield CSVItem(row, self)
 
 
-class CSVItem(pytest.Item):
-    def __init__(self, row, parent):
-        super(CSVItem, self).__init__(row.get('comment', ''), parent)
-        self.query = row.get('query', '')
-        self.expected = {}
-        for key, value in row.items():
-            if key.startswith('expected_') and value is not None:
-                self.expected[key[9:]] = value
+class YamlFile(pytest.File):
+
+    def collect(self):
+        raw = yaml.safe_load(self.fspath.open())
+        for name, spec in raw.items():
+            yield YamlItem(name, self, spec)
+
+
+class BaseFlatItem(pytest.Item):
 
     def runtest(self):
         assert_search(
-            search=self.query,
+            query=self.query,
             expected=self.expected
         )
 
@@ -67,6 +71,26 @@ class CSVItem(pytest.Item):
                 "   search was: {}".format(self.query),
                 "   results were: {}".format(excinfo.value.results),
             ])
+        else:
+            return str(excinfo.value)
 
     def reportinfo(self):
         return self.fspath, 0, "Search: {}".format(self.query)
+
+
+class CSVItem(BaseFlatItem):
+
+    def __init__(self, row, parent):
+        super(CSVItem, self).__init__(row.get('comment', ''), parent)
+        self.query = row.get('query', '')
+        self.expected = {}
+        for key, value in row.items():
+            if key.startswith('expected_') and value is not None:
+                self.expected[key[9:]] = value
+
+
+class YamlItem(BaseFlatItem):
+    def __init__(self, name, parent, spec):
+        super(YamlItem, self).__init__(name, parent)
+        self.query = name
+        self.expected = {}
