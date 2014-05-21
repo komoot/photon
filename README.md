@@ -169,7 +169,9 @@ not supported yet for example)
 
 The spec name is the query, then one key is mandatory: `expected`, which then
 has the subkeys you want to test against (`name`, `housenumber`…).
-Optional keys: `limit`, `lang`, `lat` and `lon`.
+Optional keys: `limit`, `lang`, `lat` and `lon`, `skip`.
+You can add categories to your test by using the key `mark` (which expects a
+list), that you can then run with `-m yourmarker`.
 
 
 ## Licence

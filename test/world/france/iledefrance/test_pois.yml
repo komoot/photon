@@ -20,3 +20,5 @@ Parigi:
     expected:
         name: Parigi
     lang: it
+    mark:
+        - italian

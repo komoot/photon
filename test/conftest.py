@@ -59,6 +59,18 @@ class YamlFile(pytest.File):
 
 class BaseFlatItem(pytest.Item):
 
+    def __init__(self, name, parent, **kwargs):
+        super().__init__(name, parent)
+        self.lat = kwargs.get('lat')
+        self.lon = kwargs.get('lon')
+        self.lang = kwargs.get('lang')
+        self.limit = kwargs.get('limit')
+        self.comment = kwargs.get('comment')
+        self.skip = kwargs.get('skip')
+        self.mark = kwargs.get('mark', [])
+        for mark in self.mark:
+            self.add_marker(mark)
+
     def runtest(self):
         if self.skip is not None:
             pytest.skip(msg=self.skip)
@@ -91,15 +103,11 @@ class BaseFlatItem(pytest.Item):
 class CSVItem(BaseFlatItem):
 
     def __init__(self, row, parent):
-        super(CSVItem, self).__init__(row.get('comment', ''), parent)
+        if "mark" in row:
+            row['mark'] = row['mark'].split(',')
+        super().__init__(row.get('comment', ''), parent, **row)
         self.query = row.get('query', '')
         self.expected = {}
-        self.lat = row.get('lat')
-        self.lon = row.get('lon')
-        self.lang = row.get('lang')
-        self.limit = row.get('limit')
-        self.comment = row.get('comment')
-        self.skip = row.get('skip')
         for key, value in row.items():
             if key.startswith('expected_') and value:
                 self.expected[key[9:]] = value
@@ -107,12 +115,6 @@ class CSVItem(BaseFlatItem):
 
 class YamlItem(BaseFlatItem):
     def __init__(self, name, parent, spec):
-        super(YamlItem, self).__init__(name, parent)
+        super(YamlItem, self).__init__(name, parent, **spec)
         self.query = name
         self.expected = spec['expected']
-        self.lat = spec.get('lat')
-        self.lon = spec.get('lon')
-        self.lang = spec.get('lang')
-        self.limit = spec.get('limit')
-        self.comment = spec.get('comment')
-        self.skip = spec.get('skip')
