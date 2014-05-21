@@ -56,13 +56,6 @@ def test_paris_from_new_zeland():
     assert_search("paris", {"name": "Paris"}, center=AUCKLAND, limit=1, comment="'Paris' from Auclkand still gives Paris")
 
 
-@pytest.mark.france
-@pytest.mark.iledefrance
-def test_port_aux_cerises():
-    assert_search("port aux cerises", {'osm_id': 833452505}, limit=2,
-                     comment="I can find 'Port aux Cerises' harbour")
-
-
 @pytest.mark.germany
 def test_munchen_without_lang():
     assert_search("munchen", {'name': 'München'})
