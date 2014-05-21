@@ -119,7 +119,7 @@ If you want to run only a subset of the tests, run for example
 
 What if I want to have details about the failures?
 
-    py.test --tb long
+    py.test --tb short
 
 How can I stop at first failing test?
 

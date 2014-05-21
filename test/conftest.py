@@ -65,14 +65,7 @@ class BaseFlatItem(pytest.Item):
 
     def repr_failure(self, excinfo):
         """ called when self.runtest() raises an exception. """
-        if isinstance(excinfo.value, SearchException):
-            return "\n".join([
-                "Search failed",
-                "   search was: {}".format(self.query),
-                "   results were: {}".format(excinfo.value.results),
-            ])
-        else:
-            return str(excinfo.value)
+        return str(excinfo.value)
 
     def reportinfo(self):
         return self.fspath, 0, "Search: {}".format(self.query)

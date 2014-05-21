@@ -16,12 +16,21 @@ class SearchException(Exception):
     def __init__(self, **kwargs):
         super().__init__()
         self.results = kwargs.get("results", {})
+        self.query = kwargs.get('query', '')
+        self.error = kwargs.get('error', '')
+
+    def __str__(self):
+        return self.error or "\n".join([
+            "Search failed",
+            "   search was: {}".format(self.query),
+            "   results were: {}".format(self.results),
+        ])
 
 
 def search(**params):
     r = requests.get(CONFIG['PHOTON_URL'], params=params)
     if not r.status_code == 200:
-        raise SearchException("Non 200 response")
+        raise SearchException(error="Non 200 response")
     return r.json()
 
 
