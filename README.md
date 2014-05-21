@@ -88,5 +88,13 @@ It has been developed with python3.4 (but should work with python2.x). We sugges
  ```
 * Go to http://localhost:5001/ and test it!
 
+## Metrics
+
+Photon comes with a python suite to test search relevance.
+
+First, install pytest: `pip install pytest`, then `cd test`, and run `py.test`.
+
+If we want to run only a subset of the tests, run `py.test -m iledefrance` for example.
+
 ## Licence
 _Photon_ software is open source and licensed under [Apache License, Version 2.0](http://opensource.org/licenses/Apache-2.0)
