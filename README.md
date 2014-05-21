@@ -111,7 +111,7 @@ Tests are split by geographical area, so you can run only a subset of all the te
 for example because your local database only contains a small area, or because you want
 to focus on some data.
 
-Available subset: `germany`, `france`, `iledefrance`.
+Available subsets: `germany`, `france`, `iledefrance`.
 
 If you want to run only a subset of the tests, run for example
 
@@ -128,6 +128,39 @@ How can I stop at first failing test?
 Can I change the photon URL I'm testing against?
 
     py.test --photon-url http://photon.komoot.de/api/
+
+### Adding metrics
+
+We support python, CSV and YAML format.
+
+Before creating a new file, check that there isn't a one that can host the test
+you want to add.
+
+*How do I name my file?* Just make it start with `test_`, and chose the right
+extension according to the format you want to use: `.py`, `.csv` or `.yml`.
+
+*Where do I save my file?* Chose the right geographical area, and if you create
+a new area remember to create all levels, like `france/iledefrance/paris`.
+
+#### Python
+
+They are normal python tests. Just check that you have two utils in `base.py`:
+`search` and `assert_search` that can do a lot for you.
+
+#### CSV
+
+One column are mandatory: `query`, where you store the query you make.
+Then you can add as many `expected_xxx` columns you want, according to what
+you want to test. For example, to test the name in the result, you will store
+the expected value in the column `expected_name`; for an `osm_id` it will be
+`expected_osm_id`, and so on.
+Optional columns:
+* `limit`: decide how many results you want to look at for finding your result
+(defaul: 1)
+* `lat`, `lon`: if you want to add a center for the search
+* `comment`: if you want to take control of the ouput of the test in the
+command line
+
 
 ## Licence
 _Photon_ software is open source and licensed under [Apache License, Version 2.0](http://opensource.org/licenses/Apache-2.0)
