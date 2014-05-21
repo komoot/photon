@@ -42,7 +42,9 @@ class CSVFile(pytest.File):
 
     def collect(self):
         with self.fspath.open() as f:
-            reader = csv.DictReader(f)
+            dialect = csv.Sniffer().sniff(f.read(1024))
+            f.seek(0)
+            reader = csv.DictReader(f, dialect=dialect)
             for row in reader:
                 yield CSVItem(row, self)
 
@@ -96,7 +98,7 @@ class CSVItem(BaseFlatItem):
         self.limit = row.get('limit')
         self.comment = row.get('comment')
         for key, value in row.items():
-            if key.startswith('expected_') and value is not None:
+            if key.startswith('expected_') and value:
                 self.expected[key[9:]] = value
 
 
