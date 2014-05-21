@@ -25,9 +25,7 @@
                 "index": "not_analyzed",
                 "copy_to": [
                     "collector.en",
-                    "collector.de",
-                    "collector.fr",
-                    "collector.it"
+                    "collector.de"
                 ]
             },
             "coordinate": {
@@ -44,9 +42,7 @@
                 "index": "no",
                 "copy_to": [
                     "collector.en",
-                    "collector.de",
-                    "collector.fr",
-                    "collector.it"
+                    "collector.de"
                 ]
             },
             "city": {
@@ -63,9 +59,7 @@
                         "index": "no",
                         "copy_to": [
                             "collector.en",
-                            "collector.de",
-                            "collector.fr",
-                            "collector.it"
+                            "collector.de"
                         ]
                     },
                     "en": {
@@ -73,20 +67,6 @@
                         "index": "no",
                         "copy_to": [
                             "collector.en"
-                        ]
-                    },
-                    "fr": {
-                        "type": "string",
-                        "index": "no",
-                        "copy_to": [
-                            "collector.fr"
-                        ]
-                    },
-                    "it": {
-                        "type": "string",
-                        "index": "no",
-                        "copy_to": [
-                            "collector.it"
                         ]
                     }
                 }
@@ -105,9 +85,7 @@
                         "index": "no",
                         "copy_to": [
                             "collector.en",
-                            "collector.de",
-                            "collector.fr",
-                            "collector.it"
+                            "collector.de"
                         ]
                     },
                     "en": {
@@ -115,20 +93,6 @@
                         "index": "no",
                         "copy_to": [
                             "collector.en"
-                        ]
-                    },
-                    "fr": {
-                        "type": "string",
-                        "index": "no",
-                        "copy_to": [
-                            "collector.fr"
-                        ]
-                    },
-                    "it": {
-                        "type": "string",
-                        "index": "no",
-                        "copy_to": [
-                            "collector.it"
                         ]
                     }
                 }
@@ -147,9 +111,7 @@
                         "index": "no",
                         "copy_to": [
                             "collector.en",
-                            "collector.de",
-                            "collector.fr",
-                            "collector.it"
+                            "collector.de"
                         ]
                     },
                     "en": {
@@ -157,20 +119,6 @@
                         "index": "no",
                         "copy_to": [
                             "collector.en"
-                        ]
-                    },
-                    "fr": {
-                        "type": "string",
-                        "index": "no",
-                        "copy_to": [
-                            "collector.fr"
-                        ]
-                    },
-                    "it": {
-                        "type": "string",
-                        "index": "no",
-                        "copy_to": [
-                            "collector.it"
                         ]
                     }
                 }
@@ -188,9 +136,7 @@
                         },
                         "copy_to": [
                             "collector.en",
-                            "collector.de",
-                            "collector.fr",
-                            "collector.it"
+                            "collector.de"
                         ]
                     },
                     "old": {
@@ -204,9 +150,7 @@
                         },
                         "copy_to": [
                             "collector.en",
-                            "collector.de",
-                            "collector.fr",
-                            "collector.it"
+                            "collector.de"
                         ]
                     },
                     "loc": {
@@ -220,9 +164,7 @@
                         },
                         "copy_to": [
                             "collector.en",
-                            "collector.de",
-                            "collector.fr",
-                            "collector.it"
+                            "collector.de"
                         ]
                     },
                     "alt": {
@@ -236,9 +178,7 @@
                         },
                         "copy_to": [
                             "collector.en",
-                            "collector.de",
-                            "collector.fr",
-                            "collector.it"
+                            "collector.de"
                         ]
                     },
                     "de": {
@@ -263,13 +203,9 @@
                         "index": "no",
                         "copy_to": [
                             "collector.en",
-                            "collector.de",
-                            "collector.fr",
-                            "collector.it",
+                            "collector.de"
                             "name.en",
-                            "name.de",
-                            "name.fr",
-                            "name.it"
+                            "name.de"
                         ]
                     },
                     "en": {
@@ -287,40 +223,6 @@
                         },
                         "copy_to": [
                             "collector.en"
-                        ]
-                    },
-                    "fr": {
-                        "type": "string",
-                        "index": "no",
-                        "fields": {
-                            "ngramed": {
-                                "type": "string",
-                                "index_analyzer": "stringanalyser"
-                            },
-                            "raw": {
-                                "type": "string",
-                                "index_analyzer": "raw_stringanalyser"
-                            }
-                        },
-                        "copy_to": [
-                            "collector.fr"
-                        ]
-                    },
-                    "it": {
-                        "type": "string",
-                        "index": "no",
-                        "fields": {
-                            "ngramed": {
-                                "type": "string",
-                                "index_analyzer": "stringanalyser"
-                            },
-                            "raw": {
-                                "type": "string",
-                                "index_analyzer": "raw_stringanalyser"
-                            }
-                        },
-                        "copy_to": [
-                            "collector.it"
                         ]
                     }
                 }
@@ -333,9 +235,7 @@
                         "type": "string",
                         "copy_to": [
                             "collector.en",
-                            "collector.de",
-                            "collector.fr",
-                            "collector.it"
+                            "collector.de"
                         ]
                     },
                     "de": {
@@ -350,20 +250,6 @@
                         "type": "string",
                         "copy_to": [
                             "collector.en"
-                        ]
-                    },
-                    "fr": {
-                        "index": "no",
-                        "type": "string",
-                        "copy_to": [
-                            "collector.fr"
-                        ]
-                    },
-                    "it": {
-                        "index": "no",
-                        "type": "string",
-                        "copy_to": [
-                            "collector.it"
                         ]
                     }
                 }
@@ -381,26 +267,6 @@
                         }
                     },
                     "en": {
-                        "type": "string",
-                        "analyzer": "stringanalyser",
-                        "fields": {
-                            "raw": {
-                                "type": "string",
-                                "analyzer": "raw_stringanalyser"
-                            }
-                        }
-                    },
-                    "fr": {
-                        "type": "string",
-                        "analyzer": "stringanalyser",
-                        "fields": {
-                            "raw": {
-                                "type": "string",
-                                "analyzer": "raw_stringanalyser"
-                            }
-                        }
-                    },
-                    "it": {
                         "type": "string",
                         "analyzer": "stringanalyser",
                         "fields": {
