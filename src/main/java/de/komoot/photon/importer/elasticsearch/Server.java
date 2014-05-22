@@ -47,7 +47,7 @@ public class Server {
 	private File tempDirectory;
 	private File importDirectory;
 
-	public Server(String mainDirectory) {
+	public Server(String clusterName, String mainDirectory) {
 		try {
 			setupDirectories(new URL("file://" + mainDirectory));
 		} catch(MalformedURLException e) {
@@ -60,6 +60,7 @@ public class Server {
 				log.error("Can´t create directories");
 			}
 		}
+        this.clusterName = clusterName;
 	}
 
 	public Server start() {

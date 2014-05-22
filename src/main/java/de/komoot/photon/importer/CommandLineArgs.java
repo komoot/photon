@@ -11,6 +11,9 @@ import java.io.File;
 
 @Data
 public class CommandLineArgs {
+	@Parameter(names = "-cluster", description = "name of elasticsearch cluster to put the server into (default: photon)")
+	private String cluster = "photon";
+	
 	@Parameter(names = "-nominatim-import", description = "import nominatim database into photon (this will delete previous index)")
 	private boolean nominatimImport = false;
 
