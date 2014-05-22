@@ -10,6 +10,16 @@ CONFIG = {
 }
 
 
+class HttpSearchException(Exception):
+
+    def __init__(self, **kwargs):
+        super().__init__()
+        self.error = kwargs.get("error", {})
+
+    def __str__(self):
+        return self.error
+
+
 class SearchException(Exception):
     """ custom exception for error reporting. """
 
@@ -17,20 +27,29 @@ class SearchException(Exception):
         super().__init__()
         self.results = kwargs.get("results", {})
         self.query = kwargs.get('query', '')
-        self.error = kwargs.get('error', '')
+        self.expected = kwargs.get('expected', {})
 
     def __str__(self):
-        return self.error or "\n".join([
-            "Search failed",
-            "   search was: {}".format(self.query),
-            "   results were: {}".format(self.results),
-        ])
+        lines = [
+            'Search failed',
+            "# Search was: {}".format(self.query),
+        ]
+        lines.append('# Expected was:')
+        lines.append(" — ".join("{}: {}".format(k, v) for k, v in self.expected.items()))
+        lines.append('# Results were:')
+        keys = list(self.expected.keys())
+        if not "name" in keys:
+            keys.insert(0, "name")
+        lines.append('\t'.join(keys))
+        for r in self.results['features']:
+            lines.append('\t'.join(str(r['properties'][k]) for k in keys))
+        return "\n".join(lines)
 
 
 def search(**params):
     r = requests.get(CONFIG['PHOTON_URL'], params=params)
     if not r.status_code == 200:
-        raise SearchException(error="Non 200 response")
+        raise HttpSearchException(error="Non 200 response")
     return r.json()
 
 
@@ -52,7 +71,11 @@ def assert_search(query, expected, limit=1,
                 if not key in r['properties'] or not r['properties'][key] == value:
                     found = False
         if not found:
-            raise SearchException(results=str(results), query=query)
+            raise SearchException(
+                results=results,
+                query=query,
+                expected=expected
+            )
 
     if not isinstance(expected, list):
         expected = [expected]
