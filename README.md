@@ -50,7 +50,7 @@ java -jar target/photon-0.1-SNAPSHOT.jar -nominatim-import -host localhost -port
 
 The import will take some hours/days, ssd disk are recommended to accelerate nominatim queries.
 
-For continuous updates you can run
+For continuous updates you can run [continuously_update_from_nominatim.sh](./continuously_update_from_nominatim.sh):
 ```bash
 export NOMINATIM_DIR=/home/nominatim/...
 ./continuously_update_from_nominatim.sh
