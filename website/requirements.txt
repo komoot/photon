@@ -5,3 +5,4 @@ MarkupSafe==0.18
 requests==2.0.0
 simplejson==3.3.1
 Werkzeug==0.9.4
+elasticsearch==1.0.0
