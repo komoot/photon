@@ -42,12 +42,6 @@
       "coordinate": {
         "type": "geo_point"
       },
-      "extent": {
-        "type": "geo_shape",
-        "tree": "quadtree",
-        "precision": "10m",
-        "index": "no"
-      },
       "postcode": {
         "type": "string",
         "index": "no",
