@@ -4,6 +4,9 @@
     "_all": {
       "enabled": false
     },
+     "_source" : {
+		"excludes" : ["context.*"]
+	},
     "_id": {
       "path": "id"
     },
