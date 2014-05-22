@@ -42,7 +42,7 @@ class SearchException(Exception):
             keys.insert(0, "name")
         lines.append('\t'.join(keys))
         for r in self.results['features']:
-            lines.append('\t'.join(str(r['properties'][k]) for k in keys))
+            lines.append('\t'.join(str(r['properties'].get(k, '—')) for k in keys))
         return "\n".join(lines)
 
 
@@ -68,8 +68,10 @@ def assert_search(query, expected, limit=1,
         for r in results['features']:
             found = True
             for key, value in expected.items():
-                if not key in r['properties'] or not r['properties'][key] == value:
+                if not str(r['properties'].get(key)) == str(value):
                     found = False
+            if found:
+                break
         if not found:
             raise SearchException(
                 results=results,
