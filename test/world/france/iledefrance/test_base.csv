@@ -3,7 +3,7 @@ comment,query,expected_name,expected_housenumber,expected_street,expected_city,e
 ,courbevoie france,,,,,92400,France,administrative,
 ,ile de france,,,,,,France,,
 ,hauts de seine france,,,,,,France,,
-,rue des pyrénées paris france,,,Rue des Pyrénées,Paris,,France,,
+,rue des pyrénées paris france,Rue des Pyrénées,,,Paris,,France,,
 ,eiffel tower paris,,,,Paris,,France,,
 ,grands boulevards paris,,,,Paris,,France,,
 ,cimetière du père lachaise,,,,Paris,75020,France,,
