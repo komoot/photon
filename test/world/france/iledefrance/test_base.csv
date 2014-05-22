@@ -8,5 +8,5 @@ comment,query,expected_name,expected_housenumber,expected_street,expected_city,e
 ,grands boulevards paris,,,,Paris,,France
 ,cimetière du père lachaise,,,,Paris,75020,France
 ,rue de lourmel paris,,,Rue de Lourmel,Paris,75015,France
-,25 rue bergère paris,,25,Rue Bergère,Paris,75015,France
-,rue bergère paris,,,Rue Bergère,Paris,75015,France
+,25 rue bergère paris,,25,Rue Bergère,Paris,75009,France
+,rue bergère paris,,,Rue Bergère,Paris,75009,France
