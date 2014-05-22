@@ -156,7 +156,7 @@ public class NominatimConnector {
 
 				importer.add(doc);
 				if(counter.incrementAndGet() % progressInterval == 0) {
-					final double documentsPerSecond = 1000d * progressInterval / (System.currentTimeMillis() - startMillis);
+					final double documentsPerSecond = 1000d * counter.longValue() / (System.currentTimeMillis() - startMillis);
 					log.info(String.format("imported %s documents [%.1f/second]", MessageFormat.format("{0}", counter.longValue()), documentsPerSecond));
 				}
 			}
