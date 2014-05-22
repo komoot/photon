@@ -31,6 +31,7 @@ class SearchException(Exception):
 
     def __str__(self):
         lines = [
+            '',
             'Search failed',
             "# Search was: {}".format(self.query),
         ]
@@ -38,12 +39,11 @@ class SearchException(Exception):
         expected += " | ".join("{}: {}".format(k, v) for k, v in self.expected.items())
         lines.append(expected)
         lines.append('# Results were:')
-        keys = list(self.expected.keys())
-        if not "name" in keys:
-            keys.insert(0, "name")
-        lines.append('\t'.join(keys))
-        for r in self.results['features']:
-            lines.append('\t'.join(str(r['properties'].get(k, '—')) for k in keys))
+        keys = ['name', 'osm_key', 'osm_value', 'osm_id', 'housenumber',
+                'street', 'postcode', 'city', 'country']
+        results = [f['properties'] for f in self.results['features']]
+        lines.extend(dicts_to_table(results, keys=keys))
+        lines.append('')
         return "\n".join(lines)
 
 
@@ -84,3 +84,38 @@ def assert_search(query, expected, limit=1,
         expected = [expected]
     for s in expected:
         assert_expected(s)
+
+
+def dicts_to_table(dicts, keys=None):
+    if not dicts:
+        return []
+    if keys is None:
+        keys = dicts[0].keys()
+    cols = []
+    for i, key in enumerate(keys):
+        cols.append(len(key))
+    for d in dicts:
+        for i, key in enumerate(keys):
+            l = len(str(d.get(key, '')))
+            if l > cols[i]:
+                cols[i] = l
+    out = []
+
+    def fill(l, to, char=" "):
+        l = str(l)
+        return "{}{}".format(
+            l,
+            char * (to - len(l) if len(l) < to else 0)
+        )
+
+    def create_row(values, char=" "):
+        row = []
+        for i, v in enumerate(values):
+            row.append(fill(v, cols[i], char))
+        return " | ".join(row)
+
+    out.append(create_row(keys))
+    out.append(create_row(['' for k in keys], char="-"))
+    for d in dicts:
+        out.append(create_row([d.get(k, '—') for k in keys]))
+    return out

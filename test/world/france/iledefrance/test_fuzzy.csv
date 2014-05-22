@@ -1,6 +1,6 @@
-query;expected_street;expected_city;expected_postcode;expected_country
-pairs france;;Paris;75015;France
-pairs frnace;;Paris;75015;France
-rue des bregers paris france;Rue des Bergers;Paris;75015;France
-rue des bregers prais frnace;Rue des Bergers;Paris;75015;France
-rue des begers pais franec;Rue des Bergers;Paris;75015;France
+query;expected_street;expected_city;expected_postcode;expected_country;limit
+pairs france;;Paris;75015;France;2
+pairs frnace;;Paris;75015;France;2
+rue des bregers paris france;Rue des Bergers;Paris;75015;France;2
+rue des bregers prais frnace;Rue des Bergers;Paris;75015;France;2
+rue des begers pais franec;Rue des Bergers;Paris;75015;France;2
