@@ -34,8 +34,9 @@ class SearchException(Exception):
             'Search failed',
             "# Search was: {}".format(self.query),
         ]
-        lines.append('# Expected was:')
-        lines.append(" — ".join("{}: {}".format(k, v) for k, v in self.expected.items()))
+        expected = '# Expected was: '
+        expected += " | ".join("{}: {}".format(k, v) for k, v in self.expected.items())
+        lines.append(expected)
         lines.append('# Results were:')
         keys = list(self.expected.keys())
         if not "name" in keys:
