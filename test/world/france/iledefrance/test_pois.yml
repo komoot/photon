@@ -22,3 +22,7 @@ Parigi:
     lang: it
     mark:
         - italian
+
+numa paris:
+    expected:
+        osm_id: 55046167
