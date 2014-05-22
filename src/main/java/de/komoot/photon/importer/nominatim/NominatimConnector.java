@@ -4,10 +4,12 @@ import com.neovisionaries.i18n.CountryCode;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Point;
+
 import de.komoot.photon.importer.Importer;
 import de.komoot.photon.importer.model.PhotonDoc;
 import de.komoot.photon.importer.nominatim.model.AddressRow;
 import lombok.extern.slf4j.Slf4j;
+
 import org.apache.commons.dbcp.BasicDataSource;
 import org.postgis.jts.JtsWrapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -18,6 +20,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.MessageFormat;
 import java.util.List;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -115,6 +119,32 @@ public class NominatimConnector {
 			}
 		});
 	}
+	
+	
+	private class ImportThread implements Runnable {
+		private BlockingQueue<PhotonDoc> documents;
+		
+		public ImportThread(BlockingQueue<PhotonDoc> documents) {
+			this.documents = documents;
+		}
+		
+
+		@Override
+		public void run() {
+			while (true) {
+				PhotonDoc doc = null;
+				try {
+					doc = documents.take();
+					if (doc == null)
+						break;
+					importer.add(doc);
+				} catch (InterruptedException e) { /* safe to ignore? */ }
+				
+			}
+			importer.finish();
+		}
+				
+	}
 
 	/**
 	 * parses every relevant row in placex, creates a corresponding document and calls the {@link #importer} for every document
@@ -125,6 +155,10 @@ public class NominatimConnector {
 
 		final int progressInterval = 5000;
 		final long startMillis = System.currentTimeMillis();
+		
+		final BlockingQueue<PhotonDoc> documents = new LinkedBlockingDeque<PhotonDoc>(20);
+		Thread importThread = new Thread(new ImportThread(documents));
+		importThread.start();
 
 		template.query("SELECT " + selectColsPlaceX + " FROM placex WHERE linked_place_id IS NULL ORDER BY parent_place_id;", new RowCallbackHandler() {
 			@Override
@@ -154,7 +188,16 @@ public class NominatimConnector {
 
 				if(!doc.isUsefulForIndex()) return; // do not import document
 
-				importer.add(doc);
+				//importer.add(doc);
+				while (true) {
+					try {
+						documents.put(doc);
+					} catch (InterruptedException e) {
+						log.warn("Thread interrupted while placing document in queue.");
+						continue;
+					}
+					break;
+				}
 				if(counter.incrementAndGet() % progressInterval == 0) {
 					final double documentsPerSecond = 1000d * counter.longValue() / (System.currentTimeMillis() - startMillis);
 					log.info(String.format("imported %s documents [%.1f/second]", MessageFormat.format("{0}", counter.longValue()), documentsPerSecond));
@@ -162,7 +205,17 @@ public class NominatimConnector {
 			}
 		});
 
-		importer.finish();
+		while (true) {
+			try {
+				documents.put(null);
+				importThread.join();
+			} catch (InterruptedException e) {
+				log.warn("Thread interrupted while placing document in queue.");
+				continue;
+			}
+			break;
+		}
+		//importer.finish();
 		log.info(String.format("finished import of %s photon documents.", MessageFormat.format("{0}", counter.longValue())));
 	}
 }
