@@ -28,30 +28,24 @@ cd photon
 mvn clean package
 ```
 
-## Usage
+## Quick Start
 
 ### Import Data
 To import worldwide data in four languages (English, German, French and Italian) you can use our preprocessed
 dataset. You won't be able to continuously update your data to keep them in sync with the latest OSM changes. However
 you avoid to install and import Nominatim which is time consuming.
 
-Simply start photon
 ```bash
-java -jar target/photon-importer-0.1-SNAPSHOT.jar
-```
-
-and load the global dataset by calling
-```
-curl http://localhost:4567/dump/import # not working yet!
+java -jar target/photon-0.1-SNAPSHOT.jar -import-snapshot http://photon.komoot.de/data/world.zip # important: we do not yet provide this dump, creation will be finished soon
 ```
 Be aware that you download several GB of data, the import itself will take only a few minutes.
 
 ### Import Data (inclusive continuous updates)
 If you need continuous updates or want to import country extracts only, you need to install Nominatim by yourself. Once
-this is done you can start the data importer:
+you have your nominatim database imported, you can import the data:
 
 ```bash
-java -jar target/photon-importer-0.1-SNAPSHOT.jar -nominatim-import -host localhost -port 5432 -database nominatim -user nominatim -password ...
+java -jar target/photon-0.1-SNAPSHOT.jar -nominatim-import -host localhost -port 5432 -database nominatim -user nominatim -password ...
 ```
 
 The import will take some hours/days, ssd disk are recommended to accelerate nominatim queries.
@@ -60,8 +54,44 @@ TODO: missing docu for continuous updates
 
 ### Start Photon
 ```bash
-java -jar target/photon-importer-0.1-SNAPSHOT.jar
+java -jar target/photon-0.1-SNAPSHOT.jar
 ```
+
+## Detailed Usage
+
+### start photon
+```bash
+java -jar target/photon-0.1-SNAPSHOT.jar
+```
+
+### create snapshot
+You can create a photon snapshot that allows you transfer data from one photon instance to another. This way you can import your data
+once (which might take quite a lot of time) and reimport it very quickly on other machines. It is also useful for backups.
+
+```bash
+java -jar target/photon-0.1-SNAPSHOT.jar -create-snapshot photon_snapshot_2014_05
+```
+
+The snapshot will be stored in ``photon_data/dumps/photon_snapshot_2014_05.zip```.
+
+
+### import snapshot
+** this feature is still in development **
+
+You can reimport a snapshot with:
+```bash
+java -jar target/photon-0.1-SNAPSHOT.jar -import-snapshot file:///home/photon/src/photon/photon_data/dumps/photon_snapshot_2014_05.zip
+```
+Caution: all previous data will be lost! You can also import remote files (e.g. ```http://example.com/photon.zip```).
+
+
+### delete index
+To delete all data run
+```bash
+java -jar target/photon-0.1-SNAPSHOT.jar -delete-index
+```
+Photon will be started with an empty index.
+
 
 ### Run the Demo UI
 

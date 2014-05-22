@@ -1,16 +1,9 @@
 target/
-data/
 photon_data/
 dependency-reduced-pom.xml
 
 .idea/
 *.iml
 *.~*
-
-src/main/java/de/komoot/photon/.DS_Store
-
-solrconfig/collection1/conf/solrconfig_spell.xml
-
-solrconfig/collection1/data/
 
 __pycache__

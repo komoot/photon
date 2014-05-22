@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 /**
- * date: 18.05.14
+ * useful to create json files that can be used for fast re imports
  *
  * @author christoph
  */

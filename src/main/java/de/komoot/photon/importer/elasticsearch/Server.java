@@ -5,20 +5,24 @@ import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 import net.lingala.zip4j.model.ZipParameters;
 import net.lingala.zip4j.util.Zip4jConstants;
-import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.elasticsearch.action.ActionListener;
 import org.elasticsearch.action.admin.cluster.snapshots.create.CreateSnapshotResponse;
 import org.elasticsearch.action.admin.cluster.snapshots.get.GetSnapshotsResponse;
+import org.elasticsearch.action.admin.indices.delete.DeleteIndexResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.settings.ImmutableSettings;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.env.Environment;
+import org.elasticsearch.indices.IndexMissingException;
 import org.elasticsearch.node.Node;
 import org.elasticsearch.plugins.PluginManager;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -108,23 +112,36 @@ public class Server {
 		});
 	}
 
-	public void importSnapshot(String dumpUrl, String dumpName) {
-		File dump = new File(this.tempDirectory, dumpName + ".zip");
-		String dumpLocation = "";
+	public void importSnapshot(String urlString) {
+		URL url = null;
 		try {
-			FileUtils.copyFile(new File(new URL(dumpUrl).toURI()), dump);
+			url = new URL(urlString);
+		} catch(MalformedURLException e) {
+			throw new RuntimeException("invalid snapshot url", e);
+		}
+		File file;
+		try {
+			file = new File(url.toURI());
 		} catch(Exception e) {
-			log.error("Error while loading dump (Is this the correct dump location?)", e);
+			// url did not refer to a local file, download it first to unzip
+			try {
+				file = File.createTempFile("temp-file-name", ".tmp");
+				IOUtils.copyLarge(url.openStream(), new FileOutputStream(file));
+			} catch(IOException ioe) {
+				throw new RuntimeException("cannot create temp file for snapshot", ioe);
+			}
 		}
 
+		String dumpLocation;
+		String dumpName = "photon_snapshot_2014_05";
 		try {
-			ZipFile dumpZip = new ZipFile(dump);
-			dumpLocation = this.importDirectory.getAbsolutePath() + dumpName;
+			ZipFile dumpZip = new ZipFile(file);
+			dumpLocation = this.importDirectory.getAbsolutePath() + "/" + dumpName;
 			dumpZip.extractAll(dumpLocation);
 		} catch(ZipException e) {
-
-			log.error("Can´t unzip dump", e);
+			throw new RuntimeException("error unzipping snapshot", e);
 		}
+
 		this.getClient().admin().cluster().getSnapshots(this.getClient().admin().cluster().prepareGetSnapshots(dumpLocation).setSnapshots(dumpName).request(), new ActionListener<GetSnapshotsResponse>() {
 			@Override
 			public void onResponse(GetSnapshotsResponse getSnapshotsResponse) {
@@ -146,7 +163,6 @@ public class Server {
 	}
 
 	private File setupDirectories(URL directoryName) {
-
 		File mainDirectory = new File(".");
 
 		try {
@@ -181,5 +197,29 @@ public class Server {
 			log.error("Can´t create directories");
 		}
 		this.clusterName = "defdeweef";
+	}
+
+	public void recreateIndex() {
+		deleteIndex();
+
+		final Client client = this.getClient();
+		final InputStream mappings = Thread.currentThread().getContextClassLoader().getResourceAsStream("mappings.json");
+		final InputStream index_settings = Thread.currentThread().getContextClassLoader().getResourceAsStream("index_settings.json");
+
+		try {
+			client.admin().indices().prepareCreate("photon").setSettings(IOUtils.toString(index_settings)).execute().actionGet();
+			client.admin().indices().preparePutMapping("photon").setType("place").setSource(IOUtils.toString(mappings)).execute().actionGet();
+		} catch(IOException e) {
+			log.error("cannot setup index, elastic search config files not readable", e);
+		}
+	}
+
+	public DeleteIndexResponse deleteIndex() {
+		try {
+			return this.getClient().admin().indices().prepareDelete("photon").execute().actionGet();
+		} catch(IndexMissingException e) {
+			// index did not exist
+			return null;
+		}
 	}
 }
