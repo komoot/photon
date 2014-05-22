@@ -36,7 +36,8 @@ dataset. You won't be able to continuously update your data to keep them in sync
 you avoid to install and import Nominatim which is time consuming.
 
 ```bash
-java -jar target/photon-0.1-SNAPSHOT.jar -import-snapshot http://photon.komoot.de/data/world.zip # important: we do not yet provide this dump, creation will be finished soon
+# important: we do not yet provide this dump, creation will be finished soon
+java -jar target/photon-0.1-SNAPSHOT.jar -import-snapshot http://photon.komoot.de/data/world.zip
 ```
 Be aware that you download several GB of data, the import itself will take only a few minutes.
 
