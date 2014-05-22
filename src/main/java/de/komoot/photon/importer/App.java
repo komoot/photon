@@ -24,13 +24,14 @@ public class App {
 		CommandLineArgs args = new CommandLineArgs();
 		new JCommander(args, rawArgs);
 
-		final Server esNode = new Server("photon", args.getDataDirectory());
-		esNode.start();
+		final Server esServer = new Server("photon", args.getDataDirectory());
+		esServer.start();
 
-		Client esNodeClient = esNode.getClient();
+		Client esNodeClient = esServer.getClient();
 
-		if(args.isIndexer()) {
-			Importer importer = new Importer(esNodeClient);
+		if(args.isNominatimImport()) {
+			esServer.recreateIndex(); // dump previous data
+			Importer importer = new Importer(esServer, esNodeClient);
 			NominatimConnector nominatimConnector = new NominatimConnector(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
 			nominatimConnector.setImporter(importer);
 			nominatimConnector.readEntireDatabase();
@@ -47,25 +48,25 @@ public class App {
 			}
 		}
 
+		if(args.getCreateSnapshot() != null) {
+			esServer.createSnapshot(args.getCreateSnapshot());
+		}
+
+		if(args.isDeleteIndex()) {
+			esServer.recreateIndex();
+		}
+
+		if(args.getImportSnapshot() != null) {
+			esServer.deleteIndex();
+			esServer.importSnapshot(args.getImportSnapshot());
+		}
+
 		final NominatimUpdater nominatimUpdater = new NominatimUpdater(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
 		Updater updater = new ESUpdater(esNodeClient);
 		nominatimUpdater.setUpdater(updater);
-        setPort(2322);
-		get(new Route("/", "text/html") {
-			@Override
-			public Object handle(Request request, Response response) {
-				return "hallihallo";
-			}
-		});
 
-		get(new Route("/bulk_import", "text/html") {
-			@Override
-			public Object handle(Request request, Response response) {
-				return "hallihallo";
-			}
-		});
-
-		get(new Route("/update", "text/html") {
+		setPort(2322);
+		get(new Route("/nominatim-update") {
 			@Override
 			public Object handle(Request request, Response response) {
 				Thread nominatimUpdaterThread = new Thread() {
@@ -75,46 +76,15 @@ public class App {
 					}
 				};
 				nominatimUpdaterThread.start();
-				return "hallihallo";
+				return "nominatim update started (more information in  console output) ...";
 			}
 		});
 
-		get(new Route("/create_dump", "text/html") {
+		get(new Route("api") {
 			@Override
 			public Object handle(Request request, Response response) {
-				final String dumpName = (String) request.queryParams("name");
-				Thread nominatimDumpThread = new Thread() {
-					@Override
-					public void run() {
-						esNode.createSnapshot(dumpName);
-					}
-				};
-				nominatimDumpThread.start();
-				return "hallihallo";
+				return "not yet implemented";
 			}
 		});
-
-		get(new Route("/import_dump", "text/html") {
-			@Override
-			public Object handle(Request request, Response response) {
-				return "hallihallo";
-			}
-		});
-
-		get(new Route("/geocode", "text/html") {
-			@Override
-			public Object handle(Request request, Response response) {
-				return "hallihallo";
-			}
-		});
-
-		get(new Route("/get_dump", "text/html") {
-			@Override
-			public Object handle(Request request, Response response) {
-				return "hallihallo";
-			}
-		});
-
-		//esNode.shutdown();
 	}
 }

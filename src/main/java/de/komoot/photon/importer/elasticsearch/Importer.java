@@ -6,11 +6,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.client.Client;
-import org.elasticsearch.indices.IndexMissingException;
-import spark.utils.IOUtils;
 
 import java.io.IOException;
-import java.io.InputStream;
 
 /**
  * elasticsearch importer
@@ -24,27 +21,9 @@ public class Importer implements de.komoot.photon.importer.Importer {
 	private Client esClient;
 	private BulkRequestBuilder bulkRequest;
 
-	public Importer(Client esClient) {
+	public Importer(Server esServer, Client esClient) {
 		this.esClient = esClient;
 		this.bulkRequest = esClient.prepareBulk();
-
-		try {
-			this.esClient.admin().indices().prepareDelete("photon").execute().actionGet();
-		} catch(IndexMissingException e) { /* ignored */ }
-
-		final boolean indexExists = this.esClient.admin().indices().prepareExists("photon").execute().actionGet().isExists();
-
-		if(!indexExists) {
-			final InputStream mappings = Thread.currentThread().getContextClassLoader().getResourceAsStream("mappings.json");
-			final InputStream index_settings = Thread.currentThread().getContextClassLoader().getResourceAsStream("index_settings.json");
-
-			try {
-				this.esClient.admin().indices().prepareCreate("photon").setSettings(IOUtils.toString(index_settings)).execute().actionGet();
-				this.esClient.admin().indices().preparePutMapping("photon").setType("place").setSource(IOUtils.toString(mappings)).execute().actionGet();
-			} catch(IOException e) {
-				log.error("cannot setup index, elastic search config files not readable", e);
-			}
-		}
 	}
 
 	public void add(PhotonDoc doc) {
