@@ -105,7 +105,7 @@ class CSVItem(BaseFlatItem):
     def __init__(self, row, parent):
         if "mark" in row:
             row['mark'] = row['mark'].split(',')
-        super().__init__(row.get('comment', ''), parent, **row)
+        super().__init__(row.get('query', ''), parent, **row)
         self.query = row.get('query', '')
         self.expected = {}
         for key, value in row.items():
