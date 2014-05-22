@@ -33,7 +33,7 @@ class SearchException(Exception):
         lines = [
             '',
             'Search failed',
-            "# Search was: {}".format(self.query),
+            "# Search was: {}".format(self.query),
         ]
         expected = '# Expected was: '
         expected += " | ".join("{}: {}".format(k, v) for k, v in self.expected.items())
