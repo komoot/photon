@@ -120,7 +120,11 @@ public class NominatimConnector {
 	 * parses every relevant row in placex, creates a corresponding document and calls the {@link #importer} for every document
 	 */
 	public void readEntireDatabase() {
+		log.info("start importing documents from nominatim ...");
 		final AtomicLong counter = new AtomicLong();
+
+		final int progressInterval = 5000;
+		final long startMillis = System.currentTimeMillis();
 
 		template.query("SELECT " + selectColsPlaceX + " FROM placex WHERE linked_place_id IS NULL ORDER BY parent_place_id; ", new RowCallbackHandler() {
 			@Override
@@ -151,8 +155,9 @@ public class NominatimConnector {
 				if(!doc.isUsefulForIndex()) return; // do not import document
 
 				importer.add(doc);
-				if(counter.incrementAndGet() % 1000 == 0) {
-					log.info(String.format("created %s documents.", MessageFormat.format("{0}", counter.longValue())));
+				if(counter.incrementAndGet() % progressInterval == 0) {
+					final double documentsPerSecond = 1000d * progressInterval / (System.currentTimeMillis() - startMillis);
+					log.info(String.format("imported %s documents [%.1f/second]", MessageFormat.format("{0}", counter.longValue()), documentsPerSecond));
 				}
 			}
 		});
