@@ -1,7 +1,6 @@
 comment,query,expected_name,expected_housenumber,expected_street,expected_city,expected_postcode,expected_country,expected_osm_value,limit
 ,paris france,Paris,,,Paris,,France,,
-,courbevoie france,,,,Courbevoie,92400,France,,2
-,courbevoie france,,,,,,France,administrative,2
+,courbevoie france,,,,,92400,France,administrative,
 ,ile de france,,,,,,France,,
 ,hauts de seine france,,,,,,France,,
 ,rue des pyrénées paris france,,,Rue des Pyrénées,Paris,,France,,
