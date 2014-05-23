@@ -10,19 +10,6 @@ sacre coeur:
     expected:
         osm_id: 23762981
 
-Базіліка Сакрэ-Кёр:
-    expected:
-        osm_id: 23762981
-    comment: Sacré-Cœur in russian
-    skip: Russian search not supported yet
-
-Parigi:
-    expected:
-        name: Parigi
-    lang: it
-    mark:
-        - italian
-
 numa paris:
     expected:
         osm_id: 55046167

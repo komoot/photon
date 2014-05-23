@@ -1,0 +1,26 @@
+Базіліка Сакрэ-Кёр:
+    expected:
+        osm_id: 23762981
+    comment: Sacré-Cœur in russian
+    skip: Russian search not supported yet
+
+Parigi:
+    expected:
+        name: Parigi
+    lang: it
+    mark:
+        - italian
+
+Paris:
+    expected:
+        name: Paris
+    lang: en
+    mark:
+        - english
+
+Eiffel Tower:
+    expected:
+        name: Eiffel Tower
+    lang: en
+    mark:
+        - english
