@@ -15,11 +15,11 @@ import java.io.IOException;
  * @author felix
  */
 @Slf4j
-public class ESUpdater implements de.komoot.photon.importer.Updater {
+public class Updater implements de.komoot.photon.importer.Updater {
 	private Client esClient;
 	private BulkRequestBuilder bulkRequest;
 
-	public ESUpdater(Client esClient) {
+	public Updater(Client esClient) {
 		this.esClient = esClient;
 		this.bulkRequest = esClient.prepareBulk();
 	}

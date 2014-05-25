@@ -156,7 +156,7 @@ def to_geo_json(hits, lang='en', debug=False):
         if 'osm_id' in source:
             properties['osm_id'] = int(source['osm_id'])
 
-        for attr in ['osm_key', 'osm_value', 'street', 'postcode', 'housenumber']:
+        for attr in ['osm_key', 'osm_value', 'postcode', 'housenumber']:
             if attr in source:
                 properties[attr] = source[attr]
 

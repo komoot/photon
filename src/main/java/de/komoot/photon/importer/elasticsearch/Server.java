@@ -5,6 +5,7 @@ import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 import net.lingala.zip4j.model.ZipParameters;
 import net.lingala.zip4j.util.Zip4jConstants;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.elasticsearch.action.ActionListener;
 import org.elasticsearch.action.admin.cluster.snapshots.create.CreateSnapshotResponse;
@@ -38,7 +39,7 @@ import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
 public class Server {
 
 	private Node esNode;
-	private String clusterName;
+	protected static final String clusterName = "photon";
 	private File mainDirectory;
 	private File esDirectory;
 	private File dumpDirectory;
@@ -112,6 +113,36 @@ public class Server {
 		});
 	}
 
+	public void importSnapshot(String dumpUrl, String dumpName) {
+		File dump = new File(this.tempDirectory, dumpName + ".zip");
+		String dumpLocation = "";
+		try {
+			FileUtils.copyFile(new File(new URL(dumpUrl).toURI()), dump);
+		} catch(Exception e) {
+			log.error("Error while loading dump (Is this the correct dump location?)", e);
+		}
+
+		try {
+			ZipFile dumpZip = new ZipFile(dump);
+			dumpLocation = this.importDirectory.getAbsolutePath() + dumpName;
+			dumpZip.extractAll(dumpLocation);
+		} catch(ZipException e) {
+
+			log.error("Can´t unzip dump", e);
+		}
+		this.getClient().admin().cluster().getSnapshots(this.getClient().admin().cluster().prepareGetSnapshots(dumpLocation).setSnapshots(dumpName).request(), new ActionListener<GetSnapshotsResponse>() {
+			@Override
+			public void onResponse(GetSnapshotsResponse getSnapshotsResponse) {
+				log.info("Import done!");
+			}
+
+			@Override
+			public void onFailure(Throwable e) {
+				log.error("error creating snapshot", e);
+			}
+		});
+	}
+
 	public void importSnapshot(String urlString) {
 		URL url = null;
 		try {
@@ -136,13 +167,16 @@ public class Server {
 		String dumpName = "photon_snapshot_2014_05";
 		try {
 			ZipFile dumpZip = new ZipFile(file);
-			dumpLocation = this.importDirectory.getAbsolutePath() + "/" + dumpName;
+			dumpLocation = this.importDirectory.getAbsolutePath();
 			dumpZip.extractAll(dumpLocation);
 		} catch(ZipException e) {
 			throw new RuntimeException("error unzipping snapshot", e);
 		}
 
-		this.getClient().admin().cluster().getSnapshots(this.getClient().admin().cluster().prepareGetSnapshots(dumpLocation).setSnapshots(dumpName).request(), new ActionListener<GetSnapshotsResponse>() {
+		String repository = dumpLocation + "/" + dumpName;
+		String snapshot = dumpName;
+
+		this.getClient().admin().cluster().getSnapshots(this.getClient().admin().cluster().prepareGetSnapshots(repository).setSnapshots(snapshot).request(), new ActionListener<GetSnapshotsResponse>() {
 			@Override
 			public void onResponse(GetSnapshotsResponse getSnapshotsResponse) {
 				log.info("Import done!");
@@ -187,16 +221,14 @@ public class Server {
 	}
 
 	/**
-	 * @param clusterName name of the elasticsearch cluster
 	 */
-	public Server(String clusterName, String mainDirectory) {
+	public Server(String mainDirectory) {
 
 		try {
 			this.mainDirectory = setupDirectories(new URL("file://" + mainDirectory));
 		} catch(MalformedURLException e) {
 			log.error("Can´t create directories");
 		}
-		this.clusterName = "defdeweef";
 	}
 
 	public void recreateIndex() {

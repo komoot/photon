@@ -21,7 +21,7 @@ public class Importer implements de.komoot.photon.importer.Importer {
 	private Client esClient;
 	private BulkRequestBuilder bulkRequest;
 
-	public Importer(Server esServer, Client esClient) {
+	public Importer(Client esClient) {
 		this.esClient = esClient;
 		this.bulkRequest = esClient.prepareBulk();
 	}
