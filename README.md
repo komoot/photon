@@ -41,9 +41,13 @@ java -jar target/photon-0.1-SNAPSHOT.jar -import-snapshot http://photon.komoot.d
 ```
 Be aware that you download several GB of data, the import itself will take only a few minutes.
 
+```
+http://localhost:2322/api?q=berlin
+```
+
 ### Import Data (inclusive continuous updates)
 If you need continuous updates or want to import country extracts only, you need to install Nominatim by yourself. Once
-you have your nominatim database imported, you can import the data:
+you have your nominatim database ready, you can import the data to photon:
 
 ```bash
 java -jar target/photon-0.1-SNAPSHOT.jar -nominatim-import -host localhost -port 5432 -database nominatim -user nominatim -password ...
@@ -64,9 +68,68 @@ java -jar target/photon-0.1-SNAPSHOT.jar
 
 ## Detailed Usage
 
-### start photon
+### Search API
+#### start photon
 ```bash
 java -jar target/photon-0.1-SNAPSHOT.jar
+```
+
+#### search
+```
+http://localhost:2322/api?q=berlin
+```
+
+#### search with location bias
+```
+http://localhost:2322/api?q=berlin&lon=10&lat=52
+``
+
+#### adapt number of results
+```
+http://localhost:2322/api?limit=2
+```
+
+#### adjust language
+```
+http://localhost:2322/api?q=berlin&lang=it
+```
+
+#### results are returned as GeoJSON
+```json
+  {
+    "type": "FeatureCollection",
+    "features": [
+      {
+        "type": "Feature",
+        "geometry": {
+          "coordinates": [
+            13.438596,
+            52.519854
+          ],
+          "type": "Point"
+        },
+        "properties": {
+          "city": "Berlin",
+          "country": "Germany",
+          "name": "Berlin"
+        }
+      },{
+      "type": "Feature",
+        "geometry": {
+          "coordinates": [
+            61.195088,
+            54.005826
+          ],
+          "type": "Point"
+        },
+        "properties": {
+          "country": "Russia",
+          "name": "Berlin",
+          "postcode": "457130"
+        }
+      }
+    ]
+  }
 ```
 
 ### create snapshot
