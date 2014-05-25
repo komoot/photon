@@ -134,7 +134,7 @@ public class App {
 				collection.put("type", "FeatureCollection");
 				collection.put("features", new JSONArray(results));
 
-				response.type("application/json");
+				response.type("application/json; charset=utf-8");
 
 				if(request.queryParams("debug") != null)
 					return collection.toString(4);
