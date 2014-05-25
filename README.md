@@ -41,9 +41,6 @@ java -jar target/photon-0.1-SNAPSHOT.jar -import-snapshot http://photon.komoot.d
 ```
 Be aware that you download several GB of data, the import itself will take only a few minutes.
 
-```
-http://localhost:2322/api?q=berlin
-```
 
 ### Import Data (inclusive continuous updates)
 If you need continuous updates or want to import country extracts only, you need to install Nominatim by yourself. Once
@@ -69,32 +66,32 @@ java -jar target/photon-0.1-SNAPSHOT.jar
 ## Detailed Usage
 
 ### Search API
-#### start photon
+#### Start Photon
 ```bash
 java -jar target/photon-0.1-SNAPSHOT.jar
 ```
 
-#### search
+#### Search
 ```
 http://localhost:2322/api?q=berlin
 ```
 
-#### search with location bias
+#### Search with Location Bias
 ```
 http://localhost:2322/api?q=berlin&lon=10&lat=52
 ``
 
-#### adapt number of results
+#### Adapt Number of Results
 ```
 http://localhost:2322/api?limit=2
 ```
 
-#### adjust language
+#### Adjust Language
 ```
 http://localhost:2322/api?q=berlin&lang=it
 ```
 
-#### results are returned as GeoJSON
+#### Results as GeoJSON
 ```json
   {
     "type": "FeatureCollection",
