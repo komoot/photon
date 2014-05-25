@@ -79,7 +79,7 @@ http://localhost:2322/api?q=berlin
 #### Search with Location Bias
 ```
 http://localhost:2322/api?q=berlin&lon=10&lat=52
-``
+```
 
 #### Adapt Number of Results
 ```
