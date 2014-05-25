@@ -48,5 +48,4 @@ public class PhotonDoc {
 
 		return true;
 	}
-	private Map<String, String> country;
 }
