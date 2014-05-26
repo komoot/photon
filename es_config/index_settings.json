@@ -3,12 +3,12 @@
     "analyzer": {
       "index_ngram": {
         "char_filter": ["punctuationgreedy"],
-        "filter": ["word_delimiter", "lowercase", "asciifolding", "photonlength", "unique", "wordending", "photonngram"],
+        "filter": ["word_delimiter", "lowercase", "asciifolding", "unique", "wordending", "photonngram"],
         "tokenizer": "standard"
       },
       "search_ngram": {
         "char_filter": ["punctuationgreedy"],
-        "filter": ["word_delimiter", "lowercase", "asciifolding", "photonlength", "unique", "wordendingautocomplete"],
+        "filter": ["word_delimiter", "lowercase", "asciifolding", "unique", "wordendingautocomplete"],
         "tokenizer": "standard"
       },
       "index_raw": {
@@ -38,7 +38,7 @@
     },
     "filter": {
       "photonngram": {
-        "min_gram": "2",
+        "min_gram": "1",
         "type": "edgeNGram",
         "max_gram": "15"
       },
