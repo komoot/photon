@@ -24,13 +24,14 @@ def query_index(query, lang, lon, lat, match_all=True, limit=15):
     minimum_should_match = '100%' if match_all else -1
     req_body = {
         "dis_max": {
-            "queries": [{
-                "match": {
-                    "name.{}.ngrams".format(lang): {
-                        "query": query,
-                        "boost": 2,
-                        "analyzer": "search_ngram",
-                        "minimum_should_match": minimum_should_match
+            "queries": [
+                {
+                    "match": {
+                        "name.{}.ngrams".format(lang): {
+                            "query": query,
+                            "boost": 2,
+                            "analyzer": "search_ngram",
+                            "minimum_should_match": minimum_should_match
                         }
                     }
                 },
