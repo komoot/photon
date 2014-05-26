@@ -21,20 +21,50 @@ def index():
 
 
 def query_index(query, lang, lon, lat, match_all=True, limit=15):
+    minimum_should_match = '100%' if match_all else -1
     req_body = {
-        "multi_match": {
-            "query": query,
-            "type": "best_fields",
-            "analyzer": "search_stringanalyser",
-            'minimum_should_match': '100%' if match_all else -1,
-            "fields": [
-                "name.{0}.ngramed^3".format(lang),
-                "name.{0}.raw^10".format(lang),
-                "collector.{0}.raw".format(lang),
-                "collector.{0}".format(lang)
-            ],
-            "fuzziness": 1,
-            "prefix_length": 3
+        "dis_max": {
+            "queries": [{
+                "match": {
+                    "name.{}.ngrams".format(lang): {
+                        "query": query,
+                        "boost": 2,
+                        "analyzer": "search_ngram",
+                        "minimum_should_match": minimum_should_match
+                        }
+                    }
+                },
+                {
+                    "match": {
+                        "name.{}.raw".format(lang): {
+                            "query": query,
+                            "boost": 3,
+                            "analyzer": "search_raw",
+                            "minimum_should_match": minimum_should_match
+                        }
+                    }
+                },
+                {
+                    "match": {
+                        "collector.{}.raw".format(lang): {
+                            "query": query,
+                            "analyzer": "search_raw",
+                            "fuzziness": 1,
+                            "prefix_length": 3,
+                            "minimum_should_match": minimum_should_match
+                        }
+                    }
+                },
+                {
+                    "match": {
+                        "collector.{}".format(lang): {
+                            "query": query,
+                            "analyzer": "search_ngram",
+                            "minimum_should_match": minimum_should_match
+                        }
+                    }
+                }
+            ]
         }
     }
 
@@ -46,7 +76,7 @@ def query_index(query, lang, lon, lat, match_all=True, limit=15):
             "functions": [
                 {
                     "script_score": {
-                        "script": "1 + doc['importance'].value * 40"
+                        "script": "1 + doc['importance'].value * 10"
                     }
                 }
             ],
