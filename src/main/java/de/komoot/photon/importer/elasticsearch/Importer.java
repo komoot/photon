@@ -8,6 +8,7 @@ import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.client.Client;
 
 import java.io.IOException;
+import org.elasticsearch.action.count.CountRequest;
 
 /**
  * elasticsearch importer
@@ -18,7 +19,9 @@ import java.io.IOException;
 public class Importer implements de.komoot.photon.importer.Importer {
 	private int documentCount = 0;
 
-	private Client esClient;
+        private final String indexName = "photon";
+        private final String indexType = "place";
+	private final Client esClient;
 	private BulkRequestBuilder bulkRequest;
 
 	public Importer(Client esClient) {
@@ -26,9 +29,11 @@ public class Importer implements de.komoot.photon.importer.Importer {
 		this.bulkRequest = esClient.prepareBulk();
 	}
 
+        @Override
 	public void add(PhotonDoc doc) {
 		try {
-			this.bulkRequest.add(this.esClient.prepareIndex("photon", "place").setSource(Utils.convert(doc)).setId(String.valueOf(doc.getPlaceId())));
+			this.bulkRequest.add(this.esClient.prepareIndex(indexName, indexType).
+                                setSource(Utils.convert(doc)).setId(String.valueOf(doc.getPlaceId())));
 		} catch(IOException e) {
 			log.error("could not ", e);
 		}
@@ -48,8 +53,13 @@ public class Importer implements de.komoot.photon.importer.Importer {
 		this.bulkRequest = this.esClient.prepareBulk();
 	}
 
+        @Override
 	public void finish() {
 		this.saveDocuments();
 		this.documentCount = 0;
 	}
+        
+        public long count() {
+                return this.esClient.count(new CountRequest(indexName).types(indexType)).actionGet().getCount();
+        }        
 }

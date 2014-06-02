@@ -28,6 +28,7 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 
+import org.elasticsearch.node.NodeBuilder;
 import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
 
 /**
@@ -39,18 +40,35 @@ import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
 public class Server {
 
 	private Node esNode;
-	protected static final String clusterName = "photon";
-	private File mainDirectory;
-	private File esDirectory;
+	private static final String clusterName = "photon";        
+        private File esDirectory;        
 	private File dumpDirectory;
 	private File updateDirectory;
 	private File tempDirectory;
 	private File importDirectory;
-
-	public void start() {
-		Settings settings = ImmutableSettings.settingsBuilder()
-				.put("path.home", this.esDirectory.toString())
-				.build();
+        
+	public Server(String mainDirectory) {
+            try {
+		setupDirectories(new URL("file://" + mainDirectory));
+            } catch(MalformedURLException e) {
+			log.error("Can´t create directories");
+            }
+        }
+                        
+        public Server start() {
+		return start(false);
+        }
+        
+	public Server start(boolean test) {        
+		ImmutableSettings.Builder sBuilder = ImmutableSettings.settingsBuilder()
+				.put("path.home", this.esDirectory.toString());
+                
+                // default is 'local', 'none' means no data after node restart!
+            
+                if(test)
+                    sBuilder.put("gateway.type", "none");
+                    
+		Settings settings = sBuilder.build();
 
 		final String pluginPath = this.getClass().getResource("/elasticsearch-wordending-tokenfilter-0.0.1.zip").toExternalForm();
 		PluginManager pluginManager = new PluginManager(new Environment(settings), pluginPath, PluginManager.OutputMode.VERBOSE, new TimeValue(30000));
@@ -60,16 +78,26 @@ public class Server {
 			log.debug("could not install ybon/elasticsearch-wordending-tokenfilter/0.0.1", e);
 		}
 
-		pluginManager = new PluginManager(new Environment(settings), null, PluginManager.OutputMode.VERBOSE, new TimeValue(30000));
-		for(String pluginName : new String[]{"mobz/elasticsearch-head", "polyfractal/elasticsearch-inquisitor", "elasticsearch/marvel/latest"}) {
-			try {
-				pluginManager.downloadAndExtract(pluginName);
-			} catch(IOException e) {
-			}
-		}
+                if(!test) {
+                    pluginManager = new PluginManager(new Environment(settings), null, PluginManager.OutputMode.VERBOSE, new TimeValue(30000));
+                    for(String pluginName : new String[]{"mobz/elasticsearch-head", "polyfractal/elasticsearch-inquisitor", "elasticsearch/marvel/latest"}) {
+                            try {
+                                    pluginManager.downloadAndExtract(pluginName);
+                            } catch(IOException e) {
+                            }
+                    }
+                }
 
-		this.esNode = nodeBuilder().clusterName(this.clusterName).loadConfigSettings(true).settings(settings).node();
+		NodeBuilder nBuilder = nodeBuilder().clusterName(Server.clusterName).loadConfigSettings(true).
+                        settings(settings);
+                
+                // problem with node ending plugin
+//                if(test)
+//                    nBuilder.local(true);
+                
+                esNode = nBuilder.node();
 		log.info("started elastic search node");
+                return this;
 	}
 
 	/**
@@ -218,17 +246,6 @@ public class Server {
 		}
 
 		return mainDirectory;
-	}
-
-	/**
-	 */
-	public Server(String mainDirectory) {
-
-		try {
-			this.mainDirectory = setupDirectories(new URL("file://" + mainDirectory));
-		} catch(MalformedURLException e) {
-			log.error("Can´t create directories");
-		}
 	}
 
 	public void recreateIndex() {
