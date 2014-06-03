@@ -7,7 +7,7 @@ import de.komoot.photon.importer.model.PhotonDoc;
  *
  * @author felix
  */
-public interface Importer {
+public interface Importer {    
 	public void add(PhotonDoc doc);
 
 	public void finish();
