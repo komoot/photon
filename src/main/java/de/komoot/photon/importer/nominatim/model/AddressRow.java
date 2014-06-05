@@ -26,6 +26,13 @@ public class AddressRow {
 		return 26 <= rankAddress && rankAddress < 28;
 	}
 
+	public boolean isState() {
+		if("boundary".equals(osmKey) && "administrative".equals(osmValue) && rankAddress == 8 && adminLevel == 4) {
+			return true;
+		}
+		return false;
+	}
+
 	public boolean isCity() {
 		if("place".equals(osmKey) && Arrays.binarySearch(CITY_PLACE_VALUES, osmValue) >= 0) {
 			return true;

@@ -22,18 +22,19 @@ public class PhotonDoc {
 	final private String tagKey;
 	final private String tagValue;
 	final private Map<String, String> name;
-	final private String houseNumber;
+	private String houseNumber;
 	private String postcode;
 	final private Map<String, String> extratags;
 	final private Envelope bbox;
 	final private long parentPlaceId; // 0 if unset
 	final private double importance;
 	final private CountryCode countryCode;
-	final private Point centroid;
+	private Point centroid;
 	final private long linkedPlaceId; // 0 if unset
 
 	private Map<String, String> street;
 	private Map<String, String> city;
+	private String state;
 	private Set<Map<String, String>> context = new HashSet<Map<String, String>>();
 	private Map<String, String> country;
 
@@ -41,8 +42,7 @@ public class PhotonDoc {
          * Used for testing - really all variables required (final)?         
          */
         public static PhotonDoc create(long placeId, String osmType, long osmId, Map<String, String> nameMap) {
-            return new PhotonDoc(placeId, osmType, osmId, "", "", nameMap, 
-                    "", null, null, 0, 0, null, null, 0);            
+            return new PhotonDoc(placeId, osmType, osmId, "", "", nameMap, null, null, (long)0, 0.0, null, (long)0);
         }
 
 	public boolean isUsefulForIndex() {

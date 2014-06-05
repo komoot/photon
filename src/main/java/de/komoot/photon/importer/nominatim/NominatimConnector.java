@@ -7,6 +7,7 @@ import com.vividsolutions.jts.geom.Point;
 import de.komoot.photon.importer.Importer;
 import de.komoot.photon.importer.model.PhotonDoc;
 import de.komoot.photon.importer.nominatim.model.AddressRow;
+import de.komoot.photon.importer.nominatim.model.TigerRow;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.postgis.jts.JtsWrapper;
@@ -52,16 +53,18 @@ public class NominatimConnector {
 					rs.getString("class"),
 					rs.getString("type"),
 					DBUtils.getMap(rs, "name"),
-					rs.getString("housenumber"),
+//					rs.getString("housenumber"),
 					DBUtils.getMap(rs, "extratags"),
 					envelope,
 					rs.getLong("parent_place_id"),
 					importance,
 					CountryCode.getByCode(rs.getString("calculated_country_code")),
-					(Point) DBUtils.extractGeometry(rs, "centroid"),
+//					(Point) DBUtils.extractGeometry(rs, "centroid"),
 					rs.getLong("linked_place_id")
 			);
 			doc.setPostcode(rs.getString("postcode"));
+			doc.setHouseNumber(rs.getString("housenumber"));
+			doc.setCentroid((Point) DBUtils.extractGeometry(rs, "centroid"));
 			return doc;
 		}
 	};
@@ -96,6 +99,21 @@ public class NominatimConnector {
 		return template.queryForObject("SELECT " + selectColsPlaceX + " FROM placex WHERE place_id = ?", new Object[]{placeId}, placeRowMapper);
 	}
 
+	public List<TigerRow> getTigerAddresses(long placeId) {
+//		placeId = 31210740;
+		return template.query("SELECT place_id, housenumber, postcode, centroid FROM location_property_tiger WHERE parent_place_id = ?", new Object[]{placeId}, new RowMapper<TigerRow>() {
+			@Override
+			public TigerRow mapRow(ResultSet rs, int rowNum) throws SQLException {
+				return new TigerRow(
+					rs.getLong("place_id"),
+					rs.getString("housenumber"),
+					(Point) DBUtils.extractGeometry(rs, "centroid"),
+					rs.getString("postcode")
+				);
+			}
+		});
+	}
+
 	public List<AddressRow> getAddresses(long placeId) {
 		return template.query("SELECT place_id, name, class, type, rank_address, admin_level FROM get_addressdata(?) WHERE isaddress AND (place_id IS NULL OR place_id != ?)", new Object[]{placeId, placeId}, new RowMapper<AddressRow>() {
 			@Override
@@ -116,9 +134,6 @@ public class NominatimConnector {
 		});
 	}
 
-	/**
-	 * parses every relevant row in placex, creates a corresponding document and calls the {@link #importer} for every document
-	 */
 	public void readEntireDatabase() {
 		log.info("start importing documents from nominatim ...");
 		final AtomicLong counter = new AtomicLong();
@@ -126,7 +141,7 @@ public class NominatimConnector {
 		final int progressInterval = 5000;
 		final long startMillis = System.currentTimeMillis();
 
-		template.query("SELECT " + selectColsPlaceX + " FROM placex WHERE linked_place_id IS NULL LIMIT 100; ", new RowCallbackHandler() {
+		template.query("SELECT " + selectColsPlaceX + " FROM placex WHERE linked_place_id IS NULL limit 100;", new RowCallbackHandler() {
 			@Override
 			public void processRow(ResultSet rs) throws SQLException {
 				PhotonDoc doc = placeRowMapper.mapRow(rs, 0);
@@ -134,6 +149,10 @@ public class NominatimConnector {
 				// finalize document by taking into account the higher level address assigned to this doc.
 				final List<AddressRow> addresses = getAddresses(doc.getPlaceId());
 				for(AddressRow address : addresses) {
+					if(address.isState() && doc.getState() == null ) {
+						doc.setState(address.getName().get("name:short"));
+					}
+
 					if(address.isCity()) {
 						if(doc.getCity() != null) {
 							doc.getContext().add(doc.getCity());
@@ -150,11 +169,46 @@ public class NominatimConnector {
 							doc.getContext().add(address.getName());
 						}
 					}
+
 				}
 
-				if(!doc.isUsefulForIndex()) return; // do not import document
 
-				importer.add(doc);
+				int count = 0;
+//				log.info("place:"+doc.getPlaceId());
+				final List<TigerRow> tigerAddresses = getTigerAddresses(doc.getPlaceId());
+//				log.info("num: " + tigerAddresses.size());
+				for(TigerRow tiger : tigerAddresses) {
+				  PhotonDoc doct = new PhotonDoc(
+					tiger.getPlaceId(),
+					doc.getOsmType(),
+					doc.getOsmId(),
+					"place",
+					"house",
+					doc.getName(),
+					doc.getExtratags(),
+					doc.getBbox(),
+					doc.getParentPlaceId(),
+					doc.getImportance(),
+					doc.getCountryCode(),
+					doc.getLinkedPlaceId()
+				  );
+				  doct.setPostcode(tiger.getPostcode());
+				  doct.setHouseNumber(tiger.getHouseNumber());
+				  doct.setCentroid(tiger.getCentroid());
+				  doct.setCity(doc.getCity());
+				  doct.setStreet(doc.getStreet());
+				  doct.setState(doc.getState());
+				  doct.setCountry(doc.getCountry());
+				  importer.add(doct);
+				  counter.incrementAndGet();
+				  count++;
+				}
+				if (count == 0) {
+					if (!doc.isUsefulForIndex()) {  return; } // do not import document
+					importer.add(doc);
+				} else {
+					//log.info("Added Tiger " + count);
+				}
 				if(counter.incrementAndGet() % progressInterval == 0) {
 					final double documentsPerSecond = 1000d * counter.longValue() / (System.currentTimeMillis() - startMillis);
 					log.info(String.format("imported %s documents [%.1f/second]", MessageFormat.format("{0}", counter.longValue()), documentsPerSecond));
