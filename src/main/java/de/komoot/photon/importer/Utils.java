@@ -43,6 +43,10 @@ public class Utils {
 			builder.field("housenumber", doc.getHouseNumber());
 		}
 
+		if(doc.getState() != null) {
+			builder.field("state", doc.getState());
+		}
+
 		if(doc.getPostcode() != null) {
 			builder.field("postcode", doc.getPostcode());
 		}

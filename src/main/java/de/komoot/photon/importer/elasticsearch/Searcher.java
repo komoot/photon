@@ -72,7 +72,7 @@ public class Searcher {
 
 				final JSONObject properties = new JSONObject();
 				// language unspecific properties
-				for(String key : new String[]{"osm_id", "osm_value", "postcode", "housenumber"}) {
+				for(String key : new String[]{"osm_id", "osm_value", "postcode", "housenumber", "state"}) {
 					if(source.containsKey(key))
 						properties.put(key, source.get(key));
 				}

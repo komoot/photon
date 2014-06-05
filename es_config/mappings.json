@@ -31,7 +31,7 @@
       },
       "housenumber": {
         "type": "string",
-        "index": "not_analyzed",
+	"index": "analyzed",
         "copy_to": [
           "collector.en",
           "collector.de",
@@ -42,9 +42,16 @@
       "coordinate": {
         "type": "geo_point"
       },
+      "state": {
+        "type": "string",
+	"index": "analyzed",
+        "copy_to": [
+          "collector.en"
+	]
+      },
       "postcode": {
         "type": "string",
-        "index": "no",
+	"index": "analyzed",
         "copy_to": [
           "collector.en",
           "collector.de",
