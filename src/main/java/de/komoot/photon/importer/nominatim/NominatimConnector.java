@@ -126,7 +126,7 @@ public class NominatimConnector {
 		final int progressInterval = 5000;
 		final long startMillis = System.currentTimeMillis();
 
-		template.query("SELECT " + selectColsPlaceX + " FROM placex WHERE linked_place_id IS NULL LIMIT 100; ", new RowCallbackHandler() {
+		template.query("SELECT " + selectColsPlaceX + " FROM placex WHERE linked_place_id IS NULL ORDER BY parent_place_id;", new RowCallbackHandler() {
 			@Override
 			public void processRow(ResultSet rs) throws SQLException {
 				PhotonDoc doc = placeRowMapper.mapRow(rs, 0);

@@ -46,5 +46,11 @@ public class CommandLineArgs {
 
 	@Parameter(names = "-data-dir", description = "data directory (default '.')")
 	private String dataDirectory = new File(".").getAbsolutePath();
+        
+	@Parameter(names = "-listen-port", description = "listen to port (default 2322)")
+	private int listenPort = 2322;
+        
+        @Parameter(names = "-listen-ip", description = "listen to address (default '0.0.0.0')")
+	private String listenIp = "0.0.0.0";
 }
 

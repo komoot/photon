@@ -24,6 +24,7 @@ import java.util.Set;
 
 import static spark.Spark.get;
 import static spark.Spark.setPort;
+import static spark.Spark.setIpAddress;
 
 @Slf4j
 public class App {
@@ -76,7 +77,9 @@ public class App {
 		de.komoot.photon.importer.Updater updater = new de.komoot.photon.importer.elasticsearch.Updater(esNodeClient);
 		nominatimUpdater.setUpdater(updater);
 
-		setPort(2322);
+                setPort(args.getListenPort());
+                setIpAddress(args.getListenIp());
+                
 		get(new Route("/nominatim-update") {
 			@Override
 			public Object handle(Request request, Response response) {
