@@ -28,10 +28,10 @@ public class ImporterTest extends ESBaseTester {
         Importer instance = new Importer(getClient());
         instance.add(doc);
         instance.finish();
-        
+
         refresh();
+
         assertEquals(1L, instance.count());
-        
         assertEquals(1, new Searcher(getClient()).search("testing", "en", null, null, 10, true).size());
     }
 }
