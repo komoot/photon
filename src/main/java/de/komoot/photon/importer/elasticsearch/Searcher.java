@@ -4,6 +4,8 @@ import com.google.common.base.Function;
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
+import de.komoot.photon.importer.Tags;
+import de.komoot.photon.importer.osm.OSMTags;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.text.StrSubstitutor;
@@ -28,6 +30,12 @@ public class Searcher {
 	private final String queryTemplate;
 	private final String queryLocationBiasTemplate;
 	private final Client client;
+	
+	/** These properties are directly copied into the result */
+	private final static String[] KEYS_LANG_UNSPEC = {OSMTags.KEY_OSM_ID, OSMTags.KEY_OSM_VALUE, OSMTags.KEY_OSM_KEY, OSMTags.KEY_POSTCODE, OSMTags.KEY_HOUSENUMBER};
+	
+	/** These properties will be translated before they are copied into the result */
+	private final static String[] KEYS_LANG_SPEC = {OSMTags.KEY_NAME, OSMTags.KEY_COUNTRY, OSMTags.KEY_CITY, OSMTags.KEY_STREET};
 
 	public Searcher(Client client) {
 		this.client = client;
@@ -67,22 +75,22 @@ public class Searcher {
 				final Map<String, Object> source = hit.getSource();
 
 				final JSONObject feature = new JSONObject();
-				feature.put("type", "Feature");
-				feature.put("geometry", getPoint(source));
+				feature.put(Tags.KEY_TYPE, Tags.VALUE_FEATURE);
+				feature.put(Tags.KEY_GEOMETRY, getPoint(source));
 
 				final JSONObject properties = new JSONObject();
 				// language unspecific properties
-				for(String key : new String[]{"osm_id", "osm_value", "postcode", "housenumber"}) {
+				for(String key : KEYS_LANG_UNSPEC) {
 					if(source.containsKey(key))
 						properties.put(key, source.get(key));
 				}
 
 				// language specific properties
-				for(String key : new String[]{"name", "country", "city", "street"}) {
+				for(String key : KEYS_LANG_SPEC) {
 					if(source.containsKey(key))
 						properties.put(key, getLocalised(source, key, lang));
 				}
-				feature.put("properties", properties);
+				feature.put(Tags.KEY_PROPERTIES, properties);
 
 				return feature;
 			}
@@ -93,8 +101,8 @@ public class Searcher {
 		final Map<String, Double> coordinate = (Map<String, Double>) source.get("coordinate");
 
 		JSONObject point = new JSONObject();
-		point.put("type", "Point");
-		point.put("coordinates", new JSONArray("[" + coordinate.get("lon") + "," + coordinate.get("lat") + "]"));
+		point.put(Tags.KEY_TYPE, Tags.VALUE_POINT);
+		point.put(Tags.KEY_COORDINATES, new JSONArray("[" + coordinate.get(Tags.KEY_LON) + "," + coordinate.get(Tags.KEY_LAT) + "]"));
 
 		return point;
 	}
