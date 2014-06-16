@@ -269,5 +269,8 @@ You can add categories to your test by using the key `mark` (which expects a
 list), that you can then run with `-m yourmarker`.
 
 
+## Contact
+Let us know what you think about photon! Create a github ticket or drop us a mail in https://lists.openstreetmap.org/listinfo/photon
+
 ## Licence
 _Photon_ software is open source and licensed under [Apache License, Version 2.0](http://opensource.org/licenses/Apache-2.0)
