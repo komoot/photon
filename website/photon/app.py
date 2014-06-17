@@ -50,7 +50,7 @@ def query_index(query, lang, lon, lat, match_all=True, limit=15):
             "functions": [
                 {
                     "script_score": {
-                        "script": "1 + 50*doc['importance'].value"
+                        "script": "1. + 50. * doc['importance'].value"
                     }
                 }
             ],
