@@ -49,6 +49,7 @@ class SearchException(Exception):
 
 def search(**params):
     r = requests.get(CONFIG['PHOTON_URL'], params=params)
+    print(CONFIG['PHOTON_URL'], params)
     if not r.status_code == 200:
         raise HttpSearchException(error="Non 200 response")
     return r.json()

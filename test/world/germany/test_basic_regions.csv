@@ -1,0 +1,6 @@
+comment;query;tried_location;tried_language;expected_maximum_position;expected_location;expected_location_tolerance;expected_name;expected_type;expected_housenumber;expected_street;expected_city;expected_postcode;expected_country
+admin region from wikipedia;Regierungsbezirk Arnsberg;;;1;51.3200,8.0100;20000;Regierungsbezirk Arnsberg;;;;;;Deutschland
+admin region from wikipedia;Unterfranken;;;1;50.0245,9.9319;50000;Unterfranken;;;;;;Deutschland
+admin region from wikipedia;Oberpfalz;;;1;49.4283,12.1799;40000;Oberpfalz;;;;;;Deutschland
+admin region from wikipedia;Mittelfranken;;;1;49.3260,10.8462;30000;Mittelfranken;;;;;;Deutschland
+admin region from wikipedia;Oberbayern;;;1;48.1237,11.8021;50000;Oberbayern;;;;;;Deutschland
