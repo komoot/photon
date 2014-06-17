@@ -1,6 +1,9 @@
 {
     "place": {
         "dynamic": "false",
+        "_source" : {
+            "excludes" : ["context.*"]
+        },
         "_all": {
             "enabled": false
         },
@@ -10,6 +13,10 @@
         "properties": {
             "osm_id": {
                 "type": "long"
+            },
+            "osm_type": {
+                "type": "string",
+                "index": "no"
             },
             "kmt_id": {
                 "type": "long"
@@ -22,52 +29,32 @@
             },
             "housenumber": {
                 "type": "string",
-                "index": "not_analyzed",
-                "copy_to": [
-                    "collector.en",
-                    "collector.de"
-                ]
+                "analyzer": "index_ngram",
+                "fields": {"raw": {"type": "string", "analyzer": "index"}}
             },
             "coordinate": {
                 "type": "geo_point"
             },
-            "extent": {
-                "type": "geo_shape",
-                "tree": "quadtree",
-                "precision": "10m",
-                "index": "no"
-            },
             "postcode": {
                 "type": "string",
-                "index": "no",
-                "copy_to": [
-                    "collector.en",
-                    "collector.de"
-                ]
+                "analyzer": "index"
             },
             "city": {
                 "properties": {
                     "de": {
                         "type": "string",
-                        "index": "no",
-                        "copy_to": [
-                            "collector.de"
-                        ]
+                        "analyzer": "index_ngram",
+                        "fields": {"raw": {"type": "string", "analyzer": "index"}}
                     },
                     "default": {
                         "type": "string",
-                        "index": "no",
-                        "copy_to": [
-                            "collector.en",
-                            "collector.de"
-                        ]
+                        "analyzer": "index_ngram",
+                        "fields": {"raw": {"type": "string", "analyzer": "index"}}
                     },
                     "en": {
                         "type": "string",
-                        "index": "no",
-                        "copy_to": [
-                            "collector.en"
-                        ]
+                        "analyzer": "index_ngram",
+                        "fields": {"raw": {"type": "string", "analyzer": "index"}}
                     }
                 }
             },
@@ -75,25 +62,18 @@
                 "properties": {
                     "de": {
                         "type": "string",
-                        "index": "no",
-                        "copy_to": [
-                            "collector.de"
-                        ]
+                        "analyzer": "index_ngram",
+                        "fields": {"raw": {"type": "string", "analyzer": "index"}}
                     },
                     "default": {
                         "type": "string",
-                        "index": "no",
-                        "copy_to": [
-                            "collector.en",
-                            "collector.de"
-                        ]
+                        "analyzer": "index_ngram",
+                        "fields": {"raw": {"type": "string", "analyzer": "index"}}
                     },
                     "en": {
                         "type": "string",
-                        "index": "no",
-                        "copy_to": [
-                            "collector.en"
-                        ]
+                        "analyzer": "index_ngram",
+                        "fields": {"raw": {"type": "string", "analyzer": "index"}}
                     }
                 }
             },
@@ -101,25 +81,18 @@
                 "properties": {
                     "de": {
                         "type": "string",
-                        "index": "no",
-                        "copy_to": [
-                            "collector.de"
-                        ]
+                        "analyzer": "index_ngram",
+                        "fields": {"raw": {"type": "string", "analyzer": "index"}}
                     },
                     "default": {
                         "type": "string",
-                        "index": "no",
-                        "copy_to": [
-                            "collector.en",
-                            "collector.de"
-                        ]
+                        "analyzer": "index_ngram",
+                        "fields": {"raw": {"type": "string", "analyzer": "index"}}
                     },
                     "en": {
                         "type": "string",
-                        "index": "no",
-                        "copy_to": [
-                            "collector.en"
-                        ]
+                        "analyzer": "index_ngram",
+                        "fields": {"raw": {"type": "string", "analyzer": "index"}}
                     }
                 }
             },
@@ -128,102 +101,42 @@
                     "int": {
                         "type": "string",
                         "index": "no",
-                        "fields": {
-                            "raw": {
-                                "index_analyzer": "raw_stringanalyser",
-                                "type": "string"
-                            }
-                        },
-                        "copy_to": [
-                            "collector.en",
-                            "collector.de"
-                        ]
+                        "copy_to": "name.alternatives"
                     },
                     "old": {
                         "type": "string",
                         "index": "no",
-                        "fields": {
-                            "raw": {
-                                "index_analyzer": "raw_stringanalyser",
-                                "type": "string"
-                            }
-                        },
-                        "copy_to": [
-                            "collector.en",
-                            "collector.de"
-                        ]
+                        "copy_to": "name.alternatives"
                     },
                     "loc": {
                         "type": "string",
                         "index": "no",
-                        "fields": {
-                            "raw": {
-                                "index_analyzer": "raw_stringanalyser",
-                                "type": "string"
-                            }
-                        },
-                        "copy_to": [
-                            "collector.en",
-                            "collector.de"
-                        ]
+                        "copy_to": "name.alternatives"
                     },
                     "alt": {
                         "type": "string",
                         "index": "no",
-                        "fields": {
-                            "raw": {
-                                "index_analyzer": "raw_stringanalyser",
-                                "type": "string"
-                            }
-                        },
-                        "copy_to": [
-                            "collector.en",
-                            "collector.de"
-                        ]
+                        "copy_to": "name.alternatives"
                     },
                     "de": {
                         "type": "string",
-                        "index": "no",
-                        "fields": {
-                            "ngramed": {
-                                "type": "string",
-                                "index_analyzer": "stringanalyser"
-                            },
-                            "raw": {
-                                "type": "string",
-                                "index_analyzer": "raw_stringanalyser"
-                            }
-                        },
-                        "copy_to": [
-                            "collector.de"
-                        ]
+                        "analyzer": "index_ngram",
+                        "fields": {"raw": {"type": "string", "analyzer": "index"}}
+                    },
+                    "alternatives": {
+                        "type": "string",
+                        "analyzer": "index_ngram",
+                        "fields": {"raw": {"type": "string", "analyzer": "index"}}
                     },
                     "default": {
                         "type": "string",
-                        "index": "no",
-                        "copy_to": [
-                            "collector.en",
-                            "collector.de"
-                            "name.en",
-                            "name.de"
-                        ]
+                        "analyzer": "index_ngram",
+                        "fields": {"raw": {"type": "string", "analyzer": "index"}}
                     },
                     "en": {
                         "type": "string",
-                        "index": "no",
-                        "fields": {
-                            "ngramed": {
-                                "type": "string",
-                                "index_analyzer": "stringanalyser"
-                            },
-                            "raw": {
-                                "type": "string",
-                                "index_analyzer": "raw_stringanalyser"
-                            }
-                        },
-                        "copy_to": [
-                            "collector.en"
-                        ]
+                        "analyzer": "index_ngram",
+                        "fields": {"raw": {"type": "string", "analyzer": "index"}}
                     }
                 }
             },
@@ -231,50 +144,19 @@
                 "type": "object",
                 "properties": {
                     "default": {
-                        "index": "no",
                         "type": "string",
-                        "copy_to": [
-                            "collector.en",
-                            "collector.de"
-                        ]
+                        "analyzer": "index_ngram",
+                        "fields": {"raw": {"type": "string", "analyzer": "index"}}
                     },
                     "de": {
-                        "index": "no",
                         "type": "string",
-                        "copy_to": [
-                            "collector.de"
-                        ]
-                    },
-                    "en": {
-                        "index": "no",
-                        "type": "string",
-                        "copy_to": [
-                            "collector.en"
-                        ]
-                    }
-                }
-            },
-            "collector": {
-                "properties": {
-                    "de": {
-                        "type": "string",
-                        "analyzer": "stringanalyser",
-                        "fields": {
-                            "raw": {
-                                "type": "string",
-                                "analyzer": "raw_stringanalyser"
-                            }
-                        }
+                        "analyzer": "index_ngram",
+                        "fields": {"raw": {"type": "string", "analyzer": "index"}}
                     },
                     "en": {
                         "type": "string",
-                        "analyzer": "stringanalyser",
-                        "fields": {
-                            "raw": {
-                                "type": "string",
-                                "analyzer": "raw_stringanalyser"
-                            }
-                        }
+                        "analyzer": "index_ngram",
+                        "fields": {"raw": {"type": "string", "analyzer": "index"}}
                     }
                 }
             }

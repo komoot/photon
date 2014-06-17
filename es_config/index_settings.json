@@ -12,68 +12,25 @@
       }
     },
     "analyzer": {
-      "stringanalyser": {
-        "char_filter": [
-          "punctuationgreedy"
-        ],
-        "filter": [
-          "word_delimiter",
-          "lowercase",
-          "asciifolding",
-          "photonlength",
-          "unique",
-          "wordending",
-          "photonngram"
-        ],
+      "index_ngram": {
+        "char_filter": ["punctuationgreedy"],
+        "filter": ["word_delimiter", "lowercase", "asciifolding", "unique", "photonngram"],
         "tokenizer": "standard"
       },
-      "search_stringanalyser": {
-        "char_filter": [
-          "punctuationgreedy"
-        ],
-        "filter": [
-          "word_delimiter",
-          "lowercase",
-          "asciifolding",
-          "photonlength",
-          "unique",
-          "wordendingautocomplete"
-        ],
+      "search": {
+        "char_filter": ["punctuationgreedy"],
+        "filter": ["word_delimiter", "lowercase", "asciifolding", "photonlength", "unique"],
         "tokenizer": "standard"
       },
-      "raw_stringanalyser": {
-        "char_filter": [
-          "punctuationgreedy"
-        ],
-        "filter": [
-          "word_delimiter",
-          "lowercase",
-          "asciifolding",
-          "photonlength",
-          "unique",
-          "wordending"
-        ],
+      "index": {
+        "char_filter": ["punctuationgreedy"],
+        "filter": ["word_delimiter", "lowercase", "asciifolding", "unique"],
         "tokenizer": "standard"
       }
     },
     "filter": {
-      "photonngram": {
-        "min_gram": "2",
-        "type": "edgeNGram",
-        "max_gram": "15"
-      },
-      "wordending": {
-        "type": "wordending",
-        "mode": "default"
-      },
-      "photonlength": {
-        "min": "2",
-        "type": "length"
-      },
-      "wordendingautocomplete": {
-        "type": "wordending",
-        "mode": "autocomplete"
-      }
+      "photonngram": {"min_gram": "2", "type": "edgeNGram", "max_gram": "15"},
+      "photonlength": {"min": "2", "type": "length"}
     }
   }
 }
