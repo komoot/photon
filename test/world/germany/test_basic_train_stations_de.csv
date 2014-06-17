@@ -1,96 +1,96 @@
-comment;query;tried_location;tried_language;expected_location;expected_location_tolerance;expected_name;expected_type;expected_housenumber;expected_street;expected_city;expected_postcode;expected_country
-;Bahnhof Berlin Gesundbrunnen;;DE;52.548611111111,13.389444444444;;Bahnhof Berlin Gesundbrunnen;;;;Berlin;;Deutschland
-;Berlin Hauptbahnhof;;DE;52.525,13.369444444444;;Berlin Hauptbahnhof;;;;Berlin;;Deutschland
-;Berlin Ostbahnhof;;DE;52.51,13.434722222222;;Berlin Ostbahnhof;;;;Berlin;;Deutschland
-;Bahnhof Berlin Südkreuz;;DE;52.475555555556,13.364444444444;;Bahnhof Berlin Südkreuz;;;;Berlin;;Deutschland
-;Dortmund Hauptbahnhof;;DE;51.5175,7.4588888888889;;Dortmund Hauptbahnhof;;;;Dortmund;;Deutschland
-;Dresden Hauptbahnhof;;DE;51.040278,13.731389;;Dresden Hauptbahnhof;;;;Dresden;;Deutschland
-;Düsseldorf Hauptbahnhof;;DE;51.220277777778,6.7927777777778;;Düsseldorf Hauptbahnhof;;;;Düsseldorf;;Deutschland
-;Duisburg Hauptbahnhof;;DE;51.43,6.7725;;Duisburg Hauptbahnhof;;;;Duisburg;;Deutschland
-;Essen Hauptbahnhof;;DE;51.451388888889,7.0138888888889;;Essen Hauptbahnhof;;;;Essen;;Deutschland
-;Frankfurt (Main) Hauptbahnhof;;DE;50.106944444444,8.6625;;Frankfurt (Main) Hauptbahnhof;;;;Frankfurt am Main;;Deutschland
-;Bahnhof Hamburg-Altona;;DE;53.551944444444,9.935;;Bahnhof Hamburg-Altona;;;;Hamburg;;Deutschland
-;Hamburg Hauptbahnhof;;DE;53.552777777778,10.006388888889;;Hamburg Hauptbahnhof;;;;Hamburg;;Deutschland
-;Hannover Hauptbahnhof;;DE;52.377222222222,9.7416666666667;;Hannover Hauptbahnhof;;;;Hannover;;Deutschland
-;Karlsruhe Hauptbahnhof;;DE;48.993997222222,8.4005583333333;;Karlsruhe Hauptbahnhof;;;;Karlsruhe;;Deutschland
-;Köln Hauptbahnhof;;DE;50.9425,6.9580555555556;;Köln Hauptbahnhof;;;;Köln;;Deutschland
-;Bahnhof Köln Messe/Deutz;;DE;50.940833333333,6.975;;Bahnhof Köln Messe/Deutz;;;;Köln;;Deutschland
-;Leipzig Hauptbahnhof;;DE;51.345277777778,12.382222222222;;Leipzig Hauptbahnhof;;;;Leipzig;;Deutschland
-;München Hauptbahnhof;;DE;48.140833333333,11.555;;München Hauptbahnhof;;;;München;;Deutschland
-;Nürnberg Hauptbahnhof;;DE;49.446388888889,11.081944444444;;Nürnberg Hauptbahnhof;;;;Nürnberg;;Deutschland
-;Stuttgart Hauptbahnhof;;DE;48.783888888889,9.1816666666667;;Stuttgart Hauptbahnhof;;;;Stuttgart;;Deutschland
-;Aachen Hauptbahnhof;;DE;50.768055555556,6.0911111111111;;Aachen Hauptbahnhof;;;;Aachen;;Deutschland
-;Bahnhof Altenbeken;;DE;51.766388888889,8.9422222222222;;Bahnhof Altenbeken;;;;Altenbeken;;Deutschland
-;Aschaffenburg Hauptbahnhof;;DE;49.966666666667,9.15;;Aschaffenburg Hauptbahnhof;;;;Aschaffenburg;;Deutschland
-;Augsburg Hauptbahnhof;;DE;48.365555555556,10.886388888889;;Augsburg Hauptbahnhof;;;;Augsburg;;Deutschland
-;Bahnhof Bamberg;;DE;49.900833333333,10.899444444444;;Bahnhof Bamberg;;;;Bamberg;;Deutschland
-;Bahnhof Berlin Friedrichstraße;;DE;52.520277777778,13.386944444444;;Bahnhof Berlin Friedrichstraße;;;;Berlin;;Deutschland
-;Bahnhof Berlin-Lichtenberg;;DE;52.510555555556,13.496388888889;;Bahnhof Berlin-Lichtenberg;;;;Berlin;;Deutschland
-;Bahnhof Berlin Potsdamer Platz;;DE;52.509444444444,13.375833333333;;Bahnhof Berlin Potsdamer Platz;;;;Berlin;;Deutschland
-;Bahnhof Berlin-Wannsee;;DE;52.421388888889,13.179166666667;;Bahnhof Berlin-Wannsee;;;;Berlin;;Deutschland
-;Bahnhof Berlin Zoologischer Garten;;DE;52.507222222222,13.3325;;Bahnhof Berlin Zoologischer Garten;;;;Berlin;;Deutschland
-;Bielefeld Hauptbahnhof;;DE;52.028333333333,8.5316666666667;;Bielefeld Hauptbahnhof;;;;Bielefeld;;Deutschland
-;Bahnhof Bietigheim-Bissingen;;DE;48.947222222222,9.1358333333333;;Bahnhof Bietigheim-Bissingen;;;;Bietigheim-Bissingen;;Deutschland
-;Bonn Hauptbahnhof;;DE;50.731944444444,7.0969444444444;;Bonn Hauptbahnhof;;;;Bonn;;Deutschland
-;Braunschweig Hauptbahnhof;;DE;52.252222222222,10.539722222222;;Braunschweig Hauptbahnhof;;;;Braunschweig;;Deutschland
-;Bremen Hauptbahnhof;;DE;53.083055555556,8.8136111111111;;Bremen Hauptbahnhof;;;;Bremen;;Deutschland
-;Bahnhof Bruchsal;;DE;49.123916666667,8.5899166666667;;Bahnhof Bruchsal;;;;Bruchsal;;Deutschland
-;Chemnitz Hauptbahnhof;;DE;50.840155555556,12.930594444444;;Chemnitz Hauptbahnhof;;;;Chemnitz;;Deutschland
-;Bahnhof Cottbus;;DE;51.750833333333,14.326388888889;;Bahnhof Cottbus;;;;Cottbus;;Deutschland
-;Darmstadt Hauptbahnhof;;DE;49.8725,8.6288888888889;;Darmstadt Hauptbahnhof;;;;Darmstadt;;Deutschland
-;Bahnhof Dresden-Neustadt;;DE;51.065555555556,13.740833333333;;Bahnhof Dresden-Neustadt;;;;Dresden;;Deutschland
-;Bahnhof Düsseldorf Flughafen;;DE;51.291638888889,6.7863333333333;;Bahnhof Düsseldorf Flughafen;;;;Düsseldorf;;Deutschland
-;Erfurt Hauptbahnhof;;DE;50.972777777778,11.037777777778;;Erfurt Hauptbahnhof;;;;Erfurt;;Deutschland
-;Bahnhof Frankfurt (Main) Süd;;DE;50.099444444444,8.6861111111111;;Bahnhof Frankfurt (Main) Süd;;;;Frankfurt am Main;;Deutschland
-;Freiburg (Breisgau) Hauptbahnhof;;DE;47.997777777778,7.8419444444444;;Freiburg (Breisgau) Hauptbahnhof;;;;Freiburg im Breisgau;;Deutschland
-;Bahnhof Fulda;;DE;50.553888888889,9.6847222222222;;Bahnhof Fulda;;;;Fulda;;Deutschland
-;Fürth (Bayern) Hauptbahnhof;;DE;49.470029,10.990263;;Fürth (Bayern) Hauptbahnhof;;;;Fürth;;Deutschland
-;Gelsenkirchen Hauptbahnhof;;DE;51.504444444444,7.1013888888889;;Gelsenkirchen Hauptbahnhof;;;;Gelsenkirchen;;Deutschland
-;Hagen Hauptbahnhof;;DE;51.362222222222,7.4616666666667;;Hagen Hauptbahnhof;;;;Hagen;;Deutschland
-;Halle (Saale) Hauptbahnhof;;DE;51.478055555556,11.986666666667;;Halle (Saale) Hauptbahnhof;;;;Halle (Saale);;Deutschland
-;Bahnhof Hamburg Dammtor;;DE;53.560833333333,9.9894444444444;;Bahnhof Hamburg Dammtor;;;;Hamburg;;Deutschland
-;Bahnhof Hamburg-Harburg;;DE;53.456111111111,9.9913888888889;;Bahnhof Hamburg-Harburg;;;;Hamburg;;Deutschland
-;Bahnhof Hamm (Westfalen);;DE;51.678333333333,7.8080555555556;;Bahnhof Hamm (Westfalen);;;;Hamm;;Deutschland
-;Hanau Hauptbahnhof;;DE;50.121388888889,8.9297222222222;;Hanau Hauptbahnhof;;;;Hanau;;Deutschland
-;Heidelberg Hauptbahnhof;;DE;49.403611111111,8.6752777777778;;Heidelberg Hauptbahnhof;;;;Heidelberg;;Deutschland
-;Heilbronn Hauptbahnhof;;DE;49.142797222222,9.2079444444444;;Heilbronn Hauptbahnhof;;;;Heilbronn;;Deutschland
-;Bahnhof Herford;;DE;52.119277777778,8.6643611111111;;Bahnhof Herford;;;;Herford;;Deutschland
-;Hildesheim Hauptbahnhof;;DE;52.160555555556,9.9538888888889;;Hildesheim Hauptbahnhof;;;;Hildesheim;;Deutschland
-;Kaiserslautern Hauptbahnhof;;DE;49.435902777778,7.7688194444444;;Kaiserslautern Hauptbahnhof;;;;Kaiserslautern;;Deutschland
-;Kassel Hauptbahnhof;;DE;51.318055555556,9.49;;Kassel Hauptbahnhof;;;;Kassel;;Deutschland
-;Bahnhof Kassel-Wilhelmshöhe;;DE;51.312222222222,9.4472222222222;;Bahnhof Kassel-Wilhelmshöhe;;;;Kassel;;Deutschland
-;Kiel Hauptbahnhof;;DE;54.314821,10.131798;;Kiel Hauptbahnhof;;;;Kiel;;Deutschland
-;Koblenz Hauptbahnhof;;DE;50.350555555556,7.5891666666667;;Koblenz Hauptbahnhof;;;;Koblenz;;Deutschland
-;Lübeck Hauptbahnhof;;DE;53.867222222222,10.669166666667;;Lübeck Hauptbahnhof;;;;Hansestadt Lübeck;;Deutschland
-;Ludwigshafen (Rhein) Hauptbahnhof;;DE;49.477777777778,8.4341666666667;;Ludwigshafen (Rhein) Hauptbahnhof;;;;Ludwigshafen;;Deutschland
-;Bahnhof Lüneburg;;DE;53.249916666667,10.419861111111;;Bahnhof Lüneburg;;;;Lüneburg;;Deutschland
-;Magdeburg Hauptbahnhof;;DE;52.130555555556,11.627777777778;;Magdeburg Hauptbahnhof;;;;Magdeburg;;Deutschland
-;Mainz Hauptbahnhof;;DE;50.001297222222,8.25865;;Mainz Hauptbahnhof;;;;Mainz;;Deutschland
-;Mannheim Hauptbahnhof;;DE;49.479633333333,8.4698583333333;;Mannheim Hauptbahnhof;;;;Mannheim;;Deutschland
-;Mönchengladbach Hauptbahnhof;;DE;51.196388888889,6.4461111111111;;Mönchengladbach Hauptbahnhof;;;;Mönchengladbach;;Deutschland
-;Bahnhof München-Pasing;;DE;48.15,11.461388888889;;Bahnhof München-Pasing;;;;München;;Deutschland
-;Münster (Westfalen) Hauptbahnhof;;DE;51.956666666667,7.635;;Münster (Westfalen) Hauptbahnhof;;;;Münster (Westfalen);;Deutschland
-;Bahnhof Neumünster;;DE;54.075955,9.97988;;Bahnhof Neumünster;;;;Neumünster;;Deutschland
-;Neuss Hauptbahnhof;;DE;51.204166666667,6.6838888888889;;Neuss Hauptbahnhof;;;;Neuss;;Deutschland
-;Neustadt (Weinstraße) Hauptbahnhof;;DE;49.35,8.1405555555556;;Neustadt (Weinstraße) Hauptbahnhof;;;;Neustadt an der Weinstraße;;Deutschland
-;Oberhausen Hauptbahnhof;;DE;51.474166666667,6.8536111111111;;Oberhausen Hauptbahnhof;;;;Oberhausen;;Deutschland
-;Bahnhof Offenburg;;DE;48.476013888889,7.945725;;Bahnhof Offenburg;;;;Offenburg;;Deutschland
-;Oldenburg (Oldenburg) Hauptbahnhof;;DE;53.143611111111,8.2225;;Oldenburg (Oldenburg) Hauptbahnhof;;;;Oldenburg (Oldenburg);;Deutschland
-;Osnabrück Hauptbahnhof;;DE;52.272777777778,8.0611111111111;;Osnabrück Hauptbahnhof;;;;Osnabrück;;Deutschland
-;Pforzheim Hauptbahnhof;;DE;48.893691666667,8.7029916666667;;Pforzheim Hauptbahnhof;;;;Pforzheim;;Deutschland
-;Bahnhof Plochingen;;DE;48.713055555556,9.4116666666667;;Bahnhof Plochingen;;;;Plochingen;;Deutschland
-;Potsdam Hauptbahnhof;;DE;52.391666666667,13.066666666667;;Potsdam Hauptbahnhof;;;;Potsdam;;Deutschland
-;Regensburg Hauptbahnhof;;DE;49.012222222222,12.099444444444;;Regensburg Hauptbahnhof;;;;Regensburg;;Deutschland
-;Bahnhof Rosenheim;;DE;47.850361111111,12.119527777778;;Bahnhof Rosenheim;;;;Rosenheim;;Deutschland
-;Rostock Hauptbahnhof;;DE;54.078055555556,12.130833333333;;Rostock Hauptbahnhof;;;;Rostock;;Deutschland
-;Saarbrücken Hauptbahnhof;;DE;49.241388888889,6.9905555555556;;Saarbrücken Hauptbahnhof;;;;Saarbrücken;;Deutschland
-;Solingen Hauptbahnhof;;DE;51.161527777778,7.0041666666667;;Solingen Hauptbahnhof;;;;Solingen;;Deutschland
-;Trier Hauptbahnhof;;DE;49.756944444444,6.6519444444444;;Trier Hauptbahnhof;;;;Trier;;Deutschland
-;Tübingen Hauptbahnhof;;DE;48.51578,9.055846;;Tübingen Hauptbahnhof;;;;Tübingen;;Deutschland
-;Bahnhof Uelzen;;DE;52.969722222222,10.553055555556;;Bahnhof Uelzen;;;;Uelzen;;Deutschland
-;Ulm Hauptbahnhof;;DE;48.4,9.9833333333333;;Ulm Hauptbahnhof;;;;Ulm;;Deutschland
-;Bahnhof Weimar;;DE;50.991666666667,11.326944444444;;Bahnhof Weimar;;;;Weimar;;Deutschland
-;Wiesbaden Hauptbahnhof;;DE;50.070833,8.243889;;Wiesbaden Hauptbahnhof;;;;Wiesbaden;;Deutschland
-;Wolfsburg Hauptbahnhof;;DE;52.429166666667,10.787777777778;;Wolfsburg Hauptbahnhof;;;;Wolfsburg;;Deutschland
-;Worms Hauptbahnhof;;DE;49.634733758056,8.3568674325;;Worms Hauptbahnhof;;;;Worms;;Deutschland
-;Wuppertal Hauptbahnhof;;DE;51.254722222222,7.15;;Wuppertal Hauptbahnhof;;;;Wuppertal;;Deutschland
+query;lang;expected_location;expected_location_tolerance;expected_name;expected_city;expected_country
+Bahnhof Berlin Gesundbrunnen;DE;52.548611111111,13.389444444444;;Bahnhof Berlin Gesundbrunnen;Berlin;Deutschland
+Berlin Hauptbahnhof;DE;52.525,13.369444444444;;Berlin Hauptbahnhof;Berlin;Deutschland
+Berlin Ostbahnhof;DE;52.51,13.434722222222;;Berlin Ostbahnhof;Berlin;Deutschland
+Bahnhof Berlin Südkreuz;DE;52.475555555556,13.364444444444;;Bahnhof Berlin Südkreuz;Berlin;Deutschland
+Dortmund Hauptbahnhof;DE;51.5175,7.4588888888889;;Dortmund Hauptbahnhof;Dortmund;Deutschland
+Dresden Hauptbahnhof;DE;51.040278,13.731389;;Dresden Hauptbahnhof;Dresden;Deutschland
+Düsseldorf Hauptbahnhof;DE;51.220277777778,6.7927777777778;;Düsseldorf Hauptbahnhof;Düsseldorf;Deutschland
+Duisburg Hauptbahnhof;DE;51.43,6.7725;;Duisburg Hauptbahnhof;Duisburg;Deutschland
+Essen Hauptbahnhof;DE;51.451388888889,7.0138888888889;;Essen Hauptbahnhof;Essen;Deutschland
+Frankfurt (Main) Hauptbahnhof;DE;50.106944444444,8.6625;;Frankfurt (Main) Hauptbahnhof;Frankfurt am Main;Deutschland
+Bahnhof Hamburg-Altona;DE;53.551944444444,9.935;;Bahnhof Hamburg-Altona;Hamburg;Deutschland
+Hamburg Hauptbahnhof;DE;53.552777777778,10.006388888889;;Hamburg Hauptbahnhof;Hamburg;Deutschland
+Hannover Hauptbahnhof;DE;52.377222222222,9.7416666666667;;Hannover Hauptbahnhof;Hannover;Deutschland
+Karlsruhe Hauptbahnhof;DE;48.993997222222,8.4005583333333;;Karlsruhe Hauptbahnhof;Karlsruhe;Deutschland
+Köln Hauptbahnhof;DE;50.9425,6.9580555555556;;Köln Hauptbahnhof;Köln;Deutschland
+Bahnhof Köln Messe/Deutz;DE;50.940833333333,6.975;;Bahnhof Köln Messe/Deutz;Köln;Deutschland
+Leipzig Hauptbahnhof;DE;51.345277777778,12.382222222222;;Leipzig Hauptbahnhof;Leipzig;Deutschland
+München Hauptbahnhof;DE;48.140833333333,11.555;;München Hauptbahnhof;München;Deutschland
+Nürnberg Hauptbahnhof;DE;49.446388888889,11.081944444444;;Nürnberg Hauptbahnhof;Nürnberg;Deutschland
+Stuttgart Hauptbahnhof;DE;48.783888888889,9.1816666666667;;Stuttgart Hauptbahnhof;Stuttgart;Deutschland
+Aachen Hauptbahnhof;DE;50.768055555556,6.0911111111111;;Aachen Hauptbahnhof;Aachen;Deutschland
+Bahnhof Altenbeken;DE;51.766388888889,8.9422222222222;;Bahnhof Altenbeken;Altenbeken;Deutschland
+Aschaffenburg Hauptbahnhof;DE;49.966666666667,9.15;;Aschaffenburg Hauptbahnhof;Aschaffenburg;Deutschland
+Augsburg Hauptbahnhof;DE;48.365555555556,10.886388888889;;Augsburg Hauptbahnhof;Augsburg;Deutschland
+Bahnhof Bamberg;DE;49.900833333333,10.899444444444;;Bahnhof Bamberg;Bamberg;Deutschland
+Bahnhof Berlin Friedrichstraße;DE;52.520277777778,13.386944444444;;Bahnhof Berlin Friedrichstraße;Berlin;Deutschland
+Bahnhof Berlin-Lichtenberg;DE;52.510555555556,13.496388888889;;Bahnhof Berlin-Lichtenberg;Berlin;Deutschland
+Bahnhof Berlin Potsdamer Platz;DE;52.509444444444,13.375833333333;;Bahnhof Berlin Potsdamer Platz;Berlin;Deutschland
+Bahnhof Berlin-Wannsee;DE;52.421388888889,13.179166666667;;Bahnhof Berlin-Wannsee;Berlin;Deutschland
+Bahnhof Berlin Zoologischer Garten;DE;52.507222222222,13.3325;;Bahnhof Berlin Zoologischer Garten;Berlin;Deutschland
+Bielefeld Hauptbahnhof;DE;52.028333333333,8.5316666666667;;Bielefeld Hauptbahnhof;Bielefeld;Deutschland
+Bahnhof Bietigheim-Bissingen;DE;48.947222222222,9.1358333333333;;Bahnhof Bietigheim-Bissingen;Bietigheim-Bissingen;Deutschland
+Bonn Hauptbahnhof;DE;50.731944444444,7.0969444444444;;Bonn Hauptbahnhof;Bonn;Deutschland
+Braunschweig Hauptbahnhof;DE;52.252222222222,10.539722222222;;Braunschweig Hauptbahnhof;Braunschweig;Deutschland
+Bremen Hauptbahnhof;DE;53.083055555556,8.8136111111111;;Bremen Hauptbahnhof;Bremen;Deutschland
+Bahnhof Bruchsal;DE;49.123916666667,8.5899166666667;;Bahnhof Bruchsal;Bruchsal;Deutschland
+Chemnitz Hauptbahnhof;DE;50.840155555556,12.930594444444;;Chemnitz Hauptbahnhof;Chemnitz;Deutschland
+Bahnhof Cottbus;DE;51.750833333333,14.326388888889;;Bahnhof Cottbus;Cottbus;Deutschland
+Darmstadt Hauptbahnhof;DE;49.8725,8.6288888888889;;Darmstadt Hauptbahnhof;Darmstadt;Deutschland
+Bahnhof Dresden-Neustadt;DE;51.065555555556,13.740833333333;;Bahnhof Dresden-Neustadt;Dresden;Deutschland
+Bahnhof Düsseldorf Flughafen;DE;51.291638888889,6.7863333333333;;Bahnhof Düsseldorf Flughafen;Düsseldorf;Deutschland
+Erfurt Hauptbahnhof;DE;50.972777777778,11.037777777778;;Erfurt Hauptbahnhof;Erfurt;Deutschland
+Bahnhof Frankfurt (Main) Süd;DE;50.099444444444,8.6861111111111;;Bahnhof Frankfurt (Main) Süd;Frankfurt am Main;Deutschland
+Freiburg (Breisgau) Hauptbahnhof;DE;47.997777777778,7.8419444444444;;Freiburg (Breisgau) Hauptbahnhof;Freiburg im Breisgau;Deutschland
+Bahnhof Fulda;DE;50.553888888889,9.6847222222222;;Bahnhof Fulda;Fulda;Deutschland
+Fürth (Bayern) Hauptbahnhof;DE;49.470029,10.990263;;Fürth (Bayern) Hauptbahnhof;Fürth;Deutschland
+Gelsenkirchen Hauptbahnhof;DE;51.504444444444,7.1013888888889;;Gelsenkirchen Hauptbahnhof;Gelsenkirchen;Deutschland
+Hagen Hauptbahnhof;DE;51.362222222222,7.4616666666667;;Hagen Hauptbahnhof;Hagen;Deutschland
+Halle (Saale) Hauptbahnhof;DE;51.478055555556,11.986666666667;;Halle (Saale) Hauptbahnhof;Halle (Saale);Deutschland
+Bahnhof Hamburg Dammtor;DE;53.560833333333,9.9894444444444;;Bahnhof Hamburg Dammtor;Hamburg;Deutschland
+Bahnhof Hamburg-Harburg;DE;53.456111111111,9.9913888888889;;Bahnhof Hamburg-Harburg;Hamburg;Deutschland
+Bahnhof Hamm (Westfalen);DE;51.678333333333,7.8080555555556;;Bahnhof Hamm (Westfalen);Hamm;Deutschland
+Hanau Hauptbahnhof;DE;50.121388888889,8.9297222222222;;Hanau Hauptbahnhof;Hanau;Deutschland
+Heidelberg Hauptbahnhof;DE;49.403611111111,8.6752777777778;;Heidelberg Hauptbahnhof;Heidelberg;Deutschland
+Heilbronn Hauptbahnhof;DE;49.142797222222,9.2079444444444;;Heilbronn Hauptbahnhof;Heilbronn;Deutschland
+Bahnhof Herford;DE;52.119277777778,8.6643611111111;;Bahnhof Herford;Herford;Deutschland
+Hildesheim Hauptbahnhof;DE;52.160555555556,9.9538888888889;;Hildesheim Hauptbahnhof;Hildesheim;Deutschland
+Kaiserslautern Hauptbahnhof;DE;49.435902777778,7.7688194444444;;Kaiserslautern Hauptbahnhof;Kaiserslautern;Deutschland
+Kassel Hauptbahnhof;DE;51.318055555556,9.49;;Kassel Hauptbahnhof;Kassel;Deutschland
+Bahnhof Kassel-Wilhelmshöhe;DE;51.312222222222,9.4472222222222;;Bahnhof Kassel-Wilhelmshöhe;Kassel;Deutschland
+Kiel Hauptbahnhof;DE;54.314821,10.131798;;Kiel Hauptbahnhof;Kiel;Deutschland
+Koblenz Hauptbahnhof;DE;50.350555555556,7.5891666666667;;Koblenz Hauptbahnhof;Koblenz;Deutschland
+Lübeck Hauptbahnhof;DE;53.867222222222,10.669166666667;;Lübeck Hauptbahnhof;Hansestadt Lübeck;Deutschland
+Ludwigshafen (Rhein) Hauptbahnhof;DE;49.477777777778,8.4341666666667;;Ludwigshafen (Rhein) Hauptbahnhof;Ludwigshafen;Deutschland
+Bahnhof Lüneburg;DE;53.249916666667,10.419861111111;;Bahnhof Lüneburg;Lüneburg;Deutschland
+Magdeburg Hauptbahnhof;DE;52.130555555556,11.627777777778;;Magdeburg Hauptbahnhof;Magdeburg;Deutschland
+Mainz Hauptbahnhof;DE;50.001297222222,8.25865;;Mainz Hauptbahnhof;Mainz;Deutschland
+Mannheim Hauptbahnhof;DE;49.479633333333,8.4698583333333;;Mannheim Hauptbahnhof;Mannheim;Deutschland
+Mönchengladbach Hauptbahnhof;DE;51.196388888889,6.4461111111111;;Mönchengladbach Hauptbahnhof;Mönchengladbach;Deutschland
+Bahnhof München-Pasing;DE;48.15,11.461388888889;;Bahnhof München-Pasing;München;Deutschland
+Münster (Westfalen) Hauptbahnhof;DE;51.956666666667,7.635;;Münster (Westfalen) Hauptbahnhof;Münster (Westfalen);Deutschland
+Bahnhof Neumünster;DE;54.075955,9.97988;;Bahnhof Neumünster;Neumünster;Deutschland
+Neuss Hauptbahnhof;DE;51.204166666667,6.6838888888889;;Neuss Hauptbahnhof;Neuss;Deutschland
+Neustadt (Weinstraße) Hauptbahnhof;DE;49.35,8.1405555555556;;Neustadt (Weinstraße) Hauptbahnhof;Neustadt an der Weinstraße;Deutschland
+Oberhausen Hauptbahnhof;DE;51.474166666667,6.8536111111111;;Oberhausen Hauptbahnhof;Oberhausen;Deutschland
+Bahnhof Offenburg;DE;48.476013888889,7.945725;;Bahnhof Offenburg;Offenburg;Deutschland
+Oldenburg (Oldenburg) Hauptbahnhof;DE;53.143611111111,8.2225;;Oldenburg (Oldenburg) Hauptbahnhof;Oldenburg (Oldenburg);Deutschland
+Osnabrück Hauptbahnhof;DE;52.272777777778,8.0611111111111;;Osnabrück Hauptbahnhof;Osnabrück;Deutschland
+Pforzheim Hauptbahnhof;DE;48.893691666667,8.7029916666667;;Pforzheim Hauptbahnhof;Pforzheim;Deutschland
+Bahnhof Plochingen;DE;48.713055555556,9.4116666666667;;Bahnhof Plochingen;Plochingen;Deutschland
+Potsdam Hauptbahnhof;DE;52.391666666667,13.066666666667;;Potsdam Hauptbahnhof;Potsdam;Deutschland
+Regensburg Hauptbahnhof;DE;49.012222222222,12.099444444444;;Regensburg Hauptbahnhof;Regensburg;Deutschland
+Bahnhof Rosenheim;DE;47.850361111111,12.119527777778;;Bahnhof Rosenheim;Rosenheim;Deutschland
+Rostock Hauptbahnhof;DE;54.078055555556,12.130833333333;;Rostock Hauptbahnhof;Rostock;Deutschland
+Saarbrücken Hauptbahnhof;DE;49.241388888889,6.9905555555556;;Saarbrücken Hauptbahnhof;Saarbrücken;Deutschland
+Solingen Hauptbahnhof;DE;51.161527777778,7.0041666666667;;Solingen Hauptbahnhof;Solingen;Deutschland
+Trier Hauptbahnhof;DE;49.756944444444,6.6519444444444;;Trier Hauptbahnhof;Trier;Deutschland
+Tübingen Hauptbahnhof;DE;48.51578,9.055846;;Tübingen Hauptbahnhof;Tübingen;Deutschland
+Bahnhof Uelzen;DE;52.969722222222,10.553055555556;;Bahnhof Uelzen;Uelzen;Deutschland
+Ulm Hauptbahnhof;DE;48.4,9.9833333333333;;Ulm Hauptbahnhof;Ulm;Deutschland
+Bahnhof Weimar;DE;50.991666666667,11.326944444444;;Bahnhof Weimar;Weimar;Deutschland
+Wiesbaden Hauptbahnhof;DE;50.070833,8.243889;;Wiesbaden Hauptbahnhof;Wiesbaden;Deutschland
+Wolfsburg Hauptbahnhof;DE;52.429166666667,10.787777777778;;Wolfsburg Hauptbahnhof;Wolfsburg;Deutschland
+Worms Hauptbahnhof;DE;49.634733758056,8.3568674325;;Worms Hauptbahnhof;Worms;Deutschland
+Wuppertal Hauptbahnhof;DE;51.254722222222,7.15;;Wuppertal Hauptbahnhof;Wuppertal;Deutschland
