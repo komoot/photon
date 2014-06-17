@@ -97,7 +97,7 @@ public class NominatimConnector {
 	}
 
 	public List<AddressRow> getAddresses(long placeId) {
-		return template.query("SELECT place_id, name, class, type, rank_address, admin_level FROM get_addressdata(?) WHERE isaddress AND (place_id IS NULL OR place_id != ?) ORDER BY rank_address DESC", new Object[]{placeId, placeId}, new RowMapper<AddressRow>() {
+		return template.query("SELECT place_id, name, class, type, rank_address, admin_level FROM get_addressdata(?) WHERE isaddress AND (place_id IS NULL OR place_id != ?)", new Object[]{placeId, placeId}, new RowMapper<AddressRow>() {
 			@Override
 			public AddressRow mapRow(ResultSet rs, int rowNum) throws SQLException {
 				Integer adminLevel = rs.getInt("admin_level");
@@ -120,9 +120,13 @@ public class NominatimConnector {
 	 * parses every relevant row in placex, creates a corresponding document and calls the {@link #importer} for every document
 	 */
 	public void readEntireDatabase() {
+		log.info("start importing documents from nominatim ...");
 		final AtomicLong counter = new AtomicLong();
 
-		template.query("SELECT " + selectColsPlaceX + " FROM placex WHERE linked_place_id IS NULL ORDER BY parent_place_id; ", new RowCallbackHandler() {
+		final int progressInterval = 5000;
+		final long startMillis = System.currentTimeMillis();
+
+		template.query("SELECT " + selectColsPlaceX + " FROM placex WHERE linked_place_id IS NULL ORDER BY parent_place_id;", new RowCallbackHandler() {
 			@Override
 			public void processRow(ResultSet rs) throws SQLException {
 				PhotonDoc doc = placeRowMapper.mapRow(rs, 0);
@@ -151,8 +155,9 @@ public class NominatimConnector {
 				if(!doc.isUsefulForIndex()) return; // do not import document
 
 				importer.add(doc);
-				if(counter.incrementAndGet() % 1000 == 0) {
-					log.info(String.format("created %s documents.", MessageFormat.format("{0}", counter.longValue())));
+				if(counter.incrementAndGet() % progressInterval == 0) {
+					final double documentsPerSecond = 1000d * counter.longValue() / (System.currentTimeMillis() - startMillis);
+					log.info(String.format("imported %s documents [%.1f/second]", MessageFormat.format("{0}", counter.longValue()), documentsPerSecond));
 				}
 			}
 		});

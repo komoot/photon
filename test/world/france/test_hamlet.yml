@@ -1,0 +1,5 @@
+beauregard montbrun-bocage:
+    expected:
+        name: Beauregard
+        osm_key: place
+        osm_value: hamlet

@@ -2,7 +2,6 @@ import json
 import os
 
 import simplejson
-import pysolr
 import elasticsearch
 from flask import Flask, render_template, request, abort, Response
 
@@ -12,8 +11,6 @@ DEBUG = os.environ.get('DEBUG', True)
 PORT = os.environ.get('PHOTON_PORT', 5001)
 HOST = os.environ.get('PHOTON_HOST', '0.0.0.0')
 SUPPORTED_LANGUAGES = ['de', 'en', 'fr', 'it']
-
-solr = pysolr.Solr(os.environ.get("SOLR_ENDPOINT", 'http://localhost:8983/solr/testing'), timeout=10)
 
 es = elasticsearch.Elasticsearch()
 
@@ -53,7 +50,7 @@ def query_index(query, lang, lon, lat, match_all=True, limit=15):
             "functions": [
                 {
                     "script_score": {
-                        "script": "50*doc['importance'].value"
+                        "script": "1 + 50*doc['importance'].value"
                     }
                 }
             ],
@@ -74,7 +71,7 @@ def query_index(query, lang, lon, lat, match_all=True, limit=15):
 
     # if housenumber is not null AND name.default is null, housenumber must
     # match the request. This will filter out the house from the requests
-    # if the housenumber is not explicitelly in the request
+    # if the housenumber is not explicitly in the request
     req_body = {
         "filtered": {
             "query": req_body,
@@ -146,36 +143,6 @@ def api():
     return Response(data, mimetype='application/json')
 
 
-@app.route('/api/solr/')
-def api_solr():
-    params = {}
-
-    lang = request.args.get('lang')
-    if lang is None or lang not in SUPPORTED_LANGUAGES:
-        lang = 'en'
-
-    try:
-        lon = float(request.args.get('lon'))
-        lat = float(request.args.get('lat'))
-        params['qt'] = '{lang}_loc'.format(lang=lang)
-        params['pt'] = '{lat},{lon}'.format(lon=lon, lat=lat)
-    except (TypeError, ValueError):
-        params['qt'] = '{lang}'.format(lang=lang)
-
-    try:
-        params['rows'] = min(int(request.args.get('limit')), 50)
-    except (TypeError, ValueError):
-        params['rows'] = 15
-
-    query = request.args.get('q')
-    if not query:
-        abort(400, "missing search term 'q': /?q=berlin")
-
-    results = solr.search(query, **params)
-    data = json.dumps(to_geo_json_solr(results.docs, lang=lang))
-    return Response(data, mimetype='application/json')
-
-
 def housenumber_first(lang):
     if lang in ['de', 'it']:
         return False
@@ -193,7 +160,7 @@ def to_geo_json(hits, lang='en', debug=False):
         if 'osm_id' in source:
             properties['osm_id'] = int(source['osm_id'])
 
-        for attr in ['osm_key', 'osm_value', 'street', 'postcode', 'housenumber']:
+        for attr in ['osm_key', 'osm_value', 'postcode', 'housenumber']:
             if attr in source:
                 properties[attr] = source[attr]
 
@@ -218,48 +185,6 @@ def to_geo_json(hits, lang='en', debug=False):
             "geometry": {
                 "type": "Point",
                 "coordinates": [source['coordinate']['lon'], source['coordinate']['lat']]
-            },
-            "properties": properties
-        }
-
-        features.append(feature)
-
-    return {
-        "type": "FeatureCollection",
-        "features": features
-    }
-
-
-def to_geo_json_solr(docs, lang='en'):
-    features = []
-
-    for doc in docs:
-        properties = {}
-        for attr in ['osm_id', 'osm_key', 'osm_value', 'street', 'postcode', 'housenumber']:
-            if attr in doc:
-                properties[attr] = doc[attr]
-
-        # language specific mapping
-        for attr in ['name', 'country', 'city']:
-            lang_attr = attr + "_" + lang
-            value = doc.get(lang_attr) or doc.get(attr)
-            if value:
-                properties[attr] = value
-
-        if not 'name' in properties and 'housenumber' in properties:
-            if housenumber_first(lang):
-                properties['name'] = properties['housenumber'] + ' ' + properties['street']
-            else:
-                properties['name'] = properties['street'] + ' ' + properties['housenumber']
-
-        coordinates = [float(el) for el in doc['coordinate'].split(',')]
-        coordinates.reverse()
-
-        feature = {
-            "type": "Feature",
-            "geometry": {
-                "type": "Point",
-                "coordinates": coordinates
             },
             "properties": properties
         }

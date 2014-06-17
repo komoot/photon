@@ -1,0 +1,12 @@
+comment,query,expected_name,expected_housenumber,expected_street,expected_city,expected_postcode,expected_country,expected_osm_value,limit
+,paris france,Paris,,,Paris,,France,,
+,courbevoie france,,,,,92400,France,administrative,
+,ile de france,,,,,,France,,
+,hauts de seine france,,,,,,France,,
+,rue des pyrénées paris france,Rue des Pyrénées,,,Paris,,France,,
+,eiffel tower paris,,,,Paris,,France,,
+,grands boulevards paris,,,,Paris,,France,,
+,cimetière du père lachaise,,,,Paris,75020,France,,
+,rue de lourmel paris,,,Rue de Lourmel,Paris,75015,France,,
+,25 rue bergère paris,,25,Rue Bergère,Paris,75009,France,,
+,rue bergère paris,,,Rue Bergère,Paris,75009,France,,

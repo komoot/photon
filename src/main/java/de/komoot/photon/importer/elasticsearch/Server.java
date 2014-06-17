@@ -6,23 +6,29 @@ import net.lingala.zip4j.exception.ZipException;
 import net.lingala.zip4j.model.ZipParameters;
 import net.lingala.zip4j.util.Zip4jConstants;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.elasticsearch.action.ActionListener;
 import org.elasticsearch.action.admin.cluster.snapshots.create.CreateSnapshotResponse;
 import org.elasticsearch.action.admin.cluster.snapshots.get.GetSnapshotsResponse;
+import org.elasticsearch.action.admin.indices.delete.DeleteIndexResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.settings.ImmutableSettings;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.env.Environment;
+import org.elasticsearch.indices.IndexMissingException;
 import org.elasticsearch.node.Node;
 import org.elasticsearch.plugins.PluginManager;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 
+import org.elasticsearch.node.NodeBuilder;
 import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
 
 /**
@@ -34,18 +40,35 @@ import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
 public class Server {
 
 	private Node esNode;
-	private String clusterName;
-	private File mainDirectory;
-	private File esDirectory;
+	private static final String clusterName = "photon";        
+        private File esDirectory;        
 	private File dumpDirectory;
 	private File updateDirectory;
 	private File tempDirectory;
 	private File importDirectory;
-
-	public void start() {
-		Settings settings = ImmutableSettings.settingsBuilder()
-				.put("path.home", this.esDirectory.toString())
-				.build();
+        
+	public Server(String mainDirectory) {
+            try {
+		setupDirectories(new URL("file://" + mainDirectory));
+            } catch(MalformedURLException e) {
+			log.error("Can´t create directories");
+            }
+        }
+                        
+        public Server start() {
+		return start(false);
+        }
+        
+	public Server start(boolean test) {        
+		ImmutableSettings.Builder sBuilder = ImmutableSettings.settingsBuilder()
+				.put("path.home", this.esDirectory.toString());
+                
+                // default is 'local', 'none' means no data after node restart!
+            
+                if(test)
+                    sBuilder.put("gateway.type", "none");
+                    
+		Settings settings = sBuilder.build();
 
 		final String pluginPath = this.getClass().getResource("/elasticsearch-wordending-tokenfilter-0.0.1.zip").toExternalForm();
 		PluginManager pluginManager = new PluginManager(new Environment(settings), pluginPath, PluginManager.OutputMode.VERBOSE, new TimeValue(30000));
@@ -55,16 +78,26 @@ public class Server {
 			log.debug("could not install ybon/elasticsearch-wordending-tokenfilter/0.0.1", e);
 		}
 
-		pluginManager = new PluginManager(new Environment(settings), null, PluginManager.OutputMode.VERBOSE, new TimeValue(30000));
-		for(String pluginName : new String[]{"mobz/elasticsearch-head", "polyfractal/elasticsearch-inquisitor", "elasticsearch/marvel/latest"}) {
-			try {
-				pluginManager.downloadAndExtract(pluginName);
-			} catch(IOException e) {
-			}
-		}
+                if(!test) {
+                    pluginManager = new PluginManager(new Environment(settings), null, PluginManager.OutputMode.VERBOSE, new TimeValue(30000));
+                    for(String pluginName : new String[]{"mobz/elasticsearch-head", "polyfractal/elasticsearch-inquisitor", "elasticsearch/marvel/latest"}) {
+                            try {
+                                    pluginManager.downloadAndExtract(pluginName);
+                            } catch(IOException e) {
+                            }
+                    }
+                }
 
-		this.esNode = nodeBuilder().clusterName(this.clusterName).loadConfigSettings(true).settings(settings).node();
+		NodeBuilder nBuilder = nodeBuilder().clusterName(Server.clusterName).loadConfigSettings(true).
+                        settings(settings);
+                
+                // problem with node ending plugin
+//                if(test)
+//                    nBuilder.local(true);
+                
+                esNode = nBuilder.node();
 		log.info("started elastic search node");
+                return this;
 	}
 
 	/**
@@ -138,6 +171,52 @@ public class Server {
 		});
 	}
 
+	public void importSnapshot(String urlString) {
+		URL url = null;
+		try {
+			url = new URL(urlString);
+		} catch(MalformedURLException e) {
+			throw new RuntimeException("invalid snapshot url", e);
+		}
+		File file;
+		try {
+			file = new File(url.toURI());
+		} catch(Exception e) {
+			// url did not refer to a local file, download it first to unzip
+			try {
+				file = File.createTempFile("temp-file-name", ".tmp");
+				IOUtils.copyLarge(url.openStream(), new FileOutputStream(file));
+			} catch(IOException ioe) {
+				throw new RuntimeException("cannot create temp file for snapshot", ioe);
+			}
+		}
+
+		String dumpLocation;
+		String dumpName = "photon_snapshot_2014_05";
+		try {
+			ZipFile dumpZip = new ZipFile(file);
+			dumpLocation = this.importDirectory.getAbsolutePath();
+			dumpZip.extractAll(dumpLocation);
+		} catch(ZipException e) {
+			throw new RuntimeException("error unzipping snapshot", e);
+		}
+
+		String repository = dumpLocation + "/" + dumpName;
+		String snapshot = dumpName;
+
+		this.getClient().admin().cluster().getSnapshots(this.getClient().admin().cluster().prepareGetSnapshots(repository).setSnapshots(snapshot).request(), new ActionListener<GetSnapshotsResponse>() {
+			@Override
+			public void onResponse(GetSnapshotsResponse getSnapshotsResponse) {
+				log.info("Import done!");
+			}
+
+			@Override
+			public void onFailure(Throwable e) {
+				log.error("error creating snapshot", e);
+			}
+		});
+	}
+
 	/**
 	 * returns an elasticsearch client
 	 */
@@ -146,7 +225,6 @@ public class Server {
 	}
 
 	private File setupDirectories(URL directoryName) {
-
 		File mainDirectory = new File(".");
 
 		try {
@@ -170,16 +248,27 @@ public class Server {
 		return mainDirectory;
 	}
 
-	/**
-	 * @param clusterName name of the elasticsearch cluster
-	 */
-	public Server(String clusterName, String mainDirectory) {
+	public void recreateIndex() {
+		deleteIndex();
+
+		final Client client = this.getClient();
+		final InputStream mappings = Thread.currentThread().getContextClassLoader().getResourceAsStream("mappings.json");
+		final InputStream index_settings = Thread.currentThread().getContextClassLoader().getResourceAsStream("index_settings.json");
 
 		try {
-			this.mainDirectory = setupDirectories(new URL("file://" + mainDirectory));
-		} catch(MalformedURLException e) {
-			log.error("Can´t create directories");
+			client.admin().indices().prepareCreate("photon").setSettings(IOUtils.toString(index_settings)).execute().actionGet();
+			client.admin().indices().preparePutMapping("photon").setType("place").setSource(IOUtils.toString(mappings)).execute().actionGet();
+		} catch(IOException e) {
+			log.error("cannot setup index, elastic search config files not readable", e);
 		}
-		this.clusterName = "defdeweef";
+	}
+
+	public DeleteIndexResponse deleteIndex() {
+		try {
+			return this.getClient().admin().indices().prepareDelete("photon").execute().actionGet();
+		} catch(IndexMissingException e) {
+			// index did not exist
+			return null;
+		}
 	}
 }
