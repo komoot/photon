@@ -257,6 +257,8 @@ Optional columns:
 * `lat`, `lon`: if you want to add a center for the search
 * `comment`: if you want to take control of the ouput of the test in the
 command line
+* `lang`: language
+* `expected_coordinate`: a required coordinate, format: `lat,lon,tolarted deviation in meter`, e.g. `51.0,10.3,700`
 * `skip`: add a `skip` message if you want a test to be always skipped (feature
 not supported yet for example)
 

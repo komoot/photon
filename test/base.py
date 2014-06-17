@@ -1,5 +1,5 @@
 import requests
-
+from geopy import distance, Point
 
 POTSDAM = [52.3879, 13.0582]
 BERLIN = [52.519854, 13.438596]
@@ -71,6 +71,16 @@ def assert_search(query, expected, limit=1,
             found = True
             for key, value in expected.items():
                 if not str(r['properties'].get(key)) == str(value):
+                    # values of key are different
+
+                    if key == "coordinate":
+                        # handle special expected case: coordiante
+                        coord = r['geometry']['coordinates']
+                        lat, lon, max_deviation = map(float, value.split(","))
+                        deviation = distance.distance(Point(lat, lon), Point(coord[1], coord[0])).meters
+                        if deviation < max_deviation:
+                            break
+                    print("wrong", key, value)
                     found = False
             if found:
                 break
