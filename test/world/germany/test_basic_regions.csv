@@ -1,6 +1,6 @@
-comment;query;lat;lon;expected_location_tolerance;expected_name;expected_country;lang
-admin region from wikipedia;Regierungsbezirk Arnsberg;51.3200;8.0100;20000;Regierungsbezirk Arnsberg;Deutschland;de
-admin region from wikipedia;Unterfranken;50.0245;9.9319;50000;Unterfranken;Deutschland;de
-admin region from wikipedia;Oberpfalz;49.4283;12.1799;40000;Oberpfalz;Deutschland;de
-admin region from wikipedia;Mittelfranken;49.3260;10.8462;30000;Mittelfranken;Deutschland;de
-admin region from wikipedia;Oberbayern;48.1237;11.8021;50000;Oberbayern;Deutschland;de
+comment;query;expected_location;expected_location_tolerance;expected_name;expected_country;lang
+admin region from wikipedia;Regierungsbezirk Arnsberg;51.3200,8.0100;20000;Regierungsbezirk Arnsberg;Deutschland;de
+admin region from wikipedia;Unterfranken;50.0245,9.9319;50000;Unterfranken;Deutschland;de
+admin region from wikipedia;Oberpfalz;49.4283,12.1799;40000;Oberpfalz;Deutschland;de
+admin region from wikipedia;Mittelfranken;49.3260,10.8462;30000;Mittelfranken;Deutschland;de
+admin region from wikipedia;Oberbayern;48.1237,11.8021;50000;Oberbayern;Deutschland;de
