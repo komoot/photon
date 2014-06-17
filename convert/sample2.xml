@@ -1,0 +1,396 @@
+<?xml version='1.0' encoding='utf-8'?>
+<add>
+	<doc>
+		<field name="id">1</field>
+		<field name="coordinate">52.635577700000006,13.377063600000001</field>
+		<field name="category">226</field>
+		<field name="name">Schildow</field>
+		<field name="ranking">12.5</field>
+		<field name="osm_id">30822887</field>
+	</doc>
+	<doc>
+		<field name="id">2</field>
+		<field name="coordinate">52.4016457,13.2644532</field>
+		<field name="category">228</field>
+		<field name="name">Teltow</field>
+		<field name="ranking">15.5</field>
+		<field name="osm_id">29018503</field>
+	</doc>
+	<doc>
+		<field name="id">3</field>
+		<field name="coordinate">52.5743651,13.5191298</field>
+		<field name="category">227</field>
+		<field name="name">Wartenberg</field>
+		<field name="ranking">12.75</field>
+		<field name="osm_id">29421338</field>
+		<field name="city">Berlin</field>
+		<field name="city_en">Berlin</field>
+		<field name="city_de">Berlin</field>
+		<field name="places">Lichtenberg, Berlin, Wartenberg</field>
+		<field name="places_en">Berlin</field>
+		<field name="places_de">Berlin</field>
+	</doc>
+	<doc>
+		<field name="id">4</field>
+		<field name="coordinate">52.437893200000005,13.5475496</field>
+		<field name="category">227</field>
+		<field name="name">Adlershof</field>
+		<field name="name_de">Adlershof</field>
+		<field name="ranking">12.75</field>
+		<field name="osm_id">21484102</field>
+		<field name="city">Berlin</field>
+		<field name="city_en">Berlin</field>
+		<field name="city_de">Berlin</field>
+		<field name="places">Adlershof, Berlin, Treptow-Köpenick</field>
+		<field name="places_en">Berlin</field>
+		<field name="places_de">Adlershof, Berlin</field>
+	</doc>
+	<doc>
+		<field name="id">5</field>
+		<field name="coordinate">52.48357,13.2369584</field>
+		<field name="category">227</field>
+		<field name="name">Grunewald</field>
+		<field name="ranking">12.75</field>
+		<field name="osm_id">29337165</field>
+		<field name="city">Berlin</field>
+		<field name="city_en">Berlin</field>
+		<field name="city_de">Berlin</field>
+		<field name="places">Berlin, Charlottenburg-Wilmersdorf, Grunewald</field>
+		<field name="places_en">Berlin</field>
+		<field name="places_de">Berlin</field>
+	</doc>
+	<doc>
+		<field name="id">6</field>
+		<field name="coordinate">52.482157,13.355190100000002</field>
+		<field name="category">227</field>
+		<field name="name">Schöneberg</field>
+		<field name="ranking">12.75</field>
+		<field name="osm_id">28094136</field>
+		<field name="city">Berlin</field>
+		<field name="city_en">Berlin</field>
+		<field name="city_de">Berlin</field>
+		<field name="places">Tempelhof-Schöneberg, Schöneberg, Berlin</field>
+		<field name="places_en">Berlin</field>
+		<field name="places_de">Berlin</field>
+	</doc>
+	<doc>
+		<field name="id">7</field>
+		<field name="coordinate">52.618627200000006,13.3884468</field>
+		<field name="category">227</field>
+		<field name="name">Blankenfelde</field>
+		<field name="ranking">12.75</field>
+		<field name="osm_id">30822888</field>
+		<field name="city">Berlin</field>
+		<field name="city_en">Berlin</field>
+		<field name="city_de">Berlin</field>
+		<field name="places">Blankenfelde, Pankow, Berlin</field>
+		<field name="places_en">Berlin</field>
+		<field name="places_de">Berlin</field>
+	</doc>
+	<doc>
+		<field name="id">8</field>
+		<field name="coordinate">52.46245630000001,13.523476200000001</field>
+		<field name="category">227</field>
+		<field name="name">Oberschöneweide</field>
+		<field name="ranking">12.75</field>
+		<field name="osm_id">28795831</field>
+		<field name="city">Berlin</field>
+		<field name="city_en">Berlin</field>
+		<field name="city_de">Berlin</field>
+		<field name="places">Berlin, Treptow-Köpenick, Oberschöneweide</field>
+		<field name="places_en">Berlin</field>
+		<field name="places_de">Berlin</field>
+	</doc>
+	<doc>
+		<field name="id">9</field>
+		<field name="coordinate">52.4837034,13.5233553</field>
+		<field name="category">227</field>
+		<field name="name">Karlshorst</field>
+		<field name="ranking">12.75</field>
+		<field name="osm_id">21484050</field>
+		<field name="city">Berlin</field>
+		<field name="city_en">Berlin</field>
+		<field name="city_de">Berlin</field>
+		<field name="places">Lichtenberg, Berlin, Karlshorst</field>
+		<field name="places_en">Berlin</field>
+		<field name="places_de">Berlin</field>
+	</doc>
+	<doc>
+		<field name="id">10</field>
+		<field name="coordinate">52.434321700000005,13.2589298</field>
+		<field name="category">227</field>
+		<field name="name">Zehlendorf</field>
+		<field name="ranking">12.75</field>
+		<field name="osm_id">31451386</field>
+		<field name="city">Berlin</field>
+		<field name="city_en">Berlin</field>
+		<field name="city_de">Berlin</field>
+		<field name="places">Berlin, Steglitz-Zehlendorf, Zehlendorf</field>
+		<field name="places_en">Berlin</field>
+		<field name="places_de">Berlin</field>
+	</doc>
+	<doc>
+		<field name="id">11</field>
+		<field name="coordinate">52.4856409,13.1801341</field>
+		<field name="category">227</field>
+		<field name="name">Gatow</field>
+		<field name="ranking">12.75</field>
+		<field name="osm_id">31901450</field>
+		<field name="city">Berlin</field>
+		<field name="city_en">Berlin</field>
+		<field name="city_de">Berlin</field>
+		<field name="places">Spandau, Gatow, Berlin</field>
+		<field name="places_en">Berlin</field>
+		<field name="places_de">Berlin</field>
+	</doc>
+	<doc>
+		<field name="id">12</field>
+		<field name="coordinate">52.4789022,13.292996200000001</field>
+		<field name="category">227</field>
+		<field name="name">Schmargendorf</field>
+		<field name="ranking">12.75</field>
+		<field name="osm_id">29334080</field>
+		<field name="city">Berlin</field>
+		<field name="city_en">Berlin</field>
+		<field name="city_de">Berlin</field>
+		<field name="places">Berlin, Charlottenburg-Wilmersdorf, Schmargendorf</field>
+		<field name="places_en">Berlin</field>
+		<field name="places_de">Berlin</field>
+	</doc>
+	<doc>
+		<field name="id">13</field>
+		<field name="coordinate">52.5322705,13.1433666</field>
+		<field name="category">227</field>
+		<field name="name">Staaken</field>
+		<field name="ranking">12.75</field>
+		<field name="osm_id">59979916</field>
+		<field name="city">Berlin</field>
+		<field name="city_en">Berlin</field>
+		<field name="city_de">Berlin</field>
+		<field name="places">Spandau, Staaken, Berlin</field>
+		<field name="places_en">Berlin</field>
+		<field name="places_de">Berlin</field>
+	</doc>
+	<doc>
+		<field name="id">14</field>
+		<field name="coordinate">52.4022426,13.5706649</field>
+		<field name="category">227</field>
+		<field name="name">Bohnsdorf</field>
+		<field name="ranking">12.75</field>
+		<field name="osm_id">27380127</field>
+		<field name="city">Berlin</field>
+		<field name="city_en">Berlin</field>
+		<field name="city_de">Berlin</field>
+		<field name="places">Berlin, Treptow-Köpenick, Bohnsdorf</field>
+		<field name="places_en">Berlin</field>
+		<field name="places_de">Berlin</field>
+	</doc>
+	<doc>
+		<field name="id">15</field>
+		<field name="coordinate">52.487027000000005,13.320356700000001</field>
+		<field name="category">227</field>
+		<field name="name">Wilmersdorf</field>
+		<field name="ranking">12.75</field>
+		<field name="osm_id">28891708</field>
+		<field name="city">Berlin</field>
+		<field name="city_en">Berlin</field>
+		<field name="city_de">Berlin</field>
+		<field name="places">Wilmersdorf, Berlin, Charlottenburg-Wilmersdorf</field>
+		<field name="places_en">Berlin</field>
+		<field name="places_de">Berlin</field>
+	</doc>
+	<doc>
+		<field name="id">16</field>
+		<field name="coordinate">52.5873891,13.2790461</field>
+		<field name="category">227</field>
+		<field name="name">Tegel</field>
+		<field name="ranking">12.75</field>
+		<field name="osm_id">33790061</field>
+		<field name="city">Berlin</field>
+		<field name="city_en">Berlin</field>
+		<field name="city_de">Berlin</field>
+		<field name="places">Reinickendorf, Berlin, Tegel</field>
+		<field name="places_en">Berlin</field>
+		<field name="places_de">Berlin</field>
+	</doc>
+	<doc>
+		<field name="id">17</field>
+		<field name="coordinate">52.6122549,13.229578900000002</field>
+		<field name="category">227</field>
+		<field name="name">Heiligensee</field>
+		<field name="ranking">12.75</field>
+		<field name="osm_id">61885789</field>
+		<field name="city">Berlin</field>
+		<field name="city_en">Berlin</field>
+		<field name="city_de">Berlin</field>
+		<field name="places">Reinickendorf, Berlin, Heiligensee</field>
+		<field name="places_en">Berlin</field>
+		<field name="places_de">Berlin</field>
+	</doc>
+	<doc>
+		<field name="id">18</field>
+		<field name="coordinate">52.577076700000006,13.5719004</field>
+		<field name="category">226</field>
+		<field name="name">Ahrensfelde</field>
+		<field name="ranking">12.5</field>
+		<field name="osm_id">151014935</field>
+		<field name="postcode">16356</field>
+	</doc>
+	<doc>
+		<field name="id">19</field>
+		<field name="coordinate">52.506077600000005,13.6118588</field>
+		<field name="category">228</field>
+		<field name="name">Mahlsdorf</field>
+		<field name="ranking">12.0</field>
+		<field name="osm_id">29621202</field>
+		<field name="postcode">12623</field>
+		<field name="city">Berlin</field>
+		<field name="city_en">Berlin</field>
+		<field name="city_de">Berlin</field>
+		<field name="places">Mahlsdorf, Berlin, Marzahn-Hellersdorf</field>
+		<field name="places_en">Berlin</field>
+		<field name="places_de">Berlin</field>
+	</doc>
+	<doc>
+		<field name="id">20</field>
+		<field name="coordinate">52.4697272,13.2103587</field>
+		<field name="category">228</field>
+		<field name="name">Vier Eichen</field>
+		<field name="ranking">10.0</field>
+		<field name="osm_id">144739696</field>
+		<field name="postcode">14193</field>
+		<field name="city">Berlin</field>
+		<field name="city_en">Berlin</field>
+		<field name="city_de">Berlin</field>
+		<field name="places">Nikolassee, Charlottenburg-Wilmersdorf, Grunewald, Berlin, Steglitz-Zehlendorf</field>
+		<field name="places_en">Berlin</field>
+		<field name="places_de">Berlin</field>
+	</doc>
+	<doc>
+		<field name="id">21</field>
+		<field name="coordinate">52.5880115,13.362205900000001</field>
+		<field name="category">227</field>
+		<field name="name">Wilhelmsruh</field>
+		<field name="ranking">12.75</field>
+		<field name="osm_id">161585770</field>
+		<field name="city">Berlin</field>
+		<field name="city_en">Berlin</field>
+		<field name="city_de">Berlin</field>
+		<field name="places">Pankow, Berlin, Wilhelmsruh</field>
+		<field name="places_en">Berlin</field>
+		<field name="places_de">Berlin, Wilhelmsruh</field>
+	</doc>
+	<doc>
+		<field name="id">22</field>
+		<field name="coordinate">52.588706300000005,13.308909400000001</field>
+		<field name="category">227</field>
+		<field name="name">Borsigwalde</field>
+		<field name="ranking">12.75</field>
+		<field name="osm_id">159563028</field>
+		<field name="city">Berlin</field>
+		<field name="city_en">Berlin</field>
+		<field name="city_de">Berlin</field>
+		<field name="places">Reinickendorf, Borsigwalde, Berlin</field>
+		<field name="places_en">Berlin</field>
+		<field name="places_de">Berlin</field>
+	</doc>
+	<doc>
+		<field name="id">23</field>
+		<field name="coordinate">52.515747000000005,13.3096834</field>
+		<field name="category">227</field>
+		<field name="name">Charlottenburg</field>
+		<field name="ranking">12.75</field>
+		<field name="osm_id">29336704</field>
+		<field name="city">Berlin</field>
+		<field name="city_en">Berlin</field>
+		<field name="city_de">Berlin</field>
+		<field name="places">Charlottenburg, Berlin, Charlottenburg-Wilmersdorf</field>
+		<field name="places_en">Berlin</field>
+		<field name="places_de">Berlin</field>
+	</doc>
+	<doc>
+		<field name="id">24</field>
+		<field name="coordinate">52.585683700000004,13.223197800000001</field>
+		<field name="category">227</field>
+		<field name="name">Konradshöhe</field>
+		<field name="ranking">12.75</field>
+		<field name="osm_id">159775126</field>
+		<field name="city">Berlin</field>
+		<field name="city_en">Berlin</field>
+		<field name="city_de">Berlin</field>
+		<field name="places">Reinickendorf, Berlin, Konradshöhe</field>
+		<field name="places_en">Berlin</field>
+		<field name="places_de">Berlin</field>
+	</doc>
+	<doc>
+		<field name="id">25</field>
+		<field name="coordinate">52.540525300000006,13.296266300000001</field>
+		<field name="category">227</field>
+		<field name="name">Charlottenburg-Nord</field>
+		<field name="ranking">12.75</field>
+		<field name="osm_id">150545069</field>
+		<field name="city">Berlin</field>
+		<field name="city_en">Berlin</field>
+		<field name="city_de">Berlin</field>
+		<field name="places">Berlin, Charlottenburg-Wilmersdorf, Charlottenburg-Nord</field>
+		<field name="places_en">Berlin</field>
+		<field name="places_de">Berlin</field>
+	</doc>
+	<doc>
+		<field name="id">26</field>
+		<field name="coordinate">52.5930752,13.4545521</field>
+		<field name="category">227</field>
+		<field name="name">Blankenburg</field>
+		<field name="ranking">12.75</field>
+		<field name="osm_id">29768691</field>
+		<field name="city">Berlin</field>
+		<field name="city_en">Berlin</field>
+		<field name="city_de">Berlin</field>
+		<field name="places">Blankenburg, Pankow, Berlin</field>
+		<field name="places_en">Berlin</field>
+		<field name="places_de">Berlin</field>
+	</doc>
+	<doc>
+		<field name="id">27</field>
+		<field name="coordinate">52.4548197,13.517876600000001</field>
+		<field name="category">227</field>
+		<field name="name">Niederschöneweide</field>
+		<field name="ranking">12.75</field>
+		<field name="osm_id">28795490</field>
+		<field name="city">Berlin</field>
+		<field name="city_en">Berlin</field>
+		<field name="city_de">Berlin</field>
+		<field name="places">Berlin, Treptow-Köpenick, Niederschöneweide</field>
+		<field name="places_en">Berlin</field>
+		<field name="places_de">Berlin</field>
+	</doc>
+	<doc>
+		<field name="id">28</field>
+		<field name="coordinate">52.572215500000006,13.2295251</field>
+		<field name="category">228</field>
+		<field name="name">Tegelort</field>
+		<field name="ranking">12.0</field>
+		<field name="osm_id">33784937</field>
+		<field name="postcode">13505</field>
+		<field name="city">Berlin</field>
+		<field name="city_en">Berlin</field>
+		<field name="city_de">Berlin</field>
+		<field name="places">Reinickendorf, Berlin, Konradshöhe</field>
+		<field name="places_en">Berlin</field>
+		<field name="places_de">Berlin</field>
+	</doc>
+	<doc>
+		<field name="id">29</field>
+		<field name="coordinate">52.5398082,13.256893400000001</field>
+		<field name="category">227</field>
+		<field name="name">Siemensstadt</field>
+		<field name="ranking">12.75</field>
+		<field name="osm_id">150545071</field>
+		<field name="city">Berlin</field>
+		<field name="city_en">Berlin</field>
+		<field name="city_de">Berlin</field>
+		<field name="places">Spandau, Siemensstadt, Berlin</field>
+		<field name="places_en">Berlin</field>
+		<field name="places_de">Berlin</field>
+	</doc>
+</add>
