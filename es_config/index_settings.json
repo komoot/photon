@@ -19,7 +19,7 @@
       },
       "search": {
         "char_filter": ["punctuationgreedy"],
-        "filter": ["word_delimiter", "lowercase", "asciifolding", "photonlength", "unique"],
+        "filter": ["word_delimiter", "lowercase", "asciifolding", "unique"],
         "tokenizer": "standard"
       },
       "index": {
@@ -29,8 +29,7 @@
       }
     },
     "filter": {
-      "photonngram": {"min_gram": "2", "type": "edgeNGram", "max_gram": "15"},
-      "photonlength": {"min": "2", "type": "length"}
+      "photonngram": {"min_gram": "2", "type": "edgeNGram", "max_gram": "15"}
     }
   }
 }
