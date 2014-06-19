@@ -1,6 +1,8 @@
-query;expected_street;expected_city;expected_postcode;expected_country;limit
-pairs france;;Paris;75015;France;2
-pairs frnace;;Paris;75015;France;2
-rue des bregers paris france;Rue des Bergers;Paris;75015;France;2
-rue des bregers prais frnace;Rue des Bergers;Paris;75015;France;2
-rue des begers pais franec;Rue des Bergers;Paris;75015;France;2
+query;expected_name;expected_street;expected_city;expected_postcode;expected_country;limit
+pairs france;Paris;;;75015;France;2
+pairs frnace;Paris;;;75015;France;2
+rue des bregers paris france;;Rue des Bergers;Paris;75015;France;2
+rue des bregers prais frnace;;Rue des Bergers;Paris;75015;France;2
+rue des begers pais franec;;Rue des Bergers;Paris;75015;France;2
+montreil;Montreuil;;;93100;France;2
+chateau ladon;Château-Landon;;;77570;France;2
