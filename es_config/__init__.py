@@ -24,6 +24,7 @@ def init_elasticsearch(index):
 
     es.indices.create(index, body={'mappings': mappings, 'settings': {'index': index_settings}})
     print('index created:', index)
+    es.indices.delete_alias('_all', 'photon')
     es.indices.put_alias(index, body={
         "actions": [{
             "add": {
