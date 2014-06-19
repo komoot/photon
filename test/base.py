@@ -1,5 +1,7 @@
 import requests
+
 from geopy import distance, Point
+
 
 POTSDAM = [52.3879, 13.0582]
 BERLIN = [52.519854, 13.438596]
@@ -11,7 +13,6 @@ CONFIG = {
 
 
 class HttpSearchException(Exception):
-
     def __init__(self, **kwargs):
         super().__init__()
         self.error = kwargs.get("error", {})
@@ -49,7 +50,6 @@ class SearchException(Exception):
 
 def search(**params):
     r = requests.get(CONFIG['PHOTON_URL'], params=params)
-    print(CONFIG['PHOTON_URL'], params)
     if not r.status_code == 200:
         raise HttpSearchException(error="Non 200 response")
     return r.json()
