@@ -24,11 +24,12 @@ class HttpSearchException(Exception):
 class SearchException(Exception):
     """ custom exception for error reporting. """
 
-    def __init__(self, **kwargs):
+    def __init__(self, params, expected, results):
         super().__init__()
-        self.results = kwargs.get("results", {})
-        self.query = kwargs.get('query', '')
-        self.expected = kwargs.get('expected', {})
+        self.results = results
+        self.query = params.pop('q')
+        self.params = params
+        self.expected = expected
 
     def __str__(self):
         lines = [
@@ -36,6 +37,9 @@ class SearchException(Exception):
             'Search failed',
             "# Search was: {}".format(self.query),
         ]
+        params = '# Params was: '
+        params += " - ".join("{}: {}".format(k, v) for k, v in self.params.items())
+        lines.append(params)
         expected = '# Expected was: '
         expected += " | ".join("{}: {}".format(k, v) for k, v in self.expected.items())
         lines.append(expected)
@@ -86,9 +90,9 @@ def assert_search(query, expected, limit=1,
                 break
         if not found:
             raise SearchException(
+                params=params,
+                expected=expected,
                 results=results,
-                query=query,
-                expected=expected
             )
 
     if not isinstance(expected, list):

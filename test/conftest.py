@@ -116,5 +116,5 @@ class CSVItem(BaseFlatItem):
 class YamlItem(BaseFlatItem):
     def __init__(self, name, parent, spec):
         super(YamlItem, self).__init__(name, parent, **spec)
-        self.query = name
+        self.query = spec.pop('query', name)
         self.expected = spec['expected']

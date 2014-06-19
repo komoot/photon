@@ -1,0 +1,17 @@
+paris 7444:
+    query: paris france
+    expected:
+        osm_id: 7444
+    limit: 3
+
+paris 71525:
+    query: paris france
+    expected:
+        osm_id: 71525
+    limit: 3
+
+paris 1641193:
+    query: paris france
+    expected:
+        osm_id: 1641193
+    limit: 3

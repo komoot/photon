@@ -20,4 +20,4 @@ Immeuble Maille Nord II 8, avenue Montaigne 93160 Noisy-le-Grand:
     expected:
         housenumber: 8
         street: Avenue Montaigne
-        City: Noisy-le-Grand
+        city: Noisy-le-Grand

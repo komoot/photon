@@ -1,0 +1,12 @@
+montbrun-bocage:
+    expected:
+        name: Montbrun-Bocage
+        postcode: 31310
+
+devesset:
+    expected:
+        name: Devesset
+
+fornex:
+    expected:
+        name: Fornex
