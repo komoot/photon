@@ -24,40 +24,36 @@ def query_index(query, lang, lon, lat, match_all=True, limit=15):
     req_body = {
         "multi_match": {
             "query": query,
-            "type": "cross_fields",
-            "fields": [
-                "name.default.raw^18", "name.default^2.5", "name.{lang}.raw^18", "name.{lang}^2.5", "name.alternatives.raw^14", "name.alternatives^1.5",
-                "city.default.raw^8", "city.default^2", "city.{lang}.raw^8", "city.{lang}^2",
-                "street.default.raw^8", "street.default^2", "street.{lang}.raw^8", "street.{lang}^2",
-                "housenumber.raw^6", "housenumber",
-                "postcode^5",
-                "country.default.raw^3", "country.default", "country.{lang}.raw^3", "country.{lang}",
-                "context.default.raw^3", "context.default", "context.{lang}.raw^3", "context.{lang}"
-            ],
-            "analyzer": "search",
+            "type": "best_fields",
+            "analyzer": "search_stringanalyser",
             'minimum_should_match': '100%' if match_all else -1,
+            "fields": [
+                "name.{0}.ngramed^3".format(lang),
+                "name.{0}.raw^10".format(lang),
+                "collector.{0}.raw".format(lang),
+                "collector.{0}".format(lang)
+            ],
+            "fuzziness": 1,
+            "prefix_length": 3
         }
     }
 
-    # replace lang placeholder
-    req_body['multi_match']['fields'] = list(map(lambda s: s.replace("{lang}", lang), req_body['multi_match']['fields']))
-
     req_body = {
         "function_score": {
-            "score_mode": "sum",  # How functions score are mixed together
-            "boost_mode": "sum",  # how total will be mixed to search score
+            "score_mode": "multiply",  # How functions score are mixed together
+            "boost_mode": "multiply",  # how total will be mixed to search score
             "query": req_body,
             "functions": [
                 {
                     "script_score": {
-                        "script": "1. + 50. * doc['importance'].value"
+                        "script": "1 + doc['importance'].value * 40"
                     }
                 }
             ],
         }
     }
 
-    if False and lon is not None and lat is not None:
+    if lon is not None and lat is not None:
         req_body["function_score"]["functions"].append({
             "script_score": {
                 "script": "dist = doc['coordinate'].distanceInKm(lat, lon); 1 / (0.5 - 0.5 * exp(-5*dist/maxDist))",
@@ -95,7 +91,7 @@ def query_index(query, lang, lon, lat, match_all=True, limit=15):
                         },
                         {
                             "exists": {
-                                "field": "name.default.raw"
+                                "field": "name.{0}.raw".format(lang)
                             }
                         }
                     ]

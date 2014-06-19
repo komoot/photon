@@ -12,24 +12,68 @@
       }
     },
     "analyzer": {
-      "index_ngram": {
-        "char_filter": ["punctuationgreedy"],
-        "filter": ["word_delimiter", "lowercase", "asciifolding", "unique", "photonngram"],
+      "stringanalyser": {
+        "char_filter": [
+          "punctuationgreedy"
+        ],
+        "filter": [
+          "word_delimiter",
+          "lowercase",
+          "asciifolding",
+          "photonlength",
+          "unique",
+          "wordending",
+          "photonngram"
+        ],
         "tokenizer": "standard"
       },
-      "search": {
-        "char_filter": ["punctuationgreedy"],
-        "filter": ["word_delimiter", "lowercase", "asciifolding", "unique"],
+      "search_stringanalyser": {
+        "char_filter": [
+          "punctuationgreedy"
+        ],
+        "filter": [
+          "word_delimiter",
+          "lowercase",
+          "asciifolding",
+          "photonlength",
+          "unique",
+          "wordendingautocomplete"
+        ],
         "tokenizer": "standard"
       },
-      "index": {
-        "char_filter": ["punctuationgreedy"],
-        "filter": ["word_delimiter", "lowercase", "asciifolding", "unique"],
+      "raw_stringanalyser": {
+        "char_filter": [
+          "punctuationgreedy"
+        ],
+        "filter": [
+          "word_delimiter",
+          "lowercase",
+          "asciifolding",
+          "photonlength",
+          "unique",
+          "wordending"
+        ],
         "tokenizer": "standard"
       }
     },
     "filter": {
-      "photonngram": {"min_gram": "2", "type": "edgeNGram", "max_gram": "15"}
+      "photonngram": {
+        "min_gram": "2",
+        "type": "edgeNGram",
+        "max_gram": "15"
+      },
+      "wordending": {
+        "type": "wordending",
+        "mode": "default"
+      },
+      "photonlength": {
+        "min": "2",
+        "type": "length"
+      },
+      "wordendingautocomplete": {
+        "type": "wordending",
+        "mode": "autocomplete"
+      }
     }
   }
 }
