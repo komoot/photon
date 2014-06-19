@@ -1,4 +1,4 @@
-lycée henry IV:
+lycée henri IV:
     expected:
         name: Lycée et Collège Henri IV
 
@@ -7,6 +7,10 @@ piscine pailleron:
         name: Piscine Pailleron
 
 sacre coeur:
+    expected:
+        osm_id: 23762981
+
+basilique sacre coeur:
     expected:
         osm_id: 23762981
 

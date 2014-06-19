@@ -30,7 +30,7 @@ def query_index(query, lang, lon, lat, match_all=True, limit=15):
                         "query": query,
                         "analyzer": "search_ngram",
                         "fuzziness": 1,
-                        "prefix_length": 3,
+                        "prefix_length": 2,
                         "minimum_should_match": minimum_should_match
                     }
                 }
