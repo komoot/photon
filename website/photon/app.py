@@ -26,13 +26,13 @@ def query_index(query, lang, lon, lat, match_all=True, limit=15):
             "query": query,
             "type": "cross_fields",
             "fields": [
-              "name.default.raw^18", "name.default^2.5", "name.{lang}.raw^18", "name.{lang}^2.5", "name.alternatives.raw^14", "name.alternatives^1.5",
-              "city.default.raw^8", "city.default^2", "city.{lang}.raw^8", "city.{lang}^2",
-              "street.default.raw^8", "street.default^2", "street.{lang}.raw^8", "street.{lang}^2",
-              "housenumber.raw^6", "housenumber",
-              "postcode^5",
-              "country.default.raw^3", "country.default", "country.{lang}.raw^3", "country.{lang}",
-              "context.default.raw^3", "context.default", "context.{lang}.raw^3", "context.{lang}"
+                "name.default.raw^18", "name.default^2.5", "name.{lang}.raw^18", "name.{lang}^2.5", "name.alternatives.raw^14", "name.alternatives^1.5",
+                "city.default.raw^8", "city.default^2", "city.{lang}.raw^8", "city.{lang}^2",
+                "street.default.raw^8", "street.default^2", "street.{lang}.raw^8", "street.{lang}^2",
+                "housenumber.raw^6", "housenumber",
+                "postcode^5",
+                "country.default.raw^3", "country.default", "country.{lang}.raw^3", "country.{lang}",
+                "context.default.raw^3", "context.default", "context.{lang}.raw^3", "context.{lang}"
             ],
             "analyzer": "search",
             'minimum_should_match': '100%' if match_all else -1,
@@ -40,7 +40,7 @@ def query_index(query, lang, lon, lat, match_all=True, limit=15):
     }
 
     # replace lang placeholder
-    req_body['multi_match']['fields'] = map(lambda s: s.replace("{lang}", lang), req_body['multi_match']['fields'])
+    req_body['multi_match']['fields'] = list(map(lambda s: s.replace("{lang}", lang), req_body['multi_match']['fields']))
 
     req_body = {
         "function_score": {
