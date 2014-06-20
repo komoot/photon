@@ -1,4 +1,0 @@
-comment;query;tried_location;tried_language;expected_coordinates;expected_location_tolerance;expected_name;expected_type;expected_housenumber;expected_street;expected_city;expected_postcode;expected_country
-;london united kingdom;;;;;;;;;London;;United Kingdom
-;paris france;;;;;;;;;Paris;75000;France
-;new york united states;;;;;;;;;;;United States of America
