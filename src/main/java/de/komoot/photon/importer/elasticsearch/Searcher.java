@@ -1,7 +1,6 @@
 package de.komoot.photon.importer.elasticsearch;
 
 import com.google.common.base.Function;
-import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import de.komoot.photon.importer.Tags;
@@ -30,10 +29,10 @@ public class Searcher {
 	private final String queryTemplate;
 	private final String queryLocationBiasTemplate;
 	private final Client client;
-	
+
 	/** These properties are directly copied into the result */
 	private final static String[] KEYS_LANG_UNSPEC = {OSMTags.KEY_OSM_ID, OSMTags.KEY_OSM_VALUE, OSMTags.KEY_OSM_KEY, OSMTags.KEY_POSTCODE, OSMTags.KEY_HOUSENUMBER};
-	
+
 	/** These properties will be translated before they are copied into the result */
 	private final static String[] KEYS_LANG_SPEC = {OSMTags.KEY_NAME, OSMTags.KEY_COUNTRY, OSMTags.KEY_CITY, OSMTags.KEY_STREET};
 
@@ -110,6 +109,12 @@ public class Searcher {
 	private static String getLocalised(Map<String, Object> source, String fieldName, String lang) {
 		final Map<String, String> map = (Map<String, String>) source.get(fieldName);
 		if(map == null) return null;
-		return Objects.firstNonNull(map.get(lang), map.get("default"));
+
+		if(map.get(lang) != null) {
+			// language specific field
+			return map.get(lang);
+		}
+
+		return map.get("default");
 	}
 }
