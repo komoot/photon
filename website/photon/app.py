@@ -10,6 +10,7 @@ app = Flask(__name__)
 DEBUG = os.environ.get('DEBUG', True)
 PORT = os.environ.get('PHOTON_PORT', 5001)
 HOST = os.environ.get('PHOTON_HOST', '0.0.0.0')
+API_URL = os.environ.get('API_URL', 'http://localhost:5001/api/?')
 SUPPORTED_LANGUAGES = ['de', 'en', 'fr', 'it']
 
 es = elasticsearch.Elasticsearch()
@@ -23,7 +24,7 @@ with open('../../es/query_location_bias.json', 'r') as f:
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('index.html', API_URL=API_URL)
 
 
 def query_index(query, lang, lon, lat, match_all=True, limit=15):
