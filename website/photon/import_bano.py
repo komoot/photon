@@ -108,7 +108,7 @@ if __name__ == "__main__":
     # first cleanup the housenumber data (we don't want duplicates)
     cleanup()
     with open(FILEPATH) as f:
-        reader = csv.DictReader(f)
+        reader = csv.DictReader(f, fieldnames=fields)
         count = 0
         data = []
         for row in reader:
