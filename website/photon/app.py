@@ -16,6 +16,11 @@ CENTER = [
     float(os.environ.get('PHOTON_MAP_LAT', 52.3879)),
     float(os.environ.get('PHOTON_MAP_LON', 13.0582))
 ]
+TILELAYER = os.environ.get(
+    'PHOTON_MAP_TILELAYER',
+    'http://{s}.tile.komoot.de/komoot/{z}/{x}/{y}.png'
+)
+MAXZOOM = os.environ.get('PHOTON_MAP_MAXZOOM', 18)
 
 es = elasticsearch.Elasticsearch()
 
@@ -28,7 +33,13 @@ with open('../../es/query_location_bias.json', 'r') as f:
 
 @app.route('/')
 def index():
-    return render_template('index.html', API_URL=API_URL, CENTER=CENTER)
+    return render_template(
+        'index.html',
+        API_URL=API_URL,
+        CENTER=CENTER,
+        TILELAYER=TILELAYER,
+        MAXZOOM=MAXZOOM
+    )
 
 
 def query_index(query, lang, lon, lat, match_all=True, limit=15):
