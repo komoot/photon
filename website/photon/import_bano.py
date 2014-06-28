@@ -120,3 +120,6 @@ if __name__ == "__main__":
                 idx += 1
                 data = []
                 sys.stdout.write("Done {}\n".format(count))
+        if data:
+            dump(data, idx)
+            sys.stdout.write("Done {}\n".format(count))
