@@ -23,8 +23,7 @@
         "index": "no"
       },
       "osm_value": {
-        "type": "string",
-        "index": "no"
+        "type": "string"
       },
       "importance": {
         "type": "float"

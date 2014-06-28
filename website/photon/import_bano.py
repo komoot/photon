@@ -93,8 +93,25 @@ def cleanup():
     query = {
         "query": {
             "filtered": {
-                "query": {"match_all": {}},
-                "filter": {"exists": {"field": "housenumber"}}
+                "query": {
+                    "match_all": {}
+                },
+                "filter": {
+                    "and": {
+                        "filters": [
+                            {
+                                "exists": {
+                                    "field": "housenumber"
+                                }
+                            },
+                            {
+                                "term": {
+                                    "osm_value": "house"
+                                }
+                            }
+                        ]
+                    }
+                }
             }
         }
     }
