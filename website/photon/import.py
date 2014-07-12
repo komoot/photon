@@ -22,7 +22,8 @@ class NominatimExporter(object):
         print('***************** Export init ***************')
         self.conn = self.create_connection()
         print('Connected')
-        self.cur = self.conn.cursor("nominatim", cursor_factory=psycopg2.extras.DictCursor)
+        self.cur = self.conn.cursor("nominatim",
+                                    cursor_factory=psycopg2.extras.DictCursor)
         print('Cursor created')
         self.cur.itersize = itersize
         self.limit = limit
@@ -32,20 +33,30 @@ class NominatimExporter(object):
         return psycopg2.connect(**self.credentials)
 
     def __enter__(self):
-        sql = """SELECT osm_type,osm_id,class as osm_key,type as osm_value,admin_level,rank_search,rank_address,
-            place_id,parent_place_id,calculated_country_code as country_code, postcode, housenumber,
-            (extratags->'ref') as ref, street,
-            ST_X(ST_Centroid(geometry)) as lon,
-            ST_Y(ST_Centroid(geometry)) as lat,
-            name->'name' as name,
-            name->'name:de' as name_de,
-            name->'name:fr' as name_fr,
-            name->'name:en' as name_en,
-            name->'short_name' as short_name,
-            name->'official_name' as official_name, name->'alt_name' as alt_name,
-            (extratags->'place') as extra_place
-            FROM placex
-            ORDER BY geometry
+        sql = """SELECT
+                    osm_type,osm_id,
+                    class as osm_key,
+                    type as osm_value,
+                    admin_level,
+                    rank_search,
+                    rank_address,
+                    place_id,
+                    parent_place_id,
+                    calculated_country_code as country_code,
+                    postcode, housenumber,
+                    (extratags->'ref') as ref, street,
+                    ST_X(ST_Centroid(geometry)) as lon,
+                    ST_Y(ST_Centroid(geometry)) as lat,
+                    name->'name' as name,
+                    name->'name:de' as name_de,
+                    name->'name:fr' as name_fr,
+                    name->'name:en' as name_en,
+                    name->'short_name' as short_name,
+                    name->'official_name' as official_name,
+                    name->'alt_name' as alt_name,
+                    (extratags->'place') as extra_place
+                FROM placex
+                ORDER BY geometry
             """
         self.cur.execute(sql)
         print('Query executed with itersize', self.cur.itersize)
@@ -61,12 +72,20 @@ class NominatimExporter(object):
 
     def add_parent(self, child, row):
         if child['parent_place_id']:
-            sql = """SELECT parent_place_id, type as osm_value, class as osm_key, {name}, admin_level FROM placex WHERE place_id={parent_place_id}"""
+            sql = """SELECT
+                         parent_place_id,
+                         type as osm_value,
+                         class as osm_key,
+                         {name},
+                         admin_level
+                     FROM placex
+                     WHERE place_id={parent_place_id}"""
             sql = sql.format(**{
                 'parent_place_id': child['parent_place_id'],
                 'name': self.get_name_clause()
             })
-            cur = self.conn.cursor(str(child['parent_place_id']), cursor_factory=psycopg2.extras.DictCursor)
+            cur = self.conn.cursor(str(child['parent_place_id']),
+                                   cursor_factory=psycopg2.extras.DictCursor)
             cur.execute(sql)
             parent = cur.fetchone()
             cur.close()
@@ -184,7 +203,8 @@ class JSONBatchDump(BaseConsumer):
         print('Starting export')
 
         def do_write(data, index):
-            with open('dump{}.eson'.format(index), mode='w', encoding='utf-8') as f:
+            with open('dump{}.eson'.format(index),
+                      mode='w', encoding='utf-8') as f:
                 f.write('\n'.join(data))
 
         for row in self:
