@@ -20,7 +20,7 @@ class NominatimExporter(object):
     def __init__(self, credentials, itersize=1000, limit=None, **kwargs):
         self.credentials = credentials
         print('***************** Export init ***************')
-        self.conn = self.create_connexion()
+        self.conn = self.create_connection()
         print('Connected')
         self.cur = self.conn.cursor("nominatim", cursor_factory=psycopg2.extras.DictCursor)
         print('Cursor created')
@@ -28,7 +28,7 @@ class NominatimExporter(object):
         self.limit = limit
         self.kwargs = kwargs
 
-    def create_connexion(self):
+    def create_connection(self):
         return psycopg2.connect(**self.credentials)
 
     def __enter__(self):
