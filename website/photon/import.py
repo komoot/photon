@@ -2,6 +2,7 @@
 This is just a raw importer for the sprint.
 """
 
+import argparse
 import os
 import psycopg2
 import psycopg2.extras
@@ -218,5 +219,11 @@ class JSONBatchDump(BaseConsumer):
 
 
 if __name__ == "__main__":
-    importer = JSONBatchDump()
+    parser = argparse.ArgumentParser(description="Dump Nominati's data in JSON"
+                                     "format or index it in Elasticsearch")
+    group = parser.add_mutually_exclusive_group(required=True)
+    group.add_argument('--es', action='store_true', dest='es')
+    group.add_argument('--json', action='store_true', dest='json')
+    args = parser.parse_args()
+    importer = JSONBatchDump() if args.json else ESImporter()
     importer()
