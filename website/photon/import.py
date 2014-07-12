@@ -14,9 +14,6 @@ es = Elasticsearch()
 
 
 class NominatimExporter(object):
-
-    ITER_BY = 100
-
     def __init__(self, credentials, itersize=1000, limit=None, **kwargs):
         self.credentials = credentials
         print('***************** Export init ***************')
