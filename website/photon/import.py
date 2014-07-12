@@ -7,8 +7,8 @@ import psycopg2
 import psycopg2.extras
 import simplejson
 
+from elasticsearch.helpers import bulk
 from elasticsearch import Elasticsearch
-from elasticsearch.helpers import bulk_index
 
 es = Elasticsearch()
 
@@ -162,7 +162,7 @@ class ESImporter(BaseConsumer):
 
     def index(self, data):
         print('Start indexing batch of', len(data))
-        bulk_index(es, data, index=self.ES_INDEX, doc_type='place', refresh=True)
+        bulk(es, data, index=self.ES_INDEX, doc_type='place', refresh=True)
         print('End indexing of current batch')
 
     def join(self, l, sep=", "):
