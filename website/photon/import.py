@@ -147,8 +147,15 @@ class ESImporter(BaseConsumer):
 
     INDEX_CHUNK_SIZE = 10000
     ES_INDEX = "photon"
+    BULK_SETTINGS = ('{"index": {"refresh_interval": "%s", '
+                     '"number_of_replicas": "%s"}}')
 
     def __call__(self):
+        # Don't refresh the index during full bulk index and don't replicate
+        bulk_settings = self.BULK_SETTINGS % (-1, 0)
+        es.indices.create(self.ES_INDEX)
+        es.indices.put_settings(index=self.ES_INDEX,
+                                body=bulk_settings)
         data = []
         print('Starting with ES index', self.ES_INDEX)
         for count, row in enumerate(self):
@@ -159,6 +166,12 @@ class ESImporter(BaseConsumer):
                 data = []
         if data:
             self.index(data)
+
+        # Restore default Elasticsearch settings
+        # TODO fetch current Elasticsearch settings and restore them properly
+        default_settings = self.BULK_SETTINGS % ("1s", 1)
+        es.indices.put_settings(index=self.ES_INDEX,
+                                body=default_settings)
         print('Done!')
 
     def format(self, row):
