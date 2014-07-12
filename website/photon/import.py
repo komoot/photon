@@ -153,7 +153,6 @@ class ESImporter(BaseConsumer):
     def __call__(self):
         # Don't refresh the index during full bulk index and don't replicate
         bulk_settings = self.BULK_SETTINGS % (-1, 0)
-        es.indices.create(self.ES_INDEX)
         es.indices.put_settings(index=self.ES_INDEX,
                                 body=bulk_settings)
         data = []
