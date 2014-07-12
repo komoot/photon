@@ -148,15 +148,13 @@ class ESImporter(BaseConsumer):
     ES_INDEX = "photon"
 
     def __call__(self):
-        count = 0
         data = []
         print('Starting with ES index', self.ES_INDEX)
-        for row in self:
+        for count, row in enumerate(self):
             data.append(row)
             count += 1
-            if count >= self.INDEX_CHUNK_SIZE:
+            if not count % self.INDEX_CHUNK_SIZE:
                 self.index(data)
-                count = 0
                 data = []
         if data:
             self.index(data)
