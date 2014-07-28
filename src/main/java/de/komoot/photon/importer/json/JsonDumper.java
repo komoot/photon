@@ -16,29 +16,17 @@ import java.io.PrintWriter;
  */
 @Slf4j
 public class JsonDumper implements Importer {
-	private int counter = 0;
-	private int nbLines = 100000;
 	private PrintWriter writer = null;
-	private final String filename;
 
-	public JsonDumper(String filename, int jsonLines) throws FileNotFoundException {
-		this.filename = filename;
-		this.nbLines = jsonLines;
+	public JsonDumper(String filename) throws FileNotFoundException {
+		this.writer = new PrintWriter(filename);
 	}
 
 	@Override
 	public void add(PhotonDoc doc) {
 		try {
-			if(counter % nbLines == 0) {
-				if(writer != null) {
-					// close previous writer
-					writer.close();
-				}
-				writer = new PrintWriter(filename + "_" + counter / nbLines);
-			}
 			writer.println("{\"index\": {}}");
 			writer.println(Utils.convert(doc).string());
-			counter++;
 		} catch(IOException e) {
 			log.error("error writing json file", e);
 		}
