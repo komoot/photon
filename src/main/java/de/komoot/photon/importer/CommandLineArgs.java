@@ -38,7 +38,7 @@ public class CommandLineArgs {
 	@Parameter(names = "-user", description = "postgres user (default nominatim)")
 	private String user = "nominatim";
 
-	@Parameter(names = "-password", description = "postgres host (default '')")
+	@Parameter(names = "-password", description = "postgres password (default '')")
 	private String password = "";
 
 	@Parameter(names = "-data-dir", description = "data directory (default '.')")
