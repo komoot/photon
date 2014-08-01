@@ -138,6 +138,7 @@ public class App {
 				collection.put("features", new JSONArray(results));
 
 				response.type("application/json; charset=utf-8");
+				response.header("Access-Control-Allow-Origin","*");
 
 				if(request.queryParams("debug") != null)
 					return collection.toString(4);
