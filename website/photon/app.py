@@ -34,7 +34,7 @@ def query_index(query, lang, lon, lat, match_all=True, limit=15):
     else:
         req_body = query_location_bias_template.substitute(**params)
 
-    body = {"query": req_body, "size": limit}
+    body = {"query": json.loads(req_body), "size": limit}
     return es.search(index="photon", body=body)
 
 
