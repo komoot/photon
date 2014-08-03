@@ -22,13 +22,13 @@ photon requires java, at least version 6.
 
 get photon
 ```bash
-mkdir photon
-cd photon
-wget http://photon.komoot.de/data/photon-0.1.jar
+wget http://photon.komoot.de/data/photon-0.1.tar.gz
+tar -zxvf data.tar.gz
 ```
 
-download search index (x,x gb, worldwide, languages: English, German, French and Spanish)
+download search index (x,x gb, worldwide, languages: English, German, French and Italian)
  ```bash
+cd photon-0.1
 wget http://photon.komoot.de/data/photon_data_world_5-07-2014.tar.bz2
 tar xvjf photon_data_world_5-07-2014.tar.bz2
 ln -s photon_data photon_data_world_5-07-2014.tar.bz2
@@ -39,9 +39,10 @@ start photon
 java -jar photon-0.1.jar
 ```
 
+Check the URL `http://localhost:2322/api?q=berlin` to see if photon is running without problems. You may want to use our [leaflet plugin](https://github.com/komoot/leaflet.photon) to see the results on a map.
+
 discover more of photon's feature with its usage `java -jar photon-0.1.jar -h`. 
 
-todo: leaflet plugin
 
 
 ### Customized Search Data
