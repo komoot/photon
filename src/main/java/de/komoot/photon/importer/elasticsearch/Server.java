@@ -1,15 +1,7 @@
 package de.komoot.photon.importer.elasticsearch;
 
 import lombok.extern.slf4j.Slf4j;
-import net.lingala.zip4j.core.ZipFile;
-import net.lingala.zip4j.exception.ZipException;
-import net.lingala.zip4j.model.ZipParameters;
-import net.lingala.zip4j.util.Zip4jConstants;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.elasticsearch.action.ActionListener;
-import org.elasticsearch.action.admin.cluster.snapshots.create.CreateSnapshotResponse;
-import org.elasticsearch.action.admin.cluster.snapshots.get.GetSnapshotsResponse;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.settings.ImmutableSettings;
@@ -22,7 +14,6 @@ import org.elasticsearch.node.NodeBuilder;
 import org.elasticsearch.plugins.PluginManager;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -101,116 +92,6 @@ public class Server {
 	 */
 	public void shutdown() {
 		this.esNode.close();
-	}
-
-	public void createSnapshot(String dumpName) {
-		log.info(String.format("Create snapshot '%s' in %s", dumpName, this.dumpDirectory.getAbsolutePath()));
-
-		final File dumpLocation = new File(this.dumpDirectory, dumpName);
-		dumpLocation.mkdir();
-		this.esNode.client().admin().cluster().putRepository(this.getClient().admin().cluster().preparePutRepository(dumpName)
-				.setSettings(ImmutableSettings.settingsBuilder().put("compress", "true")
-						.put("location", dumpLocation.getAbsolutePath())).setType("fs").request()).actionGet();
-
-		this.getClient().admin().cluster().createSnapshot(this.getClient().admin().cluster().
-				prepareCreateSnapshot(dumpName, dumpName).setIndices("photon").request(), new ActionListener<CreateSnapshotResponse>() {
-			@Override
-			public void onResponse(CreateSnapshotResponse createSnapshotResponse) {
-				try {
-					ZipFile zipFile = new ZipFile(dumpLocation + ".zip");
-					ZipParameters parameters = new ZipParameters();
-					parameters.setCompressionMethod(Zip4jConstants.COMP_DEFLATE);
-					parameters.setCompressionLevel(Zip4jConstants.DEFLATE_LEVEL_NORMAL);
-					zipFile.addFolder(dumpLocation, parameters);
-					dumpLocation.delete();
-
-					log.info(String.format("Created snapshot: %s.zip", dumpLocation));
-				} catch(ZipException e) {
-					log.error("error creating zip file of snapshot", e);
-				}
-			}
-
-			@Override
-			public void onFailure(Throwable e) {
-				log.error("error creating snapshot", e);
-			}
-		});
-	}
-
-	public void importSnapshot(String dumpUrl, String dumpName) {
-		File dump = new File(this.tempDirectory, dumpName + ".zip");
-		String dumpLocation = "";
-		try {
-			FileUtils.copyFile(new File(new URL(dumpUrl).toURI()), dump);
-		} catch(Exception e) {
-			log.error("Error while loading dump (Is this the correct dump location?)", e);
-		}
-
-		try {
-			ZipFile dumpZip = new ZipFile(dump);
-			dumpLocation = this.importDirectory.getAbsolutePath() + dumpName;
-			dumpZip.extractAll(dumpLocation);
-		} catch(ZipException e) {
-
-			log.error("Can´t unzip dump", e);
-		}
-		this.getClient().admin().cluster().getSnapshots(this.getClient().admin().cluster().prepareGetSnapshots(dumpLocation).setSnapshots(dumpName).request(), new ActionListener<GetSnapshotsResponse>() {
-			@Override
-			public void onResponse(GetSnapshotsResponse getSnapshotsResponse) {
-				log.info("Import done!");
-			}
-
-			@Override
-			public void onFailure(Throwable e) {
-				log.error("error creating snapshot", e);
-			}
-		});
-	}
-
-	public void importSnapshot(String urlString) {
-		URL url = null;
-		try {
-			url = new URL(urlString);
-		} catch(MalformedURLException e) {
-			throw new RuntimeException("invalid snapshot url", e);
-		}
-		File file;
-		try {
-			file = new File(url.toURI());
-		} catch(Exception e) {
-			// url did not refer to a local file, download it first to unzip
-			try {
-				file = File.createTempFile("temp-file-name", ".tmp");
-				IOUtils.copyLarge(url.openStream(), new FileOutputStream(file));
-			} catch(IOException ioe) {
-				throw new RuntimeException("cannot create temp file for snapshot", ioe);
-			}
-		}
-
-		String dumpLocation;
-		String dumpName = "photon_snapshot_2014_05";
-		try {
-			ZipFile dumpZip = new ZipFile(file);
-			dumpLocation = this.importDirectory.getAbsolutePath();
-			dumpZip.extractAll(dumpLocation);
-		} catch(ZipException e) {
-			throw new RuntimeException("error unzipping snapshot", e);
-		}
-
-		String repository = dumpLocation + "/" + dumpName;
-		String snapshot = dumpName;
-
-		this.getClient().admin().cluster().getSnapshots(this.getClient().admin().cluster().prepareGetSnapshots(repository).setSnapshots(snapshot).request(), new ActionListener<GetSnapshotsResponse>() {
-			@Override
-			public void onResponse(GetSnapshotsResponse getSnapshotsResponse) {
-				log.info("Import done!");
-			}
-
-			@Override
-			public void onFailure(Throwable e) {
-				log.error("error creating snapshot", e);
-			}
-		});
 	}
 
 	/**

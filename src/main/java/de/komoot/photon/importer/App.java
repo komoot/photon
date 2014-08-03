@@ -65,26 +65,20 @@ public class App {
 
 		Client esNodeClient = esServer.getClient();
 
+		if(args.isDeleteIndex()) {
+			esServer.recreateIndex();
+			log.info("deleted photon index and created an empty new one.");
+			return;
+		}
+
 		if(args.isNominatimImport()) {
 			esServer.recreateIndex(); // dump previous data
 			Importer importer = new Importer(esNodeClient);
 			NominatimConnector nominatimConnector = new NominatimConnector(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
 			nominatimConnector.setImporter(importer);
 			nominatimConnector.readEntireDatabase();
-		}
-
-		if(args.getCreateSnapshot() != null) {
-			esServer.createSnapshot(args.getCreateSnapshot());
-		}
-
-		if(args.isDeleteIndex()) {
-			esServer.recreateIndex();
-		}
-
-		if(args.getImportSnapshot() != null) {
-			esServer.deleteIndex();
-			esServer.importSnapshot(args.getImportSnapshot(), "photon_snapshot_2014_05");
-			//esServer.importSnapshot(args.getImportSnapshot());
+			log.info("imported data from nominatim to photon.");
+			return;
 		}
 
 		final NominatimUpdater nominatimUpdater = new NominatimUpdater(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
