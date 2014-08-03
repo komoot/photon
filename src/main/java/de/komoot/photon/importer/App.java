@@ -1,6 +1,7 @@
 package de.komoot.photon.importer;
 
 import com.beust.jcommander.JCommander;
+import com.beust.jcommander.ParameterException;
 import com.google.common.base.Joiner;
 import de.komoot.photon.importer.elasticsearch.Importer;
 import de.komoot.photon.importer.elasticsearch.Searcher;
@@ -28,8 +29,22 @@ public class App {
 	private static final Set<String> supportedLanguages = ImmutableSet.of("de", "en", "fr", "it");
 
 	public static void main(String[] rawArgs) {
+		// parse command line arguments
 		CommandLineArgs args = new CommandLineArgs();
-		new JCommander(args, rawArgs);
+		final JCommander jCommander = new JCommander(args);
+		try {
+			jCommander.parse(rawArgs);
+		} catch(ParameterException e) {
+			log.warn("could not start photon: " + e.getMessage());
+			jCommander.usage();
+			return;
+		}
+
+		// show help
+		if(args.isUsage()) {
+			jCommander.usage();
+			return;
+		}
 
 		if(args.getJsonDump() != null) {
 			try {
@@ -76,6 +91,10 @@ public class App {
 		de.komoot.photon.importer.Updater updater = new de.komoot.photon.importer.elasticsearch.Updater(esNodeClient);
 		nominatimUpdater.setUpdater(updater);
 
+		startApi(args, esNodeClient, nominatimUpdater);
+	}
+
+	private static void startApi(CommandLineArgs args, Client esNodeClient, final NominatimUpdater nominatimUpdater) {
 		setPort(args.getListenPort());
 		setIpAddress(args.getListenIp());
 

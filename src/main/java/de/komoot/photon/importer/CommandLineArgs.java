@@ -15,7 +15,7 @@ public class CommandLineArgs {
 	private boolean nominatimImport = false;
 
 	@Parameter(names = "-json", description = "import nominatim database and dump it to a json like files in (useful for developing)")
-	private String jsonDump = "/tmp/photon_dump.txt";
+	private String jsonDump = null;
 
 	@Parameter(names = "-create-snapshot", description = "create snapshot of photon index, useful for backups and for fast reimports on other photon instances ")
 	private String createSnapshot = null;
@@ -49,5 +49,8 @@ public class CommandLineArgs {
 
 	@Parameter(names = "-listen-ip", description = "listen to address (default '0.0.0.0')")
 	private String listenIp = "0.0.0.0";
+
+	@Parameter(names = "-h", description = "show help / usage")
+	private boolean usage = false;
 }
 

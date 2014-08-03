@@ -39,6 +39,11 @@ start photon
 java -jar photon-0.1.jar
 ```
 
+discover more of photon's feature with its usage `java -jar photon-0.1.jar -h`. 
+
+todo: leaflet plugin
+
+
 ### Customized Search Data
 If you need search data in other languages or restricted to a country you will need to create your search data by your own.
 Once you have your [nominatim](https://github.com/twain47/Nominatim) database ready, you can import the data to photon:
@@ -49,7 +54,7 @@ java -jar photon-0.1.jar -nominatim-import -host localhost -port 5432 -database 
 
 The import of worldwide data set will take some hours/days, ssd disk are recommended to accelerate nominatim queries.
 
-A nominatim setup is also a requirement to have continuous updates, to keep in sync with the latest OSM changes.
+A nominatim setup is also a requirement to have continuous updates. To keep in sync with the latest OSM changes run:
 
 ```bash
 export NOMINATIM_DIR=/home/nominatim/...
