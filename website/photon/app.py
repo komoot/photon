@@ -46,9 +46,9 @@ def query_index(query, lang, lon, lat, match_all=True, limit=15):
     params = dict(lang=lang, query=query, should_match="100%" if match_all else "-1", lon=lon, lat=lat)
 
     if lon is not None and lat is not None:
-        req_body = query_template.substitute(**params)
-    else:
         req_body = query_location_bias_template.substitute(**params)
+    else:
+        req_body = query_template.substitute(**params)
 
     body = {"query": json.loads(req_body), "size": limit}
     return es.search(index="photon", body=body)

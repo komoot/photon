@@ -178,13 +178,14 @@
         }
       },
       "name": {
+        "similarity": "photonsimilarity",
         "properties": {
           "int": {
             "type": "string",
             "index": "no",
             "fields": {
               "raw": {
-                "index_analyzer": "raw_stringanalyser",
+                "index_analyzer": "index_raw",
                 "type": "string"
               }
             },
@@ -200,7 +201,7 @@
             "index": "no",
             "fields": {
               "raw": {
-                "index_analyzer": "raw_stringanalyser",
+                "index_analyzer": "index_raw",
                 "type": "string"
               }
             },
@@ -216,7 +217,7 @@
             "index": "no",
             "fields": {
               "raw": {
-                "index_analyzer": "raw_stringanalyser",
+                "index_analyzer": "index_raw",
                 "type": "string"
               }
             },
@@ -232,7 +233,7 @@
             "index": "no",
             "fields": {
               "raw": {
-                "index_analyzer": "raw_stringanalyser",
+                "index_analyzer": "index_raw",
                 "type": "string"
               }
             },
@@ -247,13 +248,13 @@
             "type": "string",
             "index": "no",
             "fields": {
-              "ngramed": {
+              "ngrams": {
                 "type": "string",
-                "index_analyzer": "stringanalyser"
+                "index_analyzer": "index_ngram"
               },
               "raw": {
                 "type": "string",
-                "index_analyzer": "raw_stringanalyser"
+                "index_analyzer": "index_raw"
               }
             },
             "copy_to": [
@@ -278,13 +279,13 @@
             "type": "string",
             "index": "no",
             "fields": {
-              "ngramed": {
+              "ngrams": {
                 "type": "string",
-                "index_analyzer": "stringanalyser"
+                "index_analyzer": "index_ngram"
               },
               "raw": {
                 "type": "string",
-                "index_analyzer": "raw_stringanalyser"
+                "index_analyzer": "index_raw"
               }
             },
             "copy_to": [
@@ -295,13 +296,13 @@
             "type": "string",
             "index": "no",
             "fields": {
-              "ngramed": {
+              "ngrams": {
                 "type": "string",
-                "index_analyzer": "stringanalyser"
+                "index_analyzer": "index_ngram"
               },
               "raw": {
                 "type": "string",
-                "index_analyzer": "raw_stringanalyser"
+                "index_analyzer": "index_raw"
               }
             },
             "copy_to": [
@@ -312,13 +313,13 @@
             "type": "string",
             "index": "no",
             "fields": {
-              "ngramed": {
+              "ngrams": {
                 "type": "string",
-                "index_analyzer": "stringanalyser"
+                "index_analyzer": "index_ngram"
               },
               "raw": {
                 "type": "string",
-                "index_analyzer": "raw_stringanalyser"
+                "index_analyzer": "index_raw"
               }
             },
             "copy_to": [
@@ -371,44 +372,45 @@
         }
       },
       "collector": {
+        "similarity": "photonsimilarity",
         "properties": {
           "de": {
             "type": "string",
-            "analyzer": "stringanalyser",
+            "analyzer": "index_ngram",
             "fields": {
               "raw": {
                 "type": "string",
-                "analyzer": "raw_stringanalyser"
+                "analyzer": "index_raw"
               }
             }
           },
           "en": {
             "type": "string",
-            "analyzer": "stringanalyser",
+            "analyzer": "index_ngram",
             "fields": {
               "raw": {
                 "type": "string",
-                "analyzer": "raw_stringanalyser"
+                "analyzer": "index_raw"
               }
             }
           },
           "fr": {
             "type": "string",
-            "analyzer": "stringanalyser",
+            "analyzer": "index_ngram",
             "fields": {
               "raw": {
                 "type": "string",
-                "analyzer": "raw_stringanalyser"
+                "analyzer": "index_raw"
               }
             }
           },
           "it": {
             "type": "string",
-            "analyzer": "stringanalyser",
+            "analyzer": "index_ngram",
             "fields": {
               "raw": {
                 "type": "string",
-                "analyzer": "raw_stringanalyser"
+                "analyzer": "index_raw"
               }
             }
           }

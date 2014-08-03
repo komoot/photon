@@ -1,5 +1,27 @@
 {
   "analysis": {
+    "analyzer": {
+      "index_ngram": {
+        "char_filter": ["punctuationgreedy"],
+        "filter": ["word_delimiter", "lowercase", "asciifolding", "unique", "wordending", "photonngram"],
+        "tokenizer": "standard"
+      },
+      "search_ngram": {
+        "char_filter": ["punctuationgreedy"],
+        "filter": ["word_delimiter", "lowercase", "asciifolding", "unique", "wordendingautocomplete"],
+        "tokenizer": "standard"
+      },
+      "index_raw": {
+        "char_filter": ["punctuationgreedy"],
+        "filter": ["word_delimiter", "lowercase", "asciifolding", "unique"],
+        "tokenizer": "standard"
+      },
+      "search_raw": {
+        "char_filter": ["punctuationgreedy"],
+        "filter": ["word_delimiter", "lowercase", "asciifolding", "unique"],
+        "tokenizer": "standard"
+      }
+    },
     "similarity": {
       "photonsimilarity": {
         "type": "BM25"
@@ -11,54 +33,9 @@
         "pattern": "[\\.,]"
       }
     },
-    "analyzer": {
-      "stringanalyser": {
-        "char_filter": [
-          "punctuationgreedy"
-        ],
-        "filter": [
-          "word_delimiter",
-          "lowercase",
-          "asciifolding",
-          "photonlength",
-          "unique",
-          "wordending",
-          "photonngram"
-        ],
-        "tokenizer": "standard"
-      },
-      "search_stringanalyser": {
-        "char_filter": [
-          "punctuationgreedy"
-        ],
-        "filter": [
-          "word_delimiter",
-          "lowercase",
-          "asciifolding",
-          "photonlength",
-          "unique",
-          "wordendingautocomplete"
-        ],
-        "tokenizer": "standard"
-      },
-      "raw_stringanalyser": {
-        "char_filter": [
-          "punctuationgreedy"
-        ],
-        "filter": [
-          "word_delimiter",
-          "lowercase",
-          "asciifolding",
-          "photonlength",
-          "unique",
-          "wordending"
-        ],
-        "tokenizer": "standard"
-      }
-    },
     "filter": {
       "photonngram": {
-        "min_gram": "2",
+        "min_gram": "1",
         "type": "edgeNGram",
         "max_gram": "15"
       },
