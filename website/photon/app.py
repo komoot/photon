@@ -4,7 +4,7 @@ import os
 import simplejson
 import elasticsearch
 from flask import Flask, render_template, request, abort, Response
-
+from string import Template
 
 app = Flask(__name__)
 DEBUG = os.environ.get('DEBUG', True)
@@ -14,6 +14,12 @@ SUPPORTED_LANGUAGES = ['de', 'en', 'fr', 'it']
 
 es = elasticsearch.Elasticsearch()
 
+with open('../../es/query.json', 'r') as f:
+    query_template = Template(f.read())
+
+with open('../../es/query_location_bias.json', 'r') as f:
+    query_location_bias_template = Template(f.read())
+
 
 @app.route('/')
 def index():
@@ -21,88 +27,14 @@ def index():
 
 
 def query_index(query, lang, lon, lat, match_all=True, limit=15):
-    req_body = {
-        "multi_match": {
-            "query": query,
-            "type": "best_fields",
-            "analyzer": "search_stringanalyser",
-            'minimum_should_match': '100%' if match_all else -1,
-            "fields": [
-                "name.{0}.ngramed^3".format(lang),
-                "name.{0}.raw^10".format(lang),
-                "collector.{0}.raw".format(lang),
-                "collector.{0}".format(lang)
-            ],
-            "fuzziness": 1,
-            "prefix_length": 3
-        }
-    }
-
-    req_body = {
-        "function_score": {
-            "score_mode": "multiply",  # How functions score are mixed together
-            "boost_mode": "multiply",  # how total will be mixed to search score
-            "query": req_body,
-            "functions": [
-                {
-                    "script_score": {
-                        "script": "1 + doc['importance'].value * 40"
-                    }
-                }
-            ],
-        }
-    }
+    params = dict(lang=lang, query=query, should_match="100%" if match_all else "-1", lon=lon, lat=lat)
 
     if lon is not None and lat is not None:
-        req_body["function_score"]["functions"].append({
-            "script_score": {
-                "script": "dist = doc['coordinate'].distanceInKm(lat, lon); 1 / (0.5 - 0.5 * exp(-5*dist/maxDist))",
-                "params": {
-                    "lon": lon,
-                    "lat": lat,
-                    "maxDist": 100
-                }
-            }
-        })
-
-    # if housenumber is not null AND name.default is null, housenumber must
-    # match the request. This will filter out the house from the requests
-    # if the housenumber is not explicitly in the request
-    req_body = {
-        "filtered": {
-            "query": req_body,
-            "filter": {
-                "or": {
-                    "filters": [
-                        {
-                            "missing": {
-                                "field": "housenumber"
-                            }
-                        },
-                        {
-                            "query": {
-                                "match": {
-                                    "housenumber": {
-                                        "query": query,
-                                        "analyzer": "standard"
-                                    }
-                                }
-                            }
-                        },
-                        {
-                            "exists": {
-                                "field": "name.{0}.raw".format(lang)
-                            }
-                        }
-                    ]
-                }
-            }
-        }
-    }
+        req_body = query_template.substitute(**params)
+    else:
+        req_body = query_location_bias_template.substitute(**params)
 
     body = {"query": req_body, "size": limit}
-    if DEBUG:
-        print(json.dumps(body))
     return es.search(index="photon", body=body)
 
 
