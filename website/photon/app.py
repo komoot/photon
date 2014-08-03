@@ -50,6 +50,9 @@ def query_index(query, lang, lon, lat, match_all=True, limit=15):
     else:
         req_body = query_template.substitute(**params)
 
+    if DEBUG:
+        print(req_body)
+
     body = {"query": json.loads(req_body), "size": limit}
     return es.search(index="photon", body=body)
 
