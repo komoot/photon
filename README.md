@@ -65,7 +65,7 @@ export NOMINATIM_DIR=/home/nominatim/...
 ### Search API
 #### Start Photon
 ```bash
-java -jar target/photon-0.1-SNAPSHOT.jar
+java -jar photon-0.1.jar
 ```
 
 #### Search
