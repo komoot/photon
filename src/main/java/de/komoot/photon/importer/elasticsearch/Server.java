@@ -18,6 +18,7 @@ import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.env.Environment;
 import org.elasticsearch.indices.IndexMissingException;
 import org.elasticsearch.node.Node;
+import org.elasticsearch.node.NodeBuilder;
 import org.elasticsearch.plugins.PluginManager;
 
 import java.io.File;
@@ -28,7 +29,6 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 
-import org.elasticsearch.node.NodeBuilder;
 import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
 
 /**
@@ -40,34 +40,34 @@ import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
 public class Server {
 
 	private Node esNode;
-	private static final String clusterName = "photon";        
-        private File esDirectory;        
+	private static final String clusterName = "photon";
+	private File esDirectory;
 	private File dumpDirectory;
 	private File updateDirectory;
 	private File tempDirectory;
 	private File importDirectory;
-        
+
 	public Server(String mainDirectory) {
-            try {
-		setupDirectories(new URL("file://" + mainDirectory));
-            } catch(MalformedURLException e) {
+		try {
+			setupDirectories(new URL("file://" + mainDirectory));
+		} catch(MalformedURLException e) {
 			log.error("Can´t create directories");
-            }
-        }
-                        
-        public Server start() {
+		}
+	}
+
+	public Server start() {
 		return start(false);
-        }
-        
-	public Server start(boolean test) {        
-		ImmutableSettings.Builder sBuilder = ImmutableSettings.settingsBuilder()
-				.put("path.home", this.esDirectory.toString());
-                
-                // default is 'local', 'none' means no data after node restart!
-            
-                if(test)
-                    sBuilder.put("gateway.type", "none");
-                    
+	}
+
+	public Server start(boolean test) {
+		ImmutableSettings.Builder sBuilder = ImmutableSettings.settingsBuilder();
+		sBuilder.put("path.home", this.esDirectory.toString());
+		sBuilder.put("network.host", "127.0.0.1"); // http://stackoverflow.com/a/15509589/1245622
+
+		// default is 'local', 'none' means no data after node restart!
+		if(test)
+			sBuilder.put("gateway.type", "none");
+
 		Settings settings = sBuilder.build();
 
 		final String pluginPath = this.getClass().getResource("/elasticsearch-wordending-tokenfilter-0.0.1.zip").toExternalForm();
@@ -78,26 +78,22 @@ public class Server {
 			log.debug("could not install ybon/elasticsearch-wordending-tokenfilter/0.0.1", e);
 		}
 
-                if(!test) {
-                    pluginManager = new PluginManager(new Environment(settings), null, PluginManager.OutputMode.VERBOSE, new TimeValue(30000));
-                    for(String pluginName : new String[]{"mobz/elasticsearch-head", "polyfractal/elasticsearch-inquisitor", "elasticsearch/marvel/latest"}) {
-                            try {
-                                    pluginManager.downloadAndExtract(pluginName);
-                            } catch(IOException e) {
-                            }
-                    }
-                }
+		if(!test) {
+			pluginManager = new PluginManager(new Environment(settings), null, PluginManager.OutputMode.VERBOSE, new TimeValue(30000));
+			for(String pluginName : new String[]{"mobz/elasticsearch-head", "polyfractal/elasticsearch-inquisitor", "elasticsearch/marvel/latest"}) {
+				try {
+					pluginManager.downloadAndExtract(pluginName);
+				} catch(IOException e) {
+				}
+			}
+		}
 
 		NodeBuilder nBuilder = nodeBuilder().clusterName(Server.clusterName).loadConfigSettings(true).
-                        settings(settings);
-                
-                // problem with node ending plugin
-//                if(test)
-//                    nBuilder.local(true);
-                
-                esNode = nBuilder.node();
+				settings(settings);
+
+		esNode = nBuilder.node();
 		log.info("started elastic search node");
-                return this;
+		return this;
 	}
 
 	/**
