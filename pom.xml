@@ -180,7 +180,7 @@
 		</plugins>
 		<resources>
 			<resource>
-				<directory>es_config/</directory>
+				<directory>es/</directory>
 			</resource>
 		</resources>
 	</build>
