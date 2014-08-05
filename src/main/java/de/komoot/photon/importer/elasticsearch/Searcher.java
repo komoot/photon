@@ -66,7 +66,8 @@ public class Searcher {
 		}
 
 		SearchResponse response = client.prepareSearch("photon").setSearchType(SearchType.QUERY_AND_FETCH).setQuery(query).setSize(limit).setTimeout(TimeValue.timeValueSeconds(7)).execute().actionGet();
-		return convert(response.getHits().getHits(), lang);
+		final SearchHit[] hits = response.getHits().getHits();
+		return convert(Arrays.copyOfRange(hits, 0, limit), lang);
 	}
 
 	private List<JSONObject> convert(SearchHit[] hits, final String lang) {
