@@ -47,11 +47,10 @@
           },
           {
             "script_score": {
-              "script": "dist = doc['coordinate'].distanceInKm(lat, lon); 1 / (0.5 - 0.5 * exp(-5*dist/maxDist))",
+              "script": "dist = doc['coordinate'].distanceInKm(lat, lon); 0.5 + ( 1.5 / (1.0 + dist/40.0) )",
               "params": {
                 "lat": ${lat},
-                "lon": ${lon},
-                "maxDist": 100
+                "lon": ${lon}
               }
             }
           }
