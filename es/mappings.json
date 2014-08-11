@@ -32,10 +32,7 @@
         "type": "string",
         "index": "not_analyzed",
         "copy_to": [
-          "collector.en",
-          "collector.de",
-          "collector.fr",
-          "collector.it"
+          "collector.default"
         ]
       },
       "coordinate": {
@@ -45,10 +42,7 @@
         "type": "string",
         "index": "no",
         "copy_to": [
-          "collector.en",
-          "collector.de",
-          "collector.fr",
-          "collector.it"
+          "collector.default"
         ]
       },
       "city": {
@@ -64,10 +58,7 @@
             "type": "string",
             "index": "no",
             "copy_to": [
-              "collector.en",
-              "collector.de",
-              "collector.fr",
-              "collector.it"
+              "collector.default"
             ]
           },
           "en": {
@@ -99,6 +90,7 @@
             "type": "string",
             "index": "no",
             "copy_to": [
+              "collector.default",
               "collector.de"
             ]
           },
@@ -106,10 +98,7 @@
             "type": "string",
             "index": "no",
             "copy_to": [
-              "collector.en",
-              "collector.de",
-              "collector.fr",
-              "collector.it"
+              "collector.default"
             ]
           },
           "en": {
@@ -148,10 +137,7 @@
             "type": "string",
             "index": "no",
             "copy_to": [
-              "collector.en",
-              "collector.de",
-              "collector.fr",
-              "collector.it"
+              "collector.default"
             ]
           },
           "en": {
@@ -190,10 +176,7 @@
               }
             },
             "copy_to": [
-              "collector.en",
-              "collector.de",
-              "collector.fr",
-              "collector.it"
+              "collector.default"
             ]
           },
           "old": {
@@ -206,10 +189,7 @@
               }
             },
             "copy_to": [
-              "collector.en",
-              "collector.de",
-              "collector.fr",
-              "collector.it"
+              "collector.default"
             ]
           },
           "loc": {
@@ -222,10 +202,7 @@
               }
             },
             "copy_to": [
-              "collector.en",
-              "collector.de",
-              "collector.fr",
-              "collector.it"
+              "collector.default"
             ]
           },
           "alt": {
@@ -238,10 +215,7 @@
               }
             },
             "copy_to": [
-              "collector.en",
-              "collector.de",
-              "collector.fr",
-              "collector.it"
+              "collector.default"
             ]
           },
           "de": {
@@ -265,10 +239,7 @@
             "type": "string",
             "index": "no",
             "copy_to": [
-              "collector.en",
-              "collector.de",
-              "collector.fr",
-              "collector.it",
+              "collector.default",
               "name.en",
               "name.de",
               "name.fr",
@@ -335,10 +306,7 @@
             "index": "no",
             "type": "string",
             "copy_to": [
-              "collector.en",
-              "collector.de",
-              "collector.fr",
-              "collector.it"
+              "collector.default"
             ]
           },
           "de": {
@@ -374,6 +342,16 @@
       "collector": {
         "similarity": "photonsimilarity",
         "properties": {
+          "default": {
+            "type": "string",
+            "analyzer": "index_ngram",
+            "fields": {
+              "raw": {
+                "type": "string",
+                "analyzer": "index_raw"
+              }
+            }
+          },
           "de": {
             "type": "string",
             "analyzer": "index_ngram",
