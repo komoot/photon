@@ -7,7 +7,7 @@ from flask import Flask, render_template, request, abort, Response
 from string import Template
 
 app = Flask(__name__)
-DEBUG = os.environ.get('DEBUG', True)
+DEBUG = os.environ.get('DEBUG', False)
 PORT = os.environ.get('PHOTON_PORT', 5001)
 HOST = os.environ.get('PHOTON_HOST', '0.0.0.0')
 API_URL = os.environ.get('API_URL', 'http://localhost:5001/api/?')
