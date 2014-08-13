@@ -27,9 +27,8 @@ wget http://photon.komoot.de/data/photon-0.1.jar
 
 download search index (31 gb, worldwide, languages: English, German, French and Italian)
  ```bash
-wget http://photon.komoot.de/data/photon_data_world_5-07-2014.tar.bz2
-tar xvjf photon_data_world_5-07-2014.tar.bz2
-ln -s photon_data photon_data_world_5-07-2014.tar.bz2
+wget http://photon.komoot.de/data/photon_data_140706.tar.bz2
+tar xvjf photon_data_140706.tar.bz2
  ```
  
 start photon
