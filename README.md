@@ -25,10 +25,11 @@ get photon
 wget http://photon.komoot.de/data/photon-0.1.jar
 ```
 
-download search index (31 gb, worldwide, languages: English, German, French and Italian)
+download search index (31 gb compressed, 66 gb uncompressed, worldwide, languages: English, German, French and Italian)
  ```bash
 wget http://photon.komoot.de/data/photon_data_140706.tar.bz2
-tar xvjf photon_data_140706.tar.bz2
+lbzip2 -d photon_data_140706.tar.bz2 
+tar xf photon_data_140706.tar
  ```
  
 start photon
