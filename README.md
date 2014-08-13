@@ -22,13 +22,11 @@ photon requires java, at least version 6.
 
 get photon
 ```bash
-wget http://photon.komoot.de/data/photon-0.1.tar.gz
-tar -zxvf data.tar.gz
+wget http://photon.komoot.de/data/photon-0.1.jar
 ```
 
 download search index (x,x gb, worldwide, languages: English, German, French and Italian)
  ```bash
-cd photon-0.1
 wget http://photon.komoot.de/data/photon_data_world_5-07-2014.tar.bz2
 tar xvjf photon_data_world_5-07-2014.tar.bz2
 ln -s photon_data photon_data_world_5-07-2014.tar.bz2

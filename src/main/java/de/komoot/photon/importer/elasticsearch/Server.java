@@ -40,7 +40,7 @@ import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
 public class Server {
 
 	private Node esNode;
-	private static final String clusterName = "photon";
+	private static final String clusterName = "photon_v0.1";
 	private File esDirectory;
 	private File dumpDirectory;
 	private File updateDirectory;
