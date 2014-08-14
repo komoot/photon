@@ -1,5 +1,0 @@
-comment;query;expected_coordinate;expected_name;expected_country;lang;limit;mark
-non existing housenumber (should return street at least);Dircksenstraße 7777 Berlin;52.52346,13.40676,1000;Dircksenstraße;Germany;en;2;missing_housenumber
-non existing housenumber (should return street at least);Dachauer Straße 7777 Munich;48.15234/11.55635,3000;Dachauer Straße;Germany;en;2;missing_housenumber
-non existing housenumber (should return street at least);Rubinger Straße 7777 Oberstdorf;47.41851,10.27575,1000;Rubinger Straße;Germany;en;2;missing_housenumber
-non existing housenumber (should return street at least);Bahnhofstraße 7777 Düsseldorf;51.33001,6.78252,3000;Dircksenstraße;Germany;en;2;missing_housenumber

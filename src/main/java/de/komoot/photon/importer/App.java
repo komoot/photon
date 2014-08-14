@@ -1,6 +1,7 @@
 package de.komoot.photon.importer;
 
 import com.beust.jcommander.JCommander;
+import com.beust.jcommander.ParameterException;
 import com.google.common.base.Joiner;
 import de.komoot.photon.importer.elasticsearch.Importer;
 import de.komoot.photon.importer.elasticsearch.Searcher;
@@ -9,7 +10,6 @@ import de.komoot.photon.importer.json.JsonDumper;
 import de.komoot.photon.importer.nominatim.NominatimConnector;
 import de.komoot.photon.importer.nominatim.NominatimUpdater;
 import lombok.extern.slf4j.Slf4j;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.collect.ImmutableSet;
 import org.json.JSONArray;
@@ -22,18 +22,43 @@ import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.Set;
 
-import static spark.Spark.get;
-import static spark.Spark.setPort;
-import static spark.Spark.setIpAddress;
+import static spark.Spark.*;
 
 @Slf4j
 public class App {
 	private static final Set<String> supportedLanguages = ImmutableSet.of("de", "en", "fr", "it");
-	private static final ObjectMapper mapper = new ObjectMapper();
 
 	public static void main(String[] rawArgs) {
+		// parse command line arguments
 		CommandLineArgs args = new CommandLineArgs();
-		new JCommander(args, rawArgs);
+		final JCommander jCommander = new JCommander(args);
+		try {
+			jCommander.parse(rawArgs);
+		} catch(ParameterException e) {
+			log.warn("could not start photon: " + e.getMessage());
+			jCommander.usage();
+			return;
+		}
+
+		// show help
+		if(args.isUsage()) {
+			jCommander.usage();
+			return;
+		}
+
+		if(args.getJsonDump() != null) {
+			try {
+				final String filename = args.getJsonDump();
+				final JsonDumper jsonDumper = new JsonDumper(filename);
+				NominatimConnector nominatimConnector = new NominatimConnector(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
+				nominatimConnector.setImporter(jsonDumper);
+				nominatimConnector.readEntireDatabase();
+				log.info("json dump was created: " + filename);
+				return;
+			} catch(FileNotFoundException e) {
+				log.error("cannot create dump", e);
+			}
+		}
 
 		final Server esServer = new Server(args.getDataDirectory());
 		esServer.start();
@@ -46,17 +71,6 @@ public class App {
 			NominatimConnector nominatimConnector = new NominatimConnector(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
 			nominatimConnector.setImporter(importer);
 			nominatimConnector.readEntireDatabase();
-		}
-
-		if(args.isJsonDump()) {
-			try {
-				final JsonDumper jsonDumper = new JsonDumper("/tmp/photon_dump", args.getJsonLines());
-				NominatimConnector nominatimConnector = new NominatimConnector(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
-				nominatimConnector.setImporter(jsonDumper);
-				nominatimConnector.readEntireDatabase();
-			} catch(FileNotFoundException e) {
-				log.error("cannot create dump", e);
-			}
 		}
 
 		if(args.getCreateSnapshot() != null) {
@@ -77,9 +91,13 @@ public class App {
 		de.komoot.photon.importer.Updater updater = new de.komoot.photon.importer.elasticsearch.Updater(esNodeClient);
 		nominatimUpdater.setUpdater(updater);
 
-                setPort(args.getListenPort());
-                setIpAddress(args.getListenIp());
-                
+		startApi(args, esNodeClient, nominatimUpdater);
+	}
+
+	private static void startApi(CommandLineArgs args, Client esNodeClient, final NominatimUpdater nominatimUpdater) {
+		setPort(args.getListenPort());
+		setIpAddress(args.getListenIp());
+
 		get(new Route("/nominatim-update") {
 			@Override
 			public Object handle(Request request, Response response) {

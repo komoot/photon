@@ -1,6 +1,0 @@
-query;expected_coordinate;expected_name;expected_country;lang;limit;mark
-Dircksenstraße Berlin;52.52346,13.40676,1500;Dircksenstraße;Germany;en;4;street
-Carl-von-Ossietzky-Straße Potsdam;52.39540,13.03308,1500;Carl-von-Ossietzky-Straße;Germany;en;4;street
-Georgenstraße Berlin;52.51971,13.38713,1500;Georgenstraße;Germany;en;4;street
-Mühlenstraße Fischen;47.45321,10.26921,1500;Mühlenstraße;Germany;en;4;street
-Hafengasse Ulm;48.39886,9.99473,1500;Hafengasse;Germany;en;4;street

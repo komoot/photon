@@ -1,8 +1,0 @@
-query;expected_name;lang;mark
-dortm;Dortmund;de;autocomplete
-münche;München;de;autocomplete
-potsd;Potsdam;de;autocomplete
-dirckse 51;Dircksenstraße 51;de;autocomplete
-Ros Lux Str 22;Rosa-Luxemburg-Straße 22;de;autocomplete
-Hafenga Ulm;Hafengasse;en;autocomplete
-Georgenst Berli;Georgenstraße;en;autocomplete

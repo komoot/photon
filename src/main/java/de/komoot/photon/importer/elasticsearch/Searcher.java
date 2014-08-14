@@ -5,12 +5,14 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import de.komoot.photon.importer.Tags;
 import de.komoot.photon.importer.osm.OSMTags;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.text.StrSubstitutor;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.client.Client;
+import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.search.SearchHit;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -25,6 +27,7 @@ import java.util.Map;
  *
  * @author christoph
  */
+@Slf4j
 public class Searcher {
 	private final String queryTemplate;
 	private final String queryLocationBiasTemplate;
@@ -62,8 +65,9 @@ public class Searcher {
 			query = sub.replace(queryTemplate);
 		}
 
-		SearchResponse response = client.prepareSearch("photon").setSearchType(SearchType.QUERY_AND_FETCH).setQuery(query).setSize(limit).execute().actionGet();
-		return convert(response.getHits().getHits(), lang);
+		SearchResponse response = client.prepareSearch("photon").setSearchType(SearchType.QUERY_AND_FETCH).setQuery(query).setSize(limit).setTimeout(TimeValue.timeValueSeconds(7)).execute().actionGet();
+		final SearchHit[] hits = response.getHits().getHits();
+		return convert(Arrays.copyOfRange(hits, 0, limit), lang);
 	}
 
 	private List<JSONObject> convert(SearchHit[] hits, final String lang) {
@@ -97,11 +101,15 @@ public class Searcher {
 	}
 
 	private static JSONObject getPoint(Map<String, Object> source) {
-		final Map<String, Double> coordinate = (Map<String, Double>) source.get("coordinate");
-
 		JSONObject point = new JSONObject();
-		point.put(Tags.KEY_TYPE, Tags.VALUE_POINT);
-		point.put(Tags.KEY_COORDINATES, new JSONArray("[" + coordinate.get(Tags.KEY_LON) + "," + coordinate.get(Tags.KEY_LAT) + "]"));
+
+		final Map<String, Double> coordinate = (Map<String, Double>) source.get("coordinate");
+		if(coordinate != null) {
+			point.put(Tags.KEY_TYPE, Tags.VALUE_POINT);
+			point.put(Tags.KEY_COORDINATES, new JSONArray("[" + coordinate.get(Tags.KEY_LON) + "," + coordinate.get(Tags.KEY_LAT) + "]"));
+		} else {
+			log.error(String.format("invalid data [id=%s, type=%s], coordinate is missing!", source.get(OSMTags.KEY_OSM_ID), source.get(OSMTags.KEY_OSM_VALUE)));
+		}
 
 		return point;
 	}

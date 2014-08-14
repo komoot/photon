@@ -5,10 +5,10 @@ import de.komoot.photon.importer.model.PhotonDoc;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.bulk.BulkResponse;
+import org.elasticsearch.action.count.CountRequest;
 import org.elasticsearch.client.Client;
 
 import java.io.IOException;
-import org.elasticsearch.action.count.CountRequest;
 
 /**
  * elasticsearch importer
@@ -19,8 +19,8 @@ import org.elasticsearch.action.count.CountRequest;
 public class Importer implements de.komoot.photon.importer.Importer {
 	private int documentCount = 0;
 
-        private final String indexName = "photon";
-        private final String indexType = "place";
+	private final String indexName = "photon";
+	private final String indexType = "place";
 	private final Client esClient;
 	private BulkRequestBuilder bulkRequest;
 
@@ -29,11 +29,11 @@ public class Importer implements de.komoot.photon.importer.Importer {
 		this.bulkRequest = esClient.prepareBulk();
 	}
 
-        @Override
+	@Override
 	public void add(PhotonDoc doc) {
 		try {
 			this.bulkRequest.add(this.esClient.prepareIndex(indexName, indexType).
-                                setSource(Utils.convert(doc)).setId(String.valueOf(doc.getPlaceId())));
+					setSource(Utils.convert(doc)).setId(String.valueOf(doc.getPlaceId())));
 		} catch(IOException e) {
 			log.error("could not ", e);
 		}
@@ -53,13 +53,13 @@ public class Importer implements de.komoot.photon.importer.Importer {
 		this.bulkRequest = this.esClient.prepareBulk();
 	}
 
-        @Override
+	@Override
 	public void finish() {
 		this.saveDocuments();
 		this.documentCount = 0;
 	}
-        
-        public long count() {
-                return this.esClient.count(new CountRequest(indexName).types(indexType)).actionGet().getCount();
-        }        
+
+	public long count() {
+		return this.esClient.count(new CountRequest(indexName).types(indexType)).actionGet().getCount();
+	}
 }
