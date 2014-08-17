@@ -1,6 +1,5 @@
 package de.komoot.photon.importer.elasticsearch;
 
-import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import de.komoot.photon.importer.Tags;
@@ -17,8 +16,6 @@ import org.elasticsearch.search.SearchHit;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import javax.annotation.Nullable;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -66,38 +63,34 @@ public class Searcher {
 		}
 
 		SearchResponse response = client.prepareSearch("photon").setSearchType(SearchType.QUERY_AND_FETCH).setQuery(query).setSize(limit).setTimeout(TimeValue.timeValueSeconds(7)).execute().actionGet();
-		final SearchHit[] hits = response.getHits().getHits();
-		return convert(Arrays.copyOfRange(hits, 0, limit), lang);
+		return convert(response.getHits().getHits(), lang);
 	}
 
 	private List<JSONObject> convert(SearchHit[] hits, final String lang) {
-		return Lists.transform(Arrays.asList(hits), new Function<SearchHit, JSONObject>() {
-			@Nullable
-			@Override
-			public JSONObject apply(@Nullable SearchHit hit) {
-				final Map<String, Object> source = hit.getSource();
+		final List<JSONObject> list = Lists.newArrayListWithExpectedSize(hits.length);
+		for(SearchHit hit : hits) {
+			final Map<String, Object> source = hit.getSource();
 
-				final JSONObject feature = new JSONObject();
-				feature.put(Tags.KEY_TYPE, Tags.VALUE_FEATURE);
-				feature.put(Tags.KEY_GEOMETRY, getPoint(source));
+			final JSONObject feature = new JSONObject();
+			feature.put(Tags.KEY_TYPE, Tags.VALUE_FEATURE);
+			feature.put(Tags.KEY_GEOMETRY, getPoint(source));
 
-				final JSONObject properties = new JSONObject();
-				// language unspecific properties
-				for(String key : KEYS_LANG_UNSPEC) {
-					if(source.containsKey(key))
-						properties.put(key, source.get(key));
-				}
-
-				// language specific properties
-				for(String key : KEYS_LANG_SPEC) {
-					if(source.containsKey(key))
-						properties.put(key, getLocalised(source, key, lang));
-				}
-				feature.put(Tags.KEY_PROPERTIES, properties);
-
-				return feature;
+			final JSONObject properties = new JSONObject();
+			// language unspecific properties
+			for(String key : KEYS_LANG_UNSPEC) {
+				if(source.containsKey(key))
+					properties.put(key, source.get(key));
 			}
-		});
+
+			// language specific properties
+			for(String key : KEYS_LANG_SPEC) {
+				if(source.containsKey(key))
+					properties.put(key, getLocalised(source, key, lang));
+			}
+			feature.put(Tags.KEY_PROPERTIES, properties);
+			list.add(feature);
+		}
+		return list;
 	}
 
 	private static JSONObject getPoint(Map<String, Object> source) {
