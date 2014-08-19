@@ -2,6 +2,7 @@ package de.komoot.photon.importer.elasticsearch;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import de.komoot.photon.importer.Tags;
 import de.komoot.photon.importer.osm.OSMTags;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +17,7 @@ import org.elasticsearch.search.SearchHit;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -63,7 +65,35 @@ public class Searcher {
 		}
 
 		SearchResponse response = client.prepareSearch("photon").setSearchType(SearchType.QUERY_AND_FETCH).setQuery(query).setSize(limit).setTimeout(TimeValue.timeValueSeconds(7)).execute().actionGet();
-		return convert(response.getHits().getHits(), lang);
+		List<JSONObject> results = convert(response.getHits().getHits(), lang);
+		results = removeStreetDuplicates(results);
+		return results;
+	}
+
+	private List<JSONObject> removeStreetDuplicates(List<JSONObject> results) {
+		List<JSONObject> filteredItems = Lists.newArrayListWithCapacity(results.size());
+		final HashSet<String> keys = Sets.newHashSet();
+		for(JSONObject result : results) {
+			final JSONObject properties = result.getJSONObject(Tags.KEY_PROPERTIES);
+			if(properties.has(Tags.KEY_OSM_KEY) && "highway".equals(properties.getString(Tags.KEY_OSM_KEY))) {
+				// result is a street
+				if(properties.has(OSMTags.KEY_POSTCODE) && properties.has(OSMTags.KEY_NAME)) {
+					// street has a postcode and name
+					String postcode = properties.getString(OSMTags.KEY_POSTCODE);
+					String name = properties.getString(OSMTags.KEY_NAME);
+					String key = postcode + ":" + name;
+
+					if(keys.contains(key)) {
+						// a street with this name + postcode is already part of the result list
+						continue;
+					}
+					keys.add(key);
+				}
+			}
+			filteredItems.add(result);
+		}
+
+		return filteredItems;
 	}
 
 	private List<JSONObject> convert(SearchHit[] hits, final String lang) {

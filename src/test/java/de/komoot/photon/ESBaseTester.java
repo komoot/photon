@@ -26,7 +26,7 @@ public class ESBaseTester {
 	protected static int jettyPort;
 	protected int resolved;
 	private static Server server;
-	GeometryFactory FACTORY = new GeometryFactory(new PrecisionModel(), 5432);
+	public final static GeometryFactory FACTORY = new GeometryFactory(new PrecisionModel(), 5432);
 
 	@AfterClass
 	public static void tearDownClass() {
