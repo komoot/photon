@@ -19,6 +19,8 @@ import spark.Response;
 import spark.Route;
 
 import java.io.FileNotFoundException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -83,7 +85,8 @@ public class App {
 
 		if(args.getImportSnapshot() != null) {
 			esServer.deleteIndex();
-			esServer.importSnapshot(args.getImportSnapshot(), "photon_snapshot_2014_05");
+                        String dumpName = "photon_snapshot_" + new SimpleDateFormat("MM_dd").format(new Date());
+			esServer.importSnapshot(args.getImportSnapshot(), dumpName);
 			//esServer.importSnapshot(args.getImportSnapshot());
 		}
 
