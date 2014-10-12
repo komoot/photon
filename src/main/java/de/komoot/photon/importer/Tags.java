@@ -15,21 +15,27 @@ package de.komoot.photon.importer;
 
 /**
  * Holds the String representation of the json properties that are used in the reply.
- * This class is intended to hold certain strings in order to avoid hardcoding (repeatuing
+ * This class is intended to hold certain strings in order to avoid hardcoding (repeating
  * and thus potential errors) of strings.
- * 
+ *
+ * @author jseibl, christoph
  * @date: 14.06.14
- * @author jseibl
  */
 public class Tags {
 	public static final String KEY_TYPE = "type";
 	public static final String KEY_GEOMETRY = "geometry";
 	public static final String KEY_PROPERTIES = "properties";
 	public static final String KEY_COORDINATES = "coordinates";
-	
+
 	public static final String KEY_LAT = "lat";
 	public static final String KEY_LON = "lon";
-	
+
 	public static final String VALUE_FEATURE = "Feature";
 	public static final String VALUE_POINT = "Point";
+
+	public static final String KEY_OSM_ID = "osm_id";
+	public static final String KEY_OSM_TYPE = "osm_type";
+	public static final String KEY_OSM_KEY = "osm_key";
+	public static final String KEY_OSM_VALUE = "osm_value";
+	public static final String KEY_IMPORTANCE = "importance";
 }

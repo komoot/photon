@@ -1,8 +1,8 @@
 package de.komoot.photon.importer.elasticsearch;
 
-import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import de.komoot.photon.importer.Tags;
 import de.komoot.photon.importer.osm.OSMTags;
 import lombok.extern.slf4j.Slf4j;
@@ -17,8 +17,7 @@ import org.elasticsearch.search.SearchHit;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import javax.annotation.Nullable;
-import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -34,7 +33,7 @@ public class Searcher {
 	private final Client client;
 
 	/** These properties are directly copied into the result */
-	private final static String[] KEYS_LANG_UNSPEC = {OSMTags.KEY_OSM_ID, OSMTags.KEY_OSM_VALUE, OSMTags.KEY_OSM_KEY, OSMTags.KEY_POSTCODE, OSMTags.KEY_HOUSENUMBER};
+	private final static String[] KEYS_LANG_UNSPEC = {OSMTags.KEY_OSM_ID, OSMTags.KEY_OSM_VALUE, OSMTags.KEY_OSM_KEY, OSMTags.KEY_POSTCODE, OSMTags.KEY_HOUSENUMBER, OSMTags.KEY_OSM_TYPE};
 
 	/** These properties will be translated before they are copied into the result */
 	private final static String[] KEYS_LANG_SPEC = {OSMTags.KEY_NAME, OSMTags.KEY_COUNTRY, OSMTags.KEY_CITY, OSMTags.KEY_STREET};
@@ -66,38 +65,62 @@ public class Searcher {
 		}
 
 		SearchResponse response = client.prepareSearch("photon").setSearchType(SearchType.QUERY_AND_FETCH).setQuery(query).setSize(limit).setTimeout(TimeValue.timeValueSeconds(7)).execute().actionGet();
-		final SearchHit[] hits = response.getHits().getHits();
-		return convert(Arrays.copyOfRange(hits, 0, limit), lang);
+		List<JSONObject> results = convert(response.getHits().getHits(), lang);
+		results = removeStreetDuplicates(results);
+		return results;
+	}
+
+	private List<JSONObject> removeStreetDuplicates(List<JSONObject> results) {
+		List<JSONObject> filteredItems = Lists.newArrayListWithCapacity(results.size());
+		final HashSet<String> keys = Sets.newHashSet();
+		for(JSONObject result : results) {
+			final JSONObject properties = result.getJSONObject(Tags.KEY_PROPERTIES);
+			if(properties.has(Tags.KEY_OSM_KEY) && "highway".equals(properties.getString(Tags.KEY_OSM_KEY))) {
+				// result is a street
+				if(properties.has(OSMTags.KEY_POSTCODE) && properties.has(OSMTags.KEY_NAME)) {
+					// street has a postcode and name
+					String postcode = properties.getString(OSMTags.KEY_POSTCODE);
+					String name = properties.getString(OSMTags.KEY_NAME);
+					String key = postcode + ":" + name;
+
+					if(keys.contains(key)) {
+						// a street with this name + postcode is already part of the result list
+						continue;
+					}
+					keys.add(key);
+				}
+			}
+			filteredItems.add(result);
+		}
+
+		return filteredItems;
 	}
 
 	private List<JSONObject> convert(SearchHit[] hits, final String lang) {
-		return Lists.transform(Arrays.asList(hits), new Function<SearchHit, JSONObject>() {
-			@Nullable
-			@Override
-			public JSONObject apply(@Nullable SearchHit hit) {
-				final Map<String, Object> source = hit.getSource();
+		final List<JSONObject> list = Lists.newArrayListWithExpectedSize(hits.length);
+		for(SearchHit hit : hits) {
+			final Map<String, Object> source = hit.getSource();
 
-				final JSONObject feature = new JSONObject();
-				feature.put(Tags.KEY_TYPE, Tags.VALUE_FEATURE);
-				feature.put(Tags.KEY_GEOMETRY, getPoint(source));
+			final JSONObject feature = new JSONObject();
+			feature.put(Tags.KEY_TYPE, Tags.VALUE_FEATURE);
+			feature.put(Tags.KEY_GEOMETRY, getPoint(source));
 
-				final JSONObject properties = new JSONObject();
-				// language unspecific properties
-				for(String key : KEYS_LANG_UNSPEC) {
-					if(source.containsKey(key))
-						properties.put(key, source.get(key));
-				}
-
-				// language specific properties
-				for(String key : KEYS_LANG_SPEC) {
-					if(source.containsKey(key))
-						properties.put(key, getLocalised(source, key, lang));
-				}
-				feature.put(Tags.KEY_PROPERTIES, properties);
-
-				return feature;
+			final JSONObject properties = new JSONObject();
+			// language unspecific properties
+			for(String key : KEYS_LANG_UNSPEC) {
+				if(source.containsKey(key))
+					properties.put(key, source.get(key));
 			}
-		});
+
+			// language specific properties
+			for(String key : KEYS_LANG_SPEC) {
+				if(source.containsKey(key))
+					properties.put(key, getLocalised(source, key, lang));
+			}
+			feature.put(Tags.KEY_PROPERTIES, properties);
+			list.add(feature);
+		}
+		return list;
 	}
 
 	private static JSONObject getPoint(Map<String, Object> source) {

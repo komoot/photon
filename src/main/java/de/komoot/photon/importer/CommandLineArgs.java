@@ -17,12 +17,6 @@ public class CommandLineArgs {
 	@Parameter(names = "-json", description = "import nominatim database and dump it to a json like files in (useful for developing)")
 	private String jsonDump = null;
 
-	@Parameter(names = "-create-snapshot", description = "create snapshot of photon index, useful for backups and for fast reimports on other photon instances ")
-	private String createSnapshot = null;
-
-	@Parameter(names = "-import-snapshot", description = "import a snapshot from an URL, can be remote (http://example.com/photon.zip) or local (file:///home/photon/photon.zip)")
-	private String importSnapshot = null;
-
 	@Parameter(names = "-delete-index", description = "delete index and all documents, creates a new and empty photon index")
 	private boolean deleteIndex = false;
 
