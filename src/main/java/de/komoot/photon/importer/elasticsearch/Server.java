@@ -31,14 +31,14 @@ import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
 public class Server {
 
 	private Node esNode;
-	private static final String clusterName = "photon_v0.1";
+	private String clusterName = "photon_v0.1";
 	private File esDirectory;
 	private File dumpDirectory;
 	private File updateDirectory;
 	private File tempDirectory;
 	private File importDirectory;
 
-	public Server(String mainDirectory) {
+	public Server(String clusterName, String mainDirectory) {
 		try {
 			setupDirectories(new URL("file://" + mainDirectory));
 		} catch(MalformedURLException e) {
@@ -51,6 +51,7 @@ public class Server {
 				log.error("Can´t create directories");
 			}
 		}
+        this.clusterName = clusterName;
 	}
 
 	public Server start() {
@@ -86,7 +87,7 @@ public class Server {
 			}
 		}
 
-		NodeBuilder nBuilder = nodeBuilder().clusterName(Server.clusterName).loadConfigSettings(true).
+		NodeBuilder nBuilder = nodeBuilder().clusterName(clusterName).loadConfigSettings(true).
 				settings(settings);
 
 		esNode = nBuilder.node();

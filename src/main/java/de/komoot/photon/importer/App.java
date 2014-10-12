@@ -60,7 +60,7 @@ public class App {
 			}
 		}
 
-		final Server esServer = new Server(args.getDataDirectory());
+		final Server esServer = new Server(args.getCluster(), args.getDataDirectory());
 		esServer.start();
 
 		Client esNodeClient = esServer.getClient();
