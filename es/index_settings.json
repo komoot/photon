@@ -37,7 +37,7 @@
       "photonngram": {
         "min_gram": "1",
         "type": "edgeNGram",
-        "max_gram": "15"
+        "max_gram": "100"
       },
       "wordending": {
         "type": "wordending",
