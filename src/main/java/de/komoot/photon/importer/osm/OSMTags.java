@@ -33,4 +33,5 @@ public class OSMTags {
 	public static final String KEY_COUNTRY = "country";
 	public static final String KEY_CITY = "city";
 	public static final String KEY_STREET = "street";
+	public static final String KEY_STATE = "state";
 }

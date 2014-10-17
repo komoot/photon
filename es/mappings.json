@@ -84,6 +84,45 @@
           }
         }
       },
+	  "state": {
+        "properties": {
+          "de": {
+            "type": "string",
+            "index": "no",
+            "copy_to": [
+              "collector.de"
+            ]
+          },
+          "default": {
+            "type": "string",
+            "index": "no",
+            "copy_to": [
+              "collector.default"
+            ]
+          },
+          "en": {
+            "type": "string",
+            "index": "no",
+            "copy_to": [
+              "collector.en"
+            ]
+          },
+          "fr": {
+            "type": "string",
+            "index": "no",
+            "copy_to": [
+              "collector.fr"
+            ]
+          },
+          "it": {
+            "type": "string",
+            "index": "no",
+            "copy_to": [
+              "collector.it"
+            ]
+          }
+        }
+      },
       "context": {
         "properties": {
           "de": {

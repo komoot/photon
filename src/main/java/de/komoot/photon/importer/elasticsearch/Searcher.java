@@ -36,7 +36,7 @@ public class Searcher {
 	private final static String[] KEYS_LANG_UNSPEC = {OSMTags.KEY_OSM_ID, OSMTags.KEY_OSM_VALUE, OSMTags.KEY_OSM_KEY, OSMTags.KEY_POSTCODE, OSMTags.KEY_HOUSENUMBER, OSMTags.KEY_OSM_TYPE};
 
 	/** These properties will be translated before they are copied into the result */
-	private final static String[] KEYS_LANG_SPEC = {OSMTags.KEY_NAME, OSMTags.KEY_COUNTRY, OSMTags.KEY_CITY, OSMTags.KEY_STREET};
+	private final static String[] KEYS_LANG_SPEC = {OSMTags.KEY_NAME, OSMTags.KEY_COUNTRY, OSMTags.KEY_CITY, OSMTags.KEY_STREET, OSMTags.KEY_STATE};
 
 	public Searcher(Client client) {
 		this.client = client;

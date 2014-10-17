@@ -184,11 +184,13 @@ public class NominatimConnector {
 		template.query("SELECT " + selectColsPlaceX + " FROM placex WHERE linked_place_id IS NULL order by geometry_sector; ", new RowCallbackHandler() {
 			@Override
 			public void processRow(ResultSet rs) throws SQLException {
+				// turns a placex row into a photon document that gathers all de-normalised informations
+
 				PhotonDoc doc = placeRowMapper.mapRow(rs, 0);
 
 				if(!doc.isUsefulForIndex()) return; // do not import document
 
-				// finalize document by taking into account the higher level address assigned to this doc.
+				// finalize document by taking into account the higher level placex rows assigned to this row
 				final List<AddressRow> addresses = getAddresses(doc);
 				for(AddressRow address : addresses) {
 
@@ -205,8 +207,12 @@ public class NominatimConnector {
 					}
 
 					if(address.isStreet() && doc.getStreet() == null) {
-						// assign street to document
 						doc.setStreet(address.getName());
+						continue;
+					}
+
+					if(address.isState() && doc.getState() == null) {
+						doc.setState(address.getName());
 						continue;
 					}
 

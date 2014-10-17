@@ -50,11 +50,11 @@ public class AddressRow {
 
 		return false;
 	}
-	
+
 	public boolean hasPostcode() {
 		return postcode != null; // TODO really null?
 	}
-	
+
 	public boolean isUsefulForContext() {
 		if(name.isEmpty()) {
 			return false;
@@ -82,6 +82,19 @@ public class AddressRow {
 		}
 
 		if("place".equals(osmKey) && "country".equals(osmValue)) {
+			return true;
+		}
+
+		return false;
+	}
+
+	public boolean isState() {
+		if("place".equals(osmKey) && "state".equals(osmValue)) {
+			// TODO: check correctness of state
+			return true;
+		}
+
+		if(adminLevel != null && adminLevel == 4 && "boundary".equals(osmKey) && "administrative".equals(osmValue)) {
 			return true;
 		}
 
