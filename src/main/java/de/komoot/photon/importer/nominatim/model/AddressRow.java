@@ -5,6 +5,8 @@ import lombok.Data;
 import java.util.Arrays;
 import java.util.Map;
 
+import static de.komoot.photon.importer.Constants.STATE;
+
 /**
  * representation of an address as returned by nominatim's get_addressdata PL/pgSQL function
  *
@@ -89,7 +91,7 @@ public class AddressRow {
 	}
 
 	public boolean isState() {
-		if("place".equals(osmKey) && "state".equals(osmValue)) {
+		if("place".equals(osmKey) && STATE.equals(osmValue)) {
 			// TODO: check correctness of state
 			return true;
 		}

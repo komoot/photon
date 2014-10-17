@@ -26,11 +26,11 @@ public class Utils {
 
 	public static XContentBuilder convert(PhotonDoc doc) throws IOException {
 		XContentBuilder builder = XContentFactory.jsonBuilder().startObject()
-				.field(Tags.KEY_OSM_ID, doc.getOsmId())
-				.field(Tags.KEY_OSM_TYPE, doc.getOsmType())
-				.field(Tags.KEY_OSM_KEY, doc.getTagKey())
-				.field(Tags.KEY_OSM_VALUE, doc.getTagValue())
-				.field(Tags.KEY_IMPORTANCE, doc.getImportance());
+				.field(Constants.OSM_ID, doc.getOsmId())
+				.field(Constants.OSM_TYPE, doc.getOsmType())
+				.field(Constants.OSM_KEY, doc.getTagKey())
+				.field(Constants.OSM_VALUE, doc.getTagValue())
+				.field(Constants.IMPORTANCE, doc.getImportance());
 
 		if(doc.getCentroid() != null) {
 			builder.startObject("coordinate")
