@@ -67,6 +67,9 @@ public class Searcher {
 		SearchResponse response = client.prepareSearch("photon").setSearchType(SearchType.QUERY_AND_FETCH).setQuery(query).setSize(limit).setTimeout(TimeValue.timeValueSeconds(7)).execute().actionGet();
 		List<JSONObject> results = convert(response.getHits().getHits(), lang);
 		results = removeStreetDuplicates(results);
+		if(results.size() > limit) {
+			results = results.subList(0, limit);
+		}
 		return results;
 	}
 
