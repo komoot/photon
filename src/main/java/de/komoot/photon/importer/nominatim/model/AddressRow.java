@@ -92,7 +92,6 @@ public class AddressRow {
 
 	public boolean isState() {
 		if("place".equals(osmKey) && STATE.equals(osmValue)) {
-			// TODO: check correctness of state
 			return true;
 		}
 
