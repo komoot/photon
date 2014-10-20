@@ -120,6 +120,16 @@ public class Searcher {
 				if(source.containsKey(key))
 					properties.put(key, getLocalised(source, key, lang));
 			}
+
+			// add extent of geometry
+			final Map<String, Object> extent = (Map<String, Object>) source.get("extent");
+			if(extent != null) {
+				List<List<Double>> coords = (List<List<Double>>) extent.get("coordinates");
+				final List<Double> nw = coords.get(0);
+				final List<Double> se = coords.get(1);
+				properties.put("extent", new JSONArray(Lists.newArrayList(nw.get(0), nw.get(1), se.get(0), se.get(1))));
+			}
+
 			feature.put(Tags.KEY_PROPERTIES, properties);
 			list.add(feature);
 		}
