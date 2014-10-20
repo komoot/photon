@@ -26,7 +26,8 @@ public class ImporterTest extends ESBaseTester {
 	public void testAdd() {
 		Map<String, String> nameMap = new HashMap<String, String>();
 		nameMap.put("name", "testing");
-		PhotonDoc doc = this.createDoc(1, "way", 1, nameMap, 0., 0.);
+
+		PhotonDoc doc = PhotonDoc.create(1, "way", 1, nameMap);
 		Importer instance = new Importer(getClient());
 		instance.add(doc);
 		instance.finish();

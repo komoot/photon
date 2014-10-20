@@ -2,6 +2,8 @@ package de.komoot.photon.importer.elasticsearch;
 
 import com.google.common.collect.ImmutableMap;
 import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.PrecisionModel;
 import de.komoot.photon.ESBaseTester;
 import de.komoot.photon.importer.model.PhotonDoc;
 import org.json.JSONObject;
@@ -15,6 +17,7 @@ import static org.junit.Assert.*;
  * @author Christoph
  */
 public class RemoveStreetDuplicatesTest extends ESBaseTester {
+	GeometryFactory FACTORY = new GeometryFactory(new PrecisionModel(), 4326);
 
 	@Before
 	public void setUp() {
@@ -36,7 +39,7 @@ public class RemoveStreetDuplicatesTest extends ESBaseTester {
 		final PhotonDoc doc = new PhotonDoc(id, "way", id, "highway", "primary", ImmutableMap.of("name", name),
 				null, null, null, 0, 0.5, null,
 				FACTORY.createPoint(new Coordinate(10., 47.)),
-				0);
+				0, 0);
 		doc.setPostcode(postcode);
 		return doc;
 	}
