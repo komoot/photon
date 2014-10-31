@@ -22,7 +22,7 @@ photon requires java, at least version 6.
 
 get photon
 ```bash
-wget http://photon.komoot.de/data/photon-0.1.1.jar
+wget http://photon.komoot.de/data/photon-0.1.2.jar
 ```
 
 download search index (31 gb compressed, 66 gb uncompressed, worldwide, languages: English, German, French and Italian)
@@ -34,12 +34,12 @@ tar xf photon_data_140706.tar
  
 start photon
 ```bash
-java -jar photon-0.1.1.jar
+java -jar photon-0.1.2.jar
 ```
 
 Check the URL `http://localhost:2322/api?q=berlin` to see if photon is running without problems. You may want to use our [leaflet plugin](https://github.com/komoot/leaflet.photon) to see the results on a map.
 
-discover more of photon's feature with its usage `java -jar photon-0.1.1.jar -h`. 
+discover more of photon's feature with its usage `java -jar photon-0.1.2.jar -h`. 
 
 
 
@@ -48,7 +48,7 @@ If you need search data in other languages or restricted to a country you will n
 Once you have your [nominatim](https://github.com/twain47/Nominatim) database ready, you can import the data to photon:
 
 ```bash
-java -jar photon-0.1.1.jar -nominatim-import -host localhost -port 5432 -database nominatim -user nominatim -password ...
+java -jar photon-0.1.2.jar -nominatim-import -host localhost -port 5432 -database nominatim -user nominatim -password ...
 ```
 
 The import of worldwide data set will take some hours/days, ssd disk are recommended to accelerate nominatim queries.
@@ -63,7 +63,7 @@ export NOMINATIM_DIR=/home/nominatim/...
 ### Search API
 #### Start Photon
 ```bash
-java -jar photon-0.1.1.jar
+java -jar photon-0.1.2.jar
 ```
 
 #### Search
