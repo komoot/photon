@@ -1,0 +1,78 @@
+package de.komoot.photon.importer;
+
+import com.google.common.base.Joiner;
+import de.komoot.photon.importer.elasticsearch.Searcher;
+import org.elasticsearch.common.collect.ImmutableSet;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import spark.Request;
+import spark.Response;
+import spark.Route;
+
+import java.util.List;
+import java.util.Set;
+
+/**
+ * date: 31.10.14
+ *
+ * @author christoph
+ */
+public class RequestHandler extends Route {
+	private final Searcher searcher;
+	private static final Set<String> supportedLanguages = ImmutableSet.of("de", "en", "fr", "it");
+
+	protected RequestHandler(String path, Searcher searcher) {
+		super(path);
+		this.searcher = searcher;
+	}
+
+	@Override
+	public String handle(Request request, Response response) {
+		// parse query term
+		String query = request.queryParams("q");
+		if(query == null) {
+			halt(400, "missing search term 'q': /?q=berlin");
+		}
+
+		// parse preferred language
+		String lang = request.queryParams("lang");
+		if(lang == null) lang = "en";
+		if(!supportedLanguages.contains(lang)) {
+			halt(400, "language " + lang + " is not supported, supported languages are: " + Joiner.on(", ").join(supportedLanguages));
+		}
+
+		// parse location bias
+		Double lon = null, lat = null;
+		try {
+			lon = Double.valueOf(request.queryParams("lon"));
+			lat = Double.valueOf(request.queryParams("lat"));
+		} catch(Exception nfe) {
+		}
+
+		// parse limit for search results
+		int limit = 15;
+		try {
+			limit = Math.min(50, Integer.parseInt(request.queryParams("limit")));
+		} catch(Exception e) {
+		}
+
+		List<JSONObject> results = searcher.search(query, lang, lon, lat, limit, true);
+		if(results.isEmpty()) {
+			// try again, but less restrictive
+			results = searcher.search(query, lang, lon, lat, limit, false);
+		}
+
+		// build geojson
+		final JSONObject collection = new JSONObject();
+		collection.put("type", "FeatureCollection");
+		collection.put("features", new JSONArray(results));
+
+		response.type("application/json; charset=utf-8");
+		response.header("Access-Control-Allow-Origin", "*");
+
+		if(request.queryParams("debug") != null)
+			return collection.toString(4);
+
+		return collection.toString();
+	}
+}
