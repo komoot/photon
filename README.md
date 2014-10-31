@@ -88,39 +88,53 @@ http://localhost:2322/api?q=berlin&lang=it
 
 #### Results as GeoJSON
 ```json
-  {
-    "type": "FeatureCollection",
-    "features": [
-      {
-        "type": "Feature",
-        "geometry": {
-          "coordinates": [
-            13.438596,
-            52.519854
-          ],
-          "type": "Point"
-        },
-        "properties": {
-          "city": "Berlin",
-          "country": "Germany",
-          "name": "Berlin"
-        }
-      },{
+{
+  "features": [
+    {
+      "properties": {
+        "osm_key": "place",
+        "name": "Berlin",
+        "osm_id": 240109189,
+        "osm_type": "N",
+        "osm_value": "city",
+        "country": "Germany"
+      },
       "type": "Feature",
-        "geometry": {
-          "coordinates": [
-            61.195088,
-            54.005826
-          ],
-          "type": "Point"
-        },
-        "properties": {
-          "country": "Russia",
-          "name": "Berlin",
-          "postcode": "457130"
-        }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          13.3888599,
+          52.5170365
+        ]
       }
-    ]
+    },
+    {
+      "properties": {
+        "osm_key": "leisure",
+        "extent": [
+          13.23727,
+          52.5157151,
+          13.241757,
+          52.5135972
+        ],
+        "street": "Olympischer Platz",
+        "name": "Berlin Olympic Stadium",
+        "osm_id": 38862723,
+        "osm_type": "W",
+        "housenumber": "3",
+        "postcode": "14053",
+        "osm_value": "stadium",
+        "country": "Germany"
+      },
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          13.239514674078611,
+          52.51467945
+        ]
+      }
+    }]
   }
 ```
 
