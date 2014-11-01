@@ -2,7 +2,7 @@
 
 _Photon_ is an open source geocoder built for [OpenStreetMap](http://www.osm.org) data. It is based on [elasticsearch](http://elasticsearch.org/) - an efficient, powerful and highly scalable search platform.
 
-_Photon_ was started by [komoot](http://www.komoot.de) and provides search-as-you-type and multilingual support. It's used in production with thousands of requests per minute at [www.komoot.de](http://www.komoot.de). Find our public API on our project page [photon.komoot.de](http://photon.komoot.de).
+_Photon_ was started by [komoot](http://www.komoot.de) and provides search-as-you-type and multilingual support. It's used in production with thousands of requests per minute at [www.komoot.de](http://www.komoot.de). Find our public API and demo on [photon.komoot.de](http://photon.komoot.de).
 
 We are a very young project, feel free to test and participate! The previous version based on solr is accessible in the [deprecated solr branch](https://github.com/komoot/photon/tree/deprecated-solr-version).
 
@@ -78,7 +78,7 @@ http://localhost:2322/api?q=berlin&lon=10&lat=52
 
 #### Adapt Number of Results
 ```
-http://localhost:2322/api?limit=2
+http://localhost:2322/api?q=berlin&limit=2
 ```
 
 #### Adjust Language
@@ -92,12 +92,12 @@ http://localhost:2322/api?q=berlin&lang=it
   "features": [
     {
       "properties": {
-        "osm_key": "place",
         "name": "Berlin",
-        "osm_id": 240109189,
-        "osm_type": "N",
+        "country": "Germany",
+        "osm_key": "place",
         "osm_value": "city",
-        "country": "Germany"
+        "osm_type": "N",
+        "osm_id": 240109189
       },
       "type": "Feature",
       "geometry": {
@@ -110,21 +110,21 @@ http://localhost:2322/api?q=berlin&lang=it
     },
     {
       "properties": {
+        "name": "Berlin Olympic Stadium",
+        "street": "Olympischer Platz",
+        "housenumber": "3",
+        "postcode": "14053",
+        "country": "Germany"
         "osm_key": "leisure",
+        "osm_value": "stadium",
+        "osm_type": "W",
+        "osm_id": 38862723,
         "extent": [
           13.23727,
           52.5157151,
           13.241757,
           52.5135972
-        ],
-        "street": "Olympischer Platz",
-        "name": "Berlin Olympic Stadium",
-        "osm_id": 38862723,
-        "osm_type": "W",
-        "housenumber": "3",
-        "postcode": "14053",
-        "osm_value": "stadium",
-        "country": "Germany"
+        ]
       },
       "type": "Feature",
       "geometry": {
@@ -143,7 +143,7 @@ http://localhost:2322/api?q=berlin&lang=it
 Photon's search configuration was developed with a specific test framework. It is written in Python and [hosted separately](https://github.com/yohanboniface/osm-geocoding-tester).
 
 ### Contact
-Let us know what you think about photon! Create a github ticket or drop us a mail in https://lists.openstreetmap.org/listinfo/photon
+Let us know what you think about photon! Create a github ticket or drop us an email in https://lists.openstreetmap.org/listinfo/photon
 
 ### Licence
 Photon software is open source and licensed under [Apache License, Version 2.0](http://opensource.org/licenses/Apache-2.0)
