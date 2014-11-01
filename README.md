@@ -114,7 +114,7 @@ http://localhost:2322/api?q=berlin&lang=it
         "street": "Olympischer Platz",
         "housenumber": "3",
         "postcode": "14053",
-        "country": "Germany"
+        "country": "Germany",
         "osm_key": "leisure",
         "osm_value": "stadium",
         "osm_type": "W",
