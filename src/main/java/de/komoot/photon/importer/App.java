@@ -100,7 +100,7 @@ public class App {
 		});
 
 		final Searcher searcher = new Searcher(esNodeClient);
-		get(new RequestHandler("api", searcher, args.getNominatimImportLanguages()));
-		get(new RequestHandler("api/", searcher, args.getNominatimImportLanguages()));
+		get(new RequestHandler("api", searcher, args.getSupportedLanguages()));
+		get(new RequestHandler("api/", searcher, args.getSupportedLanguages()));
 	}
 }
