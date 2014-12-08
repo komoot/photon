@@ -16,6 +16,9 @@ public class CommandLineArgs {
 	
 	@Parameter(names = "-nominatim-import", description = "import nominatim database into photon (this will delete previous index)")
 	private boolean nominatimImport = false;
+        
+        @Parameter(names = "-nominatim-import-languages", description = "languages nominatim importer should import, comma seperated (default: 'en,fr,de,it,nl')")
+	private String nominatimImportLanguages = "en,fr,de,it,nl";
 
 	@Parameter(names = "-json", description = "import nominatim database and dump it to a json like files in (useful for developing)")
 	private String jsonDump = null;

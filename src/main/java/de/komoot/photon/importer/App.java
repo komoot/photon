@@ -41,7 +41,7 @@ public class App {
 		if(args.getJsonDump() != null) {
 			try {
 				final String filename = args.getJsonDump();
-				final JsonDumper jsonDumper = new JsonDumper(filename);
+				final JsonDumper jsonDumper = new JsonDumper(filename, args.getNominatimImportLanguages());
 				NominatimConnector nominatimConnector = new NominatimConnector(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
 				nominatimConnector.setImporter(jsonDumper);
 				nominatimConnector.readEntireDatabase();
@@ -65,16 +65,17 @@ public class App {
 
 		if(args.isNominatimImport()) {
 			esServer.recreateIndex(); // dump previous data
-			Importer importer = new Importer(esNodeClient);
+                        log.info("starting import from nominatim to photon with languages: " + args.getNominatimImportLanguages());
+			Importer importer = new Importer(esNodeClient, args.getNominatimImportLanguages());
 			NominatimConnector nominatimConnector = new NominatimConnector(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
 			nominatimConnector.setImporter(importer);
 			nominatimConnector.readEntireDatabase();
-			log.info("imported data from nominatim to photon.");
+                        log.info("imported data from nominatim to photon with languages: " + args.getNominatimImportLanguages());
 			return;
 		}
 
 		final NominatimUpdater nominatimUpdater = new NominatimUpdater(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
-		de.komoot.photon.importer.Updater updater = new de.komoot.photon.importer.elasticsearch.Updater(esNodeClient);
+		de.komoot.photon.importer.Updater updater = new de.komoot.photon.importer.elasticsearch.Updater(esNodeClient, args.getNominatimImportLanguages());
 		nominatimUpdater.setUpdater(updater);
 
 		startApi(args, esNodeClient, nominatimUpdater);
@@ -99,7 +100,7 @@ public class App {
 		});
 
 		final Searcher searcher = new Searcher(esNodeClient);
-		get(new RequestHandler("api", searcher));
-		get(new RequestHandler("api/", searcher));
+		get(new RequestHandler("api", searcher, args.getNominatimImportLanguages()));
+		get(new RequestHandler("api/", searcher, args.getNominatimImportLanguages()));
 	}
 }

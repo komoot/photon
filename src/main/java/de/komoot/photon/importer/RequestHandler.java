@@ -2,7 +2,8 @@ package de.komoot.photon.importer;
 
 import com.google.common.base.Joiner;
 import de.komoot.photon.importer.elasticsearch.Searcher;
-import org.elasticsearch.common.collect.ImmutableSet;
+import java.util.Arrays;
+import java.util.HashSet;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import spark.Request;
@@ -19,11 +20,12 @@ import java.util.Set;
  */
 public class RequestHandler extends Route {
 	private final Searcher searcher;
-	private static final Set<String> supportedLanguages = ImmutableSet.of("de", "en", "fr", "it");
-
-	protected RequestHandler(String path, Searcher searcher) {
+	private final Set<String> supportedLanguages;
+        
+	protected RequestHandler(String path, Searcher searcher, String languages) {
 		super(path);
 		this.searcher = searcher;
+                this.supportedLanguages = new HashSet<String>(Arrays.asList(languages.split(",")));
 	}
 
 	@Override

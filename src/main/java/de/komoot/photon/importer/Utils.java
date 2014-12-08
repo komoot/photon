@@ -22,9 +22,9 @@ import java.util.Set;
 public class Utils {
 	static final Joiner commaJoiner = Joiner.on(", ").skipNulls();
 
-	final static String[] languages = new String[]{"de", "en", "fr", "it"};
+	//final static String[] languages = new String[]{"de", "en", "fr", "it"};
 
-	public static XContentBuilder convert(PhotonDoc doc) throws IOException {
+	public static XContentBuilder convert(PhotonDoc doc, String[] languages) throws IOException {
 		XContentBuilder builder = XContentFactory.jsonBuilder().startObject()
 				.field(Tags.KEY_OSM_ID, doc.getOsmId())
 				.field(Tags.KEY_OSM_TYPE, doc.getOsmType())
@@ -47,11 +47,11 @@ public class Utils {
 			builder.field("postcode", doc.getPostcode());
 		}
 
-		writeName(builder, doc.getName());
-		writeIntlNames(builder, doc.getCity(), "city");
-		writeIntlNames(builder, doc.getCountry(), "country");
-		writeIntlNames(builder, doc.getStreet(), "street");
-		writeContext(builder, doc.getContext());
+		writeName(builder, doc.getName(), languages);
+		writeIntlNames(builder, doc.getCity(), "city", languages);
+		writeIntlNames(builder, doc.getCountry(), "country", languages);
+		writeIntlNames(builder, doc.getStreet(), "street", languages);
+		writeContext(builder, doc.getContext(), languages);
 		writeExtent(builder, doc.getBbox());
 
 		return builder;
@@ -74,8 +74,8 @@ public class Utils {
 		builder.endObject();
 	}
 
-	private static void writeName(XContentBuilder builder, Map<String, String> name) throws IOException {
-		Map<String, String> fNames = filterNames(name);
+	private static void writeName(XContentBuilder builder, Map<String, String> name, String[] languages) throws IOException {
+		Map<String, String> fNames = filterNames(name, languages);
 
 		if(name.get("alt_name") != null)
 			fNames.put("alt", name.get("alt_name"));
@@ -102,7 +102,7 @@ public class Utils {
 		builder.endObject();
 	}
 
-	protected static void writeContext(XContentBuilder builder, Set<Map<String, String>> contexts) throws IOException {
+	protected static void writeContext(XContentBuilder builder, Set<Map<String, String>> contexts, String[] languages) throws IOException {
 		final SetMultimap<String, String> multimap = HashMultimap.create();
 
 		for(Map<String, String> context : contexts) {
@@ -129,16 +129,16 @@ public class Utils {
 		}
 	}
 
-	private static void writeIntlNames(XContentBuilder builder, Map<String, String> names, String name) throws IOException {
-		Map<String, String> fNames = filterNames(names);
+	private static void writeIntlNames(XContentBuilder builder, Map<String, String> names, String name, String[] languages) throws IOException {
+		Map<String, String> fNames = filterNames(names, languages);
 		write(builder, fNames, name);
 	}
 
-	private static Map<String, String> filterNames(Map<String, String> names) {
-		return filterNames(names, new HashMap<String, String>());
+	private static Map<String, String> filterNames(Map<String, String> names, String[] languages) {
+		return filterNames(names, new HashMap<String, String>(), languages);
 	}
 
-	private static Map<String, String> filterNames(Map<String, String> names, HashMap<String, String> filteredNames) {
+	private static Map<String, String> filterNames(Map<String, String> names, HashMap<String, String> filteredNames, String[] languages) {
 		if(names == null) return filteredNames;
 
 		if(names.get("name") != null) {
