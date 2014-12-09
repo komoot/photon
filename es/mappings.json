@@ -81,6 +81,13 @@
             "copy_to": [
               "collector.it"
             ]
+          },
+          "nl": {
+            "type": "string",
+            "index": "no",
+            "copy_to": [
+              "collector.nl"
+            ]
           }
         }
       },
@@ -121,6 +128,13 @@
             "copy_to": [
               "collector.it"
             ]
+          },
+          "nl": {
+            "type": "string",
+            "index": "no",
+            "copy_to": [
+              "collector.nl"
+            ]
           }
         }
       },
@@ -159,6 +173,13 @@
             "index": "no",
             "copy_to": [
               "collector.it"
+            ]
+          },
+          "nl": {
+            "type": "string",
+            "index": "no",
+            "copy_to": [
+              "collector.nl"
             ]
           }
         }
@@ -243,7 +264,8 @@
               "name.en",
               "name.de",
               "name.fr",
-              "name.it"
+              "name.it",
+              "name.nl"
             ]
           },
           "en": {
@@ -295,6 +317,23 @@
             },
             "copy_to": [
               "collector.it"
+            ]
+          },
+          "nl": {
+            "type": "string",
+            "index": "no",
+            "fields": {
+              "ngrams": {
+                "type": "string",
+                "index_analyzer": "index_ngram"
+              },
+              "raw": {
+                "type": "string",
+                "index_analyzer": "index_raw"
+              }
+            },
+            "copy_to": [
+              "collector.nl"
             ]
           }
         }
@@ -335,6 +374,13 @@
             "type": "string",
             "copy_to": [
               "collector.it"
+            ]
+          },
+          "nl": {
+            "index": "no",
+            "type": "string",
+            "copy_to": [
+              "collector.nl"
             ]
           }
         }
@@ -383,6 +429,16 @@
             }
           },
           "it": {
+            "type": "string",
+            "analyzer": "index_ngram",
+            "fields": {
+              "raw": {
+                "type": "string",
+                "analyzer": "index_raw"
+              }
+            }
+          },
+          "nl": {
             "type": "string",
             "analyzer": "index_ngram",
             "fields": {
