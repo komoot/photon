@@ -27,7 +27,7 @@ public class RemoveStreetDuplicatesTest extends ESBaseTester {
 		PhotonDoc street2 = this.createStreetDoc(2, "Walserstraße", "6993");
 		PhotonDoc street3 = this.createStreetDoc(3, "Walserstraße", "6991");
 
-		Importer instance = new Importer(getClient());
+		Importer instance = new Importer(getClient(), "en"); // hardcoded lang
 		instance.add(street1);
 		instance.add(street2);
 		instance.add(street3);

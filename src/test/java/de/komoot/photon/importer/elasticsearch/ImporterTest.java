@@ -28,7 +28,7 @@ public class ImporterTest extends ESBaseTester {
 		nameMap.put("name", "testing");
 
 		PhotonDoc doc = PhotonDoc.create(1, "way", 1, nameMap);
-		Importer instance = new Importer(getClient(), "en,fr,de,it");
+		Importer instance = new Importer(getClient(), "en"); // hardcoded lang
 		instance.add(doc);
 		instance.finish();
 
