@@ -6,6 +6,7 @@ import com.google.common.collect.Sets;
 import de.komoot.photon.importer.Tags;
 import de.komoot.photon.importer.osm.OSMTags;
 import lombok.extern.slf4j.Slf4j;
+import de.komoot.photon.importer.Utils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.text.StrSubstitutor;
@@ -66,14 +67,14 @@ public class Searcher {
 
 		SearchResponse response = client.prepareSearch("photon").setSearchType(SearchType.QUERY_AND_FETCH).setQuery(query).setSize(limit).setTimeout(TimeValue.timeValueSeconds(7)).execute().actionGet();
 		List<JSONObject> results = convert(response.getHits().getHits(), lang);
-		results = removeStreetDuplicates(results);
+		results = removeStreetDuplicates(results, lang);
 		if(results.size() > limit) {
 			results = results.subList(0, limit);
 		}
 		return results;
 	}
 
-	private List<JSONObject> removeStreetDuplicates(List<JSONObject> results) {
+	private List<JSONObject> removeStreetDuplicates(List<JSONObject> results, String lang) {
 		List<JSONObject> filteredItems = Lists.newArrayListWithCapacity(results.size());
 		final HashSet<String> keys = Sets.newHashSet();
 		for(JSONObject result : results) {
@@ -84,12 +85,35 @@ public class Searcher {
 					// street has a postcode and name
 					String postcode = properties.getString(OSMTags.KEY_POSTCODE);
 					String name = properties.getString(OSMTags.KEY_NAME);
-					String key = postcode + ":" + name;
+					String key = postcode + ":" + name;                                                                   
 
 					if(keys.contains(key)) {
 						// a street with this name + postcode is already part of the result list
 						continue;
-					}
+					} else if (lang.equals("nl")) {
+                                                // check for dutch postcodes (i.e. 6532RA). If a street has the same name and the same 4 numbers in the postcode, 
+                                                // we can assume it is part of the same street, so only use the first
+                                                try {
+                                                        String letterlessPostcode = Utils.stripNonDigits(postcode);
+                                                        int postcodeNumbers = Integer.parseInt(letterlessPostcode);
+                                                        boolean foundMatch = false;
+                                                        
+                                                        for (String keyString : keys) {
+                                                                String letterlessKey = Utils.stripNonDigits(keyString);    
+                                                                // also check if name equals, 
+                                                                // which is a safety check for streets that partially match and have the same postcode numbers
+                                                                String keyName = keyString.split(":")[1];
+                                                                if (postcodeNumbers == Integer.parseInt(letterlessKey) && keyName.equals(name)) {
+                                                                        foundMatch = true;
+                                                                        break;
+                                                                }
+                                                        }
+                                                        
+                                                        if (foundMatch) {
+                                                                continue;
+                                                        }
+                                                } catch (NumberFormatException e) {}                                                
+                                        }
 					keys.add(key);
 				}
 			}
