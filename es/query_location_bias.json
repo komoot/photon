@@ -60,7 +60,8 @@
         "functions": [
           {
             "script_score": {
-              "script": "1 + doc['importance'].value * 100"
+              "script": "1 + doc['importance'].value * 100",
+              "lang" : "mvel"
             }
           },
           {
@@ -69,7 +70,8 @@
               "params": {
                 "lat": ${lat},
                 "lon": ${lon}
-              }
+              },
+              "lang" : "mvel"
             }
           }
         ]
