@@ -43,15 +43,14 @@ public class Server {
 			setupDirectories(new URL("file://" + mainDirectory));
 		} catch(MalformedURLException e) {
 			log.error("Can´t create directories");
-		} catch(Exception ex)
-		{
+		} catch(Exception ex) {
 			try {
 				setupDirectories(new URL("file:///" + mainDirectory)); //Enable running on windows.
 			} catch(MalformedURLException e) {
 				log.error("Can´t create directories");
 			}
 		}
-        this.clusterName = clusterName;
+		this.clusterName = clusterName;
 	}
 
 	public Server start() {
