@@ -67,8 +67,8 @@
             "script_score": {
               "script": "dist = doc['coordinate'].distanceInKm(lat, lon); 0.5 + ( 1.5 / (1.0 + dist/40.0) )",
               "params": {
-                "lat": "${lat}",
-                "lon": "${lon}"
+                "lat": ${lat},
+                "lon": ${lon}
               }
             }
           }
