@@ -52,7 +52,7 @@ public class App {
 			}
 		}
 
-		final Server esServer = new Server(args.getCluster(), args.getDataDirectory());
+		final Server esServer = new Server(args.getCluster(), args.getDataDirectory(), args.getNominatimImportLanguages());
 		esServer.start();
 
 		Client esNodeClient = esServer.getClient();
