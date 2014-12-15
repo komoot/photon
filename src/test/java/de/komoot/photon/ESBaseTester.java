@@ -30,7 +30,7 @@ public class ESBaseTester {
         if (server != null)
             return;
         
-        server = new Server("photon", new File("./target/es_photon").getAbsolutePath()).start(true);
+        server = new Server("photon", new File("./target/es_photon").getAbsolutePath(), "en").start(true);
         server.recreateIndex();
     }
 
