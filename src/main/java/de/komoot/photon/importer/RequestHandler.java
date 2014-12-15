@@ -22,7 +22,7 @@ public class RequestHandler extends Route {
 	private final Searcher searcher;
 	private final Set<String> supportedLanguages;
         
-	protected RequestHandler(String path, Searcher searcher, String languages) {
+        protected RequestHandler(String path, Searcher searcher, String languages) {
 		super(path);
 		this.searcher = searcher;
                 this.supportedLanguages = new HashSet<String>(Arrays.asList(languages.split(",")));
