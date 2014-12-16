@@ -185,50 +185,18 @@ public class Server {
                                         JSONObject nameToCollectorObject = new JSONObject(nameToCollectorString.replace("{lang}", lang));
                                         JSONObject collectorObject = new JSONObject(collectorString.replace("{lang}", lang));
                                     
-                                        // add language specific city to the collector
-                                        JSONObject city = propertiesObject.optJSONObject("city");
-                                        JSONObject cityProperties = city == null ? null : city.optJSONObject("properties");
-                                        if(cityProperties != null) {
-                                                cityProperties.put(lang, copyToCollectorObject);
-                                                city.put("properties", cityProperties);
-                                                propertiesObject.put("city", city);
-                                        }
+                                        // add language specific tags to the collector
+                                        propertiesObject = addToCollector("city", propertiesObject, copyToCollectorObject, lang);
+                                        propertiesObject = addToCollector("context", propertiesObject, copyToCollectorObject, lang);
+                                        propertiesObject = addToCollector("country", propertiesObject, copyToCollectorObject, lang);
+                                        propertiesObject = addToCollector("street", propertiesObject, copyToCollectorObject, lang);
+                                        propertiesObject = addToCollector("name", propertiesObject, nameToCollectorObject, lang);
                                         
-                                        // add language specific context to the collector
-                                        JSONObject context = propertiesObject.optJSONObject("context");
-                                        JSONObject contextProperties = context == null ? null : context.optJSONObject("properties");
-                                        if(contextProperties != null) {
-                                                contextProperties.put(lang, copyToCollectorObject);
-                                                context.put("properties", contextProperties);
-                                                propertiesObject.put("context", context);
-                                        }
-                                        
-                                        // add language specific country to the collector
-                                        JSONObject country = propertiesObject.optJSONObject("country");
-                                        JSONObject countryProperties = country == null ? null : country.optJSONObject("properties");
-                                        if(countryProperties != null) {
-                                                countryProperties.put(lang, copyToCollectorObject);
-                                                country.put("properties", countryProperties);
-                                                propertiesObject.put("country", country);
-                                        }
-                                        
-                                        // add language specific street to the collector
-                                        JSONObject street = propertiesObject.optJSONObject("street");
-                                        JSONObject streetProperties = street == null ? null : street.optJSONObject("properties");
-                                        if(streetProperties != null) {
-                                                streetProperties.put(lang, copyToCollectorObject);
-                                                street.put("properties", streetProperties);
-                                                propertiesObject.put("street", street);
-                                        }
-                                        
-                                        // add language specific name to the collector
+                                        // add language specific collector to default for name
                                         JSONObject name = propertiesObject.optJSONObject("name");
                                         JSONObject nameProperties = name == null ? null : name.optJSONObject("properties");
                                         if(nameProperties != null) {
-                                                nameProperties.put(lang, nameToCollectorObject);
                                                 JSONObject defaultObject = nameProperties.optJSONObject("default");
-                                                
-                                                // add language specific collector to default
                                                 JSONArray copyToArray = defaultObject == null ? null : defaultObject.optJSONArray("copy_to");
                                                 copyToArray.put("name." + lang);
                                                 
@@ -239,13 +207,7 @@ public class Server {
                                         }
                                         
                                         // add language specific collector
-                                        JSONObject collector = propertiesObject.optJSONObject("collector");
-                                        JSONObject collectorProperties = collector == null ? null : collector.optJSONObject("properties");
-                                        if(collectorProperties != null) {
-                                                collectorProperties.put(lang, collectorObject);
-                                                collector.put("properties", collectorProperties);
-                                                propertiesObject.put("collector", collector);
-                                        }
+                                        propertiesObject = addToCollector("collector", propertiesObject, collectorObject, lang);                                        
                                 }
                                 placeObject.put("properties", propertiesObject);
                                 return mappingsObject.put("place", placeObject);
@@ -253,5 +215,16 @@ public class Server {
                 }
                 log.error("cannot add langs to mapping.json, please double-check the mappings.json or the language values supplied");
                 return null;
+        }
+        
+        private JSONObject addToCollector(String key, JSONObject properties, JSONObject collectorObject, String lang) {
+                JSONObject keyObject = properties.optJSONObject(key);
+                JSONObject keyProperties = keyObject == null ? null : keyObject.optJSONObject("properties");
+                if(keyProperties != null) {
+                        keyProperties.put(lang, collectorObject);
+                        keyObject.put("properties", keyProperties);
+                        return properties.put(key, keyObject);
+                }            
+                return properties;
         }
 }
