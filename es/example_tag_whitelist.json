@@ -1,0 +1,46 @@
+{
+  "tags": {
+    "place": [
+      "locality",
+      "hamlet",
+      "island",
+      "town",
+      "isolated_dwelling",
+      "suburb",
+      "islet",
+      "neighbourhood",
+      "city",
+      "municipality",
+      "region",
+      "county",
+      "country",
+      "state",
+      "city_block",
+      "borough",
+      "national_park"
+    ],
+    "highway": [
+      "residential",
+      "unclassified",
+      "tertiary",
+      "secondary",
+      "primary",
+      "trunk",
+      "pedestrian"
+    ],
+    "landuse": [
+      "forest",
+      "park",
+      "nature_reserve"
+    ],
+    "leisure": [
+      "park",
+      "nature_reserve"
+    ],
+    "boundary": [
+      "administrative",
+      "national_park",
+      "protected_area"
+    ]
+  }
+}
