@@ -164,7 +164,6 @@ public class NominatimConnector {
 		public ImportThread(BlockingQueue<PhotonDoc> documents) {
 			this.documents = documents;
 		}
-		
 
 		@Override
 		public void run() {
@@ -241,8 +240,6 @@ public class NominatimConnector {
 					}
 				}
 
-
-				//importer.add(doc);
 				while (true) {
 					try {
 						documents.put(doc);
@@ -269,7 +266,6 @@ public class NominatimConnector {
 			}
 			break;
 		}
-		//importer.finish();
 		log.info(String.format("finished import of %s photon documents.", MessageFormat.format("{0}", counter.longValue())));
 	}
 }
