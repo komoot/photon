@@ -41,7 +41,7 @@ public class App {
 		if(args.getJsonDump() != null) {
 			try {
 				final String filename = args.getJsonDump();
-				final JsonDumper jsonDumper = new JsonDumper(filename, args.getUsingLanguages());
+				final JsonDumper jsonDumper = new JsonDumper(filename, args.getLanguages());
 				NominatimConnector nominatimConnector = new NominatimConnector(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
 				nominatimConnector.setImporter(jsonDumper);
 				nominatimConnector.readEntireDatabase();
@@ -52,7 +52,7 @@ public class App {
 			}
 		}
 
-		final Server esServer = new Server(args.getCluster(), args.getDataDirectory(), args.getUsingLanguages());
+		final Server esServer = new Server(args.getCluster(), args.getDataDirectory(), args.getLanguages());
 		esServer.start();
 
 		Client esNodeClient = esServer.getClient();
@@ -65,8 +65,8 @@ public class App {
 
 		if(args.isNominatimImport()) {
 			esServer.recreateIndex(); // dump previous data
-                        log.info("starting import from nominatim to photon with languages: " + args.getUsingLanguages());
-			Importer importer = new Importer(esNodeClient, args.getUsingLanguages());
+                        log.info("starting import from nominatim to photon with languages: " + args.getLanguages());
+			Importer importer = new Importer(esNodeClient, args.getLanguages());
 			NominatimConnector nominatimConnector = new NominatimConnector(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
 			nominatimConnector.setImporter(importer);
                         try {
@@ -75,12 +75,12 @@ public class App {
                             log.info("ERROR IMPORTING FROM NOMINATIM: "+e.getMessage());
                         }
 			
-                        log.info("imported data from nominatim to photon with languages: " + args.getUsingLanguages());
+                        log.info("imported data from nominatim to photon with languages: " + args.getLanguages());
 			return;
 		}
 
 		final NominatimUpdater nominatimUpdater = new NominatimUpdater(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
-		de.komoot.photon.importer.Updater updater = new de.komoot.photon.importer.elasticsearch.Updater(esNodeClient, args.getUsingLanguages());
+		de.komoot.photon.importer.Updater updater = new de.komoot.photon.importer.elasticsearch.Updater(esNodeClient, args.getLanguages());
 		nominatimUpdater.setUpdater(updater);
 
 		startApi(args, esNodeClient, nominatimUpdater);
@@ -105,7 +105,7 @@ public class App {
 		});
 
 		final Searcher searcher = new Searcher(esNodeClient);
-		get(new RequestHandler("api", searcher, args.getUsingLanguages()));
-		get(new RequestHandler("api/", searcher, args.getUsingLanguages()));
+		get(new RequestHandler("api", searcher, args.getLanguages()));
+		get(new RequestHandler("api/", searcher, args.getLanguages()));
 	}
 }
