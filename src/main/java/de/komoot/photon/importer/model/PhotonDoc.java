@@ -9,6 +9,8 @@ import lombok.Data;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 /**
  * denormalized doc with all information needed be dumped to elasticsearch
@@ -48,32 +50,21 @@ public class PhotonDoc {
             		"", null, null, 0, 0, null, null, 0, 0, 0);
         }
 
-	public boolean isUsefulForIndex() {
-                // Falk specific accepted tags
-                Set<String> acceptedKeys = new HashSet<String>(Arrays.asList("place,highway,landuse,leisure,boundary".split(",")));
-                if (!acceptedKeys.contains(tagKey)) return false;
+	public boolean isUsefulForIndex(JSONObject tagWhitelist) {                
+                if(tagWhitelist != null) {
+                        if(!tagWhitelist.keySet().contains(tagKey)) return false;
+
+                        JSONArray values = tagWhitelist.optJSONArray(tagKey);
+                        boolean foundMatch = false;
+                        for(int i=0; i<values.length(); i++) {
+                                String value = values.getString(i);
+                                foundMatch = value.equalsIgnoreCase(tagValue);
+                                if(foundMatch) break;
+                        }
+                        if(!foundMatch) return false;
+                }
             
-                Set<String> acceptedPlaceTags = new HashSet<String>(Arrays.asList("locality,village,hamlet,island,town,isolated_dwelling,suburb,islet,neighbourhood,city,municipality,region,county,country,state,city_block,borough,national_park".split(",")));
-                if("place".equals(tagKey) && !acceptedPlaceTags.contains(tagValue)) return false;
-                
-                Set<String> acceptedHighwayTags = new HashSet<String>(Arrays.asList("residential,unclassified,tertiary,secondary,primary,trunk,pedestrian".split(",")));
-                if("highway".equals(tagKey) && !acceptedHighwayTags.contains(tagValue)) return false;
-                
-                Set<String> acceptedLanduseTags = new HashSet<String>(Arrays.asList("forest,park,nature_reserve".split(",")));
-                if("landuse".equals(tagKey) && !acceptedLanduseTags.contains(tagValue)) return false;
-                
-                Set<String> acceptedLeisureTags = new HashSet<String>(Arrays.asList("park,nature_reserve".split(",")));
-                if("leisure".equals(tagKey) && !acceptedLeisureTags.contains(tagValue)) return false;
-                
-                Set<String> acceptedBoundaryTags = new HashSet<String>(Arrays.asList("administrative,national_park,protected_area".split(",")));
-                if("boundary".equals(tagKey) && !acceptedBoundaryTags.contains(tagValue)) return false;
-                
-                // Filter boundaries that are not admin_level 8
-                if("boundary".equals(tagKey) && tagValue.equals("administrative") && (admin_level > 8 || admin_level < 0)) return false;
-                // End Falk specific accepted tags
-                                
-                // Not used when using the Falk place whitelist
-		//if("place".equals(tagKey) && "houses".equals(tagValue)) return false;
+		if("place".equals(tagKey) && "houses".equals(tagValue)) return false;
 
 		if(houseNumber != null) return true;
 

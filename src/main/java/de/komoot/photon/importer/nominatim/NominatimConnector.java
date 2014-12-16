@@ -8,6 +8,9 @@ import com.vividsolutions.jts.geom.Point;
 import de.komoot.photon.importer.Importer;
 import de.komoot.photon.importer.model.PhotonDoc;
 import de.komoot.photon.importer.nominatim.model.AddressRow;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import lombok.extern.slf4j.Slf4j;
 
 import org.apache.commons.dbcp.BasicDataSource;
@@ -25,6 +28,9 @@ import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.atomic.AtomicLong;
+import org.apache.commons.io.IOUtils;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * Export nominatim data
@@ -35,6 +41,8 @@ import java.util.concurrent.atomic.AtomicLong;
 public class NominatimConnector {
 	private final JdbcTemplate template;
 	private Map<String, Map<String, String>> countryNames;
+        private final String tagWhitelistPath;
+        private JSONObject tagWhitelistObject;
 	/**
 	 * maps a placex row in nominatim to a photon doc, some attributes are still missing and can be derived by connected address items.
 	 */
@@ -99,8 +107,9 @@ public class NominatimConnector {
 	 * @param database database name
 	 * @param username db username
 	 * @param password db username's password
+	 * @param tagWhitelistPath path to tag whitelist
 	 */
-	public NominatimConnector(String host, int port, String database, String username, String password) {
+	public NominatimConnector(String host, int port, String database, String username, String password, String tagWhitelistPath) {
 		BasicDataSource dataSource = new BasicDataSource();
 
 		dataSource.setUrl(String.format("jdbc:postgres_jts://%s:%d/%s", host, port, database));
@@ -111,6 +120,8 @@ public class NominatimConnector {
 
 		template = new JdbcTemplate(dataSource);
 		template.setFetchSize(100000);
+                this.tagWhitelistPath = tagWhitelistPath;
+                this.tagWhitelistObject = null;
 	}
 
 	public void setImporter(Importer importer) {
@@ -178,6 +189,24 @@ public class NominatimConnector {
 	 */
 	public void readEntireDatabase() {
 		log.info("start importing documents from nominatim ...");
+                
+                if(tagWhitelistPath != null) {
+                        log.info("reading tag whitelist from specified file: "+ tagWhitelistPath);
+                        String tagWhitelistString = null;
+                        try {
+                                FileInputStream tagWhitelistStream = new FileInputStream(new File(tagWhitelistPath));
+                                tagWhitelistString = IOUtils.toString(tagWhitelistStream, "UTF-8");                            
+                        } catch (IOException e) {
+                                log.error("cannot read tag whitelist file", e);
+                        }
+                        try {
+                                JSONObject whitelist = new JSONObject(tagWhitelistString);
+                                tagWhitelistObject = whitelist.getJSONObject("tags");                            
+                        } catch (JSONException e) {
+                                log.error("cannot parse tag whitelist file", e);
+                        }                        
+                }
+                
 		final AtomicLong counter = new AtomicLong();
 
 		final int progressInterval = 5000;
@@ -192,7 +221,7 @@ public class NominatimConnector {
 			public void processRow(ResultSet rs) throws SQLException {
 				PhotonDoc doc = placeRowMapper.mapRow(rs, 0);
 
-				if(!doc.isUsefulForIndex()) return; // do not import document
+				if(!doc.isUsefulForIndex(tagWhitelistObject)) return; // do not import document
 				
 				// finalize document by taking into account the higher level address assigned to this doc.
 				final List<AddressRow> addresses = getAddresses(doc);
