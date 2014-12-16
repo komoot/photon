@@ -3,7 +3,6 @@ package de.komoot.photon.importer.model;
 import com.neovisionaries.i18n.CountryCode;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Point;
-import java.util.Arrays;
 import lombok.Data;
 
 import java.util.HashSet;
@@ -35,7 +34,6 @@ public class PhotonDoc {
 	final private Point centroid;
 	final private long linkedPlaceId; // 0 if unset
 	final private int rankSearch;
-        final private int admin_level;
 
 	private Map<String, String> street;
 	private Map<String, String> city;
@@ -47,7 +45,7 @@ public class PhotonDoc {
          */
         public static PhotonDoc create(long placeId, String osmType, long osmId, Map<String, String> nameMap) {
             return new PhotonDoc(placeId, osmType, osmId, "", "", nameMap,
-            		"", null, null, 0, 0, null, null, 0, 0, 0);
+            		"", null, null, 0, 0, null, null, 0, 0);
         }
 
 	public boolean isUsefulForIndex(JSONObject tagWhitelist) {                

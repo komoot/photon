@@ -75,15 +75,14 @@ public class NominatimConnector {
 					CountryCode.getByCode(rs.getString("calculated_country_code")),
 					(Point) DBUtils.extractGeometry(rs, "centroid"),
 					rs.getLong("linked_place_id"),
-					rs.getInt("rank_search"),
-                                        rs.getInt("admin_level")
+					rs.getInt("rank_search")
 			);
 			doc.setPostcode(rs.getString("postcode"));
 			doc.setCountry(getCountryNames(rs.getString("calculated_country_code")));
 			return doc;
 		}
 	};
-	private final String selectColsPlaceX = "place_id, osm_type, osm_id, class, type, name, housenumber, postcode, extratags, ST_Envelope(geometry) AS bbox, parent_place_id, linked_place_id, rank_search, importance, calculated_country_code, centroid, admin_level";
+	private final String selectColsPlaceX = "place_id, osm_type, osm_id, class, type, name, housenumber, postcode, extratags, ST_Envelope(geometry) AS bbox, parent_place_id, linked_place_id, rank_search, importance, calculated_country_code, centroid";
 	private Importer importer;
 	
 	private Map<String, String> getCountryNames(String countrycode) {
@@ -157,7 +156,7 @@ public class NominatimConnector {
 	}
 	
 	static final PhotonDoc FINAL_DOCUMENT =
-			new PhotonDoc(0, null, 0, null, null, null, null, null, null, 0, 0, null, null, 0, 0, 0);
+			new PhotonDoc(0, null, 0, null, null, null, null, null, null, 0, 0, null, null, 0, 0);
 	
 	private class ImportThread implements Runnable {
 		private BlockingQueue<PhotonDoc> documents;
