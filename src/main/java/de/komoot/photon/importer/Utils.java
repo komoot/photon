@@ -22,8 +22,6 @@ import java.util.Set;
 public class Utils {
 	static final Joiner commaJoiner = Joiner.on(", ").skipNulls();
 
-	//final static String[] languages = new String[]{"de", "en", "fr", "it"};
-
 	public static XContentBuilder convert(PhotonDoc doc, String[] languages) throws IOException {
 		XContentBuilder builder = XContentFactory.jsonBuilder().startObject()
 				.field(Tags.KEY_OSM_ID, doc.getOsmId())
