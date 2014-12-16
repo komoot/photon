@@ -143,15 +143,19 @@ public class Server {
 		final Client client = this.getClient();
 		final InputStream mappings = Thread.currentThread().getContextClassLoader().getResourceAsStream("mappings.json");
 		final InputStream index_settings = Thread.currentThread().getContextClassLoader().getResourceAsStream("index_settings.json");
-
+                
+                String mappingsString = "";
 		try {
                         // get mappings as JSONObject
-                        String mappingsString = IOUtils.toString(mappings);
-                        JSONObject mappingsJSON = new JSONObject(mappingsString);
+                        mappingsString = IOUtils.toString(mappings);
+                } catch(IOException e) {
+			log.error("cannot setup index, elastic search config files not readable", e);
+		}
+                JSONObject mappingsJSON = new JSONObject(mappingsString);
                         
-                        // add all langs to the mapping
-                        mappingsJSON = addLangsToMapping(mappingsJSON);
-                        
+                // add all langs to the mapping
+                mappingsJSON = addLangsToMapping(mappingsJSON);
+                try {        
 			client.admin().indices().prepareCreate("photon").setSettings(IOUtils.toString(index_settings)).execute().actionGet();
 			client.admin().indices().preparePutMapping("photon").setType("place").setSource(mappingsJSON.toString()).execute().actionGet();
 		} catch(IOException e) {
