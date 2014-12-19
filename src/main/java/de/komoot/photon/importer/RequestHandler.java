@@ -21,7 +21,7 @@ import java.util.Set;
 public class RequestHandler extends Route {
 	private final Searcher searcher;
 	private final Set<String> supportedLanguages;
-        
+
         protected RequestHandler(String path, Searcher searcher, String languages) {
 		super(path);
 		this.searcher = searcher;
