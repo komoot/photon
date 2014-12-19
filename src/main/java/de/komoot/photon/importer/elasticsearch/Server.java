@@ -137,30 +137,20 @@ public class Server {
 		return mainDirectory;
 	}
 
-	public void recreateIndex() {
+	public void recreateIndex() throws IOException {
 		deleteIndex();
 
 		final Client client = this.getClient();
 		final InputStream mappings = Thread.currentThread().getContextClassLoader().getResourceAsStream("mappings.json");
 		final InputStream index_settings = Thread.currentThread().getContextClassLoader().getResourceAsStream("index_settings.json");
                 
-                String mappingsString = "";
-		try {
-                        // get mappings as JSONObject
-                        mappingsString = IOUtils.toString(mappings);
-                } catch(IOException e) {
-			log.error("cannot setup index, elastic search config files not readable", e);
-		}
+                String mappingsString = IOUtils.toString(mappings);                
                 JSONObject mappingsJSON = new JSONObject(mappingsString);
                         
                 // add all langs to the mapping
                 mappingsJSON = addLangsToMapping(mappingsJSON);
-                try {        
-			client.admin().indices().prepareCreate("photon").setSettings(IOUtils.toString(index_settings)).execute().actionGet();
-			client.admin().indices().preparePutMapping("photon").setType("place").setSource(mappingsJSON.toString()).execute().actionGet();
-		} catch(IOException e) {
-			log.error("cannot setup index, elastic search config files not readable", e);
-		}
+                client.admin().indices().prepareCreate("photon").setSettings(IOUtils.toString(index_settings)).execute().actionGet();
+                client.admin().indices().preparePutMapping("photon").setType("place").setSource(mappingsJSON.toString()).execute().actionGet();
 	}
 
 	public DeleteIndexResponse deleteIndex() {
