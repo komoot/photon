@@ -18,7 +18,7 @@ import java.io.IOException;
 public class Updater implements de.komoot.photon.importer.Updater {
 	private Client esClient;
 	private BulkRequestBuilder bulkRequest;
-        private String[] languages;
+        private final String[] languages;
 
 	public Updater(Client esClient, String languages) {
 		this.esClient = esClient;
