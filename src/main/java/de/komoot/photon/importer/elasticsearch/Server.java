@@ -123,7 +123,7 @@ public class Server {
 		this.updateDirectory = new File(photonDirectory, "updates");
 		this.tempDirectory = new File(photonDirectory, "temp");
 		this.importDirectory = new File(photonDirectory, "imports");
-		final File scriptsDirectory = new File(photonDirectory, "scripts");
+		final File scriptsDirectory = new File(esDirectory, "config/scripts");
 
 		for(File directory : new File[]{
 				esDirectory, dumpDirectory, updateDirectory, importDirectory, tempDirectory,
