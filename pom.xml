@@ -13,6 +13,11 @@
 			<version>1.4.1</version>
 		</dependency>
 		<dependency>
+			<groupId>org.elasticsearch</groupId>
+			<artifactId>elasticsearch-lang-mvel</artifactId>
+			<version>1.4.1</version>
+		</dependency>
+		<dependency>
 			<groupId>postgresql</groupId>
 			<artifactId>postgresql</artifactId>
 			<version>9.1-901.jdbc4</version>
