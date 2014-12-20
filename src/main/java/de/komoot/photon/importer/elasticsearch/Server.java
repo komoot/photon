@@ -2,6 +2,7 @@ package de.komoot.photon.importer.elasticsearch;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.SystemUtils;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.settings.ImmutableSettings;
@@ -16,9 +17,10 @@ import org.elasticsearch.plugins.PluginManager;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 
 import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
 
@@ -31,7 +33,7 @@ import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
 public class Server {
 
 	private Node esNode;
-	private String clusterName = "photon_v0.1";
+	private String clusterName = "photon_v0.2";
 	private File esDirectory;
 	private File dumpDirectory;
 	private File updateDirectory;
@@ -40,15 +42,13 @@ public class Server {
 
 	public Server(String clusterName, String mainDirectory) {
 		try {
-			setupDirectories(new URL("file://" + mainDirectory));
-		} catch(MalformedURLException e) {
-			log.error("Can´t create directories");
-		} catch(Exception ex) {
-			try {
-				setupDirectories(new URL("file:///" + mainDirectory)); //Enable running on windows.
-			} catch(MalformedURLException e) {
-				log.error("Can´t create directories");
+			if(SystemUtils.IS_OS_WINDOWS) {
+				setupDirectories(new URL("file:///" + mainDirectory));
+			} else {
+				setupDirectories(new URL("file://" + mainDirectory));
 			}
+		} catch(Exception e) {
+			log.error("Can't create directories: ", e);
 		}
 		this.clusterName = clusterName;
 	}
@@ -69,14 +69,14 @@ public class Server {
 		Settings settings = sBuilder.build();
 
 		final String pluginPath = this.getClass().getResource("/elasticsearch-wordending-tokenfilter-0.0.1.zip").toExternalForm();
-		PluginManager pluginManager = new PluginManager(new Environment(settings), pluginPath, PluginManager.OutputMode.VERBOSE, new TimeValue(30000));
+		PluginManager pluginManager = new PluginManager(new Environment(settings), pluginPath, PluginManager.OutputMode.VERBOSE, new TimeValue(60000));
 		try {
 			pluginManager.downloadAndExtract("ybon/elasticsearch-wordending-tokenfilter/0.0.1");
 		} catch(IOException e) {
 			log.debug("could not install ybon/elasticsearch-wordending-tokenfilter/0.0.1", e);
 		}
 
-		if(!test) {
+		if(!test && false) {
 			pluginManager = new PluginManager(new Environment(settings), null, PluginManager.OutputMode.VERBOSE, new TimeValue(30000));
 			for(String pluginName : new String[]{"mobz/elasticsearch-head", "polyfractal/elasticsearch-inquisitor"}) {
 				try {
@@ -108,7 +108,7 @@ public class Server {
 		return this.esNode.client();
 	}
 
-	private File setupDirectories(URL directoryName) {
+	private File setupDirectories(URL directoryName) throws IOException, URISyntaxException {
 		File mainDirectory = new File(".");
 
 		try {
@@ -123,11 +123,20 @@ public class Server {
 		this.updateDirectory = new File(photonDirectory, "updates");
 		this.tempDirectory = new File(photonDirectory, "temp");
 		this.importDirectory = new File(photonDirectory, "imports");
+		final File scriptsDirectory = new File(photonDirectory, "scripts");
 
-		for(File directory : new File[]{esDirectory, dumpDirectory, updateDirectory, importDirectory, tempDirectory, photonDirectory, new File(photonDirectory, "elasticsearch/plugins")}) {
+		for(File directory : new File[]{
+				esDirectory, dumpDirectory, updateDirectory, importDirectory, tempDirectory,
+				photonDirectory, new File(photonDirectory, "elasticsearch/plugins"), scriptsDirectory
+		}) {
 			if(!directory.exists())
 				directory.mkdirs();
 		}
+
+		// copy script directory to elastic search directory
+		final ClassLoader loader = Thread.currentThread().getContextClassLoader();
+		Files.copy(loader.getResourceAsStream("scripts/general-score.mvel"), new File(scriptsDirectory, "general-score.mvel").toPath(), StandardCopyOption.REPLACE_EXISTING);
+		Files.copy(loader.getResourceAsStream("scripts/location-biased-score.mvel"), new File(scriptsDirectory, "location-biased-score.mvel").toPath(), StandardCopyOption.REPLACE_EXISTING);
 
 		return mainDirectory;
 	}
