@@ -15,6 +15,7 @@ import spark.Response;
 import spark.Route;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 
 import static spark.Spark.*;
 
@@ -41,7 +42,7 @@ public class App {
 		if(args.getJsonDump() != null) {
 			try {
 				final String filename = args.getJsonDump();
-				final JsonDumper jsonDumper = new JsonDumper(filename);
+				final JsonDumper jsonDumper = new JsonDumper(filename, args.getLanguages());
 				NominatimConnector nominatimConnector = new NominatimConnector(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
 				nominatimConnector.setImporter(jsonDumper);
 				nominatimConnector.readEntireDatabase();
@@ -52,29 +53,47 @@ public class App {
 			}
 		}
 
-		final Server esServer = new Server(args.getCluster(), args.getDataDirectory());
+		final Server esServer = new Server(args.getCluster(), args.getDataDirectory(), args.getLanguages());
 		esServer.start();
 
 		Client esNodeClient = esServer.getClient();
 
-		if(args.isDeleteIndex()) {
-			esServer.recreateIndex();
+		if(args.isDeleteIndex()) {                        
+                        try {
+                                esServer.recreateIndex();
+                        } catch (IOException e) {
+                                log.error("cannot setup index, elastic search config files not readable", e);
+                                return;
+                        }
+			
 			log.info("deleted photon index and created an empty new one.");
 			return;
 		}
 
 		if(args.isNominatimImport()) {
-			esServer.recreateIndex(); // dump previous data
-			Importer importer = new Importer(esNodeClient);
+			try {
+                                esServer.recreateIndex(); // dump previous data
+                        } catch (IOException e) {
+                                log.error("cannot setup index, elastic search config files not readable", e);
+                                return;
+                        }
+                        
+                        log.info("starting import from nominatim to photon with languages: " + args.getLanguages());
+			Importer importer = new Importer(esNodeClient, args.getLanguages());
 			NominatimConnector nominatimConnector = new NominatimConnector(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
 			nominatimConnector.setImporter(importer);
-			nominatimConnector.readEntireDatabase();
-			log.info("imported data from nominatim to photon.");
+                        try {
+                            nominatimConnector.readEntireDatabase();
+                        } catch (Exception e) {
+                            log.info("ERROR IMPORTING FROM NOMINATIM: "+e.getMessage());
+                        }
+			
+                        log.info("imported data from nominatim to photon with languages: " + args.getLanguages());
 			return;
 		}
 
 		final NominatimUpdater nominatimUpdater = new NominatimUpdater(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
-		de.komoot.photon.importer.Updater updater = new de.komoot.photon.importer.elasticsearch.Updater(esNodeClient);
+		de.komoot.photon.importer.Updater updater = new de.komoot.photon.importer.elasticsearch.Updater(esNodeClient, args.getLanguages());
 		nominatimUpdater.setUpdater(updater);
 
 		startApi(args, esNodeClient, nominatimUpdater);
@@ -99,7 +118,7 @@ public class App {
 		});
 
 		final Searcher searcher = new Searcher(esNodeClient);
-		get(new RequestHandler("api", searcher));
-		get(new RequestHandler("api/", searcher));
+		get(new RequestHandler("api", searcher, args.getLanguages()));
+		get(new RequestHandler("api/", searcher, args.getLanguages()));
 	}
 }

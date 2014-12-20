@@ -7,3 +7,7 @@ dependency-reduced-pom.xml
 *.~*
 
 __pycache__
+
+nb-configuration.xml
+
+nbactions.xml

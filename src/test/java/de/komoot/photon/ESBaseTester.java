@@ -2,6 +2,7 @@ package de.komoot.photon;
 
 import de.komoot.photon.importer.elasticsearch.Server;
 import java.io.File;
+import java.io.IOException;
 import org.elasticsearch.action.admin.indices.refresh.RefreshRequest;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -26,11 +27,11 @@ public class ESBaseTester {
         shutdownES();
     }    
 
-    public void setUpES() {
+    public void setUpES() throws IOException {
         if (server != null)
             return;
         
-        server = new Server("photon", new File("./target/es_photon").getAbsolutePath()).start(true);
+        server = new Server("photon", new File("./target/es_photon").getAbsolutePath(), "en").start(true);
         server.recreateIndex();
     }
 

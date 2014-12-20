@@ -23,17 +23,19 @@ public class Importer implements de.komoot.photon.importer.Importer {
 	private final String indexType = "place";
 	private final Client esClient;
 	private BulkRequestBuilder bulkRequest;
+        private final String[] languages;
 
-	public Importer(Client esClient) {
+	public Importer(Client esClient, String languages) {
 		this.esClient = esClient;
 		this.bulkRequest = esClient.prepareBulk();
+                this.languages = languages.split(",");
 	}
 
 	@Override
 	public void add(PhotonDoc doc) {
 		try {
 			this.bulkRequest.add(this.esClient.prepareIndex(indexName, indexType).
-					setSource(Utils.convert(doc)).setId(String.valueOf(doc.getPlaceId())));
+					setSource(Utils.convert(doc, languages)).setId(String.valueOf(doc.getPlaceId())));
 		} catch(IOException e) {
 			log.error("could not ", e);
 		}

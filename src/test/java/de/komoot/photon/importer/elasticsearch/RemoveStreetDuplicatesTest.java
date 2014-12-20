@@ -6,6 +6,7 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.PrecisionModel;
 import de.komoot.photon.ESBaseTester;
 import de.komoot.photon.importer.model.PhotonDoc;
+import java.io.IOException;
 import org.json.JSONObject;
 import org.junit.*;
 
@@ -20,14 +21,14 @@ public class RemoveStreetDuplicatesTest extends ESBaseTester {
 	GeometryFactory FACTORY = new GeometryFactory(new PrecisionModel(), 4326);
 
 	@Before
-	public void setUp() {
+	public void setUp() throws IOException {
 		setUpES();
 		deleteAll();
 		PhotonDoc street1 = this.createStreetDoc(1, "Walserstraße", "6993");
 		PhotonDoc street2 = this.createStreetDoc(2, "Walserstraße", "6993");
 		PhotonDoc street3 = this.createStreetDoc(3, "Walserstraße", "6991");
 
-		Importer instance = new Importer(getClient());
+		Importer instance = new Importer(getClient(), "en"); // hardcoded lang
 		instance.add(street1);
 		instance.add(street2);
 		instance.add(street3);

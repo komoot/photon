@@ -6,6 +6,7 @@ import com.google.common.collect.Sets;
 import de.komoot.photon.importer.Tags;
 import de.komoot.photon.importer.osm.OSMTags;
 import lombok.extern.slf4j.Slf4j;
+import de.komoot.photon.importer.Utils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.text.StrSubstitutor;
@@ -66,14 +67,14 @@ public class Searcher {
 
 		SearchResponse response = client.prepareSearch("photon").setSearchType(SearchType.QUERY_AND_FETCH).setQuery(query).setSize(limit).setTimeout(TimeValue.timeValueSeconds(7)).execute().actionGet();
 		List<JSONObject> results = convert(response.getHits().getHits(), lang);
-		results = removeStreetDuplicates(results);
+		results = removeStreetDuplicates(results, lang);
 		if(results.size() > limit) {
 			results = results.subList(0, limit);
 		}
 		return results;
 	}
 
-	private List<JSONObject> removeStreetDuplicates(List<JSONObject> results) {
+	private List<JSONObject> removeStreetDuplicates(List<JSONObject> results, String lang) {
 		List<JSONObject> filteredItems = Lists.newArrayListWithCapacity(results.size());
 		final HashSet<String> keys = Sets.newHashSet();
 		for(JSONObject result : results) {
@@ -84,12 +85,12 @@ public class Searcher {
 					// street has a postcode and name
 					String postcode = properties.getString(OSMTags.KEY_POSTCODE);
 					String name = properties.getString(OSMTags.KEY_NAME);
-					String key = postcode + ":" + name;
+					String key = postcode + ":" + name;                                                                   
 
 					if(keys.contains(key)) {
 						// a street with this name + postcode is already part of the result list
 						continue;
-					}
+					} 
 					keys.add(key);
 				}
 			}
