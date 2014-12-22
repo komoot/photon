@@ -2,6 +2,7 @@ package de.komoot.photon.importer.elasticsearch;
 
 import de.komoot.photon.ESBaseTester;
 import de.komoot.photon.importer.model.PhotonDoc;
+import java.io.IOException;
 import org.json.JSONObject;
 import org.junit.*;
 
@@ -17,7 +18,7 @@ import static org.junit.Assert.*;
 public class ImporterTest extends ESBaseTester {
 
 	@Before
-	public void setUp() {
+	public void setUp() throws IOException {
 		setUpES();
 		deleteAll();
 	}
