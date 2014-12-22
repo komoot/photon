@@ -137,30 +137,20 @@ public class Server {
 		return mainDirectory;
 	}
 
-	public void recreateIndex() {
+	public void recreateIndex() throws IOException {
 		deleteIndex();
 
 		final Client client = this.getClient();
 		final InputStream mappings = Thread.currentThread().getContextClassLoader().getResourceAsStream("mappings.json");
 		final InputStream index_settings = Thread.currentThread().getContextClassLoader().getResourceAsStream("index_settings.json");
                 
-                String mappingsString = "";
-		try {
-                        // get mappings as JSONObject
-                        mappingsString = IOUtils.toString(mappings);
-                } catch(IOException e) {
-			log.error("cannot setup index, elastic search config files not readable", e);
-		}
+                String mappingsString = IOUtils.toString(mappings);                
                 JSONObject mappingsJSON = new JSONObject(mappingsString);
                         
                 // add all langs to the mapping
                 mappingsJSON = addLangsToMapping(mappingsJSON);
-                try {        
-			client.admin().indices().prepareCreate("photon").setSettings(IOUtils.toString(index_settings)).execute().actionGet();
-			client.admin().indices().preparePutMapping("photon").setType("place").setSource(mappingsJSON.toString()).execute().actionGet();
-		} catch(IOException e) {
-			log.error("cannot setup index, elastic search config files not readable", e);
-		}
+                client.admin().indices().prepareCreate("photon").setSettings(IOUtils.toString(index_settings)).execute().actionGet();
+                client.admin().indices().preparePutMapping("photon").setType("place").setSource(mappingsJSON.toString()).execute().actionGet();
 	}
 
 	public DeleteIndexResponse deleteIndex() {
@@ -178,45 +168,44 @@ public class Server {
                 String nameToCollectorString = "{\"type\":\"string\",\"index\":\"no\",\"fields\":{\"ngrams\":{\"type\":\"string\",\"index_analyzer\":\"index_ngram\"},\"raw\":{\"type\":\"string\",\"index_analyzer\":\"index_raw\"}},\"copy_to\":[\"collector.{lang}\"]}";
                 String collectorString = "{\"type\":\"string\",\"index\":\"no\",\"fields\":{\"ngrams\":{\"type\":\"string\",\"index_analyzer\":\"index_ngram\"},\"raw\":{\"type\":\"string\",\"index_analyzer\":\"index_raw\"}},\"copy_to\":[\"collector.{lang}\"]}}},\"street\":{\"type\":\"object\",\"properties\":{\"default\":{\"index\":\"no\",\"type\":\"string\",\"copy_to\":[\"collector.default\"]}";
                 
-                if(mappingsObject != null) {
-                        JSONObject placeObject = mappingsObject.optJSONObject("place");
-                        JSONObject propertiesObject = placeObject == null ? null : placeObject.optJSONObject("properties");
-                        
-                        if(propertiesObject != null) {
-                                for(String lang : langs) {
-                                        // create lang-specific json objects
-                                        JSONObject copyToCollectorObject = new JSONObject(copyToCollectorString.replace("{lang}", lang));
-                                        JSONObject nameToCollectorObject = new JSONObject(nameToCollectorString.replace("{lang}", lang));
-                                        JSONObject collectorObject = new JSONObject(collectorString.replace("{lang}", lang));
-                                    
-                                        // add language specific tags to the collector
-                                        propertiesObject = addToCollector("city", propertiesObject, copyToCollectorObject, lang);
-                                        propertiesObject = addToCollector("context", propertiesObject, copyToCollectorObject, lang);
-                                        propertiesObject = addToCollector("country", propertiesObject, copyToCollectorObject, lang);
-                                        propertiesObject = addToCollector("street", propertiesObject, copyToCollectorObject, lang);
-                                        propertiesObject = addToCollector("name", propertiesObject, nameToCollectorObject, lang);
-                                        
-                                        // add language specific collector to default for name
-                                        JSONObject name = propertiesObject.optJSONObject("name");
-                                        JSONObject nameProperties = name == null ? null : name.optJSONObject("properties");
-                                        if(nameProperties != null) {
-                                                JSONObject defaultObject = nameProperties.optJSONObject("default");
-                                                JSONArray copyToArray = defaultObject == null ? null : defaultObject.optJSONArray("copy_to");
-                                                copyToArray.put("name." + lang);
-                                                
-                                                defaultObject.put("copy_to", copyToArray);
-                                                nameProperties.put("default", defaultObject);
-                                                name.put("properties", nameProperties);
-                                                propertiesObject.put("name", name);
-                                        }
-                                        
-                                        // add language specific collector
-                                        propertiesObject = addToCollector("collector", propertiesObject, collectorObject, lang);                                        
+                JSONObject placeObject = mappingsObject.optJSONObject("place");
+                JSONObject propertiesObject = placeObject == null ? null : placeObject.optJSONObject("properties");
+
+                if(propertiesObject != null) {
+                        for(String lang : langs) {
+                                // create lang-specific json objects
+                                JSONObject copyToCollectorObject = new JSONObject(copyToCollectorString.replace("{lang}", lang));
+                                JSONObject nameToCollectorObject = new JSONObject(nameToCollectorString.replace("{lang}", lang));
+                                JSONObject collectorObject = new JSONObject(collectorString.replace("{lang}", lang));
+
+                                // add language specific tags to the collector
+                                propertiesObject = addToCollector("city", propertiesObject, copyToCollectorObject, lang);
+                                propertiesObject = addToCollector("context", propertiesObject, copyToCollectorObject, lang);
+                                propertiesObject = addToCollector("country", propertiesObject, copyToCollectorObject, lang);
+                                propertiesObject = addToCollector("street", propertiesObject, copyToCollectorObject, lang);
+                                propertiesObject = addToCollector("name", propertiesObject, nameToCollectorObject, lang);
+
+                                // add language specific collector to default for name
+                                JSONObject name = propertiesObject.optJSONObject("name");
+                                JSONObject nameProperties = name == null ? null : name.optJSONObject("properties");
+                                if(nameProperties != null) {
+                                        JSONObject defaultObject = nameProperties.optJSONObject("default");
+                                        JSONArray copyToArray = defaultObject == null ? null : defaultObject.optJSONArray("copy_to");
+                                        copyToArray.put("name." + lang);
+
+                                        defaultObject.put("copy_to", copyToArray);
+                                        nameProperties.put("default", defaultObject);
+                                        name.put("properties", nameProperties);
+                                        propertiesObject.put("name", name);
                                 }
-                                placeObject.put("properties", propertiesObject);
-                                return mappingsObject.put("place", placeObject);
+
+                                // add language specific collector
+                                propertiesObject = addToCollector("collector", propertiesObject, collectorObject, lang);                                        
                         }
+                        placeObject.put("properties", propertiesObject);
+                        return mappingsObject.put("place", placeObject);
                 }
+                
                 log.error("cannot add langs to mapping.json, please double-check the mappings.json or the language values supplied");
                 return null;
         }

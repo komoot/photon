@@ -17,7 +17,7 @@ import java.io.PrintWriter;
 @Slf4j
 public class JsonDumper implements Importer {
 	private PrintWriter writer = null;
-        private String[] languages;
+        private final String[] languages;
 
 	public JsonDumper(String filename, String languages) throws FileNotFoundException {
 		this.writer = new PrintWriter(filename);
