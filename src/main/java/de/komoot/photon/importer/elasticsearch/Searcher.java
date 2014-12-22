@@ -93,26 +93,38 @@ public class Searcher {
 					} else if (lang.equals("nl")) {
                                                 // check for dutch postcodes (i.e. 6532RA). If a street has the same name and the same 4 numbers in the postcode, 
                                                 // we can assume it is part of the same street, so only use the first
-                                                try {
-                                                        String letterlessPostcode = Utils.stripNonDigits(postcode);
-                                                        int postcodeNumbers = Integer.parseInt(letterlessPostcode);
-                                                        boolean foundMatch = false;
+                                                String letterlessPostcode = Utils.stripNonDigits(postcode);
+                                                int postcodeNumbers;
+                                                try {                                                        
+                                                        postcodeNumbers = Integer.parseInt(letterlessPostcode);                                                        
+                                                } catch (NumberFormatException e) {
+                                                        // Bad OSM data
+                                                        continue;
+                                                }
+                                                boolean foundMatch = false;
                                                         
-                                                        for (String keyString : keys) {
-                                                                String letterlessKey = Utils.stripNonDigits(keyString);    
-                                                                // also check if name equals, 
-                                                                // which is a safety check for streets that partially match and have the same postcode numbers
-                                                                String keyName = keyString.split(":")[1];
-                                                                if (postcodeNumbers == Integer.parseInt(letterlessKey) && keyName.equals(name)) {
-                                                                        foundMatch = true;
-                                                                        break;
-                                                                }
-                                                        }
-                                                        
-                                                        if (foundMatch) {
+                                                for (String keyString : keys) {
+                                                        String letterlessKey = Utils.stripNonDigits(keyString);    
+                                                        int keyPostcode;
+                                                        try {
+                                                                keyPostcode = Integer.parseInt(letterlessKey);
+                                                        } catch (NumberFormatException e) {
+                                                                // Bad OSM data
                                                                 continue;
                                                         }
-                                                } catch (NumberFormatException e) {}                                                
+                                                        
+                                                        // also check if name equals, 
+                                                        // which is a safety check for streets that partially match and have the same postcode numbers
+                                                        String keyName = keyString.split(":")[1];
+                                                        if (postcodeNumbers == keyPostcode && keyName.equals(name)) {
+                                                                foundMatch = true;
+                                                                break;
+                                                        }
+                                                }
+
+                                                if (foundMatch) {
+                                                        continue;
+                                                }
                                         }
 					keys.add(key);
 				}
