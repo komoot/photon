@@ -3,6 +3,9 @@ package de.komoot.photon.importer.nominatim;
 import de.komoot.photon.importer.Updater;
 import de.komoot.photon.importer.model.PhotonDoc;
 import de.komoot.photon.importer.nominatim.model.UpdateRow;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.postgis.jts.JtsWrapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -12,6 +15,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
+import org.apache.commons.io.IOUtils;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * Nominatim update logic
@@ -25,6 +31,8 @@ public class NominatimUpdater {
 	private Integer maxRank = 30;
 	private final JdbcTemplate template;
 	private NominatimConnector exporter;
+        private final String tagWhitelistPath;
+        private JSONObject tagWhitelistObject;
 
 	private Updater updater;
 
@@ -33,6 +41,22 @@ public class NominatimUpdater {
 	}
 
 	public void update() {
+                if(tagWhitelistPath != null) {
+                        LOGGER.info("reading tag whitelist from specified file: "+ tagWhitelistPath);
+                        String tagWhitelistString = null;
+                        try {
+                                FileInputStream tagWhitelistStream = new FileInputStream(new File(tagWhitelistPath));
+                                tagWhitelistString = IOUtils.toString(tagWhitelistStream, "UTF-8");                            
+                        } catch (IOException e) {
+                                LOGGER.error("cannot read tag whitelist file", e);
+                        }
+                        try {
+                                JSONObject whitelist = new JSONObject(tagWhitelistString);
+                                tagWhitelistObject = whitelist.getJSONObject("tags");                            
+                        } catch (JSONException e) {
+                                LOGGER.error("cannot parse tag whitelist file", e);
+                        }                        
+                }
 		for(Integer rank = this.minRank; rank <= this.maxRank; rank++) {
 			LOGGER.info(String.format("Starting rank %d", rank));
 			for(Map<String, Object> sector : getIndexSectors(rank))
@@ -43,11 +67,11 @@ public class NominatimUpdater {
 
 					switch(place.getIndexdStatus()) {
 						case 1:
-							if(updatedDoc.isUsefulForIndex())
+							if(updatedDoc.isUsefulForIndex(tagWhitelistObject))
 								updater.create(updatedDoc);
 							break;
 						case 2:
-							if(!updatedDoc.isUsefulForIndex())
+							if(!updatedDoc.isUsefulForIndex(tagWhitelistObject))
 								updater.delete(place.getPlaceId());
 
 							updater.updateOrCreate(updatedDoc);
@@ -85,7 +109,7 @@ public class NominatimUpdater {
 
 	/**
 	 */
-	public NominatimUpdater(String host, int port, String database, String username, String password) {
+	public NominatimUpdater(String host, int port, String database, String username, String password, String tagWhitelistPath) {
 		BasicDataSource dataSource = new BasicDataSource();
 
 		dataSource.setUrl(String.format("jdbc:postgresql://%s:%d/%s", host, port, database));
@@ -94,7 +118,9 @@ public class NominatimUpdater {
 		dataSource.setDriverClassName(JtsWrapper.class.getCanonicalName());
 		dataSource.setDefaultAutoCommit(false);
 
-		exporter = new NominatimConnector(host, port, database, username, password);
+		exporter = new NominatimConnector(host, port, database, username, password, tagWhitelistPath);
 		template = new JdbcTemplate(dataSource);
+                this.tagWhitelistPath = tagWhitelistPath;
+                this.tagWhitelistObject = null;
 	}
 }

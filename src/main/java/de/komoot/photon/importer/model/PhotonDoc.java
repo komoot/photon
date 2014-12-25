@@ -8,6 +8,8 @@ import lombok.Data;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 /**
  * denormalized doc with all information needed be dumped to elasticsearch
@@ -46,7 +48,20 @@ public class PhotonDoc {
             		"", null, null, 0, 0, null, null, 0, 0);
         }
 
-	public boolean isUsefulForIndex() {
+	public boolean isUsefulForIndex(JSONObject tagWhitelist) {                
+                if(tagWhitelist != null) {
+                        if(!tagWhitelist.keySet().contains(tagKey)) return false;
+
+                        JSONArray values = tagWhitelist.optJSONArray(tagKey);
+                        boolean foundMatch = false;
+                        for(int i=0; i<values.length(); i++) {
+                                String value = values.getString(i);
+                                foundMatch = value.equalsIgnoreCase(tagValue);
+                                if(foundMatch) break;
+                        }
+                        if(!foundMatch) return false;
+                }
+            
 		if("place".equals(tagKey) && "houses".equals(tagValue)) return false;
 
 		if(houseNumber != null) return true;

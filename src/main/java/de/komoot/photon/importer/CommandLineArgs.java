@@ -19,6 +19,9 @@ public class CommandLineArgs {
         
         @Parameter(names = "-languages", description = "languages nominatim importer should import and use at run-time, comma seperated (default: 'en,fr,de,it')")
 	private String languages = "en,fr,de,it";
+        
+        @Parameter(names = "-tag-whitelist-file", description = "optional tag whitelist json file of the type tags that should be imported. If not specified, importing all types")
+	private String tagWhitelistFile = null;
 
 	@Parameter(names = "-json", description = "import nominatim database and dump it to a json like files in (useful for developing)")
 	private String jsonDump = null;

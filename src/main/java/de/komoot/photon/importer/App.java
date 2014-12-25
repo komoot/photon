@@ -43,7 +43,7 @@ public class App {
 			try {
 				final String filename = args.getJsonDump();
 				final JsonDumper jsonDumper = new JsonDumper(filename, args.getLanguages());
-				NominatimConnector nominatimConnector = new NominatimConnector(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
+				NominatimConnector nominatimConnector = new NominatimConnector(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword(), args.getTagWhitelistFile());
 				nominatimConnector.setImporter(jsonDumper);
 				nominatimConnector.readEntireDatabase();
 				log.info("json dump was created: " + filename);
@@ -80,7 +80,7 @@ public class App {
                         
                         log.info("starting import from nominatim to photon with languages: " + args.getLanguages());
 			Importer importer = new Importer(esNodeClient, args.getLanguages());
-			NominatimConnector nominatimConnector = new NominatimConnector(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
+			NominatimConnector nominatimConnector = new NominatimConnector(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword(), args.getTagWhitelistFile());
 			nominatimConnector.setImporter(importer);
                         try {
                             nominatimConnector.readEntireDatabase();
@@ -92,7 +92,7 @@ public class App {
 			return;
 		}
 
-		final NominatimUpdater nominatimUpdater = new NominatimUpdater(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
+		final NominatimUpdater nominatimUpdater = new NominatimUpdater(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword(), args.getTagWhitelistFile());
 		de.komoot.photon.importer.Updater updater = new de.komoot.photon.importer.elasticsearch.Updater(esNodeClient, args.getLanguages());
 		nominatimUpdater.setUpdater(updater);
 
