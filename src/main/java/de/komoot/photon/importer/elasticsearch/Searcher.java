@@ -84,13 +84,20 @@ public class Searcher {
 				if(properties.has(OSMTags.KEY_POSTCODE) && properties.has(OSMTags.KEY_NAME)) {
 					// street has a postcode and name
 					String postcode = properties.getString(OSMTags.KEY_POSTCODE);
+                                        String onlyDigitsPostcode = Utils.stripNonDigits(postcode);
 					String name = properties.getString(OSMTags.KEY_NAME);
-					String key = postcode + ":" + name;                                                                   
+					String key;
+                                        if(lang.equals("nl")) {
+                                                key = onlyDigitsPostcode + ":" + name;
+                                        }
+                                        else {
+                                                key = postcode + ":" + name;
+                                        }
 
 					if(keys.contains(key)) {
 						// a street with this name + postcode is already part of the result list
-						continue;
-					} 
+						continue;					 
+                                        }
 					keys.add(key);
 				}
 			}
