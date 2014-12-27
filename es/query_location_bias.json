@@ -60,16 +60,18 @@
         "functions": [
           {
             "script_score": {
-              "script": "1 + doc['importance'].value * 100"
+              "script": "general-score",
+              "lang" : "mvel"
             }
           },
           {
             "script_score": {
-              "script": "dist = doc['coordinate'].distanceInKm(lat, lon); 0.5 + ( 1.5 / (1.0 + dist/40.0) )",
+              "script": "location-biased-score",
               "params": {
                 "lat": ${lat},
                 "lon": ${lon}
-              }
+              },
+              "lang" : "mvel"
             }
           }
         ]

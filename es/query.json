@@ -60,7 +60,8 @@
         "functions": [
           {
             "script_score": {
-              "script": "1 + doc['importance'].value * 100"
+              "script": "general-score",
+              "lang": "mvel"
             }
           }
         ]

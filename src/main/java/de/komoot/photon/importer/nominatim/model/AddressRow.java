@@ -5,6 +5,8 @@ import lombok.Data;
 import java.util.Arrays;
 import java.util.Map;
 
+import static de.komoot.photon.importer.Constants.STATE;
+
 /**
  * representation of an address as returned by nominatim's get_addressdata PL/pgSQL function
  *
@@ -50,11 +52,11 @@ public class AddressRow {
 
 		return false;
 	}
-	
+
 	public boolean hasPostcode() {
 		return postcode != null; // TODO really null?
 	}
-	
+
 	public boolean isUsefulForContext() {
 		if(name.isEmpty()) {
 			return false;
@@ -82,6 +84,18 @@ public class AddressRow {
 		}
 
 		if("place".equals(osmKey) && "country".equals(osmValue)) {
+			return true;
+		}
+
+		return false;
+	}
+
+	public boolean isState() {
+		if("place".equals(osmKey) && STATE.equals(osmValue)) {
+			return true;
+		}
+
+		if(adminLevel != null && adminLevel == 4 && "boundary".equals(osmKey) && "administrative".equals(osmValue)) {
 			return true;
 		}
 

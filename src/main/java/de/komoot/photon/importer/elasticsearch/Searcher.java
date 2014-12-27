@@ -3,8 +3,7 @@ package de.komoot.photon.importer.elasticsearch;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import de.komoot.photon.importer.Tags;
-import de.komoot.photon.importer.osm.OSMTags;
+import de.komoot.photon.importer.Constants;
 import lombok.extern.slf4j.Slf4j;
 import de.komoot.photon.importer.Utils;
 import org.apache.commons.io.IOUtils;
@@ -34,10 +33,10 @@ public class Searcher {
 	private final Client client;
 
 	/** These properties are directly copied into the result */
-	private final static String[] KEYS_LANG_UNSPEC = {OSMTags.KEY_OSM_ID, OSMTags.KEY_OSM_VALUE, OSMTags.KEY_OSM_KEY, OSMTags.KEY_POSTCODE, OSMTags.KEY_HOUSENUMBER, OSMTags.KEY_OSM_TYPE};
+	private final static String[] KEYS_LANG_UNSPEC = {Constants.OSM_ID, Constants.OSM_VALUE, Constants.OSM_KEY, Constants.POSTCODE, Constants.HOUSENUMBER, Constants.OSM_TYPE};
 
 	/** These properties will be translated before they are copied into the result */
-	private final static String[] KEYS_LANG_SPEC = {OSMTags.KEY_NAME, OSMTags.KEY_COUNTRY, OSMTags.KEY_CITY, OSMTags.KEY_STREET};
+	private final static String[] KEYS_LANG_SPEC = {Constants.NAME, Constants.COUNTRY, Constants.CITY, Constants.STREET, Constants.STATE};
 
 	public Searcher(Client client) {
 		this.client = client;
@@ -78,16 +77,16 @@ public class Searcher {
 		List<JSONObject> filteredItems = Lists.newArrayListWithCapacity(results.size());
 		final HashSet<String> keys = Sets.newHashSet();
 		for(JSONObject result : results) {
-			final JSONObject properties = result.getJSONObject(Tags.KEY_PROPERTIES);
-			if(properties.has(Tags.KEY_OSM_KEY) && "highway".equals(properties.getString(Tags.KEY_OSM_KEY))) {
+			final JSONObject properties = result.getJSONObject(Constants.PROPERTIES);
+			if(properties.has(Constants.OSM_KEY) && "highway".equals(properties.getString(Constants.OSM_KEY))) {
 				// result is a street
-				if(properties.has(OSMTags.KEY_POSTCODE) && properties.has(OSMTags.KEY_NAME)) {
+				if(properties.has(Constants.POSTCODE) && properties.has(Constants.NAME)) {
 					// street has a postcode and name
-					String postcode = properties.getString(OSMTags.KEY_POSTCODE);
-                                        String onlyDigitsPostcode = Utils.stripNonDigits(postcode);
-					String name = properties.getString(OSMTags.KEY_NAME);
+					String postcode = properties.getString(Constants.POSTCODE);
+					String name = properties.getString(Constants.NAME);
 					String key;
                                         if(lang.equals("nl")) {
+												String onlyDigitsPostcode = Utils.stripNonDigits(postcode);
                                                 key = onlyDigitsPostcode + ":" + name;
                                         }
                                         else {
@@ -113,8 +112,8 @@ public class Searcher {
 			final Map<String, Object> source = hit.getSource();
 
 			final JSONObject feature = new JSONObject();
-			feature.put(Tags.KEY_TYPE, Tags.VALUE_FEATURE);
-			feature.put(Tags.KEY_GEOMETRY, getPoint(source));
+			feature.put(Constants.TYPE, Constants.FEATURE);
+			feature.put(Constants.GEOMETRY, getPoint(source));
 
 			final JSONObject properties = new JSONObject();
 			// language unspecific properties
@@ -138,7 +137,7 @@ public class Searcher {
 				properties.put("extent", new JSONArray(Lists.newArrayList(nw.get(0), nw.get(1), se.get(0), se.get(1))));
 			}
 
-			feature.put(Tags.KEY_PROPERTIES, properties);
+			feature.put(Constants.PROPERTIES, properties);
 			list.add(feature);
 		}
 		return list;
@@ -149,10 +148,10 @@ public class Searcher {
 
 		final Map<String, Double> coordinate = (Map<String, Double>) source.get("coordinate");
 		if(coordinate != null) {
-			point.put(Tags.KEY_TYPE, Tags.VALUE_POINT);
-			point.put(Tags.KEY_COORDINATES, new JSONArray("[" + coordinate.get(Tags.KEY_LON) + "," + coordinate.get(Tags.KEY_LAT) + "]"));
+			point.put(Constants.TYPE, Constants.POINT);
+			point.put(Constants.COORDINATES, new JSONArray("[" + coordinate.get(Constants.LON) + "," + coordinate.get(Constants.LAT) + "]"));
 		} else {
-			log.error(String.format("invalid data [id=%s, type=%s], coordinate is missing!", source.get(OSMTags.KEY_OSM_ID), source.get(OSMTags.KEY_OSM_VALUE)));
+			log.error(String.format("invalid data [id=%s, type=%s], coordinate is missing!", source.get(Constants.OSM_ID), source.get(Constants.OSM_VALUE)));
 		}
 
 		return point;
