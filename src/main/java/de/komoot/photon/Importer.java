@@ -1,6 +1,4 @@
-package de.komoot.photon.importer;
-
-import de.komoot.photon.importer.model.PhotonDoc;
+package de.komoot.photon;
 
 /**
  * interface for bulk imports from a data source like nominatim
@@ -8,7 +6,15 @@ import de.komoot.photon.importer.model.PhotonDoc;
  * @author felix
  */
 public interface Importer {
+	/**
+	 * a new document was imported
+	 *
+	 * @param doc
+	 */
 	public void add(PhotonDoc doc);
 
+	/**
+	 * import is finished
+	 */
 	public void finish();
 }

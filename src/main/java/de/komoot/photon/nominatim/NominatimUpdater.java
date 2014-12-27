@@ -1,8 +1,8 @@
-package de.komoot.photon.importer.nominatim;
+package de.komoot.photon.nominatim;
 
-import de.komoot.photon.importer.Updater;
-import de.komoot.photon.importer.model.PhotonDoc;
-import de.komoot.photon.importer.nominatim.model.UpdateRow;
+import de.komoot.photon.PhotonDoc;
+import de.komoot.photon.Updater;
+import de.komoot.photon.nominatim.model.UpdateRow;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.postgis.jts.JtsWrapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -21,10 +21,10 @@ import java.util.Map;
 
 public class NominatimUpdater {
 	private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(NominatimUpdater.class);
-	private Integer minRank = 1;
-	private Integer maxRank = 30;
+	private final Integer minRank = 1;
+	private final Integer maxRank = 30;
 	private final JdbcTemplate template;
-	private NominatimConnector exporter;
+	private final NominatimConnector exporter;
 
 	private Updater updater;
 
@@ -38,7 +38,7 @@ public class NominatimUpdater {
 			for(Map<String, Object> sector : getIndexSectors(rank))
 				for(UpdateRow place : getIndexSectorPlaces(rank, (Integer) sector.get("geometry_sector"))) {
 
-					template.update("update placex set indexed_status = 0 where place_id = ?", new Object[]{place.getPlaceId()});
+					template.update("update placex set indexed_status = 0 where place_id = ?", place.getPlaceId());
 					final PhotonDoc updatedDoc = exporter.getByPlaceId(place.getPlaceId());
 
 					switch(place.getIndexdStatus()) {
@@ -67,7 +67,7 @@ public class NominatimUpdater {
 
 	private List<Map<String, Object>> getIndexSectors(Integer rank) {
 		return template.queryForList("select geometry_sector,count(*) from placex where rank_search = ? " +
-				"and indexed_status > 0 group by geometry_sector order by geometry_sector;", new Object[]{rank});
+				"and indexed_status > 0 group by geometry_sector order by geometry_sector;", rank);
 	}
 
 	private List<UpdateRow> getIndexSectorPlaces(Integer rank, Integer geometrySector) {

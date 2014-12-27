@@ -1,10 +1,10 @@
-package de.komoot.photon.importer.elasticsearch;
+package de.komoot.photon.elasticsearch;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import de.komoot.photon.importer.Constants;
-import de.komoot.photon.importer.Utils;
+import de.komoot.photon.Constants;
+import de.komoot.photon.Utils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
@@ -85,6 +85,7 @@ public class Searcher {
 					String postcode = properties.getString(Constants.POSTCODE);
 					String name = properties.getString(Constants.NAME);
 					String key;
+
 					if(lang.equals("nl")) {
 						String onlyDigitsPostcode = Utils.stripNonDigits(postcode);
 						key = onlyDigitsPostcode + ":" + name;
@@ -114,7 +115,9 @@ public class Searcher {
 			feature.put(Constants.TYPE, Constants.FEATURE);
 			feature.put(Constants.GEOMETRY, getPoint(source));
 
+			// populate properties
 			final JSONObject properties = new JSONObject();
+
 			// language unspecific properties
 			for(String key : KEYS_LANG_UNSPEC) {
 				if(source.containsKey(key))
@@ -137,6 +140,7 @@ public class Searcher {
 			}
 
 			feature.put(Constants.PROPERTIES, properties);
+
 			list.add(feature);
 		}
 		return list;

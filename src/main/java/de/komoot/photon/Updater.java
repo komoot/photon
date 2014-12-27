@@ -1,6 +1,4 @@
-package de.komoot.photon.importer;
-
-import de.komoot.photon.importer.model.PhotonDoc;
+package de.komoot.photon;
 
 /**
  * @author felix

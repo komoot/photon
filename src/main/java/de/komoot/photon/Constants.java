@@ -1,4 +1,4 @@
-package de.komoot.photon.importer;
+package de.komoot.photon;
 
 /**
  * date: 17.10.14

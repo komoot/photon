@@ -1,12 +1,12 @@
-package de.komoot.photon.importer.nominatim;
+package de.komoot.photon.nominatim;
 
 import com.neovisionaries.i18n.CountryCode;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Point;
-import de.komoot.photon.importer.Importer;
-import de.komoot.photon.importer.model.PhotonDoc;
-import de.komoot.photon.importer.nominatim.model.AddressRow;
+import de.komoot.photon.Importer;
+import de.komoot.photon.PhotonDoc;
+import de.komoot.photon.nominatim.model.AddressRow;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.postgis.jts.JtsWrapper;
@@ -118,7 +118,7 @@ public class NominatimConnector {
 		return template.queryForObject("SELECT " + selectColsPlaceX + " FROM placex WHERE place_id = ?", new Object[]{placeId}, placeRowMapper);
 	}
 
-	public List<AddressRow> getAddresses(PhotonDoc doc) {
+	List<AddressRow> getAddresses(PhotonDoc doc) {
 		long placeId = doc.getPlaceId();
 		if(doc.getRankSearch() > 28)
 			placeId = doc.getParentPlaceId();
@@ -143,11 +143,10 @@ public class NominatimConnector {
 		});
 	}
 
-	static final PhotonDoc FINAL_DOCUMENT =
-			new PhotonDoc(0, null, 0, null, null, null, null, null, null, 0, 0, null, null, 0, 0);
+	private static final PhotonDoc FINAL_DOCUMENT = new PhotonDoc(0, null, 0, null, null, null, null, null, null, 0, 0, null, null, 0, 0);
 
 	private class ImportThread implements Runnable {
-		private BlockingQueue<PhotonDoc> documents;
+		private final BlockingQueue<PhotonDoc> documents;
 
 		public ImportThread(BlockingQueue<PhotonDoc> documents) {
 			this.documents = documents;
@@ -156,7 +155,7 @@ public class NominatimConnector {
 		@Override
 		public void run() {
 			while(true) {
-				PhotonDoc doc = null;
+				PhotonDoc doc;
 				try {
 					doc = documents.take();
 					if(doc == FINAL_DOCUMENT)

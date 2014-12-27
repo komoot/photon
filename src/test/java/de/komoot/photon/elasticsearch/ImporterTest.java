@@ -1,7 +1,7 @@
-package de.komoot.photon.importer.elasticsearch;
+package de.komoot.photon.elasticsearch;
 
 import de.komoot.photon.ESBaseTester;
-import de.komoot.photon.importer.model.PhotonDoc;
+import de.komoot.photon.PhotonDoc;
 import java.io.IOException;
 import org.json.JSONObject;
 import org.junit.*;

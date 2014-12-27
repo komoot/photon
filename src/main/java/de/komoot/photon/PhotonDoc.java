@@ -1,4 +1,4 @@
-package de.komoot.photon.importer.model;
+package de.komoot.photon;
 
 import com.neovisionaries.i18n.CountryCode;
 import com.vividsolutions.jts.geom.Envelope;

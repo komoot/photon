@@ -1,10 +1,9 @@
-package de.komoot.photon.importer;
+package de.komoot.photon;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
 import com.vividsolutions.jts.geom.Envelope;
-import de.komoot.photon.importer.model.PhotonDoc;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
 
@@ -20,7 +19,7 @@ import java.util.Set;
  * @author christoph
  */
 public class Utils {
-	static final Joiner commaJoiner = Joiner.on(", ").skipNulls();
+	private static final Joiner commaJoiner = Joiner.on(", ").skipNulls();
 
 	public static XContentBuilder convert(PhotonDoc doc, String[] languages) throws IOException {
 		XContentBuilder builder = XContentFactory.jsonBuilder().startObject()

@@ -1,4 +1,4 @@
-package de.komoot.photon.importer;
+package de.komoot.photon;
 
 /**
  * Command Line Arguments parsed by {@link com.beust.jcommander.JCommander} and used to start photon.

@@ -1,8 +1,5 @@
-package de.komoot.photon.importer.json;
+package de.komoot.photon;
 
-import de.komoot.photon.importer.Importer;
-import de.komoot.photon.importer.Utils;
-import de.komoot.photon.importer.model.PhotonDoc;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.FileNotFoundException;

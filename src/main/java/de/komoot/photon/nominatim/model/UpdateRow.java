@@ -1,4 +1,4 @@
-package de.komoot.photon.importer.nominatim.model;
+package de.komoot.photon.nominatim.model;
 
 import lombok.Data;
 

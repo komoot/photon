@@ -1,4 +1,4 @@
-package de.komoot.photon.importer.nominatim;
+package de.komoot.photon.nominatim;
 
 import com.vividsolutions.jts.geom.Geometry;
 import org.elasticsearch.common.collect.Maps;

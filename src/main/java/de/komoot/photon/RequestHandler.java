@@ -1,7 +1,7 @@
-package de.komoot.photon.importer;
+package de.komoot.photon;
 
 import com.google.common.base.Joiner;
-import de.komoot.photon.importer.elasticsearch.Searcher;
+import de.komoot.photon.elasticsearch.Searcher;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import spark.Request;
@@ -52,10 +52,11 @@ public class RequestHandler extends Route {
 		}
 
 		// parse limit for search results
-		int limit = 15;
+		int limit;
 		try {
 			limit = Math.min(50, Integer.parseInt(request.queryParams("limit")));
 		} catch(Exception e) {
+			limit = 15;
 		}
 
 		List<JSONObject> results = searcher.search(query, lang, lon, lat, limit, true);

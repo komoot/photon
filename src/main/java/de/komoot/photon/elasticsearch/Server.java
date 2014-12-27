@@ -1,4 +1,4 @@
-package de.komoot.photon.importer.elasticsearch;
+package de.komoot.photon.elasticsearch;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
@@ -11,7 +11,6 @@ import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.env.Environment;
 import org.elasticsearch.indices.IndexMissingException;
 import org.elasticsearch.node.Node;
-import org.elasticsearch.node.NodeBuilder;
 import org.elasticsearch.plugins.PluginManager;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -33,17 +32,17 @@ import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
  */
 @Slf4j
 public class Server {
-
 	private Node esNode;
 	private String clusterName = "photon_v0.2";
 	private File esDirectory;
-	private File dumpDirectory;
-	private File updateDirectory;
-	private File tempDirectory;
-	private File importDirectory;
-	private String[] langs;
+	private final boolean isTest;
+	private final String[] languages;
 
-	public Server(String clusterName, String mainDirectory, String langs) {
+	public Server(String clusterName, String mainDirectory, String languages) {
+		this(clusterName, mainDirectory, languages, false);
+	}
+
+	public Server(String clusterName, String mainDirectory, String languages, boolean isTest) {
 		try {
 			if(SystemUtils.IS_OS_WINDOWS) {
 				setupDirectories(new URL("file:///" + mainDirectory));
@@ -54,20 +53,17 @@ public class Server {
 			log.error("Can't create directories: ", e);
 		}
 		this.clusterName = clusterName;
-		this.langs = langs.split(",");
+		this.languages = languages.split(",");
+		this.isTest = isTest;
 	}
 
 	public Server start() {
-		return start(false);
-	}
-
-	public Server start(boolean test) {
 		ImmutableSettings.Builder sBuilder = ImmutableSettings.settingsBuilder();
 		sBuilder.put("path.home", this.esDirectory.toString());
 		sBuilder.put("network.host", "127.0.0.1"); // http://stackoverflow.com/a/15509589/1245622
 
 		// default is 'local', 'none' means no data after node restart!
-		if(test)
+		if(isTest)
 			sBuilder.put("gateway.type", "none");
 
 		Settings settings = sBuilder.build();
@@ -80,20 +76,18 @@ public class Server {
 			log.debug("could not install ybon/elasticsearch-wordending-tokenfilter/0.0.1", e);
 		}
 
-		if(!test) {
+		if(!isTest) {
 			pluginManager = new PluginManager(new Environment(settings), null, PluginManager.OutputMode.VERBOSE, new TimeValue(30000));
 			for(String pluginName : new String[]{"mobz/elasticsearch-head", "polyfractal/elasticsearch-inquisitor"}) {
 				try {
 					pluginManager.downloadAndExtract(pluginName);
 				} catch(IOException e) {
+					log.error(String.format("cannot install plugin: %s: %s", pluginName, e));
 				}
 			}
 		}
 
-		NodeBuilder nBuilder = nodeBuilder().clusterName(clusterName).loadConfigSettings(true).
-				settings(settings);
-
-		esNode = nBuilder.node();
+		esNode = nodeBuilder().clusterName(clusterName).loadConfigSettings(true).settings(settings).node();
 		log.info("started elastic search node");
 		return this;
 	}
@@ -112,37 +106,21 @@ public class Server {
 		return this.esNode.client();
 	}
 
-	private File setupDirectories(URL directoryName) throws IOException, URISyntaxException {
-		File mainDirectory = new File(".");
-
-		try {
-			mainDirectory = new File(directoryName.toURI());
-		} catch(URISyntaxException e) {
-			log.error("Can´t access photon_data directory");
-		}
-
-		File photonDirectory = new File(mainDirectory, "photon_data");
+	private void setupDirectories(URL directoryName) throws IOException, URISyntaxException {
+		final File mainDirectory = new File(directoryName.toURI());
+		final File photonDirectory = new File(mainDirectory, "photon_data");
 		this.esDirectory = new File(photonDirectory, "elasticsearch");
-		this.dumpDirectory = new File(photonDirectory, "dumps");
-		this.updateDirectory = new File(photonDirectory, "updates");
-		this.tempDirectory = new File(photonDirectory, "temp");
-		this.importDirectory = new File(photonDirectory, "imports");
+		final File pluginDirectory = new File(esDirectory, "plugins");
 		final File scriptsDirectory = new File(esDirectory, "config/scripts");
 
-		for(File directory : new File[]{
-				esDirectory, dumpDirectory, updateDirectory, importDirectory, tempDirectory,
-				photonDirectory, new File(photonDirectory, "elasticsearch/plugins"), scriptsDirectory
-		}) {
-			if(!directory.exists())
-				directory.mkdirs();
+		for(File directory : new File[]{esDirectory, photonDirectory, pluginDirectory, scriptsDirectory}) {
+			directory.mkdirs();
 		}
 
 		// copy script directory to elastic search directory
 		final ClassLoader loader = Thread.currentThread().getContextClassLoader();
 		Files.copy(loader.getResourceAsStream("scripts/general-score.mvel"), new File(scriptsDirectory, "general-score.mvel").toPath(), StandardCopyOption.REPLACE_EXISTING);
 		Files.copy(loader.getResourceAsStream("scripts/location-biased-score.mvel"), new File(scriptsDirectory, "location-biased-score.mvel").toPath(), StandardCopyOption.REPLACE_EXISTING);
-
-		return mainDirectory;
 	}
 
 	public void recreateIndex() throws IOException {
@@ -180,7 +158,7 @@ public class Server {
 		JSONObject propertiesObject = placeObject == null ? null : placeObject.optJSONObject("properties");
 
 		if(propertiesObject != null) {
-			for(String lang : langs) {
+			for(String lang : languages) {
 				// create lang-specific json objects
 				JSONObject copyToCollectorObject = new JSONObject(copyToCollectorString.replace("{lang}", lang));
 				JSONObject nameToCollectorObject = new JSONObject(nameToCollectorString.replace("{lang}", lang));
@@ -198,7 +176,7 @@ public class Server {
 				JSONObject nameProperties = name == null ? null : name.optJSONObject("properties");
 				if(nameProperties != null) {
 					JSONObject defaultObject = nameProperties.optJSONObject("default");
-					JSONArray copyToArray = defaultObject == null ? null : defaultObject.optJSONArray("copy_to");
+					JSONArray copyToArray = defaultObject.optJSONArray("copy_to");
 					copyToArray.put("name." + lang);
 
 					defaultObject.put("copy_to", copyToArray);
@@ -214,7 +192,7 @@ public class Server {
 			return mappingsObject.put("place", placeObject);
 		}
 
-		log.error("cannot add langs to mapping.json, please double-check the mappings.json or the language values supplied");
+		log.error("cannot add languages to mapping.json, please double-check the mappings.json or the language values supplied");
 		return null;
 	}
 

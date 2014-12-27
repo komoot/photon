@@ -1,11 +1,11 @@
-package de.komoot.photon.importer.nominatim.model;
+package de.komoot.photon.nominatim.model;
 
 import lombok.Data;
 
 import java.util.Arrays;
 import java.util.Map;
 
-import static de.komoot.photon.importer.Constants.STATE;
+import static de.komoot.photon.Constants.STATE;
 
 /**
  * representation of an address as returned by nominatim's get_addressdata PL/pgSQL function
@@ -23,8 +23,8 @@ public class AddressRow {
 	final private String postcode;
 	final private String place;
 
-	static final String[] CITY_PLACE_VALUES = new String[]{"city", "hamlet", "town", "village"}; // must be in alphabetic order to speed up lookup
-	static final String[] USEFUL_CONTEXT_KEYS = new String[]{"boundary", "landuse", "place"}; // must be in alphabetic order to speed up lookup
+	static private final String[] CITY_PLACE_VALUES = new String[]{"city", "hamlet", "town", "village"}; // must be in alphabetic order to speed up lookup
+	static private final String[] USEFUL_CONTEXT_KEYS = new String[]{"boundary", "landuse", "place"}; // must be in alphabetic order to speed up lookup
 
 	public boolean isStreet() {
 		return 26 <= rankAddress && rankAddress < 28;

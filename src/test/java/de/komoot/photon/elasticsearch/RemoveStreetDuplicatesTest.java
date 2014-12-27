@@ -1,11 +1,12 @@
-package de.komoot.photon.importer.elasticsearch;
+package de.komoot.photon.elasticsearch;
 
 import com.google.common.collect.ImmutableMap;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.PrecisionModel;
 import de.komoot.photon.ESBaseTester;
-import de.komoot.photon.importer.model.PhotonDoc;
+import de.komoot.photon.PhotonDoc;
+
 import java.io.IOException;
 import org.json.JSONObject;
 import org.junit.*;
