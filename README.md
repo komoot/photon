@@ -93,6 +93,7 @@ http://localhost:2322/api?q=berlin&lang=it
     {
       "properties": {
         "name": "Berlin",
+        "state": "Berlin",
         "country": "Germany",
         "osm_key": "place",
         "osm_value": "city",
@@ -114,6 +115,7 @@ http://localhost:2322/api?q=berlin&lang=it
         "street": "Olympischer Platz",
         "housenumber": "3",
         "postcode": "14053",
+        "state": "Berlin",
         "country": "Germany",
         "osm_key": "leisure",
         "osm_value": "stadium",
