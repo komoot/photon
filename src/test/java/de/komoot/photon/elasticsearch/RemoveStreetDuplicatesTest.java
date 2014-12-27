@@ -6,11 +6,10 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.PrecisionModel;
 import de.komoot.photon.ESBaseTester;
 import de.komoot.photon.PhotonDoc;
-
-import java.io.IOException;
 import org.json.JSONObject;
 import org.junit.*;
 
+import java.io.IOException;
 import java.util.List;
 
 import static org.junit.Assert.*;

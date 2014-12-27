@@ -1,13 +1,12 @@
 package de.komoot.photon;
 
 import de.komoot.photon.elasticsearch.Server;
+import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.admin.indices.refresh.RefreshRequest;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.indices.IndexMissingException;
 import org.junit.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,33 +14,24 @@ import java.io.IOException;
 /**
  * @author Peter Karich
  */
+@Slf4j
 public class ESBaseTester {
+	private Server server;
 
-	protected static Logger logger = LoggerFactory.getLogger(ESBaseTester.class);
-	protected static int jettyPort;
-	protected int resolved;
-	private static Server server;
-
-	@AfterClass
-	public static void tearDownClass() {
+	@After
+	public void tearDownClass() {
 		shutdownES();
 	}
 
 	public void setUpES() throws IOException {
-		if(server != null)
-			return;
-
 		server = new Server("photon", new File("./target/es_photon").getAbsolutePath(), "en", true).start();
 		server.recreateIndex();
 	}
 
-	protected Server getApiServer() {
-		return server;
-	}
-
 	protected Client getClient() {
-		if(server == null)
+		if(server == null) {
 			throw new RuntimeException("call setUpES before using getClient");
+		}
 
 		return server.getClient();
 	}
@@ -54,17 +44,14 @@ public class ESBaseTester {
 
 	protected void deleteAll() {
 		try {
-			getClient().prepareDeleteByQuery(indexName).
-					setQuery(QueryBuilders.matchAllQuery()).
-					execute().actionGet();
+			getClient().prepareDeleteByQuery(indexName).setQuery(QueryBuilders.matchAllQuery()).execute().actionGet();
 		} catch(IndexMissingException ex) {
 		}
 
 		refresh();
 	}
 
-	public static void shutdownES() {
-		if(server != null)
-			server.shutdown();
+	public void shutdownES() {
+		server.shutdown();
 	}
 }
