@@ -21,6 +21,7 @@ public class AddressRow {
 	final private int rankAddress;
 	final Integer adminLevel;
 	final private String postcode;
+	final private String place;
 
 	static final String[] CITY_PLACE_VALUES = new String[]{"city", "hamlet", "town", "village"}; // must be in alphabetic order to speed up lookup
 	static final String[] USEFUL_CONTEXT_KEYS = new String[]{"boundary", "landuse", "place"}; // must be in alphabetic order to speed up lookup
@@ -31,6 +32,10 @@ public class AddressRow {
 
 	public boolean isCity() {
 		if("place".equals(osmKey) && Arrays.binarySearch(CITY_PLACE_VALUES, osmValue) >= 0) {
+			return true;
+		}
+		
+		if(place != null && Arrays.binarySearch(CITY_PLACE_VALUES, osmValue) >= 0) {
 			return true;
 		}
 
@@ -52,11 +57,15 @@ public class AddressRow {
 
 		return false;
 	}
-
+	
 	public boolean hasPostcode() {
 		return postcode != null; // TODO really null?
 	}
-
+	
+	public boolean hasPlace() {
+		return place != null;
+	}
+	
 	public boolean isUsefulForContext() {
 		if(name.isEmpty()) {
 			return false;
