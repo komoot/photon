@@ -48,7 +48,7 @@ If you need search data in other languages or restricted to a country you will n
 Once you have your [nominatim](https://github.com/twain47/Nominatim) database ready, you can import the data to photon:
 
 ```bash
-java -jar photon-0.1.2.jar -nominatim-import -host localhost -port 5432 -database nominatim -user nominatim -password ...
+java -jar photon-0.1.2.jar -nominatim-import -host localhost -port 5432 -database nominatim -user nominatim -password ... -languages es,fr
 ```
 
 The import of worldwide data set will take some hours/days, ssd disk are recommended to accelerate nominatim queries.
