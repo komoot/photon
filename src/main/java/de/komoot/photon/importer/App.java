@@ -58,7 +58,7 @@ public class App {
 
 		Client esNodeClient = esServer.getClient();
 
-		if(args.isDeleteIndex()) {
+		if(args.isRecreateIndex()) {
 			try {
 				esServer.recreateIndex();
 			} catch(IOException e) {
