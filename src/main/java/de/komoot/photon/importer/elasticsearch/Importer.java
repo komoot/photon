@@ -23,12 +23,12 @@ public class Importer implements de.komoot.photon.importer.Importer {
 	private final String indexType = "place";
 	private final Client esClient;
 	private BulkRequestBuilder bulkRequest;
-        private final String[] languages;
+	private final String[] languages;
 
 	public Importer(Client esClient, String languages) {
 		this.esClient = esClient;
 		this.bulkRequest = esClient.prepareBulk();
-                this.languages = languages.split(",");
+		this.languages = languages.split(",");
 	}
 
 	@Override

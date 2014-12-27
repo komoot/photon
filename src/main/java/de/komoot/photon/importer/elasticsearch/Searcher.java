@@ -4,8 +4,8 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import de.komoot.photon.importer.Constants;
-import lombok.extern.slf4j.Slf4j;
 import de.komoot.photon.importer.Utils;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.text.StrSubstitutor;
@@ -85,18 +85,17 @@ public class Searcher {
 					String postcode = properties.getString(Constants.POSTCODE);
 					String name = properties.getString(Constants.NAME);
 					String key;
-                                        if(lang.equals("nl")) {
-												String onlyDigitsPostcode = Utils.stripNonDigits(postcode);
-                                                key = onlyDigitsPostcode + ":" + name;
-                                        }
-                                        else {
-                                                key = postcode + ":" + name;
-                                        }
+					if(lang.equals("nl")) {
+						String onlyDigitsPostcode = Utils.stripNonDigits(postcode);
+						key = onlyDigitsPostcode + ":" + name;
+					} else {
+						key = postcode + ":" + name;
+					}
 
 					if(keys.contains(key)) {
 						// a street with this name + postcode is already part of the result list
-						continue;					 
-                                        }
+						continue;
+					}
 					keys.add(key);
 				}
 			}

@@ -58,37 +58,37 @@ public class App {
 
 		Client esNodeClient = esServer.getClient();
 
-		if(args.isDeleteIndex()) {                        
-                        try {
-                                esServer.recreateIndex();
-                        } catch (IOException e) {
-                                log.error("cannot setup index, elastic search config files not readable", e);
-                                return;
-                        }
-			
+		if(args.isDeleteIndex()) {
+			try {
+				esServer.recreateIndex();
+			} catch(IOException e) {
+				log.error("cannot setup index, elastic search config files not readable", e);
+				return;
+			}
+
 			log.info("deleted photon index and created an empty new one.");
 			return;
 		}
 
 		if(args.isNominatimImport()) {
 			try {
-                                esServer.recreateIndex(); // dump previous data
-                        } catch (IOException e) {
-                                log.error("cannot setup index, elastic search config files not readable", e);
-                                return;
-                        }
-                        
-                        log.info("starting import from nominatim to photon with languages: " + args.getLanguages());
+				esServer.recreateIndex(); // dump previous data
+			} catch(IOException e) {
+				log.error("cannot setup index, elastic search config files not readable", e);
+				return;
+			}
+
+			log.info("starting import from nominatim to photon with languages: " + args.getLanguages());
 			Importer importer = new Importer(esNodeClient, args.getLanguages());
 			NominatimConnector nominatimConnector = new NominatimConnector(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
 			nominatimConnector.setImporter(importer);
-                        try {
-                            nominatimConnector.readEntireDatabase();
-                        } catch (Exception e) {
-                            log.info("ERROR IMPORTING FROM NOMINATIM: "+e.getMessage());
-                        }
-			
-                        log.info("imported data from nominatim to photon with languages: " + args.getLanguages());
+			try {
+				nominatimConnector.readEntireDatabase();
+			} catch(Exception e) {
+				log.info("ERROR IMPORTING FROM NOMINATIM: " + e.getMessage());
+			}
+
+			log.info("imported data from nominatim to photon with languages: " + args.getLanguages());
 			return;
 		}
 

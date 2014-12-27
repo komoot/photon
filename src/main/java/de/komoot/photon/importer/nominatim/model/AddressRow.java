@@ -34,7 +34,7 @@ public class AddressRow {
 		if("place".equals(osmKey) && Arrays.binarySearch(CITY_PLACE_VALUES, osmValue) >= 0) {
 			return true;
 		}
-		
+
 		if(place != null && Arrays.binarySearch(CITY_PLACE_VALUES, osmValue) >= 0) {
 			return true;
 		}
@@ -57,15 +57,15 @@ public class AddressRow {
 
 		return false;
 	}
-	
+
 	public boolean hasPostcode() {
 		return postcode != null; // TODO really null?
 	}
-	
+
 	public boolean hasPlace() {
 		return place != null;
 	}
-	
+
 	public boolean isUsefulForContext() {
 		if(name.isEmpty()) {
 			return false;
