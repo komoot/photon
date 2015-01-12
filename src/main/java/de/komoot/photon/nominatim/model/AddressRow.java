@@ -1,5 +1,6 @@
 package de.komoot.photon.nominatim.model;
 
+import com.google.common.base.Objects;
 import lombok.Data;
 
 import java.util.Arrays;
@@ -35,7 +36,7 @@ public class AddressRow {
 			return true;
 		}
 
-		if(place != null && Arrays.binarySearch(CITY_PLACE_VALUES, osmValue) >= 0) {
+		if(place != null && Arrays.binarySearch(CITY_PLACE_VALUES, place) >= 0) {
 			return true;
 		}
 
@@ -109,5 +110,15 @@ public class AddressRow {
 		}
 
 		return false;
+	}
+
+	@Override
+	public String toString() {
+		return Objects.toStringHelper(this)
+				.add("placeId", placeId)
+				.add("name", name)
+				.add("osmKey", osmKey)
+				.add("osmValue", osmValue)
+				.toString();
 	}
 }

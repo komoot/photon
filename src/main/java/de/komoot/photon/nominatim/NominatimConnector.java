@@ -191,44 +191,7 @@ public class NominatimConnector {
 				if(!doc.isUsefulForIndex()) return; // do not import document
 
 				// finalize document by taking into account the higher level placex rows assigned to this row
-				final List<AddressRow> addresses = getAddresses(doc);
-				for(AddressRow address : addresses) {
-
-					if(address.hasPostcode() && doc.getPostcode() == null) {
-						doc.setPostcode(address.getPostcode());
-					}
-
-					if(address.isCity()) {
-						if(doc.getCity() == null) {
-							doc.setCity(address.getName());
-						} else {
-							// there is more than one city address for this document
-							if(address.hasPlace()) {
-								// this city is more important than the previous one
-								doc.getContext().add(doc.getCity()); // move previous city to context
-								doc.setCity(address.getName()); // use new city
-							} else {
-								doc.getContext().add(address.getName());
-							}
-						}
-						continue;
-					}
-
-					if(address.isStreet() && doc.getStreet() == null) {
-						doc.setStreet(address.getName());
-						continue;
-					}
-
-					if(address.isState() && doc.getState() == null) {
-						doc.setState(address.getName());
-						continue;
-					}
-
-					// no specifically handled item, check if useful for context
-					if(address.isUsefulForContext()) {
-						doc.getContext().add(address.getName());
-					}
-				}
+				completePlace(doc);
 
 				//importer.add(doc);
 				while(true) {
@@ -259,5 +222,69 @@ public class NominatimConnector {
 		}
 		//importer.finish();
 		log.info(String.format("finished import of %s photon documents.", MessageFormat.format("{0}", counter.longValue())));
+	}
+
+	/**
+	 * retrieves a single document, used for testing / developing
+	 *
+	 * @param osmId
+	 * @param osmType 'N': node, 'W': way or 'R' relation
+	 * @return
+	 */
+	public List<PhotonDoc> readDocument(long osmId, char osmType) {
+		return template.query("SELECT " + selectColsPlaceX + " FROM placex WHERE osm_id = ? AND osm_type = ?; ", new Object[]{osmId, osmType}, new RowMapper<PhotonDoc>() {
+			@Override
+			public PhotonDoc mapRow(ResultSet resultSet, int i) throws SQLException {
+				PhotonDoc doc = placeRowMapper.mapRow(resultSet, 0);
+				completePlace(doc);
+				return doc;
+			}
+		});
+	}
+
+	/**
+	 * querying nominatim's address hierarchy to complete photon doc with missing data (like country, city, street, ...)
+	 *
+	 * @param doc
+	 */
+	private void completePlace(PhotonDoc doc) {
+		final List<AddressRow> addresses = getAddresses(doc);
+		for(AddressRow address : addresses) {
+
+			if(address.hasPostcode() && doc.getPostcode() == null) {
+				doc.setPostcode(address.getPostcode());
+			}
+
+			if(address.isCity()) {
+				if(doc.getCity() == null) {
+					doc.setCity(address.getName());
+				} else {
+					// there is more than one city address for this document
+					if(address.hasPlace()) {
+						// this city is more important than the previous one
+						doc.getContext().add(doc.getCity()); // move previous city to context
+						doc.setCity(address.getName()); // use new city
+					} else {
+						doc.getContext().add(address.getName());
+					}
+				}
+				continue;
+			}
+
+			if(address.isStreet() && doc.getStreet() == null) {
+				doc.setStreet(address.getName());
+				continue;
+			}
+
+			if(address.isState() && doc.getState() == null) {
+				doc.setState(address.getName());
+				continue;
+			}
+
+			// no specifically handled item, check if useful for context
+			if(address.isUsefulForContext()) {
+				doc.getContext().add(address.getName());
+			}
+		}
 	}
 }
