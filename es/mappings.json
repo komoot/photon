@@ -4,9 +4,9 @@
     "_all": {
       "enabled": false
     },
-     "_source" : {
-		"excludes" : ["context.*"]
-	},
+    "_source": {
+      "excludes": ["context.*"]
+    },
     "_id": {
       "path": "id"
     },
@@ -95,6 +95,19 @@
             ]
           },
           "old": {
+            "type": "string",
+            "index": "no",
+            "fields": {
+              "raw": {
+                "index_analyzer": "index_raw",
+                "type": "string"
+              }
+            },
+            "copy_to": [
+              "collector.default"
+            ]
+          },
+          "reg": {
             "type": "string",
             "index": "no",
             "fields": {
