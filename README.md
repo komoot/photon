@@ -22,24 +22,25 @@ photon requires java, at least version 6.
 
 get photon
 ```bash
-wget http://photon.komoot.de/data/photon-0.1.2.jar
+wget http://photon.komoot.de/data/photon-0.2.0.jar
 ```
 
-download search index (31 gb compressed, 66 gb uncompressed, worldwide, languages: English, German, French and Italian)
+download search index (26 gb compressed, 47 gb uncompressed, worldwide coverage, languages: English, German, French and Italian)
  ```bash
-wget http://photon.komoot.de/data/photon_data_140706.tar.bz2
-lbzip2 -d photon_data_140706.tar.bz2 
-tar xf photon_data_140706.tar
+wget http://photon.komoot.de/data/photon_data_150112.tar.bz2
+tar -xjf photon_data_150112.tar.bz2
+# you can significantly speed up extracting using lbzip2:
+tar -xf photon_data_150112.tar.bz2 --use-compress-prog=pbzip2
  ```
  
 start photon
 ```bash
-java -jar photon-0.1.2.jar
+java -jar photon-0.2.0.jar
 ```
 
 Check the URL `http://localhost:2322/api?q=berlin` to see if photon is running without problems. You may want to use our [leaflet plugin](https://github.com/komoot/leaflet.photon) to see the results on a map.
 
-discover more of photon's feature with its usage `java -jar photon-0.1.2.jar -h`. 
+discover more of photon's feature with its usage `java -jar photon-0.2.0.jar -h`.
 
 
 
@@ -48,7 +49,7 @@ If you need search data in other languages or restricted to a country you will n
 Once you have your [nominatim](https://github.com/twain47/Nominatim) database ready, you can import the data to photon:
 
 ```bash
-java -jar photon-0.1.2.jar -nominatim-import -host localhost -port 5432 -database nominatim -user nominatim -password ... -languages es,fr
+java -jar photon-0.2.0.jar -nominatim-import -host localhost -port 5432 -database nominatim -user nominatim -password ... -languages es,fr
 ```
 
 The import of worldwide data set will take some hours/days, ssd disk are recommended to accelerate nominatim queries.
@@ -63,7 +64,7 @@ export NOMINATIM_DIR=/home/nominatim/...
 ### Search API
 #### Start Photon
 ```bash
-java -jar photon-0.1.2.jar
+java -jar photon-0.2.0.jar
 ```
 
 #### Search
