@@ -30,7 +30,7 @@ download search index (26 gb compressed, 47 gb uncompressed, worldwide coverage,
 wget http://photon.komoot.de/data/photon_data_150112.tar.bz2
 tar -xjf photon_data_150112.tar.bz2
 # you can significantly speed up extracting using lbzip2:
-tar -xf photon_data_150112.tar.bz2 --use-compress-prog=pbzip2
+# tar -xf photon_data_150112.tar.bz2 --use-compress-prog=pbzip2
  ```
  
 start photon
