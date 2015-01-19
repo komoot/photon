@@ -137,6 +137,7 @@ public class Server {
 		mappingsJSON = addLangsToMapping(mappingsJSON);
 		client.admin().indices().prepareCreate("photon").setSettings(IOUtils.toString(index_settings)).execute().actionGet();
 		client.admin().indices().preparePutMapping("photon").setType("place").setSource(mappingsJSON.toString()).execute().actionGet();
+		log.info("mapping created: " + mappingsJSON.toString());
 	}
 
 	public DeleteIndexResponse deleteIndex() {
@@ -168,6 +169,7 @@ public class Server {
 				propertiesObject = addToCollector("city", propertiesObject, copyToCollectorObject, lang);
 				propertiesObject = addToCollector("context", propertiesObject, copyToCollectorObject, lang);
 				propertiesObject = addToCollector("country", propertiesObject, copyToCollectorObject, lang);
+				propertiesObject = addToCollector("state", propertiesObject, copyToCollectorObject, lang);
 				propertiesObject = addToCollector("street", propertiesObject, copyToCollectorObject, lang);
 				propertiesObject = addToCollector("name", propertiesObject, nameToCollectorObject, lang);
 
