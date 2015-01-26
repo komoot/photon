@@ -26,7 +26,6 @@ public class TagFilterTest extends ESBaseTester {
     public void setUp() throws IOException {
         setUpES();
         deleteAll();
-
         PhotonDoc street4 = new PhotonDoc(123, "way", 333, "aTag", "aValue", ImmutableMap.of("name", "hello"), "1234", ImmutableMap.of("tag2", "value2", "tag3", "value3"), null, 3333, 0.5, null,
                                           FACTORY.createPoint(new Coordinate(10., 47.)), 0, 0);
         street4.setState(ImmutableMap.of("name", "state"));
@@ -39,7 +38,6 @@ public class TagFilterTest extends ESBaseTester {
     @Test
     public void checkState() {
         final Searcher searcher = new Searcher(getClient());
-
         List<JSONObject> searchResults = searcher.search("hello state", "en", null, null, 10, false);
         Assert.assertEquals(1, searchResults.size());
         JSONObject searchResultItem = searchResults.get(0);
