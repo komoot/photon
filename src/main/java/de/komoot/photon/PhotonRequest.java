@@ -12,13 +12,13 @@ public class PhotonRequest implements Serializable {
     private String query;
     private Integer limit;
 
-    public PhotonRequest(Request webRequest) throws BadRequestException{
+    public PhotonRequest(Request webRequest) throws BadRequestException {
         this.query = webRequest.queryParams("q");
-        if (query==null) throw new BadRequestException("missing search term 'q': /?q=berlin");
+        if (query == null) throw new BadRequestException("missing search term 'q': /?q=berlin");
         try {
-            this.limit= Integer.valueOf(webRequest.queryParams("limit"));
+            this.limit = Integer.valueOf(webRequest.queryParams("limit"));
         } catch (NumberFormatException e) {
-            //ignore
+            this.limit = 15;
         }
         Double lon = null;
         Double lat = null;

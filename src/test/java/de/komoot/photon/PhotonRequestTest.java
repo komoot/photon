@@ -61,10 +61,11 @@ public class PhotonRequestTest {
         Mockito.when(mockRequest.queryParams("limit")).thenReturn(null);
         photonRequest = new PhotonRequest(mockRequest);
         Assert.assertEquals("berlin", photonRequest.getQuery());
-        Assert.assertNull(photonRequest.getLocationBias());
+        Assert.assertEquals(new Integer(15),photonRequest.getLimit());
         Mockito.verify(mockRequest, Mockito.times(1)).queryParams("q");
         Mockito.verify(mockRequest, Mockito.times(1)).queryParams("limit");
-    } 
+    }
+
     @Test
     public void testWithBadQuery() throws Exception {
         Request mockRequest = Mockito.mock(Request.class);
@@ -73,7 +74,7 @@ public class PhotonRequestTest {
             photonRequest = new PhotonRequest(mockRequest);
             Assert.fail();
         } catch (BadRequestException e) {
-            Assert.assertEquals("missing search term 'q': /?q=berlin",e.getMessage());
+            Assert.assertEquals("missing search term 'q': /?q=berlin", e.getMessage());
         }
         Mockito.verify(mockRequest, Mockito.times(1)).queryParams("q");
     }
