@@ -122,7 +122,7 @@ public class NominatimConnector {
 		long placeId = doc.getPlaceId();
 		if(doc.getRankSearch() > 28)
 			placeId = doc.getParentPlaceId();
-		return template.query("SELECT p.place_id, p.name, p.class, p.type, p.rank_address, p.admin_level, p.postcode, p.extratags->'place' as place FROM placex p, place_addressline pa WHERE p.place_id = pa.address_place_id and pa.place_id = ? and pa.cached_rank_address > 4 and pa.address_place_id != ? and pa.isaddress order by rank_address desc,fromarea desc,distance asc,rank_search desc", new Object[]{placeId, doc.getPlaceId()}, new RowMapper<AddressRow>() {
+		return template.query("SELECT p.place_id, p.osm_type, p.osm_id, p.name, p.class, p.type, p.rank_address, p.admin_level, p.postcode, p.extratags->'place' as place FROM placex p, place_addressline pa WHERE p.place_id = pa.address_place_id and pa.place_id = ? and pa.cached_rank_address > 4 and pa.address_place_id != ? and pa.isaddress order by rank_address desc,fromarea desc,distance asc,rank_search desc", new Object[]{placeId, doc.getPlaceId()}, new RowMapper<AddressRow>() {
 			@Override
 			public AddressRow mapRow(ResultSet rs, int rowNum) throws SQLException {
 				Integer adminLevel = rs.getInt("admin_level");
@@ -137,7 +137,9 @@ public class NominatimConnector {
 						rs.getInt("rank_address"),
 						adminLevel,
 						rs.getString("postcode"),
-						rs.getString("place")
+						rs.getString("place"),
+						rs.getString("osm_type"),
+						rs.getLong("osm_id")
 				);
 			}
 		});
@@ -269,6 +271,16 @@ public class NominatimConnector {
 					}
 				}
 				continue;
+			}
+
+			if(address.isCuratedCity()) {
+				if(doc.getCity() == null) {
+					doc.setCity(address.getName());
+				} else {
+					doc.getContext().add(doc.getCity()); // move previous city to context
+					doc.setCity(address.getName()); // use new city
+				}
+				// do not continue as a curated city might be a state as well
 			}
 
 			if(address.isStreet() && doc.getStreet() == null) {
