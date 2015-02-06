@@ -16,7 +16,7 @@
       },
       "osm_key": {
         "type": "string",
-        "index": "no"
+        "index":"not_analyzed"
       },
       "osm_type": {
         "type": "string",

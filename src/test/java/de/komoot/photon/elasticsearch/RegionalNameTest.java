@@ -43,8 +43,8 @@ public class RegionalNameTest extends ESBaseTester {
 	public void test() {
 		final Searcher searcher = new Searcher(getClient());
 
-		assertId(searcher.search("hawaii", "en", null, null, 10, false), 1);
-		assertId(searcher.search("big island", "en", null, null, 10, false), 1);
+		assertId(searcher.search("hawaii", "en", null, null, null,null,10, false), 1);
+		assertId(searcher.search("big island", "en", null, null, null,null,10, false), 1);
 	}
 
 	private void assertId(List<JSONObject> results, long expectedFirstId) {
