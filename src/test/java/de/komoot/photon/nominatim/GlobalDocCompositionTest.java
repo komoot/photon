@@ -16,7 +16,7 @@ import static org.junit.Assert.*;
  * @author christoph
  */
 @Slf4j
-//@Ignore // test is ignored because it depends on a local nominatim database with some data imported see /src/test/resources/nominatim_import_test_data.sh
+@Ignore // test is ignored because it depends on a local nominatim database with world-wide data
 public class GlobalDocCompositionTest {
 
 	private NominatimConnector connector;
