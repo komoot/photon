@@ -48,7 +48,7 @@ public class RemoveStreetDuplicatesTest extends ESBaseTester {
 	@Test
 	public void checkDuplicates() {
 		final Searcher searcher = new Searcher(getClient());
-		final List<JSONObject> results = searcher.search("Walserstraße", "en", null, null, 10, true);
+		final List<JSONObject> results = searcher.search("Walserstraße", "en", null, null, null,null,10, true);
 		assertEquals(2, results.size());
 	}
 }

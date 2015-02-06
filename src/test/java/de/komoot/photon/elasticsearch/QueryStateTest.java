@@ -49,13 +49,13 @@ public class QueryStateTest extends ESBaseTester {
 	public void checkState() {
 		final Searcher searcher = new Searcher(getClient());
 
-		assertId(searcher.search("streetname bavaria", "en", null, null, 10, false), 1);
-		assertId(searcher.search("streetname vorarlberg", "en", null, null, 10, false), 2);
-		assertId(searcher.search("streetname berlin", "en", null, null, 10, false), 3);
+		assertId(searcher.search("streetname bavaria", "en", null, null, null,null,10, false), 1);
+		assertId(searcher.search("streetname vorarlberg", "en", null, null, null,null,10, false), 2);
+		assertId(searcher.search("streetname berlin", "en", null, null,null,null,10, false), 3);
 
-		assertId(searcher.search("streetname bavaria", "en", null, null, 10, true), 1);
-		assertId(searcher.search("streetname vorarlberg", "en", null, null, 10, true), 2);
-		assertId(searcher.search("streetname berlin", "en", null, null, 10, true), 3);
+		assertId(searcher.search("streetname bavaria", "en", null, null, null,null,10, true), 1);
+		assertId(searcher.search("streetname vorarlberg", "en", null, null, null,null,10, true), 2);
+		assertId(searcher.search("streetname berlin", "en", null, null, null,null,10, true), 3);
 	}
 
 	private void assertId(List<JSONObject> results, long expectedFirstId) {

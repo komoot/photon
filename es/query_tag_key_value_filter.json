@@ -68,26 +68,40 @@
       }
     },
     "filter": {
-      "or": {
+      "and": {
         "filters": [
           {
-            "missing": {
-              "field": "housenumber"
+            "term": {"osm_key": "${tagKey}"}
+          },
+          {
+            "term": {
+              "osm_value": "${tagValue}"
             }
           },
           {
-            "query": {
-              "match": {
-                "housenumber": {
-                  "query": "${query}",
-                  "analyzer": "standard"
+            "or": {
+              "filters": [
+                {
+                  "missing": {
+                    "field": "housenumber"
+                  }
+                },
+                {
+                  "query": {
+                    "match": {
+                      "housenumber": {
+                        "query": "${query}",
+                        "analyzer": "standard"
+                      }
+                    }
+                  }
+                },
+                {
+                  "exists": {
+                    "field": "name.${lang}.raw"
+                  }
                 }
-              }
-            }
-          },
-          {
-            "exists": {
-              "field": "name.${lang}.raw"
+              ]
             }
           }
         ]
