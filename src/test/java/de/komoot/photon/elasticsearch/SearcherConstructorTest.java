@@ -9,7 +9,7 @@ import org.mockito.Mockito;
 import java.io.IOException;
 import java.lang.reflect.Field;
 
-public class SearcherTest {
+public class SearcherConstructorTest {
 
     @Test
     public void testConstructorForSearchDslTemplates() throws NoSuchFieldException, IllegalAccessException, IOException {
