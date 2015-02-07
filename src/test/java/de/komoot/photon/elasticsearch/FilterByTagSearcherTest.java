@@ -9,7 +9,6 @@ import de.komoot.photon.PhotonDoc;
 import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -61,8 +60,8 @@ public class FilterByTagSearcherTest extends ESBaseTester {
         Assert.assertEquals(2, searchResults.get(0).getJSONObject("properties").getInt("osm_id"));
         Assert.assertEquals(3, searchResults.get(1).getJSONObject("properties").getInt("osm_id"));
     }
+
     @Test
-    @Ignore
     public void testSearchWithTagKeyNoValueWithBias() {
         final Searcher searcher = new Searcher(getClient());
         List<JSONObject> searchResults = searcher.search("Madame", "en", -87.0, 41.0, "wrong_tag", null, 15, false);
@@ -72,19 +71,21 @@ public class FilterByTagSearcherTest extends ESBaseTester {
         Assert.assertEquals(2, searchResults.get(0).getJSONObject("properties").getInt("osm_id"));
         Assert.assertEquals(3, searchResults.get(1).getJSONObject("properties").getInt("osm_id"));
     }
+
     @Test
-    @Ignore
     public void testSearchWithTagKeyValueWithBias() {
         final Searcher searcher = new Searcher(getClient());
         List<JSONObject> searchResults = searcher.search("Madame", "en", -87.0, 41.0, "wrong_tag", "museum", 15, false);
         Assert.assertEquals(0, searchResults.size());
-        searchResults = searcher.search("Madame", "en",  41.0,-87., "tourism", "museum", 15, false);
+        searchResults = searcher.search("Madame", "en", 41.0, -87., "tourism", "museum", 15, false);
         Assert.assertEquals(2, searchResults.size());
         Assert.assertEquals(2, searchResults.get(0).getJSONObject("properties").getInt("osm_id"));
         Assert.assertEquals(3, searchResults.get(1).getJSONObject("properties").getInt("osm_id"));
     }
+
     private PhotonDoc createDoc(int id, String name, String tagKey, String tagValue) {
-        return new PhotonDoc(id, "way", id, tagKey, tagValue, ImmutableMap.of("name", name, "reg_name", "regName"), null, null, null, 0, 0.5, null, FACTORY.createPoint(new
+        ImmutableMap<String, String> nameMap = ImmutableMap.of("name", name, "reg_name", "regName");
+        return new PhotonDoc(id, "way", id, tagKey, tagValue, nameMap, null, null, null, 0, 0.5, null, FACTORY.createPoint(new
                                                                                                                                                                                 Coordinate(-87., 41.)), 0, 0);
     }
 }
