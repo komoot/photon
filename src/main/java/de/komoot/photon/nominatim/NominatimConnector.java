@@ -176,7 +176,7 @@ public class NominatimConnector {
 		log.info("start importing documents from nominatim ...");
 		final AtomicLong counter = new AtomicLong();
 
-		final int progressInterval = 5000;
+		final int progressInterval = 50000;
 		final long startMillis = System.currentTimeMillis();
 
 		final BlockingQueue<PhotonDoc> documents = new LinkedBlockingDeque<PhotonDoc>(20);
