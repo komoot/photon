@@ -71,11 +71,11 @@
       "and": {
         "filters": [
           {
-            "term": {"osm_key": "${tagKey}"}
+            "term": {"osm_key": "${osm_key}"}
           },
           {
             "term": {
-              "osm_value": "${tagValue}"
+              "osm_value": "${osm_value}"
             }
           },
           {

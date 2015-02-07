@@ -79,21 +79,21 @@ public class Searcher {
             StrSubstitutor sub = new StrSubstitutor(params.build(), "${", "}");
             query = sub.replace(queryTemplate);
         } else if (hasTagKeyNoValueHasBias) {
-            params.put("tagKey",tagKey);
+            params.put("osm_key",tagKey);
             StrSubstitutor sub = new StrSubstitutor(params.build(), "${", "}");
             query = sub.replace(queryWithTagKeyFiltersAndBiasTemplate);
         } else if (hasTagKeyNoValueNoBias) {
-            params.put("tagKey",tagKey);
+            params.put("osm_key",tagKey);
             StrSubstitutor sub = new StrSubstitutor(params.build(), "${", "}");
             query = sub.replace(queryWithTagKeyFiltersTemplate);
         } else if (hasTagKeyHasValueHasBias) {
-            params.put("tagKey",tagKey);
-            params.put("tagValue",tagValue);
+            params.put("osm_key",tagKey);
+            params.put("osm_value",tagValue);
             StrSubstitutor sub = new StrSubstitutor(params.build(), "${", "}");
             query = sub.replace(queryWithTagKeyValueFiltersAndBiasTemplate);
         } else if (hasTagKeyHasValueNoBias) {
-            params.put("tagKey",tagKey);
-            params.put("tagValue",tagValue);
+            params.put("osm_key",tagKey);
+            params.put("osm_value",tagValue);
             StrSubstitutor sub = new StrSubstitutor(params.build(), "${", "}");
             query = sub.replace(queryWithTagKeyValueFiltersTemplate);
         }

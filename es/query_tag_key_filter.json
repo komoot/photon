@@ -98,7 +98,7 @@
           },
           {
             "term": {
-              "osm_key": "${tagKey}"
+              "osm_key": "${osm_key}"
             }
           }
         ]

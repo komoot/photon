@@ -80,7 +80,7 @@
     "filter": {
       "and":{
         "filters":[
-          {"term":{"osm_key":"${tagKey}"}},
+          {"term":{"osm_key":"${osm_key}"}},
           {"or": {
             "filters": [
               {

@@ -59,13 +59,13 @@ public class RequestHandler extends Route {
 			limit = 15;
 		}
 
-        String tagKey = request.queryParams("tagKey");
-        String tagValue = request.queryParams("tagValue");
+        String osmKey = request.queryParams("osm_key");
+        String osmValue = request.queryParams("osm_value");
 
-        List<JSONObject> results = searcher.search(query, lang, lon, lat, tagKey,tagValue,limit, true);
+        List<JSONObject> results = searcher.search(query, lang, lon, lat, osmKey,osmValue,limit, true);
 		if(results.isEmpty()) {
 			// try again, but less restrictive
-			results = searcher.search(query, lang, lon, lat, tagKey,tagValue,limit, false);
+			results = searcher.search(query, lang, lon, lat, osmKey,osmValue,limit, false);
 		}
 
 		// build geojson
