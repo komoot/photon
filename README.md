@@ -87,6 +87,17 @@ http://localhost:2322/api?q=berlin&limit=2
 http://localhost:2322/api?q=berlin&lang=it
 ```
 
+#### Filter results by [tags and values](http://wiki.openstreetmap.org/wiki/Tags)
+```
+http://localhost:2322/api?q=berlin&osm_key=tourism&osm_value=museum
+```
+
+Or, just by they key
+
+```
+http://localhost:2322/api?q=berlin&osm_key=tourism
+```
+
 #### Results as GeoJSON
 ```json
 {
