@@ -80,7 +80,11 @@
     "filter": {
       "and":{
         "filters":[
+<<<<<<< HEAD
           {"term":{"osm_key":"${osm_key}"}},
+=======
+          {"term":{"osm_key":"${tagKey}"}},
+>>>>>>> origin/master
           {"or": {
             "filters": [
               {
