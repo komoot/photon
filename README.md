@@ -87,7 +87,8 @@ http://localhost:2322/api?q=berlin&limit=2
 http://localhost:2322/api?q=berlin&lang=it
 ```
 
-#### Filter results by [tags and values](http://taginfo.openstreetmap.org/projects/nominatim#tags) (Note: not all tags on that link are supported. Please see [nominatim source](https://github.com/openstreetmap/osm2pgsql/blob/master/output-gazetteer.cpp#L81) for an accurate list.
+#### Filter results by [tags and values](http://taginfo.openstreetmap.org/projects/nominatim#tags) 
+*Note: not all tags on that link are supported. Please see [nominatim source](https://github.com/openstreetmap/osm2pgsql/blob/master/output-gazetteer.cpp#L81) for an accurate list.*
 ```
 http://localhost:2322/api?q=berlin&osm_key=tourism&osm_value=museum
 ```
