@@ -33,7 +33,7 @@ import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
 @Slf4j
 public class Server {
 	private Node esNode;
-	private String clusterName = "photon_v0.2";
+	private String clusterName = "photon_v0.2.1";
 	private File esDirectory;
 	private final boolean isTest;
 	private final String[] languages;
