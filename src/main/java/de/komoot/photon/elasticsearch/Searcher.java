@@ -30,6 +30,10 @@ import java.util.Map;
 public class Searcher {
 	private final String queryTemplate;
 	private final String queryLocationBiasTemplate;
+	private final String queryWithTagKeyValueFiltersTemplate;
+	private final String queryWithTagKeyValueFiltersAndBiasTemplate;
+	private final String queryWithTagKeyFiltersTemplate;
+	private final String queryWithTagKeyFiltersAndBiasTemplate;
 	private final Client client;
 
 	/** These properties are directly copied into the result */
@@ -37,19 +41,29 @@ public class Searcher {
 
 	/** These properties will be translated before they are copied into the result */
 	private final static String[] KEYS_LANG_SPEC = {Constants.NAME, Constants.COUNTRY, Constants.CITY, Constants.STREET, Constants.STATE};
+    private boolean hasTagKeyHasValueNoBias;
+    private boolean hasTagKeyHasValueHasBias;
+    private boolean hasTagKeyNoValueNoBias;
+    private boolean hasTagKeyNoValueHasBias;
+    private boolean hasNoTagKeyNoValueNoBias;
+    private boolean hasNoTagKeyNoValueHasBias;
 
-	public Searcher(Client client) {
+    public Searcher(Client client) {
 		this.client = client;
 		try {
 			final ClassLoader loader = Thread.currentThread().getContextClassLoader();
 			queryTemplate = IOUtils.toString(loader.getResourceAsStream("query.json"), "UTF-8");
 			queryLocationBiasTemplate = IOUtils.toString(loader.getResourceAsStream("query_location_bias.json"), "UTF-8");
-		} catch(Exception e) {
+            queryWithTagKeyValueFiltersTemplate = IOUtils.toString(loader.getResourceAsStream("query_tag_key_value_filter.json"), "UTF-8");
+            queryWithTagKeyValueFiltersAndBiasTemplate = IOUtils.toString(loader.getResourceAsStream("query_tag_key_value_filter_location_bias.json"), "UTF-8");
+            queryWithTagKeyFiltersTemplate = IOUtils.toString(loader.getResourceAsStream("query_tag_key_filter.json"), "UTF-8");
+            queryWithTagKeyFiltersAndBiasTemplate = IOUtils.toString(loader.getResourceAsStream("query_tag_key_filter_location_bias.json"), "UTF-8");
+        } catch(Exception e) {
 			throw new RuntimeException("cannot access query templates", e);
 		}
 	}
 
-	public List<JSONObject> search(String query, String lang, Double lon, Double lat, int limit, boolean matchAll) {
+	public List<JSONObject> search(String query, String lang, Double lon, Double lat, String tagKey, String tagValue, int limit, boolean matchAll) {
 		final ImmutableMap.Builder<String, Object> params = ImmutableMap.<String, Object>builder()
 				.put("query", StringEscapeUtils.escapeJson(query))
 				.put("lang", lang)
@@ -57,13 +71,32 @@ public class Searcher {
 		if(lon != null) params.put("lon", lon);
 		if(lat != null) params.put("lat", lat);
 
-		StrSubstitutor sub = new StrSubstitutor(params.build(), "${", "}");
-		if(lon != null && lat != null) {
-			query = sub.replace(queryLocationBiasTemplate);
-		} else {
-			query = sub.replace(queryTemplate);
-		}
-
+        this.setupSearch(lon,lat,tagKey,tagValue);
+        if (hasNoTagKeyNoValueHasBias) {
+            StrSubstitutor sub = new StrSubstitutor(params.build(), "${", "}");
+            query = sub.replace(queryLocationBiasTemplate);
+        } else if (hasNoTagKeyNoValueNoBias) {
+            StrSubstitutor sub = new StrSubstitutor(params.build(), "${", "}");
+            query = sub.replace(queryTemplate);
+        } else if (hasTagKeyNoValueHasBias) {
+            params.put("osm_key",tagKey);
+            StrSubstitutor sub = new StrSubstitutor(params.build(), "${", "}");
+            query = sub.replace(queryWithTagKeyFiltersAndBiasTemplate);
+        } else if (hasTagKeyNoValueNoBias) {
+            params.put("osm_key",tagKey);
+            StrSubstitutor sub = new StrSubstitutor(params.build(), "${", "}");
+            query = sub.replace(queryWithTagKeyFiltersTemplate);
+        } else if (hasTagKeyHasValueHasBias) {
+            params.put("osm_key",tagKey);
+            params.put("osm_value",tagValue);
+            StrSubstitutor sub = new StrSubstitutor(params.build(), "${", "}");
+            query = sub.replace(queryWithTagKeyValueFiltersAndBiasTemplate);
+        } else if (hasTagKeyHasValueNoBias) {
+            params.put("osm_key",tagKey);
+            params.put("osm_value",tagValue);
+            StrSubstitutor sub = new StrSubstitutor(params.build(), "${", "}");
+            query = sub.replace(queryWithTagKeyValueFiltersTemplate);
+        }
 		SearchResponse response = client.prepareSearch("photon").setSearchType(SearchType.QUERY_AND_FETCH).setQuery(query).setSize(limit).setTimeout(TimeValue.timeValueSeconds(7)).execute().actionGet();
 		List<JSONObject> results = convert(response.getHits().getHits(), lang);
 		results = removeStreetDuplicates(results, lang);
@@ -73,7 +106,22 @@ public class Searcher {
 		return results;
 	}
 
-	private List<JSONObject> removeStreetDuplicates(List<JSONObject> results, String lang) {
+    private void setupSearch(Double lon, Double lat, String tagKey, String tagValue) {
+        boolean hasBias = lon!=null && lat!=null;
+        boolean hasTagKey = tagKey!=null;
+        boolean hasTagValue = tagValue!=null;
+        boolean hasTagKeyNoValue = hasTagKey && !hasTagValue;
+        boolean hasTagKeyHasValue = hasTagKey && hasTagValue;
+        this. hasTagKeyHasValueNoBias = hasTagKeyHasValue && !hasBias;
+        this. hasTagKeyHasValueHasBias = hasTagKeyHasValue && hasBias;
+        this. hasTagKeyNoValueNoBias = hasTagKeyNoValue && !hasBias;
+        this. hasTagKeyNoValueHasBias = hasTagKeyNoValue && hasBias;
+        this. hasNoTagKeyNoValueNoBias = !hasTagKey && !hasTagValue && !hasBias;
+        this. hasNoTagKeyNoValueHasBias =  !hasTagKey && !hasTagValue && hasBias;
+
+    }
+
+    private List<JSONObject> removeStreetDuplicates(List<JSONObject> results, String lang) {
 		List<JSONObject> filteredItems = Lists.newArrayListWithCapacity(results.size());
 		final HashSet<String> keys = Sets.newHashSet();
 		for(JSONObject result : results) {

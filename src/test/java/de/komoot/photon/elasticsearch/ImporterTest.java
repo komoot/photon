@@ -2,15 +2,16 @@ package de.komoot.photon.elasticsearch;
 
 import de.komoot.photon.ESBaseTester;
 import de.komoot.photon.PhotonDoc;
-import java.io.IOException;
 import org.json.JSONObject;
-import org.junit.*;
+import org.junit.Before;
+import org.junit.Test;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 /**
  * @author Peter Karich
@@ -37,7 +38,7 @@ public class ImporterTest extends ESBaseTester {
 		assertEquals(1L, instance.count());
 
 		final Searcher searcher = new Searcher(getClient());
-		final List<JSONObject> results = searcher.search("testing", "en", null, null, 10, true);
+		final List<JSONObject> results = searcher.search("testing", "en", null, null,null,null, 10, true);
 		assertEquals(1, results.size());
 	}
 }

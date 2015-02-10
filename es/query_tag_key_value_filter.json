@@ -1,0 +1,111 @@
+{
+  "filtered": {
+    "query": {
+      "function_score": {
+        "boost_mode": "multiply",
+        "query": {
+          "bool": {
+            "must": {
+              "bool": {
+                "should": [
+                  {
+                    "match": {
+                      "collector.default": {
+                        "fuzziness": 1,
+                        "query": "${query}",
+                        "minimum_should_match": "${should_match}",
+                        "analyzer": "search_ngram",
+                        "prefix_length": 2
+                      }
+                    }
+                  },
+                  {
+                    "match": {
+                      "collector.${lang}": {
+                        "fuzziness": 1,
+                        "query": "${query}",
+                        "minimum_should_match": "${should_match}",
+                        "analyzer": "search_ngram",
+                        "prefix_length": 2
+                      }
+                    }
+                  }
+                ],
+                "minimum_should_match": 1
+              }
+            },
+            "should": [
+              {
+                "match": {
+                  "name.${lang}.raw": {
+                    "query": "${query}",
+                    "boost": 200,
+                    "analyzer": "search_raw"
+                  }
+                }
+              },
+              {
+                "match": {
+                  "collector.${lang}.raw": {
+                    "query": "${query}",
+                    "boost": 100,
+                    "analyzer": "search_raw"
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "score_mode": "multiply",
+        "functions": [
+          {
+            "script_score": {
+              "script": "general-score",
+              "lang": "mvel"
+            }
+          }
+        ]
+      }
+    },
+    "filter": {
+      "and": {
+        "filters": [
+          {
+            "term": {"osm_key": "${osm_key}"}
+          },
+          {
+            "term": {
+              "osm_value": "${osm_value}"
+            }
+          },
+          {
+            "or": {
+              "filters": [
+                {
+                  "missing": {
+                    "field": "housenumber"
+                  }
+                },
+                {
+                  "query": {
+                    "match": {
+                      "housenumber": {
+                        "query": "${query}",
+                        "analyzer": "standard"
+                      }
+                    }
+                  }
+                },
+                {
+                  "exists": {
+                    "field": "name.${lang}.raw"
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  }
+}
