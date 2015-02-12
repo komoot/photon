@@ -1,7 +1,8 @@
 package de.komoot.photon;
 
 import com.google.common.collect.ImmutableSet;
-import de.komoot.photon.query.FilteredPhotonRequest;
+import de.komoot.photon.query.BadRequestException;
+import de.komoot.photon.query.PhotonRequest;
 import de.komoot.photon.query.PhotonRequestFactory;
 import de.komoot.photon.searcher.PhotonSearcherFactory;
 import org.junit.Assert;
@@ -27,18 +28,19 @@ public class SearchRequestHandlerTest {
     }
 
     @Test
-    public void testHandle() {
-        PhotonSearcherFactory mockPhotonSearcherFactory = Mockito.mock(PhotonSearcherFactory.class);
+    public void testHandle() throws BadRequestException {
         SearchRequestHandler searchRequestHandler = new SearchRequestHandler("any", "en,fr");
-        ReflectionTestUtil.setFieldValue(searchRequestHandler, SearchRequestHandler.class, "searcherFactory", mockPhotonSearcherFactory);
         Response mockResponse = Mockito.mock(Response.class);
         Request mockRequest = Mockito.mock(Request.class);
         PhotonRequestFactory mockPhotonRequestFactory = Mockito.mock(PhotonRequestFactory.class);
+        PhotonRequest mockPhotonRequest = Mockito.mock(PhotonRequest.class);
+        Mockito.when(mockPhotonRequestFactory.create(mockRequest)).thenReturn(mockPhotonRequest);
         ReflectionTestUtil.setFieldValue(searchRequestHandler,SearchRequestHandler.class,"photonRequestFactory",mockPhotonRequestFactory);
-        String handle = searchRequestHandler.handle(mockRequest, mockResponse);
-        Assert.assertFalse(handle.startsWith("bad request"));
-
-        FilteredPhotonRequest mockFilteredPhotonRequestClass = Mockito.mock(FilteredPhotonRequest.class);
-        Mockito.verify(mockPhotonSearcherFactory).getSearcher(Mockito.any(FilteredPhotonRequest.class));
+        PhotonRequestHandler mockPhotonRequestHandler = Mockito.mock(PhotonRequestHandler.class);
+        Mockito.when(mockPhotonRequestHandler.handle(mockPhotonRequest)).thenReturn("success");
+        ReflectionTestUtil.setFieldValue(searchRequestHandler,SearchRequestHandler.class,"photonRequestHandler",mockPhotonRequestHandler);
+        String resultString = searchRequestHandler.handle(mockRequest, mockResponse);
+        Assert.assertFalse(resultString.startsWith("bad request"));
+        Assert.assertEquals("success",resultString);
     }
 }
