@@ -19,4 +19,13 @@ public class ReflectionTestUtil {
         }
     }
 
+    public static <T> void setFieldValue(Object anObject, Class<?> clazz, String fieldName, T value) {try {
+        Field path = clazz.getDeclaredField(fieldName);
+        path.setAccessible(true);
+        path.set(anObject,value);
+    } catch (IllegalAccessException e) {
+        throw new RuntimeException("unable to get value of field", e);
+    } catch (NoSuchFieldException e) {
+        throw new RuntimeException("unable to get value of field", e);
+    }}
 }
