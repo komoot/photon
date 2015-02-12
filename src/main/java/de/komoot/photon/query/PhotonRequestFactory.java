@@ -43,7 +43,9 @@ public class PhotonRequestFactory {
             if (!tagFilter.contains(":")){
                 //only tag
                 if (tagFilter.startsWith("!")){
-                    request.key(tagFilter.substring(1));
+                    request.notKey(tagFilter.substring(1));
+                }else{
+                    request.key(tagFilter);
                 }
             }
         }
