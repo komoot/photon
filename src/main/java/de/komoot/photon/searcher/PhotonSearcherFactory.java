@@ -7,7 +7,7 @@ import de.komoot.photon.query.PhotonRequest;
  */
 public class PhotonSearcherFactory {
     
-    PhotonSearcher getSearcher(PhotonRequest photonRequest){
+    public PhotonSearcher getSearcher(PhotonRequest photonRequest){
         return null;
         
     }
