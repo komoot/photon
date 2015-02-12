@@ -1,5 +1,6 @@
 package de.komoot.photon.query;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import org.junit.Assert;
 import org.junit.Test;
@@ -88,7 +89,7 @@ public class PhotonRequestFactoryTest {
         Mockito.verify(mockRequest, Mockito.times(1)).queryParams("q");
     }
     @Test
-    public void testWithFilter() throws Exception {
+    public void testWithIncludeKeyFilter() throws Exception {
         Request mockRequest = Mockito.mock(Request.class);
         Mockito.when(mockRequest.queryParams("q")).thenReturn("berlin");
         QueryParamsMap mockOsmTagQueryParm = Mockito.mock(QueryParamsMap.class);
@@ -101,5 +102,77 @@ public class PhotonRequestFactoryTest {
         Mockito.verify(mockRequest, Mockito.times(1)).queryMap("osm_tag");
         Mockito.verify(mockOsmTagQueryParm, Mockito.times(1)).values();
         Assert.assertEquals(ImmutableSet.of("aTag"), filteredPhotonRequest.key());
+    }    
+    @Test
+    public void testWithIncludeTagFilter() throws Exception {
+        Request mockRequest = Mockito.mock(Request.class);
+        Mockito.when(mockRequest.queryParams("q")).thenReturn("berlin");
+        QueryParamsMap mockOsmTagQueryParm = Mockito.mock(QueryParamsMap.class);
+        Mockito.when(mockOsmTagQueryParm.values()).thenReturn(new String[]{"aTag:aValue"});
+        Mockito.when(mockRequest.queryMap("osm_tag")).thenReturn(mockOsmTagQueryParm);
+        PhotonRequestFactory photonRequestFactory = new PhotonRequestFactory();
+        FilteredPhotonRequest filteredPhotonRequest = (FilteredPhotonRequest) photonRequestFactory.create(mockRequest);
+        Assert.assertEquals("berlin", filteredPhotonRequest.getQuery());
+        Mockito.verify(mockRequest, Mockito.times(1)).queryMap("osm_tag");
+        Mockito.verify(mockOsmTagQueryParm, Mockito.times(1)).values();
+        Assert.assertEquals(ImmutableMap.of("aTag","aValue"), filteredPhotonRequest.tag());
+    }
+    @Test
+    public void testWithIncludeValueFilter() throws Exception {
+        Request mockRequest = Mockito.mock(Request.class);
+        Mockito.when(mockRequest.queryParams("q")).thenReturn("berlin");
+        QueryParamsMap mockOsmTagQueryParm = Mockito.mock(QueryParamsMap.class);
+        Mockito.when(mockOsmTagQueryParm.values()).thenReturn(new String[]{":aValue"});
+        Mockito.when(mockRequest.queryMap("osm_tag")).thenReturn(mockOsmTagQueryParm);
+        PhotonRequestFactory photonRequestFactory = new PhotonRequestFactory();
+        FilteredPhotonRequest filteredPhotonRequest = (FilteredPhotonRequest) photonRequestFactory.create(mockRequest);
+        Assert.assertEquals("berlin", filteredPhotonRequest.getQuery());
+        Mockito.verify(mockRequest, Mockito.times(1)).queryParams("q");
+        Mockito.verify(mockRequest, Mockito.times(1)).queryMap("osm_tag");
+        Mockito.verify(mockOsmTagQueryParm, Mockito.times(1)).values();
+        Assert.assertEquals(ImmutableSet.of("aValue"), filteredPhotonRequest.value());
+    }    @Test
+    public void testWithExcludeKeyFilter() throws Exception {
+        Request mockRequest = Mockito.mock(Request.class);
+        Mockito.when(mockRequest.queryParams("q")).thenReturn("berlin");
+        QueryParamsMap mockOsmTagQueryParm = Mockito.mock(QueryParamsMap.class);
+        Mockito.when(mockOsmTagQueryParm.values()).thenReturn(new String[]{"!aTag"});
+        Mockito.when(mockRequest.queryMap("osm_tag")).thenReturn(mockOsmTagQueryParm);
+        PhotonRequestFactory photonRequestFactory = new PhotonRequestFactory();
+        FilteredPhotonRequest filteredPhotonRequest = (FilteredPhotonRequest) photonRequestFactory.create(mockRequest);
+        Assert.assertEquals("berlin", filteredPhotonRequest.getQuery());
+        Mockito.verify(mockRequest, Mockito.times(1)).queryParams("q");
+        Mockito.verify(mockRequest, Mockito.times(1)).queryMap("osm_tag");
+        Mockito.verify(mockOsmTagQueryParm, Mockito.times(1)).values();
+        Assert.assertEquals(ImmutableSet.of("aTag"), filteredPhotonRequest.notKey());
+    }
+    @Test
+    public void testWithExcludeTagFilter() throws Exception {
+        Request mockRequest = Mockito.mock(Request.class);
+        Mockito.when(mockRequest.queryParams("q")).thenReturn("berlin");
+        QueryParamsMap mockOsmTagQueryParm = Mockito.mock(QueryParamsMap.class);
+        Mockito.when(mockOsmTagQueryParm.values()).thenReturn(new String[]{"!aTag:aValue"});
+        Mockito.when(mockRequest.queryMap("osm_tag")).thenReturn(mockOsmTagQueryParm);
+        PhotonRequestFactory photonRequestFactory = new PhotonRequestFactory();
+        FilteredPhotonRequest filteredPhotonRequest = (FilteredPhotonRequest) photonRequestFactory.create(mockRequest);
+        Assert.assertEquals("berlin", filteredPhotonRequest.getQuery());
+        Mockito.verify(mockRequest, Mockito.times(1)).queryMap("osm_tag");
+        Mockito.verify(mockOsmTagQueryParm, Mockito.times(1)).values();
+        Assert.assertEquals(ImmutableMap.of("aTag","aValue"), filteredPhotonRequest.notTag());
+    }
+    @Test
+    public void testWithExcludeValueFilter() throws Exception {
+        Request mockRequest = Mockito.mock(Request.class);
+        Mockito.when(mockRequest.queryParams("q")).thenReturn("berlin");
+        QueryParamsMap mockOsmTagQueryParm = Mockito.mock(QueryParamsMap.class);
+        Mockito.when(mockOsmTagQueryParm.values()).thenReturn(new String[]{"!:aValue"});
+        Mockito.when(mockRequest.queryMap("osm_tag")).thenReturn(mockOsmTagQueryParm);
+        PhotonRequestFactory photonRequestFactory = new PhotonRequestFactory();
+        FilteredPhotonRequest filteredPhotonRequest = (FilteredPhotonRequest) photonRequestFactory.create(mockRequest);
+        Assert.assertEquals("berlin", filteredPhotonRequest.getQuery());
+        Mockito.verify(mockRequest, Mockito.times(1)).queryParams("q");
+        Mockito.verify(mockRequest, Mockito.times(1)).queryMap("osm_tag");
+        Mockito.verify(mockOsmTagQueryParm, Mockito.times(1)).values();
+        Assert.assertEquals(ImmutableSet.of("aValue"), filteredPhotonRequest.notValue());
     }
 }

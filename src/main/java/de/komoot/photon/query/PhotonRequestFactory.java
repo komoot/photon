@@ -47,6 +47,30 @@ public class PhotonRequestFactory {
                 }else{
                     request.key(tagFilter);
                 }
+            }else{
+                //might be tag and value OR just value.
+                if (tagFilter.startsWith("!")){
+                    //exclude
+                    String keyValueCandidate = tagFilter.substring(1);
+                    if (keyValueCandidate.startsWith(":")){
+                        //just value
+                        request.notValue(keyValueCandidate.substring(1));
+                    }else{
+                        //key and value
+                        String[] keyAndValue = keyValueCandidate.split(":");
+                        request.notTag(keyAndValue[0], keyAndValue[1]);
+                    }
+                }else{
+                    //include
+                    if (tagFilter.startsWith(":")){
+                        //just value
+                        request.value(tagFilter.substring(1));
+                    }else{
+                        //key and value
+                        String[] keyAndValue = tagFilter.split(":");
+                        request.tag(keyAndValue[0], keyAndValue[1]);
+                    }
+                }
             }
         }
     }
