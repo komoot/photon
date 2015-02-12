@@ -1,0 +1,26 @@
+package de.komoot.photon;
+
+import de.komoot.photon.query.PhotonRequest;
+import de.komoot.photon.searcher.PhotonSearcher;
+import de.komoot.photon.searcher.PhotonSearcherFactory;
+import org.json.JSONObject;
+
+import java.util.List;
+
+/**
+ * Created by Sachin Dole on 2/12/2015.
+ */
+public class SimplePhotonRequestHandler implements PhotonRequestHandler {
+
+    private final PhotonSearcherFactory searcherFactory = new PhotonSearcherFactory();
+    @Override
+    public String handle(PhotonRequest photonRequest) {
+        PhotonSearcher searcher = searcherFactory.getSearcher(photonRequest);
+        List<JSONObject> results = searcher.search(photonRequest, true);
+        if (results.size() == 0) {
+            results = searcher.search(photonRequest, false);
+        }
+        return "";
+
+    }
+}
