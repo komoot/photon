@@ -100,6 +100,6 @@ public class PhotonRequestFactoryTest {
         Mockito.verify(mockRequest, Mockito.times(1)).queryParams("q");
         Mockito.verify(mockRequest, Mockito.times(1)).queryMap("osm_tag");
         Mockito.verify(mockOsmTagQueryParm, Mockito.times(1)).values();
-        Assert.assertEquals(filteredPhotonRequest.key(), ImmutableSet.of("aTag"));
+        Assert.assertEquals(ImmutableSet.of("aTag"), filteredPhotonRequest.key());
     }
 }
