@@ -3,7 +3,8 @@ package de.komoot.photon;
 import com.neovisionaries.i18n.CountryCode;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Point;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -14,7 +15,8 @@ import java.util.Set;
  *
  * @author christoph
  */
-@Data
+@Getter
+@Setter
 public class PhotonDoc {
 	final private long placeId;
 	final private String osmType;
@@ -38,6 +40,31 @@ public class PhotonDoc {
 	private Set<Map<String, String>> context = new HashSet<Map<String, String>>();
 	private Map<String, String> country;
 	private Map<String, String> state;
+
+	public PhotonDoc(long placeId, String osmType, long osmId, String tagKey, String tagValue, Map<String, String> name, String houseNumber, Map<String, String> extratags, Envelope bbox, long parentPlaceId, double importance, CountryCode countryCode, Point centroid, long linkedPlaceId, int rankSearch) {
+		String place = extratags != null ? extratags.get("place") : null;
+		if(place != null) {
+			// take more specific extra tag information
+			tagKey = "place";
+			tagValue = place;
+		}
+
+		this.placeId = placeId;
+		this.osmType = osmType;
+		this.osmId = osmId;
+		this.tagKey = tagKey;
+		this.tagValue = tagValue;
+		this.name = name;
+		this.houseNumber = houseNumber;
+		this.extratags = extratags;
+		this.bbox = bbox;
+		this.parentPlaceId = parentPlaceId;
+		this.importance = importance;
+		this.countryCode = countryCode;
+		this.centroid = centroid;
+		this.linkedPlaceId = linkedPlaceId;
+		this.rankSearch = rankSearch;
+	}
 
 	/**
 	 * Used for testing - really all variables required (final)?
