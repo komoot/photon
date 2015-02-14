@@ -15,10 +15,11 @@ public class SimplePhotonRequestHandler implements PhotonRequestHandler {
     private final PhotonSearcherFactory searcherFactory = new PhotonSearcherFactory();
     @Override
     public String handle(PhotonRequest photonRequest) {
+        PhotonQueryBuilder.builder(photonRequest.getQuery(),photonRequest.getLimit(),photonRequest.getLocationForBias()).build();
         PhotonSearcher searcher = searcherFactory.getSearcher(photonRequest);
-        List<JSONObject> results = searcher.search(photonRequest, true);
+        List<JSONObject> results = searcher.searchStrict();
         if (results.size() == 0) {
-            results = searcher.search(photonRequest, false);
+            results = searcher.search();
         }
         return "";
 
