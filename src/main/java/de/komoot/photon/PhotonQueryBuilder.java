@@ -2,6 +2,7 @@ package de.komoot.photon;
 
 import com.vividsolutions.jts.geom.Point;
 import org.elasticsearch.common.bytes.BytesReference;
+import org.elasticsearch.common.unit.Fuzziness;
 import org.elasticsearch.index.query.FilterBuilders;
 import org.elasticsearch.index.query.FilteredQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -23,7 +24,7 @@ public class PhotonQueryBuilder {
         this.limit = limit;
         this.locationForBias = locationForBias;
         FunctionScoreQueryBuilder functionScoreQueryBuilder = QueryBuilders.functionScoreQuery(
-                QueryBuilders.boolQuery().must(QueryBuilders.boolQuery().should().minimumShouldMatch()).should(QueryBuilders.), ScoreFunctionBuilders.scriptFunction
+                QueryBuilders.boolQuery().must(QueryBuilders.boolQuery().should(QueryBuilders.matchQuery("collector.default","berlin").fuzziness(Fuzziness.ONE).prefixLength(2).analyzer("search_ngram").minimumShouldMatch("100%")).should(QueryBuilders.matchQuery("name2","text")).minimumShouldMatch("-1")).should(QueryBuilders.matchQuery("name","text")), ScoreFunctionBuilders.scriptFunction
                         ("general-score", "mvel")
         ).boostMode("multiply").scoreMode("multiple");
         filteredQueryBuilder = QueryBuilders.filteredQuery(functionScoreQueryBuilder, FilterBuilders.andFilter());
