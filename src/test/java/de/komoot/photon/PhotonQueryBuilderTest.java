@@ -28,11 +28,12 @@ public class PhotonQueryBuilderTest {
 
         BytesReference bytes = filteredQueryBuilder.toXContent(JsonXContent.contentBuilder(), new ToXContent.MapParams(null)).bytes();
         String createdJson = new String(bytes.toBytes(), "UTF-8");
-        InputStream resourceAsStream = this.getClass().getClassLoader().getResourceAsStream("json_queries/query.json");
+        InputStream resourceAsStream = this.getClass().getClassLoader().getResourceAsStream("json_queries/test_base_query.json");
         String expectedJsonString = IOUtils.toString(resourceAsStream);
         JsonNode actualJson = new ObjectMapper().readTree(createdJson);
         JsonNode expectedJson = new ObjectMapper().readTree(expectedJsonString);
         Assert.assertEquals(expectedJson, actualJson);
+        System.out.println(actualJson.asToken());
 
 
     }
