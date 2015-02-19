@@ -15,7 +15,8 @@
                         "query": "berlin",
                         "minimum_should_match": "100%",
                         "analyzer": "search_ngram",
-                        "prefix_length": 2
+                        "prefix_length": 2,
+                        "type": "boolean"
                       }
                     }
                   },
@@ -26,7 +27,8 @@
                         "query": "berlin",
                         "minimum_should_match": "100%",
                         "analyzer": "search_ngram",
-                        "prefix_length": 2
+                        "prefix_length": 2,
+                        "type": "boolean"
                       }
                     }
                   }
@@ -61,7 +63,7 @@
           {
             "script_score": {
               "script": "general-score",
-              "lang" : "mvel"
+              "lang": "mvel"
             }
           },
           {
@@ -71,7 +73,7 @@
                 "lat": 41.0,
                 "lon": 88.0
               },
-              "lang" : "mvel"
+              "lang": "mvel"
             }
           }
         ]
