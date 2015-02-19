@@ -1,5 +1,6 @@
 package de.komoot.photon;
 
+import de.komoot.photon.query.PhotonQueryBuilder;
 import de.komoot.photon.query.PhotonRequest;
 import de.komoot.photon.searcher.PhotonSearcher;
 import de.komoot.photon.searcher.PhotonSearcherFactory;
@@ -15,7 +16,7 @@ public class SimplePhotonRequestHandler implements PhotonRequestHandler {
     private final PhotonSearcherFactory searcherFactory = new PhotonSearcherFactory();
     @Override
     public String handle(PhotonRequest photonRequest) {
-        PhotonQueryBuilder.builder(photonRequest.getQuery(),photonRequest.getLimit(),photonRequest.getLocationForBias()).build();
+        PhotonQueryBuilder.builder(photonRequest.getQuery()).build();
         PhotonSearcher searcher = searcherFactory.getSearcher(photonRequest);
         List<JSONObject> results = searcher.searchStrict();
         if (results.size() == 0) {

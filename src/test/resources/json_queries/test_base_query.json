@@ -2,7 +2,6 @@
   "filtered": {
     "query": {
       "function_score": {
-        "boost_mode": "multiply",
         "query": {
           "bool": {
             "must": {
@@ -11,27 +10,29 @@
                   {
                     "match": {
                       "collector.default": {
-                        "fuzziness": 1,
                         "query": "berlin",
-                        "minimum_should_match": "100%",
+                        "type": "boolean",
                         "analyzer": "search_ngram",
-                        "prefix_length": 2
+                        "fuzziness": 1,
+                        "prefix_length": 2,
+                        "minimum_should_match": "100%"
                       }
                     }
                   },
                   {
                     "match": {
                       "collector.en": {
-                        "fuzziness": 1,
                         "query": "berlin",
-                        "minimum_should_match": "100%",
+                        "type": "boolean",
                         "analyzer": "search_ngram",
-                        "prefix_length": 2
+                        "fuzziness": 1,
+                        "prefix_length": 2,
+                        "minimum_should_match": "100%"
                       }
                     }
                   }
                 ],
-                "minimum_should_match": 1
+                "minimum_should_match": "1"
               }
             },
             "should": [
@@ -39,8 +40,9 @@
                 "match": {
                   "name.en.raw": {
                     "query": "berlin",
-                    "boost": 200,
-                    "analyzer": "search_raw"
+                    "type": "boolean",
+                    "analyzer": "search_raw",
+                    "boost": 200.0
                   }
                 }
               },
@@ -48,15 +50,15 @@
                 "match": {
                   "collector.en.raw": {
                     "query": "berlin",
-                    "boost": 100,
-                    "analyzer": "search_raw"
+                    "type": "boolean",
+                    "analyzer": "search_raw",
+                    "boost": 100.0
                   }
                 }
               }
             ]
           }
         },
-        "score_mode": "multiply",
         "functions": [
           {
             "script_score": {
@@ -64,7 +66,9 @@
               "lang": "mvel"
             }
           }
-        ]
+        ],
+        "score_mode": "multiply",
+        "boost_mode": "multiply"
       }
     },
     "filter": {
@@ -80,6 +84,7 @@
               "match": {
                 "housenumber": {
                   "query": "berlin",
+                  "type": "boolean",
                   "analyzer": "standard"
                 }
               }
