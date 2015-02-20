@@ -10,7 +10,6 @@ import org.elasticsearch.index.query.functionscore.FunctionScoreQueryBuilder;
 import org.elasticsearch.index.query.functionscore.ScoreFunctionBuilders;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -19,16 +18,12 @@ import java.util.Set;
 /**
  * Created by Sachin Dole on 2/12/2015.
  */
-public class PhotonQueryBuilder implements Serializable {
+public class PhotonQueryBuilder {
     private FunctionScoreQueryBuilder queryBuilder;
     private Integer limit = 50;
     private FilterBuilder filterBuilder;
     private State state;
-
-
-    private enum State {
-        PLAIN, ALREADY_BUILT, FINISHED, TAG_FILTERED
-    }
+    private OrFilterBuilder orFilterBuilderForTagFiltering = null;
 
 
     private PhotonQueryBuilder(String query) {
@@ -70,11 +65,11 @@ public class PhotonQueryBuilder implements Serializable {
         return this;
     }
 
-    public PhotonQueryBuilder withTags(Map<String, String> allTags) {
+    public PhotonQueryBuilder withTags(Map<String, String> tags) {
         ensureFiltered();
-        List<AndFilterBuilder> termFilters = new ArrayList<AndFilterBuilder>(allTags.size());
-        for (String tagKey : allTags.keySet()) {
-            String value = allTags.get(tagKey);
+        List<AndFilterBuilder> termFilters = new ArrayList<AndFilterBuilder>(tags.size());
+        for (String tagKey : tags.keySet()) {
+            String value = tags.get(tagKey);
             termFilters.add(FilterBuilders.andFilter(FilterBuilders.termFilter("osm_key", tagKey), FilterBuilders.termFilter("osm_value", value)));
         }
         this.appendTermFilters(termFilters);
@@ -107,8 +102,6 @@ public class PhotonQueryBuilder implements Serializable {
         }
     }
 
-    private OrFilterBuilder orFilterBuilderForTagFiltering = null;
-
     private void ensureFiltered() {
         if (state.equals(State.PLAIN)) {
             filterBuilder = FilterBuilders.andFilter(filterBuilder);
@@ -121,16 +114,21 @@ public class PhotonQueryBuilder implements Serializable {
         state = State.TAG_FILTERED;
     }
 
+    public PhotonQueryBuilder withoutTags(Map<String, String> tagsToExclude) {return this;}
+
+    public PhotonQueryBuilder withoutKeys(Set<String> keysToExclude) {return this;}
+
+    public PhotonQueryBuilder withoutValues(Set<String> valuesToExclude) {return this;}
+
     public QueryBuilder buildQuery() {
         if (state.equals(State.FINISHED)) {
             throw new IllegalStateException("query building is already done.");
         }
         if (state.equals(State.TAG_FILTERED))
             ((AndFilterBuilder) filterBuilder).add(orFilterBuilderForTagFiltering);
-        state=State.FINISHED;
+        state = State.FINISHED;
         return QueryBuilders.filteredQuery(queryBuilder, filterBuilder);
     }
-
 
     public String buildQueryJson() throws IOException {
         BytesReference bytes = this.buildQuery().toXContent(JsonXContent.contentBuilder(), new ToXContent.MapParams(null)).bytes();
@@ -139,6 +137,10 @@ public class PhotonQueryBuilder implements Serializable {
 
     public Integer getLimit() {
         return limit;
+    }
+
+    private enum State {
+        PLAIN, ALREADY_BUILT, FINISHED, TAG_FILTERED
     }
 
 }
