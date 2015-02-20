@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * Created by Sachin Dole on 2/12/2015.
  */
-public class SimplePhotonRequestHandler implements PhotonRequestHandler {
+public class SimplePhotonRequestHandler implements PhotonRequestHandler<PhotonRequest> {
 
     private final PhotonSearcherFactory searcherFactory = new PhotonSearcherFactory();
     @Override
