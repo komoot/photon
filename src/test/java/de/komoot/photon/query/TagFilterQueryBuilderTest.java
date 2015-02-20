@@ -24,7 +24,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class PhotonQueryBuilderTest {
+public class TagFilterQueryBuilderTest {
 
     @Test
     public void testConstructor() throws IOException {
@@ -61,7 +61,7 @@ public class PhotonQueryBuilderTest {
 
     @Test
     public void testWithLimit() {
-        PhotonQueryBuilder berlinQuery = PhotonQueryBuilder.builder("berlin");
+        TagFilterQueryBuilder berlinQuery = PhotonQueryBuilder.builder("berlin");
         Assert.assertEquals(50, berlinQuery.getLimit().intValue());
         berlinQuery.withLimit(4000);
         Assert.assertEquals(4000, berlinQuery.getLimit().intValue());
@@ -69,12 +69,12 @@ public class PhotonQueryBuilderTest {
 
     @Test
     public void testWithLocation() throws IOException {
-        PhotonQueryBuilder berlinQuery = PhotonQueryBuilder.builder("berlin");
+        TagFilterQueryBuilder berlinQuery = PhotonQueryBuilder.builder("berlin");
         ScriptScoreFunctionBuilder expectedLocationBiasSubQueryBuilder = ScoreFunctionBuilders.scriptFunction("location-biased-score", "mvel").param("lat", 80).param("lon", 10);
         FunctionScoreQueryBuilder mockFunctionScoreQueryBuilder = Mockito.mock(FunctionScoreQueryBuilder.class);
         ReflectionTestUtil.setFieldValue(berlinQuery, "queryBuilder", mockFunctionScoreQueryBuilder);
         ArgumentCaptor<ScriptScoreFunctionBuilder> locationBiasSubQueryArgumentCaptor = ArgumentCaptor.forClass(ScriptScoreFunctionBuilder.class);
-        berlinQuery.withLocation(new GeometryFactory().createPoint(new Coordinate(10, 80)));
+        berlinQuery.withLocationBias(new GeometryFactory().createPoint(new Coordinate(10, 80)));
         Mockito.verify(mockFunctionScoreQueryBuilder, Mockito.times(1)).add(locationBiasSubQueryArgumentCaptor.capture());
         ScriptScoreFunctionBuilder actualLocationBiasSubQueryBuilder = locationBiasSubQueryArgumentCaptor.getValue();
         Assert.assertEquals(this.readJson(expectedLocationBiasSubQueryBuilder), this.readJson(actualLocationBiasSubQueryBuilder));
@@ -214,6 +214,5 @@ public class PhotonQueryBuilderTest {
         this.writeJson(outputFile, this.readJson(queryJson));
         JsonNode jsonNode = new ObjectMapper().readTree(expectedJsonString);
     }
-
     
 }

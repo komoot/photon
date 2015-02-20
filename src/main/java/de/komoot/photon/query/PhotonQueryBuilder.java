@@ -1,5 +1,6 @@
 package de.komoot.photon.query;
 
+import com.google.common.collect.ImmutableSet;
 import com.vividsolutions.jts.geom.Point;
 import org.elasticsearch.common.bytes.BytesReference;
 import org.elasticsearch.common.unit.Fuzziness;
@@ -18,7 +19,7 @@ import java.util.Set;
 /**
  * Created by Sachin Dole on 2/12/2015.
  */
-public class PhotonQueryBuilder {
+public class PhotonQueryBuilder implements TagFilterQueryBuilder {
     private FunctionScoreQueryBuilder queryBuilder;
     private Integer limit = 50;
     private FilterBuilder filterBuilder;
@@ -56,17 +57,20 @@ public class PhotonQueryBuilder {
         return new PhotonQueryBuilder(query);
     }
 
-    public PhotonQueryBuilder withLimit(Integer limit) {
+    @Override
+    public TagFilterQueryBuilder withLimit(Integer limit) {
         this.limit = limit;
         return this;
     }
 
-    public PhotonQueryBuilder withLocation(Point point) {
+    @Override
+    public TagFilterQueryBuilder withLocationBias(Point point) {
         queryBuilder.add(ScoreFunctionBuilders.scriptFunction("location-biased-score", "mvel").param("lon", point.getX()).param("lat", point.getY()));
         return this;
     }
 
-    public PhotonQueryBuilder withTags(Map<String, String> tags) {
+    @Override
+    public TagFilterQueryBuilder withTags(Map<String, String> tags) {
         ensureFiltered();
         List<AndFilterBuilder> termFilters = new ArrayList<AndFilterBuilder>(tags.size());
         for (String tagKey : tags.keySet()) {
@@ -77,7 +81,8 @@ public class PhotonQueryBuilder {
         return this;
     }
 
-    public PhotonQueryBuilder withKeys(Set<String> keys) {
+    @Override
+    public TagFilterQueryBuilder withKeys(Set<String> keys) {
         ensureFiltered();
         List<TermsFilterBuilder> termFilters = new ArrayList<TermsFilterBuilder>(keys.size());
         termFilters.add(FilterBuilders.termsFilter("osm_key", keys.toArray()));
@@ -85,7 +90,8 @@ public class PhotonQueryBuilder {
         return this;
     }
 
-    public PhotonQueryBuilder withValues(Set<String> values) {
+    @Override
+    public TagFilterQueryBuilder withValues(Set<String> values) {
         ensureFiltered();
         List<TermsFilterBuilder> termFilters = new ArrayList<TermsFilterBuilder>(values.size());
         termFilters.add(FilterBuilders.termsFilter("osm_value", values.toArray(new String[values.size()])));
@@ -93,7 +99,8 @@ public class PhotonQueryBuilder {
         return this;
     }
 
-    public PhotonQueryBuilder withoutTags(Map<String, String> tagsToExclude) {
+    @Override
+    public TagFilterQueryBuilder withoutTags(Map<String, String> tagsToExclude) {
         ensureFiltered();
         List<NotFilterBuilder> termFilters = new ArrayList<NotFilterBuilder>(tagsToExclude.size());
         for (String tagKey : tagsToExclude.keySet()) {
@@ -104,7 +111,8 @@ public class PhotonQueryBuilder {
         return this;
     }
 
-    public PhotonQueryBuilder withoutKeys(Set<String> keysToExclude) {
+    @Override
+    public TagFilterQueryBuilder withoutKeys(Set<String> keysToExclude) {
         ensureFiltered();
         List<NotFilterBuilder> termFilters = new ArrayList<NotFilterBuilder>(keysToExclude.size());
         termFilters.add(FilterBuilders.notFilter(FilterBuilders.termsFilter("osm_key", keysToExclude.toArray())));
@@ -112,12 +120,53 @@ public class PhotonQueryBuilder {
         return this;
     }
 
-    public PhotonQueryBuilder withoutValues(Set<String> valuesToExclude) {
+    @Override
+    public TagFilterQueryBuilder withoutValues(Set<String> valuesToExclude) {
         ensureFiltered();
         List<NotFilterBuilder> termFilters = new ArrayList<NotFilterBuilder>(valuesToExclude.size());
         termFilters.add(FilterBuilders.notFilter(FilterBuilders.termsFilter("osm_value", valuesToExclude.toArray())));
         this.appendExcludeTermFilters(termFilters);
         return this;
+    }
+
+    @Override
+    public TagFilterQueryBuilder withKeys(String... keys) {
+        return this.withKeys(ImmutableSet.<String>builder().add(keys).build());
+    }
+
+    @Override
+    public TagFilterQueryBuilder withValues(String... values) {
+        return this.withValues(ImmutableSet.<String>builder().add(values).build());
+    }
+
+    @Override
+    public TagFilterQueryBuilder withoutKeys(String... keysToExclude) {
+        return this.withoutKeys(ImmutableSet.<String>builder().add(keysToExclude).build());
+    }
+
+    @Override
+    public TagFilterQueryBuilder withoutValues(String... valuesToExclude) {
+        return this.withoutValues(ImmutableSet.<String>builder().add(valuesToExclude).build());
+    }
+
+    @Override
+    public QueryBuilder buildQuery() {
+        if (state.equals(State.FINISHED)) {
+            throw new IllegalStateException("query building is already done.");
+        }
+        if (state.equals(State.FILTERED)) {
+            if (orFilterBuilderForIncludeTagFiltering != null)
+                ((AndFilterBuilder) filterBuilder).add(orFilterBuilderForIncludeTagFiltering);
+            if (andFilterBuilderForExcludeTagFiltering != null)
+                ((AndFilterBuilder) filterBuilder).add(andFilterBuilderForExcludeTagFiltering);
+        }
+        state = State.FINISHED;
+        return QueryBuilders.filteredQuery(queryBuilder, filterBuilder);
+    }
+
+    @Override
+    public Integer getLimit() {
+        return limit;
     }
 
     private void appendIncludeTermFilters(List<? extends FilterBuilder> termFilters) {
@@ -152,27 +201,9 @@ public class PhotonQueryBuilder {
         state = State.FILTERED;
     }
 
-    public QueryBuilder buildQuery() {
-        if (state.equals(State.FINISHED)) {
-            throw new IllegalStateException("query building is already done.");
-        }
-        if (state.equals(State.FILTERED)) {
-            if (orFilterBuilderForIncludeTagFiltering != null)
-                ((AndFilterBuilder) filterBuilder).add(orFilterBuilderForIncludeTagFiltering);
-            if (andFilterBuilderForExcludeTagFiltering != null)
-                ((AndFilterBuilder) filterBuilder).add(andFilterBuilderForExcludeTagFiltering);
-        }
-        state = State.FINISHED;
-        return QueryBuilders.filteredQuery(queryBuilder, filterBuilder);
-    }
-
     public String buildQueryJson() throws IOException {
         BytesReference bytes = this.buildQuery().toXContent(JsonXContent.contentBuilder(), new ToXContent.MapParams(null)).bytes();
         return new String(bytes.toBytes(), "UTF-8");
-    }
-
-    public Integer getLimit() {
-        return limit;
     }
 
     private enum State {

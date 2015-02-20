@@ -1,7 +1,7 @@
 package de.komoot.photon;
 
-import de.komoot.photon.query.PhotonQueryBuilder;
 import de.komoot.photon.query.PhotonRequest;
+import de.komoot.photon.query.PhotonQueryBuilder;
 import de.komoot.photon.searcher.PhotonSearcher;
 import de.komoot.photon.searcher.PhotonSearcherFactory;
 import org.json.JSONObject;

@@ -31,14 +31,14 @@ public class PhotonRequestFactory {
             //ignore
         }
         QueryParamsMap tagFiltersQueryMap = webRequest.queryMap("osm_tag");
-        if (tagFiltersQueryMap == null) return new PhotonRequest(query, limit, locationForBias);
+        if (!tagFiltersQueryMap.hasKeys()) return new PhotonRequest(query, limit, locationForBias);
         FilteredPhotonRequest photonRequest = new FilteredPhotonRequest(query, limit, locationForBias);
         String[] tagFilters = tagFiltersQueryMap.values();
         setUpTagFilters(photonRequest,tagFilters);
         return photonRequest;
     }
     
-    private static void setUpTagFilters(FilteredPhotonRequest request,String[] tagFilters){
+    private void setUpTagFilters(FilteredPhotonRequest request,String[] tagFilters){
         for (String tagFilter : tagFilters) {
             if (!tagFilter.contains(":")){
                 //only tag
