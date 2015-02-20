@@ -23,7 +23,8 @@ public class PhotonQueryBuilder {
     private Integer limit = 50;
     private FilterBuilder filterBuilder;
     private State state;
-    private OrFilterBuilder orFilterBuilderForTagFiltering = null;
+    private OrFilterBuilder orFilterBuilderForIncludeTagFiltering = null;
+    private AndFilterBuilder andFilterBuilderForExcludeTagFiltering = null;
 
 
     private PhotonQueryBuilder(String query) {
@@ -72,15 +73,7 @@ public class PhotonQueryBuilder {
             String value = tags.get(tagKey);
             termFilters.add(FilterBuilders.andFilter(FilterBuilders.termFilter("osm_key", tagKey), FilterBuilders.termFilter("osm_value", value)));
         }
-        this.appendTermFilters(termFilters);
-        return this;
-    }
-
-    public PhotonQueryBuilder withValues(Set<String> values) {
-        ensureFiltered();
-        List<TermsFilterBuilder> termFilters = new ArrayList<TermsFilterBuilder>(values.size());
-        termFilters.add(FilterBuilders.termsFilter("osm_value", values.toArray(new String[values.size()])));
-        this.appendTermFilters(termFilters);
+        this.appendIncludeTermFilters(termFilters);
         return this;
     }
 
@@ -88,16 +81,61 @@ public class PhotonQueryBuilder {
         ensureFiltered();
         List<TermsFilterBuilder> termFilters = new ArrayList<TermsFilterBuilder>(keys.size());
         termFilters.add(FilterBuilders.termsFilter("osm_key", keys.toArray()));
-        this.appendTermFilters(termFilters);
+        this.appendIncludeTermFilters(termFilters);
         return this;
     }
 
-    private void appendTermFilters(List<? extends FilterBuilder> termFilters) {
-        if (orFilterBuilderForTagFiltering == null) {
-            orFilterBuilderForTagFiltering = FilterBuilders.orFilter(termFilters.toArray(new FilterBuilder[termFilters.size()]));
+    public PhotonQueryBuilder withValues(Set<String> values) {
+        ensureFiltered();
+        List<TermsFilterBuilder> termFilters = new ArrayList<TermsFilterBuilder>(values.size());
+        termFilters.add(FilterBuilders.termsFilter("osm_value", values.toArray(new String[values.size()])));
+        this.appendIncludeTermFilters(termFilters);
+        return this;
+    }
+
+    public PhotonQueryBuilder withoutTags(Map<String, String> tagsToExclude) {
+        ensureFiltered();
+        List<NotFilterBuilder> termFilters = new ArrayList<NotFilterBuilder>(tagsToExclude.size());
+        for (String tagKey : tagsToExclude.keySet()) {
+            String value = tagsToExclude.get(tagKey);
+            termFilters.add(FilterBuilders.notFilter(FilterBuilders.andFilter(FilterBuilders.termFilter("osm_key", tagKey), FilterBuilders.termFilter("osm_value", value))));
+        }
+        this.appendExcludeTermFilters(termFilters);
+        return this;
+    }
+
+    public PhotonQueryBuilder withoutKeys(Set<String> keysToExclude) {
+        ensureFiltered();
+        List<NotFilterBuilder> termFilters = new ArrayList<NotFilterBuilder>(keysToExclude.size());
+        termFilters.add(FilterBuilders.notFilter(FilterBuilders.termsFilter("osm_key", keysToExclude.toArray())));
+        this.appendExcludeTermFilters(termFilters);
+        return this;
+    }
+
+    public PhotonQueryBuilder withoutValues(Set<String> valuesToExclude) {
+        ensureFiltered();
+        List<NotFilterBuilder> termFilters = new ArrayList<NotFilterBuilder>(valuesToExclude.size());
+        termFilters.add(FilterBuilders.notFilter(FilterBuilders.termsFilter("osm_value", valuesToExclude.toArray())));
+        this.appendExcludeTermFilters(termFilters);
+        return this;
+    }
+
+    private void appendIncludeTermFilters(List<? extends FilterBuilder> termFilters) {
+        if (orFilterBuilderForIncludeTagFiltering == null) {
+            orFilterBuilderForIncludeTagFiltering = FilterBuilders.orFilter(termFilters.toArray(new FilterBuilder[termFilters.size()]));
         } else {
             for (FilterBuilder eachTagFilter : termFilters) {
-                orFilterBuilderForTagFiltering.add(eachTagFilter);
+                orFilterBuilderForIncludeTagFiltering.add(eachTagFilter);
+            }
+        }
+    }
+
+    private void appendExcludeTermFilters(List<NotFilterBuilder> termFilters) {
+        if (andFilterBuilderForExcludeTagFiltering == null) {
+            andFilterBuilderForExcludeTagFiltering = FilterBuilders.andFilter(termFilters.toArray(new FilterBuilder[termFilters.size()]));
+        } else {
+            for (FilterBuilder eachTagFilter : termFilters) {
+                andFilterBuilderForExcludeTagFiltering.add(eachTagFilter);
             }
         }
     }
@@ -111,21 +149,19 @@ public class PhotonQueryBuilder {
             throw new RuntimeException("This code is not in valid state. It is expected that the filter builder field should either be AndFilterBuilder or OrFilterBuilder. Found" +
                                                " " + filterBuilder.getClass() + " instead.");
         }
-        state = State.TAG_FILTERED;
+        state = State.FILTERED;
     }
-
-    public PhotonQueryBuilder withoutTags(Map<String, String> tagsToExclude) {return this;}
-
-    public PhotonQueryBuilder withoutKeys(Set<String> keysToExclude) {return this;}
-
-    public PhotonQueryBuilder withoutValues(Set<String> valuesToExclude) {return this;}
 
     public QueryBuilder buildQuery() {
         if (state.equals(State.FINISHED)) {
             throw new IllegalStateException("query building is already done.");
         }
-        if (state.equals(State.TAG_FILTERED))
-            ((AndFilterBuilder) filterBuilder).add(orFilterBuilderForTagFiltering);
+        if (state.equals(State.FILTERED)) {
+            if (orFilterBuilderForIncludeTagFiltering != null)
+                ((AndFilterBuilder) filterBuilder).add(orFilterBuilderForIncludeTagFiltering);
+            if (andFilterBuilderForExcludeTagFiltering != null)
+                ((AndFilterBuilder) filterBuilder).add(andFilterBuilderForExcludeTagFiltering);
+        }
         state = State.FINISHED;
         return QueryBuilders.filteredQuery(queryBuilder, filterBuilder);
     }
@@ -140,7 +176,7 @@ public class PhotonQueryBuilder {
     }
 
     private enum State {
-        PLAIN, ALREADY_BUILT, FINISHED, TAG_FILTERED
+        PLAIN, FILTERED, QUERY_ALREADY_BUILT, FINISHED,
     }
 
 }
