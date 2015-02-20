@@ -16,7 +16,7 @@ import java.util.HashSet;
 public class SearchRequestHandler extends Route {
     private final HashSet<String> supportedLanguages;
     private final PhotonRequestFactory photonRequestFactory;
-    private final PhotonRequestHandler photonRequestHandler;
+    private final PhotonRequestHandler<PhotonRequest> photonRequestHandler;
 
     SearchRequestHandler(String path, String languages) {
         super(path);

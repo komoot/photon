@@ -71,6 +71,7 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder {
 
     @Override
     public TagFilterQueryBuilder withTags(Map<String, String> tags) {
+        if (tags == null) return this;
         ensureFiltered();
         List<AndFilterBuilder> termFilters = new ArrayList<AndFilterBuilder>(tags.size());
         for (String tagKey : tags.keySet()) {
