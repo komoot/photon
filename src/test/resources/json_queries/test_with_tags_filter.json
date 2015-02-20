@@ -1,0 +1,42 @@
+{
+  "filter": {
+    "and": {
+      "filters": [
+        {
+          "term": {"osm_key": "osm_key_1"}
+        },
+        {
+          "term": {
+            "osm_value": "osm_value_1"
+          }
+        },
+        {
+          "or": {
+            "filters": [
+              {
+                "missing": {
+                  "field": "housenumber"
+                }
+              },
+              {
+                "query": {
+                  "match": {
+                    "housenumber": {
+                      "query": "${query}",
+                      "analyzer": "standard"
+                    }
+                  }
+                }
+              },
+              {
+                "exists": {
+                  "field": "name.${lang}.raw"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

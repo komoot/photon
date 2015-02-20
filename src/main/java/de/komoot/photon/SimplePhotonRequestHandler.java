@@ -16,7 +16,7 @@ public class SimplePhotonRequestHandler implements PhotonRequestHandler {
     private final PhotonSearcherFactory searcherFactory = new PhotonSearcherFactory();
     @Override
     public String handle(PhotonRequest photonRequest) {
-        PhotonQueryBuilder.builder(photonRequest.getQuery()).build();
+        PhotonQueryBuilder.builder(photonRequest.getQuery()).buildQuery();
         PhotonSearcher searcher = searcherFactory.getSearcher(photonRequest);
         List<JSONObject> results = searcher.searchStrict();
         if (results.size() == 0) {

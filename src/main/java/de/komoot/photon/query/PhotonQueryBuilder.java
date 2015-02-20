@@ -3,23 +3,36 @@ package de.komoot.photon.query;
 import com.vividsolutions.jts.geom.Point;
 import org.elasticsearch.common.bytes.BytesReference;
 import org.elasticsearch.common.unit.Fuzziness;
-import org.elasticsearch.index.query.FilterBuilders;
-import org.elasticsearch.index.query.FilteredQueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.common.xcontent.ToXContent;
+import org.elasticsearch.common.xcontent.json.JsonXContent;
+import org.elasticsearch.index.query.*;
 import org.elasticsearch.index.query.functionscore.FunctionScoreQueryBuilder;
 import org.elasticsearch.index.query.functionscore.ScoreFunctionBuilders;
+
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by Sachin Dole on 2/12/2015.
  */
-public class PhotonQueryBuilder {
-    private FilteredQueryBuilder filteredQueryBuilder;
-    private FunctionScoreQueryBuilder functionScoreQueryBuilder;
+public class PhotonQueryBuilder implements Serializable {
+    private FunctionScoreQueryBuilder queryBuilder;
     private Integer limit = 50;
+    private FilterBuilder filterBuilder;
+    private State state;
+
+
+    private enum State {
+        PLAIN, ALREADY_BUILT, FINISHED, TAG_FILTERED
+    }
 
 
     private PhotonQueryBuilder(String query) {
-        functionScoreQueryBuilder = QueryBuilders.functionScoreQuery(
+        queryBuilder = QueryBuilders.functionScoreQuery(
                 QueryBuilders.boolQuery().must(
                         QueryBuilders.boolQuery().should(
                                 QueryBuilders.matchQuery("collector.default", query).fuzziness(Fuzziness.ONE).prefixLength(2).analyzer("search_ngram").minimumShouldMatch("100%")
@@ -33,17 +46,14 @@ public class PhotonQueryBuilder {
                 ),
                 ScoreFunctionBuilders.scriptFunction("general-score", "mvel")
         ).boostMode("multiply").scoreMode("multiply");
-        filteredQueryBuilder = QueryBuilders.filteredQuery(
-                functionScoreQueryBuilder,
-                FilterBuilders.orFilter(
-                        FilterBuilders.missingFilter("housenumber"),
-                        FilterBuilders.queryFilter(
-                                QueryBuilders.matchQuery("housenumber", query).analyzer("standard")
-                        ),
-                        FilterBuilders.existsFilter("name.en.raw")
-                )
-
+        filterBuilder = FilterBuilders.orFilter(
+                FilterBuilders.missingFilter("housenumber"),
+                FilterBuilders.queryFilter(
+                        QueryBuilders.matchQuery("housenumber", query).analyzer("standard")
+                ),
+                FilterBuilders.existsFilter("name.en.raw")
         );
+        state = State.PLAIN;
     }
 
     public static PhotonQueryBuilder builder(String query) {
@@ -56,15 +66,79 @@ public class PhotonQueryBuilder {
     }
 
     public PhotonQueryBuilder withLocation(Point point) {
-        functionScoreQueryBuilder.add(ScoreFunctionBuilders.scriptFunction("location-biased-score", "mvel").param("lon", point.getX()).param("lat", point.getY()));
+        queryBuilder.add(ScoreFunctionBuilders.scriptFunction("location-biased-score", "mvel").param("lon", point.getX()).param("lat", point.getY()));
         return this;
     }
 
-    public BytesReference build() {
-        return filteredQueryBuilder.buildAsBytes();
+    public PhotonQueryBuilder withTags(Map<String, String> allTags) {
+        ensureFiltered();
+        List<AndFilterBuilder> termFilters = new ArrayList<AndFilterBuilder>(allTags.size());
+        for (String tagKey : allTags.keySet()) {
+            String value = allTags.get(tagKey);
+            termFilters.add(FilterBuilders.andFilter(FilterBuilders.termFilter("osm_key", tagKey), FilterBuilders.termFilter("osm_value", value)));
+        }
+        this.appendTermFilters(termFilters);
+        return this;
+    }
+
+    public PhotonQueryBuilder withValues(Set<String> values) {
+        ensureFiltered();
+        List<TermsFilterBuilder> termFilters = new ArrayList<TermsFilterBuilder>(values.size());
+        termFilters.add(FilterBuilders.termsFilter("osm_value", values.toArray(new String[values.size()])));
+        this.appendTermFilters(termFilters);
+        return this;
+    }
+
+    public PhotonQueryBuilder withKeys(Set<String> keys) {
+        ensureFiltered();
+        List<TermsFilterBuilder> termFilters = new ArrayList<TermsFilterBuilder>(keys.size());
+        termFilters.add(FilterBuilders.termsFilter("osm_key", keys.toArray()));
+        this.appendTermFilters(termFilters);
+        return this;
+    }
+
+    private void appendTermFilters(List<? extends FilterBuilder> termFilters) {
+        if (orFilterBuilderForTagFiltering == null) {
+            orFilterBuilderForTagFiltering = FilterBuilders.orFilter(termFilters.toArray(new FilterBuilder[termFilters.size()]));
+        } else {
+            for (FilterBuilder eachTagFilter : termFilters) {
+                orFilterBuilderForTagFiltering.add(eachTagFilter);
+            }
+        }
+    }
+
+    private OrFilterBuilder orFilterBuilderForTagFiltering = null;
+
+    private void ensureFiltered() {
+        if (state.equals(State.PLAIN)) {
+            filterBuilder = FilterBuilders.andFilter(filterBuilder);
+        } else if (filterBuilder instanceof AndFilterBuilder) {
+            //good! nothing to do
+        } else {
+            throw new RuntimeException("This code is not in valid state. It is expected that the filter builder field should either be AndFilterBuilder or OrFilterBuilder. Found" +
+                                               " " + filterBuilder.getClass() + " instead.");
+        }
+        state = State.TAG_FILTERED;
+    }
+
+    public QueryBuilder buildQuery() {
+        if (state.equals(State.FINISHED)) {
+            throw new IllegalStateException("query building is already done.");
+        }
+        if (state.equals(State.TAG_FILTERED))
+            ((AndFilterBuilder) filterBuilder).add(orFilterBuilderForTagFiltering);
+        state=State.FINISHED;
+        return QueryBuilders.filteredQuery(queryBuilder, filterBuilder);
+    }
+
+
+    public String buildQueryJson() throws IOException {
+        BytesReference bytes = this.buildQuery().toXContent(JsonXContent.contentBuilder(), new ToXContent.MapParams(null)).bytes();
+        return new String(bytes.toBytes(), "UTF-8");
     }
 
     public Integer getLimit() {
         return limit;
     }
+
 }
