@@ -2,16 +2,15 @@ package de.komoot.photon.query;
 
 import com.google.common.base.Joiner;
 
-import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by Sachin Dole on 2/20/2015.
  */
 public class LanguageChecker {
-    private final HashSet<String> supportedLanguages;
+    private final Set<String> supportedLanguages;
 
-    public LanguageChecker(HashSet<String> supportedLanguages) {
-
+    public LanguageChecker(Set<String> supportedLanguages) {
         this.supportedLanguages = supportedLanguages;
     }
 

@@ -26,15 +26,18 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder {
     private State state;
     private OrFilterBuilder orFilterBuilderForIncludeTagFiltering = null;
     private AndFilterBuilder andFilterBuilderForExcludeTagFiltering = null;
-
+    private MatchQueryBuilder defaultMatchQueryBuilder;
+    private MatchQueryBuilder enMatchQueryBuilder;
 
     private PhotonQueryBuilder(String query) {
+        defaultMatchQueryBuilder = QueryBuilders.matchQuery("collector.default", query).fuzziness(Fuzziness.ONE).prefixLength(2).analyzer("search_ngram").minimumShouldMatch("-1");
+        enMatchQueryBuilder = QueryBuilders.matchQuery("collector.en", query).fuzziness(Fuzziness.ONE).prefixLength(2).analyzer("search_ngram").minimumShouldMatch("-1");
         queryBuilder = QueryBuilders.functionScoreQuery(
                 QueryBuilders.boolQuery().must(
                         QueryBuilders.boolQuery().should(
-                                QueryBuilders.matchQuery("collector.default", query).fuzziness(Fuzziness.ONE).prefixLength(2).analyzer("search_ngram").minimumShouldMatch("100%")
+                                defaultMatchQueryBuilder
                         ).should(
-                                QueryBuilders.matchQuery("collector.en", query).fuzziness(Fuzziness.ONE).prefixLength(2).analyzer("search_ngram").minimumShouldMatch("100%")
+                                enMatchQueryBuilder
                         ).minimumShouldMatch("1")
                 ).should(
                         QueryBuilders.matchQuery("name.en.raw", query).boost(200).analyzer("search_raw")
@@ -148,6 +151,20 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder {
     @Override
     public TagFilterQueryBuilder withoutValues(String... valuesToExclude) {
         return this.withoutValues(ImmutableSet.<String>builder().add(valuesToExclude).build());
+    }
+
+    @Override
+    public TagFilterQueryBuilder withStrictMatch() {
+        defaultMatchQueryBuilder.minimumShouldMatch("100%");
+        enMatchQueryBuilder.minimumShouldMatch("100%");
+        return this;
+    }
+
+    @Override
+    public TagFilterQueryBuilder withLenientMatch() {
+        defaultMatchQueryBuilder.minimumShouldMatch("-1");
+        enMatchQueryBuilder.minimumShouldMatch("-1");
+        return this;
     }
 
     @Override

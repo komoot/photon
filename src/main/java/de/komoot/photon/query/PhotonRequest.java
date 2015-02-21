@@ -11,11 +11,13 @@ public class PhotonRequest implements Serializable {
     private String query;
     private Integer limit;
     private Point locationForBias;
-    
-    public PhotonRequest(String query, Integer limit, Point locationForBias){
+    private String language;
+
+    public PhotonRequest(String query, Integer limit, Point locationForBias, String language){
         this.query = query;
         this.limit = limit;
         this.locationForBias = locationForBias;
+        this.language = language;
     }
  
     public String getQuery() {
@@ -30,4 +32,7 @@ public class PhotonRequest implements Serializable {
         return locationForBias;
     }
 
+    public String getLanguage() {
+        return language;
+    }
 }

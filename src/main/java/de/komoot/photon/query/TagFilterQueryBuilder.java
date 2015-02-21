@@ -33,6 +33,9 @@ public interface TagFilterQueryBuilder {
     TagFilterQueryBuilder withoutKeys(String... keysToExclude);
 
     TagFilterQueryBuilder withoutValues(String... valuesToExclude);
+    TagFilterQueryBuilder withStrictMatch();
+    TagFilterQueryBuilder withLenientMatch();
+
 
     QueryBuilder buildQuery();
 

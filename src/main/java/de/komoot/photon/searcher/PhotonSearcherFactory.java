@@ -1,5 +1,6 @@
 package de.komoot.photon.searcher;
 
+import de.komoot.photon.query.FilteredPhotonRequest;
 import de.komoot.photon.query.PhotonRequest;
 
 /**
@@ -8,8 +9,10 @@ import de.komoot.photon.query.PhotonRequest;
 public class PhotonSearcherFactory {
     
     public PhotonSearcher getSearcher(PhotonRequest photonRequest){
-        return null;
-        
+        if (photonRequest instanceof FilteredPhotonRequest){
+            return new BasePhotonSearcher();
+        }else return null;
+
     }
     
 }
