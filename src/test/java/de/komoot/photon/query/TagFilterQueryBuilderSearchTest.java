@@ -106,7 +106,7 @@ public class TagFilterQueryBuilderSearchTest extends ESBaseTester {
     @Test
     public void testValueInformationNotAmenity() throws IOException {
         Client client = getClient();
-        TagFilterQueryBuilder tagFilterQueryBuilder = PhotonQueryBuilder.builder("berlin").withValues("information").withoutKeys("amenity");
+        TagFilterQueryBuilder tagFilterQueryBuilder = PhotonQueryBuilder.builder("berlin").withValues("information").withoutKeys("amenity").withStrictMatch();
         QueryBuilder queryBuilder = tagFilterQueryBuilder.buildQuery();
         SearchResponse searchResponse = client.prepareSearch("photon").setSearchType(SearchType.QUERY_AND_FETCH).setQuery(queryBuilder).execute().actionGet();
         assertThat(searchResponse.getHits().getTotalHits(), is(2l));

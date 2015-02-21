@@ -5,6 +5,7 @@ import de.komoot.photon.query.BadRequestException;
 import de.komoot.photon.query.PhotonRequest;
 import de.komoot.photon.query.PhotonRequestFactory;
 import de.komoot.photon.searcher.PhotonSearcherFactory;
+import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -13,6 +14,7 @@ import spark.Response;
 import spark.Route;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.Set;
 
 public class SearchRequestHandlerTest {
@@ -37,7 +39,7 @@ public class SearchRequestHandlerTest {
         Mockito.when(mockPhotonRequestFactory.create(mockRequest)).thenReturn(mockPhotonRequest);
         ReflectionTestUtil.setFieldValue(searchRequestHandler,SearchRequestHandler.class,"photonRequestFactory",mockPhotonRequestFactory);
         PhotonRequestHandler mockPhotonRequestHandler = Mockito.mock(PhotonRequestHandler.class);
-        Mockito.when(mockPhotonRequestHandler.handle(mockPhotonRequest)).thenReturn("success");
+        Mockito.when(mockPhotonRequestHandler.handle(mockPhotonRequest)).thenReturn(new ArrayList<JSONObject>());
         ReflectionTestUtil.setFieldValue(searchRequestHandler,SearchRequestHandler.class,"photonRequestHandler",mockPhotonRequestHandler);
         String resultString = searchRequestHandler.handle(mockRequest, mockResponse);
         Assert.assertFalse(resultString.startsWith("bad request"));

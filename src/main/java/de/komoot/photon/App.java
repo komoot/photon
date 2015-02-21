@@ -5,7 +5,6 @@ import com.beust.jcommander.ParameterException;
 import de.komoot.photon.elasticsearch.Server;
 import de.komoot.photon.nominatim.NominatimConnector;
 import de.komoot.photon.nominatim.NominatimUpdater;
-import de.komoot.photon.query.PhotonRequestFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.client.Client;
 import spark.Request;
@@ -19,6 +18,11 @@ import static spark.Spark.*;
 
 @Slf4j
 public class App {
+    private static Client esClient= null;
+    public static Client getClient(){
+        return esClient;
+        
+    }
 	public static void main(String[] rawArgs) {
 		// parse command line arguments
 		CommandLineArgs args = new CommandLineArgs();
@@ -43,7 +47,7 @@ public class App {
 		}
 
 		final Server esServer = new Server(args.getCluster(), args.getDataDirectory(), args.getLanguages()).start();
-		Client esClient = esServer.getClient();
+		esClient = esServer.getClient();
 
 		if(args.isRecreateIndex()) {
 			startRecreatingIndex(esServer);
@@ -136,7 +140,7 @@ public class App {
 //		final Searcher searcher = new Searcher(esNodeClient);
 //		get(new RequestHandler("api", searcher, args.getLanguages()));
 //		get(new RequestHandler("api/", searcher, args.getLanguages()));
-        PhotonRequestFactory photonRequestFactory = new PhotonRequestFactory();
+//        PhotonRequestFactory photonRequestFactory = new PhotonRequestFactory();
         get(new SearchRequestHandler("api",args.getLanguages()));
         get(new SearchRequestHandler("api/",args.getLanguages()));
 		// setup update API

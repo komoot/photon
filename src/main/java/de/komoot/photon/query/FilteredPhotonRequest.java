@@ -11,8 +11,8 @@ import java.util.Set;
  * Created by Sachin Dole on 2/12/2015.
  */
 public class FilteredPhotonRequest extends PhotonRequest {
-    public FilteredPhotonRequest(String query, Integer limit, Point locationForBias) {
-        super(query, limit, locationForBias);
+    public FilteredPhotonRequest(String query, Integer limit, Point locationForBias,String language) {
+        super(query, limit, locationForBias, language);
     }
 
     private Set<String> excludeKeys = new HashSet<String>(3);

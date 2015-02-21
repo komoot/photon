@@ -7,7 +7,7 @@ import com.vividsolutions.jts.geom.PrecisionModel;
 import spark.QueryParamsMap;
 import spark.Request;
 
-import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by Sachin Dole on 2/12/2015.
@@ -16,12 +16,13 @@ public class PhotonRequestFactory {
 
     private final LanguageChecker languageChecker;
 
-    public PhotonRequestFactory(HashSet<String> supportedLanguages) {
+    public PhotonRequestFactory(Set<String> supportedLanguages) {
         this.languageChecker = new LanguageChecker(supportedLanguages);
     }
 
     public <R extends PhotonRequest> R create(Request webRequest) throws BadRequestException {
-        languageChecker.check(webRequest.queryParams("lang"));
+        String language = webRequest.queryParams("lang");
+        languageChecker.check(language);
         String query = webRequest.queryParams("q");
         if (query == null) throw new BadRequestException(400,"missing search term 'q': /?q=berlin");
         Integer limit;
@@ -41,8 +42,8 @@ public class PhotonRequestFactory {
             //ignore
         }
         QueryParamsMap tagFiltersQueryMap = webRequest.queryMap("osm_tag");
-        if (!tagFiltersQueryMap.hasKeys()) return (R) new PhotonRequest(query, limit, locationForBias);
-        FilteredPhotonRequest photonRequest = new FilteredPhotonRequest(query, limit, locationForBias);
+        if (!tagFiltersQueryMap.hasKeys()) return (R) new PhotonRequest(query, limit, locationForBias, language);
+        FilteredPhotonRequest photonRequest = new FilteredPhotonRequest(query, limit, locationForBias,language);
         String[] tagFilters = tagFiltersQueryMap.values();
         setUpTagFilters(photonRequest,tagFilters);
         return (R) photonRequest;
