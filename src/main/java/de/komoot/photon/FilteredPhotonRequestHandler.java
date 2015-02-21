@@ -14,7 +14,7 @@ import java.util.List;
 public class FilteredPhotonRequestHandler implements PhotonRequestHandler<FilteredPhotonRequest> {
     private final PhotonSearcherFactory searcherFactory = new PhotonSearcherFactory();
     @Override
-    public String handle(FilteredPhotonRequest photonRequest) {
+    public List<JSONObject> handle(FilteredPhotonRequest photonRequest) {
         PhotonQueryBuilder.builder(photonRequest.getQuery()).
                 withTags(photonRequest.tag()).
                 withKeys(photonRequest.key()).
@@ -28,7 +28,8 @@ public class FilteredPhotonRequestHandler implements PhotonRequestHandler<Filter
         if (results.size() == 0) {
             results = searcher.search();
         }
-        return "";
+        return results;
 
     }
+
 }
