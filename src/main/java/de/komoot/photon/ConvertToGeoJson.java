@@ -19,7 +19,7 @@ public class ConvertToGeoJson extends Converter<List<JSONObject>,JSONObject> {
         collection.put("type", "FeatureCollection");
         collection.put("features", new JSONArray(jsonObjects));
 
-        return null;
+        return collection;
     }
 
     @Override

@@ -28,6 +28,7 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder {
     private AndFilterBuilder andFilterBuilderForExcludeTagFiltering = null;
     private MatchQueryBuilder defaultMatchQueryBuilder;
     private MatchQueryBuilder enMatchQueryBuilder;
+    private FilteredQueryBuilder finalFilteredQueryBuiler;
 
     private PhotonQueryBuilder(String query) {
         defaultMatchQueryBuilder = QueryBuilders.matchQuery("collector.default", query).fuzziness(Fuzziness.ONE).prefixLength(2).analyzer("search_ngram").minimumShouldMatch("-1");
@@ -73,13 +74,17 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder {
     }
 
     @Override
-    public TagFilterQueryBuilder withTags(Map<String, String> tags) {
+    public TagFilterQueryBuilder withTags(Map<String, Set<String>> tags) {
         if (tags == null) return this;
         ensureFiltered();
         List<AndFilterBuilder> termFilters = new ArrayList<AndFilterBuilder>(tags.size());
         for (String tagKey : tags.keySet()) {
-            String value = tags.get(tagKey);
-            termFilters.add(FilterBuilders.andFilter(FilterBuilders.termFilter("osm_key", tagKey), FilterBuilders.termFilter("osm_value", value)));
+            Set<String> valuesToInclude = tags.get(tagKey);
+            AndFilterBuilder includeAndFilter = FilterBuilders.andFilter(FilterBuilders.termFilter("osm_key", tagKey));
+            for (String eachValueToInclude : valuesToInclude) {
+                FilterBuilders.termFilter("osm_value",eachValueToInclude);
+            }
+            termFilters.add(includeAndFilter);
         }
         this.appendIncludeTermFilters(termFilters);
         return this;
@@ -104,12 +109,16 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder {
     }
 
     @Override
-    public TagFilterQueryBuilder withoutTags(Map<String, String> tagsToExclude) {
+    public TagFilterQueryBuilder withoutTags(Map<String, Set<String>> tagsToExclude) {
         ensureFiltered();
         List<NotFilterBuilder> termFilters = new ArrayList<NotFilterBuilder>(tagsToExclude.size());
         for (String tagKey : tagsToExclude.keySet()) {
-            String value = tagsToExclude.get(tagKey);
-            termFilters.add(FilterBuilders.notFilter(FilterBuilders.andFilter(FilterBuilders.termFilter("osm_key", tagKey), FilterBuilders.termFilter("osm_value", value))));
+            Set<String> valuesToExclude = tagsToExclude.get(tagKey);
+            AndFilterBuilder andFilterForExclusions = FilterBuilders.andFilter(FilterBuilders.termFilter("osm_key", tagKey));
+            for (String eachValueToExclude : valuesToExclude) {
+                andFilterForExclusions.add(FilterBuilders.termFilter("osm_value", eachValueToExclude));
+            }
+            termFilters.add(FilterBuilders.notFilter(andFilterForExclusions));
         }
         this.appendExcludeTermFilters(termFilters);
         return this;
@@ -170,7 +179,7 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder {
     @Override
     public QueryBuilder buildQuery() {
         if (state.equals(State.FINISHED)) {
-            throw new IllegalStateException("query building is already done.");
+            return finalFilteredQueryBuiler;
         }
         if (state.equals(State.FILTERED)) {
             if (orFilterBuilderForIncludeTagFiltering != null)
@@ -179,7 +188,8 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder {
                 ((AndFilterBuilder) filterBuilder).add(andFilterBuilderForExcludeTagFiltering);
         }
         state = State.FINISHED;
-        return QueryBuilders.filteredQuery(queryBuilder, filterBuilder);
+        finalFilteredQueryBuiler = QueryBuilders.filteredQuery(queryBuilder, filterBuilder);
+        return finalFilteredQueryBuiler;
     }
 
     @Override

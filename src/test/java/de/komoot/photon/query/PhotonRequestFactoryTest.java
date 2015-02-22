@@ -101,7 +101,7 @@ public class PhotonRequestFactoryTest {
         Mockito.verify(mockRequest, Mockito.times(1)).queryParams("q");
         Mockito.verify(mockRequest, Mockito.times(1)).queryMap("osm_tag");
         Mockito.verify(mockOsmTagQueryParm, Mockito.times(1)).values();
-        Assert.assertEquals(ImmutableSet.of("aTag"), filteredPhotonRequest.key());
+        Assert.assertEquals(ImmutableSet.of("aTag"), filteredPhotonRequest.keys());
     }    
     @Test
     public void testWithIncludeTagFilter() throws Exception {
@@ -115,7 +115,7 @@ public class PhotonRequestFactoryTest {
         Assert.assertEquals("berlin", filteredPhotonRequest.getQuery());
         Mockito.verify(mockRequest, Mockito.times(1)).queryMap("osm_tag");
         Mockito.verify(mockOsmTagQueryParm, Mockito.times(1)).values();
-        Assert.assertEquals(ImmutableMap.of("aTag","aValue"), filteredPhotonRequest.tag());
+        Assert.assertEquals(ImmutableMap.of("aTag","aValue"), filteredPhotonRequest.tags());
     }
     @Test
     public void testWithIncludeValueFilter() throws Exception {
@@ -130,7 +130,7 @@ public class PhotonRequestFactoryTest {
         Mockito.verify(mockRequest, Mockito.times(1)).queryParams("q");
         Mockito.verify(mockRequest, Mockito.times(1)).queryMap("osm_tag");
         Mockito.verify(mockOsmTagQueryParm, Mockito.times(1)).values();
-        Assert.assertEquals(ImmutableSet.of("aValue"), filteredPhotonRequest.value());
+        Assert.assertEquals(ImmutableSet.of("aValue"), filteredPhotonRequest.values());
     }    @Test
     public void testWithExcludeKeyFilter() throws Exception {
         Request mockRequest = Mockito.mock(Request.class);
@@ -144,7 +144,7 @@ public class PhotonRequestFactoryTest {
         Mockito.verify(mockRequest, Mockito.times(1)).queryParams("q");
         Mockito.verify(mockRequest, Mockito.times(1)).queryMap("osm_tag");
         Mockito.verify(mockOsmTagQueryParm, Mockito.times(1)).values();
-        Assert.assertEquals(ImmutableSet.of("aTag"), filteredPhotonRequest.notKey());
+        Assert.assertEquals(ImmutableSet.of("aTag"), filteredPhotonRequest.notKeys());
     }
     @Test
     public void testWithExcludeTagFilter() throws Exception {
@@ -158,7 +158,7 @@ public class PhotonRequestFactoryTest {
         Assert.assertEquals("berlin", filteredPhotonRequest.getQuery());
         Mockito.verify(mockRequest, Mockito.times(1)).queryMap("osm_tag");
         Mockito.verify(mockOsmTagQueryParm, Mockito.times(1)).values();
-        Assert.assertEquals(ImmutableMap.of("aTag","aValue"), filteredPhotonRequest.notTag());
+        Assert.assertEquals(ImmutableMap.of("aTag","aValue"), filteredPhotonRequest.notTags());
     }
     @Test
     public void testWithExcludeValueFilter() throws Exception {
@@ -173,6 +173,6 @@ public class PhotonRequestFactoryTest {
         Mockito.verify(mockRequest, Mockito.times(1)).queryParams("q");
         Mockito.verify(mockRequest, Mockito.times(1)).queryMap("osm_tag");
         Mockito.verify(mockOsmTagQueryParm, Mockito.times(1)).values();
-        Assert.assertEquals(ImmutableSet.of("aValue"), filteredPhotonRequest.notValue());
+        Assert.assertEquals(ImmutableSet.of("aValue"), filteredPhotonRequest.notValues());
     }
 }

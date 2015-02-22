@@ -14,13 +14,13 @@ public interface TagFilterQueryBuilder {
 
     TagFilterQueryBuilder withLocationBias(Point point);
 
-    TagFilterQueryBuilder withTags(Map<String, String> tags);
+    TagFilterQueryBuilder withTags(Map<String, Set<String>> tags);
 
     TagFilterQueryBuilder withKeys(Set<String> keys);
 
     TagFilterQueryBuilder withValues(Set<String> values);
 
-    TagFilterQueryBuilder withoutTags(Map<String, String> tagsToExclude);
+    TagFilterQueryBuilder withoutTags(Map<String, Set<String>> tagsToExclude);
 
     TagFilterQueryBuilder withoutKeys(Set<String> keysToExclude);
 
