@@ -7,6 +7,7 @@ import com.vividsolutions.jts.geom.PrecisionModel;
 import spark.QueryParamsMap;
 import spark.Request;
 
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -24,63 +25,69 @@ public class PhotonRequestFactory {
         String language = webRequest.queryParams("lang");
         languageChecker.check(language);
         String query = webRequest.queryParams("q");
-        if (query == null) throw new BadRequestException(400,"missing search term 'q': /?q=berlin");
+        if (query == null) throw new BadRequestException(400, "missing search term 'q': /?q=berlin");
         Integer limit;
         try {
             limit = Integer.valueOf(webRequest.queryParams("limit"));
         } catch (NumberFormatException e) {
             limit = 15;
         }
-        Double lon = null;
-        Double lat = null;
         Point locationForBias = null;
         try {
-            lon = Double.valueOf(webRequest.queryParams("lon"));
-            lat = Double.valueOf(webRequest.queryParams("lat"));
+            Double lon = Double.valueOf(webRequest.queryParams("lon"));
+            Double lat = Double.valueOf(webRequest.queryParams("lat"));
             locationForBias = new GeometryFactory(new PrecisionModel(), 4326).createPoint(new Coordinate(lon, lat));
         } catch (Exception nfe) {
             //ignore
         }
         QueryParamsMap tagFiltersQueryMap = webRequest.queryMap("osm_tag");
-        if (!tagFiltersQueryMap.hasKeys()) return (R) new PhotonRequest(query, limit, locationForBias, language);
-        FilteredPhotonRequest photonRequest = new FilteredPhotonRequest(query, limit, locationForBias,language);
+        if (!new CheckIfFilteredRequest().execute(tagFiltersQueryMap)) {
+            return (R) new PhotonRequest(query, limit, locationForBias, language);
+        }
+        FilteredPhotonRequest photonRequest = new FilteredPhotonRequest(query, limit, locationForBias, language);
         String[] tagFilters = tagFiltersQueryMap.values();
-        setUpTagFilters(photonRequest,tagFilters);
+        setUpTagFilters(photonRequest, tagFilters);
         return (R) photonRequest;
     }
-    
-    private void setUpTagFilters(FilteredPhotonRequest request,String[] tagFilters){
+
+    private void setUpTagFilters(FilteredPhotonRequest request, String[] tagFilters) {
         for (String tagFilter : tagFilters) {
-            if (!tagFilter.contains(":")){
-                //only tag
-                if (tagFilter.startsWith("!")){
-                    request.notKey(tagFilter.substring(1));
-                }else{
-                    request.key(tagFilter);
-                }
-            }else{
+            if (tagFilter.contains(":")) {
                 //might be tag and value OR just value.
-                if (tagFilter.startsWith("!")){
+                if (tagFilter.startsWith("!")) {
                     //exclude
                     String keyValueCandidate = tagFilter.substring(1);
-                    if (keyValueCandidate.startsWith(":")){
+                    if (keyValueCandidate.startsWith(":")) {
                         //just value
-                        request.notValue(keyValueCandidate.substring(1));
-                    }else{
+                        request.notValues(keyValueCandidate.substring(1));
+                    } else {
                         //key and value
                         String[] keyAndValue = keyValueCandidate.split(":");
-                        request.notTag(keyAndValue[0], keyAndValue[1]);
+                        Set<String> valuesToExclude = request.notTags().get(keyAndValue[0]);
+                        if (valuesToExclude == null) valuesToExclude = new HashSet<String>();
+                        valuesToExclude.add(keyAndValue[1]);
+                        request.notTags(keyAndValue[0], valuesToExclude);
                     }
-                }else{
+                } else {
                     //include
-                    if (tagFilter.startsWith(":")){
+                    if (tagFilter.startsWith(":")) {
                         //just value
-                        request.value(tagFilter.substring(1));
-                    }else{
+                        request.values(tagFilter.substring(1));
+                    } else {
                         //key and value
                         String[] keyAndValue = tagFilter.split(":");
-                        request.tag(keyAndValue[0], keyAndValue[1]);
+                        Set<String> valuesToInclude = request.tags().get(keyAndValue[0]);
+                        if (valuesToInclude == null) valuesToInclude = new HashSet<String>();
+                        valuesToInclude.add(keyAndValue[1]);
+                        request.tags(keyAndValue[0], valuesToInclude);
                     }
+                }
+            } else {
+                //only tag
+                if (tagFilter.startsWith("!")) {
+                    request.notKeys(tagFilter.substring(1));
+                } else {
+                    request.keys(tagFilter);
                 }
             }
         }

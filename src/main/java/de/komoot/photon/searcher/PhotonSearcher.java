@@ -9,5 +9,4 @@ import org.elasticsearch.index.query.QueryBuilder;
 public interface PhotonSearcher {
     SearchResponse search(QueryBuilder queryBuilder, Integer limit);
 
-    SearchResponse searchStrict(QueryBuilder queryBuilder, Integer limit);
 }

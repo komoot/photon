@@ -11,6 +11,7 @@ import spark.Route;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by Sachin Dole on 2/12/2015.
@@ -21,7 +22,7 @@ public class SearchRequestHandler<R extends PhotonRequest> extends Route {
 
     SearchRequestHandler(String path, String languages) {
         super(path);
-        HashSet<String> supportedLanguages = new HashSet<String>(Arrays.asList(languages.split(",")));
+        Set<String> supportedLanguages = new HashSet<String>(Arrays.asList(languages.split(",")));
         this.photonRequestFactory = new PhotonRequestFactory(supportedLanguages);
         this.requestHandlerFactory = new PhotonRequestHandlerFactory();
     }

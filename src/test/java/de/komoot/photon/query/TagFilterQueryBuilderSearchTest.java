@@ -2,6 +2,7 @@ package de.komoot.photon.query;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
@@ -19,6 +20,7 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -61,7 +63,8 @@ public class TagFilterQueryBuilderSearchTest extends ESBaseTester {
     @Test
     public void testFilterWithTagTourismAttraction() throws IOException {
         Client client = getClient();
-        TagFilterQueryBuilder tagFilterQueryBuilder = PhotonQueryBuilder.builder("berlin").withTags(ImmutableMap.of("tourism", "attraction"));
+        Set<String> valueSet = ImmutableSet.of("attraction");
+        TagFilterQueryBuilder tagFilterQueryBuilder = PhotonQueryBuilder.builder("berlin").withTags(ImmutableMap.of("tourism", valueSet));
         QueryBuilder queryBuilder = tagFilterQueryBuilder.buildQuery();
         SearchResponse searchResponse = client.prepareSearch("photon").setSearchType(SearchType.QUERY_AND_FETCH).setQuery(queryBuilder).execute().actionGet();
         assertThat(searchResponse.getHits().getTotalHits(), is(2l));
