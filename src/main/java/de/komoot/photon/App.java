@@ -42,7 +42,7 @@ public class App {
 			return;
 		}
 
-		final Server esServer = new Server(args.getCluster(), args.getDataDirectory(), args.getLanguages()).start();
+		final Server esServer = new Server(args).start();
 		Client esClient = esServer.getClient();
 
 		if(args.isRecreateIndex()) {

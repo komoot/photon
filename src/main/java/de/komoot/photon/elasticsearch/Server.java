@@ -1,5 +1,6 @@
 package de.komoot.photon.elasticsearch;
 
+import de.komoot.photon.CommandLineArgs;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.SystemUtils;
@@ -22,6 +23,10 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.util.Arrays;
+import java.util.List;
+import org.elasticsearch.client.transport.TransportClient;
+import org.elasticsearch.common.transport.InetSocketTransportAddress;
 
 import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
 
@@ -32,17 +37,19 @@ import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
  */
 @Slf4j
 public class Server {
-	private Node esNode;
-	private String clusterName = "photon_v0.2.1";
+        private Node esNode;
+	private Client esClient;
+	private String clusterName;
 	private File esDirectory;
 	private final boolean isTest;
 	private final String[] languages;
+        private String transportAddresses;
 
-	public Server(String clusterName, String mainDirectory, String languages) {
-		this(clusterName, mainDirectory, languages, false);
+	public Server(CommandLineArgs args) {            
+		this(args.getCluster(), args.getDataDirectory(), args.getLanguages(), args.getTransportAddresses(), false);
 	}
 
-	public Server(String clusterName, String mainDirectory, String languages, boolean isTest) {
+	public Server(String clusterName, String mainDirectory, String languages, String transportAddresses, boolean isTest) {
 		try {
 			if(SystemUtils.IS_OS_WINDOWS) {
 				setupDirectories(new URL("file:///" + mainDirectory));
@@ -54,6 +61,7 @@ public class Server {
 		}
 		this.clusterName = clusterName;
 		this.languages = languages.split(",");
+                this.transportAddresses = transportAddresses;
 		this.isTest = isTest;
 	}
 
@@ -64,31 +72,51 @@ public class Server {
 
 		// default is 'local', 'none' means no data after node restart!
 		if(isTest)
-			sBuilder.put("gateway.type", "none");
+                    sBuilder.put("gateway.type", "none");		
 
-		Settings settings = sBuilder.build();
+                if(transportAddresses != null && !transportAddresses.isEmpty()) {                    
+                    sBuilder.put("cluster.name", clusterName);
+                    TransportClient trClient = new TransportClient(sBuilder.build(), true);
+                    List<String> addresses = Arrays.asList(transportAddresses.split(","));
+                    for(String tAddr : addresses) {
+                        int index = tAddr.indexOf(":");
+                        if(index >= 0) {                            
+                            int port = Integer.parseInt(tAddr.substring(index + 1));
+                            String addrStr = tAddr.substring(0, index);
+                            trClient.addTransportAddress(new InetSocketTransportAddress(addrStr, port));
+                        } else {
+                            trClient.addTransportAddress(new InetSocketTransportAddress(tAddr, 9300));
+                        }                        
+                    }
+                                        
+                    esClient = trClient;
+                    
+                    log.info("started elastic search client connected to " + addresses);                    
+                } else {
+                    Settings settings = sBuilder.build();
 
-		final String pluginPath = this.getClass().getResource("/elasticsearch-wordending-tokenfilter-0.0.1.zip").toExternalForm();
-		PluginManager pluginManager = new PluginManager(new Environment(settings), pluginPath, PluginManager.OutputMode.VERBOSE, new TimeValue(30000));
-		try {
-			pluginManager.downloadAndExtract("ybon/elasticsearch-wordending-tokenfilter/0.0.1");
-		} catch(IOException e) {
-			log.debug("could not install ybon/elasticsearch-wordending-tokenfilter/0.0.1", e);
-		}
+                    final String pluginPath = this.getClass().getResource("/elasticsearch-wordending-tokenfilter-0.0.1.zip").toExternalForm();
+                    PluginManager pluginManager = new PluginManager(new Environment(settings), pluginPath, PluginManager.OutputMode.VERBOSE, new TimeValue(30000));
+                    try {
+                        pluginManager.downloadAndExtract("ybon/elasticsearch-wordending-tokenfilter/0.0.1");
+                    } catch(IOException e) {
+                        log.debug("could not install ybon/elasticsearch-wordending-tokenfilter/0.0.1", e);
+                    }
 
-		if(!isTest) {
-			pluginManager = new PluginManager(new Environment(settings), null, PluginManager.OutputMode.VERBOSE, new TimeValue(30000));
-			for(String pluginName : new String[]{"mobz/elasticsearch-head", "polyfractal/elasticsearch-inquisitor"}) {
-				try {
-					pluginManager.downloadAndExtract(pluginName);
-				} catch(IOException e) {
-					log.error(String.format("cannot install plugin: %s: %s", pluginName, e));
-				}
-			}
-		}
-
-		esNode = nodeBuilder().clusterName(clusterName).loadConfigSettings(true).settings(settings).node();
-		log.info("started elastic search node");
+                    if(!isTest) {
+                        pluginManager = new PluginManager(new Environment(settings), null, PluginManager.OutputMode.VERBOSE, new TimeValue(30000));
+                        for(String pluginName : new String[]{"mobz/elasticsearch-head", "polyfractal/elasticsearch-inquisitor"}) {
+                            try {
+                                    pluginManager.downloadAndExtract(pluginName);
+                            } catch(IOException e) {
+                                    log.error(String.format("cannot install plugin: %s: %s", pluginName, e));
+                            }
+                        }
+                    }
+                    esNode = nodeBuilder().clusterName(clusterName).loadConfigSettings(true).settings(settings).node();
+                    log.info("started elastic search node");
+                    esClient = esNode.client();
+                }		
 		return this;
 	}
 
@@ -96,14 +124,17 @@ public class Server {
 	 * stops the elasticsearch node
 	 */
 	public void shutdown() {
-		this.esNode.close();
+                if(esNode != null)
+                    esNode.close();
+                
+		esClient.close();
 	}
 
 	/**
 	 * returns an elasticsearch client
 	 */
 	public Client getClient() {
-		return this.esNode.client();
+		return esClient;
 	}
 
 	private void setupDirectories(URL directoryName) throws IOException, URISyntaxException {
