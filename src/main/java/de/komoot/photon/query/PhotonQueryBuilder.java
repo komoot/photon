@@ -63,27 +63,27 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder {
 
     @Override
     public TagFilterQueryBuilder withLimit(Integer limit) {
-        this.limit = limit;
+        this.limit = limit == null ? 15 : limit;
         return this;
     }
 
     @Override
     public TagFilterQueryBuilder withLocationBias(Point point) {
+        if (point == null) return this;
         queryBuilder.add(ScoreFunctionBuilders.scriptFunction("location-biased-score", "mvel").param("lon", point.getX()).param("lat", point.getY()));
         return this;
     }
 
     @Override
     public TagFilterQueryBuilder withTags(Map<String, Set<String>> tags) {
-        if (tags == null) return this;
+        if (!checkTags(tags)) return this;
         ensureFiltered();
         List<AndFilterBuilder> termFilters = new ArrayList<AndFilterBuilder>(tags.size());
         for (String tagKey : tags.keySet()) {
             Set<String> valuesToInclude = tags.get(tagKey);
-            AndFilterBuilder includeAndFilter = FilterBuilders.andFilter(FilterBuilders.termFilter("osm_key", tagKey));
-            for (String eachValueToInclude : valuesToInclude) {
-                FilterBuilders.termFilter("osm_value",eachValueToInclude);
-            }
+            TermFilterBuilder keyFilter = FilterBuilders.termFilter("osm_key", tagKey);
+            TermsFilterBuilder valueFilter = FilterBuilders.termsFilter("osm_value", valuesToInclude.toArray(new String[valuesToInclude.size()]));
+            AndFilterBuilder includeAndFilter = FilterBuilders.andFilter(keyFilter, valueFilter);
             termFilters.add(includeAndFilter);
         }
         this.appendIncludeTermFilters(termFilters);
@@ -92,6 +92,7 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder {
 
     @Override
     public TagFilterQueryBuilder withKeys(Set<String> keys) {
+        if (!checkTags(keys)) return this;
         ensureFiltered();
         List<TermsFilterBuilder> termFilters = new ArrayList<TermsFilterBuilder>(keys.size());
         termFilters.add(FilterBuilders.termsFilter("osm_key", keys.toArray()));
@@ -101,6 +102,7 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder {
 
     @Override
     public TagFilterQueryBuilder withValues(Set<String> values) {
+        if (!checkTags(values)) return this;
         ensureFiltered();
         List<TermsFilterBuilder> termFilters = new ArrayList<TermsFilterBuilder>(values.size());
         termFilters.add(FilterBuilders.termsFilter("osm_value", values.toArray(new String[values.size()])));
@@ -109,15 +111,32 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder {
     }
 
     @Override
+    public TagFilterQueryBuilder withTagsNotValues(Map<String, Set<String>> tags) {
+        if (!checkTags(tags))return this;
+        ensureFiltered();
+        List<AndFilterBuilder> termFilters = new ArrayList<AndFilterBuilder>(tags.size());
+        for (String tagKey : tags.keySet()) {
+            Set<String> valuesToInclude = tags.get(tagKey);
+            TermFilterBuilder keyFilter = FilterBuilders.termFilter("osm_key", tagKey);
+            TermsFilterBuilder valueFilter = FilterBuilders.termsFilter("osm_value", valuesToInclude.toArray(new String[valuesToInclude.size()]));
+            NotFilterBuilder negatedValueFilter = FilterBuilders.notFilter(valueFilter);
+            AndFilterBuilder includeAndFilter = FilterBuilders.andFilter(keyFilter, negatedValueFilter);
+            termFilters.add(includeAndFilter);
+        }
+        this.appendIncludeTermFilters(termFilters);
+        return this;
+    }
+
+    @Override
     public TagFilterQueryBuilder withoutTags(Map<String, Set<String>> tagsToExclude) {
+        if (!checkTags(tagsToExclude)) return this;
         ensureFiltered();
         List<NotFilterBuilder> termFilters = new ArrayList<NotFilterBuilder>(tagsToExclude.size());
         for (String tagKey : tagsToExclude.keySet()) {
             Set<String> valuesToExclude = tagsToExclude.get(tagKey);
-            AndFilterBuilder andFilterForExclusions = FilterBuilders.andFilter(FilterBuilders.termFilter("osm_key", tagKey));
-            for (String eachValueToExclude : valuesToExclude) {
-                andFilterForExclusions.add(FilterBuilders.termFilter("osm_value", eachValueToExclude));
-            }
+            TermFilterBuilder keyFilter = FilterBuilders.termFilter("osm_key", tagKey);
+            TermsFilterBuilder valueFilter = FilterBuilders.termsFilter("osm_value", valuesToExclude.toArray(new String[valuesToExclude.size()]));
+            AndFilterBuilder andFilterForExclusions = FilterBuilders.andFilter(keyFilter,valueFilter);
             termFilters.add(FilterBuilders.notFilter(andFilterForExclusions));
         }
         this.appendExcludeTermFilters(termFilters);
@@ -126,6 +145,7 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder {
 
     @Override
     public TagFilterQueryBuilder withoutKeys(Set<String> keysToExclude) {
+        if (!checkTags(keysToExclude)) return this;
         ensureFiltered();
         List<NotFilterBuilder> termFilters = new ArrayList<NotFilterBuilder>(keysToExclude.size());
         termFilters.add(FilterBuilders.notFilter(FilterBuilders.termsFilter("osm_key", keysToExclude.toArray())));
@@ -135,6 +155,7 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder {
 
     @Override
     public TagFilterQueryBuilder withoutValues(Set<String> valuesToExclude) {
+        if (!checkTags(valuesToExclude)) return this;
         ensureFiltered();
         List<NotFilterBuilder> termFilters = new ArrayList<NotFilterBuilder>(valuesToExclude.size());
         termFilters.add(FilterBuilders.notFilter(FilterBuilders.termsFilter("osm_value", valuesToExclude.toArray())));
@@ -195,6 +216,14 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder {
     @Override
     public Integer getLimit() {
         return limit;
+    }
+
+    private Boolean checkTags(Set<String> keys) {
+        return !(keys == null || keys.isEmpty());
+    }
+
+    private Boolean checkTags(Map<String, Set<String>> tags) {
+        return !(tags == null || tags.isEmpty());
     }
 
     private void appendIncludeTermFilters(List<? extends FilterBuilder> termFilters) {

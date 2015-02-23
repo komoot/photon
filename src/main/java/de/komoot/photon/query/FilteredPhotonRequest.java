@@ -17,6 +17,7 @@ public class FilteredPhotonRequest extends PhotonRequest {
     private Set<String> includeValues = new HashSet<String>();
     private Map<String, Set<String>> includeTags = new HashMap<String, Set<String>>(3);
     private Map<String, Set<String>> excludeTags = new HashMap<String, Set<String>>(3);
+    private Map<String, Set<String>> excludeTagValues = new HashMap<String, Set<String>>(3);
     FilteredPhotonRequest(String query, Integer limit, Point locationForBias, String language) {
         super(query, limit, locationForBias, language);
     }
@@ -67,5 +68,13 @@ public class FilteredPhotonRequest extends PhotonRequest {
 
     public Set<String> notKeys() {
         return excludeKeys;
+    }
+
+    void tagNotValues(String key, Set<String> excludeValues) {
+        excludeTagValues.put(key,excludeValues);
+    }
+    public Map<String,Set<String>> tagNotValues(){
+        return excludeTagValues;
+        
     }
 }

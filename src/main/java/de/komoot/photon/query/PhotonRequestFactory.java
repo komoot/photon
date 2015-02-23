@@ -63,23 +63,37 @@ public class PhotonRequestFactory {
                     } else {
                         //key and value
                         String[] keyAndValue = keyValueCandidate.split(":");
-                        Set<String> valuesToExclude = request.notTags().get(keyAndValue[0]);
+                        String excludeKey = keyAndValue[0];
+                        String value = keyAndValue[1].startsWith("!") ? keyAndValue[1].substring(1) : keyAndValue[1];
+                        Set<String> valuesToExclude = request.notTags().get(excludeKey);
                         if (valuesToExclude == null) valuesToExclude = new HashSet<String>();
-                        valuesToExclude.add(keyAndValue[1]);
-                        request.notTags(keyAndValue[0], valuesToExclude);
+                        valuesToExclude.add(value);
+                        request.notTags(excludeKey, valuesToExclude);
                     }
                 } else {
-                    //include
+                    //include key, not sure about value
                     if (tagFilter.startsWith(":")) {
                         //just value
                         request.values(tagFilter.substring(1));
                     } else {
                         //key and value
                         String[] keyAndValue = tagFilter.split(":");
-                        Set<String> valuesToInclude = request.tags().get(keyAndValue[0]);
-                        if (valuesToInclude == null) valuesToInclude = new HashSet<String>();
-                        valuesToInclude.add(keyAndValue[1]);
-                        request.tags(keyAndValue[0], valuesToInclude);
+
+                        String key = keyAndValue[0];
+                        String value = keyAndValue[1];
+                        if (value.startsWith("!")) {
+                            //exclude value
+                            Set<String> tagKeysValuesNotIncluded = request.tagNotValues().get(key);
+                            if (tagKeysValuesNotIncluded == null) tagKeysValuesNotIncluded = new HashSet<String>();
+                            tagKeysValuesNotIncluded.add(value.substring(1));
+                            request.tagNotValues(key, tagKeysValuesNotIncluded);
+                        } else {
+                            //include value
+                            Set<String> valuesToInclude = request.tags().get(key);
+                            if (valuesToInclude == null) valuesToInclude = new HashSet<String>();
+                            valuesToInclude.add(value);
+                            request.tags(key, valuesToInclude);
+                        }
                     }
                 }
             } else {
