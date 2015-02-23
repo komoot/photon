@@ -14,7 +14,7 @@ public class CommandLineArgs {
 	@Parameter(names = "-cluster", description = "name of elasticsearch cluster to put the server into (default is 'photon')")
 	private String cluster = "photon";
         
-        @Parameter(names = "-transport-addresses", description = "the addresses of external elasticsearch nodes the client can connect to (default is an empty string which forces an internal node to start)")
+        @Parameter(names = "-transport-addresses", description = "the comma separated addresses of external elasticsearch nodes where the client can connect to (default is an empty string which forces an internal node to start)")
 	private String transportAddresses = "";
 
 	@Parameter(names = "-nominatim-import", description = "import nominatim database into photon (this will delete previous index)")
