@@ -10,7 +10,7 @@ public class CheckIfFilteredRequest implements Command<Boolean, QueryParamsMap> 
     @Override
     public Boolean execute(QueryParamsMap... operand) {
         QueryParamsMap queryParam = operand[0];
-        if (!queryParam.hasKeys()) return false;
+        if (!queryParam.hasValue()) return false;
         String[] tagsToFilterOn = queryParam.values();
         for (String eachTagToFilterOn : tagsToFilterOn) {
             if (eachTagToFilterOn != null && eachTagToFilterOn.trim().length() > 0) {
