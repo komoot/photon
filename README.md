@@ -27,10 +27,11 @@ wget http://photon.komoot.de/data/photon-0.2.1.jar
 
 download search index (31G gb compressed, 56.3 gb uncompressed, worldwide coverage, languages: English, German, French and Italian)
  ```bash
-wget http://photon.komoot.de/data/photon_data_021_150112.tar.bz2
-tar -xjf photon_data_021_150112.tar.bz2
-# you can significantly speed up extracting using lbzip2:
-# tar -xf photon_data_150112.tar.bz2 --use-compress-prog=pbzip2
+wget -O - http://photon.komoot.de/data/photon_data_021_150112.tar.bz2 |
+bzip2 -cd | tar x
+# you can significantly speed up extracting using pbzip2:
+wget -O - http://photon.komoot.de/data/photon_data_021_150112.tar.bz2 |
+pbzip2 -cd | tar x
  ```
  
 start photon
