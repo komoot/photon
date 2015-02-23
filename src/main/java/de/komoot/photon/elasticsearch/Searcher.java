@@ -40,13 +40,7 @@ public class Searcher {
 	private final static String[] KEYS_LANG_UNSPEC = {Constants.OSM_ID, Constants.OSM_VALUE, Constants.OSM_KEY, Constants.POSTCODE, Constants.HOUSENUMBER, Constants.OSM_TYPE};
 
 	/** These properties will be translated before they are copied into the result */
-	private final static String[] KEYS_LANG_SPEC = {Constants.NAME, Constants.COUNTRY, Constants.CITY, Constants.STREET, Constants.STATE};
-    private boolean hasTagKeyHasValueNoBias;
-    private boolean hasTagKeyHasValueHasBias;
-    private boolean hasTagKeyNoValueNoBias;
-    private boolean hasTagKeyNoValueHasBias;
-    private boolean hasNoTagKeyNoValueNoBias;
-    private boolean hasNoTagKeyNoValueHasBias;
+	private final static String[] KEYS_LANG_SPEC = {Constants.NAME, Constants.COUNTRY, Constants.CITY, Constants.STREET, Constants.STATE};    
 
     public Searcher(Client client) {
 		this.client = client;
@@ -71,7 +65,18 @@ public class Searcher {
 		if(lon != null) params.put("lon", lon);
 		if(lat != null) params.put("lat", lat);
 
-        this.setupSearch(lon,lat,tagKey,tagValue);
+        boolean hasBias = lon!=null && lat!=null;
+        boolean hasTagKey = tagKey!=null;
+        boolean hasTagValue = tagValue!=null;
+        boolean hasTagKeyNoValue = hasTagKey && !hasTagValue;
+        boolean hasTagKeyHasValue = hasTagKey && hasTagValue;
+        boolean hasTagKeyHasValueNoBias = hasTagKeyHasValue && !hasBias;
+        boolean hasTagKeyHasValueHasBias = hasTagKeyHasValue && hasBias;
+        boolean hasTagKeyNoValueNoBias = hasTagKeyNoValue && !hasBias;
+        boolean hasTagKeyNoValueHasBias = hasTagKeyNoValue && hasBias;
+        boolean hasNoTagKeyNoValueNoBias = !hasTagKey && !hasTagValue && !hasBias;
+        boolean hasNoTagKeyNoValueHasBias =  !hasTagKey && !hasTagValue && hasBias;
+        
         if (hasNoTagKeyNoValueHasBias) {
             StrSubstitutor sub = new StrSubstitutor(params.build(), "${", "}");
             query = sub.replace(queryLocationBiasTemplate);
@@ -105,21 +110,6 @@ public class Searcher {
 		}
 		return results;
 	}
-
-    private void setupSearch(Double lon, Double lat, String tagKey, String tagValue) {
-        boolean hasBias = lon!=null && lat!=null;
-        boolean hasTagKey = tagKey!=null;
-        boolean hasTagValue = tagValue!=null;
-        boolean hasTagKeyNoValue = hasTagKey && !hasTagValue;
-        boolean hasTagKeyHasValue = hasTagKey && hasTagValue;
-        this. hasTagKeyHasValueNoBias = hasTagKeyHasValue && !hasBias;
-        this. hasTagKeyHasValueHasBias = hasTagKeyHasValue && hasBias;
-        this. hasTagKeyNoValueNoBias = hasTagKeyNoValue && !hasBias;
-        this. hasTagKeyNoValueHasBias = hasTagKeyNoValue && hasBias;
-        this. hasNoTagKeyNoValueNoBias = !hasTagKey && !hasTagValue && !hasBias;
-        this. hasNoTagKeyNoValueHasBias =  !hasTagKey && !hasTagValue && hasBias;
-
-    }
 
     private List<JSONObject> removeStreetDuplicates(List<JSONObject> results, String lang) {
 		List<JSONObject> filteredItems = Lists.newArrayListWithCapacity(results.size());
