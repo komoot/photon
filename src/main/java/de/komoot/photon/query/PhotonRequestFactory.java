@@ -23,6 +23,7 @@ public class PhotonRequestFactory {
 
     public <R extends PhotonRequest> R create(Request webRequest) throws BadRequestException {
         String language = webRequest.queryParams("lang");
+        language = language == null ? "en" : language;
         languageChecker.check(language);
         String query = webRequest.queryParams("q");
         if (query == null) throw new BadRequestException(400, "missing search term 'q': /?q=berlin");
@@ -74,7 +75,15 @@ public class PhotonRequestFactory {
                     //include key, not sure about value
                     if (tagFilter.startsWith(":")) {
                         //just value
-                        request.values(tagFilter.substring(1));
+
+                        String valueCandidate = tagFilter.substring(1);
+                        if (valueCandidate.startsWith("!")){
+                            //exclude value
+                            request.notValues(valueCandidate.substring(1));
+                        }else {
+                            //include value
+                            request.values(valueCandidate);
+                        }
                     } else {
                         //key and value
                         String[] keyAndValue = tagFilter.split(":");
