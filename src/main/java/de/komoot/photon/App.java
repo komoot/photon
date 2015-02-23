@@ -2,7 +2,6 @@ package de.komoot.photon;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
-import de.komoot.photon.elasticsearch.Searcher;
 import de.komoot.photon.elasticsearch.Server;
 import de.komoot.photon.nominatim.NominatimConnector;
 import de.komoot.photon.nominatim.NominatimUpdater;
@@ -137,11 +136,11 @@ public class App {
 		setIpAddress(args.getListenIp());
 
 		// setup search API
-		final Searcher searcher = new Searcher(esNodeClient);
-		get(new RequestHandler("api", searcher, args.getLanguages()));
-		get(new RequestHandler("api/", searcher, args.getLanguages()));
-//        get(new SearchRequestHandler("api",args.getLanguages()));
-//        get(new SearchRequestHandler("api/",args.getLanguages()));
+//		final Searcher searcher = new Searcher(esNodeClient);
+//		get(new RequestHandler("api", searcher, args.getLanguages()));
+//		get(new RequestHandler("api/", searcher, args.getLanguages()));
+        get(new SearchRequestHandler("api",args.getLanguages()));
+        get(new SearchRequestHandler("api/",args.getLanguages()));
 		// setup update API
 		final NominatimUpdater nominatimUpdater = new NominatimUpdater(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
 		Updater updater = new de.komoot.photon.elasticsearch.Updater(esNodeClient, args.getLanguages());
