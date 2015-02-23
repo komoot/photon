@@ -40,6 +40,9 @@ public class SearchRequestHandler<R extends PhotonRequest> extends Route {
         JSONObject geoJsonResults = new ConvertToGeoJson().convert(results);
         response.type("application/json; charset=utf-8");
         response.header("Access-Control-Allow-Origin", "*");
+        if (request.queryParams("debug") != null)
+            return geoJsonResults.toString(4);
+
         return geoJsonResults.toString();
     }
 }
