@@ -20,12 +20,14 @@ public interface TagFilterQueryBuilder {
 
     TagFilterQueryBuilder withValues(Set<String> values);
 
+    TagFilterQueryBuilder withTagsNotValues(Map<String, Set<String>> tags);
+
     TagFilterQueryBuilder withoutTags(Map<String, Set<String>> tagsToExclude);
 
     TagFilterQueryBuilder withoutKeys(Set<String> keysToExclude);
 
     TagFilterQueryBuilder withoutValues(Set<String> valuesToExclude);
-    
+
     TagFilterQueryBuilder withKeys(String... keys);
 
     TagFilterQueryBuilder withValues(String... values);
@@ -33,7 +35,9 @@ public interface TagFilterQueryBuilder {
     TagFilterQueryBuilder withoutKeys(String... keysToExclude);
 
     TagFilterQueryBuilder withoutValues(String... valuesToExclude);
+
     TagFilterQueryBuilder withStrictMatch();
+
     TagFilterQueryBuilder withLenientMatch();
 
 

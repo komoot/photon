@@ -21,7 +21,9 @@ public class FilteredPhotonRequestHandler extends AbstractPhotonRequestHandler<F
         Map<String, Set<String>> excludeTags = photonRequest.notTags();
         Set<String> excludeKeys = photonRequest.notKeys();
         Set<String> excludeValues = photonRequest.notValues();
-        return PhotonQueryBuilder.builder(query).withTags(includeTags).withKeys(includeKeys).withValues(includeValues).withoutTags(excludeTags).withoutKeys(excludeKeys).withoutValues(excludeValues);
+        Map<String, Set<String>> excludeTagValues = photonRequest.tagNotValues();
+        return PhotonQueryBuilder.builder(query).withTags(includeTags).withKeys(includeKeys).withValues(includeValues).withoutTags(excludeTags).withoutKeys(excludeKeys)
+                                 .withoutValues(excludeValues).withTagsNotValues(excludeTagValues);
     }
 
 }

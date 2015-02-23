@@ -4,7 +4,6 @@ import de.komoot.photon.query.PhotonRequest;
 import de.komoot.photon.query.TagFilterQueryBuilder;
 import de.komoot.photon.searcher.BasePhotonSearcher;
 import de.komoot.photon.searcher.PhotonSearcher;
-import de.komoot.photon.searcher.PhotonSearcherFactory;
 import org.elasticsearch.action.search.SearchResponse;
 import org.json.JSONObject;
 
@@ -14,7 +13,6 @@ import java.util.List;
  * Created by Sachin Dole on 2/20/2015.
  */
 public abstract class AbstractPhotonRequestHandler<R extends PhotonRequest> implements PhotonRequestHandler<R> {
-    private final PhotonSearcherFactory searcherFactory = new PhotonSearcherFactory();
 
     private PhotonSearcher photonSearcher = new BasePhotonSearcher();
 
