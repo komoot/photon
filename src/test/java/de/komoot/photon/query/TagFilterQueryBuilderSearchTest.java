@@ -46,6 +46,7 @@ public class TagFilterQueryBuilderSearchTest extends ESBaseTester {
                                                       "amenity", "parking",
                                                       "amenity", "restaurant",
                                                       "amenity", "information",
+                                                      "food", "information",
                                                       "railway", "station");
         Importer instance = new Importer(getClient(), "en");
         for (int i = 0; i < tags.size(); i++) {
@@ -71,93 +72,149 @@ public class TagFilterQueryBuilderSearchTest extends ESBaseTester {
         Set<String> valueSet = ImmutableSet.of("attraction");
         TagFilterQueryBuilder tagFilterQueryBuilder = PhotonQueryBuilder.builder("berlin").withTags(ImmutableMap.of("tourism", valueSet));
         QueryBuilder queryBuilder = tagFilterQueryBuilder.buildQuery();
-        SearchResponse searchResponse = client.prepareSearch("photon").setSearchType(SearchType.QUERY_AND_FETCH).setQuery(queryBuilder).execute().actionGet();
+        SearchResponse searchResponse = search(client, queryBuilder);
         assertThat(searchResponse.getHits().getTotalHits(), is(2l));
     }
 
     /**
-     * Find me all places named "berlin" that are tagged "tourism" with any value.
-     *
-     * @throws IOException
+     * Find me all places named "berlin" that are tagged with a value of "attraction".
+     */
+    @Test
+    public void testValueAttraction() throws IOException {
+        Client client = getClient();
+        TagFilterQueryBuilder tagFilterQueryBuilder = PhotonQueryBuilder.builder("berlin").withValues("attraction");
+        QueryBuilder queryBuilder = tagFilterQueryBuilder.buildQuery();
+        SearchResponse searchResponse = search(client, queryBuilder);
+        assertThat(searchResponse.getHits().getTotalHits(), is(2l));
+    }
+
+    /**
+     * Find me all places named "berlin" that are tagged with key "tourism".
      */
     @Test
     public void testKeyTourism() throws IOException {
         Client client = getClient();
         TagFilterQueryBuilder tagFilterQueryBuilder = PhotonQueryBuilder.builder("berlin").withKeys("tourism");
         QueryBuilder queryBuilder = tagFilterQueryBuilder.buildQuery();
-        SearchResponse searchResponse = client.prepareSearch("photon").setSearchType(SearchType.QUERY_AND_FETCH).setQuery(queryBuilder).execute().actionGet();
+        SearchResponse searchResponse = search(client, queryBuilder);
         assertThat(searchResponse.getHits().getTotalHits(), is(8l));
     }
 
     /**
-     * Find me all places named "berlin" that are tagged with the key "tourism" but not tagged with value "information". This method of including a key and excluding a value *
-     * separately may exclude another key that has the same value. See {@link TagFilterQueryBuilderSearchTest#testKeyTourismValueNotInformationAnotherWay()}
-     *
-     * @throws IOException
+     * Find me all places named "berlin" that are NOT tagged "tourism=attraction"
      */
     @Test
-    public void testKeyTourismValueNotInformation() throws IOException {
+    public void testFilterWithoutTagTourismAttraction() throws IOException {
         Client client = getClient();
-        TagFilterQueryBuilder tagFilterQueryBuilder = PhotonQueryBuilder.builder("berlin").withKeys("tourism").withoutValues("information");
+        Set<String> valueSet = ImmutableSet.of("attraction");
+        TagFilterQueryBuilder tagFilterQueryBuilder = PhotonQueryBuilder.builder("berlin").withoutTags(ImmutableMap.of("tourism", valueSet));
         QueryBuilder queryBuilder = tagFilterQueryBuilder.buildQuery();
-        SearchResponse searchResponse = client.prepareSearch("photon").setSearchType(SearchType.QUERY_AND_FETCH).setQuery(queryBuilder).execute().actionGet();
-        assertThat(searchResponse.getHits().getTotalHits(), is(6l));
-    }
-
-    /**
-     * Find me all places named "berlin" that are tagged with the key "tourism" but not tagged with value "information". This is similar to 
-     * {@link TagFilterQueryBuilderSearchTest#testKeyTourismValueNotInformation} but, does it explicitly for one key instead of excluding all values regardless of key. This method * does
-     * not exclude other keys that may have the same values.
-     *
-     * @throws IOException
-     */
-    @Test
-    public void testKeyTourismValueNotInformationAnotherWay() throws IOException {
-        Client client = getClient();
-        Set<String> valueSet = ImmutableSet.of("information");
-        TagFilterQueryBuilder tagFilterQueryBuilder = PhotonQueryBuilder.builder("berlin").withTagsNotValues(ImmutableMap.of("tourism", valueSet));
-        QueryBuilder queryBuilder = tagFilterQueryBuilder.buildQuery();
-        SearchResponse searchResponse = client.prepareSearch("photon").setSearchType(SearchType.QUERY_AND_FETCH).setQuery(queryBuilder).execute().actionGet();
-        assertThat(searchResponse.getHits().getTotalHits(), is(6l));
+        SearchResponse searchResponse = search(client, queryBuilder);
+        assertThat(searchResponse.getHits().getTotalHits(), is(16l));
     }
 
     /**
      * Find me all places named "berlin" that do not have the value "information" in their tags - no matter what key
-     *
-     * @throws IOException
      */
     @Test
     public void testValueNotInformation() throws IOException {
         Client client = getClient();
         TagFilterQueryBuilder tagFilterQueryBuilder = PhotonQueryBuilder.builder("berlin").withoutValues("information");
         QueryBuilder queryBuilder = tagFilterQueryBuilder.buildQuery();
-        SearchResponse searchResponse = client.prepareSearch("photon").setSearchType(SearchType.QUERY_AND_FETCH).setQuery(queryBuilder).execute().actionGet();
+        SearchResponse searchResponse = search(client, queryBuilder);
         assertThat(searchResponse.getHits().getTotalHits(), is(12l));
     }
 
     /**
      * Find me all places named "berlin" that do not have the key "tourism" in their tags
-     *
-     * @throws IOException
      */
     @Test
     public void testKeyNotTourism() throws IOException {
         Client client = getClient();
         TagFilterQueryBuilder tagFilterQueryBuilder = PhotonQueryBuilder.builder("berlin").withoutKeys("tourism");
         QueryBuilder queryBuilder = tagFilterQueryBuilder.buildQuery();
-        SearchResponse searchResponse = client.prepareSearch("photon").setSearchType(SearchType.QUERY_AND_FETCH).setQuery(queryBuilder).execute().actionGet();
+        SearchResponse searchResponse = search(client, queryBuilder);
+        assertThat(searchResponse.getHits().getTotalHits(), is(10l));
+    }
+
+    /**
+     * Find me all places named "berlin" that are tagged with the key "tourism" but not tagged with value "information".
+     * <p/>
+     * Note: This is a different method of achieving the same result as {@link TagFilterQueryBuilderSearchTest#testKeyTourismButValueNotInformation()}
+     */
+    @Test
+    public void testKeyTourismAndValueNotInformation() throws IOException {
+        Client client = getClient();
+        TagFilterQueryBuilder tagFilterQueryBuilder = PhotonQueryBuilder.builder("berlin").withKeys("tourism").withoutValues("information");
+        QueryBuilder queryBuilder = tagFilterQueryBuilder.buildQuery();
+        SearchResponse searchResponse = search(client, queryBuilder);
+        assertThat(searchResponse.getHits().getTotalHits(), is(6l));
+    }
+
+    /**
+     * Find me all places named "berlin" that are tagged with the key "tourism" but not tagged with value "information".
+     * <p/>
+     * Note: This is a different method of achieving the same result as {@link TagFilterQueryBuilderSearchTest#testKeyTourismAndValueNotInformation}.
+     */
+    @Test
+    public void testKeyTourismButValueNotInformation() throws IOException {
+        Client client = getClient();
+        Set<String> valueSet = ImmutableSet.of("information");
+        TagFilterQueryBuilder tagFilterQueryBuilder = PhotonQueryBuilder.builder("berlin").withTagsNotValues(ImmutableMap.of("tourism", valueSet));
+        QueryBuilder queryBuilder = tagFilterQueryBuilder.buildQuery();
+        SearchResponse searchResponse = search(client, queryBuilder);
+        assertThat(searchResponse.getHits().getTotalHits(), is(6l));
+    }
+
+    /**
+     * Find me all places named "berlin" that are tagged without the keys "tourism" and "amenity".
+     */
+    @Test
+    public void testKeyNotTourismAndKeyNotAmenity() throws IOException {
+        Client client = getClient();
+        TagFilterQueryBuilder tagFilterQueryBuilder = PhotonQueryBuilder.builder("berlin").withoutKeys("tourism", "amenity");
+        QueryBuilder queryBuilder = tagFilterQueryBuilder.buildQuery();
+        SearchResponse searchResponse = search(client, queryBuilder);
+        assertThat(searchResponse.getHits().getTotalHits(), is(4l));
+    }
+
+    /**
+     * Find me all places named "berlin" that are tagged with the key "tourism" but not "amenity". This test works, but, the use case does not make sense because by searching for
+     * key "tourism", this test already excludes places keyed on "amenity"
+     */
+    @Test
+    public void testKeyTourismAndKeyNotAmenity() throws IOException {
+        Client client = getClient();
+        TagFilterQueryBuilder tagFilterQueryBuilder = PhotonQueryBuilder.builder("berlin").withKeys("tourism").withoutKeys("amenity");
+        QueryBuilder queryBuilder = tagFilterQueryBuilder.buildQuery();
+        SearchResponse searchResponse = search(client, queryBuilder);
         assertThat(searchResponse.getHits().getTotalHits(), is(8l));
     }
 
+    /**
+     * Find me all places named "berlin" that have value "information" but not key "amenity"
+     */
     @Test
-    public void testValueInformationNotAmenity() throws IOException {
+    public void testValueInformationButKeyNotAmenity() throws IOException {
         Client client = getClient();
-        TagFilterQueryBuilder tagFilterQueryBuilder = PhotonQueryBuilder.builder("berlin").withValues("information").withoutKeys("amenity").withStrictMatch();
+        TagFilterQueryBuilder tagFilterQueryBuilder = PhotonQueryBuilder.builder("berlin").withValues("information").withoutKeys("amenity");
         QueryBuilder queryBuilder = tagFilterQueryBuilder.buildQuery();
-        SearchResponse searchResponse = client.prepareSearch("photon").setSearchType(SearchType.QUERY_AND_FETCH).setQuery(queryBuilder).execute().actionGet();
-        assertThat(searchResponse.getHits().getTotalHits(), is(2l));
+        SearchResponse searchResponse = search(client, queryBuilder);
+        assertThat(searchResponse.getHits().getTotalHits(), is(4l));
     }
 
+    /**
+     * Find me all places named "berlin" that do not have the tag tourism=attraction
+     */
+    @Test
+    public void testTagNotTourismAttraction() throws IOException {
+        Client client = getClient();
+        Set<String> attraction = ImmutableSet.of("attraction");
+        TagFilterQueryBuilder tagFilterQueryBuilder = PhotonQueryBuilder.builder("berlin").withoutTags(ImmutableMap.of("tourism", attraction));
+        QueryBuilder queryBuilder = tagFilterQueryBuilder.buildQuery();
+        SearchResponse searchResponse = search(client, queryBuilder);
+        assertThat(searchResponse.getHits().getTotalHits(), is(16l));
+    }
 
     private PhotonDoc createDoc(int id, String key, String value) {
         ImmutableMap<String, String> nameMap = ImmutableMap.of("name", "berlin");
@@ -165,8 +222,11 @@ public class TagFilterQueryBuilderSearchTest extends ESBaseTester {
         return new PhotonDoc(id, "way", id, key, value, nameMap, null, null, null, 0, 0.5, null, location, 0, 0);
     }
 
+
     @After
     public void tearDownClass() {
         shutdownES();
     }
+
+    private SearchResponse search(Client client, QueryBuilder queryBuilder) {return client.prepareSearch("photon").setSearchType(SearchType.QUERY_AND_FETCH).setQuery(queryBuilder).execute().actionGet();}
 }
