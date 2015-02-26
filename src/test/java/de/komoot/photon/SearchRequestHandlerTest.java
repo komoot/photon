@@ -37,10 +37,12 @@ public class SearchRequestHandlerTest {
         PhotonRequestFactory mockPhotonRequestFactory = Mockito.mock(PhotonRequestFactory.class);
         PhotonRequest mockPhotonRequest = Mockito.mock(PhotonRequest.class);
         Mockito.when(mockPhotonRequestFactory.create(mockRequest)).thenReturn(mockPhotonRequest);
-        ReflectionTestUtil.setFieldValue(searchRequestHandler,SearchRequestHandler.class,"photonRequestFactory",mockPhotonRequestFactory);
-        PhotonRequestHandler mockPhotonRequestHandler = Mockito.mock(PhotonRequestHandler.class);
-        Mockito.when(mockPhotonRequestHandler.handle(mockPhotonRequest)).thenReturn(new ArrayList<JSONObject>());
-        ReflectionTestUtil.setFieldValue(searchRequestHandler,SearchRequestHandler.class,"photonRequestHandler",mockPhotonRequestHandler);
+        ReflectionTestUtil.setFieldValue(searchRequestHandler, SearchRequestHandler.class, "photonRequestFactory", mockPhotonRequestFactory);
+        PhotonRequestHandlerFactory mockPhotonRequestHandlerFactory = Mockito.mock(PhotonRequestHandlerFactory.class);
+        SimplePhotonRequestHandler mockSimplePhotonRequestHandler = Mockito.mock(SimplePhotonRequestHandler.class);
+        Mockito.when(mockSimplePhotonRequestHandler.handle(mockPhotonRequest)).thenReturn(new ArrayList<JSONObject>());
+        Mockito.when(mockPhotonRequestHandlerFactory.createHandler(mockPhotonRequest)).thenReturn(mockSimplePhotonRequestHandler);
+        ReflectionTestUtil.setFieldValue(searchRequestHandler, SearchRequestHandler.class, "requestHandlerFactory", mockPhotonRequestHandlerFactory);
         String resultString = searchRequestHandler.handle(mockRequest, mockResponse);
         Assert.assertFalse(resultString.startsWith("bad request"));
         Assert.assertEquals("success",resultString);
