@@ -91,6 +91,7 @@ http://localhost:2322/api?q=berlin&lang=it
 #### Filter results by [tags and values](http://taginfo.openstreetmap.org/projects/nominatim#tags) 
 *Note: not all tags on [link in the title](http://taginfo.openstreetmap.org/projects/nominatim#tags) are supported. Please see [nominatim source](https://github.com/openstreetmap/osm2pgsql/blob/master/output-gazetteer.cpp#L81) for an accurate list.*
 If one or many query parameters named ```osm_tag``` are present, photon will attempt to filter results by those tags. In general, here is the expected format (syntax) for the value of osm_tag request parameters.
+
 1. Include places with tag: ```osm_tag=key:value```
 2. Exclude places with tag: ```osm_tag=!key:value```
 3. Include places with tag key: ```osm_tag=key```
