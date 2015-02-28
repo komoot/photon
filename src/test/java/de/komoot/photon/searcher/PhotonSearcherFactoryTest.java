@@ -16,6 +16,6 @@ public class PhotonSearcherFactoryTest {
         Mockito.when(mockPhotonRequest.getLimit()).thenReturn(15);
         Mockito.when(mockPhotonRequest.keys()).thenReturn(ImmutableSet.of("aTag"));
         PhotonSearcher searcher = photonSearcherFactory.getSearcher(mockPhotonRequest);
-        Assert.assertNull(searcher);
+        Assert.assertEquals(BasePhotonSearcher.class,searcher.getClass());
     }
 }

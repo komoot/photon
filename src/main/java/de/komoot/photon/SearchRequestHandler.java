@@ -19,11 +19,13 @@ import java.util.Set;
 public class SearchRequestHandler<R extends PhotonRequest> extends Route {
     private final PhotonRequestFactory photonRequestFactory;
     private final PhotonRequestHandlerFactory requestHandlerFactory;
+    private final ConvertToGeoJson geoJsonConverter;
 
     SearchRequestHandler(String path, String languages) {
         super(path);
         Set<String> supportedLanguages = new HashSet<String>(Arrays.asList(languages.split(",")));
         this.photonRequestFactory = new PhotonRequestFactory(supportedLanguages);
+        this.geoJsonConverter = new ConvertToGeoJson();
         this.requestHandlerFactory = new PhotonRequestHandlerFactory();
     }
 
@@ -37,7 +39,7 @@ public class SearchRequestHandler<R extends PhotonRequest> extends Route {
         }
         PhotonRequestHandler<R> handler = requestHandlerFactory.createHandler(photonRequest);
         List<JSONObject> results = handler.handle(photonRequest);
-        JSONObject geoJsonResults = new ConvertToGeoJson().convert(results);
+        JSONObject geoJsonResults = geoJsonConverter.convert(results);
         response.type("application/json; charset=utf-8");
         response.header("Access-Control-Allow-Origin", "*");
         if (request.queryParams("debug") != null)
