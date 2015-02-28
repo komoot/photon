@@ -23,6 +23,7 @@ public class FilterByTagSearcherTest extends ESBaseTester {
 
     @Before
     public void setUp() throws IOException {
+        //TODO @sdole this could be replaces with a JUnit4 annotation TestRunner that starts the server only once for all tests.
         setUpES();
         deleteAll();
 
