@@ -1,4 +1,4 @@
-package de.komoot.photon;
+package de.komoot.photon.utils;
 
 /**
  * Created by sachi_000 on 2/20/2015.

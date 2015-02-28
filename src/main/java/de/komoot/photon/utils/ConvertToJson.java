@@ -2,7 +2,6 @@ package de.komoot.photon.utils;
 
 import com.google.common.collect.Lists;
 import de.komoot.photon.Constants;
-import de.komoot.photon.OneWayConverter;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.search.SearchHit;

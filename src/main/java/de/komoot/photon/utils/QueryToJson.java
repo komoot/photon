@@ -1,6 +1,5 @@
 package de.komoot.photon.utils;
 
-import de.komoot.photon.OneWayConverter;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.common.bytes.BytesReference;
 import org.elasticsearch.common.xcontent.ToXContent;
