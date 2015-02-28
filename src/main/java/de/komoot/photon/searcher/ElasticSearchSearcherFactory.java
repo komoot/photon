@@ -8,7 +8,7 @@ import de.komoot.photon.query.PhotonRequest;
  * <p/>
  * Created by sachi_000 on 2/12/2015.
  */
-public class ElasticSearchSearcherFactory {
+public class ElasticsearchSearcherFactory {
 
     public ElasticsearchSearcher getSearcher(PhotonRequest photonRequest) {
         if (photonRequest instanceof FilteredPhotonRequest) {

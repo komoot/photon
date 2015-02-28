@@ -7,10 +7,6 @@ import org.elasticsearch.index.query.*;
 import org.elasticsearch.index.query.functionscore.FunctionScoreQueryBuilder;
 import org.elasticsearch.index.query.functionscore.ScoreFunctionBuilders;
 
-<<<<<<< HEAD
-=======
-import java.io.IOException;
->>>>>>> origin/master
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;

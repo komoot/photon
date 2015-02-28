@@ -10,12 +10,12 @@ public class ElasticsearchSearcherFactoryTest {
 
     @Test
     public void testGetSearcher() throws Exception {
-        ElasticSearchSearcherFactory elasticSearchSearcherFactory = new ElasticSearchSearcherFactory();
+        ElasticsearchSearcherFactory elasticsearchSearcherFactory = new ElasticsearchSearcherFactory();
         FilteredPhotonRequest mockPhotonRequest = Mockito.mock(FilteredPhotonRequest.class);
         Mockito.when(mockPhotonRequest.getQuery()).thenReturn("berlin");
         Mockito.when(mockPhotonRequest.getLimit()).thenReturn(15);
         Mockito.when(mockPhotonRequest.keys()).thenReturn(ImmutableSet.of("aTag"));
-        ElasticsearchSearcher searcher = elasticSearchSearcherFactory.getSearcher(mockPhotonRequest);
+        ElasticsearchSearcher searcher = elasticsearchSearcherFactory.getSearcher(mockPhotonRequest);
         Assert.assertEquals(BaseElasticsearchSearcher.class,searcher.getClass());
     }
 }
