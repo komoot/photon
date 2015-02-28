@@ -1,6 +1,8 @@
-package de.komoot.photon;
+package de.komoot.photon.utils;
 
 import com.google.common.collect.Lists;
+import de.komoot.photon.Constants;
+import de.komoot.photon.OneWayConverter;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.search.SearchHit;
@@ -11,6 +13,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * Convert a elasticsearch {@link SearchResponse} into a list of {@link JSONObject}s
+ * <p/>
  * Created by Sachin Dole on 2/20/2015.
  */
 @Slf4j
@@ -18,6 +22,7 @@ public class ConvertToJson implements OneWayConverter<SearchResponse, List<JSONO
     private final static String[] KEYS_LANG_UNSPEC = {Constants.OSM_ID, Constants.OSM_VALUE, Constants.OSM_KEY, Constants.POSTCODE, Constants.HOUSENUMBER, Constants.OSM_TYPE};
     private final static String[] KEYS_LANG_SPEC = {Constants.NAME, Constants.COUNTRY, Constants.CITY, Constants.STREET, Constants.STATE};
     private final String lang;
+
     public ConvertToJson(String lang) {
         this.lang = lang;
     }

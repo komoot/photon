@@ -1,4 +1,4 @@
-package de.komoot.photon;
+package de.komoot.photon.searcher;
 
 import de.komoot.photon.query.PhotonQueryBuilder;
 import de.komoot.photon.query.PhotonRequest;

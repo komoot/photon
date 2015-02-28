@@ -6,16 +6,16 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-public class PhotonSearcherFactoryTest {
+public class ElasticsearchSearcherFactoryTest {
 
     @Test
     public void testGetSearcher() throws Exception {
-        PhotonSearcherFactory photonSearcherFactory = new PhotonSearcherFactory();
+        ElasticSearchSearcherFactory elasticSearchSearcherFactory = new ElasticSearchSearcherFactory();
         FilteredPhotonRequest mockPhotonRequest = Mockito.mock(FilteredPhotonRequest.class);
         Mockito.when(mockPhotonRequest.getQuery()).thenReturn("berlin");
         Mockito.when(mockPhotonRequest.getLimit()).thenReturn(15);
         Mockito.when(mockPhotonRequest.keys()).thenReturn(ImmutableSet.of("aTag"));
-        PhotonSearcher searcher = photonSearcherFactory.getSearcher(mockPhotonRequest);
-        Assert.assertEquals(BasePhotonSearcher.class,searcher.getClass());
+        ElasticsearchSearcher searcher = elasticSearchSearcherFactory.getSearcher(mockPhotonRequest);
+        Assert.assertEquals(BaseElasticsearchSearcher.class,searcher.getClass());
     }
 }

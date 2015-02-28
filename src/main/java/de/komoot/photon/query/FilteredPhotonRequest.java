@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
+ * A photon request that can hold filter parameters requested by client.
  * Created by Sachin Dole on 2/12/2015.
  */
 public class FilteredPhotonRequest extends PhotonRequest {

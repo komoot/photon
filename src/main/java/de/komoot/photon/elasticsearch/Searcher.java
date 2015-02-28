@@ -27,6 +27,7 @@ import java.util.Map;
  * @author christoph
  */
 @Slf4j
+@Deprecated
 public class Searcher {
 	private final String queryTemplate;
 	private final String queryLocationBiasTemplate;

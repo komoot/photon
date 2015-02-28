@@ -1,13 +1,20 @@
-package de.komoot.photon;
+package de.komoot.photon.searcher;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import de.komoot.photon.Constants;
+import de.komoot.photon.Utils;
+import de.komoot.photon.utils.Command;
 import org.json.JSONObject;
 
 import java.util.HashSet;
 import java.util.List;
 
 /**
+ * This is copy over from the method
+ * <pre>private List<JSONObject> removeStreetDuplicates(List<JSONObject> results, String lang)</pre>
+ * in class {@link de.komoot.photon.App}
+ * <p/>
  * Created by Sachin Dole on 2/20/2015.
  */
 public class StreetDupesRemover implements Command<List<JSONObject>, List<JSONObject>> {

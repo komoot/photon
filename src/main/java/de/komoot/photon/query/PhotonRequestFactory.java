@@ -11,6 +11,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
+ * A factory that creates a {@link PhotonRequest} from a {@link Request web request}
  * Created by Sachin Dole on 2/12/2015.
  */
 public class PhotonRequestFactory {
@@ -24,7 +25,7 @@ public class PhotonRequestFactory {
     public <R extends PhotonRequest> R create(Request webRequest) throws BadRequestException {
         String language = webRequest.queryParams("lang");
         language = language == null ? "en" : language;
-        languageChecker.check(language);
+        languageChecker.apply(language);
         String query = webRequest.queryParams("q");
         if (query == null) throw new BadRequestException(400, "missing search term 'q': /?q=berlin");
         Integer limit;

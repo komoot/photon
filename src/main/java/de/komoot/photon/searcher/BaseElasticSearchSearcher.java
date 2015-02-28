@@ -10,7 +10,7 @@ import org.elasticsearch.index.query.QueryBuilder;
 /**
  * Created by Sachin Dole on 2/12/2015.
  */
-public class BasePhotonSearcher implements PhotonSearcher {
+public class BaseElasticsearchSearcher implements ElasticsearchSearcher {
     @Override
     public SearchResponse search(QueryBuilder queryBuilder, Integer limit) {
         TimeValue timeout = TimeValue.timeValueSeconds(7);

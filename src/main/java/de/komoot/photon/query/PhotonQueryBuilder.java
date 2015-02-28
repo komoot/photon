@@ -2,15 +2,11 @@ package de.komoot.photon.query;
 
 import com.google.common.collect.ImmutableSet;
 import com.vividsolutions.jts.geom.Point;
-import org.elasticsearch.common.bytes.BytesReference;
 import org.elasticsearch.common.unit.Fuzziness;
-import org.elasticsearch.common.xcontent.ToXContent;
-import org.elasticsearch.common.xcontent.json.JsonXContent;
 import org.elasticsearch.index.query.*;
 import org.elasticsearch.index.query.functionscore.FunctionScoreQueryBuilder;
 import org.elasticsearch.index.query.functionscore.ScoreFunctionBuilders;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -18,6 +14,7 @@ import java.util.Set;
 
 /**
  * Created by Sachin Dole on 2/12/2015.
+ * @see de.komoot.photon.query.TagFilterQueryBuilder  
  */
 public class PhotonQueryBuilder implements TagFilterQueryBuilder {
     private FunctionScoreQueryBuilder queryBuilder;
@@ -57,13 +54,19 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder {
         state = State.PLAIN;
     }
 
-    public static PhotonQueryBuilder builder(String query) {
+    /**
+     * Create an instance of this builder which can then be embellished as needed.
+     * @param query the value for photon query parameter "q"
+     * @return An initialized {@link TagFilterQueryBuilder photon query builder}.
+     */
+    public static TagFilterQueryBuilder builder(String query) {
         return new PhotonQueryBuilder(query);
     }
 
     @Override
     public TagFilterQueryBuilder withLimit(Integer limit) {
-        this.limit = limit == null ? 15 : limit;
+        this.limit = limit == null || limit < 1 ? 15 : limit;
+        this.limit = this.limit > 50 ? 50 : this.limit;
         return this;
     }
 
@@ -112,7 +115,7 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder {
 
     @Override
     public TagFilterQueryBuilder withTagsNotValues(Map<String, Set<String>> tags) {
-        if (!checkTags(tags))return this;
+        if (!checkTags(tags)) return this;
         ensureFiltered();
         List<AndFilterBuilder> termFilters = new ArrayList<AndFilterBuilder>(tags.size());
         for (String tagKey : tags.keySet()) {
@@ -136,7 +139,7 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder {
             Set<String> valuesToExclude = tagsToExclude.get(tagKey);
             TermFilterBuilder keyFilter = FilterBuilders.termFilter("osm_key", tagKey);
             TermsFilterBuilder valueFilter = FilterBuilders.termsFilter("osm_value", valuesToExclude.toArray(new String[valuesToExclude.size()]));
-            AndFilterBuilder andFilterForExclusions = FilterBuilders.andFilter(keyFilter,valueFilter);
+            AndFilterBuilder andFilterForExclusions = FilterBuilders.andFilter(keyFilter, valueFilter);
             termFilters.add(FilterBuilders.notFilter(andFilterForExclusions));
         }
         this.appendExcludeTermFilters(termFilters);
@@ -250,17 +253,12 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder {
         if (state.equals(State.PLAIN)) {
             filterBuilder = FilterBuilders.andFilter(filterBuilder);
         } else if (filterBuilder instanceof AndFilterBuilder) {
-            //good! nothing to do
+            //good! nothing to do because query builder is already filtered.
         } else {
             throw new RuntimeException("This code is not in valid state. It is expected that the filter builder field should either be AndFilterBuilder or OrFilterBuilder. Found" +
                                                " " + filterBuilder.getClass() + " instead.");
         }
         state = State.FILTERED;
-    }
-
-    public String buildQueryJson() throws IOException {
-        BytesReference bytes = this.buildQuery().toXContent(JsonXContent.contentBuilder(), new ToXContent.MapParams(null)).bytes();
-        return new String(bytes.toBytes(), "UTF-8");
     }
 
     private enum State {

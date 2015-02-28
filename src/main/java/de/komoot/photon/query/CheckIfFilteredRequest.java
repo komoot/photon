@@ -1,6 +1,6 @@
 package de.komoot.photon.query;
 
-import de.komoot.photon.Command;
+import de.komoot.photon.utils.Command;
 import spark.QueryParamsMap;
 
 /**
