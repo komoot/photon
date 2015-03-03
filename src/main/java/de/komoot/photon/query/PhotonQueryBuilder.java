@@ -13,23 +13,40 @@ import java.util.Map;
 import java.util.Set;
 
 /**
+ * There are four {@link de.komoot.photon.query.PhotonQueryBuilder.State states} that this query builder goes through before a query can be executed on elastic search. Of these,
+ * three are of importance. <ul> <li>{@link de.komoot.photon.query.PhotonQueryBuilder.State#PLAIN PLAIN} The query builder is being used to build a query without any tag filters.
+ * </li> <li>{@link de.komoot.photon.query.PhotonQueryBuilder.State#FILTERED FILTERED} The query builder is being used to build a query that has tag filters and can no longer be
+ * used to build a PLAIN filter. </li> <li>{@link de.komoot.photon.query.PhotonQueryBuilder.State#FINISHED FINISHED} The query builder has been built and the query has been placed
+ * inside a {@link FilteredQueryBuilder filtered query}. Further calls to any methods will have no effect on this query builder.</li>  </ul>
+ * <p/>
  * Created by Sachin Dole on 2/12/2015.
- * @see de.komoot.photon.query.TagFilterQueryBuilder  
+ *
+ * @see de.komoot.photon.query.TagFilterQueryBuilder
  */
 public class PhotonQueryBuilder implements TagFilterQueryBuilder {
     private FunctionScoreQueryBuilder queryBuilder;
     private Integer limit = 50;
-    private FilterBuilder filterBuilder;
+    private FilterBuilder filterBuilderForTopLevelFilter;
     private State state;
     private OrFilterBuilder orFilterBuilderForIncludeTagFiltering = null;
     private AndFilterBuilder andFilterBuilderForExcludeTagFiltering = null;
     private MatchQueryBuilder defaultMatchQueryBuilder;
     private MatchQueryBuilder enMatchQueryBuilder;
-    private FilteredQueryBuilder finalFilteredQueryBuiler;
+    private FilteredQueryBuilder finalFilteredQueryBuilder;
 
     private PhotonQueryBuilder(String query) {
-        defaultMatchQueryBuilder = QueryBuilders.matchQuery("collector.default", query).fuzziness(Fuzziness.ONE).prefixLength(2).analyzer("search_ngram").minimumShouldMatch("-1");
-        enMatchQueryBuilder = QueryBuilders.matchQuery("collector.en", query).fuzziness(Fuzziness.ONE).prefixLength(2).analyzer("search_ngram").minimumShouldMatch("-1");
+        defaultMatchQueryBuilder = QueryBuilders.
+                                                        matchQuery("collector.default", query).
+                                                        fuzziness(Fuzziness.ONE).
+                                                        prefixLength(2).
+                                                        analyzer("search_ngram").
+                                                        minimumShouldMatch("100%");
+        enMatchQueryBuilder = QueryBuilders.
+                                                   matchQuery("collector.en", query).
+                                                   fuzziness(Fuzziness.ONE).
+                                                   prefixLength(2).
+                                                   analyzer("search_ngram").
+                                                   minimumShouldMatch("100%");
         queryBuilder = QueryBuilders.functionScoreQuery(
                 QueryBuilders.boolQuery().must(
                         QueryBuilders.boolQuery().should(
@@ -44,7 +61,7 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder {
                 ),
                 ScoreFunctionBuilders.scriptFunction("general-score", "mvel")
         ).boostMode("multiply").scoreMode("multiply");
-        filterBuilder = FilterBuilders.orFilter(
+        filterBuilderForTopLevelFilter = FilterBuilders.orFilter(
                 FilterBuilders.missingFilter("housenumber"),
                 FilterBuilders.queryFilter(
                         QueryBuilders.matchQuery("housenumber", query).analyzer("standard")
@@ -56,7 +73,9 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder {
 
     /**
      * Create an instance of this builder which can then be embellished as needed.
+     *
      * @param query the value for photon query parameter "q"
+     *
      * @return An initialized {@link TagFilterQueryBuilder photon query builder}.
      */
     public static TagFilterQueryBuilder builder(String query) {
@@ -200,20 +219,26 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder {
         return this;
     }
 
+    /**
+     * When this method is called, all filters are placed inside their {@link OrFilterBuilder OR} or {@link AndFilterBuilder AND} containers and the top level filter builder is
+     * built. Subsequent invocations of this method have no additional effect. Note that after this method is called, calling other methods on this class also have no effect.
+     * 
+     * @see TagFilterQueryBuilder#buildQuery()
+     */
     @Override
     public QueryBuilder buildQuery() {
         if (state.equals(State.FINISHED)) {
-            return finalFilteredQueryBuiler;
+            return finalFilteredQueryBuilder;
         }
         if (state.equals(State.FILTERED)) {
             if (orFilterBuilderForIncludeTagFiltering != null)
-                ((AndFilterBuilder) filterBuilder).add(orFilterBuilderForIncludeTagFiltering);
+                ((AndFilterBuilder) filterBuilderForTopLevelFilter).add(orFilterBuilderForIncludeTagFiltering);
             if (andFilterBuilderForExcludeTagFiltering != null)
-                ((AndFilterBuilder) filterBuilder).add(andFilterBuilderForExcludeTagFiltering);
+                ((AndFilterBuilder) filterBuilderForTopLevelFilter).add(andFilterBuilderForExcludeTagFiltering);
         }
         state = State.FINISHED;
-        finalFilteredQueryBuiler = QueryBuilders.filteredQuery(queryBuilder, filterBuilder);
-        return finalFilteredQueryBuiler;
+        finalFilteredQueryBuilder = QueryBuilders.filteredQuery(queryBuilder, filterBuilderForTopLevelFilter);
+        return finalFilteredQueryBuilder;
     }
 
     @Override
@@ -251,12 +276,12 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder {
 
     private void ensureFiltered() {
         if (state.equals(State.PLAIN)) {
-            filterBuilder = FilterBuilders.andFilter(filterBuilder);
-        } else if (filterBuilder instanceof AndFilterBuilder) {
+            filterBuilderForTopLevelFilter = FilterBuilders.andFilter(filterBuilderForTopLevelFilter);
+        } else if (filterBuilderForTopLevelFilter instanceof AndFilterBuilder) {
             //good! nothing to do because query builder is already filtered.
         } else {
             throw new RuntimeException("This code is not in valid state. It is expected that the filter builder field should either be AndFilterBuilder or OrFilterBuilder. Found" +
-                                               " " + filterBuilder.getClass() + " instead.");
+                                               " " + filterBuilderForTopLevelFilter.getClass() + " instead.");
         }
         state = State.FILTERED;
     }

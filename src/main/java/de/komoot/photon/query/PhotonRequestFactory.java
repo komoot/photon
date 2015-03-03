@@ -17,6 +17,7 @@ import java.util.Set;
 public class PhotonRequestFactory {
 
     private final LanguageChecker languageChecker;
+    private final static GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
 
     public PhotonRequestFactory(Set<String> supportedLanguages) {
         this.languageChecker = new LanguageChecker(supportedLanguages);
@@ -38,7 +39,7 @@ public class PhotonRequestFactory {
         try {
             Double lon = Double.valueOf(webRequest.queryParams("lon"));
             Double lat = Double.valueOf(webRequest.queryParams("lat"));
-            locationForBias = new GeometryFactory(new PrecisionModel(), 4326).createPoint(new Coordinate(lon, lat));
+            locationForBias = geometryFactory.createPoint(new Coordinate(lon, lat));
         } catch (Exception nfe) {
             //ignore
         }

@@ -15,7 +15,7 @@
                         "analyzer": "search_ngram",
                         "fuzziness": 1,
                         "prefix_length": 2,
-                        "minimum_should_match": "-1"
+                        "minimum_should_match": "100%"
                       }
                     }
                   },
@@ -27,7 +27,7 @@
                         "analyzer": "search_ngram",
                         "fuzziness": 1,
                         "prefix_length": 2,
-                        "minimum_should_match": "-1"
+                        "minimum_should_match": "100%"
                       }
                     }
                   }
