@@ -1,0 +1,102 @@
+{
+  "filtered": {
+    "query": {
+      "function_score": {
+        "query": {
+          "bool": {
+            "must": {
+              "bool": {
+                "should": [
+                  {
+                    "match": {
+                      "collector.default": {
+                        "query": "berlin",
+                        "type": "boolean",
+                        "analyzer": "search_ngram",
+                        "fuzziness": 1,
+                        "prefix_length": 2,
+                        "minimum_should_match": "100%"
+                      }
+                    }
+                  },
+                  {
+                    "match": {
+                      "collector.en": {
+                        "query": "berlin",
+                        "type": "boolean",
+                        "analyzer": "search_ngram",
+                        "fuzziness": 1,
+                        "prefix_length": 2,
+                        "minimum_should_match": "100%"
+                      }
+                    }
+                  }
+                ],
+                "minimum_should_match": "1"
+              }
+            },
+            "should": [
+              {
+                "match": {
+                  "name.en.raw": {
+                    "query": "berlin",
+                    "type": "boolean",
+                    "analyzer": "search_raw",
+                    "boost": 200.0
+                  }
+                }
+              },
+              {
+                "match": {
+                  "collector.en.raw": {
+                    "query": "berlin",
+                    "type": "boolean",
+                    "analyzer": "search_raw",
+                    "boost": 100.0
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "functions": [
+          {
+            "script_score": {
+              "script": "general-score",
+              "lang": "mvel"
+            }
+          }
+        ],
+        "score_mode": "multiply",
+        "boost_mode": "multiply"
+      }
+    },
+    "filter": {
+      "or": {
+        "filters": [
+          {
+            "missing": {
+              "field": "housenumber"
+            }
+          },
+          {
+            "query": {
+              "match": {
+                "housenumber": {
+                  "query": "berlin",
+                  "type": "boolean",
+                  "analyzer": "standard"
+                }
+              }
+            }
+          },
+          {
+            "exists": {
+              "field": "name.en.raw"
+            }
+          }
+        ]
+      }
+    }
+  }
+}

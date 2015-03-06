@@ -7,12 +7,13 @@ import com.vividsolutions.jts.geom.PrecisionModel;
 import de.komoot.photon.ESBaseTester;
 import de.komoot.photon.PhotonDoc;
 import org.json.JSONObject;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.util.List;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * Created by Sachin Dole on 2/6/2015.
@@ -22,6 +23,7 @@ public class FilterByTagSearcherTest extends ESBaseTester {
 
     @Before
     public void setUp() throws IOException {
+        //TODO @sdole this could be replaces with a JUnit4 annotation TestRunner that starts the server only once for all tests.
         setUpES();
         deleteAll();
 
@@ -44,9 +46,9 @@ public class FilterByTagSearcherTest extends ESBaseTester {
     public void testSearchWithTagKeyNoValueNoBias() {
         final Searcher searcher = new Searcher(getClient());
         List<JSONObject> searchResults = searcher.search("Madame", "en", null, null, "wrong_tag", null, 15, false);
-        Assert.assertEquals(0, searchResults.size());
+        assertEquals(0, searchResults.size());
         searchResults = searcher.search("Madame", "en", null, null, "tourism", null, 15, false);
-        Assert.assertEquals(4, searchResults.size());
+        assertEquals(4, searchResults.size());
     }
 
 
@@ -54,33 +56,33 @@ public class FilterByTagSearcherTest extends ESBaseTester {
     public void testSearchWithTagKeyValueNoBias() {
         final Searcher searcher = new Searcher(getClient());
         List<JSONObject> searchResults = searcher.search("Madame", "en", null, null, "wrong_tag", "museum", 15, false);
-        Assert.assertEquals(0, searchResults.size());
+        assertEquals(0, searchResults.size());
         searchResults = searcher.search("Madame", "en", null, null, "tourism", "museum", 15, false);
-        Assert.assertEquals(2, searchResults.size());
-        Assert.assertEquals(2, searchResults.get(0).getJSONObject("properties").getInt("osm_id"));
-        Assert.assertEquals(3, searchResults.get(1).getJSONObject("properties").getInt("osm_id"));
+        assertEquals(2, searchResults.size());
+        assertEquals(2, searchResults.get(0).getJSONObject("properties").getInt("osm_id"));
+        assertEquals(3, searchResults.get(1).getJSONObject("properties").getInt("osm_id"));
     }
 
     @Test
     public void testSearchWithTagKeyNoValueWithBias() {
         final Searcher searcher = new Searcher(getClient());
         List<JSONObject> searchResults = searcher.search("Madame", "en", -87.0, 41.0, "wrong_tag", null, 15, false);
-        Assert.assertEquals(0, searchResults.size());
+        assertEquals(0, searchResults.size());
         searchResults = searcher.search("Madame", "en", -87.0, 41.0, "tourism", "museum", 15, false);
-        Assert.assertEquals(2, searchResults.size());
-        Assert.assertEquals(2, searchResults.get(0).getJSONObject("properties").getInt("osm_id"));
-        Assert.assertEquals(3, searchResults.get(1).getJSONObject("properties").getInt("osm_id"));
+        assertEquals(2, searchResults.size());
+        assertEquals(2, searchResults.get(0).getJSONObject("properties").getInt("osm_id"));
+        assertEquals(3, searchResults.get(1).getJSONObject("properties").getInt("osm_id"));
     }
 
     @Test
     public void testSearchWithTagKeyValueWithBias() {
         final Searcher searcher = new Searcher(getClient());
         List<JSONObject> searchResults = searcher.search("Madame", "en", -87.0, 41.0, "wrong_tag", "museum", 15, false);
-        Assert.assertEquals(0, searchResults.size());
+        assertEquals(0, searchResults.size());
         searchResults = searcher.search("Madame", "en", 41.0, -87., "tourism", "museum", 15, false);
-        Assert.assertEquals(2, searchResults.size());
-        Assert.assertEquals(2, searchResults.get(0).getJSONObject("properties").getInt("osm_id"));
-        Assert.assertEquals(3, searchResults.get(1).getJSONObject("properties").getInt("osm_id"));
+        assertEquals(2, searchResults.size());
+        assertEquals(2, searchResults.get(0).getJSONObject("properties").getInt("osm_id"));
+        assertEquals(3, searchResults.get(1).getJSONObject("properties").getInt("osm_id"));
     }
 
     private PhotonDoc createDoc(int id, String name, String tagKey, String tagValue) {
