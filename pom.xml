@@ -14,7 +14,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.elasticsearch</groupId>
-			<artifactId>elasticsearch-lang-mvel</artifactId>
+			<artifactId>elasticsearch-groovy</artifactId>
 			<version>1.4.1</version>
 		</dependency>
 		<dependency>

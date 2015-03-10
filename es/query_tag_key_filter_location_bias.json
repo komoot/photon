@@ -61,7 +61,7 @@
           {
             "script_score": {
               "script": "general-score",
-              "lang" : "mvel"
+              "lang" : "groovy"
             }
           },
           {
@@ -71,7 +71,7 @@
                 "lat": ${lat},
                 "lon": ${lon}
               },
-              "lang" : "mvel"
+              "lang" : "groovy"
             }
           }
         ]

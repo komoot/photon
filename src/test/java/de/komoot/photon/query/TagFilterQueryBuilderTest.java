@@ -40,7 +40,7 @@ public class TagFilterQueryBuilderTest {
     @Test
     public void testWithLocation() throws IOException {
         TagFilterQueryBuilder berlinQuery = PhotonQueryBuilder.builder("berlin");
-        ScriptScoreFunctionBuilder expectedLocationBiasSubQueryBuilder = ScoreFunctionBuilders.scriptFunction("location-biased-score", "mvel").param("lat", 80).param("lon", 10);
+        ScriptScoreFunctionBuilder expectedLocationBiasSubQueryBuilder = ScoreFunctionBuilders.scriptFunction("location-biased-score", "groovy").param("lat", 80).param("lon", 10);
         FunctionScoreQueryBuilder mockFunctionScoreQueryBuilder = Mockito.mock(FunctionScoreQueryBuilder.class);
         ReflectionTestUtil.setFieldValue(berlinQuery, "queryBuilder", mockFunctionScoreQueryBuilder);
         ArgumentCaptor<ScriptScoreFunctionBuilder> locationBiasSubQueryArgumentCaptor = ArgumentCaptor.forClass(ScriptScoreFunctionBuilder.class);
