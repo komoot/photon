@@ -18,11 +18,7 @@ import static spark.Spark.*;
 
 @Slf4j
 public class App {
-    private static Client esClient= null;
-    public static Client getClient(){
-        return esClient;
-        
-    }
+    
 	public static void main(String[] rawArgs) {
 		// parse command line arguments
 		CommandLineArgs args = new CommandLineArgs();
@@ -47,7 +43,7 @@ public class App {
 		}
 
 		final Server esServer = new Server(args).start();
-		esClient = esServer.getClient();
+		Client esClient = esServer.getClient();
 
 		if(args.isRecreateIndex()) {
 			startRecreatingIndex(esServer);
@@ -139,8 +135,8 @@ public class App {
 //		final Searcher searcher = new Searcher(esNodeClient);
 //		get(new RequestHandler("api", searcher, args.getLanguages()));
 //		get(new RequestHandler("api/", searcher, args.getLanguages()));
-        get(new SearchRequestHandler("api",args.getLanguages()));
-        get(new SearchRequestHandler("api/",args.getLanguages()));
+        get(new SearchRequestHandler("api", esNodeClient, args.getLanguages()));
+        get(new SearchRequestHandler("api/", esNodeClient, args.getLanguages()));
 		// setup update API
 		final NominatimUpdater nominatimUpdater = new NominatimUpdater(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
 		Updater updater = new de.komoot.photon.elasticsearch.Updater(esNodeClient, args.getLanguages());

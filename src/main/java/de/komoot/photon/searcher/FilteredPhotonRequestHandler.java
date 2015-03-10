@@ -12,8 +12,12 @@ import java.util.Set;
  */
 public class FilteredPhotonRequestHandler extends AbstractPhotonRequestHandler<FilteredPhotonRequest> implements PhotonRequestHandler<FilteredPhotonRequest> {
 
+    public FilteredPhotonRequestHandler(ElasticsearchSearcher elasticsearchSearcher) {
+        super(elasticsearchSearcher);
+    }
+    
     @Override
-    TagFilterQueryBuilder buildQuery(FilteredPhotonRequest photonRequest) {
+    public TagFilterQueryBuilder buildQuery(FilteredPhotonRequest photonRequest) {
         String query = photonRequest.getQuery();
         Map<String, Set<String>> includeTags = photonRequest.tags();
         Set<String> includeKeys = photonRequest.keys();
