@@ -9,8 +9,12 @@ import de.komoot.photon.query.TagFilterQueryBuilder;
  */
 public class SimplePhotonRequestHandler extends AbstractPhotonRequestHandler<PhotonRequest> implements PhotonRequestHandler<PhotonRequest> {
 
+    public SimplePhotonRequestHandler(ElasticsearchSearcher elasticsearchSearcher) {
+        super(elasticsearchSearcher);
+    }
+
     @Override
-    TagFilterQueryBuilder buildQuery(PhotonRequest photonRequest) {
+    public TagFilterQueryBuilder buildQuery(PhotonRequest photonRequest) {
         return PhotonQueryBuilder.builder(photonRequest.getQuery());
     }
 }

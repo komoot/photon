@@ -13,7 +13,11 @@ import java.util.List;
  */
 public abstract class AbstractPhotonRequestHandler<R extends PhotonRequest> implements PhotonRequestHandler<R> {
 
-    private ElasticsearchSearcher elasticsearchSearcher = new BaseElasticsearchSearcher();
+    private final ElasticsearchSearcher elasticsearchSearcher;
+
+    public AbstractPhotonRequestHandler(ElasticsearchSearcher elasticsearchSearcher) {
+        this.elasticsearchSearcher = elasticsearchSearcher;
+    }        
 
     @Override
     public final List<JSONObject> handle(R photonRequest) {

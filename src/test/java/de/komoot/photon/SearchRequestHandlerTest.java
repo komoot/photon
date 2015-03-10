@@ -24,13 +24,15 @@ import spark.Route;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Set;
+import org.elasticsearch.client.Client;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(SimplePhotonRequestHandler.class)
 public class SearchRequestHandlerTest {
     @Test
     public void testConstructor() throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
-        SearchRequestHandler searchRequestHandler = new SearchRequestHandler("any", "en,fr");
+        Client client = Mockito.mock(Client.class);
+        SearchRequestHandler searchRequestHandler = new SearchRequestHandler("any", client, "en,fr");
         String path = ReflectionTestUtil.getFieldValue(searchRequestHandler, Route.class, "path");
         Assert.assertEquals("any", path);
         PhotonRequestFactory photonRequestFactory = ReflectionTestUtil.getFieldValue(searchRequestHandler, searchRequestHandler.getClass(), "photonRequestFactory");
@@ -42,7 +44,8 @@ public class SearchRequestHandlerTest {
 
     @Test
     public void testHandle() throws BadRequestException {
-        SearchRequestHandler searchRequestHandlerUnderTest = new SearchRequestHandler("any", "en,fr");
+        Client client = Mockito.mock(Client.class);
+        SearchRequestHandler searchRequestHandlerUnderTest = new SearchRequestHandler("any", client, "en,fr");
         PhotonRequestFactory mockPhotonRequestFactory = Mockito.mock(PhotonRequestFactory.class);
         Request mockWebRequest = Mockito.mock(Request.class);
         ReflectionTestUtil.setFieldValue(searchRequestHandlerUnderTest, SearchRequestHandler.class, "photonRequestFactory", mockPhotonRequestFactory);
