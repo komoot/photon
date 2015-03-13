@@ -150,8 +150,8 @@ public class Server {
 
 		// copy script directory to elastic search directory
 		final ClassLoader loader = Thread.currentThread().getContextClassLoader();
-		Files.copy(loader.getResourceAsStream("scripts/general-score.mvel"), new File(scriptsDirectory, "general-score.mvel").toPath(), StandardCopyOption.REPLACE_EXISTING);
-		Files.copy(loader.getResourceAsStream("scripts/location-biased-score.mvel"), new File(scriptsDirectory, "location-biased-score.mvel").toPath(), StandardCopyOption.REPLACE_EXISTING);
+		Files.copy(loader.getResourceAsStream("scripts/general-score.groovy"), new File(scriptsDirectory, "general-score.groovy").toPath(), StandardCopyOption.REPLACE_EXISTING);
+		Files.copy(loader.getResourceAsStream("scripts/location-biased-score.groovy"), new File(scriptsDirectory, "location-biased-score.groovy").toPath(), StandardCopyOption.REPLACE_EXISTING);
 	}
 
 	public void recreateIndex() throws IOException {

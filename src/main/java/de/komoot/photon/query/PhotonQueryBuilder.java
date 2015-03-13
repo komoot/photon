@@ -59,7 +59,7 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder {
                 ).should(
                         QueryBuilders.matchQuery("collector.en.raw", query).boost(100).analyzer("search_raw")
                 ),
-                ScoreFunctionBuilders.scriptFunction("general-score", "mvel")
+                ScoreFunctionBuilders.scriptFunction("general-score", "groovy")
         ).boostMode("multiply").scoreMode("multiply");
         filterBuilderForTopLevelFilter = FilterBuilders.orFilter(
                 FilterBuilders.missingFilter("housenumber"),
@@ -92,7 +92,7 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder {
     @Override
     public TagFilterQueryBuilder withLocationBias(Point point) {
         if (point == null) return this;
-        queryBuilder.add(ScoreFunctionBuilders.scriptFunction("location-biased-score", "mvel").param("lon", point.getX()).param("lat", point.getY()));
+        queryBuilder.add(ScoreFunctionBuilders.scriptFunction("location-biased-score", "groovy").param("lon", point.getX()).param("lat", point.getY()));
         return this;
     }
 
