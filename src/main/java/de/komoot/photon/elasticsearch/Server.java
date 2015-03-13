@@ -69,6 +69,8 @@ public class Server {
 		ImmutableSettings.Builder sBuilder = ImmutableSettings.settingsBuilder();
 		sBuilder.put("path.home", this.esDirectory.toString());
 		sBuilder.put("network.host", "127.0.0.1"); // http://stackoverflow.com/a/15509589/1245622
+                sBuilder.put("script.disable_dynamic", "true");
+                sBuilder.put("script.groovy.sandbox.enabled", "false");
 
 		// default is 'local', 'none' means no data after node restart!
 		if(isTest)
