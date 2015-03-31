@@ -68,6 +68,17 @@
           }
         }
       },
+      "suburb": {
+        "properties": {
+          "default": {
+            "type": "string",
+            "index": "no",
+            "copy_to": [
+              "collector.default"
+            ]
+          }
+        }
+      },
       "context": {
         "properties": {
           "default": {

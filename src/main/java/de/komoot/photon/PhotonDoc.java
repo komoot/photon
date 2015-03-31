@@ -37,6 +37,7 @@ public class PhotonDoc {
 
 	private Map<String, String> street;
 	private Map<String, String> city;
+	private Map<String, String> suburb;
 	private Set<Map<String, String>> context = new HashSet<Map<String, String>>();
 	private Map<String, String> country;
 	private Map<String, String> state;

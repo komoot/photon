@@ -46,6 +46,7 @@ public class Utils {
 
 		writeName(builder, doc.getName(), languages);
 		writeIntlNames(builder, doc.getCity(), "city", languages);
+		writeIntlNames(builder, doc.getSuburb(), "suburb", languages);
 		writeIntlNames(builder, doc.getCountry(), "country", languages);
 		writeIntlNames(builder, doc.getState(), "state", languages);
 		writeIntlNames(builder, doc.getStreet(), "street", languages);

@@ -203,6 +203,7 @@ public class Server {
 				propertiesObject = addToCollector("context", propertiesObject, copyToCollectorObject, lang);
 				propertiesObject = addToCollector("country", propertiesObject, copyToCollectorObject, lang);
 				propertiesObject = addToCollector("state", propertiesObject, copyToCollectorObject, lang);
+				propertiesObject = addToCollector("suburb", propertiesObject, copyToCollectorObject, lang);
 				propertiesObject = addToCollector("street", propertiesObject, copyToCollectorObject, lang);
 				propertiesObject = addToCollector("name", propertiesObject, nameToCollectorObject, lang);
 

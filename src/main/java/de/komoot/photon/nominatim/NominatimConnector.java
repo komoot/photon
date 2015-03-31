@@ -292,6 +292,10 @@ public class NominatimConnector {
 				doc.setState(address.getName());
 				continue;
 			}
+			if(address.isSuburb() && doc.getSuburb() == null){
+				doc.setSuburb(address.getName());
+				continue;
+			}
 
 			// no specifically handled item, check if useful for context
 			if(address.isUsefulForContext()) {
