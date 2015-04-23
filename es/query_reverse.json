@@ -1,0 +1,16 @@
+{
+    "filtered": {
+      "query": {
+        "match_all": {}
+      },
+      "filter": {
+        "geo_distance": {
+          "distance": "5km",
+          "coordinate": [
+            ${lon},
+            ${lat}
+          ]
+        }
+      }
+    }
+}

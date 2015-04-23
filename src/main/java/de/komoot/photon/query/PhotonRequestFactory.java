@@ -4,18 +4,17 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.PrecisionModel;
-import spark.QueryParamsMap;
-import spark.Request;
 
 import java.util.HashSet;
 import java.util.Set;
+import spark.QueryParamsMap;
+import spark.Request;
 
 /**
  * A factory that creates a {@link PhotonRequest} from a {@link Request web request}
  * Created by Sachin Dole on 2/12/2015.
  */
 public class PhotonRequestFactory {
-
     private final LanguageChecker languageChecker;
     private final static GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
 
@@ -117,5 +116,4 @@ public class PhotonRequestFactory {
             }
         }
     }
-
 }

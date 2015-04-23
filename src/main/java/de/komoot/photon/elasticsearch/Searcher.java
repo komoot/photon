@@ -5,6 +5,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import de.komoot.photon.Constants;
 import de.komoot.photon.Utils;
+import java.util.ArrayList;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
@@ -20,6 +21,9 @@ import org.json.JSONObject;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import org.apache.commons.lang3.StringUtils;
+import org.elasticsearch.search.sort.SortBuilders;
+import org.elasticsearch.search.sort.SortOrder;
 
 /**
  * date: 24.05.14
@@ -31,6 +35,7 @@ import java.util.Map;
 public class Searcher {
 	private final String queryTemplate;
 	private final String queryLocationBiasTemplate;
+    private final String queryReverseTemplate;
 	private final String queryWithTagKeyValueFiltersTemplate;
 	private final String queryWithTagKeyValueFiltersAndBiasTemplate;
 	private final String queryWithTagKeyFiltersTemplate;
@@ -49,6 +54,7 @@ public class Searcher {
 			final ClassLoader loader = Thread.currentThread().getContextClassLoader();
 			queryTemplate = IOUtils.toString(loader.getResourceAsStream("query.json"), "UTF-8");
 			queryLocationBiasTemplate = IOUtils.toString(loader.getResourceAsStream("query_location_bias.json"), "UTF-8");
+            queryReverseTemplate = IOUtils.toString(loader.getResourceAsStream("query_reverse.json"), "UTF-8");
             queryWithTagKeyValueFiltersTemplate = IOUtils.toString(loader.getResourceAsStream("query_tag_key_value_filter.json"), "UTF-8");
             queryWithTagKeyValueFiltersAndBiasTemplate = IOUtils.toString(loader.getResourceAsStream("query_tag_key_value_filter_location_bias.json"), "UTF-8");
             queryWithTagKeyFiltersTemplate = IOUtils.toString(loader.getResourceAsStream("query_tag_key_filter.json"), "UTF-8");
@@ -108,6 +114,31 @@ public class Searcher {
 		results = removeStreetDuplicates(results, lang);
 		if(results.size() > limit) {
 			results = results.subList(0, limit);
+		}
+		return results;
+	}
+        
+        public List<JSONObject> reverse(String lang, Double lon, Double lat) {
+		final ImmutableMap.Builder<String, Object> params = ImmutableMap.<String, Object>builder()
+				.put("lang", lang)
+                                .put("lon", lon)
+                                .put("lat", lat);
+                
+		StrSubstitutor sub = new StrSubstitutor(params.build(), "${", "}");
+                String query = sub.replace(queryReverseTemplate);
+
+		SearchResponse response = client.prepareSearch("photon").setSearchType(SearchType.QUERY_AND_FETCH)
+                        .setQuery(query)
+                        .addSort(SortBuilders.geoDistanceSort("coordinate").point(lat, lon).order(SortOrder.ASC))
+                        .setSize(1)
+                        .setTimeout(TimeValue.timeValueSeconds(7))
+                        .execute()
+                        .actionGet();
+		
+                List<JSONObject> results = convert(response.getHits().getHits(), lang);
+		
+                if(results.size() > 1) {
+			results = results.subList(0, 1);
 		}
 		return results;
 	}

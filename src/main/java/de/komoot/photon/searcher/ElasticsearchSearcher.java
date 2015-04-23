@@ -10,5 +10,4 @@ import org.elasticsearch.index.query.QueryBuilder;
  */
 public interface ElasticsearchSearcher {
     SearchResponse search(QueryBuilder queryBuilder, Integer limit);
-
 }

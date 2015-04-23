@@ -29,45 +29,55 @@ public class RequestHandler extends Route {
 	}
 
 	@Override
-	public String handle(Request request, Response response) {
-		// parse query term
-		String query = request.queryParams("q");
-		if(query == null) {
-			halt(400, "missing search term 'q': /?q=berlin");
-		}
+	public String handle(Request request, Response response) {             
+                // parse query term
+                String reverse = request.queryParams("reverse");   
+                String query = request.queryParams("q");
+                if(query == null && reverse == null) {
+                        halt(400, "missing search term 'q': /?q=berlin or 'reverse': /?reverse=true");
+                }
 
-		// parse preferred language
-		String lang = request.queryParams("lang");
-		if(lang == null) lang = "en";
-		if(!supportedLanguages.contains(lang)) {
-			halt(400, "language " + lang + " is not supported, supported languages are: " + Joiner.on(", ").join(supportedLanguages));
-		}
+                // parse preferred language
+                String lang = request.queryParams("lang");
+                if(lang == null) lang = "en";
+                if(!supportedLanguages.contains(lang)) {
+                        halt(400, "language " + lang + " is not supported, supported languages are: " + Joiner.on(", ").join(supportedLanguages));
+                }
 
-		// parse location bias
-		Double lon = null, lat = null;
-		try {
-			lon = Double.valueOf(request.queryParams("lon"));
-			lat = Double.valueOf(request.queryParams("lat"));
-		} catch(Exception nfe) {
-		}
+                // parse location bias
+                Double lon = null, lat = null;
+                try {
+                        lon = Double.valueOf(request.queryParams("lon"));
+                        lat = Double.valueOf(request.queryParams("lat"));
+                } catch(Exception nfe) {
+                }
+                
+                if (reverse != null && reverse.equalsIgnoreCase("true") && (lat == null || lon == null)) {
+                        halt(400, "missing search term 'lat' and/or 'lon': /?reverse=true&lat=51.5&lon=8.0");
+                }
 
-		// parse limit for search results
-		int limit;
-		try {
-			limit = Math.min(50, Integer.parseInt(request.queryParams("limit")));
-		} catch(Exception e) {
-			limit = 15;
-		}
+                // parse limit for search results
+                int limit;
+                try {
+                        limit = Math.min(50, Integer.parseInt(request.queryParams("limit")));
+                } catch(Exception e) {
+                        limit = 15;
+                }
 
-        String osmKey = request.queryParams("osm_key");
-        String osmValue = request.queryParams("osm_value");
+                String osmKey = request.queryParams("osm_key");
+                String osmValue = request.queryParams("osm_value");
+                List<JSONObject> results;
+                if (reverse != null && reverse.equalsIgnoreCase("true")) {
+                        results = searcher.reverse(lang, lon, lat);
+                } else {
+                        results = searcher.search(query, lang, lon, lat, osmKey,osmValue,limit, true);
+                }
 
-        List<JSONObject> results = searcher.search(query, lang, lon, lat, osmKey,osmValue,limit, true);
-		if(results.isEmpty()) {
-			// try again, but less restrictive
-			results = searcher.search(query, lang, lon, lat, osmKey,osmValue,limit, false);
-		}
-
+                        if(results.isEmpty() && (reverse == null || !reverse.equalsIgnoreCase("true"))) {
+                        // try again, but less restrictive
+                        results = searcher.search(query, lang, lon, lat, osmKey,osmValue,limit, false);
+                }
+        
 		// build geojson
 		final JSONObject collection = new JSONObject();
 		collection.put("type", "FeatureCollection");
