@@ -52,8 +52,8 @@ public class RequestHandler extends Route {
                 } catch(Exception nfe) {
                 }
                 
-                if (reverse != null && reverse.equalsIgnoreCase("true") && (lat == null || lon == null)) {
-                        halt(400, "missing search term 'lat' and/or 'lon': /?reverse=true&lat=51.5&lon=8.0");
+                if (reverse != null && (lat == null || lon == null)) {
+                        halt(400, "missing search term 'lat' and/or 'lon': /?reverse&lat=51.5&lon=8.0");
                 }
 
                 // parse limit for search results
@@ -67,13 +67,13 @@ public class RequestHandler extends Route {
                 String osmKey = request.queryParams("osm_key");
                 String osmValue = request.queryParams("osm_value");
                 List<JSONObject> results;
-                if (reverse != null && reverse.equalsIgnoreCase("true")) {
+                if (reverse != null) {
                         results = searcher.reverse(lang, lon, lat);
                 } else {
                         results = searcher.search(query, lang, lon, lat, osmKey,osmValue,limit, true);
                 }
 
-                        if(results.isEmpty() && (reverse == null || !reverse.equalsIgnoreCase("true"))) {
+                        if(results.isEmpty() && reverse == null) {
                         // try again, but less restrictive
                         results = searcher.search(query, lang, lon, lat, osmKey,osmValue,limit, false);
                 }

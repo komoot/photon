@@ -30,10 +30,6 @@ public class ReverseRequestFactory {
             Double lat = Double.valueOf(webRequest.queryParams("lat"));
             location = geometryFactory.createPoint(new Coordinate(lon, lat));
         } catch (Exception nfe) {
-            //ignore
-        }
-        
-        if (location == null) {
             throw new BadRequestException(400, "missing search term 'lat' and/or 'lon': /?lat=51.5&lon=8.0");
         }
         
