@@ -18,7 +18,7 @@ CENTER = [
 ]
 TILELAYER = os.environ.get(
     'PHOTON_MAP_TILELAYER',
-    'http://{s}.tile.komoot.de/komoot/{z}/{x}/{y}.png'
+    '//www.komoot.de/tiles/{s}/{z}/{x}/{y}.png'
 )
 MAXZOOM = os.environ.get('PHOTON_MAP_MAXZOOM', 18)
 
