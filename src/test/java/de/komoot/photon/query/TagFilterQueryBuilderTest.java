@@ -28,7 +28,7 @@ public class TagFilterQueryBuilderTest {
     @Test
     public void testConstructor() throws IOException {
 
-        TagFilterQueryBuilder photonQueryBuilder = PhotonQueryBuilder.builder("berlin");
+        TagFilterQueryBuilder photonQueryBuilder = PhotonQueryBuilder.builder("berlin", "en");
         InputStream resourceAsStream = this.getClass().getClassLoader().getResourceAsStream("json_queries/test_base_query.json");
         String expectedJsonString = IOUtils.toString(resourceAsStream);
 
@@ -39,7 +39,7 @@ public class TagFilterQueryBuilderTest {
 
     @Test
     public void testWithLocation() throws IOException {
-        TagFilterQueryBuilder berlinQuery = PhotonQueryBuilder.builder("berlin");
+        TagFilterQueryBuilder berlinQuery = PhotonQueryBuilder.builder("berlin", "en");
         ScriptScoreFunctionBuilder expectedLocationBiasSubQueryBuilder = ScoreFunctionBuilders.scriptFunction("location-biased-score", "groovy").param("lat", 80).param("lon", 10);
         FunctionScoreQueryBuilder mockFunctionScoreQueryBuilder = Mockito.mock(FunctionScoreQueryBuilder.class);
         ReflectionTestUtil.setFieldValue(berlinQuery, "queryBuilder", mockFunctionScoreQueryBuilder);

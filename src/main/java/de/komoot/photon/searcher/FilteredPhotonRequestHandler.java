@@ -18,7 +18,6 @@ public class FilteredPhotonRequestHandler extends AbstractPhotonRequestHandler<F
     
     @Override
     public TagFilterQueryBuilder buildQuery(FilteredPhotonRequest photonRequest) {
-        String query = photonRequest.getQuery();
         Map<String, Set<String>> includeTags = photonRequest.tags();
         Set<String> includeKeys = photonRequest.keys();
         Set<String> includeValues = photonRequest.values();
@@ -27,7 +26,7 @@ public class FilteredPhotonRequestHandler extends AbstractPhotonRequestHandler<F
         Set<String> excludeValues = photonRequest.notValues();
         Map<String, Set<String>> excludeTagValues = photonRequest.tagNotValues();
         return PhotonQueryBuilder.
-                                         builder(query).
+                                         builder(photonRequest.getQuery(), photonRequest.getLanguage()).
                                          withTags(includeTags).
                                          withKeys(includeKeys).
                                          withValues(includeValues).
