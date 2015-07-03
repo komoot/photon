@@ -14,6 +14,7 @@ We are a very young project, feel free to test and participate! The previous ver
 - location bias
 - typo tolerance
 - filter by osm tag and value
+- reverse geocode a coordinate to an address
 - OSM data import (built upon [Nominatim](https://github.com/twain47/Nominatim)) inclusive continuous updates
 
 
