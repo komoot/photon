@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.Map;
 
 import static de.komoot.photon.Constants.STATE;
+import static de.komoot.photon.Constants.SUBURB;
 
 /**
  * representation of an address as returned by nominatim's get_addressdata PL/pgSQL function
@@ -125,6 +126,18 @@ public class AddressRow {
 		}
 
 		if("place".equals(osmKey) && "country".equals(osmValue)) {
+			return true;
+		}
+
+		return false;
+	}
+
+	public boolean isSuburb() {
+		if("place".equals(osmKey) && SUBURB.equals(osmValue)) {
+			return true;
+		}
+
+		if(adminLevel != null && adminLevel == 20 && "boundary".equals(osmKey) && "administrative".equals(osmValue)) {
 			return true;
 		}
 
