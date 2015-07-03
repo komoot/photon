@@ -21,7 +21,7 @@
                   },
                   {
                     "match": {
-                      "collector.en.ngrams": {
+                      "collector.fr.ngrams": {
                         "query": "berlin",
                         "type": "boolean",
                         "analyzer": "search_ngram",
@@ -38,7 +38,7 @@
             "should": [
               {
                 "match": {
-                  "name.en.raw": {
+                  "name.fr.raw": {
                     "query": "berlin",
                     "type": "boolean",
                     "analyzer": "search_raw",
@@ -48,7 +48,7 @@
               },
               {
                 "match": {
-                  "collector.en.raw": {
+                  "collector.fr.raw": {
                     "query": "berlin",
                     "type": "boolean",
                     "analyzer": "search_raw",
@@ -92,7 +92,7 @@
           },
           {
             "exists": {
-              "field": "name.en.raw"
+              "field": "name.fr.raw"
             }
           }
         ]
