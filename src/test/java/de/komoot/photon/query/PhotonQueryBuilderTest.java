@@ -13,7 +13,7 @@ public class PhotonQueryBuilderTest {
 
     @Test
     public void testNoMoreThan50WithLimit() throws Exception {
-        TagFilterQueryBuilder queryBuilder = PhotonQueryBuilder.builder("");
+        TagFilterQueryBuilder queryBuilder = PhotonQueryBuilder.builder("", "en");
         queryBuilder.withLimit(100);
         Integer actualLimit = ReflectionTestUtil.getFieldValue(queryBuilder, "limit");
         assertThat(actualLimit, equalTo(50));
@@ -21,7 +21,7 @@ public class PhotonQueryBuilderTest {
 
     @Test
     public void testNullOrZeroIs15WithLimit() throws Exception {
-        TagFilterQueryBuilder queryBuilder = PhotonQueryBuilder.builder("");
+        TagFilterQueryBuilder queryBuilder = PhotonQueryBuilder.builder("", "en");
         Integer[] testValues = {null, 0, -1};
         for (Integer testValue : testValues) {
             queryBuilder.withLimit(testValue);
@@ -33,7 +33,7 @@ public class PhotonQueryBuilderTest {
 
     @Test
     public void testWithLimit() throws Exception {
-        TagFilterQueryBuilder queryBuilder = PhotonQueryBuilder.builder("");
+        TagFilterQueryBuilder queryBuilder = PhotonQueryBuilder.builder("", "en");
         queryBuilder.withLimit(5);
         Integer actualLimit = ReflectionTestUtil.getFieldValue(queryBuilder, "limit");
         assertThat(actualLimit, equalTo(5));
