@@ -42,7 +42,7 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder {
 				analyzer("search_ngram").
 				minimumShouldMatch("100%");
 		languageMatchQueryBuilder = QueryBuilders.
-				matchQuery(String.format("collector.%s", language), query).
+				matchQuery(String.format("collector.%s.ngrams", language), query).
 				fuzziness(Fuzziness.ONE).
 				prefixLength(2).
 				analyzer("search_ngram").
