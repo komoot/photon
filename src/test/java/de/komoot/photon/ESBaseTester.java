@@ -10,6 +10,7 @@ import org.junit.*;
 
 import java.io.File;
 import java.io.IOException;
+import org.junit.After;
 
 /**
  * @author Peter Karich

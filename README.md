@@ -13,6 +13,8 @@ We are a very young project, feel free to test and participate! The previous ver
 - multilingual search
 - location bias
 - typo tolerance
+- filter by osm tag and value
+- reverse geocode a coordinate to an address
 - OSM data import (built upon [Nominatim](https://github.com/twain47/Nominatim)) inclusive continuous updates
 
 
@@ -76,6 +78,11 @@ http://localhost:2322/api?q=berlin
 #### Search with Location Bias
 ```
 http://localhost:2322/api?q=berlin&lon=10&lat=52
+```
+
+#### Reverse geocode a coordinate
+```
+http://localhost:2322/reverse?lat=10&lat=52
 ```
 
 #### Adapt Number of Results

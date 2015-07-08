@@ -80,8 +80,8 @@ public class PhotonDoc {
 		if(houseNumber != null) return true;
 
 		if(name.isEmpty()) return false;
-
-		if(linkedPlaceId > 0) return false;
+                
+                if(linkedPlaceId > 0) return false;
 
 		return true;
 	}
