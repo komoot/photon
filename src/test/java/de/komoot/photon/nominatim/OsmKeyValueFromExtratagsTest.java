@@ -15,7 +15,7 @@ import static org.junit.Assert.*;
  */
 @Slf4j
 @Ignore // test is ignored because it depends on a global nominatim database
-public class OsmKeyValueFromExtraTagsTest {
+public class OsmKeyValueFromExtratagsTest {
 
 	private NominatimConnector connector;
 
