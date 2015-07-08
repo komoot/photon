@@ -82,7 +82,7 @@ http://localhost:2322/api?q=berlin&lon=10&lat=52
 
 #### Reverse geocode a coordinate
 ```
-http://localhost:2322/reverse?lat=10&lat=52
+http://localhost:2322/reverse?lon=10&lat=52
 ```
 
 #### Adapt Number of Results
