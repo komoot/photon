@@ -1,10 +1,6 @@
-import json
 import os
 
-import simplejson
-import elasticsearch
 from flask import Flask, render_template, request, abort, Response
-from string import Template
 
 app = Flask(__name__)
 DEBUG = os.environ.get('DEBUG', False)

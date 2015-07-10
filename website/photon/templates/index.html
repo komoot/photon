@@ -30,6 +30,7 @@
             <li>Scalable</li>
             <li>Multilingual</li>
             <li>Typo tolerance</li>
+            <li>Reverse geocoding</li>
             <li>Minutely up to date OSM data</li>
         </ul>
     </div>
@@ -91,6 +92,10 @@
                 <li>
                     <h4>Force preferred language</h4>
                     <pre>photon.komoot.de/api/?q=berlin&amp;<strong>lang=de</strong></pre>
+                </li>
+                <li>
+                    <h4>Reverse geocoding</h4>
+                    <pre>photon.komoot.de/reverse?lon=10&lat=52</pre>
                 </li>
                 <li>
                     <h4>All good GeoJSON</h4>
@@ -156,6 +161,9 @@
     TILELAYER = '{{ TILELAYER }}';
     CENTER = {{ CENTER }};
     MAXZOOM = {{ MAXZOOM }};
+
+
+
 </script>
 <script src="/static/js/app.js"></script>
 </body>
