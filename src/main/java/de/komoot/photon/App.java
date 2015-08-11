@@ -60,7 +60,7 @@ public class App {
                     startApi(args, esClient);
                 
                 } finally {
-                    esServer.shutdown();
+                    // esServer.shutdown();
                 }
 	}
 
