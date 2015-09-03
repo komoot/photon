@@ -171,9 +171,10 @@ http://localhost:2322/api?q=berlin&osm_tag=tourism
   }
 ```
 
-### Metrics
+### Related Projects
 
-Photon's search configuration was developed with a specific test framework. It is written in Python and [hosted separately](https://github.com/yohanboniface/osm-geocoding-tester).
+ - Photon's search configuration was developed with a specific test framework. It is written in Python and [hosted separately](https://github.com/yohanboniface/osm-geocoding-tester).
+ - [R packge](https://github.com/rCarto/photon) to access photon's public API with [R](https://en.wikipedia.org/wiki/R_%28programming_language%29)
 
 ### Contact
 Let us know what you think about photon! Create a github ticket or drop us an email in https://lists.openstreetmap.org/listinfo/photon
