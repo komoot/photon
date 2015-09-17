@@ -41,7 +41,9 @@ public class ReverseSearchRequestHandler <R extends ReverseRequest> extends Rout
         try {
             photonRequest = reverseRequestFactory.create(request);
         } catch (BadRequestException e) {
-            halt(e.getHttpStatus(), "bad request: " + e.getMessage());
+            JSONObject json = new JSONObject();
+            json.put("message", e.getMessage());
+            halt(e.getHttpStatus(), json.toString());
         }
         ReverseRequestHandler<R> handler = requestHandlerFactory.createHandler(photonRequest);
         List<JSONObject> results = handler.handle(photonRequest);
