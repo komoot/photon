@@ -32,7 +32,7 @@ download search index (31G gb compressed, 56.3 gb uncompressed, worldwide covera
 wget -O - http://download1.graphhopper.com/public/photon-db-latest.tar.bz2 |
 bzip2 -cd | tar x
 # you can significantly speed up extracting using pbzip2:
-wget -O - http://photon.komoot.de/data/photon_data_021_150112.tar.bz2 |
+wget -O - http://download1.graphhopper.com/public/photon-db-latest.tar.bz2 |
 pbzip2 -cd | tar x
  ```
  
