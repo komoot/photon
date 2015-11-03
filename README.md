@@ -57,12 +57,27 @@ java -jar photon-0.2.5.jar -nominatim-import -host localhost -port 5432 -databas
 
 The import of worldwide data set will take some hours/days, ssd disk are recommended to accelerate nominatim queries.
 
+#### Updating from Nominatim
+
+In order to update from nominatim, you must start photon with the nominatim database credentials on the command line:
+
+```bash
+java -jar photon-0.2.5.jar -host localhost -port 5432 -database nominatim -user nominatim -password ...
+```
+
 A nominatim setup is also a requirement to have continuous updates. To keep in sync with the latest OSM changes run:
 
 ```bash
 export NOMINATIM_DIR=/home/nominatim/...
 ./continuously_update_from_nominatim.sh
 ```
+
+If you have updated nominatim with another method, photon can be updated by making a HTTP GET request to `/nominatim-update`, e.g. with this command:
+
+```bash
+curl http://localhost:2322/nominatim-update
+```
+
 
 ### Search API
 #### Start Photon
