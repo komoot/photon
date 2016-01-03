@@ -42,17 +42,20 @@ public class App {
 			return;
 		}
 
+                boolean shutdownES = false;
 		final Server esServer = new Server(args).start();
                 try { 
                     Client esClient = esServer.getClient();                                
 
                     if(args.isRecreateIndex()) {
+                            shutdownES = true;
                             startRecreatingIndex(esServer);                        
                             return;
                     }
 
                     if(args.isNominatimImport()) {
-                            startNominatimImport(args, esServer, esClient);
+                            shutdownES = true;
+                            startNominatimImport(args, esServer, esClient);                            
                             return;
                     }
 
@@ -60,7 +63,8 @@ public class App {
                     startApi(args, esClient);
                 
                 } finally {
-                    // esServer.shutdown();
+                    if(shutdownES)
+                            esServer.shutdown();
                 }
 	}
 
