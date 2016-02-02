@@ -18,7 +18,7 @@ import static spark.Spark.*;
 
 @Slf4j
 public class App {
-    
+
 	public static void main(String[] rawArgs) {
 		// parse command line arguments
 		CommandLineArgs args = new CommandLineArgs();
@@ -49,13 +49,13 @@ public class App {
 
                     if(args.isRecreateIndex()) {
                             shutdownES = true;
-                            startRecreatingIndex(esServer);                        
+                            startRecreatingIndex(esServer);
                             return;
                     }
 
                     if(args.isNominatimImport()) {
                             shutdownES = true;
-                            startNominatimImport(args, esServer, esClient);                            
+                            startNominatimImport(args, esServer, esClient);
                             return;
                     }
 
@@ -141,11 +141,15 @@ public class App {
 		setIpAddress(args.getListenIp());
 
 		// setup search API
-                get(new SearchRequestHandler("api", esNodeClient, args.getLanguages()));
-                get(new SearchRequestHandler("api/", esNodeClient, args.getLanguages()));
-                get(new ReverseSearchRequestHandler("reverse", esNodeClient, args.getLanguages()));
-                get(new ReverseSearchRequestHandler("reverse/", esNodeClient, args.getLanguages()));
-                
+		get(new SearchRequestHandler("api", esNodeClient, args.getLanguages()));
+		get(new SearchRequestHandler("api/", esNodeClient, args.getLanguages()));
+		get(new ReverseSearchRequestHandler("reverse", esNodeClient, args.getLanguages()));
+		get(new ReverseSearchRequestHandler("reverse/", esNodeClient, args.getLanguages()));
+
+		for(String path : new String[]{"api", "api/", "reserve", "reserve/"}) {
+			options(new OptionsRequestHandler(path));
+		}
+
 		// setup update API
 		final NominatimUpdater nominatimUpdater = new NominatimUpdater(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
 		Updater updater = new de.komoot.photon.elasticsearch.Updater(esNodeClient, args.getLanguages());
