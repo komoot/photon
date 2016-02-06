@@ -24,7 +24,7 @@ photon requires java, at least version 6.
 
 get photon
 ```bash
-wget http://photon.komoot.de/data/photon-0.2.6.jar
+wget http://photon.komoot.de/data/photon-0.2.7.jar
 ```
 
 download search index (31G gb compressed, 56.3 gb uncompressed, worldwide coverage, languages: English, German, French and Italian). The search index is updated weekly and thankfully provided by [graphhopper](https://graphhopper.com/) with the support of [lonvia](https://github.com/lonvia).
@@ -38,12 +38,12 @@ pbzip2 -cd | tar x
  
 start photon
 ```bash
-java -jar photon-0.2.6.jar
+java -jar photon-0.2.7.jar
 ```
 
 Check the URL `http://localhost:2322/api?q=berlin` to see if photon is running without problems. You may want to use our [leaflet plugin](https://github.com/komoot/leaflet.photon) to see the results on a map.
 
-discover more of photon's feature with its usage `java -jar photon-0.2.6.jar -h`.
+discover more of photon's feature with its usage `java -jar photon-0.2.7.jar -h`.
 
 
 
@@ -52,7 +52,7 @@ If you need search data in other languages or restricted to a country you will n
 Once you have your [nominatim](https://github.com/twain47/Nominatim) database ready, you can import the data to photon:
 
 ```bash
-java -jar photon-0.2.6.jar -nominatim-import -host localhost -port 5432 -database nominatim -user nominatim -password ... -languages es,fr
+java -jar photon-0.2.7.jar -nominatim-import -host localhost -port 5432 -database nominatim -user nominatim -password ... -languages es,fr
 ```
 
 The import of worldwide data set will take some hours/days, ssd disk are recommended to accelerate nominatim queries.
@@ -62,7 +62,7 @@ The import of worldwide data set will take some hours/days, ssd disk are recomme
 In order to update from nominatim, you must start photon with the nominatim database credentials on the command line:
 
 ```bash
-java -jar photon-0.2.6.jar -host localhost -port 5432 -database nominatim -user nominatim -password ...
+java -jar photon-0.2.7.jar -host localhost -port 5432 -database nominatim -user nominatim -password ...
 ```
 
 A nominatim setup is also a requirement to have continuous updates. To keep in sync with the latest OSM changes run:
@@ -82,7 +82,7 @@ curl http://localhost:2322/nominatim-update
 ### Search API
 #### Start Photon
 ```bash
-java -jar photon-0.2.6.jar
+java -jar photon-0.2.7.jar
 ```
 
 #### Search

@@ -42,30 +42,29 @@ public class App {
 			return;
 		}
 
-                boolean shutdownES = false;
+		boolean shutdownES = false;
 		final Server esServer = new Server(args).start();
-                try { 
-                    Client esClient = esServer.getClient();                                
+		try {
+			Client esClient = esServer.getClient();
 
-                    if(args.isRecreateIndex()) {
-                            shutdownES = true;
-                            startRecreatingIndex(esServer);
-                            return;
-                    }
+			if(args.isRecreateIndex()) {
+				shutdownES = true;
+				startRecreatingIndex(esServer);
+				return;
+			}
 
-                    if(args.isNominatimImport()) {
-                            shutdownES = true;
-                            startNominatimImport(args, esServer, esClient);
-                            return;
-                    }
+			if(args.isNominatimImport()) {
+				shutdownES = true;
+				startNominatimImport(args, esServer, esClient);
+				return;
+			}
 
-                    // no special action specified -> normal mode: start search API
-                    startApi(args, esClient);
-                
-                } finally {
-                    if(shutdownES)
-                            esServer.shutdown();
-                }
+			// no special action specified -> normal mode: start search API
+			startApi(args, esClient);
+		} finally {
+			if(shutdownES)
+				esServer.shutdown();
+		}
 	}
 
 	/**
@@ -145,10 +144,6 @@ public class App {
 		get(new SearchRequestHandler("api/", esNodeClient, args.getLanguages()));
 		get(new ReverseSearchRequestHandler("reverse", esNodeClient, args.getLanguages()));
 		get(new ReverseSearchRequestHandler("reverse/", esNodeClient, args.getLanguages()));
-
-		for(String path : new String[]{"api", "api/", "reserve", "reserve/"}) {
-			options(new OptionsRequestHandler(path));
-		}
 
 		// setup update API
 		final NominatimUpdater nominatimUpdater = new NominatimUpdater(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
