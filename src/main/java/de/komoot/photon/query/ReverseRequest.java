@@ -10,10 +10,14 @@ import java.io.Serializable;
 public class ReverseRequest implements Serializable {
     private Point location;
     private String language;
+    private Double radius;
+    private Integer limit;
 
-    public ReverseRequest(Point location, String language){
+    public ReverseRequest(Point location, String language, Double radius, Integer limit){
         this.location = location;
         this.language = language;
+        this.radius = radius;
+        this.limit = limit;
     }
 
     public Point getLocation() {
@@ -22,5 +26,13 @@ public class ReverseRequest implements Serializable {
 
     public String getLanguage() {
         return language;
+    }
+
+    public Double getRadius() {
+        return radius;
+    }
+
+    public Integer getLimit() {
+        return limit;
     }
 }

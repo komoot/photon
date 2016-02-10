@@ -32,8 +32,39 @@ public class ReverseRequestFactory {
         } catch (Exception nfe) {
             throw new BadRequestException(400, "missing search term 'lat' and/or 'lon': /?lat=51.5&lon=8.0");
         }
-        
-        ReverseRequest reverseRequest = new ReverseRequest(location, language);
+
+        Double radius = 1d;
+        String radiusParam = webRequest.queryParams("radius");
+        if(radiusParam != null){
+            try {
+                radius = Double.valueOf(radiusParam);
+            } catch (Exception nfe) {
+                throw new BadRequestException(400, "invalid search parameter 'radius', expected a number.");
+            }
+            if(radius < 0){
+                throw new BadRequestException(400, "invalid search parameter 'radius', expected a positive number.");
+            }else{
+                // limit search radius to 5km
+                radius = Math.min(radius, 5d);
+            }
+        }
+
+        Integer limit = 1;
+        String limitParam = webRequest.queryParams("limit");
+        if(limitParam != null){
+            try {
+                limit = Integer.valueOf(limitParam);
+            } catch (Exception nfe) {
+                throw new BadRequestException(400, "invalid search parameter 'limit', expected an integer.");
+            }
+            if(limit < 0){
+                throw new BadRequestException(400, "invalid search parameter 'limit', expected a positive integer.");
+            }else{
+                // limit number of results to 50
+                limit = Math.min(limit, 50);
+            }
+        }
+        ReverseRequest reverseRequest = new ReverseRequest(location, language, radius, limit);
         
         return (R) reverseRequest;
     }
