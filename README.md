@@ -4,7 +4,7 @@ _Photon_ is an open source geocoder built for [OpenStreetMap](http://www.osm.org
 
 _Photon_ was started by [komoot](http://www.komoot.de) and provides search-as-you-type and multilingual support. It's used in production with thousands of requests per minute at [www.komoot.de](http://www.komoot.de). Find our public API and demo on [photon.komoot.de](http://photon.komoot.de).
 
-We are a very young project, feel free to test and participate! The previous version based on solr is accessible in the [deprecated solr branch](https://github.com/komoot/photon/tree/deprecated-solr-version).
+We are a young project, feel free to test and participate!
 
 ### Features
 - high performance
@@ -24,26 +24,26 @@ photon requires java, at least version 6.
 
 get photon
 ```bash
-wget http://photon.komoot.de/data/photon-0.2.5.jar
+wget http://photon.komoot.de/data/photon-0.2.7.jar
 ```
 
-download search index (31G gb compressed, 56.3 gb uncompressed, worldwide coverage, languages: English, German, French and Italian)
+download search index (31G gb compressed, 56.3 gb uncompressed, worldwide coverage, languages: English, German, French and Italian). The search index is updated weekly and thankfully provided by [graphhopper](https://graphhopper.com/) with the support of [lonvia](https://github.com/lonvia).
  ```bash
-wget -O - http://photon.komoot.de/data/photon_data_021_150112.tar.bz2 |
+wget -O - http://download1.graphhopper.com/public/photon-db-latest.tar.bz2 |
 bzip2 -cd | tar x
 # you can significantly speed up extracting using pbzip2:
-wget -O - http://photon.komoot.de/data/photon_data_021_150112.tar.bz2 |
+wget -O - http://download1.graphhopper.com/public/photon-db-latest.tar.bz2 |
 pbzip2 -cd | tar x
  ```
  
 start photon
 ```bash
-java -jar photon-0.2.5.jar
+java -jar photon-0.2.7.jar
 ```
 
 Check the URL `http://localhost:2322/api?q=berlin` to see if photon is running without problems. You may want to use our [leaflet plugin](https://github.com/komoot/leaflet.photon) to see the results on a map.
 
-discover more of photon's feature with its usage `java -jar photon-0.2.5.jar -h`.
+discover more of photon's feature with its usage `java -jar photon-0.2.7.jar -h`.
 
 
 
@@ -52,10 +52,18 @@ If you need search data in other languages or restricted to a country you will n
 Once you have your [nominatim](https://github.com/twain47/Nominatim) database ready, you can import the data to photon:
 
 ```bash
-java -jar photon-0.2.5.jar -nominatim-import -host localhost -port 5432 -database nominatim -user nominatim -password ... -languages es,fr
+java -jar photon-0.2.7.jar -nominatim-import -host localhost -port 5432 -database nominatim -user nominatim -password ... -languages es,fr
 ```
 
 The import of worldwide data set will take some hours/days, ssd disk are recommended to accelerate nominatim queries.
+
+#### Updating from Nominatim
+
+In order to update from nominatim, you must start photon with the nominatim database credentials on the command line:
+
+```bash
+java -jar photon-0.2.7.jar -host localhost -port 5432 -database nominatim -user nominatim -password ...
+```
 
 A nominatim setup is also a requirement to have continuous updates. To keep in sync with the latest OSM changes run:
 
@@ -64,10 +72,17 @@ export NOMINATIM_DIR=/home/nominatim/...
 ./continuously_update_from_nominatim.sh
 ```
 
+If you have updated nominatim with another method, photon can be updated by making a HTTP GET request to `/nominatim-update`, e.g. with this command:
+
+```bash
+curl http://localhost:2322/nominatim-update
+```
+
+
 ### Search API
 #### Start Photon
 ```bash
-java -jar photon-0.2.5.jar
+java -jar photon-0.2.7.jar
 ```
 
 #### Search

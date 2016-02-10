@@ -40,7 +40,9 @@ public class SearchRequestHandler<R extends PhotonRequest> extends Route {
         try {
             photonRequest = photonRequestFactory.create(request);
         } catch (BadRequestException e) {
-            halt(e.getHttpStatus(), "bad request: " + e.getMessage());
+            JSONObject json = new JSONObject();
+            json.put("message", e.getMessage());
+            halt(e.getHttpStatus(), json.toString());
         }
         PhotonRequestHandler<R> handler = requestHandlerFactory.createHandler(photonRequest);
         List<JSONObject> results = handler.handle(photonRequest);

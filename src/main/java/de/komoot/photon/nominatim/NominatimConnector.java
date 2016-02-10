@@ -183,7 +183,7 @@ public class NominatimConnector {
 		Thread importThread = new Thread(new ImportThread(documents));
 		importThread.start();
 
-		template.query("SELECT " + selectColsPlaceX + " FROM placex WHERE linked_place_id IS NULL order by geometry_sector; ", new RowCallbackHandler() {
+		template.query("SELECT " + selectColsPlaceX + " FROM placex WHERE linked_place_id IS NULL AND centroid IS NOT NULL ORDER BY geometry_sector; ", new RowCallbackHandler() {
 			@Override
 			public void processRow(ResultSet rs) throws SQLException {
 				// turns a placex row into a photon document that gathers all de-normalised information

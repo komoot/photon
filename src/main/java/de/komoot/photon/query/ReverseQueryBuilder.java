@@ -4,12 +4,8 @@ import com.google.common.collect.ImmutableSet;
 import com.vividsolutions.jts.geom.Point;
 import java.util.Map;
 import java.util.Set;
-import org.elasticsearch.common.geo.GeoDistance;
-import org.elasticsearch.common.unit.Fuzziness;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.index.query.FilterBuilder;
-import org.elasticsearch.index.query.FilterBuilders;
 import org.elasticsearch.common.unit.DistanceUnit;
 
 /**
@@ -107,7 +103,7 @@ public class ReverseQueryBuilder implements TagFilterQueryBuilder {
     
     @Override
     public QueryBuilder buildQuery() {
-        FilterBuilder fb = FilterBuilders.geoDistanceFilter("coordinate")    
+        QueryBuilder fb = QueryBuilders.geoDistanceQuery("coordinate")
                             .point(location.getY(), location.getX())                                         
                             .distance(5, DistanceUnit.KILOMETERS)                 
                             .optimizeBbox("memory");
