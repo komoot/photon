@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Implementation-Title: elasticsearch-wordending-tokenfilter
+Implementation-Version: 2.2.0
+Built-By: BH4101
+X-Compile-Lucene-Version: 5.4.1
+Created-By: Apache Maven 3.3.9
+X-Compile-Source-JDK: 1.7
+Implementation-Vendor-Id: biz.ixxi
+X-Compile-Elasticsearch-Version: 2.2.0
+Build-Jdk: 1.7.0_55
+X-Build-Time: 1455101741060
+X-Build-Number: 39f40c4dfefa8c28bae8cdb34183e9633dbcbafe
+X-Build-Branch: master
+X-Compile-Target-JDK: 1.7
+Archiver-Version: Plexus Archiver
+

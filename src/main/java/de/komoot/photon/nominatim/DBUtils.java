@@ -1,7 +1,7 @@
 package de.komoot.photon.nominatim;
 
 import com.vividsolutions.jts.geom.Geometry;
-import org.elasticsearch.common.collect.Maps;
+import com.google.common.collect.Maps;
 import org.openstreetmap.osmosis.hstore.PGHStore;
 import org.postgis.jts.JtsGeometry;
 
