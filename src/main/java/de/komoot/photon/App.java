@@ -18,7 +18,7 @@ import static spark.Spark.*;
 
 @Slf4j
 public class App {
-    
+
 	public static void main(String[] rawArgs) {
 		// parse command line arguments
 		CommandLineArgs args = new CommandLineArgs();
@@ -43,11 +43,11 @@ public class App {
 		}
 
 		final Server esServer = new Server(args).start();
-                try { 
-                    Client esClient = esServer.getClient();                                
+                try {
+                    Client esClient = esServer.getClient();
 
                     if(args.isRecreateIndex()) {
-                            startRecreatingIndex(esServer);                        
+                            startRecreatingIndex(esServer);
                             return;
                     }
 
@@ -58,7 +58,7 @@ public class App {
 
                     // no special action specified -> normal mode: start search API
                     startApi(args, esClient);
-                
+
                 } finally {
                     // esServer.shutdown();
                 }
@@ -141,7 +141,7 @@ public class App {
                 get(new SearchRequestHandler("api/", esNodeClient, args.getLanguages()));
                 get(new ReverseSearchRequestHandler("reverse", esNodeClient, args.getLanguages()));
                 get(new ReverseSearchRequestHandler("reverse/", esNodeClient, args.getLanguages()));
-                
+
 		// setup update API
 		final NominatimUpdater nominatimUpdater = new NominatimUpdater(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
 		Updater updater = new de.komoot.photon.elasticsearch.Updater(esNodeClient, args.getLanguages());
