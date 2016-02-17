@@ -51,7 +51,7 @@ public class Utils {
 		writeIntlNames(builder, doc.getStreet(), "street", languages);
 		writeContext(builder, doc.getContext(), languages);
 		writeExtent(builder, doc.getBbox());
-
+                
 		return builder;
 	}
 

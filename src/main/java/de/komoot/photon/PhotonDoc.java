@@ -75,6 +75,9 @@ public class PhotonDoc {
 	}
 
 	public boolean isUsefulForIndex() {
+            
+                if(centroid == null) return false;
+                    
 		if("place".equals(tagKey) && "houses".equals(tagValue)) return false;
 
 		if(houseNumber != null) return true;

@@ -19,6 +19,15 @@ public class CommandLineArgs {
 
 	@Parameter(names = "-nominatim-import", description = "import nominatim database into photon (this will delete previous index)")
 	private boolean nominatimImport = false;
+        
+        @Parameter(names = "-append", description = "append to existing index instead of creating a new one during import")
+	private boolean appendImport = false;
+                
+        @Parameter(names = "-csv-import", description = "import csv dataset into photon (this will delete previous index)")
+	private boolean csvImport = false;
+        
+        @Parameter(names = "-file", description = "csv file location")
+	private String file = null;
 
 	@Parameter(names = "-languages", description = "languages nominatim importer should import and use at run-time, comma separated (default is 'en,fr,de,it')")
 	private String languages = "en,fr,de,it";

@@ -5,6 +5,8 @@ import com.beust.jcommander.ParameterException;
 import de.komoot.photon.elasticsearch.Server;
 import de.komoot.photon.nominatim.NominatimConnector;
 import de.komoot.photon.nominatim.NominatimUpdater;
+import de.komoot.photon.csv.CsvConnector;
+import com.neovisionaries.i18n.LanguageCode;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.client.Client;
 import spark.Request;
@@ -29,6 +31,16 @@ public class App {
 			log.warn("could not start photon: " + e.getMessage());
 			jCommander.usage();
 			return;
+		}
+                
+                if(args.getLanguages().equals("all")) {
+                    java.util.ArrayList<String> languageList = new java.util.ArrayList<String>();
+                    for (LanguageCode lang: LanguageCode.values())
+                    {
+                        languageList.add(lang.name());
+                    }
+                    String[] languages = languageList.toArray(new String[languageList.size()]);
+                    args.setLanguages(String.join(",", languages));
 		}
 
 		// show help
@@ -56,6 +68,12 @@ public class App {
 			if(args.isNominatimImport()) {
 				shutdownES = true;
 				startNominatimImport(args, esServer, esClient);
+				return;
+			}
+                        
+                        if(args.isCsvImport()) {
+				shutdownES = true;
+				startCsvImport(args, esServer, esClient);
 				return;
 			}
 
@@ -109,12 +127,14 @@ public class App {
 	 * @param esNodeClient
 	 */
 	private static void startNominatimImport(CommandLineArgs args, Server esServer, Client esNodeClient) {
-		try {
-			esServer.recreateIndex(); // dump previous data
-		} catch(IOException e) {
-			log.error("cannot setup index, elastic search config files not readable", e);
-			return;
-		}
+                if(!args.isAppendImport()){
+                    try {
+                            esServer.recreateIndex(); // dump previous data
+                    } catch(IOException e) {
+                            log.error("cannot setup index, elastic search config files not readable", e);
+                            return;
+                    }
+                }
 
 		log.info("starting import from nominatim to photon with languages: " + args.getLanguages());
 		de.komoot.photon.elasticsearch.Importer importer = new de.komoot.photon.elasticsearch.Importer(esNodeClient, args.getLanguages());
@@ -127,6 +147,36 @@ public class App {
 		}
 
 		log.info("imported data from nominatim to photon with languages: " + args.getLanguages());
+	}
+        
+        /**
+	 * take csv data to fill elastic search index
+	 *
+	 * @param args
+	 * @param esServer
+	 * @param esNodeClient
+	 */
+	private static void startCsvImport(CommandLineArgs args, Server esServer, Client esNodeClient) {
+                if(!args.isAppendImport()){
+                    try {
+                            esServer.recreateIndex(); // dump previous data
+                    } catch(IOException e) {
+                            log.error("cannot setup index, elastic search config files not readable", e);
+                            return;
+                    }
+                }
+
+		log.info("starting import from csv file to photon");
+		de.komoot.photon.elasticsearch.Importer importer = new de.komoot.photon.elasticsearch.Importer(esNodeClient, args.getLanguages());
+                CsvConnector csvConnector = new CsvConnector();
+		csvConnector.setImporter(importer);
+		try {
+			csvConnector.readData(args.getFile());
+		} catch(Exception e) {
+			log.info("error importing from csv file: " + e.getMessage());
+		}
+
+		log.info("imported data from csv file to photon");
 	}
 
 	/**

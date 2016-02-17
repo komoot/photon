@@ -7,8 +7,10 @@ import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.count.CountRequest;
 import org.elasticsearch.client.Client;
+import org.elasticsearch.common.xcontent.XContentBuilder;
 
 import java.io.IOException;
+import java.util.UUID;
 
 /**
  * elasticsearch importer
@@ -34,8 +36,14 @@ public class Importer implements de.komoot.photon.Importer {
 	@Override
 	public void add(PhotonDoc doc) {
 		try {
-			this.bulkRequest.add(this.esClient.prepareIndex(indexName, indexType).
-					setSource(Utils.convert(doc, languages)).setId(String.valueOf(doc.getPlaceId())));
+                    XContentBuilder source = Utils.convert(doc, languages);
+                    long id = doc.getPlaceId();
+                    if(id > 0){
+                        this.bulkRequest.add(this.esClient.prepareIndex(indexName, indexType).setSource(source).setId(String.valueOf(id)));
+                    }
+                    else{
+                        this.bulkRequest.add(this.esClient.prepareIndex(indexName, indexType).setSource(source));
+                    }
 		} catch(IOException e) {
 			log.error("could not ", e);
 		}
