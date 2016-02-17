@@ -10,7 +10,6 @@ import org.elasticsearch.client.Client;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 
 import java.io.IOException;
-import java.util.UUID;
 
 /**
  * elasticsearch importer
