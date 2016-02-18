@@ -1,6 +1,6 @@
 {
   "similarity": {
-    "photonsimilarity": {
+    "default": {
       "type": "BM25"
     }
   },

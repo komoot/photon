@@ -178,7 +178,6 @@
       "collector": {
         "properties": {
           "default": {
-            "similarity": "photonsimilarity",
             "type": "string",
             "analyzer": "index_ngram",
             "fields": {
