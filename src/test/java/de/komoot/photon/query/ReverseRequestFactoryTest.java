@@ -19,7 +19,7 @@ public class ReverseRequestFactoryTest {
 
     private ReverseRequest reverseRequest;
 
-    public void requestWithLatLon(Request mockRequest, Double longitude, Double latitude){
+    public void requestWithLongitudeLatitude(Request mockRequest, Double longitude, Double latitude){
         Mockito.when(mockRequest.queryParams("lon")).thenReturn(longitude.toString());
         Mockito.when(mockRequest.queryParams("lat")).thenReturn(latitude.toString());
     }
@@ -27,7 +27,7 @@ public class ReverseRequestFactoryTest {
     @Test
     public void testWithLocation() throws Exception {
         Request mockRequest = Mockito.mock(Request.class);
-        requestWithLatLon(mockRequest, -87d, 41d);
+        requestWithLongitudeLatitude(mockRequest, -87d, 41d);
         ReverseRequestFactory reverseRequestFactory = new ReverseRequestFactory(ImmutableSet.of("en"));
         reverseRequest = reverseRequestFactory.create(mockRequest);
         Assert.assertEquals(-87, reverseRequest.getLocation().getX(), 0);
@@ -46,18 +46,51 @@ public class ReverseRequestFactoryTest {
         }
     }
 
-    public void assertBadLocation(Request mockRequest) {
-        assertBadRequest(mockRequest, "missing search term 'lat' and/or 'lon': /?lat=51.5&lon=8.0");
-    }
-
     @Test
     public void testWithBadLocation() throws Exception {
         Request mockRequest = Mockito.mock(Request.class);
         Mockito.when(mockRequest.queryParams("lon")).thenReturn("bad");
         Mockito.when(mockRequest.queryParams("lat")).thenReturn("bad");
-        assertBadLocation(mockRequest);
+        assertBadRequest(mockRequest, "invalid search term 'lat' and/or 'lon': /?lat=51.5&lon=8.0");
         Mockito.verify(mockRequest, Mockito.times(1)).queryParams("lon");
         Mockito.verify(mockRequest, Mockito.never()).queryParams("lat");
+    }
+
+
+    public void testWithHighLowLongitude(Boolean high) throws Exception {
+        Request mockRequest = Mockito.mock(Request.class);
+        requestWithLongitudeLatitude(mockRequest, (high) ? 180.01 : -180.01, 0.0);
+        assertBadRequest(mockRequest, "invalid search term 'lon', expected number >= -180.0 and <= 180.0");
+        Mockito.verify(mockRequest, Mockito.times(1)).queryParams("lon");
+        Mockito.verify(mockRequest, Mockito.never()).queryParams("lat");
+    }
+
+    @Test
+    public void testWithHighLongitude() throws Exception {
+        testWithHighLowLongitude(true);
+    }
+
+    @Test
+    public void testWithLowLongitude() throws Exception {
+        testWithHighLowLongitude(false);
+    }
+
+    public void testWithHighLowLatitude(Boolean high) throws Exception {
+        Request mockRequest = Mockito.mock(Request.class);
+        requestWithLongitudeLatitude(mockRequest, 0.0, (high) ? 90.01 : -90.01);
+        assertBadRequest(mockRequest, "invalid search term 'lat', expected number >= -90.0 and <= 90.0");
+        Mockito.verify(mockRequest, Mockito.times(1)).queryParams("lon");
+        Mockito.verify(mockRequest, Mockito.times(1)).queryParams("lat");
+    }
+
+    @Test
+    public void testWithHighLatitude() throws Exception {
+        testWithHighLowLatitude(true);
+    }
+
+    @Test
+    public void testWithLowLatitude() throws Exception {
+        testWithHighLowLatitude(false);
     }
 
     @Test
@@ -65,14 +98,14 @@ public class ReverseRequestFactoryTest {
         Request mockRequest = Mockito.mock(Request.class);
         Mockito.when(mockRequest.queryParams("lon")).thenReturn(null);
         Mockito.when(mockRequest.queryParams("lat")).thenReturn(null);
-        assertBadLocation(mockRequest);
+        assertBadRequest(mockRequest, "missing search term 'lat' and/or 'lon': /?lat=51.5&lon=8.0");
         Mockito.verify(mockRequest, Mockito.times(1)).queryParams("lon");
         Mockito.verify(mockRequest, Mockito.never()).queryParams("lat");
     }
 
     public void testWithBadParam(String paramName, String paramValue, String expectedMessage) throws Exception {
         Request mockRequest = Mockito.mock(Request.class);
-        requestWithLatLon(mockRequest, -87d, 41d);
+        requestWithLongitudeLatitude(mockRequest, -87d, 41d);
         Mockito.when(mockRequest.queryParams(paramName)).thenReturn(paramValue);
         assertBadRequest(mockRequest, expectedMessage);
         Mockito.verify(mockRequest, Mockito.times(1)).queryParams(paramName);
@@ -80,18 +113,18 @@ public class ReverseRequestFactoryTest {
 
     @Test
     public void testWithNegativeRadius() throws Exception {
-        testWithBadParam("radius", "-10.0", "invalid search parameter 'radius', expected a positive number.");
+        testWithBadParam("radius", "-10.0", "invalid search term 'radius', expected a positive number.");
     }
 
     @Test
     public void testWithBadRadius() throws Exception {
-        testWithBadParam("radius", "bad", "invalid search parameter 'radius', expected a number.");
+        testWithBadParam("radius", "bad", "invalid search term 'radius', expected a number.");
     }
 
     @Test
     public void testHighRadius() throws Exception {
         Request mockRequest = Mockito.mock(Request.class);
-        requestWithLatLon(mockRequest, -87d, 41d);
+        requestWithLongitudeLatitude(mockRequest, -87d, 41d);
         Mockito.when(mockRequest.queryParams("radius")).thenReturn("5.1");
         ReverseRequestFactory reverseRequestFactory = new ReverseRequestFactory(ImmutableSet.of("en"));
         reverseRequest = reverseRequestFactory.create(mockRequest);
@@ -101,18 +134,18 @@ public class ReverseRequestFactoryTest {
 
     @Test
     public void testWithNegativeLimit() throws Exception {
-        testWithBadParam("limit", "-1", "invalid search parameter 'limit', expected a positive integer.");
+        testWithBadParam("limit", "-1", "invalid search term 'limit', expected a positive integer.");
     }
 
     @Test
     public void testWithBadLimit() throws Exception {
-        testWithBadParam("limit", "bad", "invalid search parameter 'limit', expected an integer.");
+        testWithBadParam("limit", "bad", "invalid search term 'limit', expected an integer.");
     }
 
     @Test
     public void testHighLimit() throws Exception {
         Request mockRequest = Mockito.mock(Request.class);
-        requestWithLatLon(mockRequest, -87d, 41d);
+        requestWithLongitudeLatitude(mockRequest, -87d, 41d);
         Mockito.when(mockRequest.queryParams("limit")).thenReturn("51");
         ReverseRequestFactory reverseRequestFactory = new ReverseRequestFactory(ImmutableSet.of("en"));
         reverseRequest = reverseRequestFactory.create(mockRequest);
