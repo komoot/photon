@@ -113,7 +113,12 @@ public class ReverseRequestFactoryTest {
 
     @Test
     public void testWithNegativeRadius() throws Exception {
-        testWithBadParam("radius", "-10.0", "invalid search term 'radius', expected a positive number.");
+        testWithBadParam("radius", "-10.0", "invalid search term 'radius', expected a strictly positive number.");
+    }
+
+    @Test
+    public void testWithZeroRadius() throws Exception {
+        testWithBadParam("radius", "0.0", "invalid search term 'radius', expected a strictly positive number.");
     }
 
     @Test
@@ -134,7 +139,12 @@ public class ReverseRequestFactoryTest {
 
     @Test
     public void testWithNegativeLimit() throws Exception {
-        testWithBadParam("limit", "-1", "invalid search term 'limit', expected a positive integer.");
+        testWithBadParam("limit", "-1", "invalid search term 'limit', expected a strictly positive integer.");
+    }
+
+    @Test
+    public void testWithZeroLimit() throws Exception {
+        testWithBadParam("limit", "0", "invalid search term 'limit', expected a strictly positive integer.");
     }
 
     @Test

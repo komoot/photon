@@ -49,8 +49,8 @@ public class ReverseRequestFactory {
             } catch (Exception nfe) {
                 throw new BadRequestException(400, "invalid search term 'radius', expected a number.");
             }
-            if(radius < 0){
-                throw new BadRequestException(400, "invalid search term 'radius', expected a positive number.");
+            if(radius <= 0){
+                throw new BadRequestException(400, "invalid search term 'radius', expected a strictly positive number.");
             }else{
                 // limit search radius to 5km
                 radius = Math.min(radius, 5d);
@@ -65,8 +65,8 @@ public class ReverseRequestFactory {
             } catch (Exception nfe) {
                 throw new BadRequestException(400, "invalid search term 'limit', expected an integer.");
             }
-            if(limit < 0){
-                throw new BadRequestException(400, "invalid search term 'limit', expected a positive integer.");
+            if(limit <= 0){
+                throw new BadRequestException(400, "invalid search term 'limit', expected a strictly positive integer.");
             }else{
                 // limit number of results to 50
                 limit = Math.min(limit, 50);
