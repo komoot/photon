@@ -72,7 +72,7 @@ public class Server {
 		}
 		this.clusterName = clusterName;
 		this.languages = languages.split(",");
-                this.transportAddresses = transportAddresses;
+		this.transportAddresses = transportAddresses;
 		this.isTest = isTest;
 	}
 
@@ -81,16 +81,6 @@ public class Server {
 		sBuilder.put("index.version.created", Version.CURRENT.id);
 		sBuilder.put("path.home", this.esDirectory.toString());
 		sBuilder.put("network.host", "127.0.0.1"); // http://stackoverflow.com/a/15509589/1245622
-
-		// default is 'local', 'none' means no data after node restart!
-		if(isTest) {
-			// Clean up data directory
-			/*try {
-				FileUtils.deleteDirectory(this.esDirectory);
-			}catch(IOException e){
-				log.error("could not clean up directory before test", e);
-			}*/
-		}
 
 		if(transportAddresses != null && !transportAddresses.isEmpty()) {
 			sBuilder.put("cluster.name", clusterName);
@@ -154,9 +144,9 @@ public class Server {
 	 * stops the elasticsearch node
 	 */
 	public void shutdown() {
-                if(esNode != null)
-                    esNode.close();
-                
+		if(esNode != null)
+			esNode.close();
+
 		esClient.close();
 	}
 
@@ -186,15 +176,6 @@ public class Server {
 
 		Files.copy(loader.getResourceAsStream("modules/lang-groovy/plugin-security.policy"), new File(groovyDirectory, "plugin-security.policy").toPath(), StandardCopyOption.REPLACE_EXISTING);
 		Files.copy(loader.getResourceAsStream("modules/lang-groovy/plugin-descriptor.properties"), new File(groovyDirectory, "plugin-descriptor.properties").toPath(), StandardCopyOption.REPLACE_EXISTING);
-
-		URL[] jarURLs = JarHell.parseClassPath();
-		for(URL jarURL: jarURLs){
-			Path jarPath = PathUtils.get(jarURL.toURI());
-			String jarFileName = jarPath.getFileName().toString();
-			if(jarFileName.equals("groovy-all-2.4.4-indy.jar") || jarFileName.equals("lang-groovy-2.2.0.jar")){
-				Files.copy(jarPath, new File(groovyDirectory, jarFileName).toPath(), StandardCopyOption.REPLACE_EXISTING);
-			}
-		}
 	}
 
 	public void recreateIndex() throws IOException {
