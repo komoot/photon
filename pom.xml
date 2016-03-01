@@ -13,11 +13,6 @@
 			<version>2.2.0</version>
 		</dependency>
 		<dependency>
-			<groupId>org.elasticsearch.plugin</groupId>
-			<artifactId>delete-by-query</artifactId>
-			<version>2.2.0</version>
-		</dependency>
-		<dependency>
 			<groupId>org.elasticsearch.module</groupId>
 			<artifactId>lang-groovy</artifactId>
 			<version>2.2.0</version>

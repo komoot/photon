@@ -18,7 +18,6 @@ import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.env.Environment;
 import org.elasticsearch.index.IndexNotFoundException;
 import org.elasticsearch.node.Node;
-import org.elasticsearch.plugin.deletebyquery.DeleteByQueryPlugin;
 import org.elasticsearch.plugins.PluginManager;
 import org.elasticsearch.script.groovy.GroovyPlugin;
 import org.json.JSONArray;
@@ -102,7 +101,6 @@ public class Server {
 
 			log.info("started elastic search client connected to " + addresses);
 		} else {
-			//if(isTest) sBuilder.put("plugin.types", DeleteByQueryPlugin.class.getName());
 			Settings settings = sBuilder.build();
 
 			try {
@@ -115,9 +113,7 @@ public class Server {
 			}
 
 			ArrayList<String> pluginsToInstall = new ArrayList<String>();
-			if(isTest){
-				pluginsToInstall.add(DeleteByQueryPlugin.NAME);
-			}else{
+			if(!isTest){
 				pluginsToInstall.add("mobz/elasticsearch-head");
 				pluginsToInstall.add("polyfractal/elasticsearch-inquisitor");
 			}

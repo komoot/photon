@@ -3,12 +3,7 @@ package de.komoot.photon;
 import de.komoot.photon.elasticsearch.Server;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.admin.indices.refresh.RefreshRequest;
-import org.elasticsearch.action.deletebyquery.DeleteByQueryAction;
-import org.elasticsearch.action.deletebyquery.DeleteByQueryRequestBuilder;
-import org.elasticsearch.action.deletebyquery.DeleteByQueryResponse;
 import org.elasticsearch.client.Client;
-import org.elasticsearch.index.IndexNotFoundException;
-import org.elasticsearch.index.query.QueryBuilders;
 import org.junit.*;
 
 import java.io.File;
@@ -30,6 +25,7 @@ public class ESBaseTester {
 	public void setUpES() throws IOException {
 		server = new Server("photon", new File("./target/es_photon").getAbsolutePath(), "en", "", true).start();
 		server.recreateIndex();
+		refresh();
 	}
 
 	protected Client getClient() {
@@ -44,19 +40,6 @@ public class ESBaseTester {
 
 	protected void refresh() {
 		getClient().admin().indices().refresh(new RefreshRequest(indexName)).actionGet();
-	}
-
-	protected void deleteAll() {
-		try {
-			new DeleteByQueryRequestBuilder(getClient(), DeleteByQueryAction.INSTANCE)
-					.setIndices(indexName)
-					.setQuery(QueryBuilders.matchAllQuery())
-					.execute()
-					.actionGet();
-		} catch(IndexNotFoundException ex) {
-		}
-
-		refresh();
 	}
 
 	public void shutdownES() {
