@@ -29,11 +29,9 @@ wget http://photon.komoot.de/data/photon-0.2.7.jar
 
 download search index (31G gb compressed, 56.3 gb uncompressed, worldwide coverage, languages: English, German, French and Italian). The search index is updated weekly and thankfully provided by [graphhopper](https://graphhopper.com/) with the support of [lonvia](https://github.com/lonvia).
  ```bash
-wget -O - http://download1.graphhopper.com/public/photon-db-latest.tar.bz2 |
-bzip2 -cd | tar x
+wget -O - http://download1.graphhopper.com/public/photon-db-latest.tar.bz2 | bzip2 -cd | tar x
 # you can significantly speed up extracting using pbzip2:
-wget -O - http://download1.graphhopper.com/public/photon-db-latest.tar.bz2 |
-pbzip2 -cd | tar x
+wget -O - http://download1.graphhopper.com/public/photon-db-latest.tar.bz2 | pbzip2 -cd | tar x
  ```
  
 start photon
