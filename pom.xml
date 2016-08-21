@@ -148,7 +148,11 @@
 			<version>1.9.2</version>
 			<scope>test</scope>
 		</dependency>
-
+	 <dependency>
+	  <groupId>com.opencsv</groupId>
+	  <artifactId>opencsv</artifactId>
+	  <version>3.7</version>
+	 </dependency>
 	</dependencies>
 
 	<repositories>
