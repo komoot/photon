@@ -4,12 +4,15 @@ import com.google.common.collect.ImmutableList;
 import com.neovisionaries.i18n.CountryCode;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
+import com.vividsolutions.jts.linearref.LengthIndexedLine;
 
 import de.komoot.photon.Importer;
 import de.komoot.photon.PhotonDoc;
 import de.komoot.photon.nominatim.model.AddressRow;
 import lombok.extern.slf4j.Slf4j;
+
 import org.apache.commons.dbcp.BasicDataSource;
 import org.postgis.jts.JtsWrapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -20,6 +23,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -87,6 +91,37 @@ class NominatimResult {
 				housenumbers.put(h, doc.getCentroid());
 		}
 	}
+
+	public void addHouseNumbersFromInterpolation(long first, long last, String interpoltype, Geometry geom) {
+		if (last <= first || (last - first) > 1000)
+			return;
+
+		if (housenumbers == null)
+			housenumbers = new HashMap<String, Point>();
+
+		LengthIndexedLine line = new LengthIndexedLine(geom);
+		double si = line.getStartIndex();
+		double ei = line.getEndIndex();
+		double lstep = (ei - si) / (double) (last - first);
+
+		// leave out first and last, they have a distinct OSM node that is already indexed
+		long step = 2;
+		long num = 1;
+		if (interpoltype.equals("odd")) {
+			if (first % 2 == 1)
+				++num;
+		} else if (interpoltype.equals("even")) {
+			if (first % 2 == 0)
+				++num;
+		} else {
+			step = 1;
+		}
+
+		GeometryFactory fac = geom.getFactory();
+		for (; first + num < last; num += step) {
+			housenumbers.put(String.valueOf(num + first), fac.createPoint(line.extractPoint(si + lstep * num)));
+		}
+	}
 }
 
 /**
@@ -98,6 +133,40 @@ class NominatimResult {
 public class NominatimConnector {
 	private final JdbcTemplate template;
 	private Map<String, Map<String, String>> countryNames;
+	/**
+	 * Maps a row from location_property_osmline (address interpolation lines) to a photon doc.
+	 */
+	private final RowMapper<NominatimResult> osmlineRowMapper = new RowMapper<NominatimResult>() {
+		@Override
+		public NominatimResult mapRow(ResultSet rs, int rownum) throws SQLException {
+			Geometry geometry = DBUtils.extractGeometry(rs, "linegeo");
+
+			PhotonDoc doc = new PhotonDoc(
+					rs.getLong("place_id"),
+					"W",
+					rs.getLong("osm_id"),
+					"place",
+					"house_number",
+					Collections.<String, String>emptyMap(), // no name
+					(String) null,
+					Collections.<String, String>emptyMap(), // no extratags
+					(Envelope) null,
+					rs.getLong("parent_place_id"),
+					0d, // importance
+					CountryCode.getByCode(rs.getString("calculated_country_code")),
+					(Point) null, // centroid
+					0,
+					30
+			);
+			doc.setPostcode(rs.getString("postcode"));
+			doc.setCountry(getCountryNames(rs.getString("calculated_country_code")));
+
+			NominatimResult result = new NominatimResult(doc);
+			result.addHouseNumbersFromInterpolation(rs.getLong("startnumber"), rs.getLong("endnumber"), rs.getString("interpolationtype"), geometry);
+
+			return result;
+		}
+	};
 	/**
 	 * maps a placex row in nominatim to a photon doc, some attributes are still missing and can be derived by connected address items.
 	 */
@@ -261,6 +330,35 @@ public class NominatimConnector {
 				NominatimResult docs = placeRowMapper.mapRow(rs, 0);
 
 				if(!docs.isUsefulForIndex()) return; // do not import document
+
+				// finalize document by taking into account the higher level placex rows assigned to this row
+				completePlace(docs.getBaseDoc());
+
+				for (PhotonDoc doc : docs.getDocsWithHousenumber()) {
+					while(true) {
+						try {
+							documents.put(doc);
+						} catch(InterruptedException e) {
+							log.warn("Thread interrupted while placing document in queue.");
+							continue;
+						}
+						break;
+					}
+					if(counter.incrementAndGet() % progressInterval == 0) {
+						final double documentsPerSecond = 1000d * counter.longValue() / (System.currentTimeMillis() - startMillis);
+						log.info(String.format("imported %s documents [%.1f/second]", MessageFormat.format("{0}", counter.longValue()), documentsPerSecond));
+					}
+				}
+			}
+		});
+
+
+		template.query("SELECT place_id, osm_id, parent_place_id, startnumber, endnumber, interpolationtype, postcode, calculated_country_code, linegeo FROM location_property_osmline ORDER BY geometry_sector; ", new RowCallbackHandler() {
+			@Override
+			public void processRow(ResultSet rs) throws SQLException {
+				NominatimResult docs = osmlineRowMapper.mapRow(rs, 0);
+
+				if (!docs.isUsefulForIndex()) return; // do not import document
 
 				// finalize document by taking into account the higher level placex rows assigned to this row
 				completePlace(docs.getBaseDoc());
