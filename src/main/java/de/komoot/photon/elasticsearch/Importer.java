@@ -35,7 +35,7 @@ public class Importer implements de.komoot.photon.Importer {
 	public void add(PhotonDoc doc) {
 		try {
 			this.bulkRequest.add(this.esClient.prepareIndex(indexName, indexType).
-					setSource(Utils.convert(doc, languages)).setId(String.valueOf(doc.getPlaceId())));
+					setSource(Utils.convert(doc, languages)).setId(doc.getUid()));
 		} catch(IOException e) {
 			log.error("could not ", e);
 		}

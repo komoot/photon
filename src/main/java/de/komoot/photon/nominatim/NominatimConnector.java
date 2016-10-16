@@ -1,9 +1,11 @@
 package de.komoot.photon.nominatim;
 
+import com.google.common.collect.ImmutableList;
 import com.neovisionaries.i18n.CountryCode;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Point;
+
 import de.komoot.photon.Importer;
 import de.komoot.photon.PhotonDoc;
 import de.komoot.photon.nominatim.model.AddressRow;
@@ -17,12 +19,75 @@ import org.springframework.jdbc.core.RowMapper;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.atomic.AtomicLong;
+
+/**
+ * A Nominatim result consisting of the basic PhotonDoc for the object
+ * and a map of attached house numbers together with their respective positions.
+ */
+class NominatimResult {
+	private PhotonDoc doc;
+	private Map<String, Point> housenumbers;
+
+	public NominatimResult(PhotonDoc baseobj) {
+		doc = baseobj;
+		housenumbers = null;
+	}
+
+	PhotonDoc getBaseDoc() {
+		return doc;
+	}
+
+	boolean isUsefulForIndex()
+	{
+		return (housenumbers != null && !housenumbers.isEmpty()) || doc.isUsefulForIndex();
+	}
+
+	List<PhotonDoc> getDocsWithHousenumber() {
+		if (housenumbers == null || housenumbers.isEmpty())
+			return ImmutableList.of(doc);
+
+		List<PhotonDoc> results = new ArrayList<PhotonDoc>(housenumbers.size());
+		for (Map.Entry<String, Point> e : housenumbers.entrySet()) {
+			PhotonDoc copy = new PhotonDoc(doc);
+			copy.setHouseNumber(e.getKey());
+			copy.setCentroid(e.getValue());
+			results.add(copy);
+		}
+
+		return results;
+	}
+
+	/**
+	 * Adds house numbers from a house number string.
+	 *
+	 * This may either be a single house number or multiple
+	 * house numbers delimited by a semicolon. All locations
+	 * will be set to the centroid of the doc geometry.
+	 *
+	 * @param str House number string. May be null, in which case nothing is added.
+	 */
+	public void addHousenumbersFromString(String str) {
+		if (str == null || str.isEmpty())
+			return;
+
+		if (housenumbers == null)
+			housenumbers = new HashMap<String, Point>();
+
+		String[] parts = str.split(";");
+		for (String part : parts) {
+			String h = part.trim();
+			if (!h.isEmpty())
+				housenumbers.put(h, doc.getCentroid());
+		}
+	}
+}
 
 /**
  * Export nominatim data
@@ -36,9 +101,9 @@ public class NominatimConnector {
 	/**
 	 * maps a placex row in nominatim to a photon doc, some attributes are still missing and can be derived by connected address items.
 	 */
-	private final RowMapper<PhotonDoc> placeRowMapper = new RowMapper<PhotonDoc>() {
+	private final RowMapper<NominatimResult> placeRowMapper = new RowMapper<NominatimResult>() {
 		@Override
-		public PhotonDoc mapRow(ResultSet rs, int rowNum) throws SQLException {
+		public NominatimResult mapRow(ResultSet rs, int rowNum) throws SQLException {
 
 			Double importance = rs.getDouble("importance");
 			if(rs.wasNull()) {
@@ -57,7 +122,7 @@ public class NominatimConnector {
 					rs.getString("class"),
 					rs.getString("type"),
 					DBUtils.getMap(rs, "name"),
-					rs.getString("housenumber"),
+					(String) null,
 					DBUtils.getMap(rs, "extratags"),
 					envelope,
 					rs.getLong("parent_place_id"),
@@ -67,9 +132,14 @@ public class NominatimConnector {
 					rs.getLong("linked_place_id"),
 					rs.getInt("rank_search")
 			);
+
 			doc.setPostcode(rs.getString("postcode"));
 			doc.setCountry(getCountryNames(rs.getString("calculated_country_code")));
-			return doc;
+
+			NominatimResult result = new NominatimResult(doc);
+			result.addHousenumbersFromString(rs.getString("housenumber"));
+
+			return result;
 		}
 	};
 	private final String selectColsPlaceX = "place_id, osm_type, osm_id, class, type, name, housenumber, postcode, extratags, ST_Envelope(geometry) AS bbox, parent_place_id, linked_place_id, rank_search, importance, calculated_country_code, centroid";
@@ -115,7 +185,7 @@ public class NominatimConnector {
 	}
 
 	public PhotonDoc getByPlaceId(long placeId) {
-		return template.queryForObject("SELECT " + selectColsPlaceX + " FROM placex WHERE place_id = ?", new Object[]{placeId}, placeRowMapper);
+		return template.queryForObject("SELECT " + selectColsPlaceX + " FROM placex WHERE place_id = ?", new Object[]{placeId}, placeRowMapper).getBaseDoc();
 	}
 
 	List<AddressRow> getAddresses(PhotonDoc doc) {
@@ -188,26 +258,27 @@ public class NominatimConnector {
 			public void processRow(ResultSet rs) throws SQLException {
 				// turns a placex row into a photon document that gathers all de-normalised information
 
-				PhotonDoc doc = placeRowMapper.mapRow(rs, 0);
+				NominatimResult docs = placeRowMapper.mapRow(rs, 0);
 
-				if(!doc.isUsefulForIndex()) return; // do not import document
+				if(!docs.isUsefulForIndex()) return; // do not import document
 
 				// finalize document by taking into account the higher level placex rows assigned to this row
-				completePlace(doc);
+				completePlace(docs.getBaseDoc());
 
-				//importer.add(doc);
-				while(true) {
-					try {
-						documents.put(doc);
-					} catch(InterruptedException e) {
-						log.warn("Thread interrupted while placing document in queue.");
-						continue;
+				for (PhotonDoc doc : docs.getDocsWithHousenumber()) {
+					while(true) {
+						try {
+							documents.put(doc);
+						} catch(InterruptedException e) {
+							log.warn("Thread interrupted while placing document in queue.");
+							continue;
+						}
+						break;
 					}
-					break;
-				}
-				if(counter.incrementAndGet() % progressInterval == 0) {
-					final double documentsPerSecond = 1000d * counter.longValue() / (System.currentTimeMillis() - startMillis);
-					log.info(String.format("imported %s documents [%.1f/second]", MessageFormat.format("{0}", counter.longValue()), documentsPerSecond));
+					if(counter.incrementAndGet() % progressInterval == 0) {
+						final double documentsPerSecond = 1000d * counter.longValue() / (System.currentTimeMillis() - startMillis);
+						log.info(String.format("imported %s documents [%.1f/second]", MessageFormat.format("{0}", counter.longValue()), documentsPerSecond));
+					}
 				}
 			}
 		});
@@ -236,7 +307,7 @@ public class NominatimConnector {
 		return template.query("SELECT " + selectColsPlaceX + " FROM placex WHERE osm_id = ? AND osm_type = ?; ", new Object[]{osmId, osmType}, new RowMapper<PhotonDoc>() {
 			@Override
 			public PhotonDoc mapRow(ResultSet resultSet, int i) throws SQLException {
-				PhotonDoc doc = placeRowMapper.mapRow(resultSet, 0);
+				PhotonDoc doc = placeRowMapper.mapRow(resultSet, 0).getBaseDoc();
 				completePlace(doc);
 				return doc;
 			}

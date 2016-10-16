@@ -3,6 +3,7 @@ package de.komoot.photon;
 import com.neovisionaries.i18n.CountryCode;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Point;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -24,14 +25,12 @@ public class PhotonDoc {
 	final private String tagKey;
 	final private String tagValue;
 	final private Map<String, String> name;
-	final private String houseNumber;
 	private String postcode;
 	final private Map<String, String> extratags;
 	final private Envelope bbox;
 	final private long parentPlaceId; // 0 if unset
 	final private double importance;
 	final private CountryCode countryCode;
-	final private Point centroid;
 	final private long linkedPlaceId; // 0 if unset
 	final private int rankSearch;
 
@@ -40,6 +39,8 @@ public class PhotonDoc {
 	private Set<Map<String, String>> context = new HashSet<Map<String, String>>();
 	private Map<String, String> country;
 	private Map<String, String> state;
+	private String houseNumber;
+	private Point centroid;
 
 	public PhotonDoc(long placeId, String osmType, long osmId, String tagKey, String tagValue, Map<String, String> name, String houseNumber, Map<String, String> extratags, Envelope bbox, long parentPlaceId, double importance, CountryCode countryCode, Point centroid, long linkedPlaceId, int rankSearch) {
 		String place = extratags != null ? extratags.get("place") : null;
@@ -64,6 +65,38 @@ public class PhotonDoc {
 		this.centroid = centroid;
 		this.linkedPlaceId = linkedPlaceId;
 		this.rankSearch = rankSearch;
+	}
+
+	public PhotonDoc(PhotonDoc other) {
+		this.placeId = other.placeId;
+		this.osmType = other.osmType;
+		this.osmId = other.osmId;
+		this.tagKey = other.tagKey;
+		this.tagValue = other.tagValue;
+		this.name = other.name;
+		this.houseNumber = other.houseNumber;
+		this.postcode = other.postcode;
+		this.extratags = other.extratags;
+		this.bbox = other.bbox;
+		this.parentPlaceId = other.parentPlaceId;
+		this.importance = other.importance;
+		this.countryCode = other.countryCode;
+		this.centroid = other.centroid;
+		this.linkedPlaceId = other.linkedPlaceId;
+		this.rankSearch = other.rankSearch;
+		this.street = other.street;
+		this.city = other.city;
+		this.context = other.context;
+		this.country = other.country;
+		this.state = other.state;
+	}
+
+	public String getUid()
+	{
+		if (houseNumber == null || houseNumber.isEmpty())
+			return String.valueOf(placeId);
+		else
+			return String.valueOf(placeId) + "." + houseNumber;
 	}
 
 	/**
