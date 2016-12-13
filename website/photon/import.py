@@ -2,50 +2,59 @@
 This is just a raw importer for the sprint.
 """
 
+import argparse
 import os
 import psycopg2
 import psycopg2.extras
 import simplejson
 
+from elasticsearch.helpers import bulk
 from elasticsearch import Elasticsearch
-from elasticsearch.helpers import bulk_index
 
 es = Elasticsearch()
 
 
 class NominatimExporter(object):
-
-    ITER_BY = 100
-
     def __init__(self, credentials, itersize=1000, limit=None, **kwargs):
         self.credentials = credentials
         print('***************** Export init ***************')
-        self.conn = self.create_connexion()
+        self.conn = self.create_connection()
         print('Connected')
-        self.cur = self.conn.cursor("nominatim", cursor_factory=psycopg2.extras.DictCursor)
+        self.cur = self.conn.cursor("nominatim",
+                                    cursor_factory=psycopg2.extras.DictCursor)
         print('Cursor created')
         self.cur.itersize = itersize
         self.limit = limit
         self.kwargs = kwargs
 
-    def create_connexion(self):
+    def create_connection(self):
         return psycopg2.connect(**self.credentials)
 
     def __enter__(self):
-        sql = """SELECT osm_type,osm_id,class as osm_key,type as osm_value,admin_level,rank_search,rank_address,
-            place_id,parent_place_id,calculated_country_code as country_code, postcode, housenumber,
-            (extratags->'ref') as ref, street,
-            ST_X(ST_Centroid(geometry)) as lon,
-            ST_Y(ST_Centroid(geometry)) as lat,
-            name->'name' as name,
-            name->'name:de' as name_de,
-            name->'name:fr' as name_fr,
-            name->'name:en' as name_en,
-            name->'short_name' as short_name,
-            name->'official_name' as official_name, name->'alt_name' as alt_name,
-            (extratags->'place') as extra_place
-            FROM placex
-            ORDER BY geometry
+        sql = """SELECT
+                    osm_type,osm_id,
+                    class as osm_key,
+                    type as osm_value,
+                    admin_level,
+                    rank_search,
+                    rank_address,
+                    place_id,
+                    parent_place_id,
+                    calculated_country_code as country_code,
+                    postcode, housenumber,
+                    (extratags->'ref') as ref, street,
+                    ST_X(ST_Centroid(geometry)) as lon,
+                    ST_Y(ST_Centroid(geometry)) as lat,
+                    name->'name' as name,
+                    name->'name:de' as name_de,
+                    name->'name:fr' as name_fr,
+                    name->'name:en' as name_en,
+                    name->'short_name' as short_name,
+                    name->'official_name' as official_name,
+                    name->'alt_name' as alt_name,
+                    (extratags->'place') as extra_place
+                FROM placex
+                ORDER BY geometry
             """
         self.cur.execute(sql)
         print('Query executed with itersize', self.cur.itersize)
@@ -61,12 +70,20 @@ class NominatimExporter(object):
 
     def add_parent(self, child, row):
         if child['parent_place_id']:
-            sql = """SELECT parent_place_id, type as osm_value, class as osm_key, {name}, admin_level FROM placex WHERE place_id={parent_place_id}"""
+            sql = """SELECT
+                         parent_place_id,
+                         type as osm_value,
+                         class as osm_key,
+                         {name},
+                         admin_level
+                     FROM placex
+                     WHERE place_id={parent_place_id}"""
             sql = sql.format(**{
                 'parent_place_id': child['parent_place_id'],
                 'name': self.get_name_clause()
             })
-            cur = self.conn.cursor(str(child['parent_place_id']), cursor_factory=psycopg2.extras.DictCursor)
+            cur = self.conn.cursor(str(child['parent_place_id']),
+                                   cursor_factory=psycopg2.extras.DictCursor)
             cur.execute(sql)
             parent = cur.fetchone()
             cur.close()
@@ -130,20 +147,30 @@ class ESImporter(BaseConsumer):
 
     INDEX_CHUNK_SIZE = 10000
     ES_INDEX = "photon"
+    BULK_SETTINGS = ('{"index": {"refresh_interval": "%s", '
+                     '"number_of_replicas": "%s"}}')
 
     def __call__(self):
-        count = 0
+        # Don't refresh the index during full bulk index and don't replicate
+        bulk_settings = self.BULK_SETTINGS % (-1, 0)
+        es.indices.put_settings(index=self.ES_INDEX,
+                                body=bulk_settings)
         data = []
         print('Starting with ES index', self.ES_INDEX)
-        for row in self:
+        for count, row in enumerate(self):
             data.append(row)
             count += 1
-            if count >= self.INDEX_CHUNK_SIZE:
+            if not count % self.INDEX_CHUNK_SIZE:
                 self.index(data)
-                count = 0
                 data = []
         if data:
             self.index(data)
+
+        # Restore default Elasticsearch settings
+        # TODO fetch current Elasticsearch settings and restore them properly
+        default_settings = self.BULK_SETTINGS % ("1s", 1)
+        es.indices.put_settings(index=self.ES_INDEX,
+                                body=default_settings)
         print('Done!')
 
     def format(self, row):
@@ -162,7 +189,7 @@ class ESImporter(BaseConsumer):
 
     def index(self, data):
         print('Start indexing batch of', len(data))
-        bulk_index(es, data, index=self.ES_INDEX, doc_type='place', refresh=True)
+        bulk(es, data, index=self.ES_INDEX, doc_type='place', refresh=True)
         print('End indexing of current batch')
 
     def join(self, l, sep=", "):
@@ -184,7 +211,8 @@ class JSONBatchDump(BaseConsumer):
         print('Starting export')
 
         def do_write(data, index):
-            with open('dump{}.eson'.format(index), mode='w', encoding='utf-8') as f:
+            with open('dump{}.eson'.format(index),
+                      mode='w', encoding='utf-8') as f:
                 f.write('\n'.join(data))
 
         for row in self:
@@ -203,5 +231,11 @@ class JSONBatchDump(BaseConsumer):
 
 
 if __name__ == "__main__":
-    importer = JSONBatchDump()
+    parser = argparse.ArgumentParser(description="Dump Nominati's data in JSON"
+                                     "format or index it in Elasticsearch")
+    group = parser.add_mutually_exclusive_group(required=True)
+    group.add_argument('--es', action='store_true', dest='es')
+    group.add_argument('--json', action='store_true', dest='json')
+    args = parser.parse_args()
+    importer = JSONBatchDump() if args.json else ESImporter()
     importer()
