@@ -11,3 +11,7 @@ __pycache__
 nb-configuration.xml
 
 nbactions.xml
+
+.classpath
+.project
+.settings/

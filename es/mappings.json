@@ -1,194 +1,504 @@
 {
-  "place": {
-    "dynamic": "false",
-    "_all": {
-      "enabled": false
-    },
-    "_source": {
-      "excludes": ["context.*"]
-    },
-    "properties": {
-      "osm_id": {
-        "type": "long"
-      },
-      "osm_key": {
-        "type": "string",
-        "index":"not_analyzed"
-      },
-      "osm_type": {
-        "type": "string",
-        "index": "no"
-      },
-      "osm_value": {
-        "type": "string",
-        "index":"not_analyzed"
-      },
-      "importance": {
-        "type": "float"
-      },
-      "housenumber": {
-        "type": "string",
-        "index": "not_analyzed",
-        "copy_to": [
-          "collector.default"
-        ]
-      },
-      "coordinate": {
-        "type": "geo_point"
-      },
-      "postcode": {
-        "type": "string",
-        "index": "no",
-        "copy_to": [
-          "collector.default"
-        ]
-      },
-      "city": {
-        "properties": {
-          "default": {
-            "type": "string",
-            "index": "no",
-            "copy_to": [
-              "collector.default"
-            ]
-          }
-        }
-      },
-      "state": {
-        "properties": {
-          "default": {
-            "type": "string",
-            "index": "no",
-            "copy_to": [
-              "collector.default"
-            ]
-          }
-        }
-      },
-      "context": {
-        "properties": {
-          "default": {
-            "type": "string",
-            "index": "no",
-            "copy_to": [
-              "collector.default"
-            ]
-          }
-        }
-      },
-      "country": {
-        "properties": {
-          "default": {
-            "type": "string",
-            "index": "no",
-            "copy_to": [
-              "collector.default"
-            ]
-          }
-        }
-      },
-      "name": {
-        "properties": {
-          "int": {
-            "type": "string",
-            "index": "no",
-            "fields": {
-              "raw": {
-                "analyzer": "index_raw",
-                "type": "string"
-              }
-            },
-            "copy_to": [
-              "collector.default"
-            ]
-          },
-          "old": {
-            "type": "string",
-            "index": "no",
-            "fields": {
-              "raw": {
-                "analyzer": "index_raw",
-                "type": "string"
-              }
-            },
-            "copy_to": [
-              "collector.default"
-            ]
-          },
-          "reg": {
-            "type": "string",
-            "index": "no",
-            "fields": {
-              "raw": {
-                "analyzer": "index_raw",
-                "type": "string"
-              }
-            },
-            "copy_to": [
-              "collector.default"
-            ]
-          },
-          "loc": {
-            "type": "string",
-            "index": "no",
-            "fields": {
-              "raw": {
-                "analyzer": "index_raw",
-                "type": "string"
-              }
-            },
-            "copy_to": [
-              "collector.default"
-            ]
-          },
-          "alt": {
-            "type": "string",
-            "index": "no",
-            "fields": {
-              "raw": {
-                "analyzer": "index_raw",
-                "type": "string"
-              }
-            },
-            "copy_to": [
-              "collector.default"
-            ]
-          },
-          "default": {
-            "type": "string",
-            "index": "no",
-            "copy_to": [
-              "collector.default"
-            ]
-          }
-        }
-      },
-      "street": {
-        "type": "object",
-        "properties": {
-          "default": {
-            "index": "no",
-            "type": "string",
-            "copy_to": [
-              "collector.default"
-            ]
-          }
-        }
-      },
-      "collector": {
-        "properties": {
-          "default": {
-            "type": "string",
-            "analyzer": "index_ngram",
-            "fields": {
-              "raw": {
-                "type": "string",
-                "analyzer": "index_raw"
-              }
-            }
-          }
-        }
-      }
-    }
-  }
+	"place":
+	{
+		"dynamic": "false",
+		"_all":
+		{
+			"enabled": false	
+		},
+		"_source":
+		{
+			"excludes": ["context.*"]	
+		},
+		"properties":
+		{
+			"city":
+			{
+				"properties":
+				{
+					"de":
+					{
+						"type": "string",
+						"index": "no",
+						"copy_to": ["collector.de"]	
+					},
+					"default":
+					{
+						"type": "string",
+						"index": "no",
+						"copy_to": ["collector.default"]	
+					},
+					"en":
+					{
+						"type": "string",
+						"index": "no",
+						"copy_to": ["collector.en"]	
+					},
+					"fr":
+					{
+						"type": "string",
+						"index": "no",
+						"copy_to": ["collector.fr"]	
+					},
+					"it":
+					{
+						"type": "string",
+						"index": "no",
+						"copy_to": ["collector.it"]	
+					}	
+				}	
+			},
+			"collector":
+			{
+				"properties":
+				{
+					"de":
+					{
+						"type": "string",
+						"index": "no",
+						"fields":
+						{
+							"ngrams":
+							{
+								"type": "string",
+								"analyzer": "index_ngram",
+								"search_analyzer": "search_ngram"	
+							},
+							"raw":
+							{
+								"type": "string",
+								"analyzer": "index_raw"	
+							}	
+						},
+						"copy_to": ["collector.de"]	
+					},
+					"default":
+					{
+						"type": "string",
+						"analyzer": "index_ngram",
+						"fields":
+						{
+							"raw":
+							{
+								"type": "string",
+								"analyzer": "index_raw"	
+							}	
+						}	
+					},
+					"en":
+					{
+						"type": "string",
+						"index": "no",
+						"fields":
+						{
+							"ngrams":
+							{
+								"type": "string",
+								"analyzer": "index_ngram",
+								"search_analyzer": "search_ngram"	
+							},
+							"raw":
+							{
+								"type": "string",
+								"analyzer": "index_raw"	
+							}	
+						},
+						"copy_to": ["collector.en"]	
+					},
+					"fr":
+					{
+						"type": "string",
+						"index": "no",
+						"fields":
+						{
+							"ngrams":
+							{
+								"type": "string",
+								"analyzer": "index_ngram",
+								"search_analyzer": "search_ngram"	
+							},
+							"raw":
+							{
+								"type": "string",
+								"analyzer": "index_raw"	
+							}	
+						},
+						"copy_to": ["collector.fr"]	
+					},
+					"it":
+					{
+						"type": "string",
+						"index": "no",
+						"fields":
+						{
+							"ngrams":
+							{
+								"type": "string",
+								"analyzer": "index_ngram",
+								"search_analyzer": "search_ngram"	
+							},
+							"raw":
+							{
+								"type": "string",
+								"analyzer": "index_raw"	
+							}	
+						},
+						"copy_to": ["collector.it"]	
+					}	
+				}	
+			},
+			"context":
+			{
+				"properties":
+				{
+					"de":
+					{
+						"type": "string",
+						"index": "no",
+						"copy_to": ["collector.de"]	
+					},
+					"default":
+					{
+						"type": "string",
+						"index": "no",
+						"copy_to": ["collector.default"]	
+					},
+					"en":
+					{
+						"type": "string",
+						"index": "no",
+						"copy_to": ["collector.en"]	
+					},
+					"fr":
+					{
+						"type": "string",
+						"index": "no",
+						"copy_to": ["collector.fr"]	
+					},
+					"it":
+					{
+						"type": "string",
+						"index": "no",
+						"copy_to": ["collector.it"]	
+					}	
+				}	
+			},
+			"coordinate":
+			{
+				"type": "geo_point"	
+			},
+			"country":
+			{
+				"properties":
+				{
+					"de":
+					{
+						"type": "string",
+						"index": "no",
+						"copy_to": ["collector.de"]	
+					},
+					"default":
+					{
+						"type": "string",
+						"index": "no",
+						"copy_to": ["collector.default"]	
+					},
+					"en":
+					{
+						"type": "string",
+						"index": "no",
+						"copy_to": ["collector.en"]	
+					},
+					"fr":
+					{
+						"type": "string",
+						"index": "no",
+						"copy_to": ["collector.fr"]	
+					},
+					"it":
+					{
+						"type": "string",
+						"index": "no",
+						"copy_to": ["collector.it"]	
+					}	
+				}	
+			},
+			"housenumber":
+			{
+				"type": "string",
+				"index": "not_analyzed",
+				"copy_to": ["collector.default"]	
+			},
+			"importance":
+			{
+				"type": "float"	
+			},
+			"name":
+			{
+				"properties":
+				{
+					"alt":
+					{
+						"type": "string",
+						"index": "no",
+						"fields":
+						{
+							"raw":
+							{
+								"type": "string",
+								"analyzer": "index_raw"	
+							}	
+						},
+						"copy_to": ["collector.default"]	
+					},
+					"de":
+					{
+						"type": "string",
+						"index": "no",
+						"fields":
+						{
+							"ngrams":
+							{
+								"type": "string",
+								"analyzer": "index_ngram",
+								"search_analyzer": "search_ngram"	
+							},
+							"raw":
+							{
+								"type": "string",
+								"analyzer": "index_raw"	
+							}	
+						},
+						"copy_to": ["collector.de"]	
+					},
+					"default":
+					{
+						"type": "string",
+						"index": "no",
+						"copy_to": 
+						[
+							"collector.default",
+							"name.en",
+							"name.de",
+							"name.fr",
+							"name.it"	
+						]	
+					},
+					"en":
+					{
+						"type": "string",
+						"index": "no",
+						"fields":
+						{
+							"ngrams":
+							{
+								"type": "string",
+								"analyzer": "index_ngram",
+								"search_analyzer": "search_ngram"	
+							},
+							"raw":
+							{
+								"type": "string",
+								"analyzer": "index_raw"	
+							}	
+						},
+						"copy_to": ["collector.en"]	
+					},
+					"fr":
+					{
+						"type": "string",
+						"index": "no",
+						"fields":
+						{
+							"ngrams":
+							{
+								"type": "string",
+								"analyzer": "index_ngram",
+								"search_analyzer": "search_ngram"	
+							},
+							"raw":
+							{
+								"type": "string",
+								"analyzer": "index_raw"	
+							}	
+						},
+						"copy_to": ["collector.fr"]	
+					},
+					"int":
+					{
+						"type": "string",
+						"index": "no",
+						"fields":
+						{
+							"raw":
+							{
+								"type": "string",
+								"analyzer": "index_raw"	
+							}	
+						},
+						"copy_to": ["collector.default"]	
+					},
+					"it":
+					{
+						"type": "string",
+						"index": "no",
+						"fields":
+						{
+							"ngrams":
+							{
+								"type": "string",
+								"analyzer": "index_ngram",
+								"search_analyzer": "search_ngram"	
+							},
+							"raw":
+							{
+								"type": "string",
+								"analyzer": "index_raw"	
+							}	
+						},
+						"copy_to": ["collector.it"]	
+					},
+					"loc":
+					{
+						"type": "string",
+						"index": "no",
+						"fields":
+						{
+							"raw":
+							{
+								"type": "string",
+								"analyzer": "index_raw"	
+							}	
+						},
+						"copy_to": ["collector.default"]	
+					},
+					"old":
+					{
+						"type": "string",
+						"index": "no",
+						"fields":
+						{
+							"raw":
+							{
+								"type": "string",
+								"analyzer": "index_raw"	
+							}	
+						},
+						"copy_to": ["collector.default"]	
+					},
+					"reg":
+					{
+						"type": "string",
+						"index": "no",
+						"fields":
+						{
+							"raw":
+							{
+								"type": "string",
+								"analyzer": "index_raw"	
+							}	
+						},
+						"copy_to": ["collector.default"]	
+					}	
+				}	
+			},
+			"osm_id":
+			{
+				"type": "long"	
+			},
+			"osm_key":
+			{
+				"type": "string",
+				"index": "not_analyzed"	
+			},
+			"osm_type":
+			{
+				"type": "string",
+				"index": "no"	
+			},
+			"osm_value":
+			{
+				"type": "string",
+				"index": "not_analyzed"	
+			},
+			"postcode":
+			{
+				"type": "string",
+				"index": "no",
+				"copy_to": ["collector.default"]	
+			},
+			"state":
+			{
+				"properties":
+				{
+					"de":
+					{
+						"type": "string",
+						"index": "no",
+						"copy_to": ["collector.de"]	
+					},
+					"default":
+					{
+						"type": "string",
+						"index": "no",
+						"copy_to": ["collector.default"]	
+					},
+					"en":
+					{
+						"type": "string",
+						"index": "no",
+						"copy_to": ["collector.en"]	
+					},
+					"fr":
+					{
+						"type": "string",
+						"index": "no",
+						"copy_to": ["collector.fr"]	
+					},
+					"it":
+					{
+						"type": "string",
+						"index": "no",
+						"copy_to": ["collector.it"]	
+					}	
+				}	
+			},
+			"street":
+			{
+				"properties":
+				{
+					"de":
+					{
+						"type": "string",
+						"index": "no",
+						"copy_to": ["collector.de"]	
+					},
+					"default":
+					{
+						"type": "string",
+						"index": "no",
+						"copy_to": ["collector.default"]	
+					},
+					"en":
+					{
+						"type": "string",
+						"index": "no",
+						"copy_to": ["collector.en"]	
+					},
+					"fr":
+					{
+						"type": "string",
+						"index": "no",
+						"copy_to": ["collector.fr"]	
+					},
+					"it":
+					{
+						"type": "string",
+						"index": "no",
+						"copy_to": ["collector.it"]	
+					}	
+				}	
+			}	
+		}	
+	}	
 }

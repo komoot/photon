@@ -45,4 +45,8 @@ public class ESBaseTester {
 	public void shutdownES() {
 		server.shutdown();
 	}
+	
+	public void deleteIndex()	{
+	    server.deleteIndex();
+	}
 }
