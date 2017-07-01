@@ -4,12 +4,8 @@ import com.google.common.collect.ImmutableSet;
 import com.vividsolutions.jts.geom.Point;
 import java.util.Map;
 import java.util.Set;
-import org.elasticsearch.common.geo.GeoDistance;
-import org.elasticsearch.common.unit.Fuzziness;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.index.query.FilterBuilder;
-import org.elasticsearch.index.query.FilterBuilders;
 import org.elasticsearch.common.unit.DistanceUnit;
 
 /**
@@ -17,21 +13,25 @@ import org.elasticsearch.common.unit.DistanceUnit;
  * @author svantulden
  */
 public class ReverseQueryBuilder implements TagFilterQueryBuilder {
-    private Integer limit = 1;
+    private Integer limit;
+    private Double radius;
     private State state;
     private Point location;
 
-    private ReverseQueryBuilder(Point location) {
+    private ReverseQueryBuilder(Point location, Double radius) {
         this.state = State.PLAIN;
         this.location = location;
+        this.radius = radius;
     }
     
-    public static TagFilterQueryBuilder builder(Point location) {
-        return new ReverseQueryBuilder(location);
+    public static TagFilterQueryBuilder builder(Point location, Double radius) {
+        return new ReverseQueryBuilder(location, radius);
     }
 
     @Override
-    public TagFilterQueryBuilder withLimit(Integer limit) {        
+    public TagFilterQueryBuilder withLimit(Integer limit) {
+        this.limit = limit == null || limit < 0 ? 0 : limit;
+        this.limit = this.limit > 50 ? 50 : this.limit;
         return this;
     }
 
@@ -107,10 +107,9 @@ public class ReverseQueryBuilder implements TagFilterQueryBuilder {
     
     @Override
     public QueryBuilder buildQuery() {
-        FilterBuilder fb = FilterBuilders.geoDistanceFilter("coordinate")    
-                            .point(location.getY(), location.getX())                                         
-                            .distance(5, DistanceUnit.KILOMETERS)                 
-                            .optimizeBbox("memory");
+        QueryBuilder fb = QueryBuilders.geoDistanceQuery("coordinate")
+                            .point(location.getY(), location.getX())
+                            .distance(radius, DistanceUnit.KILOMETERS);
         return QueryBuilders.filteredQuery(QueryBuilders.matchAllQuery(), fb);
     }
 

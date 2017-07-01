@@ -22,10 +22,11 @@ public abstract class AbstractReverseRequestHandler <R extends ReverseRequest> i
     @Override
     public final List<JSONObject> handle(R photonRequest) {
         TagFilterQueryBuilder queryBuilder = buildQuery(photonRequest);
-        SearchResponse results = elasticsearchSearcher.search(queryBuilder.buildQuery(), 1, photonRequest.getLocation());
-        
+        SearchResponse results = elasticsearchSearcher.search(queryBuilder.buildQuery(), photonRequest.getLimit(), photonRequest.getLocation());
         List<JSONObject> resultJsonObjects = new ConvertToJson(photonRequest.getLanguage()).convert(results);
-        
+        if (resultJsonObjects.size() > photonRequest.getLimit()) {
+            resultJsonObjects = resultJsonObjects.subList(0, photonRequest.getLimit());
+        }
         return resultJsonObjects;
     }
 

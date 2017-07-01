@@ -14,6 +14,6 @@ public class SimpleReverseRequestHandler extends AbstractReverseRequestHandler<R
 
     @Override
     public TagFilterQueryBuilder buildQuery(ReverseRequest photonRequest) {
-        return ReverseQueryBuilder.builder(photonRequest.getLocation());
+        return ReverseQueryBuilder.builder(photonRequest.getLocation(), photonRequest.getRadius());
     }
 }

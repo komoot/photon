@@ -13,7 +13,7 @@
                         "query": "berlin",
                         "type": "boolean",
                         "analyzer": "search_ngram",
-                        "fuzziness": 1,
+                        "fuzziness": "1",
                         "prefix_length": 2,
                         "minimum_should_match": "100%"
                       }
@@ -25,7 +25,7 @@
                         "query": "berlin",
                         "type": "boolean",
                         "analyzer": "search_ngram",
-                        "fuzziness": 1,
+                        "fuzziness": "1",
                         "prefix_length": 2,
                         "minimum_should_match": "100%"
                       }
@@ -62,8 +62,10 @@
         "functions": [
           {
             "script_score": {
-              "script": "general-score",
-              "lang": "groovy"
+              "script": {
+                "file": "general-score",
+                "lang": "groovy"
+              }
             }
           }
         ],
