@@ -15,6 +15,8 @@ import org.elasticsearch.common.xcontent.json.JsonXContent;
 import org.elasticsearch.index.query.functionscore.FunctionScoreQueryBuilder;
 import org.elasticsearch.index.query.functionscore.ScoreFunctionBuilders;
 import org.elasticsearch.index.query.functionscore.script.ScriptScoreFunctionBuilder;
+import org.elasticsearch.script.Script;
+import org.elasticsearch.script.ScriptService;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -22,6 +24,9 @@ import org.mockito.Mockito;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Map;
+
+import static com.google.common.collect.Maps.newHashMap;
 
 public class TagFilterQueryBuilderTest {
 
@@ -50,7 +55,10 @@ public class TagFilterQueryBuilderTest {
 	@Test
 	public void testWithLocation() throws IOException {
 		TagFilterQueryBuilder berlinQuery = PhotonQueryBuilder.builder("berlin", "en");
-		ScriptScoreFunctionBuilder expectedLocationBiasSubQueryBuilder = ScoreFunctionBuilders.scriptFunction("location-biased-score", "groovy").param("lat", 80).param("lon", 10);
+		Map<String,Object> params =  newHashMap();
+		params.put("lon", 10);
+		params.put("lat", 80);
+		ScriptScoreFunctionBuilder expectedLocationBiasSubQueryBuilder = ScoreFunctionBuilders.scriptFunction(new Script("location-biased-score", ScriptService.ScriptType.FILE, "groovy", params));
 		FunctionScoreQueryBuilder mockFunctionScoreQueryBuilder = Mockito.mock(FunctionScoreQueryBuilder.class);
 		ReflectionTestUtil.setFieldValue(berlinQuery, "queryBuilder", mockFunctionScoreQueryBuilder);
 		ArgumentCaptor<ScriptScoreFunctionBuilder> locationBiasSubQueryArgumentCaptor = ArgumentCaptor.forClass(ScriptScoreFunctionBuilder.class);

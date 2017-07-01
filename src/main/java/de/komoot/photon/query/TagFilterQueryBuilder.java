@@ -8,7 +8,7 @@ import java.util.Set;
 
 /**
  * A query builder wrapper on top of {@link QueryBuilder elastic search api} specifically to handle <a href="http://taginfo.openstreetmap.org/projects/nominatim">OSM tags</a> as
- * {@link org.elasticsearch.index.query.FilterBuilder elastic search filter} criteria in the context of photon.
+ * {@link org.elasticsearch.index.query.QueryBuilder elastic search filter} criteria in the context of photon.
  * <p/>
  * Created by Sachin Dole on 2/20/2015.
  */
