@@ -153,13 +153,13 @@ public class NominatimConnector {
 					(Envelope) null,
 					rs.getLong("parent_place_id"),
 					0d, // importance
-					CountryCode.getByCode(rs.getString("calculated_country_code")),
+					CountryCode.getByCode(rs.getString("country_code")),
 					(Point) null, // centroid
 					0,
 					30
 			);
 			doc.setPostcode(rs.getString("postcode"));
-			doc.setCountry(getCountryNames(rs.getString("calculated_country_code")));
+			doc.setCountry(getCountryNames(rs.getString("country_code")));
 
 			NominatimResult result = new NominatimResult(doc);
 			result.addHouseNumbersFromInterpolation(rs.getLong("startnumber"), rs.getLong("endnumber"), rs.getString("interpolationtype"), geometry);
@@ -196,14 +196,14 @@ public class NominatimConnector {
 					envelope,
 					rs.getLong("parent_place_id"),
 					importance,
-					CountryCode.getByCode(rs.getString("calculated_country_code")),
+					CountryCode.getByCode(rs.getString("country_code")),
 					(Point) DBUtils.extractGeometry(rs, "centroid"),
 					rs.getLong("linked_place_id"),
 					rs.getInt("rank_search")
 			);
 
 			doc.setPostcode(rs.getString("postcode"));
-			doc.setCountry(getCountryNames(rs.getString("calculated_country_code")));
+			doc.setCountry(getCountryNames(rs.getString("country_code")));
 
 			NominatimResult result = new NominatimResult(doc);
 			result.addHousenumbersFromString(rs.getString("housenumber"));
@@ -211,7 +211,7 @@ public class NominatimConnector {
 			return result;
 		}
 	};
-	private final String selectColsPlaceX = "place_id, osm_type, osm_id, class, type, name, housenumber, postcode, extratags, ST_Envelope(geometry) AS bbox, parent_place_id, linked_place_id, rank_search, importance, calculated_country_code, centroid";
+	private final String selectColsPlaceX = "place_id, osm_type, osm_id, class, type, name, housenumber, postcode, extratags, ST_Envelope(geometry) AS bbox, parent_place_id, linked_place_id, rank_search, importance, country_code, centroid";
 	private Importer importer;
 
 	private Map<String, String> getCountryNames(String countrycode) {
@@ -353,7 +353,7 @@ public class NominatimConnector {
 		});
 
 
-		template.query("SELECT place_id, osm_id, parent_place_id, startnumber, endnumber, interpolationtype, postcode, calculated_country_code, linegeo FROM location_property_osmline ORDER BY geometry_sector; ", new RowCallbackHandler() {
+		template.query("SELECT place_id, osm_id, parent_place_id, startnumber, endnumber, interpolationtype, postcode, country_code, linegeo FROM location_property_osmline ORDER BY geometry_sector; ", new RowCallbackHandler() {
 			@Override
 			public void processRow(ResultSet rs) throws SQLException {
 				NominatimResult docs = osmlineRowMapper.mapRow(rs, 0);
