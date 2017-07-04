@@ -1,0 +1,1 @@
+dist = doc['coordinate'].planeDistance(lat, lon); 0.5 + ( 1.5 / (1.0 + dist * 1000 /40.0) )
