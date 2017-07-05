@@ -52,6 +52,9 @@ public class Utils {
 		writeContext(builder, doc.getContext(), languages);
 		writeExtent(builder, doc.getBbox());
 
+		builder.endObject();
+		
+		
 		return builder;
 	}
 
