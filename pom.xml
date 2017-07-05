@@ -11,13 +11,39 @@
 		<dependency>
 			<groupId>org.elasticsearch</groupId>
 			<artifactId>elasticsearch</artifactId>
-			<version>2.2.0</version>
+			<version>5.4.1</version>
+			<exclusions><!-- gives a bad error -->
+				<exclusion>
+					<groupId>org.elasticsearch</groupId>
+					<artifactId>jna</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency><!-- required by elasticsearch -->
+			<groupId>org.elasticsearch.plugin</groupId>
+			<artifactId>transport-netty4-client</artifactId>
+			<version>5.4.1</version>
+		</dependency>
+		<dependency><!-- required by elasticsearch -->
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-api</artifactId>
+			<version>2.7</version>
+		</dependency>
+		<dependency><!-- required by elasticsearch -->
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-core</artifactId>
+			<version>2.7</version>
 		</dependency>
 		<dependency>
-			<groupId>org.elasticsearch.module</groupId>
-			<artifactId>lang-groovy</artifactId>
-			<version>2.2.0</version>
+			<groupId>org.elasticsearch.client</groupId>
+			<artifactId>transport</artifactId>
+			<version>5.4.1</version>
 		</dependency>
+		<!-- <dependency> -->
+		<!-- <groupId>org.elasticsearch.module</groupId> -->
+		<!-- <artifactId>lang-groovy</artifactId> -->
+		<!-- <version>2.2.0</version> -->
+		<!-- </dependency> -->
 		<dependency>
 			<groupId>postgresql</groupId>
 			<artifactId>postgresql</artifactId>
@@ -244,7 +270,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<maven.compiler.encoding>UTF-8</maven.compiler.encoding>
-		
+
 		<additionalparam>-Xdoclint:none</additionalparam>
 	</properties>
 
