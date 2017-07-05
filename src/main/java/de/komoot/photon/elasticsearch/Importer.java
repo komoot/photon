@@ -1,14 +1,16 @@
 package de.komoot.photon.elasticsearch;
 
-import de.komoot.photon.Utils;
-import de.komoot.photon.PhotonDoc;
-import lombok.extern.slf4j.Slf4j;
+import java.io.IOException;
+
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.bulk.BulkResponse;
-import org.elasticsearch.action.count.CountRequest;
 import org.elasticsearch.client.Client;
+import org.elasticsearch.client.Requests;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
 
-import java.io.IOException;
+import de.komoot.photon.PhotonDoc;
+import de.komoot.photon.Utils;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * elasticsearch importer
@@ -62,6 +64,7 @@ public class Importer implements de.komoot.photon.Importer {
 	}
 
 	public long count() {
-		return this.esClient.count(new CountRequest(indexName).types(indexType)).actionGet().getCount();
+		return this.esClient.search(Requests.searchRequest(indexName).types(indexType).source(SearchSourceBuilder.searchSource().size(0))).actionGet().getHits()
+		        .getTotalHits();
 	}
 }

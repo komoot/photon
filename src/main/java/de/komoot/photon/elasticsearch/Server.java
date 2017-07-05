@@ -2,29 +2,6 @@ package de.komoot.photon.elasticsearch;
 
 
 
-import de.komoot.photon.CommandLineArgs;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.SystemUtils;
-import org.elasticsearch.Version;
-import org.elasticsearch.action.admin.indices.delete.DeleteIndexResponse;
-import org.elasticsearch.bootstrap.JarHell;
-import org.elasticsearch.client.Client;
-import org.elasticsearch.common.cli.Terminal;
-import org.elasticsearch.common.inject.Module;
-import org.elasticsearch.common.io.PathUtils;
-import org.elasticsearch.common.logging.log4j.LogConfigurator;
-import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.common.unit.TimeValue;
-import org.elasticsearch.env.Environment;
-import org.elasticsearch.index.IndexNotFoundException;
-import org.elasticsearch.node.Node;
-import org.elasticsearch.plugins.PluginManager;
-import org.elasticsearch.script.groovy.GroovyPlugin;
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,15 +9,31 @@ import java.net.InetSocketAddress;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
-import org.elasticsearch.client.transport.TransportClient;
-import org.elasticsearch.common.transport.InetSocketTransportAddress;
 
-import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.SystemUtils;
+import org.elasticsearch.action.admin.indices.delete.DeleteIndexResponse;
+import org.elasticsearch.client.Client;
+import org.elasticsearch.client.transport.TransportClient;
+import org.elasticsearch.common.settings.Settings;
+import org.elasticsearch.common.transport.InetSocketTransportAddress;
+import org.elasticsearch.index.IndexNotFoundException;
+import org.elasticsearch.node.InternalSettingsPreparer;
+import org.elasticsearch.node.Node;
+import org.elasticsearch.node.NodeValidationException;
+import org.elasticsearch.plugins.Plugin;
+import org.elasticsearch.transport.Netty4Plugin;
+import org.elasticsearch.transport.client.PreBuiltTransportClient;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import de.komoot.photon.CommandLineArgs;
+import lombok.extern.slf4j.Slf4j;
 
 
 
@@ -65,6 +58,27 @@ public class Server
     private final String[] languages;
 
     private String transportAddresses;
+
+
+
+
+    // static
+    // {
+    // System.out.println("huhuu: " + System.getProperty("jna.boot.library.path"));
+    // System.out.println("huhuu2: " + System.getProperty("jna.nosys"));
+    //// System.setProperty("jna.boot.library.path", "");
+    // }
+
+
+
+
+    protected static class MyNode extends Node
+    {
+        public MyNode(Settings preparedSettings, Collection<Class<? extends Plugin>> classpathPlugins)
+        {
+            super(InternalSettingsPreparer.prepareEnvironment(preparedSettings, null), classpathPlugins);
+        }
+    }
 
 
 
@@ -103,15 +117,18 @@ public class Server
     public Server start()
     {
         Settings.Builder sBuilder = Settings.builder();
-        sBuilder.put("index.version.created", Version.CURRENT.id);
+        // sBuilder.put("index.version.created", Version.CURRENT.id);
         sBuilder.put("path.home", this.esDirectory.toString());
         sBuilder.put("network.host", "127.0.0.1"); // http://stackoverflow.com/a/15509589/1245622
 
         if(transportAddresses != null && !transportAddresses.isEmpty())
         {
+
             sBuilder.put("cluster.name", clusterName);
+            // XXX old:
             // The transport client also no longer supports loading settings from config files.
-            TransportClient trClient = TransportClient.builder().settings(sBuilder.build()).build();
+            // TransportClient trClient = TransportClient.builder().settings(sBuilder.build()).build();
+            TransportClient trClient = new PreBuiltTransportClient(sBuilder.build());
             List<String> addresses = Arrays.asList(transportAddresses.split(","));
             for (String tAddr : addresses)
             {
@@ -131,48 +148,84 @@ public class Server
             esClient = trClient;
 
             log.info("started elastic search client connected to " + addresses);
+
+
         }
         else
         {
-            Settings settings = sBuilder.build();
+
+
+            // XXX old:
+            // Settings settings = sBuilder.build();
+            //
+            // try
+            // {
+            // final String pluginPath = this.getClass().getResource("/elasticsearch-wordending-tokenfilter-2.2.0.zip").toExternalForm();
+            // PluginManager pluginManager = new PluginManager(new Environment(settings), new URL(pluginPath), PluginManager.OutputMode.VERBOSE, new TimeValue(30000));
+            // pluginManager.downloadAndExtract("ybon/elasticsearch-wordending-tokenfilter/2.2.0", Terminal.DEFAULT, true);
+            //
+            // }
+            // catch (IOException e)
+            // {
+            // log.debug("could not install ybon/elasticsearch-wordending-tokenfilter/2.2.0", e);
+            // }
+            //
+            //
+            // ArrayList<String> pluginsToInstall = new ArrayList<String>();
+            // if(!isTest)
+            // {
+            // pluginsToInstall.add("mobz/elasticsearch-head");
+            // pluginsToInstall.add("polyfractal/elasticsearch-inquisitor");
+            // }
+            //
+            //
+            // for (String pluginName : pluginsToInstall)
+            // {
+            // try
+            // {
+            // PluginManager pluginManager = new PluginManager(new Environment(settings), null, PluginManager.OutputMode.VERBOSE, new TimeValue(30000));
+            // pluginManager.downloadAndExtract(pluginName, Terminal.DEFAULT, true);
+            // }
+            // catch (IOException e)
+            // {
+            // log.error(String.format("cannot install plugin: %s: %s", pluginName, e));
+            // }
+            // }
+
+
+            // LogConfigurator.configure(settings, true);
+            // loading settings from config files is no logger supported .loadConfigSettings(true)
+            // esNode = nodeBuilder().clusterName(clusterName).settings(settings).node();
+
+
+            // new from https://stackoverflow.com/questions/41298467/how-to-start-elasticsearch-5-1-embedded-in-my-java-application:
+            // Embedding is really unsupported yet: https://www.elastic.co/blog/elasticsearch-the-server
+            // I think embedding ES is a bad idea anyway, but it's plenty of work to change it. Better would be a photon-ES-plugin as an additional ES-REST-interface.
 
             try
             {
-                final String pluginPath = this.getClass().getResource("/elasticsearch-wordending-tokenfilter-2.2.0.zip").toExternalForm();
-                PluginManager pluginManager = new PluginManager(new Environment(settings), new URL(pluginPath), PluginManager.OutputMode.VERBOSE, new TimeValue(30000));
-                pluginManager.downloadAndExtract("ybon/elasticsearch-wordending-tokenfilter/2.2.0", Terminal.DEFAULT, true);
+
+                sBuilder.put("transport.type", "netty4").put("http.type", "netty4").put("http.enabled", "true");
+                Settings settings = sBuilder.build();
+                Collection<Class<? extends Plugin>> lList = new LinkedList<>();
+                lList.add(Netty4Plugin.class);
+                esNode = new MyNode(settings, lList);
+                esNode.start();
+
+
+                log.info("started elastic search node");
+
+
+                esClient = esNode.client();
 
             }
-            catch (IOException e)
+            catch (NodeValidationException e)
             {
-                log.debug("could not install ybon/elasticsearch-wordending-tokenfilter/2.2.0", e);
+                log.error("Error while starting elasticsearch server", e);
             }
 
-            ArrayList<String> pluginsToInstall = new ArrayList<String>();
-            if(!isTest)
-            {
-                pluginsToInstall.add("mobz/elasticsearch-head");
-                pluginsToInstall.add("polyfractal/elasticsearch-inquisitor");
-            }
 
-            for (String pluginName : pluginsToInstall)
-            {
-                try
-                {
-                    PluginManager pluginManager = new PluginManager(new Environment(settings), null, PluginManager.OutputMode.VERBOSE, new TimeValue(30000));
-                    pluginManager.downloadAndExtract(pluginName, Terminal.DEFAULT, true);
-                }
-                catch (IOException e)
-                {
-                    log.error(String.format("cannot install plugin: %s: %s", pluginName, e));
-                }
-            }
 
-            LogConfigurator.configure(settings, true);
-            // loading settings from config files is no logger supported .loadConfigSettings(true)
-            esNode = nodeBuilder().clusterName(clusterName).settings(settings).node();
-            log.info("started elastic search node");
-            esClient = esNode.client();
         }
         return this;
     }
@@ -184,9 +237,16 @@ public class Server
      */
     public void shutdown()
     {
-        if(esNode != null) esNode.close();
+        try
+        {
+            if(esNode != null) esNode.close();
 
-        esClient.close();
+            esClient.close();
+        }
+        catch (IOException e)
+        {
+            log.error("Error during elasticsearch server shutdown", e);
+        }
     }
 
 
@@ -209,23 +269,43 @@ public class Server
         final File pluginDirectory = new File(esDirectory, "plugins");
         final File scriptsDirectory = new File(esDirectory, "config/scripts");
         final File groovyDirectory = new File(esDirectory, "modules/lang-groovy");
+        final File painlessDirectory = new File(esDirectory, "modules/lang-painless");
 
-        for (File directory : new File[] { esDirectory, photonDirectory, pluginDirectory, scriptsDirectory, groovyDirectory })
+        // for (File directory : new File[] { esDirectory, photonDirectory, pluginDirectory, scriptsDirectory, groovyDirectory })
+        for (File directory : new File[] { esDirectory, photonDirectory, pluginDirectory, scriptsDirectory, groovyDirectory, painlessDirectory })
         {
             directory.mkdirs();
         }
 
         // copy script directory to elastic search directory
         final ClassLoader loader = Thread.currentThread().getContextClassLoader();
-        Files.copy(loader.getResourceAsStream("scripts/general-score.groovy"), new File(scriptsDirectory, "general-score.groovy").toPath(),
+        Files.copy(loader.getResourceAsStream("scripts/general-score.painless"), new File(scriptsDirectory, "general-score.painless").toPath(),
                 StandardCopyOption.REPLACE_EXISTING);
-        Files.copy(loader.getResourceAsStream("scripts/location-biased-score.groovy"), new File(scriptsDirectory, "location-biased-score.groovy").toPath(),
+        Files.copy(loader.getResourceAsStream("scripts/location-biased-score.painless"), new File(scriptsDirectory, "location-biased-score.painless").toPath(),
                 StandardCopyOption.REPLACE_EXISTING);
 
         Files.copy(loader.getResourceAsStream("modules/lang-groovy/plugin-security.policy"), new File(groovyDirectory, "plugin-security.policy").toPath(),
                 StandardCopyOption.REPLACE_EXISTING);
         Files.copy(loader.getResourceAsStream("modules/lang-groovy/plugin-descriptor.properties"), new File(groovyDirectory, "plugin-descriptor.properties").toPath(),
                 StandardCopyOption.REPLACE_EXISTING);
+        
+        Files.copy(loader.getResourceAsStream("modules/lang-groovy/lang-groovy-5.4.1.jar"), new File(groovyDirectory, "lang-groovy-5.4.1.jar").toPath(),
+                StandardCopyOption.REPLACE_EXISTING);
+        Files.copy(loader.getResourceAsStream("modules/lang-groovy/groovy-2.4.6-indy.jar"), new File(groovyDirectory, "groovy-2.4.6-indy.jar").toPath(),
+                StandardCopyOption.REPLACE_EXISTING);
+        Files.copy(loader.getResourceAsStream("modules/lang-painless/antlr4-runtime-4.5.1-1.jar"), new File(painlessDirectory, "antlr4-runtime-4.5.1-1.jar").toPath(),
+                StandardCopyOption.REPLACE_EXISTING);
+        Files.copy(loader.getResourceAsStream("modules/lang-painless/asm-debug-all-5.1.jar"), new File(painlessDirectory, "asm-debug-all-5.1.jar").toPath(),
+                StandardCopyOption.REPLACE_EXISTING);
+        Files.copy(loader.getResourceAsStream("modules/lang-painless/lang-painless-5.4.1.jar"), new File(painlessDirectory, "lang-painless-5.4.1.jar").toPath(),
+                StandardCopyOption.REPLACE_EXISTING);
+        Files.copy(loader.getResourceAsStream("modules/lang-painless/plugin-descriptor.properties"), new File(painlessDirectory, "plugin-descriptor.properties").toPath(),
+                StandardCopyOption.REPLACE_EXISTING);
+        Files.copy(loader.getResourceAsStream("modules/lang-painless/plugin-security.policy"), new File(painlessDirectory, "plugin-security.policy").toPath(),
+                StandardCopyOption.REPLACE_EXISTING);
+
+        
+        
     }
 
 

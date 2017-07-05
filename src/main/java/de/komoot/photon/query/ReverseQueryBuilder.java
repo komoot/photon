@@ -170,7 +170,11 @@ public class ReverseQueryBuilder implements TagFilterQueryBuilder
     public QueryBuilder buildQuery()
     {
         QueryBuilder fb = QueryBuilders.geoDistanceQuery("coordinate").point(location.getY(), location.getX()).distance(radius, DistanceUnit.KILOMETERS);
-        return QueryBuilders.filteredQuery(QueryBuilders.matchAllQuery(), fb);
+
+        // XXX old
+        // return QueryBuilders.filteredQuery(QueryBuilders.matchAllQuery(), fb);
+
+        return QueryBuilders.boolQuery().must(QueryBuilders.matchAllQuery()).filter(fb);
     }
 
 
