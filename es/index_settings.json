@@ -1,56 +1,67 @@
 {
-  "similarity": {
-    "default": {
-      "type": "BM25"
-    }
-  },
-  "analysis": {
-    "analyzer": {
-      "index_ngram": {
-        "char_filter": ["punctuationgreedy"],
-        "filter": ["word_delimiter", "lowercase", "asciifolding", "unique", "wordending", "photonngram"],
-        "tokenizer": "standard"
-      },
-      "search_ngram": {
-        "char_filter": ["punctuationgreedy"],
-        "filter": ["word_delimiter", "lowercase", "asciifolding", "unique", "wordendingautocomplete"],
-        "tokenizer": "standard"
-      },
-      "index_raw": {
-        "char_filter": ["punctuationgreedy"],
-        "filter": ["word_delimiter", "lowercase", "asciifolding", "unique"],
-        "tokenizer": "standard"
-      },
-      "search_raw": {
-        "char_filter": ["punctuationgreedy"],
-        "filter": ["word_delimiter", "lowercase", "asciifolding", "unique"],
-        "tokenizer": "standard"
-      }
-    },
-    "char_filter": {
-      "punctuationgreedy": {
-        "type": "pattern_replace",
-        "pattern": "[\\.,]"
-      }
-    },
-    "filter": {
-      "photonngram": {
-        "min_gram": "1",
-        "type": "edgeNGram",
-        "max_gram": "100"
-      },
-      "wordending": {
-        "type": "wordending",
-        "mode": "default"
-      },
-      "photonlength": {
-        "min": "2",
-        "type": "length"
-      },
-      "wordendingautocomplete": {
-        "type": "wordending",
-        "mode": "autocomplete"
-      }
-    }
-  }
+	"analysis":
+	{
+		"analyzer":
+		{
+			"index_ngram":
+			{
+				"tokenizer": "edge_ngram",
+				"filter": ["lowercase"]	
+			},
+			"search_ngram":
+			{
+				"tokenizer": "lowercase"	
+			},
+			"index_raw":
+			{
+				"char_filter": ["punctuationgreedy"],
+				"filter": 
+				[
+					"word_delimiter",
+					"lowercase",
+					"asciifolding",
+					"unique"	
+				],
+				"tokenizer": "standard"	
+			},
+			"search_raw":
+			{
+				"char_filter": ["punctuationgreedy"],
+				"filter": 
+				[
+					"word_delimiter",
+					"lowercase",
+					"asciifolding",
+					"unique"	
+				],
+				"tokenizer": "standard"	
+			}	
+		},
+		"tokenizer":
+		{
+			"edge_ngram":
+			{
+				"type": "edge_ngram",
+				"min_gram": 1,
+				"max_gram": 100,
+				"token_chars": ["letter"]	
+			}	
+		},
+		"char_filter":
+		{
+			"punctuationgreedy":
+			{
+				"type": "pattern_replace",
+				"pattern": "[\\.,]"	
+			}	
+		},
+		"filter":
+		{
+			"photonlength":
+			{
+				"min": "2",
+				"type": "length"	
+			}	
+		}	
+	}	
 }
