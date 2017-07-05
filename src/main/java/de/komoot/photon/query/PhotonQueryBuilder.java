@@ -57,11 +57,6 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder
 
     private State state;
 
-    // XXX old
-    // private OrQueryBuilder orQueryBuilderForIncludeTagFiltering = null;
-    //
-    // private AndQueryBuilder andQueryBuilderForExcludeTagFiltering = null;
-
     private BoolQueryBuilder orQueryBuilderForIncludeTagFiltering = null;
 
     private BoolQueryBuilder andQueryBuilderForExcludeTagFiltering = null;
@@ -89,14 +84,6 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder
                 .analyzer("search_ngram").minimumShouldMatch("100%");
 
 
-        // XXX old:
-//        queryBuilder = QueryBuilders.functionScoreQuery(
-//                QueryBuilders.boolQuery().must(QueryBuilders.boolQuery().should(defaultMatchQueryBuilder).should(languageMatchQueryBuilder).minimumShouldMatch("1"))
-//                        .should(QueryBuilders.matchQuery(String.format("name.%s.raw", language), query).boost(200).analyzer("search_raw"))
-//                        .should(QueryBuilders.matchQuery(String.format("collector.%s.raw", language), query).boost(100).analyzer("search_raw")),
-//                ScoreFunctionBuilders.scriptFunction("general-score", "groovy")).boostMode("multiply").scoreMode("multiply");
-
-
         m_query4QueryBuilder =
                 QueryBuilders.boolQuery().must(QueryBuilders.boolQuery().should(defaultMatchQueryBuilder).should(languageMatchQueryBuilder).minimumShouldMatch("1"))
                         .should(QueryBuilders.matchQuery(String.format("name.%s.raw", language), query).boost(200).analyzer("search_raw"))
@@ -111,13 +98,6 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder
                 .boostMode(CombineFunction.MULTIPLY).scoreMode(ScoreMode.MULTIPLY);
 
         
-        
-        // XXX old:
-        // queryBuilderForTopLevelFilter = QueryBuilders.orQuery(QueryBuilders.missingQuery("housenumber"),
-        // QueryBuilders.queryFilter(QueryBuilders.matchQuery("housenumber", query).analyzer("standard")),
-        // QueryBuilders.existsQuery(String.format("name.%s.raw", language)));
-
-        // deprecated stuff, see https://static.javadoc.io/org.elasticsearch/elasticsearch/2.3.0/deprecated-list.html
         queryBuilderForTopLevelFilter = QueryBuilders.boolQuery().should(QueryBuilders.boolQuery().mustNot(QueryBuilders.existsQuery("housenumber")))
                 .should(QueryBuilders.matchQuery("housenumber", query).analyzer("standard")).should(QueryBuilders.existsQuery(String.format("name.%s.raw", language)));
 
@@ -160,10 +140,7 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder
         ScriptScoreFunctionBuilder builder =
                 ScoreFunctionBuilders.scriptFunction(new Script(ScriptType.FILE, "painless", "location-biased-score", null, params));
 
-        // old:
-        // queryBuilder.add();
-
-        // new - add method is removed. we have to create the object again
+        
         m_alFilterFunction4QueryBuilder.add(new FilterFunctionBuilder(builder));
 
         queryBuilder = new FunctionScoreQueryBuilder(m_query4QueryBuilder, m_alFilterFunction4QueryBuilder.toArray(new FilterFunctionBuilder[0]))
@@ -239,10 +216,8 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder
             Set<String> valuesToInclude = tags.get(tagKey);
             TermQueryBuilder keyQuery = QueryBuilders.termQuery("osm_key", tagKey);
             TermsQueryBuilder valueQuery = QueryBuilders.termsQuery("osm_value", valuesToInclude.toArray(new String[valuesToInclude.size()]));
-            // XXX old
-            // NotQueryBuilder negatedValueQuery = QueryBuilders.notQuery(valueQuery);
-            // AndQueryBuilder includeAndQuery = QueryBuilders.andQuery(keyQuery, negatedValueQuery);
 
+            
             BoolQueryBuilder includeAndQuery = QueryBuilders.boolQuery().must(keyQuery).mustNot(valueQuery);
 
             termQueries.add(includeAndQuery);
@@ -266,10 +241,8 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder
             Set<String> valuesToExclude = tagsToExclude.get(tagKey);
             TermQueryBuilder keyQuery = QueryBuilders.termQuery("osm_key", tagKey);
             TermsQueryBuilder valueQuery = QueryBuilders.termsQuery("osm_value", valuesToExclude.toArray(new String[valuesToExclude.size()]));
-            // XXX old
-            // AndQueryBuilder andQueryForExclusions = QueryBuilders.andQuery(keyQuery, valueQuery);
-            // termQueries.add(QueryBuilders.notQuery(andQueryForExclusions));
 
+            
             BoolQueryBuilder withoutTagsQuery = QueryBuilders.boolQuery().mustNot(QueryBuilders.boolQuery().must(keyQuery).must(valueQuery));
 
             termQueries.add(withoutTagsQuery);
@@ -291,10 +264,6 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder
         ensureFiltered();
 
 
-        // XXX old
-        // List<BoolQueryBuilder> termQueries = new ArrayList<BoolQueryBuilder>(keysToExclude.size());
-        // termQueries.add(QueryBuilders.notQuery(QueryBuilders.termsQuery("osm_key", keysToExclude.toArray())));
-
         BoolQueryBuilder boolQuery = QueryBuilders.boolQuery().mustNot(QueryBuilders.termsQuery("osm_key", keysToExclude.toArray()));
 
         LinkedList<QueryBuilder> lList = new LinkedList<>();
@@ -314,9 +283,6 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder
 
         ensureFiltered();
 
-        // XXX old
-        // List<BoolQueryBuilder> termQueries = new ArrayList<BoolQueryBuilder>(valuesToExclude.size());
-        // termQueries.add(QueryBuilders.notQuery(QueryBuilders.termsQuery("osm_value", valuesToExclude.toArray())));
 
         BoolQueryBuilder boolQuery = QueryBuilders.boolQuery().mustNot(QueryBuilders.termsQuery("osm_value", valuesToExclude.toArray()));
 
@@ -397,9 +363,6 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder
 
         if(state.equals(State.FILTERED))
         {
-            // XXX old
-            // if(orQueryBuilderForIncludeTagFiltering != null) ((AndQueryBuilder) queryBuilderForTopLevelFilter).add(orQueryBuilderForIncludeTagFiltering);
-            // if(andQueryBuilderForExcludeTagFiltering != null) ((AndQueryBuilder) queryBuilderForTopLevelFilter).add(andQueryBuilderForExcludeTagFiltering);
 
             if(orQueryBuilderForIncludeTagFiltering != null) queryBuilderForTopLevelFilter.must(orQueryBuilderForIncludeTagFiltering);
             if(andQueryBuilderForExcludeTagFiltering != null) queryBuilderForTopLevelFilter.must(andQueryBuilderForExcludeTagFiltering);
@@ -408,9 +371,6 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder
 
         state = State.FINISHED;
 
-
-        // XXX old
-        // finalQueryBuilder = QueryBuilders.filteredQuery(queryBuilder, queryBuilderForTopLevelFilter);
 
         finalQueryBuilder = QueryBuilders.boolQuery().must(queryBuilder).filter(queryBuilderForTopLevelFilter);
 
@@ -444,20 +404,6 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder
     private void appendIncludeTermQueries(List<? extends QueryBuilder> termQueries)
     {
 
-
-        // XXX old
-        // if(orQueryBuilderForIncludeTagFiltering == null)
-        // {
-        // orQueryBuilderForIncludeTagFiltering = QueryBuilders.orQuery(termQueries.toArray(new QueryBuilder[termQueries.size()]));
-        // }
-        // else
-        // {
-        // for (QueryBuilder eachTagFilter : termQueries)
-        // {
-        // orQueryBuilderForIncludeTagFiltering.add(eachTagFilter);
-        // }
-        // }
-
         if(orQueryBuilderForIncludeTagFiltering == null) orQueryBuilderForIncludeTagFiltering = QueryBuilders.boolQuery();
 
         for (QueryBuilder eachTagFilter : termQueries)
@@ -469,19 +415,6 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder
     private void appendExcludeTermQueries(List<QueryBuilder> termQueries)
     {
 
-        // XXX old
-        // if(andQueryBuilderForExcludeTagFiltering == null)
-        // {
-        // andQueryBuilderForExcludeTagFiltering = QueryBuilders.andQuery(termQueries.toArray(new QueryBuilder[termQueries.size()]));
-        // }
-        // else
-        // {
-        // for (QueryBuilder eachTagFilter : termQueries)
-        // {
-        // andQueryBuilderForExcludeTagFiltering.add(eachTagFilter);
-        // }
-        // }
-
         if(andQueryBuilderForExcludeTagFiltering == null) andQueryBuilderForExcludeTagFiltering = QueryBuilders.boolQuery();
 
         for (QueryBuilder eachTagFilter : termQueries)
@@ -492,23 +425,6 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder
 
     private void ensureFiltered()
     {
-
-
-        // XXX old: this method is not needed anymmore - now the toplevel queryBuilder is a BoolQueryBuilder in any case.
-        // if(state.equals(State.PLAIN))
-        // {
-        // queryBuilderForTopLevelFilter = QueryBuilders.andQuery(queryBuilderForTopLevelFilter);
-        // }
-        // else if(queryBuilderForTopLevelFilter instanceof AndQueryBuilder)
-        // {
-        // // good! nothing to do because query builder is already filtered.
-        // }
-        // else
-        // {
-        // throw new RuntimeException(
-        // "This code is not in valid state. It is expected that the filter builder field should either be AndQueryBuilder or OrQueryBuilder. Found" + " "
-        // + queryBuilderForTopLevelFilter.getClass() + " instead.");
-        // }
         state = State.FILTERED;
     }
 

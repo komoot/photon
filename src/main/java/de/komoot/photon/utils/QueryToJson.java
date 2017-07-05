@@ -26,8 +26,6 @@ public class QueryToJson implements OneWayConverter<QueryBuilder, String>
         {
             BytesReference bytes = anItem.toXContent(JsonXContent.contentBuilder(), new ToXContent.MapParams(null)).bytes();
 
-            // XXX old
-            // return new String(bytes.toBytes(), "UTF-8");
 
             return bytes.utf8ToString();
         }

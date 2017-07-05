@@ -62,15 +62,6 @@ public class Server
 
 
 
-    // static
-    // {
-    // System.out.println("huhuu: " + System.getProperty("jna.boot.library.path"));
-    // System.out.println("huhuu2: " + System.getProperty("jna.nosys"));
-    //// System.setProperty("jna.boot.library.path", "");
-    // }
-
-
-
 
     protected static class MyNode extends Node
     {
@@ -117,7 +108,6 @@ public class Server
     public Server start()
     {
         Settings.Builder sBuilder = Settings.builder();
-        // sBuilder.put("index.version.created", Version.CURRENT.id);
         sBuilder.put("path.home", this.esDirectory.toString());
         sBuilder.put("network.host", "127.0.0.1"); // http://stackoverflow.com/a/15509589/1245622
 
@@ -125,9 +115,7 @@ public class Server
         {
 
             sBuilder.put("cluster.name", clusterName);
-            // XXX old:
-            // The transport client also no longer supports loading settings from config files.
-            // TransportClient trClient = TransportClient.builder().settings(sBuilder.build()).build();
+            
             TransportClient trClient = new PreBuiltTransportClient(sBuilder.build());
             List<String> addresses = Arrays.asList(transportAddresses.split(","));
             for (String tAddr : addresses)
@@ -153,54 +141,6 @@ public class Server
         }
         else
         {
-
-
-            // XXX old:
-            // Settings settings = sBuilder.build();
-            //
-            // try
-            // {
-            // final String pluginPath = this.getClass().getResource("/elasticsearch-wordending-tokenfilter-2.2.0.zip").toExternalForm();
-            // PluginManager pluginManager = new PluginManager(new Environment(settings), new URL(pluginPath), PluginManager.OutputMode.VERBOSE, new TimeValue(30000));
-            // pluginManager.downloadAndExtract("ybon/elasticsearch-wordending-tokenfilter/2.2.0", Terminal.DEFAULT, true);
-            //
-            // }
-            // catch (IOException e)
-            // {
-            // log.debug("could not install ybon/elasticsearch-wordending-tokenfilter/2.2.0", e);
-            // }
-            //
-            //
-            // ArrayList<String> pluginsToInstall = new ArrayList<String>();
-            // if(!isTest)
-            // {
-            // pluginsToInstall.add("mobz/elasticsearch-head");
-            // pluginsToInstall.add("polyfractal/elasticsearch-inquisitor");
-            // }
-            //
-            //
-            // for (String pluginName : pluginsToInstall)
-            // {
-            // try
-            // {
-            // PluginManager pluginManager = new PluginManager(new Environment(settings), null, PluginManager.OutputMode.VERBOSE, new TimeValue(30000));
-            // pluginManager.downloadAndExtract(pluginName, Terminal.DEFAULT, true);
-            // }
-            // catch (IOException e)
-            // {
-            // log.error(String.format("cannot install plugin: %s: %s", pluginName, e));
-            // }
-            // }
-
-
-            // LogConfigurator.configure(settings, true);
-            // loading settings from config files is no logger supported .loadConfigSettings(true)
-            // esNode = nodeBuilder().clusterName(clusterName).settings(settings).node();
-
-
-            // new from https://stackoverflow.com/questions/41298467/how-to-start-elasticsearch-5-1-embedded-in-my-java-application:
-            // Embedding is really unsupported yet: https://www.elastic.co/blog/elasticsearch-the-server
-            // I think embedding ES is a bad idea anyway, but it's plenty of work to change it. Better would be a photon-ES-plugin as an additional ES-REST-interface.
 
             try
             {
@@ -271,7 +211,6 @@ public class Server
         final File groovyDirectory = new File(esDirectory, "modules/lang-groovy");
         final File painlessDirectory = new File(esDirectory, "modules/lang-painless");
 
-        // for (File directory : new File[] { esDirectory, photonDirectory, pluginDirectory, scriptsDirectory, groovyDirectory })
         for (File directory : new File[] { esDirectory, photonDirectory, pluginDirectory, scriptsDirectory, groovyDirectory, painlessDirectory })
         {
             directory.mkdirs();
@@ -293,6 +232,7 @@ public class Server
                 StandardCopyOption.REPLACE_EXISTING);
         Files.copy(loader.getResourceAsStream("modules/lang-groovy/groovy-2.4.6-indy.jar"), new File(groovyDirectory, "groovy-2.4.6-indy.jar").toPath(),
                 StandardCopyOption.REPLACE_EXISTING);
+        
         Files.copy(loader.getResourceAsStream("modules/lang-painless/antlr4-runtime-4.5.1-1.jar"), new File(painlessDirectory, "antlr4-runtime-4.5.1-1.jar").toPath(),
                 StandardCopyOption.REPLACE_EXISTING);
         Files.copy(loader.getResourceAsStream("modules/lang-painless/asm-debug-all-5.1.jar"), new File(painlessDirectory, "asm-debug-all-5.1.jar").toPath(),
