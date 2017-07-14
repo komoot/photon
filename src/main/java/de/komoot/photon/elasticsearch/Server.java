@@ -218,17 +218,13 @@ public class Server
 
         // copy script directory to elastic search directory
         final ClassLoader loader = Thread.currentThread().getContextClassLoader();
-        Files.copy(loader.getResourceAsStream("scripts/general-score.painless"), new File(scriptsDirectory, "general-score.painless").toPath(),
-                StandardCopyOption.REPLACE_EXISTING);
-        Files.copy(loader.getResourceAsStream("scripts/location-biased-score.painless"), new File(scriptsDirectory, "location-biased-score.painless").toPath(),
-                StandardCopyOption.REPLACE_EXISTING);
 
         Files.copy(loader.getResourceAsStream("modules/lang-groovy/plugin-security.policy"), new File(groovyDirectory, "plugin-security.policy").toPath(),
                 StandardCopyOption.REPLACE_EXISTING);
         Files.copy(loader.getResourceAsStream("modules/lang-groovy/plugin-descriptor.properties"), new File(groovyDirectory, "plugin-descriptor.properties").toPath(),
                 StandardCopyOption.REPLACE_EXISTING);
         
-        Files.copy(loader.getResourceAsStream("modules/lang-groovy/lang-groovy-5.4.1.jar"), new File(groovyDirectory, "lang-groovy-5.4.1.jar").toPath(),
+        Files.copy(loader.getResourceAsStream("modules/lang-groovy/lang-groovy-5.5.0.jar"), new File(groovyDirectory, "lang-groovy-5.5.0.jar").toPath(),
                 StandardCopyOption.REPLACE_EXISTING);
         Files.copy(loader.getResourceAsStream("modules/lang-groovy/groovy-2.4.6-indy.jar"), new File(groovyDirectory, "groovy-2.4.6-indy.jar").toPath(),
                 StandardCopyOption.REPLACE_EXISTING);
@@ -237,7 +233,7 @@ public class Server
                 StandardCopyOption.REPLACE_EXISTING);
         Files.copy(loader.getResourceAsStream("modules/lang-painless/asm-debug-all-5.1.jar"), new File(painlessDirectory, "asm-debug-all-5.1.jar").toPath(),
                 StandardCopyOption.REPLACE_EXISTING);
-        Files.copy(loader.getResourceAsStream("modules/lang-painless/lang-painless-5.4.1.jar"), new File(painlessDirectory, "lang-painless-5.4.1.jar").toPath(),
+        Files.copy(loader.getResourceAsStream("modules/lang-painless/lang-painless-5.5.0.jar"), new File(painlessDirectory, "lang-painless-5.5.0.jar").toPath(),
                 StandardCopyOption.REPLACE_EXISTING);
         Files.copy(loader.getResourceAsStream("modules/lang-painless/plugin-descriptor.properties"), new File(painlessDirectory, "plugin-descriptor.properties").toPath(),
                 StandardCopyOption.REPLACE_EXISTING);

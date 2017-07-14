@@ -49,11 +49,11 @@ import com.vividsolutions.jts.geom.Point;
  */
 public class PhotonQueryBuilder implements TagFilterQueryBuilder
 {
-    private FunctionScoreQueryBuilder queryBuilder;
+    private FunctionScoreQueryBuilder m_finalQueryWithoutTagFilterBuilder;
 
     private Integer limit = 50;
 
-    private BoolQueryBuilder queryBuilderForTopLevelFilter;
+    private BoolQueryBuilder m_queryBuilderForTopLevelFilter;
 
     private State state;
 
@@ -67,7 +67,7 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder
 
     private MatchQueryBuilder languageMatchQueryBuilder;
 
-    private QueryBuilder finalQueryBuilder;
+    private QueryBuilder m_finalQueryBuilder;
 
     protected ArrayList<FilterFunctionBuilder> m_alFilterFunction4QueryBuilder = new ArrayList<>(1);
 
@@ -83,23 +83,30 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder
         languageMatchQueryBuilder = QueryBuilders.matchQuery(String.format("collector.%s.ngrams", language), query).fuzziness(Fuzziness.ONE).prefixLength(2)
                 .analyzer("search_ngram").minimumShouldMatch("100%");
 
-
+        // @formatter:off
         m_query4QueryBuilder =
                 QueryBuilders.boolQuery().must(QueryBuilders.boolQuery().should(defaultMatchQueryBuilder).should(languageMatchQueryBuilder).minimumShouldMatch("1"))
                         .should(QueryBuilders.matchQuery(String.format("name.%s.raw", language), query).boost(200).analyzer("search_raw"))
                         .should(QueryBuilders.matchQuery(String.format("collector.%s.raw", language), query).boost(100).analyzer("search_raw"));
+        // @formatter:on
 
 
+        // this is former general-score, now inline
+        String strCode = "double score = 1 + doc['importance'].value * 100; score";
         ScriptScoreFunctionBuilder functionBuilder4QueryBuilder =
-                ScoreFunctionBuilders.scriptFunction(new Script(ScriptType.FILE, "painless", "general-score", null, new HashMap<String, Object>()));
+                ScoreFunctionBuilders.scriptFunction(new Script(ScriptType.INLINE, "painless", strCode, new HashMap<String, Object>()));
+
+
         m_alFilterFunction4QueryBuilder.add(new FilterFunctionBuilder(functionBuilder4QueryBuilder));
 
-        queryBuilder = new FunctionScoreQueryBuilder(m_query4QueryBuilder, m_alFilterFunction4QueryBuilder.toArray(new FilterFunctionBuilder[0]))
+        m_finalQueryWithoutTagFilterBuilder = new FunctionScoreQueryBuilder(m_query4QueryBuilder, m_alFilterFunction4QueryBuilder.toArray(new FilterFunctionBuilder[0]))
                 .boostMode(CombineFunction.MULTIPLY).scoreMode(ScoreMode.MULTIPLY);
 
-        
-        queryBuilderForTopLevelFilter = QueryBuilders.boolQuery().should(QueryBuilders.boolQuery().mustNot(QueryBuilders.existsQuery("housenumber")))
+        // @formatter:off
+        m_queryBuilderForTopLevelFilter = QueryBuilders.boolQuery()
+                .should(QueryBuilders.boolQuery().mustNot(QueryBuilders.existsQuery("housenumber")))
                 .should(QueryBuilders.matchQuery("housenumber", query).analyzer("standard")).should(QueryBuilders.existsQuery(String.format("name.%s.raw", language)));
+//        @formatter:on
 
         state = State.PLAIN;
     }
@@ -137,13 +144,19 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder
         Map<String, Object> params = newHashMap();
         params.put("lon", point.getX());
         params.put("lat", point.getY());
-        ScriptScoreFunctionBuilder builder =
-                ScoreFunctionBuilders.scriptFunction(new Script(ScriptType.FILE, "painless", "location-biased-score", null, params));
 
-        
+
+        // this is former location-biased-score, now inline
+        // exemplary debugged score: 0.5000002150154673, is multiplied with the scores from other query parts: 2150.804 (basequery) * 31,7 (importance doc value-script,
+        // former general-score)
+        // the score from the location distance is very small with respect to the score of the other query parts, thus it has a very small, up to zero, influence to the
+        // final sorting of the documents
+        String strCode = "double dist = doc['coordinate'].planeDistance(params.lat, params.lon); double score = 0.5 + ( 1.5 / (1.0 + dist * 1000 /40.0)); score";
+        ScriptScoreFunctionBuilder builder = ScoreFunctionBuilders.scriptFunction(new Script(ScriptType.INLINE, "painless", strCode, params));
+
         m_alFilterFunction4QueryBuilder.add(new FilterFunctionBuilder(builder));
 
-        queryBuilder = new FunctionScoreQueryBuilder(m_query4QueryBuilder, m_alFilterFunction4QueryBuilder.toArray(new FilterFunctionBuilder[0]))
+        m_finalQueryWithoutTagFilterBuilder = new FunctionScoreQueryBuilder(m_query4QueryBuilder, m_alFilterFunction4QueryBuilder.toArray(new FilterFunctionBuilder[0]))
                 .boostMode(CombineFunction.MULTIPLY).scoreMode(ScoreMode.MULTIPLY);
 
         return this;
@@ -358,23 +371,23 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder
     @Override
     public QueryBuilder buildQuery()
     {
-        if(state.equals(State.FINISHED)) return finalQueryBuilder;
+        if(state.equals(State.FINISHED)) return m_finalQueryBuilder;
 
 
         if(state.equals(State.FILTERED))
         {
 
-            if(orQueryBuilderForIncludeTagFiltering != null) queryBuilderForTopLevelFilter.must(orQueryBuilderForIncludeTagFiltering);
-            if(andQueryBuilderForExcludeTagFiltering != null) queryBuilderForTopLevelFilter.must(andQueryBuilderForExcludeTagFiltering);
+            if(orQueryBuilderForIncludeTagFiltering != null) m_queryBuilderForTopLevelFilter.must(orQueryBuilderForIncludeTagFiltering);
+            if(andQueryBuilderForExcludeTagFiltering != null) m_queryBuilderForTopLevelFilter.must(andQueryBuilderForExcludeTagFiltering);
 
         }
 
         state = State.FINISHED;
 
 
-        finalQueryBuilder = QueryBuilders.boolQuery().must(queryBuilder).filter(queryBuilderForTopLevelFilter);
+        m_finalQueryBuilder = QueryBuilders.boolQuery().must(m_finalQueryWithoutTagFilterBuilder).filter(m_queryBuilderForTopLevelFilter);
 
-        return finalQueryBuilder;
+        return m_finalQueryBuilder;
     }
 
 
