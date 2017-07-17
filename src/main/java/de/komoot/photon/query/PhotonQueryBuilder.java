@@ -138,7 +138,7 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder
 
 
     @Override
-    public TagFilterQueryBuilder withLocationBias(Point point)
+    public TagFilterQueryBuilder withLocationBias(Point point, Boolean locationDistanceSort)
     {
         if(point == null) return this;
         Map<String, Object> params = newHashMap();
@@ -154,10 +154,26 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder
         String strCode = "double dist = doc['coordinate'].planeDistance(params.lat, params.lon); double score = 0.5 + ( 1.5 / (1.0 + dist * 1000 /40.0)); score";
         ScriptScoreFunctionBuilder builder = ScoreFunctionBuilders.scriptFunction(new Script(ScriptType.INLINE, "painless", strCode, params));
 
-        m_alFilterFunction4QueryBuilder.add(new FilterFunctionBuilder(builder));
+        //in the case we want to sort against the location distance, only the according function score is relevant
+        if(locationDistanceSort)
+        {
+            
+            m_alFilterFunction4QueryBuilder.clear();
+            m_alFilterFunction4QueryBuilder.add(new FilterFunctionBuilder(builder));
 
-        m_finalQueryWithoutTagFilterBuilder = new FunctionScoreQueryBuilder(m_query4QueryBuilder, m_alFilterFunction4QueryBuilder.toArray(new FilterFunctionBuilder[0]))
-                .boostMode(CombineFunction.MULTIPLY).scoreMode(ScoreMode.MULTIPLY);
+            m_finalQueryWithoutTagFilterBuilder = new FunctionScoreQueryBuilder(m_query4QueryBuilder, m_alFilterFunction4QueryBuilder.toArray(new FilterFunctionBuilder[0]))
+                    .boostMode(CombineFunction.REPLACE).scoreMode(ScoreMode.MULTIPLY);
+            
+        }
+        else
+        {
+            
+            m_alFilterFunction4QueryBuilder.add(new FilterFunctionBuilder(builder));
+
+            m_finalQueryWithoutTagFilterBuilder = new FunctionScoreQueryBuilder(m_query4QueryBuilder, m_alFilterFunction4QueryBuilder.toArray(new FilterFunctionBuilder[0]))
+                    .boostMode(CombineFunction.MULTIPLY).scoreMode(ScoreMode.MULTIPLY);
+        }
+        
 
         return this;
     }

@@ -42,11 +42,21 @@ public class PhotonRequestFactory {
         } catch (Exception nfe) {
             //ignore
         }
+        Boolean locationDistanceSort = true;
+        try {
+            if(webRequest.queryParams("distanceSort") == null)
+                locationDistanceSort = true;
+            else
+                locationDistanceSort = Boolean.valueOf(webRequest.queryParams("distanceSort"));
+            
+        } catch (Exception nfe) {
+            //ignore
+        }
         QueryParamsMap tagFiltersQueryMap = webRequest.queryMap("osm_tag");
         if (!new CheckIfFilteredRequest().execute(tagFiltersQueryMap)) {
-            return (R) new PhotonRequest(query, limit, locationForBias, language);
+            return (R) new PhotonRequest(query, limit, locationForBias, locationDistanceSort, language);
         }
-        FilteredPhotonRequest photonRequest = new FilteredPhotonRequest(query, limit, locationForBias, language);
+        FilteredPhotonRequest photonRequest = new FilteredPhotonRequest(query, limit, locationForBias, locationDistanceSort, language);
         String[] tagFilters = tagFiltersQueryMap.values();
         setUpTagFilters(photonRequest, tagFilters);
         return (R) photonRequest;

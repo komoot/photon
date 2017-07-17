@@ -55,7 +55,7 @@ public class ReverseQueryBuilder implements TagFilterQueryBuilder
 
 
     @Override
-    public TagFilterQueryBuilder withLocationBias(Point point)
+    public TagFilterQueryBuilder withLocationBias(Point point, Boolean locationDistanceSort)
     {
         return this;
     }

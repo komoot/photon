@@ -27,7 +27,7 @@ public interface TagFilterQueryBuilder {
      *
      * @param point Geographical {@link Point}
      */
-    TagFilterQueryBuilder withLocationBias(Point point);
+    TagFilterQueryBuilder withLocationBias(Point point, Boolean locationDistanceSort);
 
     /**
      * Search results will be filtered to contain places having tags as provided in the argument. For example, if the argument contains
