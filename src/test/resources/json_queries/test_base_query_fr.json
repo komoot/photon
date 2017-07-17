@@ -115,7 +115,7 @@
 					{
 						"script":
 						{
-							"file": "general-score",
+							"inline": "double score = 1 + doc['importance'].value * 100; score",
 							"lang": "painless"	
 						}	
 					}	
