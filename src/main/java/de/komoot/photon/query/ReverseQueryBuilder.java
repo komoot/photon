@@ -6,6 +6,8 @@ import com.google.common.collect.ImmutableSet;
 import com.vividsolutions.jts.geom.Point;
 import java.util.Map;
 import java.util.Set;
+
+import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.common.unit.DistanceUnit;
@@ -22,24 +24,24 @@ public class ReverseQueryBuilder implements TagFilterQueryBuilder
 
     private Double radius;
 
-    private State state;
-
     private Point location;
+    
+    private String queryStringFilter;
 
 
 
-    private ReverseQueryBuilder(Point location, Double radius)
+    private ReverseQueryBuilder(Point location, Double radius, String queryStringFilter)
     {
-        this.state = State.PLAIN;
         this.location = location;
         this.radius = radius;
+        this.queryStringFilter = queryStringFilter;
     }
 
 
 
-    public static TagFilterQueryBuilder builder(Point location, Double radius)
+    public static TagFilterQueryBuilder builder(Point location, Double radius, String queryStringFilter)
     {
-        return new ReverseQueryBuilder(location, radius);
+        return new ReverseQueryBuilder(location, radius, queryStringFilter);
     }
 
 
@@ -48,7 +50,8 @@ public class ReverseQueryBuilder implements TagFilterQueryBuilder
     public TagFilterQueryBuilder withLimit(Integer limit)
     {
         this.limit = limit == null || limit < 0 ? 0 : limit;
-        this.limit = this.limit > 50 ? 50 : this.limit;
+        this.limit = this.limit > 5000 ? 5000 : this.limit;
+        
         return this;
     }
 
@@ -57,7 +60,7 @@ public class ReverseQueryBuilder implements TagFilterQueryBuilder
     @Override
     public TagFilterQueryBuilder withLocationBias(Point point, Boolean locationDistanceSort)
     {
-        return this;
+        throw new RuntimeException( new NoSuchMethodException("this method is not implemented (NOOP)"));
     }
 
 
@@ -65,7 +68,7 @@ public class ReverseQueryBuilder implements TagFilterQueryBuilder
     @Override
     public TagFilterQueryBuilder withTags(Map<String, Set<String>> tags)
     {
-        return this;
+        throw new RuntimeException( new NoSuchMethodException("this method is not implemented (NOOP)"));
     }
 
 
@@ -73,7 +76,7 @@ public class ReverseQueryBuilder implements TagFilterQueryBuilder
     @Override
     public TagFilterQueryBuilder withKeys(Set<String> keys)
     {
-        return this;
+        throw new RuntimeException( new NoSuchMethodException("this method is not implemented (NOOP)"));
     }
 
 
@@ -81,7 +84,7 @@ public class ReverseQueryBuilder implements TagFilterQueryBuilder
     @Override
     public TagFilterQueryBuilder withValues(Set<String> values)
     {
-        return this;
+        throw new RuntimeException( new NoSuchMethodException("this method is not implemented (NOOP)"));
     }
 
 
@@ -89,7 +92,7 @@ public class ReverseQueryBuilder implements TagFilterQueryBuilder
     @Override
     public TagFilterQueryBuilder withTagsNotValues(Map<String, Set<String>> tags)
     {
-        return this;
+        throw new RuntimeException( new NoSuchMethodException("this method is not implemented (NOOP)"));
     }
 
 
@@ -97,7 +100,7 @@ public class ReverseQueryBuilder implements TagFilterQueryBuilder
     @Override
     public TagFilterQueryBuilder withoutTags(Map<String, Set<String>> tagsToExclude)
     {
-        return this;
+        throw new RuntimeException( new NoSuchMethodException("this method is not implemented (NOOP)"));
     }
 
 
@@ -105,7 +108,7 @@ public class ReverseQueryBuilder implements TagFilterQueryBuilder
     @Override
     public TagFilterQueryBuilder withoutKeys(Set<String> keysToExclude)
     {
-        return this;
+        throw new RuntimeException( new NoSuchMethodException("this method is not implemented (NOOP)"));
     }
 
 
@@ -113,7 +116,7 @@ public class ReverseQueryBuilder implements TagFilterQueryBuilder
     @Override
     public TagFilterQueryBuilder withoutValues(Set<String> valuesToExclude)
     {
-        return this;
+        throw new RuntimeException( new NoSuchMethodException("this method is not implemented (NOOP)"));
     }
 
 
@@ -153,7 +156,7 @@ public class ReverseQueryBuilder implements TagFilterQueryBuilder
     @Override
     public TagFilterQueryBuilder withStrictMatch()
     {
-        return this;
+        throw new RuntimeException( new NoSuchMethodException("this method is not implemented (NOOP)"));
     }
 
 
@@ -161,7 +164,7 @@ public class ReverseQueryBuilder implements TagFilterQueryBuilder
     @Override
     public TagFilterQueryBuilder withLenientMatch()
     {
-        return this;
+        throw new RuntimeException( new NoSuchMethodException("this method is not implemented (NOOP)"));
     }
 
 
@@ -170,8 +173,16 @@ public class ReverseQueryBuilder implements TagFilterQueryBuilder
     public QueryBuilder buildQuery()
     {
         QueryBuilder fb = QueryBuilders.geoDistanceQuery("coordinate").point(location.getY(), location.getX()).distance(radius, DistanceUnit.KILOMETERS);
+        
+        BoolQueryBuilder finalQuery;
+        
+        if(queryStringFilter != null && queryStringFilter.trim().length() > 0)
+            finalQuery = QueryBuilders.boolQuery().must(QueryBuilders.queryStringQuery(queryStringFilter)).filter(fb);
+        else
+            finalQuery = QueryBuilders.boolQuery().must(QueryBuilders.matchAllQuery()).filter(fb);
 
-        return QueryBuilders.boolQuery().must(QueryBuilders.matchAllQuery()).filter(fb);
+        
+        return finalQuery;
     }
 
 

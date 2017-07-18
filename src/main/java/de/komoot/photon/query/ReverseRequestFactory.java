@@ -4,6 +4,9 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.PrecisionModel;
+
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Set;
 import spark.Request;
 
@@ -14,12 +17,21 @@ import spark.Request;
 public class ReverseRequestFactory {
     private final LanguageChecker languageChecker;
     private final static GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
+    
+    protected static HashSet<String> m_hsRequestQueryParams = new HashSet<>(Arrays.asList("lang", "lon", "lat", "radius", "queryStringFilter", "distanceSort", "limit"));
 
     public ReverseRequestFactory(Set<String> supportedLanguages) {
         this.languageChecker = new LanguageChecker(supportedLanguages);
     }
        
     public <R extends ReverseRequest> R create(Request webRequest) throws BadRequestException {
+        
+        
+        for(String queryParam: webRequest.queryParams())
+            if(!m_hsRequestQueryParams.contains(queryParam))
+                throw new BadRequestException(400, "unknown query parameter '" + queryParam + "'.  Allowed parameters are: " + m_hsRequestQueryParams);
+        
+        
         String language = webRequest.queryParams("lang");
         language = language == null ? "en" : language;
         languageChecker.apply(language);
@@ -52,9 +64,22 @@ public class ReverseRequestFactory {
             if(radius <= 0){
                 throw new BadRequestException(400, "invalid search term 'radius', expected a strictly positive number.");
             }else{
-                // limit search radius to 5km
-                radius = Math.min(radius, 5d);
+                // limit search radius to 5000km
+                radius = Math.min(radius, 5000d);
             }
+        }
+        
+        String queryStringFilter = webRequest.queryParams("queryStringFilter");
+        
+        Boolean locationDistanceSort = true;
+        try {
+            if(webRequest.queryParams("distanceSort") == null)
+                locationDistanceSort = true;
+            else
+                locationDistanceSort = Boolean.valueOf(webRequest.queryParams("distanceSort"));
+            
+        } catch (Exception nfe) {
+            //ignore
         }
 
         Integer limit = 1;
@@ -72,7 +97,10 @@ public class ReverseRequestFactory {
                 limit = Math.min(limit, 50);
             }
         }
-        ReverseRequest reverseRequest = new ReverseRequest(location, language, radius, limit);
+        
+                
+                
+        ReverseRequest reverseRequest = new ReverseRequest(location, language, radius, queryStringFilter, limit, locationDistanceSort);
         
         return (R) reverseRequest;
     }

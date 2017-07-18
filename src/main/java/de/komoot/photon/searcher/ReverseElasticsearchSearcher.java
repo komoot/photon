@@ -3,6 +3,8 @@ package de.komoot.photon.searcher;
 
 
 import com.vividsolutions.jts.geom.Point;
+
+import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.client.Client;
@@ -32,13 +34,15 @@ public class ReverseElasticsearchSearcher implements ElasticsearchReverseSearche
 
 
     @Override
-    public SearchResponse search(QueryBuilder queryBuilder, Integer limit, Point location)
+    public SearchResponse search(QueryBuilder queryBuilder, Integer limit, Point location, Boolean locationDistanceSort)
     {
         TimeValue timeout = TimeValue.timeValueSeconds(7);
 
-        
-        return client.prepareSearch("photon").setSearchType(SearchType.QUERY_AND_FETCH).setQuery(queryBuilder)
-                .addSort(SortBuilders.geoDistanceSort("coordinate", new GeoPoint(location.getY(), location.getX())).order(SortOrder.ASC)).setSize(limit)
-                .setTimeout(timeout).execute().actionGet();
+
+        SearchRequestBuilder builder = client.prepareSearch("photon").setSearchType(SearchType.QUERY_AND_FETCH).setQuery(queryBuilder).setSize(limit).setTimeout(timeout);
+
+        if(locationDistanceSort) builder.addSort(SortBuilders.geoDistanceSort("coordinate", new GeoPoint(location.getY(), location.getX())).order(SortOrder.ASC));
+
+        return builder.execute().actionGet();
     }
 }
