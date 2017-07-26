@@ -11,7 +11,6 @@
 		<dependency>
 			<groupId>org.elasticsearch</groupId>
 			<artifactId>elasticsearch</artifactId>
-			<!-- <version>5.4.1</version> -->
 			<version>5.5.0</version>
 			<exclusions><!-- gives a bad error -->
 				<exclusion>
@@ -23,7 +22,6 @@
 		<dependency><!-- required by elasticsearch -->
 			<groupId>org.elasticsearch.plugin</groupId>
 			<artifactId>transport-netty4-client</artifactId>
-			<!-- <version>5.4.1</version> -->
 			<version>5.5.0</version>
 		</dependency>
 		<dependency><!-- required by elasticsearch -->
@@ -39,14 +37,8 @@
 		<dependency>
 			<groupId>org.elasticsearch.client</groupId>
 			<artifactId>transport</artifactId>
-			<!-- <version>5.4.1</version> -->
 			<version>5.5.0</version>
 		</dependency>
-		<!-- <dependency> -->
-		<!-- <groupId>org.elasticsearch.module</groupId> -->
-		<!-- <artifactId>lang-groovy</artifactId> -->
-		<!-- <version>2.2.0</version> -->
-		<!-- </dependency> -->
 		<dependency>
 			<groupId>postgresql</groupId>
 			<artifactId>postgresql</artifactId>

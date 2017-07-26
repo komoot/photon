@@ -19,7 +19,7 @@ public class PhotonRequestFactory {
     private final LanguageChecker languageChecker;
     private final static GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
     
-    protected static HashSet<String> m_hsRequestQueryParams = new HashSet<>(Arrays.asList("lang", "q", "lon", "lat", "limit", "distanceSort", "osm_tag"));
+    protected static HashSet<String> m_hsRequestQueryParams = new HashSet<>(Arrays.asList("lang", "q", "lon", "lat", "limit", "distance_sort", "osm_tag"));
 
     public PhotonRequestFactory(Set<String> supportedLanguages) {
         this.languageChecker = new LanguageChecker(supportedLanguages);
@@ -55,10 +55,10 @@ public class PhotonRequestFactory {
         }
         Boolean locationDistanceSort = true;
         try {
-            if(webRequest.queryParams("distanceSort") == null)
+            if(webRequest.queryParams("distance_sort") == null)
                 locationDistanceSort = true;
             else
-                locationDistanceSort = Boolean.valueOf(webRequest.queryParams("distanceSort"));
+                locationDistanceSort = Boolean.valueOf(webRequest.queryParams("distance_sort"));
             
         } catch (Exception nfe) {
             //ignore

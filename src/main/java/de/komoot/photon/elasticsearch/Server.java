@@ -168,17 +168,6 @@ public class Server {
 	// copy script directory to elastic search directory
 	final ClassLoader loader = Thread.currentThread().getContextClassLoader();
 
-	Files.copy(loader.getResourceAsStream("modules/lang-groovy/plugin-security.policy"),
-		new File(groovyDirectory, "plugin-security.policy").toPath(), StandardCopyOption.REPLACE_EXISTING);
-	Files.copy(loader.getResourceAsStream("modules/lang-groovy/plugin-descriptor.properties"),
-		new File(groovyDirectory, "plugin-descriptor.properties").toPath(),
-		StandardCopyOption.REPLACE_EXISTING);
-
-	Files.copy(loader.getResourceAsStream("modules/lang-groovy/lang-groovy-5.5.0.jar"),
-		new File(groovyDirectory, "lang-groovy-5.5.0.jar").toPath(), StandardCopyOption.REPLACE_EXISTING);
-	Files.copy(loader.getResourceAsStream("modules/lang-groovy/groovy-2.4.6-indy.jar"),
-		new File(groovyDirectory, "groovy-2.4.6-indy.jar").toPath(), StandardCopyOption.REPLACE_EXISTING);
-
 	Files.copy(loader.getResourceAsStream("modules/lang-painless/antlr4-runtime-4.5.1-1.jar"),
 		new File(painlessDirectory, "antlr4-runtime-4.5.1-1.jar").toPath(),
 		StandardCopyOption.REPLACE_EXISTING);

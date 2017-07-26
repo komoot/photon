@@ -23,7 +23,7 @@ public class QueryToJson implements OneWayConverter<QueryBuilder, String> {
 	    return bytes.utf8ToString();
 	} catch (IOException e) {
 	    log.error("Unable to transform querybuilder to a json string due to an exception", e);
-	    return null;
+	    throw new RuntimeException("Unable to transform querybuilder to a json string due to an exception", e);
 	}
     }
 }
