@@ -157,11 +157,10 @@ public class Server {
 	this.esDirectory = new File(photonDirectory, "elasticsearch");
 	final File pluginDirectory = new File(esDirectory, "plugins");
 	final File scriptsDirectory = new File(esDirectory, "config/scripts");
-	final File groovyDirectory = new File(esDirectory, "modules/lang-groovy");
 	final File painlessDirectory = new File(esDirectory, "modules/lang-painless");
 
-	for (File directory : new File[] { esDirectory, photonDirectory, pluginDirectory, scriptsDirectory,
-		groovyDirectory, painlessDirectory }) {
+	for (File directory : new File[] { photonDirectory, esDirectory, pluginDirectory, scriptsDirectory,
+		painlessDirectory }) {
 	    directory.mkdirs();
 	}
 
