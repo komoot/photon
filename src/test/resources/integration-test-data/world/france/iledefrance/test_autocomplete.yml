@@ -1,0 +1,91 @@
+avenue de la répu:
+    expected:
+        name: Avenue de la République
+    lon: 2.3672929240873075
+    lat: 48.849559049999996
+
+canal bi:
+    expected:
+        name: Canal Bio
+    lon: 2.3672929240873075
+    lat: 48.849559049999996
+
+place de la répu:
+    expected:
+        name: Place de la République
+        city: Paris
+    lon: 2.3672929240873075
+    lat: 48.849559049999996
+
+place de la ba:
+    expected:
+        name: Place de la Bastille
+        city: Paris
+    lon: 2.3672929240873075
+    lat: 48.849559049999996
+
+canal saint mar:
+    expected:
+        name: Canal Saint-Martin
+    lon: 2.3672929240873075
+    lat: 48.849559049999996
+
+tour eiff:
+    expected:
+        name: Tour Eiffel
+    lon: 2.3672929240873075
+    lat: 48.849559049999996
+    lang: fr
+
+eiffel to:
+    expected:
+        name: Eiffel Tower
+        city: Paris
+    lon: 2.3672929240873075
+    lat: 48.849559049999996
+    lang: en
+
+eiffel tow:
+    expected:
+        name: Eiffel Tower
+        city: Paris
+    lon: 2.3672929240873075
+    lat: 48.849559049999996
+    lang: en
+
+gare de ly:
+    expected:
+        name: Gare de Lyon
+        city: Paris
+    lon: 2.3672929240873075
+    lat: 48.849559049999996
+
+mk2 bilb:
+    expected:
+        name: MK2 Bibliothèque
+    lon: 2.3672929240873075
+    lat: 48.849559049999996
+
+mk2 bas:
+    expected:
+        name: MK2 Bastille
+    lon: 2.3672929240873075
+    lat: 48.849559049999996
+
+quai d'au:
+    expected:
+        name: Quai d'Austerlitz
+    lon: 2.3672929240873075
+    lat: 48.849559049999996
+
+piscine josé:
+    expected:
+        name: Piscine Joséphine Baker
+    lon: 2.3672929240873075
+    lat: 48.849559049999996
+
+rue de lancr:
+    expected:
+        name: Rue de Lancry
+    lon: 2.3672929240873075
+    lat: 48.849559049999996

@@ -1,0 +1,436 @@
+query,lon,lat,limit,expected_name,expected_housenumber,expected_street,expected_city,expected_postcode
+30 Rue des Chapeliers Digne-les-Bains,,,,30 Rue des Chapeliers,,,,04000
+30 Rue des Chapeliers 04000,,,,30 Rue des Chapeliers,,,Digne-les-Bains,
+30 Rue des Chapeliers,6.236155,44.091569,,30 Rue des Chapeliers,,,,04000
+933 Route d'Apt Manosque,,,,933 Route d'Apt,,,,04100
+933 Route d'Apt 04100,,,,933 Route d'Apt,,,Manosque,
+933 Route d'Apt,5.757922,43.831939,,933 Route d'Apt,,,,04100
+13 Rue Alphonse Rolland Oraison,,,,13 Rue Alphonse Rolland,,,,04700
+13 Rue Alphonse Rolland 04700,,,,13 Rue Alphonse Rolland,,,Oraison,
+13 Rue Alphonse Rolland,5.918742,43.918616,,13 Rue Alphonse Rolland,,,,04700
+13 Rue de la Plaine Sainte-Tulle,,,,13 Rue de la Plaine,,,,04220
+13 Rue de la Plaine 04220,,,,13 Rue de la Plaine,,,Sainte-Tulle,
+13 Rue de la Plaine,5.761650,43.785843,,13 Rue de la Plaine,,,,04220
+17 Chemin du Clauzon Gap,,,,17 Chemin du Clauzon,,,,05000
+17 Chemin du Clauzon 05000,,,,17 Chemin du Clauzon,,,Gap,
+17 Chemin du Clauzon,6.107486,44.585189,,17 Chemin du Clauzon,,,,05000
+23 Rue de la Mairie Le Monêtier-les-Bains,,,,23 Rue de la Mairie,,,,05220
+23 Rue de la Mairie 05220,,,,23 Rue de la Mairie,,,Le Monêtier-les-Bains,
+23 Rue de la Mairie,6.508099,44.976243,,23 Rue de la Mairie,,,,05220
+15 Rue Lacan Antibes,,,,15 Rue Lacan,,,,06600
+15 Rue Lacan 06600,,,,15 Rue Lacan,,,Antibes,
+15 Rue Lacan,7.123838,43.582773,,15 Rue Lacan,,,,06600
+11 Chemin du Bois Aspremont,,,,11 Chemin du Bois,,,,06790
+11 Chemin du Bois 06790,,,,11 Chemin du Bois,,,Aspremont,
+11 Chemin du Bois,7.250749,43.786604,,11 Chemin du Bois,,,,06790
+730 Route des Escaillouns Berre-les-Alpes,,,,730 Route des Escaillouns,,,,06390
+730 Route des Escaillouns 06390,,,,730 Route des Escaillouns,,,Berre-les-Alpes,
+730 Route des Escaillouns,7.336633,43.829037,,730 Route des Escaillouns,,,,06390
+582 Promenade Saint-Jean Cabris,,,,582 Promenade Saint-Jean,,,,06530
+582 Promenade Saint-Jean 06530,,,,582 Promenade Saint-Jean,,,Cabris,
+582 Promenade Saint-Jean,6.866844,43.657046,,582 Promenade Saint-Jean,,,,06530
+2665 Route de la Plaine de Caille Caille,,,,2665 Route de la Plaine de Caille,,,,06750
+2665 Route de la Plaine de Caille 06750,,,,2665 Route de la Plaine de Caille,,,Caille,
+2665 Route de la Plaine de Caille,6.760316,43.781557,,2665 Route de la Plaine de Caille,,,,06750
+5 Boulevard Lord Brougham Cannes,,,,5 Boulevard Lord Brougham,,,,06150
+5 Boulevard Lord Brougham 06150,,,,5 Boulevard Lord Brougham,,,Cannes,
+5 Boulevard Lord Brougham,7.003226,43.556886,,5 Boulevard Lord Brougham,,,,06150
+16 Rue du Canal Le Cannet,,,,16 Rue du Canal,,,,06110
+16 Rue du Canal 06110,,,,16 Rue du Canal,,,Le Cannet,
+16 Rue du Canal,7.029540,43.570909,,16 Rue du Canal,,,,06110
+14 Avenue des Cigales Carros,,,,14 Avenue des Cigales,,,,06510
+14 Avenue des Cigales 06510,,,,14 Avenue des Cigales,,,Carros,
+14 Avenue des Cigales,7.191315,43.770882,,14 Avenue des Cigales,,,,06510
+822 Route du Plan de Linéa Coaraze,,,,822 Route du Plan de Linéa,,,,06390
+822 Route du Plan de Linéa 06390,,,,822 Route du Plan de Linéa,,,Coaraze,
+822 Route du Plan de Linéa,7.299132,43.858760,,822 Route du Plan de Linéa,,,,06390
+2 Rue du Murier Cuébris,,,,2 Rue du Murier,,,,06910
+2 Rue du Murier 06910,,,,2 Rue du Murier,,,Cuébris,
+2 Rue du Murier,7.018922,43.886951,,2 Rue du Murier,,,,06910
+190 Cours de la Colle de Rouge N88 La Gaude,,,,190 Cours de la Colle de Rouge N88,,,,06610
+190 Cours de la Colle de Rouge N88 06610,,,,190 Cours de la Colle de Rouge N88,,,La Gaude,
+190 Cours de la Colle de Rouge N88,7.155574,43.705968,,190 Cours de la Colle de Rouge N88,,,,06610
+22 Boulevard Jacques Crouet Grasse,,,,22 Boulevard Jacques Crouet,,,,06520
+22 Boulevard Jacques Crouet 06520,,,,22 Boulevard Jacques Crouet,,,Grasse,
+22 Boulevard Jacques Crouet,6.925281,43.656798,,22 Boulevard Jacques Crouet,,,,06520
+1 Rue du Portal Levens,,,,1 Rue du Portal,,,,06670
+1 Rue du Portal 06670,,,,1 Rue du Portal,,,Levens,
+1 Rue du Portal,7.225881,43.859565,,1 Rue du Portal,,,,06670
+1570 Route des Ciappes de Castellar Menton,,,,1570 Route des Ciappes de Castellar,,,,06500
+1570 Route des Ciappes de Castellar 06500,,,,1570 Route des Ciappes de Castellar,,,Menton,
+1570 Route des Ciappes de Castellar,7.500395,43.783476,,1570 Route des Ciappes de Castellar,,,,06500
+993 Chemin de la Sénéquière Mouans-Sartoux,,,,993 Chemin de la Sénéquière,,,,06370
+993 Chemin de la Sénéquière 06370,,,,993 Chemin de la Sénéquière,,,Mouans-Sartoux,
+993 Chemin de la Sénéquière,6.968666,43.630803,,993 Chemin de la Sénéquière,,,,06370
+8 Rue de Gubert Moulinet,,,,8 Rue de Gubert,,,,06380
+8 Rue de Gubert 06380,,,,8 Rue de Gubert,,,Moulinet,
+8 Rue de Gubert,7.412802,43.941339,,8 Rue de Gubert,,,,06380
+213 Route de Colomars Nice,,,,213 Route de Colomars,,,,06300
+213 Route de Colomars 06300,,,,213 Route de Colomars,,,Nice,
+213 Route de Colomars,7.205110,43.754519,,213 Route de Colomars,,,,06300
+28 Rue de l'Hôtel des Postes Nice,,,,28 Rue de l'Hôtel des Postes,,,,06300
+28 Rue de l'Hôtel des Postes 06300,,,,28 Rue de l'Hôtel des Postes,,,Nice,
+28 Rue de l'Hôtel des Postes,7.271473,43.699629,,28 Rue de l'Hôtel des Postes,,,,06300
+39 Rue Paul Déroulède Nice,,,,39 Rue Paul Déroulède,,,,06300
+39 Rue Paul Déroulède 06300,,,,39 Rue Paul Déroulède,,,Nice,
+39 Rue Paul Déroulède,7.263094,43.700708,,39 Rue Paul Déroulède,,,,06300
+16 Chemin de la Vignette Nice,,,,16 Chemin de la Vignette,,,,06300
+16 Chemin de la Vignette 06300,,,,16 Chemin de la Vignette,,,Nice,
+16 Chemin de la Vignette,7.208998,43.719120,,16 Chemin de la Vignette,,,,06300
+14 Chemin de la Frayère Peymeinade,,,,14 Chemin de la Frayère,,,,06530
+14 Chemin de la Frayère 06530,,,,14 Chemin de la Frayère,,,Peymeinade,
+14 Chemin de la Frayère,6.882741,43.641830,,14 Chemin de la Frayère,,,,06530
+235 Chemin du Tramway Roquefort-les-Pins,,,,235 Chemin du Tramway,,,,06330
+235 Chemin du Tramway 06330,,,,235 Chemin du Tramway,,,Roquefort-les-Pins,
+235 Chemin du Tramway,7.063445,43.660163,,235 Chemin du Tramway,,,,06330
+460 Chemin Departemental 13 Rte de Grasse Saint-Cézaire-sur-Siagne,,,,460 Chemin Departemental 13 Rte de Grasse,,,,06530
+460 Chemin Departemental 13 Rte de Grasse 06530,,,,460 Chemin Departemental 13 Rte de Grasse,,,Saint-Cézaire-sur-Siagne,
+460 Chemin Departemental 13 Rte de Grasse,6.804939,43.647248,,460 Chemin Departemental 13 Rte de Grasse,,,,06530
+194 Chemin des Romarins Saint-Laurent-du-Var,,,,194 Chemin des Romarins,,,,06700
+194 Chemin des Romarins 06700,,,,194 Chemin des Romarins,,,Saint-Laurent-du-Var,
+194 Chemin des Romarins,7.180512,43.664602,,194 Chemin des Romarins,,,,06700
+11 Rue des Voutes Sospel,,,,11 Rue des Voutes,,,,06380
+11 Rue des Voutes 06380,,,,11 Rue des Voutes,,,Sospel,
+11 Rue des Voutes,7.448558,43.876872,,11 Rue des Voutes,,,,06380
+399 Route de Pierascas Tourrettes-sur-Loup,,,,399 Route de Pierascas,,,,06140
+399 Route de Pierascas 06140,,,,399 Route de Pierascas,,,Tourrettes-sur-Loup,
+399 Route de Pierascas,7.072880,43.711277,,399 Route de Pierascas,,,,06140
+75 Boulevard du Cap Vallauris,,,,75 Boulevard du Cap,,,,06220
+75 Boulevard du Cap 06220,,,,75 Boulevard du Cap,,,Vallauris,
+75 Boulevard du Cap,7.060118,43.570042,,75 Boulevard du Cap,,,,06220
+36 Avenue des Pins Vence,,,,36 Avenue des Pins,,,,06140
+36 Avenue des Pins 06140,,,,36 Avenue des Pins,,,Vence,
+36 Avenue des Pins,7.105532,43.718743,,36 Avenue des Pins,,,,06140
+8 Allée de la Tour de la Madone Villeneuve-Loubet,,,,8 Allée de la Tour de la Madone,,,,06270
+8 Allée de la Tour de la Madone 06270,,,,8 Allée de la Tour de la Madone,,,Villeneuve-Loubet,
+8 Allée de la Tour de la Madone,7.113288,43.634314,,8 Allée de la Tour de la Madone,,,,06270
+1 Avenue des Infirmeries Aix-en-Provence,,,,1 Avenue des Infirmeries,,,,13090
+1 Avenue des Infirmeries 13090,,,,1 Avenue des Infirmeries,,,Aix-en-Provence,
+1 Avenue des Infirmeries,5.462783,43.516233,,1 Avenue des Infirmeries,,,,13090
+11 Cours Sextius Aix-en-Provence,,,,11 Cours Sextius,,,,13090
+11 Cours Sextius 13090,,,,11 Cours Sextius,,,Aix-en-Provence,
+11 Cours Sextius,5.443837,43.528339,,11 Cours Sextius,,,,13090
+16 Lotissement Notre-Dame des Anges Allauch,,,,16 Lotissement Notre-Dame des Anges,,,,13190
+16 Lotissement Notre-Dame des Anges 13190,,,,16 Lotissement Notre-Dame des Anges,,,Allauch,
+16 Lotissement Notre-Dame des Anges,5.484550,43.363311,,16 Lotissement Notre-Dame des Anges,,,,13190
+20 Rue Delfo Novi Arles,,,,20 Rue Delfo Novi,,,,13104
+20 Rue Delfo Novi 13104,,,,20 Rue Delfo Novi,,,Arles,
+20 Rue Delfo Novi,4.617719,43.664400,,20 Rue Delfo Novi,,,,13104
+2 Rue Jacquemin Arles,,,,2 Rue Jacquemin,,,,13104
+2 Rue Jacquemin 13104,,,,2 Rue Jacquemin,,,Arles,
+2 Rue Jacquemin,4.631506,43.673112,,2 Rue Jacquemin,,,,13104
+2 Rue Portagnel Arles,,,,2 Rue Portagnel,,,,13104
+2 Rue Portagnel 13104,,,,2 Rue Portagnel,,,Arles,
+2 Rue Portagnel,4.631362,43.679640,,2 Rue Portagnel,,,,13104
+100 Chemin de l'Aumône Vieille Aubagne,,,,100 Chemin de l'Aumône Vieille,,,,13400
+100 Chemin de l'Aumône Vieille 13400,,,,100 Chemin de l'Aumône Vieille,,,Aubagne,
+100 Chemin de l'Aumône Vieille,5.529703,43.286451,,100 Chemin de l'Aumône Vieille,,,,13400
+129 Rue du Vallat Aubagne,,,,129 Rue du Vallat,,,,13400
+129 Rue du Vallat 13400,,,,129 Rue du Vallat,,,Aubagne,
+129 Rue du Vallat,5.598012,43.290970,,129 Rue du Vallat,,,,13400
+7 Chemin de Magne La Bouilladisse,,,,7 Chemin de Magne,,,,13720
+7 Chemin de Magne 13720,,,,7 Chemin de Magne,,,La Bouilladisse,
+7 Chemin de Magne,5.593794,43.393574,,7 Chemin de Magne,,,,13720
+19 Chemin du Plan Capelan Carry-le-Rouet,,,,19 Chemin du Plan Capelan,,,,13620
+19 Chemin du Plan Capelan 13620,,,,19 Chemin du Plan Capelan,,,Carry-le-Rouet,
+19 Chemin du Plan Capelan,5.141116,43.335699,,19 Chemin du Plan Capelan,,,,13620
+33 Rue Claude Debussy Châteaurenard,,,,33 Rue Claude Debussy,,,,13160
+33 Rue Claude Debussy 13160,,,,33 Rue Claude Debussy,,,Châteaurenard,
+33 Rue Claude Debussy,4.851979,43.874230,,33 Rue Claude Debussy,,,,13160
+18 Rue Henri Diffonty La Ciotat,,,,18 Rue Henri Diffonty,,,,13600
+18 Rue Henri Diffonty 13600,,,,18 Rue Henri Diffonty,,,La Ciotat,
+18 Rue Henri Diffonty,5.609487,43.175723,,18 Rue Henri Diffonty,,,,13600
+1 Impasse des Mésanges Ensuès-la-Redonne,,,,1 Impasse des Mésanges,,,,13820
+1 Impasse des Mésanges 13820,,,,1 Impasse des Mésanges,,,Ensuès-la-Redonne,
+1 Impasse des Mésanges,5.212512,43.352148,,1 Impasse des Mésanges,,,,13820
+31 Rue du Puits de Passet Fontvieille,,,,31 Rue du Puits de Passet,,,,13990
+31 Rue du Puits de Passet 13990,,,,31 Rue du Puits de Passet,,,Fontvieille,
+31 Rue du Puits de Passet,4.710541,43.726877,,31 Rue du Puits de Passet,,,,13990
+6 Rue Mignet Gardanne,,,,6 Rue Mignet,,,,13120
+6 Rue Mignet 13120,,,,6 Rue Mignet,,,Gardanne,
+6 Rue Mignet,5.472036,43.455234,,6 Rue Mignet,,,,13120
+4 Impasse de la Lavande Gréasque,,,,4 Impasse de la Lavande,,,,13850
+4 Impasse de la Lavande 13850,,,,4 Impasse de la Lavande,,,Gréasque,
+4 Impasse de la Lavande,5.533649,43.436009,,4 Impasse de la Lavande,,,,13850
+25 Lotissement La Palun Istres,,,,25 Lotissement La Palun,,,,13800
+25 Lotissement La Palun 13800,,,,25 Lotissement La Palun,,,Istres,
+25 Lotissement La Palun,4.976047,43.506638,,25 Lotissement La Palun,,,,13800
+32 Lotissement Les Restanques Mallemort,,,,32 Lotissement Les Restanques,,,,13370
+32 Lotissement Les Restanques 13370,,,,32 Lotissement Les Restanques,,,Mallemort,
+32 Lotissement Les Restanques,5.183941,43.727544,,32 Lotissement Les Restanques,,,,13370
+21 Rue Galinière Martigues,,,,21 Rue Galinière,,,,13500
+21 Rue Galinière 13500,,,,21 Rue Galinière,,,Martigues,
+21 Rue Galinière,5.055315,43.406165,,21 Rue Galinière,,,,13500
+3 Rue de la Bourride Miramas,,,,3 Rue de la Bourride,,,,13140
+3 Rue de la Bourride 13140,,,,3 Rue de la Bourride,,,Miramas,
+3 Rue de la Bourride,5.001276,43.572373,,3 Rue de la Bourride,,,,13140
+6503 Chemin de l'Eau Noves,,,,6503 Chemin de l'Eau,,,,13550
+6503 Chemin de l'Eau 13550,,,,6503 Chemin de l'Eau,,,Noves,
+6503 Chemin de l'Eau,4.900729,43.872602,,6503 Chemin de l'Eau,,,,13550
+48 Avenue de la Gardiette Les Pennes-Mirabeau,,,,48 Avenue de la Gardiette,,,,13170
+48 Avenue de la Gardiette 13170,,,,48 Avenue de la Gardiette,,,Les Pennes-Mirabeau,
+48 Avenue de la Gardiette,5.338169,43.419697,,48 Avenue de la Gardiette,,,,13170
+6 Boulevard Victor Hugo Plan-de-Cuques,,,,6 Boulevard Victor Hugo,,,,13380
+6 Boulevard Victor Hugo 13380,,,,6 Boulevard Victor Hugo,,,Plan-de-Cuques,
+6 Boulevard Victor Hugo,5.466831,43.361087,,6 Boulevard Victor Hugo,,,,13380
+11 Boulevard de la Coopérative Le Puy-Sainte-Réparade,,,,11 Boulevard de la Coopérative,,,,13610
+11 Boulevard de la Coopérative 13610,,,,11 Boulevard de la Coopérative,,,Le Puy-Sainte-Réparade,
+11 Boulevard de la Coopérative,5.436264,43.665288,,11 Boulevard de la Coopérative,,,,13610
+17 Rue du Poilu La Roque-d'Anthéron,,,,17 Rue du Poilu,,,,13640
+17 Rue du Poilu 13640,,,,17 Rue du Poilu,,,La Roque-d'Anthéron,
+17 Rue du Poilu,5.311433,43.715139,,17 Rue du Poilu,,,,13640
+21 Boulevard Général de Gaulle Saint-Étienne-du-Grès,,,,21 Boulevard Général de Gaulle,,,,13103
+21 Boulevard Général de Gaulle 13103,,,,21 Boulevard Général de Gaulle,,,Saint-Étienne-du-Grès,
+21 Boulevard Général de Gaulle,4.725087,43.782449,,21 Boulevard Général de Gaulle,,,,13103
+206 Rue des Pins Saint-Martin-de-Crau,,,,206 Rue des Pins,,,,13310
+206 Rue des Pins 13310,,,,206 Rue des Pins,,,Saint-Martin-de-Crau,
+206 Rue des Pins,4.789785,43.651381,,206 Rue des Pins,,,,13310
+22 Lotissement La Voie Aurelienne Saint-Rémy-de-Provence,,,,22 Lotissement La Voie Aurelienne,,,,13210
+22 Lotissement La Voie Aurelienne 13210,,,,22 Lotissement La Voie Aurelienne,,,Saint-Rémy-de-Provence,
+22 Lotissement La Voie Aurelienne,4.847178,43.782434,,22 Lotissement La Voie Aurelienne,,,,13210
+134 Rue des Moulins Salon-de-Provence,,,,134 Rue des Moulins,,,,13300
+134 Rue des Moulins 13300,,,,134 Rue des Moulins,,,Salon-de-Provence,
+134 Rue des Moulins,5.099604,43.641854,,134 Rue des Moulins,,,,13300
+133 Avenue du 8 Mai 1945 Septèmes-les-Vallons,,,,133 Avenue du 8 Mai 1945,,,,13240
+133 Avenue du 8 Mai 1945 13240,,,,133 Avenue du 8 Mai 1945,,,Septèmes-les-Vallons,
+133 Avenue du 8 Mai 1945,5.365317,43.397083,,133 Avenue du 8 Mai 1945,,,,13240
+25 Cours Esquiros Trets,,,,25 Cours Esquiros,,,,13530
+25 Cours Esquiros 13530,,,,25 Cours Esquiros,,,Trets,
+25 Cours Esquiros,5.686558,43.446655,,25 Cours Esquiros,,,,13530
+6 Impasse des Genets Verquières,,,,6 Impasse des Genets,,,,13670
+6 Impasse des Genets 13670,,,,6 Impasse des Genets,,,Verquières,
+6 Impasse des Genets,4.921382,43.842542,,6 Impasse des Genets,,,,13670
+11 Rue Fontaine d'Arménie Marseille,,,,11 Rue Fontaine d'Arménie,,,,13001
+11 Rue Fontaine d'Arménie 13001,,,,11 Rue Fontaine d'Arménie,,,Marseille,
+11 Rue Fontaine d'Arménie,5.374893,43.299415,,11 Rue Fontaine d'Arménie,,,,13001
+35 Rue du Panier Marseille,,,,35 Rue du Panier,,,,13002
+35 Rue du Panier 13002,,,,35 Rue du Panier,,,Marseille,
+35 Rue du Panier,5.367604,43.299366,,35 Rue du Panier,,,,13002
+9 Rue de Versailles Marseille,,,,9 Rue de Versailles,,,,13003
+9 Rue de Versailles 13003,,,,9 Rue de Versailles,,,Marseille,
+9 Rue de Versailles,5.375093,43.310709,,9 Rue de Versailles,,,,13003
+2 Rue Tournon Marseille,,,,2 Rue Tournon,,,,13004
+2 Rue Tournon 13004,,,,2 Rue Tournon,,,Marseille,
+2 Rue Tournon,5.404800,43.302731,,2 Rue Tournon,,,,13004
+10 Rue de Verdun Marseille,,,,10 Rue de Verdun,,,,13005
+10 Rue de Verdun 13005,,,,10 Rue de Verdun,,,Marseille,
+10 Rue de Verdun,5.395718,43.296491,,10 Rue de Verdun,,,,13005
+5 Impasse Saint-Domingue Marseille,,,,5 Impasse Saint-Domingue,,,,13006
+5 Impasse Saint-Domingue 13006,,,,5 Impasse Saint-Domingue,,,Marseille,
+5 Impasse Saint-Domingue,5.374039,43.281652,,5 Impasse Saint-Domingue,,,,13006
+9 Rue Notre-Dame des Grâces Marseille,,,,9 Rue Notre-Dame des Grâces,,,,13007
+9 Rue Notre-Dame des Grâces 13007,,,,9 Rue Notre-Dame des Grâces,,,Marseille,
+9 Rue Notre-Dame des Grâces,5.348567,43.280428,,9 Rue Notre-Dame des Grâces,,,,13007
+7 Rue Jean Alcazar Marseille,,,,7 Rue Jean Alcazar,,,,13008
+7 Rue Jean Alcazar 13008,,,,7 Rue Jean Alcazar,,,Marseille,
+7 Rue Jean Alcazar,5.391744,43.279568,,7 Rue Jean Alcazar,,,,13008
+44 Avenue Desautel Marseille,,,,44 Avenue Desautel,,,,13009
+44 Avenue Desautel 13009,,,,44 Avenue Desautel,,,Marseille,
+44 Avenue Desautel,5.407131,43.254766,,44 Avenue Desautel,,,,13009
+138 Rue François Mauriac Marseille,,,,138 Rue François Mauriac,,,,13010
+138 Rue François Mauriac 13010,,,,138 Rue François Mauriac,,,Marseille,
+138 Rue François Mauriac,5.423724,43.269851,,138 Rue François Mauriac,,,,13010
+11 Impasse du Cordeau Marseille,,,,11 Impasse du Cordeau,,,,13011
+11 Impasse du Cordeau 13011,,,,11 Impasse du Cordeau,,,Marseille,
+11 Impasse du Cordeau,5.460850,43.293026,,11 Impasse du Cordeau,,,,13011
+9 Lotissement Le Domaine des Faïenciers Marseille,,,,9 Lotissement Le Domaine des Faïenciers,,,,13011
+9 Lotissement Le Domaine des Faïenciers 13011,,,,9 Lotissement Le Domaine des Faïenciers,,,Marseille,
+9 Lotissement Le Domaine des Faïenciers,5.429800,43.293113,,9 Lotissement Le Domaine des Faïenciers,,,,13011
+31 Boulevard Henri Fabre Marseille,,,,31 Boulevard Henri Fabre,,,,13012
+31 Boulevard Henri Fabre 13012,,,,31 Boulevard Henri Fabre,,,Marseille,
+31 Boulevard Henri Fabre,5.416035,43.307605,,31 Boulevard Henri Fabre,,,,13012
+179 Avenue du 24 Avril 1915 Marseille,,,,179 Avenue du 24 Avril 1915,,,,13012
+179 Avenue du 24 Avril 1915 13012,,,,179 Avenue du 24 Avril 1915,,,Marseille,
+179 Avenue du 24 Avril 1915,5.438740,43.308772,,179 Avenue du 24 Avril 1915,,,,13012
+4 Boulevard Michel Marseille,,,,4 Boulevard Michel,,,,13013
+4 Boulevard Michel 13013,,,,4 Boulevard Michel,,,Marseille,
+4 Boulevard Michel,5.410359,43.320262,,4 Boulevard Michel,,,,13013
+19 Impasse du Bois-Chenu Marseille,,,,19 Impasse du Bois-Chenu,,,,13014
+19 Impasse du Bois-Chenu 13014,,,,19 Impasse du Bois-Chenu,,,Marseille,
+19 Impasse du Bois-Chenu,5.400304,43.341514,,19 Impasse du Bois-Chenu,,,,13014
+26 Boulevard Bech Marseille,,,,26 Boulevard Bech,,,,13015
+26 Boulevard Bech 13015,,,,26 Boulevard Bech,,,Marseille,
+26 Boulevard Bech,5.363367,43.363386,,26 Boulevard Bech,,,,13015
+15 Boulevard Paumont Marseille,,,,15 Boulevard Paumont,,,,13015
+15 Boulevard Paumont 13015,,,,15 Boulevard Paumont,,,Marseille,
+15 Boulevard Paumont,5.351411,43.340284,,15 Boulevard Paumont,,,,13015
+52 Chemin du Passet Marseille,,,,52 Chemin du Passet,,,,13016
+52 Chemin du Passet 13016,,,,52 Chemin du Passet,,,Marseille,
+52 Chemin du Passet,5.335897,43.360764,,52 Chemin du Passet,,,,13016
+332 Chemin No 126 du Bourneou Le Beausset,,,,332 Chemin No 126 du Bourneou,,,,83330
+332 Chemin No 126 du Bourneou 83330,,,,332 Chemin No 126 du Bourneou,,,Le Beausset,
+332 Chemin No 126 du Bourneou,5.811577,43.208600,,332 Chemin No 126 du Bourneou,,,,83330
+15 Chemin des Restanques Bormes-les-Mimosas,,,,15 Chemin des Restanques,,,,83230
+15 Chemin des Restanques 83230,,,,15 Chemin des Restanques,,,Bormes-les-Mimosas,
+15 Chemin des Restanques,6.356603,43.141732,,15 Chemin des Restanques,,,,83230
+5 Avenue des Pins Carqueiranne,,,,5 Avenue des Pins,,,,83320
+5 Avenue des Pins 83320,,,,5 Avenue des Pins,,,Carqueiranne,
+5 Avenue des Pins,6.072952,43.102472,,5 Avenue des Pins,,,,83320
+14 Lotissement Bois Fleuri Cogolin,,,,14 Lotissement Bois Fleuri,,,,83310
+14 Lotissement Bois Fleuri 83310,,,,14 Lotissement Bois Fleuri,,,Cogolin,
+14 Lotissement Bois Fleuri,6.524936,43.238195,,14 Lotissement Bois Fleuri,,,,83310
+302 Rue du Thym La Crau,,,,302 Rue du Thym,,,,83260
+302 Rue du Thym 83260,,,,302 Rue du Thym,,,La Crau,
+302 Rue du Thym,6.076723,43.119725,,302 Rue du Thym,,,,83260
+684 Avenue de Grasse Draguignan,,,,684 Avenue de Grasse,,,,83300
+684 Avenue de Grasse 83300,,,,684 Avenue de Grasse,,,Draguignan,
+684 Avenue de Grasse,6.474148,43.538038,,684 Avenue de Grasse,,,,83300
+5 Impasse Ventre La Farlède,,,,5 Impasse Ventre,,,,83210
+5 Impasse Ventre 83210,,,,5 Impasse Ventre,,,La Farlède,
+5 Impasse Ventre,6.046754,43.171436,,5 Impasse Ventre,,,,83210
+74 Allée de la Cigale d'Or Fréjus,,,,74 Allée de la Cigale d'Or,,,,83600
+74 Allée de la Cigale d'Or 83600,,,,74 Allée de la Cigale d'Or,,,Fréjus,
+74 Allée de la Cigale d'Or,6.727121,43.449170,,74 Allée de la Cigale d'Or,,,,83600
+465 Rue du Pas de la Cèpe Fréjus,,,,465 Rue du Pas de la Cèpe,,,,83600
+465 Rue du Pas de la Cèpe 83600,,,,465 Rue du Pas de la Cèpe,,,Fréjus,
+465 Rue du Pas de la Cèpe,6.874097,43.520450,,465 Rue du Pas de la Cèpe,,,,83600
+4 Rue du Lot Domaine des Pins La Garde,,,,4 Rue du Lot Domaine des Pins,,,,83130
+4 Rue du Lot Domaine des Pins 83130,,,,4 Rue du Lot Domaine des Pins,,,La Garde,
+4 Rue du Lot Domaine des Pins,6.001340,43.116684,,4 Rue du Lot Domaine des Pins,,,,83130
+14 Allée Auréa Hyères,,,,14 Allée Auréa,,,,83400
+14 Allée Auréa 83400,,,,14 Allée Auréa,,,Hyères,
+14 Allée Auréa,6.144660,43.116093,,14 Allée Auréa,,,,83400
+21 Rue Marc Riché Hyères,,,,21 Rue Marc Riché,,,,83400
+21 Rue Marc Riché 83400,,,,21 Rue Marc Riché,,,Hyères,
+21 Rue Marc Riché,6.115726,43.103108,,21 Rue Marc Riché,,,,83400
+6108 Impasse du Rossignol Le Lavandou,,,,6108 Impasse du Rossignol,,,,83980
+6108 Impasse du Rossignol 83980,,,,6108 Impasse du Rossignol,,,Le Lavandou,
+6108 Impasse du Rossignol,6.416059,43.150385,,6108 Impasse du Rossignol,,,,83980
+288 Chemin du Pas de l'Ave Lorgues,,,,288 Chemin du Pas de l'Ave,,,,83510
+288 Chemin du Pas de l'Ave 83510,,,,288 Chemin du Pas de l'Ave,,,Lorgues,
+288 Chemin du Pas de l'Ave,6.326831,43.484272,,288 Chemin du Pas de l'Ave,,,,83510
+899 Chemin des Rouvières Le Muy,,,,899 Chemin des Rouvières,,,,83490
+899 Chemin des Rouvières 83490,,,,899 Chemin des Rouvières,,,Le Muy,
+899 Chemin des Rouvières,6.549990,43.484002,,899 Chemin des Rouvières,,,,83490
+45 Avenue Général Albert Azan Pignans,,,,45 Avenue Général Albert Azan,,,,83790
+45 Avenue Général Albert Azan 83790,,,,45 Avenue Général Albert Azan,,,Pignans,
+45 Avenue Général Albert Azan,6.235873,43.304437,,45 Avenue Général Albert Azan,,,,83790
+52 Traverse du Marché Puget-Ville,,,,52 Traverse du Marché,,,,83390
+52 Traverse du Marché 83390,,,,52 Traverse du Marché,,,Puget-Ville,
+52 Traverse du Marché,6.135290,43.288656,,52 Traverse du Marché,,,,83390
+48 Rue du Nid Au Soleil Roquebrune-sur-Argens,,,,48 Rue du Nid Au Soleil,,,,83370
+48 Rue du Nid Au Soleil 83370,,,,48 Rue du Nid Au Soleil,,,Roquebrune-sur-Argens,
+48 Rue du Nid Au Soleil,6.714635,43.350730,,48 Rue du Nid Au Soleil,,,,83370
+6 Boulevard des Cades Sainte-Maxime,,,,6 Boulevard des Cades,,,,83120
+6 Boulevard des Cades 83120,,,,6 Boulevard des Cades,,,Sainte-Maxime,
+6 Boulevard des Cades,6.643041,43.316052,,6 Boulevard des Cades,,,,83120
+453 Chemin du Petit Recours Saint-Maximin-la-Sainte-Baume,,,,453 Chemin du Petit Recours,,,,83470
+453 Chemin du Petit Recours 83470,,,,453 Chemin du Petit Recours,,,Saint-Maximin-la-Sainte-Baume,
+453 Chemin du Petit Recours,5.850618,43.437391,,453 Chemin du Petit Recours,,,,83470
+829 Boulevard Jean Georges Branché Saint-Raphaël,,,,829 Boulevard Jean Georges Branché,,,,83530
+829 Boulevard Jean Georges Branché 83530,,,,829 Boulevard Jean Georges Branché,,,Saint-Raphaël,
+829 Boulevard Jean Georges Branché,6.924382,43.478576,,829 Boulevard Jean Georges Branché,,,,83530
+21 Boulevard Bernard Palissy Saint-Zacharie,,,,21 Boulevard Bernard Palissy,,,,83640
+21 Boulevard Bernard Palissy 83640,,,,21 Boulevard Bernard Palissy,,,Saint-Zacharie,
+21 Boulevard Bernard Palissy,5.708330,43.384033,,21 Boulevard Bernard Palissy,,,,83640
+345 Avenue Auguste Renoir La Seyne-sur-Mer,,,,345 Avenue Auguste Renoir,,,,83500
+345 Avenue Auguste Renoir 83500,,,,345 Avenue Auguste Renoir,,,La Seyne-sur-Mer,
+345 Avenue Auguste Renoir,5.868262,43.085750,,345 Avenue Auguste Renoir,,,,83500
+54 Rue Louis Blanqui La Seyne-sur-Mer,,,,54 Rue Louis Blanqui,,,,83500
+54 Rue Louis Blanqui 83500,,,,54 Rue Louis Blanqui,,,La Seyne-sur-Mer,
+54 Rue Louis Blanqui,5.881829,43.099435,,54 Rue Louis Blanqui,,,,83500
+109 Impasse des Faisses Six-Fours-les-Plages,,,,109 Impasse des Faisses,,,,83140
+109 Impasse des Faisses 83140,,,,109 Impasse des Faisses,,,Six-Fours-les-Plages,
+109 Impasse des Faisses,5.813487,43.078865,,109 Impasse des Faisses,,,,83140
+387 Chemin des Andués Solliès-Pont,,,,387 Chemin des Andués,,,,83210
+387 Chemin des Andués 83210,,,,387 Chemin des Andués,,,Solliès-Pont,
+387 Chemin des Andués,6.050041,43.197059,,387 Chemin des Andués,,,,83210
+111 Hameau Les Camails Le Thoronet,,,,111 Hameau Les Camails,,,,83340
+111 Hameau Les Camails 83340,,,,111 Hameau Les Camails,,,Le Thoronet,
+111 Hameau Les Camails,6.261667,43.475218,,111 Hameau Les Camails,,,,83340
+593 Chemin du Collet de Saint-Pièrre Toulon,,,,593 Chemin du Collet de Saint-Pièrre,,,,83100
+593 Chemin du Collet de Saint-Pièrre 83100,,,,593 Chemin du Collet de Saint-Pièrre,,,Toulon,
+593 Chemin du Collet de Saint-Pièrre,5.912041,43.160528,,593 Chemin du Collet de Saint-Pièrre,,,,83100
+64 Avenue Georges Clemenceau Toulon,,,,64 Avenue Georges Clemenceau,,,,83100
+64 Avenue Georges Clemenceau 83100,,,,64 Avenue Georges Clemenceau,,,Toulon,
+64 Avenue Georges Clemenceau,5.937206,43.123403,,64 Avenue Georges Clemenceau,,,,83100
+18 Rue Masséna Toulon,,,,18 Rue Masséna,,,,83100
+18 Rue Masséna 83100,,,,18 Rue Masséna,,,Toulon,
+18 Rue Masséna,5.935369,43.110195,,18 Rue Masséna,,,,83100
+85 Rue Santa Lucia Toulon,,,,85 Rue Santa Lucia,,,,83100
+85 Rue Santa Lucia 83100,,,,85 Rue Santa Lucia,,,Toulon,
+85 Rue Santa Lucia,5.896875,43.146111,,85 Rue Santa Lucia,,,,83100
+78 Traverse du Pinson La Valette-du-Var,,,,78 Traverse du Pinson,,,,83160
+78 Traverse du Pinson 83160,,,,78 Traverse du Pinson,,,La Valette-du-Var,
+78 Traverse du Pinson,5.987031,43.154275,,78 Traverse du Pinson,,,,83160
+15 Chemin des Aubépines Saint-Mandrier-sur-Mer,,,,15 Chemin des Aubépines,,,,83430
+15 Chemin des Aubépines 83430,,,,15 Chemin des Aubépines,,,Saint-Mandrier-sur-Mer,
+15 Chemin des Aubépines,5.924359,43.075482,,15 Chemin des Aubépines,,,,83430
+5 Rue Alfred Bergier Mft Avignon,,,,5 Rue Alfred Bergier Mft,,,,84140
+5 Rue Alfred Bergier Mft 84140,,,,5 Rue Alfred Bergier Mft,,,Avignon,
+5 Rue Alfred Bergier Mft,4.875017,43.939148,,5 Rue Alfred Bergier Mft,,,,84140
+31 Rue Diane de Poitiers Avignon,,,,31 Rue Diane de Poitiers,,,,84140
+31 Rue Diane de Poitiers 84140,,,,31 Rue Diane de Poitiers,,,Avignon,
+31 Rue Diane de Poitiers,4.822552,43.928334,,31 Rue Diane de Poitiers,,,,84140
+7 Rue Ledru Rollin Avignon,,,,7 Rue Ledru Rollin,,,,84140
+7 Rue Ledru Rollin 84140,,,,7 Rue Ledru Rollin,,,Avignon,
+7 Rue Ledru Rollin,4.812372,43.950804,,7 Rue Ledru Rollin,,,,84140
+10 Rue du Portail Boquier Avignon,,,,10 Rue du Portail Boquier,,,,84140
+10 Rue du Portail Boquier 84140,,,,10 Rue du Portail Boquier,,,Avignon,
+10 Rue du Portail Boquier,4.804947,43.944583,,10 Rue du Portail Boquier,,,,84140
+75 Chemin de la Bindonne Bédarrides,,,,75 Chemin de la Bindonne,,,,84370
+75 Chemin de la Bindonne 84370,,,,75 Chemin de la Bindonne,,,Bédarrides,
+75 Chemin de la Bindonne,4.937503,44.057071,,75 Chemin de la Bindonne,,,,84370
+601 Chemin de la Prefferance Bollène,,,,601 Chemin de la Prefferance,,,,84500
+601 Chemin de la Prefferance 84500,,,,601 Chemin de la Prefferance,,,Bollène,
+601 Chemin de la Prefferance,4.712632,44.277966,,601 Chemin de la Prefferance,,,,84500
+52BIS Chemin de l'Aqueduc Carpentras,,,,52BIS Chemin de l'Aqueduc,,,,84200
+52BIS Chemin de l'Aqueduc 84200,,,,52BIS Chemin de l'Aqueduc,,,Carpentras,
+52BIS Chemin de l'Aqueduc,5.058438,44.064902,,52BIS Chemin de l'Aqueduc,,,,84200
+195 Boulevard du Nord Carpentras,,,,195 Boulevard du Nord,,,,84200
+195 Boulevard du Nord 84200,,,,195 Boulevard du Nord,,,Carpentras,
+195 Boulevard du Nord,5.048548,44.057651,,195 Boulevard du Nord,,,,84200
+6 Domaine de la Noyeraie Caumont-sur-Durance,,,,6 Domaine de la Noyeraie,,,,84510
+6 Domaine de la Noyeraie 84510,,,,6 Domaine de la Noyeraie,,,Caumont-sur-Durance,
+6 Domaine de la Noyeraie,4.952233,43.895967,,6 Domaine de la Noyeraie,,,,84510
+2634 Chemin Romieu Cavaillon,,,,2634 Chemin Romieu,,,,84300
+2634 Chemin Romieu 84300,,,,2634 Chemin Romieu,,,Cavaillon,
+2634 Chemin Romieu,5.052860,43.874299,,2634 Chemin Romieu,,,,84300
+80 Allée Raimbaud d'Orange Courthézon,,,,80 Allée Raimbaud d'Orange,,,,84350
+80 Allée Raimbaud d'Orange 84350,,,,80 Allée Raimbaud d'Orange,,,Courthézon,
+80 Allée Raimbaud d'Orange,4.879376,44.089706,,80 Allée Raimbaud d'Orange,,,,84350
+578 Cours René Char L'Isle-sur-la-Sorgue,,,,578 Cours René Char,,,,84800
+578 Cours René Char 84800,,,,578 Cours René Char,,,L'Isle-sur-la-Sorgue,
+578 Cours René Char,5.054979,43.913808,,578 Cours René Char,,,,84800
+9 Lotissement Les Peupliers L'Isle-sur-la-Sorgue,,,,9 Lotissement Les Peupliers,,,,84800
+9 Lotissement Les Peupliers 84800,,,,9 Lotissement Les Peupliers,,,L'Isle-sur-la-Sorgue,
+9 Lotissement Les Peupliers,5.046234,43.931580,,9 Lotissement Les Peupliers,,,,84800
+246 Chemin de Tinargue Malemort-du-Comtat,,,,246 Chemin de Tinargue,,,,84570
+246 Chemin de Tinargue 84570,,,,246 Chemin de Tinargue,,,Malemort-du-Comtat,
+246 Chemin de Tinargue,5.166013,44.021273,,246 Chemin de Tinargue,,,,84570
+8 Impasse Louis Giraud Monteux,,,,8 Impasse Louis Giraud,,,,84170
+8 Impasse Louis Giraud 84170,,,,8 Impasse Louis Giraud,,,Monteux,
+8 Impasse Louis Giraud,5.003113,44.034636,,8 Impasse Louis Giraud,,,,84170
+99 Chemin des Peyrollets Mormoiron,,,,99 Chemin des Peyrollets,,,,84570
+99 Chemin des Peyrollets 84570,,,,99 Chemin des Peyrollets,,,Mormoiron,
+99 Chemin des Peyrollets,5.185432,44.066491,,99 Chemin des Peyrollets,,,,84570
+169 Avenue Général Raymond Lorho Orange,,,,169 Avenue Général Raymond Lorho,,,,84100
+169 Avenue Général Raymond Lorho 84100,,,,169 Avenue Général Raymond Lorho,,,Orange,
+169 Avenue Général Raymond Lorho,4.819466,44.134117,,169 Avenue Général Raymond Lorho,,,,84100
+53 Clos Saint-Jacques Orange,,,,53 Clos Saint-Jacques,,,,84100
+53 Clos Saint-Jacques 84100,,,,53 Clos Saint-Jacques,,,Orange,
+53 Clos Saint-Jacques,4.824597,44.121110,,53 Clos Saint-Jacques,,,,84100
+18 Rue Grande Pertuis,,,,18 Rue Grande,,,,84120
+18 Rue Grande 84120,,,,18 Rue Grande,,,Pertuis,
+18 Rue Grande,5.502976,43.694931,,18 Rue Grande,,,,84120
+39 Avenue de Provence Piolenc,,,,39 Avenue de Provence,,,,84420
+39 Avenue de Provence 84420,,,,39 Avenue de Provence,,,Piolenc,
+39 Avenue de Provence,4.761619,44.175499,,39 Avenue de Provence,,,,84420
+133 Chemin de Canfier Robion,,,,133 Chemin de Canfier,,,,84440
+133 Chemin de Canfier 84440,,,,133 Chemin de Canfier,,,Robion,
+133 Chemin de Canfier,5.107585,43.848871,,133 Chemin de Canfier,,,,84440
+12 Impasse des Troènes Saint-Saturnin-lès-Avignon,,,,12 Impasse des Troènes,,,,84450
+12 Impasse des Troènes 84450,,,,12 Impasse des Troènes,,,Saint-Saturnin-lès-Avignon,
+12 Impasse des Troènes,4.935709,43.958471,,12 Impasse des Troènes,,,,84450
+274C Rue Marius Chastel Sorgues,,,,274C Rue Marius Chastel,,,,84700
+274C Rue Marius Chastel 84700,,,,274C Rue Marius Chastel,,,Sorgues,
+274C Rue Marius Chastel,4.881426,44.009981,,274C Rue Marius Chastel,,,,84700
+490 Chemin Vieux Le Thor,,,,490 Chemin Vieux,,,,84250
+490 Chemin Vieux 84250,,,,490 Chemin Vieux,,,Le Thor,
+490 Chemin Vieux,4.988444,43.925977,,490 Chemin Vieux,,,,84250
+40 Cours Tivoli Valréas,,,,40 Cours Tivoli,,,,84600
+40 Cours Tivoli 84600,,,,40 Cours Tivoli,,,Valréas,
+40 Cours Tivoli,4.993043,44.382437,,40 Cours Tivoli,,,,84600
+6059 Rue des Vautes Velleron,,,,6059 Rue des Vautes,,,,84740
+6059 Rue des Vautes 84740,,,,6059 Rue des Vautes,,,Velleron,
+6059 Rue des Vautes,5.031515,43.956557,,6059 Rue des Vautes,,,,84740

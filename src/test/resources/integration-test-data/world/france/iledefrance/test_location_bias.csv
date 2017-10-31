@@ -1,0 +1,5 @@
+comment;query;lat;lon;expected_name;expected_city
+From Nanterre;avenue de la république;48.8924273;2.2071267;Avenue de la République;Nanterre
+From Rueil-Malmaison;avenue de la république;48.8693888;2.1808837;Avenue de la République;Rueil-Malmaison
+From Saint-Cloud;saint;48.8426;2.2045308;Saint-Cloud;
+From Saint-Germain-en-Laye;saint;48.8990413;2.0942792;Saint-Germain-en-Laye;

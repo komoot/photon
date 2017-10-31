@@ -1,0 +1,415 @@
+query,lon,lat,limit,expected_name,expected_housenumber,expected_street,expected_city,expected_postcode
+1 Rue des Colis Angoulême,,,,1 Rue des Colis,,,,16000
+1 Rue des Colis 16000,,,,1 Rue des Colis,,,Angoulême,
+1 Rue des Colis,0.161566,45.647280,,1 Rue des Colis,,,,16000
+13 Rue Marie Gounin Angoulême,,,,13 Rue Marie Gounin,,,,16000
+13 Rue Marie Gounin 16000,,,,13 Rue Marie Gounin,,,Angoulême,
+13 Rue Marie Gounin,0.173704,45.651263,,13 Rue Marie Gounin,,,,16000
+99BIS Rue de la Tourgarnier Angoulême,,,,99BIS Rue de la Tourgarnier,,,,16000
+99BIS Rue de la Tourgarnier 16000,,,,99BIS Rue de la Tourgarnier,,,Angoulême,
+99BIS Rue de la Tourgarnier,0.165480,45.644521,,99BIS Rue de la Tourgarnier,,,,16000
+1 Rue des Distilleries Bourg-Charente,,,,1 Rue des Distilleries,,,,16200
+1 Rue des Distilleries 16200,,,,1 Rue des Distilleries,,,Bourg-Charente,
+1 Rue des Distilleries,-0.227308,45.680513,,1 Rue des Distilleries,,,,16200
+416 Rue Edward Warin Champniers,,,,416 Rue Edward Warin,,,,16430
+416 Rue Edward Warin 16430,,,,416 Rue Edward Warin,,,Champniers,
+416 Rue Edward Warin,0.201514,45.732566,,416 Rue Edward Warin,,,,16430
+6 Rue Croix Landolle Châteaubernard,,,,6 Rue Croix Landolle,,,,16100
+6 Rue Croix Landolle 16100,,,,6 Rue Croix Landolle,,,Châteaubernard,
+6 Rue Croix Landolle,-0.327085,45.681005,,6 Rue Croix Landolle,,,,16100
+18 Rue du Canada Cognac,,,,18 Rue du Canada,,,,16100
+18 Rue du Canada 16100,,,,18 Rue du Canada,,,Cognac,
+18 Rue du Canada,-0.315761,45.698434,,18 Rue du Canada,,,,16100
+329 Chemin des Meuniers Cognac,,,,329 Chemin des Meuniers,,,,16100
+329 Chemin des Meuniers 16100,,,,329 Chemin des Meuniers,,,Cognac,
+329 Chemin des Meuniers,-0.346361,45.675277,,329 Chemin des Meuniers,,,,16100
+9 Impasse du Canal La Couronne,,,,9 Impasse du Canal,,,,16400
+9 Impasse du Canal 16400,,,,9 Impasse du Canal,,,La Couronne,
+9 Impasse du Canal,0.089518,45.603432,,9 Impasse du Canal,,,,16400
+14 Rue des Ouches Fléac,,,,14 Rue des Ouches,,,,16730
+14 Rue des Ouches 16730,,,,14 Rue des Ouches,,,Fléac,
+14 Rue des Ouches,0.078065,45.689511,,14 Rue des Ouches,,,,16730
+21 Impasse Sadi Carnot Gond-Pontouvre,,,,21 Impasse Sadi Carnot,,,,16160
+21 Impasse Sadi Carnot 16160,,,,21 Impasse Sadi Carnot,,,Gond-Pontouvre,
+21 Impasse Sadi Carnot,0.172977,45.662927,,21 Impasse Sadi Carnot,,,,16160
+3 Impasse des Jardins Jarnac,,,,3 Impasse des Jardins,,,,16200
+3 Impasse des Jardins 16200,,,,3 Impasse des Jardins,,,Jarnac,
+3 Impasse des Jardins,-0.177017,45.681481,,3 Impasse des Jardins,,,,16200
+17 Rue René Gillardie Magnac-sur-Touvre,,,,17 Rue René Gillardie,,,,16600
+17 Rue René Gillardie 16600,,,,17 Rue René Gillardie,,,Magnac-sur-Touvre,
+17 Rue René Gillardie,0.223782,45.675523,,17 Rue René Gillardie,,,,16600
+9 Route d'Angouleme Mouthiers-sur-Boëme,,,,9 Route d'Angouleme,,,,16440
+9 Route d'Angouleme 16440,,,,9 Route d'Angouleme,,,Mouthiers-sur-Boëme,
+9 Route d'Angouleme,0.126940,45.568245,,9 Route d'Angouleme,,,,16440
+7 Avenue de la Gare La Rochefoucauld,,,,7 Avenue de la Gare,,,,16110
+7 Avenue de la Gare 16110,,,,7 Avenue de la Gare,,,La Rochefoucauld,
+7 Avenue de la Gare,0.388576,45.740335,,7 Avenue de la Gare,,,,16110
+41 Avenue Célestin Sieur Ruffec,,,,41 Avenue Célestin Sieur,,,,16700
+41 Avenue Célestin Sieur 16700,,,,41 Avenue Célestin Sieur,,,Ruffec,
+41 Avenue Célestin Sieur,0.198377,46.019155,,41 Avenue Célestin Sieur,,,,16700
+8 Rue de L'Égalité Saint-Michel,,,,8 Rue de L'Égalité,,,,16470
+8 Rue de L'Égalité 16470,,,,8 Rue de L'Égalité,,,Saint-Michel,
+8 Rue de L'Égalité,0.109590,45.641650,,8 Rue de L'Égalité,,,,16470
+14 Rue des Rocs Berchets Saint-Yrieix-sur-Charente,,,,14 Rue des Rocs Berchets,,,,16710
+14 Rue des Rocs Berchets 16710,,,,14 Rue des Rocs Berchets,,,Saint-Yrieix-sur-Charente,
+14 Rue des Rocs Berchets,0.111007,45.690139,,14 Rue des Rocs Berchets,,,,16710
+33 Route du Peux Soyaux,,,,33 Route du Peux,,,,16800
+33 Route du Peux 16800,,,,33 Route du Peux,,,Soyaux,
+33 Route du Peux,0.211057,45.627405,,33 Route du Peux,,,,16800
+1 Allée des Guindets Annepont,,,,1 Allée des Guindets,,,,17350
+1 Allée des Guindets 17350,,,,1 Allée des Guindets,,,Annepont,
+1 Allée des Guindets,-0.622318,45.837795,,1 Allée des Guindets,,,,17350
+9 Rue des Tourterelles Arvert,,,,9 Rue des Tourterelles,,,,17530
+9 Rue des Tourterelles 17530,,,,9 Rue des Tourterelles,,,Arvert,
+9 Rue des Tourterelles,-1.125004,45.744789,,9 Rue des Tourterelles,,,,17530
+2 Allée des Villas de Beauchamp Aytré,,,,2 Allée des Villas de Beauchamp,,,,17440
+2 Allée des Villas de Beauchamp 17440,,,,2 Allée des Villas de Beauchamp,,,Aytré,
+2 Allée des Villas de Beauchamp,-1.108840,46.139854,,2 Allée des Villas de Beauchamp,,,,17440
+350 Rue de Bel Ébat Le Bois-Plage-en-Ré,,,,350 Rue de Bel Ébat,,,,17580
+350 Rue de Bel Ébat 17580,,,,350 Rue de Bel Ébat,,,Le Bois-Plage-en-Ré,
+350 Rue de Bel Ébat,-1.370015,46.190992,,350 Rue de Bel Ébat,,,,17580
+6BIS Rue des Ormes Bourcefranc-le-Chapus,,,,6BIS Rue des Ormes,,,,17560
+6BIS Rue des Ormes 17560,,,,6BIS Rue des Ormes,,,Bourcefranc-le-Chapus,
+6BIS Rue des Ormes,-1.132180,45.842928,,6BIS Rue des Ormes,,,,17560
+22 Rue de l'aubépine La Brousse,,,,22 Rue de l'aubépine,,,,17160
+22 Rue de l'aubépine 17160,,,,22 Rue de l'aubépine,,,La Brousse,
+22 Rue de l'aubépine,-0.359612,45.888229,,22 Rue de l'aubépine,,,,17160
+5 Avenue Charles de Gaulle Chaniers,,,,5 Avenue Charles de Gaulle,,,,17610
+5 Avenue Charles de Gaulle 17610,,,,5 Avenue Charles de Gaulle,,,Chaniers,
+5 Avenue Charles de Gaulle,-0.557041,45.718091,,5 Avenue Charles de Gaulle,,,,17610
+9 Rue Albert 1er Châtelaillon-Plage,,,,9 Rue Albert 1er,,,,17340
+9 Rue Albert 1er 17340,,,,9 Rue Albert 1er,,,Châtelaillon-Plage,
+9 Rue Albert 1er,-1.092643,46.074416,,9 Rue Albert 1er,,,,17340
+14 Rue du Morinet Chermignac,,,,14 Rue du Morinet,,,,17460
+14 Rue du Morinet 17460,,,,14 Rue du Morinet,,,Chermignac,
+14 Rue du Morinet,-0.690942,45.694871,,14 Rue du Morinet,,,,17460
+12 Rue des Epinettes La Couarde-sur-Mer,,,,12 Rue des Epinettes,,,,17670
+12 Rue des Epinettes 17670,,,,12 Rue des Epinettes,,,La Couarde-sur-Mer,
+12 Rue des Epinettes,-1.432210,46.196994,,12 Rue des Epinettes,,,,17670
+13 Rue du Cardinal Crazannes,,,,13 Rue du Cardinal,,,,17350
+13 Rue du Cardinal 17350,,,,13 Rue du Cardinal,,,Crazannes,
+13 Rue du Cardinal,-0.704618,45.848883,,13 Rue du Cardinal,,,,17350
+11 Rue du Fief Tue Loup Dompierre-sur-Mer,,,,11 Rue du Fief Tue Loup,,,,17139
+11 Rue du Fief Tue Loup 17139,,,,11 Rue du Fief Tue Loup,,,Dompierre-sur-Mer,
+11 Rue du Fief Tue Loup,-1.060989,46.191742,,11 Rue du Fief Tue Loup,,,,17139
+5 Rue Petit Verdot L'Éguille,,,,5 Rue Petit Verdot,,,,17600
+5 Rue Petit Verdot 17600,,,,5 Rue Petit Verdot,,,L'Éguille,
+5 Rue Petit Verdot,-0.979278,45.701790,,5 Rue Petit Verdot,,,,17600
+16 Chemin du Gros Moulin La Flotte,,,,16 Chemin du Gros Moulin,,,,17630
+16 Chemin du Gros Moulin 17630,,,,16 Chemin du Gros Moulin,,,La Flotte,
+16 Chemin du Gros Moulin,-1.317803,46.183899,,16 Chemin du Gros Moulin,,,,17630
+2 Rue des Franches Fouras,,,,2 Rue des Franches,,,,17450
+2 Rue des Franches 17450,,,,2 Rue des Franches,,,Fouras,
+2 Rue des Franches,-1.090670,45.984385,,2 Rue des Franches,,,,17450
+7 Rue Basse Gourvillette,,,,7 Rue Basse,,,,17490
+7 Rue Basse 17490,,,,7 Rue Basse,,,Gourvillette,
+7 Rue Basse,-0.221244,45.888702,,7 Rue Basse,,,,17490
+7 Rue du Fief Girard La Jarne,,,,7 Rue du Fief Girard,,,,17220
+7 Rue du Fief Girard 17220,,,,7 Rue du Fief Girard,,,La Jarne,
+7 Rue du Fief Girard,-1.068316,46.128290,,7 Rue du Fief Girard,,,,17220
+13 Rue de la Comtesse de Segur Lagord,,,,13 Rue de la Comtesse de Segur,,,,17140
+13 Rue de la Comtesse de Segur 17140,,,,13 Rue de la Comtesse de Segur,,,Lagord,
+13 Rue de la Comtesse de Segur,-1.158987,46.189740,,13 Rue de la Comtesse de Segur,,,,17140
+3 Rue des Meuniers Loulay,,,,3 Rue des Meuniers,,,,17330
+3 Rue des Meuniers 17330,,,,3 Rue des Meuniers,,,Loulay,
+3 Rue des Meuniers,-0.512246,46.045767,,3 Rue des Meuniers,,,,17330
+9 Avenue de Maumusson Marennes,,,,9 Avenue de Maumusson,,,,17320
+9 Avenue de Maumusson 17320,,,,9 Avenue de Maumusson,,,Marennes,
+9 Avenue de Maumusson,-1.134501,45.818247,,9 Avenue de Maumusson,,,,17320
+6 Rue des Mésanges Les Mathes,,,,6 Rue des Mésanges,,,,17570
+6 Rue des Mésanges 17570,,,,6 Rue des Mésanges,,,Les Mathes,
+6 Rue des Mésanges,-1.153502,45.719443,,6 Rue des Mésanges,,,,17570
+13 Rue Nouvelle Meschers-sur-Gironde,,,,13 Rue Nouvelle,,,,17132
+13 Rue Nouvelle 17132,,,,13 Rue Nouvelle,,,Meschers-sur-Gironde,
+13 Rue Nouvelle,-0.963095,45.563184,,13 Rue Nouvelle,,,,17132
+14 Rue de Saint-Savin Montendre,,,,14 Rue de Saint-Savin,,,,17130
+14 Rue de Saint-Savin 17130,,,,14 Rue de Saint-Savin,,,Montendre,
+14 Rue de Saint-Savin,-0.408752,45.281106,,14 Rue de Saint-Savin,,,,17130
+24 Route de Jonzac Neuillac,,,,24 Route de Jonzac,,,,17520
+24 Route de Jonzac 17520,,,,24 Route de Jonzac,,,Neuillac,
+24 Route de Jonzac,-0.404898,45.500882,,24 Route de Jonzac,,,,17520
+14A Rue des Lavandieres Paillé,,,,14A Rue des Lavandieres,,,,17470
+14A Rue des Lavandieres 17470,,,,14A Rue des Lavandieres,,,Paillé,
+14A Rue des Lavandieres,-0.393286,45.990263,,14A Rue des Lavandieres,,,,17470
+6 Rue Gagne-Pain Plassay,,,,6 Rue Gagne-Pain,,,,17250
+6 Rue Gagne-Pain 17250,,,,6 Rue Gagne-Pain,,,Plassay,
+6 Rue Gagne-Pain,-0.726319,45.821013,,6 Rue Gagne-Pain,,,,17250
+11 Ruelle des Bergeronnettes Les Portes-en-Ré,,,,11 Ruelle des Bergeronnettes,,,,17880
+11 Ruelle des Bergeronnettes 17880,,,,11 Ruelle des Bergeronnettes,,,Les Portes-en-Ré,
+11 Ruelle des Bergeronnettes,-1.497128,46.249174,,11 Ruelle des Bergeronnettes,,,,17880
+90 Rue de la Chapellerie Rivedoux-Plage,,,,90 Rue de la Chapellerie,,,,17940
+90 Rue de la Chapellerie 17940,,,,90 Rue de la Chapellerie,,,Rivedoux-Plage,
+90 Rue de la Chapellerie,-1.285300,46.163507,,90 Rue de la Chapellerie,,,,17940
+33C Rue Docteur Pujos Rochefort,,,,33C Rue Docteur Pujos,,,,17300
+33C Rue Docteur Pujos 17300,,,,33C Rue Docteur Pujos,,,Rochefort,
+33C Rue Docteur Pujos,-0.959530,45.940741,,33C Rue Docteur Pujos,,,,17300
+26 Rue des Plainauds Rochefort,,,,26 Rue des Plainauds,,,,17300
+26 Rue des Plainauds 17300,,,,26 Rue des Plainauds,,,Rochefort,
+26 Rue des Plainauds,-0.956856,45.953772,,26 Rue des Plainauds,,,,17300
+33 Rue du Canada La Rochelle,,,,33 Rue du Canada,,,,17000
+33 Rue du Canada 17000,,,,33 Rue du Canada,,,La Rochelle,
+33 Rue du Canada,-1.156577,46.169975,,33 Rue du Canada,,,,17000
+4 Rue Février La Rochelle,,,,4 Rue Février,,,,17000
+4 Rue Février 17000,,,,4 Rue Février,,,La Rochelle,
+4 Rue Février,-1.206687,46.164421,,4 Rue Février,,,,17000
+2 Square des Lys La Rochelle,,,,2 Square des Lys,,,,17000
+2 Square des Lys 17000,,,,2 Square des Lys,,,La Rochelle,
+2 Square des Lys,-1.125056,46.167755,,2 Square des Lys,,,,17000
+134 Chemin des Remparts La Rochelle,,,,134 Chemin des Remparts,,,,17000
+134 Chemin des Remparts 17000,,,,134 Chemin des Remparts,,,La Rochelle,
+134 Chemin des Remparts,-1.155121,46.165137,,134 Chemin des Remparts,,,,17000
+7 Avenue des Acacias Royan,,,,7 Avenue des Acacias,,,,17200
+7 Avenue des Acacias 17200,,,,7 Avenue des Acacias,,,Royan,
+7 Avenue des Acacias,-1.006111,45.617160,,7 Avenue des Acacias,,,,17200
+27 Chemin de la Garenne Royan,,,,27 Chemin de la Garenne,,,,17200
+27 Chemin de la Garenne 17200,,,,27 Chemin de la Garenne,,,Royan,
+27 Chemin de la Garenne,-1.024817,45.635869,,27 Chemin de la Garenne,,,,17200
+15 Rue Roger et Emma Bolleau Royan,,,,15 Rue Roger et Emma Bolleau,,,,17200
+15 Rue Roger et Emma Bolleau 17200,,,,15 Rue Roger et Emma Bolleau,,,Royan,
+15 Rue Roger et Emma Bolleau,-1.004516,45.622751,,15 Rue Roger et Emma Bolleau,,,,17200
+27 Rue des Joncs Saint-Augustin,,,,27 Rue des Joncs,,,,17570
+27 Rue des Joncs 17570,,,,27 Rue des Joncs,,,Saint-Augustin,
+27 Rue des Joncs,-1.081196,45.670827,,27 Rue des Joncs,,,,17570
+8 Petite Rue Saint-Nicolas Saint-Denis-d'Oléron,,,,8 Petite Rue Saint-Nicolas,,,,17650
+8 Petite Rue Saint-Nicolas 17650,,,,8 Petite Rue Saint-Nicolas,,,Saint-Denis-d'Oléron,
+8 Petite Rue Saint-Nicolas,-1.379008,46.031638,,8 Petite Rue Saint-Nicolas,,,,17650
+4 Rue du Docteur Maudet Saint-Georges-de-Didonne,,,,4 Rue du Docteur Maudet,,,,17110
+4 Rue du Docteur Maudet 17110,,,,4 Rue du Docteur Maudet,,,Saint-Georges-de-Didonne,
+4 Rue du Docteur Maudet,-1.000934,45.604721,,4 Rue du Docteur Maudet,,,,17110
+4 Rue d'Aulnay Saint-Georges-de-Longuepierre,,,,4 Rue d'Aulnay,,,,17470
+4 Rue d'Aulnay 17470,,,,4 Rue d'Aulnay,,,Saint-Georges-de-Longuepierre,
+4 Rue d'Aulnay,-0.398062,46.041340,,4 Rue d'Aulnay,,,,17470
+77 Rue de l'Ostain Saint-Georges-d'Oléron,,,,77 Rue de l'Ostain,,,,17190
+77 Rue de l'Ostain 17190,,,,77 Rue de l'Ostain,,,Saint-Georges-d'Oléron,
+77 Rue de l'Ostain,-1.376368,45.985775,,77 Rue de l'Ostain,,,,17190
+40 Faubourg d'Aunis Saint-Jean-d'Angély,,,,40 Faubourg d'Aunis,,,,17400
+40 Faubourg d'Aunis 17400,,,,40 Faubourg d'Aunis,,,Saint-Jean-d'Angély,
+40 Faubourg d'Aunis,-0.527250,45.947092,,40 Faubourg d'Aunis,,,,17400
+4 Rue du Docteur Quoy Saint-Jean-de-Liversay,,,,4 Rue du Docteur Quoy,,,,17170
+4 Rue du Docteur Quoy 17170,,,,4 Rue du Docteur Quoy,,,Saint-Jean-de-Liversay,
+4 Rue du Docteur Quoy,-0.873856,46.269391,,4 Rue du Docteur Quoy,,,,17170
+15 Rue des Galinées Sainte-Marie-de-Ré,,,,15 Rue des Galinées,,,,17740
+15 Rue des Galinées 17740,,,,15 Rue des Galinées,,,Sainte-Marie-de-Ré,
+15 Rue des Galinées,-1.317101,46.154610,,15 Rue des Galinées,,,,17740
+1 Rue des Magnolias Saint-Ouen-d'Aunis,,,,1 Rue des Magnolias,,,,17230
+1 Rue des Magnolias 17230,,,,1 Rue des Magnolias,,,Saint-Ouen-d'Aunis,
+1 Rue des Magnolias,-1.030693,46.221760,,1 Rue des Magnolias,,,,17230
+1 Rue des Mottes Saint-Pardoult,,,,1 Rue des Mottes,,,,17400
+1 Rue des Mottes 17400,,,,1 Rue des Mottes,,,Saint-Pardoult,
+1 Rue des Mottes,-0.448880,45.999754,,1 Rue des Mottes,,,,17400
+12 Rue des Soucis Saint-Pierre-d'Oléron,,,,12 Rue des Soucis,,,,17310
+12 Rue des Soucis 17310,,,,12 Rue des Soucis,,,Saint-Pierre-d'Oléron,
+12 Rue des Soucis,-1.296065,45.938808,,12 Rue des Soucis,,,,17310
+37 Rue de Saintonge Saint-Sauveur-d'Aunis,,,,37 Rue de Saintonge,,,,17540
+37 Rue de Saintonge 17540,,,,37 Rue de Saintonge,,,Saint-Sauveur-d'Aunis,
+37 Rue de Saintonge,-0.878294,46.213209,,37 Rue de Saintonge,,,,17540
+18 Avenue Pasteur Saint-Sulpice-de-Royan,,,,18 Avenue Pasteur,,,,17200
+18 Avenue Pasteur 17200,,,,18 Avenue Pasteur,,,Saint-Sulpice-de-Royan,
+18 Avenue Pasteur,-0.986903,45.664511,,18 Avenue Pasteur,,,,17200
+2 Rue Hippolyte Pradelles Saintes,,,,2 Rue Hippolyte Pradelles,,,,17100
+2 Rue Hippolyte Pradelles 17100,,,,2 Rue Hippolyte Pradelles,,,Saintes,
+2 Rue Hippolyte Pradelles,-0.650667,45.732657,,2 Rue Hippolyte Pradelles,,,,17100
+2 Rue Geoffroy Martel Saintes,,,,2 Rue Geoffroy Martel,,,,17100
+2 Rue Geoffroy Martel 17100,,,,2 Rue Geoffroy Martel,,,Saintes,
+2 Rue Geoffroy Martel,-0.620214,45.742686,,2 Rue Geoffroy Martel,,,,17100
+9 Rue Roger Coumaillaud Saintes,,,,9 Rue Roger Coumaillaud,,,,17100
+9 Rue Roger Coumaillaud 17100,,,,9 Rue Roger Coumaillaud,,,Saintes,
+9 Rue Roger Coumaillaud,-0.612904,45.742329,,9 Rue Roger Coumaillaud,,,,17100
+44 Rue des Papillons Saujon,,,,44 Rue des Papillons,,,,17600
+44 Rue des Papillons 17600,,,,44 Rue des Papillons,,,Saujon,
+44 Rue des Papillons,-0.930818,45.686074,,44 Rue des Papillons,,,,17600
+12 Rue du Dix Neuf Mars 1962 Surgères,,,,12 Rue du Dix Neuf Mars 1962,,,,17700
+12 Rue du Dix Neuf Mars 1962 17700,,,,12 Rue du Dix Neuf Mars 1962,,,Surgères,
+12 Rue du Dix Neuf Mars 1962,-0.761290,46.107157,,12 Rue du Dix Neuf Mars 1962,,,,17700
+3 Rue de Fonrouil Thézac,,,,3 Rue de Fonrouil,,,,17600
+3 Rue de Fonrouil 17600,,,,3 Rue de Fonrouil,,,Thézac,
+3 Rue de Fonrouil,-0.792566,45.664190,,3 Rue de Fonrouil,,,,17600
+1 Allée des Bouleaux La Tremblade,,,,1 Allée des Bouleaux,,,,17390
+1 Allée des Bouleaux 17390,,,,1 Allée des Bouleaux,,,La Tremblade,
+1 Allée des Bouleaux,-1.158942,45.792497,,1 Allée des Bouleaux,,,,17390
+51 Route Depart 137 La Touche La Vallée,,,,51 Route Depart 137 La Touche,,,,17250
+51 Route Depart 137 La Touche 17250,,,,51 Route Depart 137 La Touche,,,La Vallée,
+51 Route Depart 137 La Touche,-0.861675,45.885661,,51 Route Depart 137 La Touche,,,,17250
+12 Chemin des Écluses La Vergne,,,,12 Chemin des Écluses,,,,17400
+12 Chemin des Écluses 17400,,,,12 Chemin des Écluses,,,La Vergne,
+12 Chemin des Écluses,-0.575906,45.958662,,12 Chemin des Écluses,,,,17400
+4 Rue des Palles Port-des-Barques,,,,4 Rue des Palles,,,,17730
+4 Rue des Palles 17730,,,,4 Rue des Palles,,,Port-des-Barques,
+4 Rue des Palles,-1.076673,45.944566,,4 Rue des Palles,,,,17730
+3 Route de Melle Les Alleuds,,,,3 Route de Melle,,,,79190
+3 Route de Melle 79190,,,,3 Route de Melle,,,Les Alleuds,
+3 Route de Melle,-0.012251,46.176161,,3 Route de Melle,,,,79190
+4 Rue des Quatre Vents Jaunay Azay-le-Brûlé,,,,4 Rue des Quatre Vents Jaunay,,,,79400
+4 Rue des Quatre Vents Jaunay 79400,,,,4 Rue des Quatre Vents Jaunay,,,Azay-le-Brûlé,
+4 Rue des Quatre Vents Jaunay,-0.240003,46.393543,,4 Rue des Quatre Vents Jaunay,,,,79400
+9 Rue Eugène Fabien La Crèche,,,,9 Rue Eugène Fabien,,,,79260
+9 Rue Eugène Fabien 79260,,,,9 Rue Eugène Fabien,,,La Crèche,
+9 Rue Eugène Fabien,-0.297987,46.366659,,9 Rue Eugène Fabien,,,,79260
+3 Rue du Paradis Bressuire,,,,3 Rue du Paradis,,,,79300
+3 Rue du Paradis 79300,,,,3 Rue du Paradis,,,Bressuire,
+3 Rue du Paradis,-0.457111,46.896912,,3 Rue du Paradis,,,,79300
+20 Rue du Verger Le Breuil-sous-Argenton,,,,20 Rue du Verger,,,,79150
+20 Rue du Verger 79150,,,,20 Rue du Verger,,,Le Breuil-sous-Argenton,
+20 Rue du Verger,-0.435746,46.987470,,20 Rue du Verger,,,,79150
+17 Rue Pierre de Ronsard Cerizay,,,,17 Rue Pierre de Ronsard,,,,79140
+17 Rue Pierre de Ronsard 79140,,,,17 Rue Pierre de Ronsard,,,Cerizay,
+17 Rue Pierre de Ronsard,-0.687295,46.824082,,17 Rue Pierre de Ronsard,,,,79140
+121 Rue des Meuniers Moulins Mauléon,,,,121 Rue des Meuniers Moulins,,,,79700
+121 Rue des Meuniers Moulins 79700,,,,121 Rue des Meuniers Moulins,,,Mauléon,
+121 Rue des Meuniers Moulins,-0.796001,46.954562,,121 Rue des Meuniers Moulins,,,,79700
+23 Boulevard des Tilleuls Chauray,,,,23 Boulevard des Tilleuls,,,,79180
+23 Boulevard des Tilleuls 79180,,,,23 Boulevard des Tilleuls,,,Chauray,
+23 Boulevard des Tilleuls,-0.385469,46.361599,,23 Boulevard des Tilleuls,,,,79180
+8C Rue de l'Autremont Coulon,,,,8C Rue de l'Autremont,,,,79510
+8C Rue de l'Autremont 79510,,,,8C Rue de l'Autremont,,,Coulon,
+8C Rue de l'Autremont,-0.587055,46.321813,,8C Rue de l'Autremont,,,,79510
+413 Route de Saint-Gelais Échiré,,,,413 Route de Saint-Gelais,,,,79410
+413 Route de Saint-Gelais 79410,,,,413 Route de Saint-Gelais,,,Échiré,
+413 Route de Saint-Gelais,-0.398376,46.388581,,413 Route de Saint-Gelais,,,,79410
+2 Rue du Puits Marot La Foye-Monjault,,,,2 Rue du Puits Marot,,,,79360
+2 Rue du Puits Marot 79360,,,,2 Rue du Puits Marot,,,La Foye-Monjault,
+2 Rue du Puits Marot,-0.543070,46.196884,,2 Rue du Puits Marot,,,,79360
+6 Rue Gâte-Bourse Lezay,,,,6 Rue Gâte-Bourse,,,,79120
+6 Rue Gâte-Bourse 79120,,,,6 Rue Gâte-Bourse,,,Lezay,
+6 Rue Gâte-Bourse,-0.012922,46.263221,,6 Rue Gâte-Bourse,,,,79120
+15 Rue du Cruchot Marigny,,,,15 Rue du Cruchot,,,,79360
+15 Rue du Cruchot 79360,,,,15 Rue du Cruchot,,,Marigny,
+15 Rue du Cruchot,-0.438599,46.209810,,15 Rue du Cruchot,,,,79360
+60 Rue du Tapis Vert Melle,,,,60 Rue du Tapis Vert,,,,79500
+60 Rue du Tapis Vert 79500,,,,60 Rue du Tapis Vert,,,Melle,
+60 Rue du Tapis Vert,-0.137081,46.229054,,60 Rue du Tapis Vert,,,,79500
+87 Rue de Charnay Nanteuil,,,,87 Rue de Charnay,,,,79400
+87 Rue de Charnay 79400,,,,87 Rue de Charnay,,,Nanteuil,
+87 Rue de Charnay,-0.186721,46.411850,,87 Rue de Charnay,,,,79400
+1 Impasse des Chardonnerets Niort,,,,1 Impasse des Chardonnerets,,,,79000
+1 Impasse des Chardonnerets 79000,,,,1 Impasse des Chardonnerets,,,Niort,
+1 Impasse des Chardonnerets,-0.455781,46.341878,,1 Impasse des Chardonnerets,,,,79000
+10 Rue Georges Courteline Niort,,,,10 Rue Georges Courteline,,,,79000
+10 Rue Georges Courteline 79000,,,,10 Rue Georges Courteline,,,Niort,
+10 Rue Georges Courteline,-0.481175,46.331529,,10 Rue Georges Courteline,,,,79000
+38J Rue du Maréchal Leclerc Niort,,,,38J Rue du Maréchal Leclerc,,,,79000
+38J Rue du Maréchal Leclerc 79000,,,,38J Rue du Maréchal Leclerc,,,Niort,
+38J Rue du Maréchal Leclerc,-0.457219,46.330255,,38J Rue du Maréchal Leclerc,,,,79000
+49 Rue des Quatre Vents Niort,,,,49 Rue des Quatre Vents,,,,79000
+49 Rue des Quatre Vents 79000,,,,49 Rue des Quatre Vents,,,Niort,
+49 Rue des Quatre Vents,-0.473894,46.329511,,49 Rue des Quatre Vents,,,,79000
+22E Rue du Vieux Fourneau Niort,,,,22E Rue du Vieux Fourneau,,,,79000
+22E Rue du Vieux Fourneau 79000,,,,22E Rue du Vieux Fourneau,,,Niort,
+22E Rue du Vieux Fourneau,-0.459066,46.330797,,22E Rue du Vieux Fourneau,,,,79000
+11 Rue du Bourg Belais Parthenay,,,,11 Rue du Bourg Belais,,,,79200
+11 Rue du Bourg Belais 79200,,,,11 Rue du Bourg Belais,,,Parthenay,
+11 Rue du Bourg Belais,-0.245761,46.647845,,11 Rue du Bourg Belais,,,,79200
+149 Route de Brioux Périgné,,,,149 Route de Brioux,,,,79170
+149 Route de Brioux 79170,,,,149 Route de Brioux,,,Périgné,
+149 Route de Brioux,-0.240927,46.178884,,149 Route de Brioux,,,,79170
+9 Route du Pré de l'assemblée Airi Romans,,,,9 Route du Pré de l'assemblée Airi,,,,79260
+9 Route du Pré de l'assemblée Airi 79260,,,,9 Route du Pré de l'assemblée Airi,,,Romans,
+9 Route du Pré de l'assemblée Airi,-0.250425,46.362132,,9 Route du Pré de l'assemblée Airi,,,,79260
+4 Impasse des Rouches Saint-Hilaire-la-Palud,,,,4 Impasse des Rouches,,,,79210
+4 Impasse des Rouches 79210,,,,4 Impasse des Rouches,,,Saint-Hilaire-la-Palud,
+4 Impasse des Rouches,-0.694289,46.242742,,4 Impasse des Rouches,,,,79210
+11 Rue de la Marne Saint-Maixent-l'École,,,,11 Rue de la Marne,,,,79400
+11 Rue de la Marne 79400,,,,11 Rue de la Marne,,,Saint-Maixent-l'École,
+11 Rue de la Marne,-0.202752,46.412630,,11 Rue de la Marne,,,,79400
+34 Rue Saint-Pierre Saint-Pierre-des-Échaubrognes,,,,34 Rue Saint-Pierre,,,,79700
+34 Rue Saint-Pierre 79700,,,,34 Rue Saint-Pierre,,,Saint-Pierre-des-Échaubrognes,
+34 Rue Saint-Pierre,-0.744142,46.989093,,34 Rue Saint-Pierre,,,,79700
+13 Rue des Motèles Sainte-Verge,,,,13 Rue des Motèles,,,,79100
+13 Rue des Motèles 79100,,,,13 Rue des Motèles,,,Sainte-Verge,
+13 Rue des Motèles,-0.217119,47.003688,,13 Rue des Motèles,,,,79100
+17 Rue Camille Grelet Le Tallud,,,,17 Rue Camille Grelet,,,,79200
+17 Rue Camille Grelet 79200,,,,17 Rue Camille Grelet,,,Le Tallud,
+17 Rue Camille Grelet,-0.298185,46.631905,,17 Rue Camille Grelet,,,,79200
+2BIS Impasse Lamartine Thouars,,,,2BIS Impasse Lamartine,,,,79100
+2BIS Impasse Lamartine 79100,,,,2BIS Impasse Lamartine,,,Thouars,
+2BIS Impasse Lamartine,-0.219295,46.982489,,2BIS Impasse Lamartine,,,,79100
+4 Rue Mélusine Verruyes,,,,4 Rue Mélusine,,,,79310
+4 Rue Mélusine 79310,,,,4 Rue Mélusine,,,Verruyes,
+4 Rue Mélusine,-0.289437,46.517168,,4 Rue Mélusine,,,,79310
+22 Rue des Lises de la Ballu Beaumont,,,,22 Rue des Lises de la Ballu,,,,86490
+22 Rue des Lises de la Ballu 86490,,,,22 Rue des Lises de la Ballu,,,Beaumont,
+22 Rue des Lises de la Ballu,0.427328,46.732373,,22 Rue des Lises de la Ballu,,,,86490
+6 Hameau des Rabries Brion,,,,6 Hameau des Rabries,,,,86160
+6 Hameau des Rabries 86160,,,,6 Hameau des Rabries,,,Brion,
+6 Hameau des Rabries,0.490153,46.363951,,6 Hameau des Rabries,,,,86160
+9 Rue du Tramaguet Cenon-sur-Vienne,,,,9 Rue du Tramaguet,,,,86530
+9 Rue du Tramaguet 86530,,,,9 Rue du Tramaguet,,,Cenon-sur-Vienne,
+9 Rue du Tramaguet,0.534056,46.769509,,9 Rue du Tramaguet,,,,86530
+5 Rue des Fours Château-Larcher,,,,5 Rue des Fours,,,,86370
+5 Rue des Fours 86370,,,,5 Rue des Fours,,,Château-Larcher,
+5 Rue des Fours,0.296546,46.393063,,5 Rue des Fours,,,,86370
+35BIS Rue Faubourg Saint-Jacques Châtellerault,,,,35BIS Rue Faubourg Saint-Jacques,,,,86100
+35BIS Rue Faubourg Saint-Jacques 86100,,,,35BIS Rue Faubourg Saint-Jacques,,,Châtellerault,
+35BIS Rue Faubourg Saint-Jacques,0.546483,46.815181,,35BIS Rue Faubourg Saint-Jacques,,,,86100
+10 Quai du Onze Novembre Châtellerault,,,,10 Quai du Onze Novembre,,,,86100
+10 Quai du Onze Novembre 86100,,,,10 Quai du Onze Novembre,,,Châtellerault,
+10 Quai du Onze Novembre,0.538126,46.811397,,10 Quai du Onze Novembre,,,,86100
+7 Rue du Châtaignier Chauvigny,,,,7 Rue du Châtaignier,,,,86300
+7 Rue du Châtaignier 86300,,,,7 Rue du Châtaignier,,,Chauvigny,
+7 Rue du Châtaignier,0.643251,46.576068,,7 Rue du Châtaignier,,,,86300
+19 Rue de la Nécropole Civaux,,,,19 Rue de la Nécropole,,,,86320
+19 Rue de la Nécropole 86320,,,,19 Rue de la Nécropole,,,Civaux,
+19 Rue de la Nécropole,0.663992,46.445695,,19 Rue de la Nécropole,,,,86320
+85 Avenue de l'Europe Dangé-Saint-Romain,,,,85 Avenue de l'Europe,,,,86220
+85 Avenue de l'Europe 86220,,,,85 Avenue de l'Europe,,,Dangé-Saint-Romain,
+85 Avenue de l'Europe,0.607071,46.941757,,85 Avenue de l'Europe,,,,86220
+5 Rue des Coquelicots Gouex,,,,5 Rue des Coquelicots,,,,86320
+5 Rue des Coquelicots 86320,,,,5 Rue des Coquelicots,,,Gouex,
+5 Rue des Coquelicots,0.686884,46.370054,,5 Rue des Coquelicots,,,,86320
+28 Rue de la Payre Jaunay-Clan,,,,28 Rue de la Payre,,,,86130
+28 Rue de la Payre 86130,,,,28 Rue de la Payre,,,Jaunay-Clan,
+28 Rue de la Payre,0.368268,46.678954,,28 Rue de la Payre,,,,86130
+46 Promenade des Rocs Lhommaizé,,,,46 Promenade des Rocs,,,,86410
+46 Promenade des Rocs 86410,,,,46 Promenade des Rocs,,,Lhommaizé,
+46 Promenade des Rocs,0.600846,46.438564,,46 Promenade des Rocs,,,,86410
+20 Rue d'Altusried Lusignan,,,,20 Rue d'Altusried,,,,86600
+20 Rue d'Altusried 86600,,,,20 Rue d'Altusried,,,Lusignan,
+20 Rue d'Altusried,0.111721,46.432752,,20 Rue d'Altusried,,,,86600
+1114 Route des Bruères Mignaloux-Beauvoir,,,,1114 Route des Bruères,,,,86550
+1114 Route des Bruères 86550,,,,1114 Route des Bruères,,,Mignaloux-Beauvoir,
+1114 Route des Bruères,0.438878,46.552096,,1114 Route des Bruères,,,,86550
+1 Rue des Eterrasses Moncontour,,,,1 Rue des Eterrasses,,,,86330
+1 Rue des Eterrasses 86330,,,,1 Rue des Eterrasses,,,Moncontour,
+1 Rue des Eterrasses,-0.016372,46.881179,,1 Rue des Eterrasses,,,,86330
+16 Rue Raoul Mortier Montmorillon,,,,16 Rue Raoul Mortier,,,,86500
+16 Rue Raoul Mortier 86500,,,,16 Rue Raoul Mortier,,,Montmorillon,
+16 Rue Raoul Mortier,0.877835,46.427322,,16 Rue Raoul Mortier,,,,86500
+22 Rue des Genêts Naintré,,,,22 Rue des Genêts,,,,86530
+22 Rue des Genêts 86530,,,,22 Rue des Genêts,,,Naintré,
+22 Rue des Genêts,0.504943,46.771729,,22 Rue des Genêts,,,,86530
+110 Route Nationale Dix Les Ormes,,,,110 Route Nationale Dix,,,,86220
+110 Route Nationale Dix 86220,,,,110 Route Nationale Dix,,,Les Ormes,
+110 Route Nationale Dix,0.606911,46.969419,,110 Route Nationale Dix,,,,86220
+65 Rue de la Cathédrale Poitiers,,,,65 Rue de la Cathédrale,,,,86000
+65 Rue de la Cathédrale 86000,,,,65 Rue de la Cathédrale,,,Poitiers,
+65 Rue de la Cathédrale,0.343959,46.582329,,65 Rue de la Cathédrale,,,,86000
+34 Rue Grand Rue Poitiers,,,,34 Rue Grand Rue,,,,86000
+34 Rue Grand Rue 86000,,,,34 Rue Grand Rue,,,Poitiers,
+34 Rue Grand Rue,0.351548,46.581453,,34 Rue Grand Rue,,,,86000
+113 Avenue de Nantes Poitiers,,,,113 Avenue de Nantes,,,,86000
+113 Avenue de Nantes 86000,,,,113 Avenue de Nantes,,,Poitiers,
+113 Avenue de Nantes,0.331620,46.583891,,113 Avenue de Nantes,,,,86000
+10 Impasse Serpentine Poitiers,,,,10 Impasse Serpentine,,,,86000
+10 Impasse Serpentine 86000,,,,10 Impasse Serpentine,,,Poitiers,
+10 Impasse Serpentine,0.333233,46.592693,,10 Impasse Serpentine,,,,86000
+14 Rue de l'Étang Le Rochereau,,,,14 Rue de l'Étang,,,,86170
+14 Rue de l'Étang 86170,,,,14 Rue de l'Étang,,,Le Rochereau,
+14 Rue de l'Étang,0.159198,46.701446,,14 Rue de l'Étang,,,,86170
+9 Route de la Croix Boutet Saint-Genest-d'Ambière,,,,9 Route de la Croix Boutet,,,,86140
+9 Route de la Croix Boutet 86140,,,,9 Route de la Croix Boutet,,,Saint-Genest-d'Ambière,
+9 Route de la Croix Boutet,0.366519,46.819948,,9 Route de la Croix Boutet,,,,86140
+17 Rue des Colverts Valdivienne,,,,17 Rue des Colverts,,,,86300
+17 Rue des Colverts 86300,,,,17 Rue des Colverts,,,Valdivienne,
+17 Rue des Colverts,0.630677,46.479260,,17 Rue des Colverts,,,,86300
+28 Route de Limoges Savigné,,,,28 Route de Limoges,,,,86400
+28 Route de Limoges 86400,,,,28 Route de Limoges,,,Savigné,
+28 Route de Limoges,0.319266,46.159745,,28 Route de Limoges,,,,86400
+41 Rue de la Perrière Gaudeau Thuré,,,,41 Rue de la Perrière Gaudeau,,,,86540
+41 Rue de la Perrière Gaudeau 86540,,,,41 Rue de la Perrière Gaudeau,,,Thuré,
+41 Rue de la Perrière Gaudeau,0.450131,46.837406,,41 Rue de la Perrière Gaudeau,,,,86540
+1 Chemin des Écoles La Villedieu-du-Clain,,,,1 Chemin des Écoles,,,,86340
+1 Chemin des Écoles 86340,,,,1 Chemin des Écoles,,,La Villedieu-du-Clain,
+1 Chemin des Écoles,0.368094,46.452890,,1 Chemin des Écoles,,,,86340
+2 Rue du 11 Novembre Vouneuil-sous-Biard,,,,2 Rue du 11 Novembre,,,,86580
+2 Rue du 11 Novembre 86580,,,,2 Rue du 11 Novembre,,,Vouneuil-sous-Biard,
+2 Rue du 11 Novembre,0.264971,46.570574,,2 Rue du 11 Novembre,,,,86580

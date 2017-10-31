@@ -1,0 +1,520 @@
+query,lon,lat,limit,expected_name,expected_housenumber,expected_street,expected_city,expected_postcode
+3 Rue Docteur Pierre Simbat Bergerac,,,,3 Rue Docteur Pierre Simbat,,,,24100
+3 Rue Docteur Pierre Simbat 24100,,,,3 Rue Docteur Pierre Simbat,,,Bergerac,
+3 Rue Docteur Pierre Simbat,0.475077,44.854347,,3 Rue Docteur Pierre Simbat,,,,24100
+31 Route Pierre Pinson Bergerac,,,,31 Route Pierre Pinson,,,,24100
+31 Route Pierre Pinson 24100,,,,31 Route Pierre Pinson,,,Bergerac,
+31 Route Pierre Pinson,0.454627,44.851248,,31 Route Pierre Pinson,,,,24100
+6 Place du Champ de Foire Brantôme,,,,6 Place du Champ de Foire,,,,24310
+6 Place du Champ de Foire 24310,,,,6 Place du Champ de Foire,,,Brantôme,
+6 Place du Champ de Foire,0.650042,45.361569,,6 Place du Champ de Foire,,,,24310
+47 Avenue Pierre Mendès France Coulounieix-Chamiers,,,,47 Avenue Pierre Mendès France,,,,24660
+47 Avenue Pierre Mendès France 24660,,,,47 Avenue Pierre Mendès France,,,Coulounieix-Chamiers,
+47 Avenue Pierre Mendès France,0.695090,45.162787,,47 Avenue Pierre Mendès France,,,,24660
+5 Impasse du Coureau Lamonzie-Saint-Martin,,,,5 Impasse du Coureau,,,,24680
+5 Impasse du Coureau 24680,,,,5 Impasse du Coureau,,,Lamonzie-Saint-Martin,
+5 Impasse du Coureau,0.376397,44.838837,,5 Impasse du Coureau,,,,24680
+49 Rue de la Nouzillère Mussidan,,,,49 Rue de la Nouzillère,,,,24400
+49 Rue de la Nouzillère 24400,,,,49 Rue de la Nouzillère,,,Mussidan,
+49 Rue de la Nouzillère,0.359680,45.031254,,49 Rue de la Nouzillère,,,,24400
+8 Rue de la Constitution Périgueux,,,,8 Rue de la Constitution,,,,24000
+8 Rue de la Constitution 24000,,,,8 Rue de la Constitution,,,Périgueux,
+8 Rue de la Constitution,0.723692,45.184609,,8 Rue de la Constitution,,,,24000
+65 Rue du Président Wilson Périgueux,,,,65 Rue du Président Wilson,,,,24000
+65 Rue du Président Wilson 24000,,,,65 Rue du Président Wilson,,,Périgueux,
+65 Rue du Président Wilson,0.712912,45.185299,,65 Rue du Président Wilson,,,,24000
+34 Route de Peymilou Prigonrieux,,,,34 Route de Peymilou,,,,24130
+34 Route de Peymilou 24130,,,,34 Route de Peymilou,,,Prigonrieux,
+34 Route de Peymilou,0.411217,44.884759,,34 Route de Peymilou,,,,24130
+9 Rue Henri Saumande Thiviers,,,,9 Rue Henri Saumande,,,,24800
+9 Rue Henri Saumande 24800,,,,9 Rue Henri Saumande,,,Thiviers,
+9 Rue Henri Saumande,0.921633,45.420576,,9 Rue Henri Saumande,,,,24800
+16B Avenue du Général de Gaulle Ambès,,,,16B Avenue du Général de Gaulle,,,,33810
+16B Avenue du Général de Gaulle 33810,,,,16B Avenue du Général de Gaulle,,,Ambès,
+16B Avenue du Général de Gaulle,-0.526682,45.011379,,16B Avenue du Général de Gaulle,,,,33810
+14 Avenue Johann Strauss Andernos-les-Bains,,,,14 Avenue Johann Strauss,,,,33510
+14 Avenue Johann Strauss 33510,,,,14 Avenue Johann Strauss,,,Andernos-les-Bains,
+14 Avenue Johann Strauss,-1.079634,44.739466,,14 Avenue Johann Strauss,,,,33510
+111 Boulevard de la Côte d'Argent Arcachon,,,,111 Boulevard de la Côte d'Argent,,,,33120
+111 Boulevard de la Côte d'Argent 33120,,,,111 Boulevard de la Côte d'Argent,,,Arcachon,
+111 Boulevard de la Côte d'Argent,-1.186492,44.651653,,111 Boulevard de la Côte d'Argent,,,,33120
+31BIS Avenue Victor Hugo Arcachon,,,,31BIS Avenue Victor Hugo,,,,33120
+31BIS Avenue Victor Hugo 33120,,,,31BIS Avenue Victor Hugo,,,Arcachon,
+31BIS Avenue Victor Hugo,-1.172149,44.657159,,31BIS Avenue Victor Hugo,,,,33120
+15 Avenue de Lestrille Artigues-près-Bordeaux,,,,15 Avenue de Lestrille,,,,33370
+15 Avenue de Lestrille 33370,,,,15 Avenue de Lestrille,,,Artigues-près-Bordeaux,
+15 Avenue de Lestrille,-0.496308,44.871065,,15 Avenue de Lestrille,,,,33370
+8 Résidence Le Courtiou Audenge,,,,8 Résidence Le Courtiou,,,,33980
+8 Résidence Le Courtiou 33980,,,,8 Résidence Le Courtiou,,,Audenge,
+8 Résidence Le Courtiou,-0.990967,44.690035,,8 Résidence Le Courtiou,,,,33980
+23 Rue Maurice Toutaud Bassens,,,,23 Rue Maurice Toutaud,,,,33530
+23 Rue Maurice Toutaud 33530,,,,23 Rue Maurice Toutaud,,,Bassens,
+23 Rue Maurice Toutaud,-0.520141,44.893901,,23 Rue Maurice Toutaud,,,,33530
+56 Avenue Alexis Capelle Bègles,,,,56 Avenue Alexis Capelle,,,,33130
+56 Avenue Alexis Capelle 33130,,,,56 Avenue Alexis Capelle,,,Bègles,
+56 Avenue Alexis Capelle,-0.548946,44.813630,,56 Avenue Alexis Capelle,,,,33130
+50 Avenue Lucien Lerousseau Bègles,,,,50 Avenue Lucien Lerousseau,,,,33130
+50 Avenue Lucien Lerousseau 33130,,,,50 Avenue Lucien Lerousseau,,,Bègles,
+50 Avenue Lucien Lerousseau,-0.556357,44.807703,,50 Avenue Lucien Lerousseau,,,,33130
+3 Route de Maison Rouge Belin-Béliet,,,,3 Route de Maison Rouge,,,,33830
+3 Route de Maison Rouge 33830,,,,3 Route de Maison Rouge,,,Belin-Béliet,
+3 Route de Maison Rouge,-0.779524,44.503739,,3 Route de Maison Rouge,,,,33830
+35 Rue du Cardinal Lecot Blanquefort,,,,35 Rue du Cardinal Lecot,,,,33290
+35 Rue du Cardinal Lecot 33290,,,,35 Rue du Cardinal Lecot,,,Blanquefort,
+35 Rue du Cardinal Lecot,-0.648799,44.915606,,35 Rue du Cardinal Lecot,,,,33290
+1 Chemin du Monteil Blaye,,,,1 Chemin du Monteil,,,,33390
+1 Chemin du Monteil 33390,,,,1 Chemin du Monteil,,,Blaye,
+1 Chemin du Monteil,-0.656628,45.128046,,1 Chemin du Monteil,,,,33390
+2 Rue d'Aviau Bordeaux,,,,2 Rue d'Aviau,,,,33090
+2 Rue d'Aviau 33090,,,,2 Rue d'Aviau,,,Bordeaux,
+2 Rue d'Aviau,-0.575711,44.849723,,2 Rue d'Aviau,,,,33090
+17B Rue Bourbon Bordeaux,,,,17B Rue Bourbon,,,,33090
+17B Rue Bourbon 33090,,,,17B Rue Bourbon,,,Bordeaux,
+17B Rue Bourbon,-0.556596,44.859876,,17B Rue Bourbon,,,,33090
+123 Quai des Chartrons Bordeaux,,,,123 Quai des Chartrons,,,,33090
+123 Quai des Chartrons 33090,,,,123 Quai des Chartrons,,,Bordeaux,
+123 Quai des Chartrons,-0.563341,44.856034,,123 Quai des Chartrons,,,,33090
+5 Cité Dulamon Bordeaux,,,,5 Cité Dulamon,,,,33090
+5 Cité Dulamon 33090,,,,5 Cité Dulamon,,,Bordeaux,
+5 Cité Dulamon,-0.572776,44.834117,,5 Cité Dulamon,,,,33090
+6 Passage François Ducom Bordeaux,,,,6 Passage François Ducom,,,,33090
+6 Passage François Ducom 33090,,,,6 Passage François Ducom,,,Bordeaux,
+6 Passage François Ducom,-0.579374,44.823163,,6 Passage François Ducom,,,,33090
+9 Rue Hoche Bordeaux,,,,9 Rue Hoche,,,,33090
+9 Rue Hoche 33090,,,,9 Rue Hoche,,,Bordeaux,
+9 Rue Hoche,-0.603882,44.847715,,9 Rue Hoche,,,,33090
+114 Chemin Lafitte Bordeaux,,,,114 Chemin Lafitte,,,,33090
+114 Chemin Lafitte 33090,,,,114 Chemin Lafitte,,,Bordeaux,
+114 Chemin Lafitte,-0.549965,44.881709,,114 Chemin Lafitte,,,,33090
+58 Rue de Macau Bordeaux,,,,58 Rue de Macau,,,,33090
+58 Rue de Macau 33090,,,,58 Rue de Macau,,,Bordeaux,
+58 Rue de Macau,-0.587626,44.856104,,58 Rue de Macau,,,,33090
+61 Rue Mondenard Bordeaux,,,,61 Rue Mondenard,,,,33090
+61 Rue Mondenard 33090,,,,61 Rue Mondenard,,,Bordeaux,
+61 Rue Mondenard,-0.588301,44.846301,,61 Rue Mondenard,,,,33090
+172 Rue Pelleport Bordeaux,,,,172 Rue Pelleport,,,,33090
+172 Rue Pelleport 33090,,,,172 Rue Pelleport,,,Bordeaux,
+172 Rue Pelleport,-0.565360,44.821270,,172 Rue Pelleport,,,,33090
+13 Rue des Remparts Bordeaux,,,,13 Rue des Remparts,,,,33090
+13 Rue des Remparts 33090,,,,13 Rue des Remparts,,,Bordeaux,
+13 Rue des Remparts,-0.579634,44.840237,,13 Rue des Remparts,,,,33090
+7 Rue du Soldat Moncourrier Bordeaux,,,,7 Rue du Soldat Moncourrier,,,,33090
+7 Rue du Soldat Moncourrier 33090,,,,7 Rue du Soldat Moncourrier,,,Bordeaux,
+7 Rue du Soldat Moncourrier,-0.597601,44.821230,,7 Rue du Soldat Moncourrier,,,,33090
+17 Rue Victor et Louis Liotard Bordeaux,,,,17 Rue Victor et Louis Liotard,,,,33090
+17 Rue Victor et Louis Liotard 33090,,,,17 Rue Victor et Louis Liotard,,,Bordeaux,
+17 Rue Victor et Louis Liotard,-0.596909,44.823322,,17 Rue Victor et Louis Liotard,,,,33090
+36B Avenue du Général Leclerc Le Bouscat,,,,36B Avenue du Général Leclerc,,,,33110
+36B Avenue du Général Leclerc 33110,,,,36B Avenue du Général Leclerc,,,Le Bouscat,
+36B Avenue du Général Leclerc,-0.597711,44.854511,,36B Avenue du Général Leclerc,,,,33110
+4 Place de l'Église Branne,,,,4 Place de l'Église,,,,33420
+4 Place de l'Église 33420,,,,4 Place de l'Église,,,Branne,
+4 Place de l'Église,-0.185841,44.830631,,4 Place de l'Église,,,,33420
+12 Rue du Camp Bas Cabanac-et-Villagrains,,,,12 Rue du Camp Bas,,,,33650
+12 Rue du Camp Bas 33650,,,,12 Rue du Camp Bas,,,Cabanac-et-Villagrains,
+12 Rue du Camp Bas,-0.592585,44.571301,,12 Rue du Camp Bas,,,,33650
+37 Route de Morillon Camblanes-et-Meynac,,,,37 Route de Morillon,,,,33360
+37 Route de Morillon 33360,,,,37 Route de Morillon,,,Camblanes-et-Meynac,
+37 Route de Morillon,-0.480489,44.764428,,37 Route de Morillon,,,,33360
+1 Rue Pierre Corneille Carbon-Blanc,,,,1 Rue Pierre Corneille,,,,33560
+1 Rue Pierre Corneille 33560,,,,1 Rue Pierre Corneille,,,Carbon-Blanc,
+1 Rue Pierre Corneille,-0.494346,44.906445,,1 Rue Pierre Corneille,,,,33560
+8 Rue du 14 Juillet Castelnau-de-Médoc,,,,8 Rue du 14 Juillet,,,,33480
+8 Rue du 14 Juillet 33480,,,,8 Rue du 14 Juillet,,,Castelnau-de-Médoc,
+8 Rue du 14 Juillet,-0.798072,45.028678,,8 Rue du 14 Juillet,,,,33480
+34 Chemin des Bories Cenon,,,,34 Chemin des Bories,,,,33150
+34 Chemin des Bories 33150,,,,34 Chemin des Bories,,,Cenon,
+34 Chemin des Bories,-0.516612,44.849890,,34 Chemin des Bories,,,,33150
+4 Lotissement Les Moulins Cérons,,,,4 Lotissement Les Moulins,,,,33720
+4 Lotissement Les Moulins 33720,,,,4 Lotissement Les Moulins,,,Cérons,
+4 Lotissement Les Moulins,-0.348354,44.632741,,4 Lotissement Les Moulins,,,,33720
+14 Chemin de Peyre Cestas,,,,14 Chemin de Peyre,,,,33610
+14 Chemin de Peyre 33610,,,,14 Chemin de Peyre,,,Cestas,
+14 Chemin de Peyre,-0.651919,44.733530,,14 Chemin de Peyre,,,,33610
+2 Rue Epernon Créon,,,,2 Rue Epernon,,,,33670
+2 Rue Epernon 33670,,,,2 Rue Epernon,,,Créon,
+2 Rue Epernon,-0.347629,44.774049,,2 Rue Epernon,,,,33670
+71 Rue du College Technique Eysines,,,,71 Rue du College Technique,,,,33320
+71 Rue du College Technique 33320,,,,71 Rue du College Technique,,,Eysines,
+71 Rue du College Technique,-0.629469,44.884043,,71 Rue du College Technique,,,,33320
+5 Route de Dardenac Faleyras,,,,5 Route de Dardenac,,,,33760
+5 Route de Dardenac 33760,,,,5 Route de Dardenac,,,Faleyras,
+5 Route de Dardenac,-0.241729,44.778078,,5 Route de Dardenac,,,,33760
+13 Rue Racine Floirac,,,,13 Rue Racine,,,,33270
+13 Rue Racine 33270,,,,13 Rue Racine,,,Floirac,
+13 Rue Racine,-0.514491,44.845523,,13 Rue Racine,,,,33270
+2 Allée de la Clairière Gradignan,,,,2 Allée de la Clairière,,,,33170
+2 Allée de la Clairière 33170,,,,2 Allée de la Clairière,,,Gradignan,
+2 Allée de la Clairière,-0.612658,44.776573,,2 Allée de la Clairière,,,,33170
+15 Allée Paul Cézanne Gradignan,,,,15 Allée Paul Cézanne,,,,33170
+15 Allée Paul Cézanne 33170,,,,15 Allée Paul Cézanne,,,Gradignan,
+15 Allée Paul Cézanne,-0.634094,44.771633,,15 Allée Paul Cézanne,,,,33170
+64 Rue Chante Cigale Gujan-Mestras,,,,64 Rue Chante Cigale,,,,33470
+64 Rue Chante Cigale 33470,,,,64 Rue Chante Cigale,,,Gujan-Mestras,
+64 Rue Chante Cigale,-1.062088,44.629659,,64 Rue Chante Cigale,,,,33470
+73 Allée des Places Gujan-Mestras,,,,73 Allée des Places,,,,33470
+73 Allée des Places 33470,,,,73 Allée des Places,,,Gujan-Mestras,
+73 Allée des Places,-1.092154,44.633911,,73 Allée des Places,,,,33470
+10 Rue des Potiers Le Haillan,,,,10 Rue des Potiers,,,,33185
+10 Rue des Potiers 33185,,,,10 Rue des Potiers,,,Le Haillan,
+10 Rue des Potiers,-0.686257,44.876153,,10 Rue des Potiers,,,,33185
+438 Avenue du Général de Gaulle Izon,,,,438 Avenue du Général de Gaulle,,,,33450
+438 Avenue du Général de Gaulle 33450,,,,438 Avenue du Général de Gaulle,,,Izon,
+438 Avenue du Général de Gaulle,-0.350218,44.917525,,438 Avenue du Général de Gaulle,,,,33450
+106 Chemin des Gemmeurs Lacanau,,,,106 Chemin des Gemmeurs,,,,33680
+106 Chemin des Gemmeurs 33680,,,,106 Chemin des Gemmeurs,,,Lacanau,
+106 Chemin des Gemmeurs,-1.178049,45.002652,,106 Chemin des Gemmeurs,,,,33680
+68 Avenue du Général De Gaulle Langoiran,,,,68 Avenue du Général De Gaulle,,,,33550
+68 Avenue du Général De Gaulle 33550,,,,68 Avenue du Général De Gaulle,,,Langoiran,
+68 Avenue du Général De Gaulle,-0.399080,44.705610,,68 Avenue du Général De Gaulle,,,,33550
+25 Boulevard de la Plage Lanton,,,,25 Boulevard de la Plage,,,,33138
+25 Boulevard de la Plage 33138,,,,25 Boulevard de la Plage,,,Lanton,
+25 Boulevard de la Plage,-1.067437,44.717438,,25 Boulevard de la Plage,,,,33138
+20 Rue des Chevreuils Piraillan Lège-Cap-Ferret,,,,20 Rue des Chevreuils Piraillan,,,,33950
+20 Rue des Chevreuils Piraillan 33950,,,,20 Rue des Chevreuils Piraillan,,,Lège-Cap-Ferret,
+20 Rue des Chevreuils Piraillan,-1.228406,44.711892,,20 Rue des Chevreuils Piraillan,,,,33950
+8BIS Rue de la Poste Cap Ferret Lège-Cap-Ferret,,,,8BIS Rue de la Poste Cap Ferret,,,,33950
+8BIS Rue de la Poste Cap Ferret 33950,,,,8BIS Rue de la Poste Cap Ferret,,,Lège-Cap-Ferret,
+8BIS Rue de la Poste Cap Ferret,-1.248688,44.647288,,8BIS Rue de la Poste Cap Ferret,,,,33950
+2BIS Rue des Abbés Collin Lesparre-Médoc,,,,2BIS Rue des Abbés Collin,,,,33340
+2BIS Rue des Abbés Collin 33340,,,,2BIS Rue des Abbés Collin,,,Lesparre-Médoc,
+2BIS Rue des Abbés Collin,-0.923608,45.303859,,2BIS Rue des Abbés Collin,,,,33340
+195 Avenue de l'Épinette Libourne,,,,195 Avenue de l'Épinette,,,,33500
+195 Avenue de l'Épinette 33500,,,,195 Avenue de l'Épinette,,,Libourne,
+195 Avenue de l'Épinette,-0.214421,44.906517,,195 Avenue de l'Épinette,,,,33500
+10 Rue des 4 Frères Robert Libourne,,,,10 Rue des 4 Frères Robert,,,,33500
+10 Rue des 4 Frères Robert 33500,,,,10 Rue des 4 Frères Robert,,,Libourne,
+10 Rue des 4 Frères Robert,-0.246306,44.911514,,10 Rue des 4 Frères Robert,,,,33500
+89 Rue du Général de Gaulle Lormont,,,,89 Rue du Général de Gaulle,,,,33310
+89 Rue du Général de Gaulle 33310,,,,89 Rue du Général de Gaulle,,,Lormont,
+89 Rue du Général de Gaulle,-0.528535,44.877435,,89 Rue du Général de Gaulle,,,,33310
+11 Rue Combattants Afn 1952 1962 Macau,,,,11 Rue Combattants Afn 1952 1962,,,,33460
+11 Rue Combattants Afn 1952 1962 33460,,,,11 Rue Combattants Afn 1952 1962,,,Macau,
+11 Rue Combattants Afn 1952 1962,-0.620015,45.002512,,11 Rue Combattants Afn 1952 1962,,,,33460
+29 Rue Alphonse Daudet Mérignac,,,,29 Rue Alphonse Daudet,,,,33700
+29 Rue Alphonse Daudet 33700,,,,29 Rue Alphonse Daudet,,,Mérignac,
+29 Rue Alphonse Daudet,-0.657175,44.852947,,29 Rue Alphonse Daudet,,,,33700
+64 Avenue de l'Europe Mérignac,,,,64 Avenue de l'Europe,,,,33700
+64 Avenue de l'Europe 33700,,,,64 Avenue de l'Europe,,,Mérignac,
+64 Avenue de l'Europe,-0.672518,44.820343,,64 Avenue de l'Europe,,,,33700
+110 Avenue de la Libération Mérignac,,,,110 Avenue de la Libération,,,,33700
+110 Avenue de la Libération 33700,,,,110 Avenue de la Libération,,,Mérignac,
+110 Avenue de la Libération,-0.644571,44.854168,,110 Avenue de la Libération,,,,33700
+23 Avenue Pythagore Mérignac,,,,23 Avenue Pythagore,,,,33700
+23 Avenue Pythagore 33700,,,,23 Avenue Pythagore,,,Mérignac,
+23 Avenue Pythagore,-0.680333,44.831207,,23 Avenue Pythagore,,,,33700
+34 Rue Porte de la Réole Monségur,,,,34 Rue Porte de la Réole,,,,33580
+34 Rue Porte de la Réole 33580,,,,34 Rue Porte de la Réole,,,Monségur,
+34 Rue Porte de la Réole,0.078745,44.649933,,34 Rue Porte de la Réole,,,,33580
+22 Allée de la Forêt d'Arboudeau Parempuyre,,,,22 Allée de la Forêt d'Arboudeau,,,,33290
+22 Allée de la Forêt d'Arboudeau 33290,,,,22 Allée de la Forêt d'Arboudeau,,,Parempuyre,
+22 Allée de la Forêt d'Arboudeau,-0.609884,44.943862,,22 Allée de la Forêt d'Arboudeau,,,,33290
+4 Allée de l'Aube Pessac,,,,4 Allée de l'Aube,,,,33600
+4 Allée de l'Aube 33600,,,,4 Allée de l'Aube,,,Pessac,
+4 Allée de l'Aube,-0.679580,44.796945,,4 Allée de l'Aube,,,,33600
+19 Avenue des Erables Pessac,,,,19 Avenue des Erables,,,,33600
+19 Avenue des Erables 33600,,,,19 Avenue des Erables,,,Pessac,
+19 Avenue des Erables,-0.622953,44.812073,,19 Avenue des Erables,,,,33600
+14 Avenue Léon Blum Pessac,,,,14 Avenue Léon Blum,,,,33600
+14 Avenue Léon Blum 33600,,,,14 Avenue Léon Blum,,,Pessac,
+14 Avenue Léon Blum,-0.624426,44.814299,,14 Avenue Léon Blum,,,,33600
+158 Rue de la Poudrière Pessac,,,,158 Rue de la Poudrière,,,,33600
+158 Rue de la Poudrière 33600,,,,158 Rue de la Poudrière,,,Pessac,
+158 Rue de la Poudrière,-0.701315,44.791874,,158 Rue de la Poudrière,,,,33600
+296 Chemin Font Martin Le Pian-Médoc,,,,296 Chemin Font Martin,,,,33290
+296 Chemin Font Martin 33290,,,,296 Chemin Font Martin,,,Le Pian-Médoc,
+296 Chemin Font Martin,-0.684848,44.942391,,296 Chemin Font Martin,,,,33290
+4 Chemin de Callonge Pompignac,,,,4 Chemin de Callonge,,,,33370
+4 Chemin de Callonge 33370,,,,4 Chemin de Callonge,,,Pompignac,
+4 Chemin de Callonge,-0.435860,44.849075,,4 Chemin de Callonge,,,,33370
+11 Rue du Général de Gaulle Reignac,,,,11 Rue du Général de Gaulle,,,,33860
+11 Rue du Général de Gaulle 33860,,,,11 Rue du Général de Gaulle,,,Reignac,
+11 Rue du Général de Gaulle,-0.506287,45.232121,,11 Rue du Général de Gaulle,,,,33860
+25 Rue de Montalon Saint-André-de-Cubzac,,,,25 Rue de Montalon,,,,33240
+25 Rue de Montalon 33240,,,,25 Rue de Montalon,,,Saint-André-de-Cubzac,
+25 Rue de Montalon,-0.447362,44.996219,,25 Rue de Montalon,,,,33240
+10 Rue de l'Église Saint-Christoly-Médoc,,,,10 Rue de l'Église,,,,33340
+10 Rue de l'Église 33340,,,,10 Rue de l'Église,,,Saint-Christoly-Médoc,
+10 Rue de l'Église,-0.826166,45.356896,,10 Rue de l'Église,,,,33340
+75 Rue François Boulière Sainte-Eulalie,,,,75 Rue François Boulière,,,,33560
+75 Rue François Boulière 33560,,,,75 Rue François Boulière,,,Sainte-Eulalie,
+75 Rue François Boulière,-0.464408,44.907859,,75 Rue François Boulière,,,,33560
+15 Impasse Bugade Saint-Jean-d'Illac,,,,15 Impasse Bugade,,,,33127
+15 Impasse Bugade 33127,,,,15 Impasse Bugade,,,Saint-Jean-d'Illac,
+15 Impasse Bugade,-0.834097,44.801573,,15 Impasse Bugade,,,,33127
+31 Rue du Moulin de Conilh Saint-Loubès,,,,31 Rue du Moulin de Conilh,,,,33450
+31 Rue du Moulin de Conilh 33450,,,,31 Rue du Moulin de Conilh,,,Saint-Loubès,
+31 Rue du Moulin de Conilh,-0.440753,44.916946,,31 Rue du Moulin de Conilh,,,,33450
+12BIS Chemin du Bruilleau Saint-Médard-d'Eyrans,,,,12BIS Chemin du Bruilleau,,,,33650
+12BIS Chemin du Bruilleau 33650,,,,12BIS Chemin du Bruilleau,,,Saint-Médard-d'Eyrans,
+12BIS Chemin du Bruilleau,-0.519029,44.694191,,12BIS Chemin du Bruilleau,,,,33650
+20 Rue Fernand Labrousse Saint-Médard-en-Jalles,,,,20 Rue Fernand Labrousse,,,,33160
+20 Rue Fernand Labrousse 33160,,,,20 Rue Fernand Labrousse,,,Saint-Médard-en-Jalles,
+20 Rue Fernand Labrousse,-0.753604,44.891912,,20 Rue Fernand Labrousse,,,,33160
+12 Allée des Palombes Saint-Médard-en-Jalles,,,,12 Allée des Palombes,,,,33160
+12 Allée des Palombes 33160,,,,12 Allée des Palombes,,,Saint-Médard-en-Jalles,
+12 Allée des Palombes,-0.782343,44.894470,,12 Allée des Palombes,,,,33160
+43 Rue Célestin Joubert Saint-Savin,,,,43 Rue Célestin Joubert,,,,33920
+43 Rue Célestin Joubert 33920,,,,43 Rue Célestin Joubert,,,Saint-Savin,
+43 Rue Célestin Joubert,-0.447718,45.140065,,43 Rue Célestin Joubert,,,,33920
+12 Chemin des Pins Saint-Vivien-de-Médoc,,,,12 Chemin des Pins,,,,33590
+12 Chemin des Pins 33590,,,,12 Chemin des Pins,,,Saint-Vivien-de-Médoc,
+12 Chemin des Pins,-1.045862,45.423773,,12 Chemin des Pins,,,,33590
+18 Résidence Le Parc de Taudignon Salles,,,,18 Résidence Le Parc de Taudignon,,,,33770
+18 Résidence Le Parc de Taudignon 33770,,,,18 Résidence Le Parc de Taudignon,,,Salles,
+18 Résidence Le Parc de Taudignon,-0.874498,44.563054,,18 Résidence Le Parc de Taudignon,,,,33770
+12 Place de la République Soulac-sur-Mer,,,,12 Place de la République,,,,33780
+12 Place de la République 33780,,,,12 Place de la République,,,Soulac-sur-Mer,
+12 Place de la République,-1.126167,45.508096,,12 Place de la République,,,,33780
+77 Rue Victor Schoelcher Le Taillan-Médoc,,,,77 Rue Victor Schoelcher,,,,33320
+77 Rue Victor Schoelcher 33320,,,,77 Rue Victor Schoelcher,,,Le Taillan-Médoc,
+77 Rue Victor Schoelcher,-0.677172,44.903033,,77 Rue Victor Schoelcher,,,,33320
+97 Boulevard George V Talence,,,,97 Boulevard George V,,,,33400
+97 Boulevard George V 33400,,,,97 Boulevard George V,,,Talence,
+97 Boulevard George V,-0.587917,44.824324,,97 Boulevard George V,,,,33400
+8 Rue Vergnaud Talence,,,,8 Rue Vergnaud,,,,33400
+8 Rue Vergnaud 33400,,,,8 Rue Vergnaud,,,Talence,
+8 Rue Vergnaud,-0.575896,44.809673,,8 Rue Vergnaud,,,,33400
+78 Avenue de la Brasserie La Teste-de-Buch,,,,78 Avenue de la Brasserie,,,,33164
+78 Avenue de la Brasserie 33164,,,,78 Avenue de la Brasserie,,,La Teste-de-Buch,
+78 Avenue de la Brasserie,-1.147982,44.628861,,78 Avenue de la Brasserie,,,,33164
+22 Rue Jean Saint-Marc La Teste-de-Buch,,,,22 Rue Jean Saint-Marc,,,,33164
+22 Rue Jean Saint-Marc 33164,,,,22 Rue Jean Saint-Marc,,,La Teste-de-Buch,
+22 Rue Jean Saint-Marc,-1.117454,44.634571,,22 Rue Jean Saint-Marc,,,,33164
+5 Allée des Platanes de Castéra La Teste-de-Buch,,,,5 Allée des Platanes de Castéra,,,,33164
+5 Allée des Platanes de Castéra 33164,,,,5 Allée des Platanes de Castéra,,,La Teste-de-Buch,
+5 Allée des Platanes de Castéra,-1.145141,44.538804,,5 Allée des Platanes de Castéra,,,,33164
+27 Route de Montalivet Vendays-Montalivet,,,,27 Route de Montalivet,,,,33930
+27 Route de Montalivet 33930,,,,27 Route de Montalivet,,,Vendays-Montalivet,
+27 Route de Montalivet,-1.066271,45.357160,,27 Route de Montalivet,,,,33930
+16 Rue des Bleuets Villenave-d'Ornon,,,,16 Rue des Bleuets,,,,33140
+16 Rue des Bleuets 33140,,,,16 Rue des Bleuets,,,Villenave-d'Ornon,
+16 Rue des Bleuets,-0.577113,44.756149,,16 Rue des Bleuets,,,,33140
+31 Chemin Lalaurie Villenave-d'Ornon,,,,31 Chemin Lalaurie,,,,33140
+31 Chemin Lalaurie 33140,,,,31 Chemin Lalaurie,,,Villenave-d'Ornon,
+31 Chemin Lalaurie,-0.566619,44.765003,,31 Chemin Lalaurie,,,,33140
+77 Rue Yvon Mansencal Villenave-d'Ornon,,,,77 Rue Yvon Mansencal,,,,33140
+77 Rue Yvon Mansencal 33140,,,,77 Rue Yvon Mansencal,,,Villenave-d'Ornon,
+77 Rue Yvon Mansencal,-0.574044,44.778289,,77 Rue Yvon Mansencal,,,,33140
+190 Route du Château Arsague,,,,190 Route du Château,,,,40330
+190 Route du Château 40330,,,,190 Route du Château,,,Arsague,
+190 Route du Château,-0.792188,43.585772,,190 Route du Château,,,,40330
+1660 Chemin de Sablaret Bénesse-Maremne,,,,1660 Chemin de Sablaret,,,,40230
+1660 Chemin de Sablaret 40230,,,,1660 Chemin de Sablaret,,,Bénesse-Maremne,
+1660 Chemin de Sablaret,-1.376576,43.620787,,1660 Chemin de Sablaret,,,,40230
+578 Avenue Gabriele d'Annunzio Biscarrosse,,,,578 Avenue Gabriele d'Annunzio,,,,40600
+578 Avenue Gabriele d'Annunzio 40600,,,,578 Avenue Gabriele d'Annunzio,,,Biscarrosse,
+578 Avenue Gabriele d'Annunzio,-1.248768,44.453087,,578 Avenue Gabriele d'Annunzio,,,,40600
+502 Rue d'Yquem Biscarrosse,,,,502 Rue d'Yquem,,,,40600
+502 Rue d'Yquem 40600,,,,502 Rue d'Yquem,,,Biscarrosse,
+502 Rue d'Yquem,-1.152588,44.395253,,502 Rue d'Yquem,,,,40600
+22 Boulevard du Docteur Junqua Capbreton,,,,22 Boulevard du Docteur Junqua,,,,40130
+22 Boulevard du Docteur Junqua 40130,,,,22 Boulevard du Docteur Junqua,,,Capbreton,
+22 Boulevard du Docteur Junqua,-1.429401,43.643674,,22 Boulevard du Docteur Junqua,,,,40130
+123 Laplaçote Cauneille,,,,123 Laplaçote,,,,40300
+123 Laplaçote 40300,,,,123 Laplaçote,,,Cauneille,
+123 Laplaçote,-1.082044,43.547036,,123 Laplaçote,,,,40300
+76 Avenue Georges Clémenceau Dax,,,,76 Avenue Georges Clemenceau,,,,40100
+76 Avenue Georges Clémenceau 40100,,,,76 Avenue Georges Clemenceau,,,Dax,
+76 Avenue Georges Clémenceau,-1.046628,43.707986,,76 Avenue Georges Clemenceau,,,,40100
+58 Route du Lac de Tastoa Estibeaux,,,,58 Route du Lac de Tastoa,,,,40290
+58 Route du Lac de Tastoa 40290,,,,58 Route du Lac de Tastoa,,,Estibeaux,
+58 Route du Lac de Tastoa,-0.895449,43.592815,,58 Route du Lac de Tastoa,,,,40290
+48 Rue René Vielle Grenade-sur-l'Adour,,,,48 Rue René Vielle,,,,40270
+48 Rue René Vielle 40270,,,,48 Rue René Vielle,,,Grenade-sur-l'Adour,
+48 Rue René Vielle,-0.425961,43.772494,,48 Rue René Vielle,,,,40270
+77 Rue des Cerisiers Josse,,,,77 Rue des Cerisiers,,,,40230
+77 Rue des Cerisiers 40230,,,,77 Rue des Cerisiers,,,Josse,
+77 Rue des Cerisiers,-1.221092,43.642049,,77 Rue des Cerisiers,,,,40230
+56 Chemin de Pesques Laluque,,,,56 Chemin de Pesques,,,,40465
+56 Chemin de Pesques 40465,,,,56 Chemin de Pesques,,,Laluque,
+56 Chemin de Pesques,-0.991764,43.855019,,56 Chemin de Pesques,,,,40465
+131 Rue des Tilleuls Lit-et-Mixe,,,,131 Rue des Tilleuls,,,,40170
+131 Rue des Tilleuls 40170,,,,131 Rue des Tilleuls,,,Lit-et-Mixe,
+131 Rue des Tilleuls,-1.256387,44.033363,,131 Rue des Tilleuls,,,,40170
+150 Chemin du Pey de l'Ancre Messanges,,,,150 Chemin du Pey de l'Ancre,,,,40660
+150 Chemin du Pey de l'Ancre 40660,,,,150 Chemin du Pey de l'Ancre,,,Messanges,
+150 Chemin du Pey de l'Ancre,-1.388481,43.796055,,150 Chemin du Pey de l'Ancre,,,,40660
+477 Chemin de Condom Misson,,,,477 Chemin de Condom,,,,40290
+477 Chemin de Condom 40290,,,,477 Chemin de Condom,,,Misson,
+477 Chemin de Condom,-0.957415,43.579464,,477 Chemin de Condom,,,,40290
+10 Avenue du Doct René Lataste Mont-de-Marsan,,,,10 Avenue du Doct René Lataste,,,,40000
+10 Avenue du Doct René Lataste 40000,,,,10 Avenue du Doct René Lataste,,,Mont-de-Marsan,
+10 Avenue du Doct René Lataste,-0.481489,43.880640,,10 Avenue du Doct René Lataste,,,,40000
+150 Avenue de Morcenx Mont-de-Marsan,,,,150 Avenue de Morcenx,,,,40000
+150 Avenue de Morcenx 40000,,,,150 Avenue de Morcenx,,,Mont-de-Marsan,
+150 Avenue de Morcenx,-0.522942,43.903836,,150 Avenue de Morcenx,,,,40000
+35 Rue des Cigales Morcenx,,,,35 Rue des Cigales,,,,40110
+35 Rue des Cigales 40110,,,,35 Rue des Cigales,,,Morcenx,
+35 Rue des Cigales,-0.896936,44.025986,,35 Rue des Cigales,,,,40110
+301 Allée des Bruyères Ondres,,,,301 Allée des Bruyères,,,,40440
+301 Allée des Bruyères 40440,,,,301 Allée des Bruyères,,,Ondres,
+301 Allée des Bruyères,-1.458190,43.570357,,301 Allée des Bruyères,,,,40440
+11 Avenue de Verdun Parentis-en-Born,,,,11 Avenue de Verdun,,,,40160
+11 Avenue de Verdun 40160,,,,11 Avenue de Verdun,,,Parentis-en-Born,
+11 Avenue de Verdun,-1.068463,44.358469,,11 Avenue de Verdun,,,,40160
+40 Thiou de la Lande Pontonx-sur-l'Adour,,,,40 Thiou de la Lande,,,,40465
+40 Thiou de la Lande 40465,,,,40 Thiou de la Lande,,,Pontonx-sur-l'Adour,
+40 Thiou de la Lande,-0.938654,43.787333,,40 Thiou de la Lande,,,,40465
+563 Avenue Gaston Lescouzères Roquefort,,,,563 Avenue Gaston Lescouzères,,,,40120
+563 Avenue Gaston Lescouzères 40120,,,,563 Avenue Gaston Lescouzères,,,Roquefort,
+563 Avenue Gaston Lescouzères,-0.321924,44.043769,,563 Avenue Gaston Lescouzères,,,,40120
+227 Route de l'Auribat Saint-Jean-de-Lier,,,,227 Route de l'Auribat,,,,40380
+227 Route de l'Auribat 40380,,,,227 Route de l'Auribat,,,Saint-Jean-de-Lier,
+227 Route de l'Auribat,-0.875903,43.788860,,227 Route de l'Auribat,,,,40380
+2553 Avenue du Quartier Neuf Saint-Martin-de-Seignanx,,,,2553 Avenue du Quartier Neuf,,,,40390
+2553 Avenue du Quartier Neuf 40390,,,,2553 Avenue du Quartier Neuf,,,Saint-Martin-de-Seignanx,
+2553 Avenue du Quartier Neuf,-1.386432,43.531772,,2553 Avenue du Quartier Neuf,,,,40390
+344 Avenue de la Résistance Saint-Paul-lès-Dax,,,,344 Avenue de la Résistance,,,,40990
+344 Avenue de la Résistance 40990,,,,344 Avenue de la Résistance,,,Saint-Paul-lès-Dax,
+344 Avenue de la Résistance,-1.055410,43.724307,,344 Avenue de la Résistance,,,,40990
+2 Rue Guillaume Sanche Saint-Sever,,,,2 Rue Guillaume Sanche,,,,40500
+2 Rue Guillaume Sanche 40500,,,,2 Rue Guillaume Sanche,,,Saint-Sever,
+2 Rue Guillaume Sanche,-0.564599,43.749650,,2 Rue Guillaume Sanche,,,,40500
+249 Chemin de Pierrot Samadet,,,,249 Chemin de Pierrot,,,,40320
+249 Chemin de Pierrot 40320,,,,249 Chemin de Pierrot,,,Samadet,
+249 Chemin de Pierrot,-0.498466,43.651077,,249 Chemin de Pierrot,,,,40320
+33 Avenue d'Augusta Seignosse,,,,33 Avenue d'Augusta,,,,40510
+33 Avenue d'Augusta 40510,,,,33 Avenue d'Augusta,,,Seignosse,
+33 Avenue d'Augusta,-1.421023,43.695156,,33 Avenue d'Augusta,,,,40510
+205 Avenue Paul Lahary Soorts-Hossegor,,,,205 Avenue Paul Lahary,,,,40150
+205 Avenue Paul Lahary 40150,,,,205 Avenue Paul Lahary,,,Soorts-Hossegor,
+205 Avenue Paul Lahary,-1.430593,43.659827,,205 Avenue Paul Lahary,,,,40150
+8 Rue de Piric Soustons,,,,8 Rue de Piric,,,,40140
+8 Rue de Piric 40140,,,,8 Rue de Piric,,,Soustons,
+8 Rue de Piric,-1.310569,43.741685,,8 Rue de Piric,,,,40140
+808 Rue des Mimosas Tartas,,,,808 Rue des Mimosas,,,,40400
+808 Rue des Mimosas 40400,,,,808 Rue des Mimosas,,,Tartas,
+808 Rue des Mimosas,-0.812372,43.836854,,808 Rue des Mimosas,,,,40400
+7 Rue Claude Debussy Vieux-Boucau-les-Bains,,,,7 Rue Claude Debussy,,,,40480
+7 Rue Claude Debussy 40480,,,,7 Rue Claude Debussy,,,Vieux-Boucau-les-Bains,
+7 Rue Claude Debussy,-1.395571,43.793057,,7 Rue Claude Debussy,,,,40480
+28 Rue Laboulbéne Agen,,,,28 Rue Laboulbéne,,,,47000
+28 Rue Laboulbéne 47000,,,,28 Rue Laboulbéne,,,Agen,
+28 Rue Laboulbéne,0.621702,44.200821,,28 Rue Laboulbéne,,,,47000
+5 Avenue du Marechal-Joffre Aiguillon,,,,5 Avenue du Marechal-Joffre,,,,47190
+5 Avenue du Marechal-Joffre 47190,,,,5 Avenue du Marechal-Joffre,,,Aiguillon,
+5 Avenue du Marechal-Joffre,0.338871,44.287799,,5 Avenue du Marechal-Joffre,,,,47190
+33 Rue de l'École Boé,,,,33 Rue de l'École,,,,47550
+33 Rue de l'École 47550,,,,33 Rue de l'École,,,Boé,
+33 Rue de l'École,0.630073,44.161242,,33 Rue de l'École,,,,47550
+10 Rue Baptiste Marcet Casteljaloux,,,,10 Rue Baptiste Marcet,,,,47700
+10 Rue Baptiste Marcet 47700,,,,10 Rue Baptiste Marcet,,,Casteljaloux,
+10 Rue Baptiste Marcet,0.081247,44.308950,,10 Rue Baptiste Marcet,,,,47700
+156 Route de Lacaussade La Croix-Blanche,,,,156 Route de Lacaussade,,,,47340
+156 Route de Lacaussade 47340,,,,156 Route de Lacaussade,,,La Croix-Blanche,
+156 Route de Lacaussade,0.678807,44.280839,,156 Route de Lacaussade,,,,47340
+10 Rue Neuve Fumel,,,,10 Rue Neuve,,,,47500
+10 Rue Neuve 47500,,,,10 Rue Neuve,,,Fumel,
+10 Rue Neuve,0.955720,44.489609,,10 Rue Neuve,,,,47500
+122 Avenue du Commandant Christian Baylac Marmande,,,,122 Avenue du Commandant Christian Baylac,,,,47200
+122 Avenue du Commandant Christian Baylac 47200,,,,122 Avenue du Commandant Christian Baylac,,,Marmande,
+122 Avenue du Commandant Christian Baylac,0.178997,44.500245,,122 Avenue du Commandant Christian Baylac,,,,47200
+14 Rue Toulouse Lautrec Marmande,,,,14 Rue Toulouse Lautrec,,,,47200
+14 Rue Toulouse Lautrec 47200,,,,14 Rue Toulouse Lautrec,,,Marmande,
+14 Rue Toulouse Lautrec,0.162686,44.508085,,14 Rue Toulouse Lautrec,,,,47200
+19 Rue de l'Union Monflanquin,,,,19 Rue de l'Union,,,,47150
+19 Rue de l'Union 47150,,,,19 Rue de l'Union,,,Monflanquin,
+19 Rue de l'Union,0.768862,44.532183,,19 Rue de l'Union,,,,47150
+6 Rue Helene Boucher Le Passage,,,,6 Rue Hélène Boucher,,,,47520
+6 Rue Helene Boucher 47520,,,,6 Rue Hélène Boucher,,,Le Passage,
+6 Rue Helene Boucher,0.595985,44.199905,,6 Rue Hélène Boucher,,,,47520
+52 Avenue de Saint-Antoine Pujols,,,,52 Avenue de Saint-Antoine,,,,47300
+52 Avenue de Saint-Antoine 47300,,,,52 Avenue de Saint-Antoine,,,Pujols,
+52 Avenue de Saint-Antoine,0.700492,44.377337,,52 Avenue de Saint-Antoine,,,,47300
+33 Rue de la République Saint-Sylvestre-sur-Lot,,,,33 Rue de la République,,,,47140
+33 Rue de la République 47140,,,,33 Rue de la République,,,Saint-Sylvestre-sur-Lot,
+33 Rue de la République,0.803990,44.397284,,33 Rue de la République,,,,47140
+25 Rue Allende Villeneuve-sur-Lot,,,,25 Rue Allende,,,,47300
+25 Rue Allende 47300,,,,25 Rue Allende,,,Villeneuve-sur-Lot,
+25 Rue Allende,0.726070,44.410430,,25 Rue Allende,,,,47300
+7 Rue de Luneville Villeneuve-sur-Lot,,,,7 Rue de Luneville,,,,47300
+7 Rue de Luneville 47300,,,,7 Rue de Luneville,,,Villeneuve-sur-Lot,
+7 Rue de Luneville,0.711374,44.405217,,7 Rue de Luneville,,,,47300
+26 Avenue des Dauphins Anglet,,,,26 Avenue des Dauphins,,,,64600
+26 Avenue des Dauphins 64600,,,,26 Avenue des Dauphins,,,Anglet,
+26 Avenue des Dauphins,-1.540230,43.500891,,26 Avenue des Dauphins,,,,64600
+24 Rue de Saint-Léon Anglet,,,,24 Rue de Saint-Léon,,,,64600
+24 Rue de Saint-Léon 64600,,,,24 Rue de Saint-Léon,,,Anglet,
+24 Rue de Saint-Léon,-1.537594,43.488101,,24 Rue de Saint-Léon,,,,64600
+4 Lotissement Domaine du Piqueur Artiguelouve,,,,4 Lotissement Domaine du Piqueur,,,,64230
+4 Lotissement Domaine du Piqueur 64230,,,,4 Lotissement Domaine du Piqueur,,,Artiguelouve,
+4 Lotissement Domaine du Piqueur,-0.477150,43.315818,,4 Lotissement Domaine du Piqueur,,,,64230
+1069 Chemin de Bellegarde Balansun,,,,1069 Chemin de Bellegarde,,,,64300
+1069 Chemin de Bellegarde 64300,,,,1069 Chemin de Bellegarde,,,Balansun,
+1069 Chemin de Bellegarde,-0.691926,43.494464,,1069 Chemin de Bellegarde,,,,64300
+27 Rue Jules Labat Bayonne,,,,27 Rue Jules Labat,,,,64100
+27 Rue Jules Labat 64100,,,,27 Rue Jules Labat,,,Bayonne,
+27 Rue Jules Labat,-1.478165,43.492781,,27 Rue Jules Labat,,,,64100
+22 D 934 /Qua Sansou Bescat,,,,22 D 934 /Qua Sansou,,,,64260
+22 D 934 /Qua Sansou 64260,,,,22 D 934 /Qua Sansou,,,Bescat,
+22 D 934 /Qua Sansou,-0.401612,43.136794,,22 D 934 /Qua Sansou,,,,64260
+3 Allée des Ormeaux Biarritz,,,,3 Allée des Ormeaux,,,,64200
+3 Allée des Ormeaux 64200,,,,3 Allée des Ormeaux,,,Biarritz,
+3 Allée des Ormeaux,-1.552418,43.473679,,3 Allée des Ormeaux,,,,64200
+7 Rue Laspalettes Bielle,,,,7 Rue Laspalettes,,,,64260
+7 Rue Laspalettes 64260,,,,7 Rue Laspalettes,,,Bielle,
+7 Rue Laspalettes,-0.425447,43.059424,,7 Rue Laspalettes,,,,64260
+2BIS Rue Albert Mora Boucau,,,,2BIS Rue Albert Mora,,,,64340
+2BIS Rue Albert Mora 64340,,,,2BIS Rue Albert Mora,,,Boucau,
+2BIS Rue Albert Mora,-1.466059,43.527856,,2BIS Rue Albert Mora,,,,64340
+26 Rue des Hortensias Cambo-les-Bains,,,,26 Rue des Hortensias,,,,64250
+26 Rue des Hortensias 64250,,,,26 Rue des Hortensias,,,Cambo-les-Bains,
+26 Rue des Hortensias,-1.395730,43.355425,,26 Rue des Hortensias,,,,64250
+11 Rue du Gabizos Coarraze,,,,11 Rue du Gabizos,,,,64800
+11 Rue du Gabizos 64800,,,,11 Rue du Gabizos,,,Coarraze,
+11 Rue du Gabizos,-0.245030,43.179542,,11 Rue du Gabizos,,,,64800
+8 Rue du Padoin Gan,,,,8 Rue du Padoin,,,,64290
+8 Rue du Padoin 64290,,,,8 Rue du Padoin,,,Gan,
+8 Rue du Padoin,-0.386857,43.232652,,8 Rue du Padoin,,,,64290
+5 Place du Jeu de Paume Hasparren,,,,5 Place du Jeu de Paume,,,,64240
+5 Place du Jeu de Paume 64240,,,,5 Place du Jeu de Paume,,,Hasparren,
+5 Place du Jeu de Paume,-1.304446,43.384880,,5 Place du Jeu de Paume,,,,64240
+3 Rue Saint-Louis Idron,,,,3 Rue Saint-Louis,,,,64320
+3 Rue Saint-Louis 64320,,,,3 Rue Saint-Louis,,,Idron,
+3 Rue Saint-Louis,-0.303599,43.288433,,3 Rue Saint-Louis,,,,64320
+581 Route de l'Eglise Lalonquette,,,,581 Route de l'Eglise,,,,64450
+581 Route de l'Eglise 64450,,,,581 Route de l'Eglise,,,Lalonquette,
+581 Route de l'Eglise,-0.322203,43.487934,,581 Route de l'Eglise,,,,64450
+10 Rue du Parvis Lescar,,,,10 Rue du Parvis,,,,64230
+10 Rue du Parvis 64230,,,,10 Rue du Parvis,,,Lescar,
+10 Rue du Parvis,-0.435641,43.332656,,10 Rue du Parvis,,,,64230
+390 Chemin de la Pouble Loubieng,,,,390 Chemin de la Pouble,,,,64300
+390 Chemin de la Pouble 64300,,,,390 Chemin de la Pouble,,,Loubieng,
+390 Chemin de la Pouble,-0.725574,43.430203,,390 Chemin de la Pouble,,,,64300
+7 Allée des Chevreuils Monein,,,,7 Allée des Chevreuils,,,,64360
+7 Allée des Chevreuils 64360,,,,7 Allée des Chevreuils,,,Monein,
+7 Allée des Chevreuils,-0.565611,43.321021,,7 Allée des Chevreuils,,,,64360
+183 Route du Plateau Mouguerre,,,,183 Route du Plateau,,,,64990
+183 Route du Plateau 64990,,,,183 Route du Plateau,,,Mouguerre,
+183 Route du Plateau,-1.431111,43.477527,,183 Route du Plateau,,,,64990
+10 Rue Adoue Oloron-Sainte-Marie,,,,10 Rue Adoue,,,,64400
+10 Rue Adoue 64400,,,,10 Rue Adoue,,,Oloron-Sainte-Marie,
+10 Rue Adoue,-0.610700,43.187819,,10 Rue Adoue,,,,64400
+22 Avenue du 8 Mai Orthez,,,,22 Avenue du 8 Mai,,,,64300
+22 Avenue du 8 Mai 64300,,,,22 Avenue du 8 Mai,,,Orthez,
+22 Avenue du 8 Mai,-0.780128,43.490966,,22 Avenue du 8 Mai,,,,64300
+44 Rue Castetnau Pau,,,,44 Rue Castetnau,,,,64000
+44 Rue Castetnau 64000,,,,44 Rue Castetnau,,,Pau,
+44 Rue Castetnau,-0.364267,43.300539,,44 Rue Castetnau,,,,64000
+9 Rue du Marsan Pau,,,,9 Rue du Marsan,,,,64000
+9 Rue du Marsan 64000,,,,9 Rue du Marsan,,,Pau,
+9 Rue du Marsan,-0.369473,43.326873,,9 Rue du Marsan,,,,64000
+276 Route du Haou Pomps,,,,276 Route du Haou,,,,64370
+276 Route du Haou 64370,,,,276 Route du Haou,,,Pomps,
+276 Route du Haou,-0.548295,43.493244,,276 Route du Haou,,,,64370
+40 Avenue Argi Eder Saint-Jean-de-Luz,,,,40 Avenue Argi Eder,,,,64500
+40 Avenue Argi Eder 64500,,,,40 Avenue Argi Eder,,,Saint-Jean-de-Luz,
+40 Avenue Argi Eder,-1.638311,43.401596,,40 Avenue Argi Eder,,,,64500
+27 Rue des Pyrénées Saint-Laurent-Bretagne,,,,27 Rue des Pyrénées,,,,64160
+27 Rue des Pyrénées 64160,,,,27 Rue des Pyrénées,,,Saint-Laurent-Bretagne,
+27 Rue des Pyrénées,-0.225524,43.390578,,27 Rue des Pyrénées,,,,64160
+1 Impasse Laban Sendets,,,,1 Impasse Laban,,,,64320
+1 Impasse Laban 64320,,,,1 Impasse Laban,,,Sendets,
+1 Impasse Laban,-0.271652,43.293096,,1 Impasse Laban,,,,64320
+318 Chemin Bordenave Urcuit,,,,318 Chemin Bordenave,,,,64990
+318 Chemin Bordenave 64990,,,,318 Chemin Bordenave,,,Urcuit,
+318 Chemin Bordenave,-1.356450,43.495035,,318 Chemin Bordenave,,,,64990
+16 Rue de Hiribehere Ustaritz,,,,16 Rue de Hiribehere,,,,64480
+16 Rue de Hiribehere 64480,,,,16 Rue de Hiribehere,,,Ustaritz,
+16 Rue de Hiribehere,-1.457295,43.400521,,16 Rue de Hiribehere,,,,64480

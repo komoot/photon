@@ -1,0 +1,541 @@
+query,lon,lat,limit,expected_name,expected_housenumber,expected_street,expected_city,expected_postcode
+6 Sentier des Briandais Bobital,,,,6 Sentier des Briandais,,,,22100
+6 Sentier des Briandais 22100,,,,6 Sentier des Briandais,,,Bobital,
+6 Sentier des Briandais,-2.103385,48.413152,,6 Sentier des Briandais,,,,22100
+16 Résidence des Chênes Caulnes,,,,16 Résidence des Chênes,,,,22350
+16 Résidence des Chênes 22350,,,,16 Résidence des Chênes,,,Caulnes,
+16 Résidence des Chênes,-2.149973,48.291864,,16 Résidence des Chênes,,,,22350
+8 Place Duguesclin Dinan,,,,8 Place Duguesclin,,,,22100
+8 Place Duguesclin 22100,,,,8 Place Duguesclin,,,Dinan,
+8 Place Duguesclin,-2.043671,48.450922,,8 Place Duguesclin,,,,22100
+32 Rue de la Mare Ès Loups Erquy,,,,32 Rue de la Mare Ès Loups,,,,22430
+32 Rue de la Mare Ès Loups 22430,,,,32 Rue de la Mare Ès Loups,,,Erquy,
+32 Rue de la Mare Ès Loups,-2.449201,48.628913,,32 Rue de la Mare Ès Loups,,,,22430
+11 Route Kerjaffray Gouarec,,,,11 Route Kerjaffray,,,,22570
+11 Route Kerjaffray 22570,,,,11 Route Kerjaffray,,,Gouarec,
+11 Route Kerjaffray,-3.193388,48.228382,,11 Route Kerjaffray,,,,22570
+1 Rue du Gen de Gaulle Hémonstoir,,,,1 Rue du Gen de Gaulle,,,,22600
+1 Rue du Gen de Gaulle 22600,,,,1 Rue du Gen de Gaulle,,,Hémonstoir,
+1 Rue du Gen de Gaulle,-2.830120,48.159337,,1 Rue du Gen de Gaulle,,,,22600
+24 Rue des Clossiaux Maroue Lamballe,,,,24 Rue des Clossiaux Maroue,,,,22400
+24 Rue des Clossiaux Maroue 22400,,,,24 Rue des Clossiaux Maroue,,,Lamballe,
+24 Rue des Clossiaux Maroue,-2.507481,48.461821,,24 Rue des Clossiaux Maroue,,,,22400
+13 Rue du Sabre Lancieux,,,,13 Rue du Sabre,,,,22770
+13 Rue du Sabre 22770,,,,13 Rue du Sabre,,,Lancieux,
+13 Rue du Sabre,-2.142685,48.589369,,13 Rue du Sabre,,,,22770
+21 Impasse Hent Dall de Kerlabia Lanloup,,,,21 Impasse Hent Dall de Kerlabia,,,,22580
+21 Impasse Hent Dall de Kerlabia 22580,,,,21 Impasse Hent Dall de Kerlabia,,,Lanloup,
+21 Impasse Hent Dall de Kerlabia,-2.964631,48.711541,,21 Impasse Hent Dall de Kerlabia,,,,22580
+18 Rue René Laënnec Lannion,,,,18 Rue René Laënnec,,,,22300
+18 Rue René Laënnec 22300,,,,18 Rue René Laënnec,,,Lannion,
+18 Rue René Laënnec,-3.459777,48.739303,,18 Rue René Laënnec,,,,22300
+2 Avenue de l'Echapt Léhon,,,,2 Avenue de l'Echapt,,,,22100
+2 Avenue de l'Echapt 22100,,,,2 Avenue de l'Echapt,,,Léhon,
+2 Avenue de l'Echapt,-2.049523,48.439123,,2 Avenue de l'Echapt,,,,22100
+18 Rue Neuve Loudéac,,,,18 Rue Neuve,,,,22600
+18 Rue Neuve 22600,,,,18 Rue Neuve,,,Loudéac,
+18 Rue Neuve,-2.752705,48.177182,,18 Rue Neuve,,,,22600
+4 Rue des Epinais La Motte,,,,4 Rue des Epinais,,,,22600
+4 Rue des Epinais 22600,,,,4 Rue des Epinais,,,La Motte,
+4 Rue des Epinais,-2.731693,48.232805,,4 Rue des Epinais,,,,22600
+48 Rue François Le Louarn Paimpol,,,,48 Rue François Le Louarn,,,,22500
+48 Rue François Le Louarn 22500,,,,48 Rue François Le Louarn,,,Paimpol,
+48 Rue François Le Louarn,-2.997629,48.754377,,48 Rue François Le Louarn,,,,22500
+52 Rue des Frères Le Montréer Perros-Guirec,,,,52 Rue des Frères Le Montréer,,,,22700
+52 Rue des Frères Le Montréer 22700,,,,52 Rue des Frères Le Montréer,,,Perros-Guirec,
+52 Rue des Frères Le Montréer,-3.448811,48.812851,,52 Rue des Frères Le Montréer,,,,22700
+18 Les Aires Blanches Plancoët,,,,18 Les Aires Blanches,,,,22130
+18 Les Aires Blanches 22130,,,,18 Les Aires Blanches,,,Plancoët,
+18 Les Aires Blanches,-2.238056,48.520394,,18 Les Aires Blanches,,,,22130
+3 Rue Hent Coz Plélauff,,,,3 Rue Hent Coz,,,,22570
+3 Rue Hent Coz 22570,,,,3 Rue Hent Coz,,,Plélauff,
+3 Rue Hent Coz,-3.210685,48.206661,,3 Rue Hent Coz,,,,22570
+4 Rue des Mouettes Pléneuf-Val-André,,,,4 Rue des Mouettes,,,,22370
+4 Rue des Mouettes 22370,,,,4 Rue des Mouettes,,,Pléneuf-Val-André,
+4 Rue des Mouettes,-2.557191,48.587526,,4 Rue des Mouettes,,,,22370
+10 Rue Pierre Sémard Plérin,,,,10 Rue Pierre Sémard,,,,22190
+10 Rue Pierre Sémard 22190,,,,10 Rue Pierre Sémard,,,Plérin,
+10 Rue Pierre Sémard,-2.758758,48.529967,,10 Rue Pierre Sémard,,,,22190
+3 Impasse Saint-Roch Plestin-les-Grèves,,,,3 Impasse Saint-Roch,,,,22310
+3 Impasse Saint-Roch 22310,,,,3 Impasse Saint-Roch,,,Plestin-les-Grèves,
+3 Impasse Saint-Roch,-3.625051,48.658529,,3 Impasse Saint-Roch,,,,22310
+1 Rue Saint-Geran Plévenon,,,,1 Rue Saint-Geran,,,,22240
+1 Rue Saint-Geran 22240,,,,1 Rue Saint-Geran,,,Plévenon,
+1 Rue Saint-Geran,-2.303649,48.657821,,1 Rue Saint-Geran,,,,22240
+15 Chemin du Paou Ploubazlanec,,,,15 Chemin du Paou,,,,22620
+15 Chemin du Paou 22620,,,,15 Chemin du Paou,,,Ploubazlanec,
+15 Chemin du Paou,-3.013857,48.815575,,15 Chemin du Paou,,,,22620
+12 Rue des Déportés Ploufragan,,,,12 Rue des Déportés,,,,22440
+12 Rue des Déportés 22440,,,,12 Rue des Déportés,,,Ploufragan,
+12 Rue des Déportés,-2.781276,48.500142,,12 Rue des Déportés,,,,22440
+6491A Rue du Gen Leclerc Plouha,,,,6491A Rue du Gen Leclerc,,,,22580
+6491A Rue du Gen Leclerc 22580,,,,6491A Rue du Gen Leclerc,,,Plouha,
+6491A Rue du Gen Leclerc,-2.925709,48.678650,,6491A Rue du Gen Leclerc,,,,22580
+12 Allée des Cerisiers Plourivo,,,,12 Allée des Cerisiers,,,,22860
+12 Allée des Cerisiers 22860,,,,12 Allée des Cerisiers,,,Plourivo,
+12 Allée des Cerisiers,-3.068601,48.744078,,12 Allée des Cerisiers,,,,22860
+1 Rue Chateaubriand Pordic,,,,1 Rue Chateaubriand,,,,22590
+1 Rue Chateaubriand 22590,,,,1 Rue Chateaubriand,,,Pordic,
+1 Rue Chateaubriand,-2.803699,48.574278,,1 Rue Chateaubriand,,,,22590
+14 Rue du Gasset Quintin,,,,14 Rue du Gasset,,,,22800
+14 Rue du Gasset 22800,,,,14 Rue du Gasset,,,Quintin,
+14 Rue du Gasset,-2.914359,48.399785,,14 Rue du Gasset,,,,22800
+4 Rue Anatole France Saint-Brieuc,,,,4 Rue Anatole France,,,,22000
+4 Rue Anatole France 22000,,,,4 Rue Anatole France,,,Saint-Brieuc,
+4 Rue Anatole France,-2.744764,48.505898,,4 Rue Anatole France,,,,22000
+7 Rue du Général Leclerc Saint-Brieuc,,,,7 Rue du Général Leclerc,,,,22000
+7 Rue du Général Leclerc 22000,,,,7 Rue du Général Leclerc,,,Saint-Brieuc,
+7 Rue du Général Leclerc,-2.760220,48.512763,,7 Rue du Général Leclerc,,,,22000
+9 Rue Pierre Loti Saint-Brieuc,,,,9 Rue Pierre Loti,,,,22000
+9 Rue Pierre Loti 22000,,,,9 Rue Pierre Loti,,,Saint-Brieuc,
+9 Rue Pierre Loti,-2.756462,48.511670,,9 Rue Pierre Loti,,,,22000
+43 Boulevard de la Côte d'Émeraude Saint-Cast-le-Guildo,,,,43 Boulevard de la Côte d'Émeraude,,,,22380
+43 Boulevard de la Côte d'Émeraude 22380,,,,43 Boulevard de la Côte d'Émeraude,,,Saint-Cast-le-Guildo,
+43 Boulevard de la Côte d'Émeraude,-2.265858,48.633341,,43 Boulevard de la Côte d'Émeraude,,,,22380
+33 Rue des Fresches Saint-Jacut-de-la-Mer,,,,33 Rue des Fresches,,,,22750
+33 Rue des Fresches 22750,,,,33 Rue des Fresches,,,Saint-Jacut-de-la-Mer,
+33 Rue des Fresches,-2.183134,48.600200,,33 Rue des Fresches,,,,22750
+10 Rue des Korrigans Saint-Quay-Portrieux,,,,10 Rue des Korrigans,,,,22410
+10 Rue des Korrigans 22410,,,,10 Rue des Korrigans,,,Saint-Quay-Portrieux,
+10 Rue des Korrigans,-2.831977,48.646387,,10 Rue des Korrigans,,,,22410
+5 Rue de Garen Bian Trébeurden,,,,5 Rue de Garen Bian,,,,22560
+5 Rue de Garen Bian 22560,,,,5 Rue de Garen Bian,,,Trébeurden,
+5 Rue de Garen Bian,-3.574797,48.768907,,5 Rue de Garen Bian,,,,22560
+1 Allée Poincaré Trégueux,,,,1 Allée Poincaré,,,,22950
+1 Allée Poincaré 22950,,,,1 Allée Poincaré,,,Trégueux,
+1 Allée Poincaré,-2.734380,48.490124,,1 Allée Poincaré,,,,22950
+20 Rue du Port Goret Tréveneuc,,,,20 Rue du Port Goret,,,,22410
+20 Rue du Port Goret 22410,,,,20 Rue du Port Goret,,,Tréveneuc,
+20 Rue du Port Goret,-2.862599,48.669955,,20 Rue du Port Goret,,,,22410
+10 Venelle Notre Dame de la Mer Bénodet,,,,10 Venelle Notre Dame de la Mer,,,,29950
+10 Venelle Notre Dame de la Mer 29950,,,,10 Venelle Notre Dame de la Mer,,,Bénodet,
+10 Venelle Notre Dame de la Mer,-4.103927,47.875185,,10 Venelle Notre Dame de la Mer,,,,29950
+17BIS Rue Amiral Romain Desfossés Brest,,,,17BIS Rue Amiral Romain Desfossés,,,,29200
+17BIS Rue Amiral Romain Desfossés 29200,,,,17BIS Rue Amiral Romain Desfossés,,,Brest,
+17BIS Rue Amiral Romain Desfossés,-4.480860,48.425263,,17BIS Rue Amiral Romain Desfossés,,,,29200
+90 Rue Colette Brest,,,,90 Rue Colette,,,,29200
+90 Rue Colette 29200,,,,90 Rue Colette,,,Brest,
+90 Rue Colette,-4.545725,48.374951,,90 Rue Colette,,,,29200
+4 Rue Frégate la Belle-Poule Brest,,,,4 Rue Frégate la Belle-Poule,,,,29200
+4 Rue Frégate la Belle-Poule 29200,,,,4 Rue Frégate la Belle-Poule,,,Brest,
+4 Rue Frégate la Belle-Poule,-4.484221,48.386129,,4 Rue Frégate la Belle-Poule,,,,29200
+5 Boulevard Jean Moulin Brest,,,,5 Boulevard Jean Moulin,,,,29200
+5 Boulevard Jean Moulin 29200,,,,5 Boulevard Jean Moulin,,,Brest,
+5 Boulevard Jean Moulin,-4.492970,48.386754,,5 Boulevard Jean Moulin,,,,29200
+3 Rue Lumière Brest,,,,3 Rue Lumière,,,,29200
+3 Rue Lumière 29200,,,,3 Rue Lumière,,,Brest,
+3 Rue Lumière,-4.473340,48.404117,,3 Rue Lumière,,,,29200
+50 Rue Poullic Al Lor Brest,,,,50 Rue Poullic Al Lor,,,,29200
+50 Rue Poullic Al Lor 29200,,,,50 Rue Poullic Al Lor,,,Brest,
+50 Rue Poullic Al Lor,-4.471934,48.387116,,50 Rue Poullic Al Lor,,,,29200
+22 Rue Victor Cousin Brest,,,,22 Rue Victor Cousin,,,,29200
+22 Rue Victor Cousin 29200,,,,22 Rue Victor Cousin,,,Brest,
+22 Rue Victor Cousin,-4.537774,48.377049,,22 Rue Victor Cousin,,,,29200
+26 Route de la Grande Grève Carantec,,,,26 Route de la Grande Grève,,,,29660
+26 Route de la Grande Grève 29660,,,,26 Route de la Grande Grève,,,Carantec,
+26 Route de la Grande Grève,-3.923989,48.659955,,26 Route de la Grande Grève,,,,29660
+50 Quai Carnot Châteaulin,,,,50 Quai Carnot,,,,29150
+50 Quai Carnot 29150,,,,50 Quai Carnot,,,Châteaulin,
+50 Quai Carnot,-4.096023,48.195803,,50 Quai Carnot,,,,29150
+8 Rue Paul Sérusier Clohars-Carnoët,,,,8 Rue Paul Sérusier,,,,29360
+8 Rue Paul Sérusier 29360,,,,8 Rue Paul Sérusier,,,Clohars-Carnoët,
+8 Rue Paul Sérusier,-3.555013,47.770193,,8 Rue Paul Sérusier,,,,29360
+4BIS Rue Anatole Le Braz Concarneau,,,,4BIS Rue Anatole Le Braz,,,,29900
+4BIS Rue Anatole Le Braz 29900,,,,4BIS Rue Anatole Le Braz,,,Concarneau,
+4BIS Rue Anatole Le Braz,-3.926054,47.871812,,4BIS Rue Anatole Le Braz,,,,29900
+12 Rue Monet Concarneau,,,,12 Rue Monet,,,,29900
+12 Rue Monet 29900,,,,12 Rue Monet,,,Concarneau,
+12 Rue Monet,-3.898905,47.861193,,12 Rue Monet,,,,29900
+56 Rue de l'Atlantique Crozon,,,,56 Rue de l'Atlantique,,,,29160
+56 Rue de l'Atlantique 29160,,,,56 Rue de l'Atlantique,,,Crozon,
+56 Rue de l'Atlantique,-4.510399,48.222496,,56 Rue de l'Atlantique,,,,29160
+30 Rue Ar Vilin-Goz Douarnenez,,,,30 Rue Ar Vilin-Goz,,,,29100
+30 Rue Ar Vilin-Goz 29100,,,,30 Rue Ar Vilin-Goz,,,Douarnenez,
+30 Rue Ar Vilin-Goz,-4.348851,48.096421,,30 Rue Ar Vilin-Goz,,,,29100
+12 Rue du Pont Douarnenez,,,,12 Rue du Pont,,,,29100
+12 Rue du Pont 29100,,,,12 Rue du Pont,,,Douarnenez,
+12 Rue du Pont,-4.329540,48.090731,,12 Rue du Pont,,,,29100
+7 Allée des Pins Ergué-Gabéric,,,,7 Allée des Pins,,,,29500
+7 Allée des Pins 29500,,,,7 Allée des Pins,,,Ergué-Gabéric,
+7 Allée des Pins,-4.013284,48.017743,,7 Allée des Pins,,,,29500
+8 Route Quimper La Forêt-Fouesnant,,,,8 Route Quimper,,,,29940
+8 Route Quimper 29940,,,,8 Route Quimper,,,La Forêt-Fouesnant,
+8 Route Quimper,-3.964487,47.919462,,8 Route Quimper,,,,29940
+41 Ty Pri Rosnabat Fouesnant,,,,41 Ty Pri Rosnabat,,,,29170
+41 Ty Pri Rosnabat 29170,,,,41 Ty Pri Rosnabat,,,Fouesnant,
+41 Ty Pri Rosnabat,-4.010664,47.910955,,41 Ty Pri Rosnabat,,,,29170
+7 Rue Saint-Gouesnou Gouesnou,,,,7 Rue Saint-Gouesnou,,,,29850
+7 Rue Saint-Gouesnou 29850,,,,7 Rue Saint-Gouesnou,,,Gouesnou,
+7 Rue Saint-Gouesnou,-4.466800,48.452416,,7 Rue Saint-Gouesnou,,,,29850
+16 Rue du Gymnase Guilvinec,,,,16 Rue du Gymnase,,,,29730
+16 Rue du Gymnase 29730,,,,16 Rue du Gymnase,,,Guilvinec,
+16 Rue du Gymnase,-4.282916,47.801967,,16 Rue du Gymnase,,,,29730
+9 Rue Louis Guilloux Guipavas,,,,9 Rue Louis Guilloux,,,,29490
+9 Rue Louis Guilloux 29490,,,,9 Rue Louis Guilloux,,,Guipavas,
+9 Rue Louis Guilloux,-4.431741,48.416497,,9 Rue Louis Guilloux,,,,29490
+3 Place de la Cale Île-Tudy,,,,3 Place de la Cale,,,,29980
+3 Place de la Cale 29980,,,,3 Place de la Cale,,,Île-Tudy,
+3 Place de la Cale,-4.169105,47.841136,,3 Place de la Cale,,,,29980
+1 Rue Anatole Le Braz Landerneau,,,,1 Rue Anatole Le Braz,,,,29800
+1 Rue Anatole Le Braz 29800,,,,1 Rue Anatole Le Braz,,,Landerneau,
+1 Rue Anatole Le Braz,-4.247649,48.454503,,1 Rue Anatole Le Braz,,,,29800
+32A Rue des Ecossais Landerneau,,,,32A Rue des Ecossais,,,,29800
+32A Rue des Ecossais 29800,,,,32A Rue des Ecossais,,,Landerneau,
+32A Rue des Ecossais,-4.235341,48.456678,,32A Rue des Ecossais,,,,29800
+3 Route de Poull-Menoc Landunvez,,,,3 Route de Poull-Menoc,,,,29840
+3 Route de Poull-Menoc 29840,,,,3 Route de Poull-Menoc,,,Landunvez,
+3 Route de Poull-Menoc,-4.720739,48.554438,,3 Route de Poull-Menoc,,,,29840
+12 Rue Alice Coudol Lesneven,,,,12 Rue Alice Coudol,,,,29260
+12 Rue Alice Coudol 29260,,,,12 Rue Alice Coudol,,,Lesneven,
+12 Rue Alice Coudol,-4.320257,48.566925,,12 Rue Alice Coudol,,,,29260
+10 Rue des Aubépines Locquirec,,,,10 Rue des Aubépines,,,,29241
+10 Rue des Aubépines 29241,,,,10 Rue des Aubépines,,,Locquirec,
+10 Rue des Aubépines,-3.666623,48.679845,,10 Rue des Aubépines,,,,29241
+10 Route du Moulin Mer Logonna-Daoulas,,,,10 Route du Moulin Mer,,,,29460
+10 Route du Moulin Mer 29460,,,,10 Route du Moulin Mer,,,Logonna-Daoulas,
+10 Route du Moulin Mer,-4.294897,48.319117,,10 Route du Moulin Mer,,,,29460
+32 Rue de Pont-ar-Laër Moëlan-sur-Mer,,,,32 Rue de Pont-ar-Laër,,,,29350
+32 Rue de Pont-ar-Laër 29350,,,,32 Rue de Pont-ar-Laër,,,Moëlan-sur-Mer,
+32 Rue de Pont-ar-Laër,-3.627645,47.808588,,32 Rue de Pont-ar-Laër,,,,29350
+3 Rue de Ty Dour Morlaix,,,,3 Rue de Ty Dour,,,,29600
+3 Rue de Ty Dour 29600,,,,3 Rue de Ty Dour,,,Morlaix,
+3 Rue de Ty Dour,-3.824510,48.586742,,3 Rue de Ty Dour,,,,29600
+456 Venelle de Quélourn Penmarc'h,,,,456 Venelle de Quélourn,,,,29760
+456 Venelle de Quélourn 29760,,,,456 Venelle de Quélourn,,,Penmarc'h,
+456 Venelle de Quélourn,-4.349843,47.814379,,456 Venelle de Quélourn,,,,29760
+2 Rue D'Argoat Pleyber-Christ,,,,2 Rue D'Argoat,,,,29410
+2 Rue D'Argoat 29410,,,,2 Rue D'Argoat,,,Pleyber-Christ,
+2 Rue D'Argoat,-3.876835,48.498599,,2 Rue D'Argoat,,,,29410
+24 Rue Mein Torret Plomeur,,,,24 Rue Mein Torret,,,,29120
+24 Rue Mein Torret 29120,,,,24 Rue Mein Torret,,,Plomeur,
+24 Rue Mein Torret,-4.286608,47.807693,,24 Rue Mein Torret,,,,29120
+2 Chemin des Amers Ploudalmézeau,,,,2 Chemin des Amers,,,,29830
+2 Chemin des Amers 29830,,,,2 Chemin des Amers,,,Ploudalmézeau,
+2 Chemin des Amers,-4.699781,48.565118,,2 Chemin des Amers,,,,29830
+23 Rue Charles Le Goffic Plouescat,,,,23 Rue Charles Le Goffic,,,,29430
+23 Rue Charles Le Goffic 29430,,,,23 Rue Charles Le Goffic,,,Plouescat,
+23 Rue Charles Le Goffic,-4.178039,48.658930,,23 Rue Charles Le Goffic,,,,29430
+59 Rue du Cléguer Plougastel-Daoulas,,,,59 Rue du Cléguer,,,,29470
+59 Rue du Cléguer 29470,,,,59 Rue du Cléguer,,,Plougastel-Daoulas,
+59 Rue du Cléguer,-4.376045,48.375103,,59 Rue du Cléguer,,,,29470
+24 Rossermeur Plougastel-Daoulas,,,,24 Rossermeur,,,,29470
+24 Rossermeur 29470,,,,24 Rossermeur,,,Plougastel-Daoulas,
+24 Rossermeur,-4.345761,48.349780,,24 Rossermeur,,,,29470
+10 Rue des Fusiliers Marins Plouhinec,,,,10 Rue des Fusiliers Marins,,,,29780
+10 Rue des Fusiliers Marins 29780,,,,10 Rue des Fusiliers Marins,,,Plouhinec,
+10 Rue des Fusiliers Marins,-4.528938,48.013286,,10 Rue des Fusiliers Marins,,,,29780
+529 Rue Saint-Pol Plounéour-Trez,,,,529 Rue Saint-Pol,,,,29890
+529 Rue Saint-Pol 29890,,,,529 Rue Saint-Pol,,,Plounéour-Trez,
+529 Rue Saint-Pol,-4.318770,48.651117,,529 Rue Saint-Pol,,,,29890
+7 Allée des Cèdres Plouzané,,,,7 Allée des Cèdres,,,,29280
+7 Allée des Cèdres 29280,,,,7 Allée des Cèdres,,,Plouzané,
+7 Allée des Cèdres,-4.586258,48.375167,,7 Allée des Cèdres,,,,29280
+17BIS RTE DE LEZAVREC Plozévet,,,,17BIS RTE DE LEZAVREC,,,,29710
+17BIS RTE DE LEZAVREC 29710,,,,17BIS RTE DE LEZAVREC,,,Plozévet,
+17BIS RTE DE LEZAVREC,-4.407623,47.973885,,17BIS RTE DE LEZAVREC,,,,29710
+31 Rue Jean Moulin Pont-l'Abbé,,,,31 Rue Jean Moulin,,,,29120
+31 Rue Jean Moulin 29120,,,,31 Rue Jean Moulin,,,Pont-l'Abbé,
+31 Rue Jean Moulin,-4.231055,47.864381,,31 Rue Jean Moulin,,,,29120
+5 Rue Saint-Laurent Quéménéven,,,,5 Rue Saint-Laurent,,,,29180
+5 Rue Saint-Laurent 29180,,,,5 Rue Saint-Laurent,,,Quéménéven,
+5 Rue Saint-Laurent,-4.120979,48.115701,,5 Rue Saint-Laurent,,,,29180
+16 Rue des Douves Quimper,,,,16 Rue des Douves,,,,29000
+16 Rue des Douves 29000,,,,16 Rue des Douves,,,Quimper,
+16 Rue des Douves,-4.101930,47.998592,,16 Rue des Douves,,,,29000
+21 Allée Joséphine Pencalet Quimper,,,,21 Allée Joséphine Pencalet,,,,29000
+21 Allée Joséphine Pencalet 29000,,,,21 Allée Joséphine Pencalet,,,Quimper,
+21 Allée Joséphine Pencalet,-4.132122,47.976205,,21 Allée Joséphine Pencalet,,,,29000
+21 Rue Montaigne Quimper,,,,21 Rue Montaigne,,,,29000
+21 Rue Montaigne 29000,,,,21 Rue Montaigne,,,Quimper,
+21 Rue Montaigne,-4.101233,47.984264,,21 Rue Montaigne,,,,29000
+23 Rue du Sallé Quimper,,,,23 Rue du Sallé,,,,29000
+23 Rue du Sallé 29000,,,,23 Rue du Sallé,,,Quimper,
+23 Rue du Sallé,-4.103760,47.996656,,23 Rue du Sallé,,,,29000
+7 Rue Kerguelen Quimperlé,,,,7 Rue Kerguelen,,,,29300
+7 Rue Kerguelen 29300,,,,7 Rue Kerguelen,,,Quimperlé,
+7 Rue Kerguelen,-3.553074,47.877299,,7 Rue Kerguelen,,,,29300
+211 Rue des Hauts de Kerhorres Le Relecq-Kerhuon,,,,211 Rue des Hauts de Kerhorres,,,,29480
+211 Rue des Hauts de Kerhorres 29480,,,,211 Rue des Hauts de Kerhorres,,,Le Relecq-Kerhuon,
+211 Rue des Hauts de Kerhorres,-4.390051,48.408666,,211 Rue des Hauts de Kerhorres,,,,29480
+42 Rue Peisey Nancroix Roscanvel,,,,42 Rue Peisey Nancroix,,,,29570
+42 Rue Peisey Nancroix 29570,,,,42 Rue Peisey Nancroix,,,Roscanvel,
+42 Rue Peisey Nancroix,-4.547880,48.321216,,42 Rue Peisey Nancroix,,,,29570
+3 Place de l'Église Saint-Évarzec,,,,3 Place de l'Église,,,,29170
+3 Place de l'Église 29170,,,,3 Place de l'Église,,,Saint-Évarzec,
+3 Place de l'Église,-4.020776,47.936276,,3 Place de l'Église,,,,29170
+26 Rue de Ty Arvor Saint-Pabu,,,,26 Rue de Ty Arvor,,,,29830
+26 Rue de Ty Arvor 29830,,,,26 Rue de Ty Arvor,,,Saint-Pabu,
+26 Rue de Ty Arvor,-4.627485,48.570215,,26 Rue de Ty Arvor,,,,29830
+41 Rue des Vosges Saint-Renan,,,,41 Rue des Vosges,,,,29290
+41 Rue des Vosges 29290,,,,41 Rue des Vosges,,,Saint-Renan,
+41 Rue des Vosges,-4.636641,48.433739,,41 Rue des Vosges,,,,29290
+9 RUE LEON BLUM Scaër,,,,9 RUE LEON BLUM,,,,29390
+9 RUE LEON BLUM 29390,,,,9 RUE LEON BLUM,,,Scaër,
+9 RUE LEON BLUM,-3.700026,48.022873,,9 RUE LEON BLUM,,,,29390
+26 Rue Saint Jacques Treffiagat,,,,26 Rue Saint Jacques,,,,29730
+26 Rue Saint Jacques 29730,,,,26 Rue Saint Jacques,,,Treffiagat,
+26 Rue Saint Jacques,-4.273025,47.794064,,26 Rue Saint Jacques,,,,29730
+11 Rue Éric Tabarly Pont-de-Buis-lès-Quimerch,,,,11 Rue Éric Tabarly,,,,29590
+11 Rue Éric Tabarly 29590,,,,11 Rue Éric Tabarly,,,Pont-de-Buis-lès-Quimerch,
+11 Rue Éric Tabarly,-4.083466,48.248724,,11 Rue Éric Tabarly,,,,29590
+6 Allée de l'Europe Bain-de-Bretagne,,,,6 Allée de l'Europe,,,,35470
+6 Allée de l'Europe 35470,,,,6 Allée de l'Europe,,,Bain-de-Bretagne,
+6 Allée de l'Europe,-1.685310,47.849196,,6 Allée de l'Europe,,,,35470
+5 Rue Châteaubriand Bédée,,,,5 Rue Châteaubriand,,,,35137
+5 Rue Châteaubriand 35137,,,,5 Rue Châteaubriand,,,Bédée,
+5 Rue Châteaubriand,-1.947428,48.181676,,5 Rue Châteaubriand,,,,35137
+8 Rue de Bréhat La Bouëxière,,,,8 Rue de Bréhat,,,,35340
+8 Rue de Bréhat 35340,,,,8 Rue de Bréhat,,,La Bouëxière,
+8 Rue de Bréhat,-1.439885,48.185437,,8 Rue de Bréhat,,,,35340
+11 Rue du Houx Breteil,,,,11 Rue du Houx,,,,35160
+11 Rue du Houx 35160,,,,11 Rue du Houx,,,Breteil,
+11 Rue du Houx,-1.902950,48.145552,,11 Rue du Houx,,,,35160
+28 Rue Théodore Botrel Bruz,,,,28 Rue Théodore Botrel,,,,35170
+28 Rue Théodore Botrel 35170,,,,28 Rue Théodore Botrel,,,Bruz,
+28 Rue Théodore Botrel,-1.741993,48.021820,,28 Rue Théodore Botrel,,,,35170
+33 Rue du Couradin Cesson-Sévigné,,,,33 Rue du Couradin,,,,35510
+33 Rue du Couradin 35510,,,,33 Rue du Couradin,,,Cesson-Sévigné,
+33 Rue du Couradin,-1.606872,48.127294,,33 Rue du Couradin,,,,35510
+1 Allée des Genêts Chantepie,,,,1 Allée des Genêts,,,,35135
+1 Allée des Genêts 35135,,,,1 Allée des Genêts,,,Chantepie,
+1 Allée des Genêts,-1.614846,48.082779,,1 Allée des Genêts,,,,35135
+3 Rue d'Armorique Chartres-de-Bretagne,,,,3 Rue d'Armorique,,,,35131
+3 Rue d'Armorique 35131,,,,3 Rue d'Armorique,,,Chartres-de-Bretagne,
+3 Rue d'Armorique,-1.706048,48.036645,,3 Rue d'Armorique,,,,35131
+4 Rue Leprestre de Lézonnet Châteaugiron,,,,4 Rue Leprestre de Lézonnet,,,,35410
+4 Rue Leprestre de Lézonnet 35410,,,,4 Rue Leprestre de Lézonnet,,,Châteaugiron,
+4 Rue Leprestre de Lézonnet,-1.503453,48.049784,,4 Rue Leprestre de Lézonnet,,,,35410
+6 Rue Berthe Morisot Cintré,,,,6 Rue Berthe Morisot,,,,35310
+6 Rue Berthe Morisot 35310,,,,6 Rue Berthe Morisot,,,Cintré,
+6 Rue Berthe Morisot,-1.875814,48.101999,,6 Rue Berthe Morisot,,,,35310
+10 Impasse Chauchat Dinard,,,,10 Impasse Chauchat,,,,35800
+10 Impasse Chauchat 35800,,,,10 Impasse Chauchat,,,Dinard,
+10 Impasse Chauchat,-2.060471,48.633501,,10 Impasse Chauchat,,,,35800
+3 Rue du Clos Lupin Dol-de-Bretagne,,,,3 Rue du Clos Lupin,,,,35120
+3 Rue du Clos Lupin 35120,,,,3 Rue du Clos Lupin,,,Dol-de-Bretagne,
+3 Rue du Clos Lupin,-1.743187,48.546469,,3 Rue du Clos Lupin,,,,35120
+1 Rue de la Champagne Étrelles,,,,1 Rue de la Champagne,,,,35370
+1 Rue de la Champagne 35370,,,,1 Rue de la Champagne,,,Étrelles,
+1 Rue de la Champagne,-1.197284,48.057428,,1 Rue de la Champagne,,,,35370
+13 Rue du Père Maunoir Fougères,,,,13 Rue du Père Maunoir,,,,35300
+13 Rue du Père Maunoir 35300,,,,13 Rue du Père Maunoir,,,Fougères,
+13 Rue du Père Maunoir,-1.190344,48.351868,,13 Rue du Père Maunoir,,,,35300
+3 Rue Simone Veil Gévezé,,,,3 Rue Simone Veil,,,,35850
+3 Rue Simone Veil 35850,,,,3 Rue Simone Veil,,,Gévezé,
+3 Rue Simone Veil,-1.804097,48.224109,,3 Rue Simone Veil,,,,35850
+32 Rue du Maréchal de Lattre de Tassigny Guichen,,,,32 Rue du Maréchal de Lattre de Tassigny,,,,35580
+32 Rue du Maréchal de Lattre de Tassigny 35580,,,,32 Rue du Maréchal de Lattre de Tassigny,,,Guichen,
+32 Rue du Maréchal de Lattre de Tassigny,-1.794726,47.974108,,32 Rue du Maréchal de Lattre de Tassigny,,,,35580
+1 Impasse des Bruyères Irodouër,,,,1 Impasse des Bruyères,,,,35850
+1 Impasse des Bruyères 35850,,,,1 Impasse des Bruyères,,,Irodouër,
+1 Impasse des Bruyères,-1.950843,48.244717,,1 Impasse des Bruyères,,,,35850
+8 le Ruel Laillé,,,,8 le Ruel,,,,35890
+8 le Ruel 35890,,,,8 le Ruel,,,Laillé,
+8 le Ruel,-1.714623,48.001487,,8 le Ruel,,,,35890
+12 Allée des Sternes Liffré,,,,12 Allée des Sternes,,,,35340
+12 Allée des Sternes 35340,,,,12 Allée des Sternes,,,Liffré,
+12 Allée des Sternes,-1.513746,48.208444,,12 Allée des Sternes,,,,35340
+12 Rue de Dinan Médréac,,,,12 Rue de Dinan,,,,35360
+12 Rue de Dinan 35360,,,,12 Rue de Dinan,,,Médréac,
+12 Rue de Dinan,-2.066663,48.268468,,12 Rue de Dinan,,,,35360
+5 la Pommardière Miniac-sous-Bécherel,,,,5 la Pommardière,,,,35190
+5 la Pommardière 35190,,,,5 la Pommardière,,,Miniac-sous-Bécherel,
+5 la Pommardière,-1.921621,48.300397,,5 la Pommardière,,,,35190
+27B Rue de la Rébunière Montgermont,,,,27B Rue de la Rébunière,,,,35760
+27B Rue de la Rébunière 35760,,,,27B Rue de la Rébunière,,,Montgermont,
+27B Rue de la Rébunière,-1.723916,48.162736,,27B Rue de la Rébunière,,,,35760
+8 Rue Paul Verlaine Nouvoitou,,,,8 Rue Paul Verlaine,,,,35410
+8 Rue Paul Verlaine 35410,,,,8 Rue Paul Verlaine,,,Nouvoitou,
+8 Rue Paul Verlaine,-1.552305,48.039910,,8 Rue Paul Verlaine,,,,35410
+51 la Rochelle Orgères,,,,51 la Rochelle,,,,35230
+51 la Rochelle 35230,,,,51 la Rochelle,,,Orgères,
+51 la Rochelle,-1.653896,47.983919,,51 la Rochelle,,,,35230
+114 Le Vil Le Petit-Fougeray,,,,114 Le Vil,,,,35320
+114 Le Vil 35320,,,,114 Le Vil,,,Le Petit-Fougeray,
+114 Le Vil,-1.605625,47.921359,,114 Le Vil,,,,35320
+2E Rue de l'Aéroport Pleurtuit,,,,2E Rue de l'Aéroport,,,,35730
+2E Rue de l'Aéroport 35730,,,,2E Rue de l'Aéroport,,,Pleurtuit,
+2E Rue de l'Aéroport,-2.059630,48.584326,,2E Rue de l'Aéroport,,,,35730
+8 Rue des Lièvries Redon,,,,8 Rue des Lièvries,,,,35600
+8 Rue des Lièvries 35600,,,,8 Rue des Lièvries,,,Redon,
+8 Rue des Lièvries,-2.087540,47.655778,,8 Rue des Lièvries,,,,35600
+4 Allée Bernard Josse Rennes,,,,4 Allée Bernard Josse,,,,35000
+4 Allée Bernard Josse 35000,,,,4 Allée Bernard Josse,,,Rennes,
+4 Allée Bernard Josse,-1.691285,48.099290,,4 Allée Bernard Josse,,,,35000
+8 Rue du Docteur Regnault Rennes,,,,8 Rue du Docteur Regnault,,,,35000
+8 Rue du Docteur Regnault 35000,,,,8 Rue du Docteur Regnault,,,Rennes,
+8 Rue du Docteur Regnault,-1.675601,48.111663,,8 Rue du Docteur Regnault,,,,35000
+9 Rue Hamon Rennes,,,,9 Rue Hamon,,,,35000
+9 Rue Hamon 35000,,,,9 Rue Hamon,,,Rennes,
+9 Rue Hamon,-1.703077,48.113379,,9 Rue Hamon,,,,35000
+8 Rue Louis Blériot Rennes,,,,8 Rue Louis Blériot,,,,35000
+8 Rue Louis Blériot 35000,,,,8 Rue Louis Blériot,,,Rennes,
+8 Rue Louis Blériot,-1.678040,48.101790,,8 Rue Louis Blériot,,,,35000
+5 Rue Philippe Nordmann Rennes,,,,5 Rue Philippe Nordmann,,,,35000
+5 Rue Philippe Nordmann 35000,,,,5 Rue Philippe Nordmann,,,Rennes,
+5 Rue Philippe Nordmann,-1.657406,48.107582,,5 Rue Philippe Nordmann,,,,35000
+28 Avenue Sir Winston Churchill Rennes,,,,28 Avenue Sir Winston Churchill,,,,35000
+28 Avenue Sir Winston Churchill 35000,,,,28 Avenue Sir Winston Churchill,,,Rennes,
+28 Avenue Sir Winston Churchill,-1.708682,48.122861,,28 Avenue Sir Winston Churchill,,,,35000
+7 Rue de la Haie de Terre Le Rheu,,,,7 Rue de la Haie de Terre,,,,35650
+7 Rue de la Haie de Terre 35650,,,,7 Rue de la Haie de Terre,,,Le Rheu,
+7 Rue de la Haie de Terre,-1.785236,48.095231,,7 Rue de la Haie de Terre,,,,35650
+17 Rue de Rennes Saint-Aubin-d'Aubigné,,,,17 Rue de Rennes,,,,35250
+17 Rue de Rennes 35250,,,,17 Rue de Rennes,,,Saint-Aubin-d'Aubigné,
+17 Rue de Rennes,-1.606008,48.261010,,17 Rue de Rennes,,,,35250
+16 Rue de l'Orme Saint-Broladre,,,,16 Rue de l'Orme,,,,35120
+16 Rue de l'Orme 35120,,,,16 Rue de l'Orme,,,Saint-Broladre,
+16 Rue de l'Orme,-1.661524,48.584266,,16 Rue de l'Orme,,,,35120
+3 Rue Alphonse Milon Saint-Grégoire,,,,3 Rue Alphonse Milon,,,,35760
+3 Rue Alphonse Milon 35760,,,,3 Rue Alphonse Milon,,,Saint-Grégoire,
+3 Rue Alphonse Milon,-1.684788,48.152535,,3 Rue Alphonse Milon,,,,35760
+33 Rue Pierre Brossolette Saint-Jacques-de-la-Lande,,,,33 Rue Pierre Brossolette,,,,35136
+33 Rue Pierre Brossolette 35136,,,,33 Rue Pierre Brossolette,,,Saint-Jacques-de-la-Lande,
+33 Rue Pierre Brossolette,-1.694338,48.091726,,33 Rue Pierre Brossolette,,,,35136
+16 Rue du Chanoine Édouard Lainé Saint-Malo,,,,16 Rue du Chanoine Édouard Lainé,,,,35400
+16 Rue du Chanoine Édouard Lainé 35400,,,,16 Rue du Chanoine Édouard Lainé,,,Saint-Malo,
+16 Rue du Chanoine Édouard Lainé,-1.996150,48.656199,,16 Rue du Chanoine Édouard Lainé,,,,35400
+29 Avenue du Président John Kennedy Saint-Malo,,,,29 Avenue du Président John Kennedy,,,,35400
+29 Avenue du Président John Kennedy 35400,,,,29 Avenue du Président John Kennedy,,,Saint-Malo,
+29 Avenue du Président John Kennedy,-1.987465,48.665875,,29 Avenue du Président John Kennedy,,,,35400
+1 Chaussée du Sillon Saint-Malo,,,,1 Chaussée du Sillon,,,,35400
+1 Chaussée du Sillon 35400,,,,1 Chaussée du Sillon,,,Saint-Malo,
+1 Chaussée du Sillon,-2.009486,48.654209,,1 Chaussée du Sillon,,,,35400
+18 Rue Saint-Georges Saint-Père,,,,18 Rue Saint-Georges,,,,35430
+18 Rue Saint-Georges 35430,,,,18 Rue Saint-Georges,,,Saint-Père,
+18 Rue Saint-Georges,-1.940984,48.579598,,18 Rue Saint-Georges,,,,35430
+5 Rue de Brocéliande Sixt-sur-Aff,,,,5 Rue de Brocéliande,,,,35550
+5 Rue de Brocéliande 35550,,,,5 Rue de Brocéliande,,,Sixt-sur-Aff,
+5 Rue de Brocéliande,-2.080183,47.773913,,5 Rue de Brocéliande,,,,35550
+3 Rue Xavier Grall Tinténiac,,,,3 Rue Xavier Grall,,,,35190
+3 Rue Xavier Grall 35190,,,,3 Rue Xavier Grall,,,Tinténiac,
+3 Rue Xavier Grall,-1.840169,48.332720,,3 Rue Xavier Grall,,,,35190
+5 les Ponts Poiriers Vern-sur-Seiche,,,,5 les Ponts Poiriers,,,,35770
+5 les Ponts Poiriers 35770,,,,5 les Ponts Poiriers,,,Vern-sur-Seiche,
+5 les Ponts Poiriers,-1.624988,48.069700,,5 les Ponts Poiriers,,,,35770
+139 Boulevard de Laval Vitré,,,,139 Boulevard de Laval,,,,35500
+139 Boulevard de Laval 35500,,,,139 Boulevard de Laval,,,Vitré,
+139 Boulevard de Laval,-1.187754,48.122264,,139 Boulevard de Laval,,,,35500
+6 Rue de la Pte de Kerners Arzon,,,,6 Rue de la Pte de Kerners,,,,56640
+6 Rue de la Pte de Kerners 56640,,,,6 Rue de la Pte de Kerners,,,Arzon,
+6 Rue de la Pte de Kerners,-2.880081,47.555487,,6 Rue de la Pte de Kerners,,,,56640
+20 Rue An Alre Baden,,,,20 Rue An Alre,,,,56870
+20 Rue An Alre 56870,,,,20 Rue An Alre,,,Baden,
+20 Rue An Alre,-2.922821,47.622552,,20 Rue An Alre,,,,56870
+20 Rue de Manegroven Belz,,,,20 Rue de Manegroven,,,,56550
+20 Rue de Manegroven 56550,,,,20 Rue de Manegroven,,,Belz,
+20 Rue de Manegroven,-3.184733,47.680799,,20 Rue de Manegroven,,,,56550
+14 Rue Jean de Beaumanoir Bréhan,,,,14 Rue Jean de Beaumanoir,,,,56580
+14 Rue Jean de Beaumanoir 56580,,,,14 Rue Jean de Beaumanoir,,,Bréhan,
+14 Rue Jean de Beaumanoir,-2.687628,48.059786,,14 Rue Jean de Beaumanoir,,,,56580
+6 Impasse des Goémons Carnac,,,,6 Impasse des Goémons,,,,56340
+6 Impasse des Goémons 56340,,,,6 Impasse des Goémons,,,Carnac,
+6 Impasse des Goémons,-3.056878,47.577451,,6 Impasse des Goémons,,,,56340
+13 Rue Boquelen Cléguérec,,,,13 Rue Boquelen,,,,56480
+13 Rue Boquelen 56480,,,,13 Rue Boquelen,,,Cléguérec,
+13 Rue Boquelen,-3.006142,48.091749,,13 Rue Boquelen,,,,56480
+6 Rue du Meunier Damgan,,,,6 Rue du Meunier,,,,56750
+6 Rue du Meunier 56750,,,,6 Rue du Meunier,,,Damgan,
+6 Rue du Meunier,-2.585269,47.520248,,6 Rue du Meunier,,,,56750
+9 Rue du Champ Vert Le Faouët,,,,9 Rue du Champ Vert,,,,56320
+9 Rue du Champ Vert 56320,,,,9 Rue du Champ Vert,,,Le Faouët,
+9 Rue du Champ Vert,-3.486882,48.034917,,9 Rue du Champ Vert,,,,56320
+16 Rue Jean Louis Kergaravat Gourin,,,,16 Rue Jean Louis Kergaravat,,,,56110
+16 Rue Jean Louis Kergaravat 56110,,,,16 Rue Jean Louis Kergaravat,,,Gourin,
+16 Rue Jean Louis Kergaravat,-3.609035,48.138322,,16 Rue Jean Louis Kergaravat,,,,56110
+38BIS Route de la Ruézie Guer,,,,38BIS Route de la Ruézie,,,,56380
+38BIS Route de la Ruézie 56380,,,,38BIS Route de la Ruézie,,,Guer,
+38BIS Route de la Ruézie,-2.126470,47.951612,,38BIS Route de la Ruézie,,,,56380
+5 Rue Marie-Anne Collot Hennebont,,,,5 Rue Marie-Anne Collot,,,,56700
+5 Rue Marie-Anne Collot 56700,,,,5 Rue Marie-Anne Collot,,,Hennebont,
+5 Rue Marie-Anne Collot,-3.247926,47.816511,,5 Rue Marie-Anne Collot,,,,56700
+8 Rue Arthur Rimbaud Inzinzac-Lochrist,,,,8 Rue Arthur Rimbaud,,,,56650
+8 Rue Arthur Rimbaud 56650,,,,8 Rue Arthur Rimbaud,,,Inzinzac-Lochrist,
+8 Rue Arthur Rimbaud,-3.263289,47.824413,,8 Rue Arthur Rimbaud,,,,56650
+2 Rue Adolphe Beaufrere Lanester,,,,2 Rue Adolphe Beaufrere,,,,56600
+2 Rue Adolphe Beaufrere 56600,,,,2 Rue Adolphe Beaufrere,,,Lanester,
+2 Rue Adolphe Beaufrere,-3.329200,47.762099,,2 Rue Adolphe Beaufrere,,,,56600
+1 Rue de la Paix Lanester,,,,1 Rue de la Paix,,,,56600
+1 Rue de la Paix 56600,,,,1 Rue de la Paix,,,Lanester,
+1 Rue de la Paix,-3.341975,47.757099,,1 Rue de la Paix,,,,56600
+46 Rue des Fleurs Larmor-Plage,,,,46 Rue des Fleurs,,,,56260
+46 Rue des Fleurs 56260,,,,46 Rue des Fleurs,,,Larmor-Plage,
+46 Rue des Fleurs,-3.377173,47.713411,,46 Rue des Fleurs,,,,56260
+7 Rue Ernest Renan Locminé,,,,7 Rue Ernest Renan,,,,56500
+7 Rue Ernest Renan 56500,,,,7 Rue Ernest Renan,,,Locminé,
+7 Rue Ernest Renan,-2.831214,47.891179,,7 Rue Ernest Renan,,,,56500
+5 Impasse Berthe Morisot Lorient,,,,5 Impasse Berthe Morisot,,,,56100
+5 Impasse Berthe Morisot 56100,,,,5 Impasse Berthe Morisot,,,Lorient,
+5 Impasse Berthe Morisot,-3.382847,47.761769,,5 Impasse Berthe Morisot,,,,56100
+9 Rue Jules Le Grand Lorient,,,,9 Rue Jules Le Grand,,,,56100
+9 Rue Jules Le Grand 56100,,,,9 Rue Jules Le Grand,,,Lorient,
+9 Rue Jules Le Grand,-3.359382,47.750646,,9 Rue Jules Le Grand,,,,56100
+8 Rue Roger Le Bloa Lorient,,,,8 Rue Roger Le Bloa,,,,56100
+8 Rue Roger Le Bloa 56100,,,,8 Rue Roger Le Bloa,,,Lorient,
+8 Rue Roger Le Bloa,-3.377312,47.755901,,8 Rue Roger Le Bloa,,,,56100
+18 Rue d'Armor Ménéac,,,,18 Rue d'Armor,,,,56490
+18 Rue d'Armor 56490,,,,18 Rue d'Armor,,,Ménéac,
+18 Rue d'Armor,-2.458412,48.141601,,18 Rue d'Armor,,,,56490
+7 Rue des Lavandières Muzillac,,,,7 Rue des Lavandières,,,,56190
+7 Rue des Lavandières 56190,,,,7 Rue des Lavandières,,,Muzillac,
+7 Rue des Lavandières,-2.487385,47.553834,,7 Rue des Lavandières,,,,56190
+736 Impasse Landrin Pénestin,,,,736 Impasse Landrin,,,,56760
+736 Impasse Landrin 56760,,,,736 Impasse Landrin,,,Pénestin,
+736 Impasse Landrin,-2.483480,47.467474,,736 Impasse Landrin,,,,56760
+16 Rue du Docteur Laënnec Ploemeur,,,,16 Rue du Docteur Laënnec,,,,56270
+16 Rue du Docteur Laënnec 56270,,,,16 Rue du Docteur Laënnec,,,Ploemeur,
+16 Rue du Docteur Laënnec,-3.402496,47.741704,,16 Rue du Docteur Laënnec,,,,56270
+3 Rue de la Bellevue Ploërdut,,,,3 Rue de la Bellevue,,,,56160
+3 Rue de la Bellevue 56160,,,,3 Rue de la Bellevue,,,Ploërdut,
+3 Rue de la Bellevue,-3.282802,48.088320,,3 Rue de la Bellevue,,,,56160
+87 Rue du Val Ploërmel,,,,87 Rue du Val,,,,56800
+87 Rue du Val 56800,,,,87 Rue du Val,,,Ploërmel,
+87 Rue du Val,-2.398261,47.938237,,87 Rue du Val,,,,56800
+3 Rue du Clos du pré Pluherlin,,,,3 Rue du Clos du pré,,,,56220
+3 Rue du Clos du pré 56220,,,,3 Rue du Clos du pré,,,Pluherlin,
+3 Rue du Clos du pré,-2.359453,47.695888,,3 Rue du Clos du pré,,,,56220
+12 Place du Marché Pluvigner,,,,12 Place du Marché,,,,56330
+12 Place du Marché 56330,,,,12 Place du Marché,,,Pluvigner,
+12 Place du Marché,-3.010056,47.775239,,12 Place du Marché,,,,56330
+5 Rue du Paradis Pontivy,,,,5 Rue du Paradis,,,,56300
+5 Rue du Paradis 56300,,,,5 Rue du Paradis,,,Pontivy,
+5 Rue du Paradis,-2.964661,48.067146,,5 Rue du Paradis,,,,56300
+1 Impasse de la Forge Questembert,,,,1 Impasse de la Forge,,,,56230
+1 Impasse de la Forge 56230,,,,1 Impasse de la Forge,,,Questembert,
+1 Impasse de la Forge,-2.465397,47.641671,,1 Impasse de la Forge,,,,56230
+25 Rue de la Croix Quiberon,,,,25 Rue de la Croix,,,,56170
+25 Rue de la Croix 56170,,,,25 Rue de la Croix,,,Quiberon,
+25 Rue de la Croix,-3.120270,47.494272,,25 Rue de la Croix,,,,56170
+2 Rue Abbe Alain Le Blevec Riantec,,,,2 Rue Abbe Alain Le Blevec,,,,56670
+2 Rue Abbe Alain Le Blevec 56670,,,,2 Rue Abbe Alain Le Blevec,,,Riantec,
+2 Rue Abbe Alain Le Blevec,-3.306785,47.713507,,2 Rue Abbe Alain Le Blevec,,,,56670
+21 Rue Charles Péguy Saint-Avé,,,,21 Rue Charles Péguy,,,,56890
+21 Rue Charles Péguy 56890,,,,21 Rue Charles Péguy,,,Saint-Avé,
+21 Rue Charles Péguy,-2.762742,47.680755,,21 Rue Charles Péguy,,,,56890
+81 Route du Cossay Saint-Gildas-de-Rhuys,,,,81 Route du Cossay,,,,56730
+81 Route du Cossay 56730,,,,81 Route du Cossay,,,Saint-Gildas-de-Rhuys,
+81 Route du Cossay,-2.803974,47.491268,,81 Route du Cossay,,,,56730
+36 Résidence Beau Soleil Saint-Nolff,,,,36 Résidence Beau Soleil,,,,56250
+36 Résidence Beau Soleil 56250,,,,36 Résidence Beau Soleil,,,Saint-Nolff,
+36 Résidence Beau Soleil,-2.680819,47.697673,,36 Résidence Beau Soleil,,,,56250
+5 Rue de la Cote Sarzeau,,,,5 Rue de la Cote,,,,56370
+5 Rue de la Cote 56370,,,,5 Rue de la Cote,,,Sarzeau,
+5 Rue de la Cote,-2.779327,47.497753,,5 Rue de la Cote,,,,56370
+25 Chemin de Bindre Séné,,,,25 Chemin de Bindre,,,,56860
+25 Chemin de Bindre 56860,,,,25 Chemin de Bindre,,,Séné,
+25 Chemin de Bindre,-2.717768,47.632136,,25 Chemin de Bindre,,,,56860
+24 Résidence Jean Monnet Sulniac,,,,24 Résidence Jean Monnet,,,,56250
+24 Résidence Jean Monnet 56250,,,,24 Résidence Jean Monnet,,,Sulniac,
+24 Résidence Jean Monnet,-2.572650,47.673721,,24 Résidence Jean Monnet,,,,56250
+16 Rue de la Libération Trédion,,,,16 Rue de la Libération,,,,56250
+16 Rue de la Libération 56250,,,,16 Rue de la Libération,,,Trédion,
+16 Rue de la Libération,-2.592773,47.791914,,16 Rue de la Libération,,,,56250
+3 Allée du Couëdic Vannes,,,,3 Allée du Couëdic,,,,56000
+3 Allée du Couëdic 56000,,,,3 Allée du Couëdic,,,Vannes,
+3 Allée du Couëdic,-2.727410,47.661763,,3 Allée du Couëdic,,,,56000
+69 Avenue de la Marne Vannes,,,,69 Avenue de la Marne,,,,56000
+69 Avenue de la Marne 56000,,,,69 Avenue de la Marne,,,Vannes,
+69 Avenue de la Marne,-2.779573,47.659461,,69 Avenue de la Marne,,,,56000
+23 Rue Edouard Herriot Bono,,,,23 Rue Edouard Herriot,,,,56400
+23 Rue Edouard Herriot 56400,,,,23 Rue Edouard Herriot,,,Bono,
+23 Rue Edouard Herriot,-2.945260,47.636698,,23 Rue Edouard Herriot,,,,56400

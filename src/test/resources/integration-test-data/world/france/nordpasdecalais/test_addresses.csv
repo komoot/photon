@@ -1,0 +1,833 @@
+query,lon,lat,limit,expected_name,expected_housenumber,expected_street,expected_city,expected_postcode
+19 Rue Denis Cordonnier Aniche,,,,19 Rue Denis Cordonnier,,,,59580
+19 Rue Denis Cordonnier 59580,,,,19 Rue Denis Cordonnier,,,Aniche,
+19 Rue Denis Cordonnier,3.250339,50.323376,,19 Rue Denis Cordonnier,,,,59580
+119 Rue Carpeaux Villeneuve-d'Ascq,,,,119 Rue Carpeaux,,,,59650
+119 Rue Carpeaux 59650,,,,119 Rue Carpeaux,,,Villeneuve-d'Ascq,
+11 Rue des Genêts Villeneuve-d'Ascq,,,,11 Rue des Genêts,,,,59650
+11 Rue des Genêts 59650,,,,11 Rue des Genêts,,,Villeneuve-d'Ascq,
+18 Rue Saint-Sauveur Villeneuve-d'Ascq,,,,18 Rue Saint-Sauveur,,,,59650
+18 Rue Saint-Sauveur 59650,,,,18 Rue Saint-Sauveur,,,Villeneuve-d'Ascq,
+18 Rue Saint-Sauveur,3.141394,50.627746,,18 Rue Saint-Sauveur,,,,59650
+31 Rue des Anorelles Anor,,,,31 Rue des Anorelles,,,,59186
+31 Rue des Anorelles 59186,,,,31 Rue des Anorelles,,,Anor,
+31 Rue des Anorelles,4.134764,49.998113,,31 Rue des Anorelles,,,,59186
+8 Rue Kléber Anzin,,,,8 Rue Kléber,,,,59410
+8 Rue Kléber 59410,,,,8 Rue Kléber,,,Anzin,
+8 Rue Kléber,3.500907,50.374232,,8 Rue Kléber,,,,59410
+3 Cours Carniaux Armentières,,,,3 Cour Carniaud,,,,59280
+3 Cours Carniaux 59280,,,,3 Cour Carniaud,,,Armentières,
+3 Cours Carniaux,2.879964,50.688477,,3 Cour Carniaud,,,,59280
+64BIS Rue de Metz Armentières,,,,64 B Rue de Metz,,,,59280
+64BIS Rue de Metz 59280,,,,64 B Rue de Metz,,,Armentières,
+64 B Rue de Metz,2.889957,50.687328,,64 B Rue de Metz,,,,59280
+16 Place des Eglantines Attiches,,,,16 Place des Eglantines,,,,59551
+16 Place des Eglantines 59551,,,,16 Place des Eglantines,,,Attiches,
+16 Place des Eglantines,3.065758,50.524763,,16 Place des Eglantines,,,,59551
+7 Rue Condorcet Auby,,,,7 Rue Condorcet,,,,59950
+7 Rue Condorcet 59950,,,,7 Rue Condorcet,,,Auby,
+45 Rue Albert-Schweitzer Aulnoye-Aymeries,,,,45 Rue Albert-Schweitzer,,,,59620
+45 Rue Albert-Schweitzer 59620,,,,45 Rue Albert-Schweitzer,,,Aulnoye-Aymeries,
+45 Rue Albert-Schweitzer,3.848887,50.207203,,45 Rue Albert-Schweitzer,,,,59620
+28 Rue des Jardins Avesnelles,,,,28 Rue des Jardins,,,,59440
+28 Rue des Jardins 59440,,,,28 Rue des Jardins,,,Avesnelles,
+28 Rue des Jardins,3.948079,50.120090,,28 Rue des Jardins,,,,59440
+13 Rue d'Estree Bachant,,,,13 Rue d'Estree,,,,59138
+13 Rue d'Estree 59138,,,,13 Rue d'Estree,,,Bachant,
+13 Rue d'Estree,3.855022,50.209278,,13 Rue d'Estree,,,,59138
+100 Rue Philippe Van Tieghem Bailleul,,,,100 Rue Philippe Van Tieghem,,,,59270
+100 Rue Philippe Van Tieghem 59270,,,,100 Rue Philippe Van Tieghem,,,Bailleul,
+100 Rue Philippe Van Tieghem,2.728873,50.734869,,100 Rue Philippe Van Tieghem,,,,59270
+34 Hameau de Beaupuits La Bassée,,,,34 Hameau de Beaupuits,,,,59480
+34 Hameau de Beaupuits 59480,,,,34 Hameau de Beaupuits,,,La Bassée,
+34 Hameau de Beaupuits,2.799730,50.548204,,34 Hameau de Beaupuits,,,,59480
+18 Rue de Fournes Beaucamps-Ligny,,,,18 Rue de Fournes,,,,59134
+18 Rue de Fournes 59134,,,,18 Rue de Fournes,,,Beaucamps-Ligny,
+18 Rue de Fournes,2.914258,50.604176,,18 Rue de Fournes,,,,59134
+1 Rue du Moulin Berlaimont,,,,1 Rue du Moulin,,,,59145
+1 Rue du Moulin 59145,,,,1 Rue du Moulin,,,Berlaimont,
+1 Rue du Moulin,3.816387,50.202380,,1 Rue du Moulin,,,,59145
+12 Rue Jean Chanat Beuvrages,,,,12 Rue Jean Chanat,,,,59192
+12 Rue Jean Chanat 59192,,,,12 Rue Jean Chanat,,,Beuvrages,
+12 Rue Jean Chanat,3.508408,50.381089,,12 Rue Jean Chanat,,,,59192
+97 Rue du Moulin Boeschepe,,,,97 Rue du Moulin,,,,59299
+97 Rue du Moulin 59299,,,,97 Rue du Moulin,,,Boeschepe,
+97 Rue du Moulin,2.688706,50.800570,,97 Rue du Moulin,,,,59299
+796 Domaine de la Vigne Bondues,,,,796 Domaine de la Vigne,,,,59910
+796 Domaine de la Vigne 59910,,,,796 Domaine de la Vigne,,,Bondues,
+796 Domaine de la Vigne,3.075937,50.713709,,796 Domaine de la Vigne,,,,59910
+9 Rue Schadet Vercoustre Bourbourg,,,,9 Rue Schadet Vercoustre,,,,59630
+9 Rue Schadet Vercoustre 59630,,,,9 Rue Schadet Vercoustre,,,Bourbourg,
+9 Rue Schadet Vercoustre,2.196252,50.948307,,9 Rue Schadet Vercoustre,,,,59630
+270 Rue de la Paix Boussois,,,,270 Rue de la Paix,,,,59168
+270 Rue de la Paix 59168,,,,270 Rue de la Paix,,,Boussois,
+270 Rue de la Paix,4.040773,50.293517,,270 Rue de la Paix,,,,59168
+25 Route de Rubrouck Cd 911 Broxeele,,,,25 Route de Rubrouck Cd 911,,,,59470
+25 Route de Rubrouck Cd 911 59470,,,,25 Route de Rubrouck Cd 911,,,Broxeele,
+25 Route de Rubrouck Cd 911,2.317148,50.829900,,25 Route de Rubrouck Cd 911,,,,59470
+25 Rue Lesage Bruille-lez-Marchiennes,,,,25 Rue Lesage,,,,59490
+25 Rue Lesage 59490,,,,25 Rue Lesage,,,Bruille-lez-Marchiennes,
+25 Rue Lesage,3.244433,50.365048,2,25 Rue Lesage,,,,59490
+71 Rue d'Artois Cambrai,,,,71 Rue d'Artois,,,,59400
+71 Rue d'Artois 59400,,,,71 Rue d'Artois,,,Cambrai,
+71 Rue d'Artois,3.255944,50.160947,,71 Rue d'Artois,,,,59400
+5 Rue Jean Racine Cambrai,,,,5 Rue Jean Racine,,,,59400
+5 Rue Jean Racine 59400,,,,5 Rue Jean Racine,,,Cambrai,
+5 Rue Jean Racine,3.256965,50.165885,,5 Rue Jean Racine,,,,59400
+5 Allée Saint-Roch Cambrai,,,,5 Allée Saint-Roch,,,,59400
+5 Allée Saint-Roch 59400,,,,5 Allée Saint-Roch,,,Cambrai,
+5 Allée Saint-Roch,3.239989,50.180002,,5 Allée Saint-Roch,,,,59400
+967 Rue Basilic Straete Cappelle-Brouck,,,,967 Rue Basilic Straete,,,,59630
+967 Rue Basilic Straete 59630,,,,967 Rue Basilic Straete,,,Cappelle-Brouck,
+967 Rue Basilic Straete,2.238490,50.910373,,967 Rue Basilic Straete,,,,59630
+115 Rue de Bruxelles Caudry,,,,115 Rue de Bruxelles,,,,59540
+115 Rue de Bruxelles 59540,,,,115 Rue de Bruxelles,,,Caudry,
+115 Rue de Bruxelles,3.410777,50.131644,,115 Rue de Bruxelles,,,,59540
+17 Rue Stephenson Caudry,,,,17 Rue Stephenson,,,,59540
+17 Rue Stephenson 59540,,,,17 Rue Stephenson,,,Caudry,
+17 Rue Stephenson,3.420761,50.126288,,17 Rue Stephenson,,,,59540
+34 Rue du Bon Passage Chéreng,,,,34 Rue du Bon Passage,,,,59152
+34 Rue du Bon Passage 59152,,,,34 Rue du Bon Passage,,,Chéreng,
+34 Rue du Bon Passage,3.204850,50.608204,,34 Rue du Bon Passage,,,,59152
+58 Rue Martha Desrumeaux Comines,,,,58 Rue Martha Desrumaux,,,,59560
+58 Rue Martha Desrumeaux 59560,,,,58 Rue Martha Desrumaux,,,Comines,
+58 Rue Martha Desrumeaux,3.020017,50.766500,,58 Rue Martha Desrumaux,,,,59560
+21 Rue du Quesnoy Condé-sur-l'Escaut,,,,21 Rue du Quesnoy,,,,59163
+21 Rue du Quesnoy 59163,,,,21 Rue du Quesnoy,,,Condé-sur-l'Escaut,
+21 Rue du Quesnoy,3.594722,50.445786,2,21 Rue du Quesnoy,,,,59163
+69 Boulevard Jean Jaurès Coudekerque-Branche,,,,69 Boulevard Jean Jaurès,,,,59210
+69 Boulevard Jean Jaurès 59210,,,,69 Boulevard Jean Jaurès,,,Coudekerque-Branche,
+69 Boulevard Jean Jaurès,2.379438,51.021507,,69 Boulevard Jean Jaurès,,,,59210
+2 Rue Pierre de Coubertin Courchelettes,,,,2 Rue Pierre de Coubertin,,,,59552
+2 Rue Pierre de Coubertin 59552,,,,2 Rue Pierre de Coubertin,,,Courchelettes,
+2 Rue Pierre de Coubertin,3.057501,50.348526,,2 Rue Pierre de Coubertin,,,,59552
+73 Rue Anatole France Croix,,,,73 Rue Anatole France,,,,59170
+73 Rue Anatole France 59170,,,,73 Rue Anatole France,,,Croix,
+73 Rue Anatole France,3.156332,50.684844,5,73 Rue Anatole France,,,,59170
+43 Rue Paul Lafargue Croix,,,,43 Rue Paul Lafargue,,,,59170
+43 Rue Paul Lafargue 59170,,,,43 Rue Paul Lafargue,,,Croix,
+43 Rue Paul Lafargue,3.155249,50.686021,,43 Rue Paul Lafargue,,,,59170
+20E Rue du Général de Gaulle Cysoing,,,,20 E Rue du Général de Gaulle,,,,59830
+20E Rue du Général de Gaulle 59830,,,,20 E Rue du Général de Gaulle,,,Cysoing,
+20E Rue du Général de Gaulle,3.218773,50.570480,,20 E Rue du Général de Gaulle,,,,59830
+240 Rue Charles Bourseul Douai,,,,240 Rue Charles Bourseul,,,,59500
+240 Rue Charles Bourseul 59500,,,,240 Rue Charles Bourseul,,,Douai,
+240 Rue Charles Bourseul,3.074509,50.379867,,240 Rue Charles Bourseul,,,,59500
+89 Rue Léo Delibes Douai,,,,89 Rue Léo Delibes,,,,59500
+89 Rue Léo Delibes 59500,,,,89 Rue Léo Delibes,,,Douai,
+89 Rue Léo Delibes,3.098754,50.378096,,89 Rue Léo Delibes,,,,59500
+32 Rue Victor Pecqueur Douai,,,,32 Rue Victor Pecqueur,,,,59500
+32 Rue Victor Pecqueur 59500,,,,32 Rue Victor Pecqueur,,,Douai,
+32 Rue Victor Pecqueur,3.084533,50.391887,,32 Rue Victor Pecqueur,,,,59500
+30 Rue Alfred Dumont Dunkerque,,,,30 Rue Alfred Dumont,,,,59140
+30 Rue Alfred Dumont 59140,,,,30 Rue Alfred Dumont,,,Dunkerque,
+30 Rue Alfred Dumont,2.377278,51.030606,,30 Rue Alfred Dumont,,,,59140
+543 Rue Arago Dunkerque,,,,543 Rue Arago,,,,59240
+543 Rue Arago 59240,,,,543 Rue Arago,,,Dunkerque,
+543 Rue Arago,2.403552,51.044322,,543 Rue Arago,,,,59240
+52 Rue des Fusiliers Marins Dunkerque,,,,52 Rue des Fusiliers Marins,,,,59430
+52 Rue des Fusiliers Marins 59430,,,,52 Rue des Fusiliers Marins,,,Dunkerque,
+52 Rue des Fusiliers Marins,2.345248,51.034846,,52 Rue des Fusiliers Marins,,,,59430
+133 Rue de la Moissonnière Dunkerque,,,,133 Rue de la Moissonnière,,,,59640
+133 Rue de la Moissonnière 59640,,,,133 Rue de la Moissonnière,,,Dunkerque,
+133 Rue de la Moissonnière,2.315725,51.025215,,133 Rue de la Moissonnière,,,,59640
+635 Rue de Zuydcoote Dunkerque,,,,635 Rue de Zuydcoote,,,,59240
+635 Rue de Zuydcoote 59240,,,,635 Rue de Zuydcoote,,,Dunkerque,
+635 Rue de Zuydcoote,2.427879,51.047466,,635 Rue de Zuydcoote,,,,59240
+56 Rue Gambetta Dunkerque,,,,56 Rue Gambetta,,,,59430
+56 Rue Gambetta 59430,,,,56 Rue Gambetta,,,Dunkerque,
+56 Rue Gambetta,2.350174,51.026210,,56 Rue Gambetta,,,,59430
+93 Rue de l'Hazewinde Eecke,,,,93 Rue de l'Hazewinde,,,,59114
+93 Rue de l'Hazewinde 59114,,,,93 Rue de l'Hazewinde,,,Eecke,
+93 Rue de l'Hazewinde,2.593041,50.780304,,93 Rue de l'Hazewinde,,,,59114
+404 Avenue Jules Guesde Escaudain,,,,404 Avenue Jules Guesde,,,,59124
+404 Avenue Jules Guesde 59124,,,,404 Avenue Jules Guesde,,,Escaudain,
+404 Avenue Jules Guesde,3.330919,50.329008,,404 Avenue Jules Guesde,,,,59124
+4 Allée des Peupliers Escobecques,,,,4 Allée des Peupliers,,,,59320
+4 Allée des Peupliers 59320,,,2,4 Allée des Peupliers,,,Escobecques,
+4 Allée des Peupliers,2.937156,50.618826,3,4 Allée des Peupliers,,,,59320
+19 Rue de Thun l'Eveque Eswars,,,,19 Rue de Thun l'Eveque,,,,59161
+19 Rue de Thun l'Eveque 59161,,,,19 Rue de Thun l'Eveque,,,Eswars,
+19 Rue de Thun l'Eveque,3.272098,50.222170,,19 Rue de Thun l'Eveque,,,,59161
+228 Rue Jean Jaurès Faches-Thumesnil,,,,228 Rue Jean Jaurès,,,,59155
+228 Rue Jean Jaurès 59155,,,,228 Rue Jean Jaurès,,,Faches-Thumesnil,
+228 Rue Jean Jaurès,3.074016,50.604837,2,228 Rue Jean Jaurès,,,,59155
+2 Rue Alfred-Derkenne Feignies,,,,2 Rue Alfred-Derkenne,,,,59750
+2 Rue Alfred-Derkenne 59750,,,,2 Rue Alfred-Derkenne,,,Feignies,
+2 Rue Alfred-Derkenne,3.917436,50.298104,,2 Rue Alfred-Derkenne,,,,59750
+75 Rue Suzanne Lanoy Fenain,,,,75 Rue Suzanne Lanoy,,,,59179
+75 Rue Suzanne Lanoy 59179,,,,75 Rue Suzanne Lanoy,,,Fenain,
+75 Rue Suzanne Lanoy,3.295850,50.366135,,75 Rue Suzanne Lanoy,,,,59179
+79BIS Rue Marceau Martin Flers-en-Escrebieux,,,,79 BIS Rue Marceau Martin,,,,59128
+79BIS Rue Marceau Martin 59128,,,,79 BIS Rue Marceau Martin,,,Flers-en-Escrebieux,
+79BIS Rue Marceau Martin,3.091407,50.399575,,79 BIS Rue Marceau Martin,,,,59128
+41 Rue Lamartine Fontaine-au-Pire,,,,41 Rue Lamartine,,,,59157
+41 Rue Lamartine 59157,,,,41 Rue Lamartine,,,Fontaine-au-Pire,
+41 Rue Lamartine,3.374668,50.133814,,41 Rue Lamartine,,,,59157
+4 Impasse Marcy Fourmies,,,,4 Impasse Marcy,,,,59610
+4 Impasse Marcy 59610,,,,4 Impasse Marcy,,,Fourmies,
+4 Impasse Marcy,4.040814,50.013599,,4 Impasse Marcy,,,,59610
+84 Rue Jacques Renard Fresnes-sur-Escaut,,,,84 Rue Jacques Renard,,,,59970
+84 Rue Jacques Renard 59970,,,,84 Rue Jacques Renard,,,Fresnes-sur-Escaut,
+84 Rue Jacques Renard,3.555527,50.438435,,84 Rue Jacques Renard,,,,59970
+22A Rue des Écoles Ghyvelde,,,,22 A Rue des Écoles,,,,59254
+22A Rue des Écoles 59254,,,,22 A Rue des Écoles,,,Ghyvelde,
+22A Rue des Écoles,2.524502,51.050100,2,22 A Rue des Écoles,,,,59254
+10 Rue Gustave Mélantois Gondecourt,,,,10 Rue Gustave Mélantois,,,,59147
+10 Rue Gustave Mélantois 59147,,,,10 Rue Gustave Mélantois,,,Gondecourt,
+10 Rue Gustave Mélantois,2.981813,50.541273,,10 Rue Gustave Mélantois,,,,59147
+77 Rue de Gravelines Grand-Fort-Philippe,,,,77 Rue de Gravelines,,,,59153
+77 Rue de Gravelines 59153,,,,77 Rue de Gravelines,,,Grand-Fort-Philippe,
+77 Rue de Gravelines,2.105327,50.998279,,77 Rue de Gravelines,,,,59153
+14 Rue de la Plage Gravelines,,,,14 Rue de la Plage,,,,59820
+14 Rue de la Plage 59820,,,,14 Rue de la Plage,,,Gravelines,
+14 Rue de la Plage,2.132981,50.991071,2,14 Rue de la Plage,,,,59820
+12 Rue Arthur Houte Halluin,,,,12 Rue Arthur Houte,,,,59250
+12 Rue Arthur Houte 59250,,,,12 Rue Arthur Houte,,,Halluin,
+12 Rue Arthur Houte,3.127454,50.779975,,12 Rue Arthur Houte,,,,59250
+81 Rue Maurice Simono Halluin,,,,81 Rue Maurice Simono,,,,59250
+81 Rue Maurice Simono 59250,,,,81 Rue Maurice Simono,,,Halluin,
+81 Rue Maurice Simono,3.120149,50.785824,,81 Rue Maurice Simono,,,,59250
+1 BIS Rue d'Avesnes Le Sec Haspres,,,,1 BIS Rue d'Avesnes Le Sec,,,,59198
+1 BIS Rue d'Avesnes Le Sec 59198,,,,1 BIS Rue d'Avesnes Le Sec,,,Haspres,
+1 BIS Rue d'Avesnes Le Sec,3.411783,50.256013,,1 BIS Rue d'Avesnes Le Sec,,,,59198
+69 Avenue de la Pépinière Haubourdin,,,,69 Avenue de la Pépinière,,,,59320
+69 Avenue de la Pépinière 59320,,,,69 Avenue de la Pépinière,,,Haubourdin,
+69 Avenue de la Pépinière,2.970606,50.609344,,69 Avenue de la Pépinière,,,,59320
+183 Avenue du Général Leclerc Hautmont,,,,183 Avenue du Général Leclerc,,,,59330
+183 Avenue du Général Leclerc 59330,,,,183 Avenue du Général Leclerc,,,Hautmont,
+183 Avenue du Général Leclerc,3.910328,50.243280,,183 Avenue du Général Leclerc,,,,59330
+138 Rue de la Croix Haynecourt,,,,138 Rue de la Croix,,,,59268
+138 Rue de la Croix 59268,,,,138 Rue de la Croix,,,Haynecourt,
+138 Rue de la Croix,3.162923,50.212839,,138 Rue de la Croix,,,,59268
+34 Avenue Masson Beau Hazebrouck,,,,34 Avenue Masson Beau,,,,59190
+34 Avenue Masson Beau 59190,,,,34 Avenue Masson Beau,,,Hazebrouck,
+34 Avenue Masson Beau,2.537314,50.727763,,34 Avenue Masson Beau,,,,59190
+35T Rue Briet Hem,,,,35 TER Rue Briet,,,,59510
+35T Rue Briet 59510,,,,35 TER Rue Briet,,,Hem,
+35T Rue Briet,3.190776,50.669223,,35 TER Rue Briet,,,,59510
+35T Rue du Trié Hem,,,,35T Rue du Trié,,,,59510
+35T Rue du Trié 59510,,,,35T Rue du Trié,,,Hem,
+35T Rue du Trié,3.170736,50.662216,,35T Rue du Trié,,,,59510
+435 Rue de la Rosière Herrin,,,,435 Rue de la Rosière,,,,59147
+435 Rue de la Rosière 59147,,,,435 Rue de la Rosière,,,Herrin,
+435 Rue de la Rosière,2.965071,50.546279,,435 Rue de la Rosière,,,,59147
+60 Rue Paul Lafargue Hornaing,,,,60 Rue Paul Lafargue,,,,59171
+60 Rue Paul Lafargue 59171,,,,60 Rue Paul Lafargue,,,Hornaing,
+60 Rue Paul Lafargue,3.340594,50.368279,,60 Rue Paul Lafargue,,,,59171
+6 Allée des Tilleuls Houplines,,,,6 Allée des Tilleuls,,,,59116
+6 Allée des Tilleuls 59116,,,,6 Allée des Tilleuls,,,Houplines,
+6 Allée des Tilleuls,2.915761,50.699086,,6 Allée des Tilleuls,,,,59116
+184 Rue Auguste-Marchal Jeumont,,,,184 Rue Auguste-Marchal,,,,59460
+184 Rue Auguste-Marchal 59460,,,,184 Rue Auguste-Marchal,,,Jeumont,
+184 Rue Auguste-Marchal,4.089842,50.294301,,184 Rue Auguste-Marchal,,,,59460
+60 Rue des Clématites Lallaing,,,,60 Rue des Clématites,,,,59167
+60 Rue des Clématites 59167,,,,60 Rue des Clématites,,,Lallaing,
+60 Rue des Clématites,3.158504,50.385744,,60 Rue des Clématites,,,,59167
+58 Rue Georges Boidin Lambersart,,,,58 Rue Georges Boidin,,,,59130
+58 Rue Georges Boidin 59130,,,,58 Rue Georges Boidin,,,Lambersart,
+58 Rue Georges Boidin,3.025622,50.641394,,58 Rue Georges Boidin,,,,59130
+1T Rue de Verlinghem Lambersart,,,,1 ter Rue de Verlinghem,,,,59130
+1T Rue de Verlinghem 59130,,,,1 ter Rue de Verlinghem,,,Lambersart,
+1T Rue de Verlinghem,3.024410,50.653979,,1 ter Rue de Verlinghem,,,,59130
+4 Rue de Tournai Lannoy,,,,4 Rue de Tournai,,,,59390
+4 Rue de Tournai 59390,,,,4 Rue de Tournai,,,Lannoy,
+4 Rue de Tournai,3.211316,50.666924,2,4 Rue de Tournai,,,,59390
+105 Rue du Maréchal Leclerc Leers,,,,105 Rue du Maréchal Leclerc,,,,59115
+105 Rue du Maréchal Leclerc 59115,,,,105 Rue du Maréchal Leclerc,,,Leers,
+105 Rue du Maréchal Leclerc,3.224415,50.685248,,105 Rue du Maréchal Leclerc,,,,59115
+22 Rue d'Iena Lesquin,,,,22 Rue d'Iena,,,,59810
+22 Rue d'Iena 59810,,,,22 Rue d'Iena,,,Lesquin,
+22 Rue d'Iena,3.110028,50.587426,3,22 Rue d'Iena,,,,59810
+41 Rue de Beaux-Monts Liessies,,,,41 Rue des Beaux-Monts,,,,59740
+41 Rue de Beaux-Monts 59740,,,,41 Rue des Beaux-Monts,,,Liessies,
+41 Rue de Beaux-Monts,4.082586,50.124005,,41 Rue des Beaux-Monts,,,,59740
+119 Rue Barthélémy Delespaul Lille,,,,119 Rue Barthélémy Delespaul,,,,59000
+119 Rue Barthélémy Delespaul 59000,,,,119 Rue Barthélémy Delespaul,,,Lille,
+119 Rue Barthélémy Delespaul,3.065487,50.624199,,119 Rue Barthélémy Delespaul,,,,59000
+27 Rue du Chaufour Lille,,,,27 Rue du Chaufour,,,,59000
+27 Rue du Chaufour 59000,,,,27 Rue du Chaufour,,,Lille,
+27 Rue du Chaufour,3.048511,50.625807,,27 Rue du Chaufour,,,,59000
+54 Boulevard de l'Épine Lille,,,,54 Boulevard de l'Épine,,,,59260
+54 Boulevard de l'Épine 59260,,,,54 Boulevard de l'Épine,,,Lille,
+54 Boulevard de l'Épine,3.106904,50.620387,,54 Boulevard de l'Épine,,,,59260
+15 Rue Gustave Nadaud Lille,,,,15 Rue Gustave Nadaud,,,,59000
+15 Rue Gustave Nadaud 59000,,,,15 Rue Gustave Nadaud,,,Lille,
+15 Rue Gustave Nadaud,3.045269,50.613480,,15 Rue Gustave Nadaud,,,,59000
+37 Rue de Lens Lille,,,,37 Rue de Lens,,,,59000
+37 Rue de Lens 59000,,,,37 Rue de Lens,,,Lille,
+37 Rue de Lens,3.062420,50.624967,,37 Rue de Lens,,,,59000
+14 Rue des Modeleurs Lille,,,,14 Rue des Modeleurs,,,,59260
+14 Rue des Modeleurs 59260,,,,14 Rue des Modeleurs,,,Lille,
+14 Rue des Modeleurs,3.103481,50.626239,,14 Rue des Modeleurs,,,,59260
+41 Rue du Professeur Langevin Lille,,,,41 Rue du Professeur Langevin,,,,59000
+41 Rue du Professeur Langevin 59000,,,,41 Rue du Professeur Langevin,,,Lille,
+41 Rue du Professeur Langevin,3.087164,50.617687,,41 Rue du Professeur Langevin,,,,59000
+25 Rue de Tourville Lille,,,,25 Rue de Tourville,,,,59000
+25 Rue de Tourville 59000,,,,25 Rue de Tourville,,,Lille,
+25 Rue de Tourville,3.026860,50.631026,,25 Rue de Tourville,,,,59000
+5 Rue François J Deroullers Lille,,,,5 Rue François Joseph Deroullers,,,,59160
+5 Rue François J Deroullers 59160,,,,5 Rue François Joseph Deroullers,,,Lille,
+5 Rue François J Deroullers,2.981528,50.647078,,5 Rue François Joseph Deroullers,,,,59160
+57 Cité Bacquet Lille,,,,57 Cité Bacquet,,,,59260
+57 Cité Bacquet 59260,,,,57 Cité Bacquet,,,Lille,
+57 Cité Bacquet,3.102247,50.634071,,57 Cité Bacquet,,,,59260
+40 Rue de Pont-sur-Sambre La Longueville,,,,40 Rue de Pont-sur-Sambre,,,,59570
+40 Rue de Pont-sur-Sambre 59570,,,,40 Rue de Pont-sur-Sambre,,,La Longueville,
+40 Rue de Pont-sur-Sambre,3.855835,50.279000,,40 Rue de Pont-sur-Sambre,,,,59570
+157 Rue Georges Clemenceau Loos,,,,157 Rue Georges Clemenceau,,,,59120
+157 Rue Georges Clemenceau 59120,,,,157 Rue Georges Clemenceau,,,Loos,
+157 Rue Georges Clemenceau,3.010221,50.615663,,157 Rue Georges Clemenceau,,,,59120
+14BIS Ruelle de la Frête Louvignies-Quesnoy,,,,14 BIS Ruelle de la Frête,,,,59530
+14BIS Ruelle de la Frête 59530,,,,14 BIS Ruelle de la Frête,,,Louvignies-Quesnoy,
+14BIS Ruelle de la Frête,3.638996,50.222443,,14 BIS Ruelle de la Frête,,,,59530
+54 Rue Henri Ghesquière Lys-lez-Lannoy,,,,54 Rue Henri Ghesquière,,,,59390
+54 Rue Henri Ghesquière 59390,,,,54 Rue Henri Ghesquière,,,Lys-lez-Lannoy,
+54 Rue Henri Ghesquière,3.207610,50.672364,2,54 Rue Henri Ghesquière,,,,59390
+35 Rue Jeanne d'Arc La Madeleine,,,,35 Rue Jeanne d'Arc,,,,59110
+35 Rue Jeanne d'Arc 59110,,,,35 Rue Jeanne d'Arc,,,La Madeleine,
+35 Rue Jeanne d'Arc,3.067200,50.659361,5,35 Rue Jeanne d'Arc,,,,59110
+2 Rue de Beaurevoir Malincourt,,,,2 Rue de Beaurevoir,,,,59127
+2 Rue de Beaurevoir 59127,,,,2 Rue de Beaurevoir,,,Malincourt,
+2 Rue de Beaurevoir,3.326748,50.045848,,2 Rue de Beaurevoir,,,,59127
+17 Rue des Châtaigniers Marcq-en-Barœul,,,,17 Rue des Châtaigniers,,,,59700
+17 Rue des Châtaigniers 59700,,,,17 Rue des Châtaigniers,,,Marcq-en-Barœul,
+17 Rue des Châtaigniers,3.099402,50.683486,,17 Rue des Châtaigniers,,,,59700
+16 Rue Marc Sangnier Marcq-en-Barœul,,,,16 Rue Marc Sangnier,,,,59700
+16 Rue Marc Sangnier 59700,,,,16 Rue Marc Sangnier,,,Marcq-en-Barœul,
+16 Rue Marc Sangnier,3.098585,50.673768,3,16 Rue Marc Sangnier,,,,59700
+3 Rue d'Artres Maresches,,,,3 Rue d'Artres,,,,59990
+3 Rue d'Artres 59990,,,,3 Rue d'Artres,,,Maresches,
+3 Rue d'Artres,3.574746,50.293586,2,3 Rue d'Artres,,,,59990
+6 Rue des Tulipes Marly,,,,6 Rue des Tulipes,,,,59770
+6 Rue des Tulipes 59770,,,,6 Rue des Tulipes,,,Marly,
+6 Rue des Tulipes,3.546305,50.343249,,6 Rue des Tulipes,,,,59770
+19 Rue Saint-Venant Marquette-lez-Lille,,,,19 Rue Saint-Venant,,,,59520
+19 Rue Saint-Venant 59520,,,,19 Rue Saint-Venant,,,Marquette-lez-Lille,
+19 Rue Saint-Venant,3.053130,50.670610,,19 Rue Saint-Venant,,,,59520
+12 Rue Charles Grivilers Mastaing,,,,12 Rue Charles Grivilers,,,,59172
+12 Rue Charles Grivilers 59172,,,,12 Rue Charles Grivilers,,,Mastaing,
+12 Rue Charles Grivilers,3.309081,50.305725,,12 Rue Charles Grivilers,,,,59172
+141 Boulevard Jean-de-la-Fontaine Maubeuge,,,,141 Boulevard Jean-de-la-Fontaine,,,,59600
+141 Boulevard Jean-de-la-Fontaine 59600,,,,141 Boulevard Jean-de-la-Fontaine,,,Maubeuge,
+141 Boulevard Jean-de-la-Fontaine,3.965613,50.294906,,141 Boulevard Jean-de-la-Fontaine,,,,59600
+4 Rue d'Honnechy Maurois,,,,4 Rue d'Honnechy,,,,59980
+4 Rue d'Honnechy 59980,,,,4 Rue d'Honnechy,,,Maurois,
+4 Rue d'Honnechy,3.468269,50.073082,,4 Rue d'Honnechy,,,,59980
+19 Allée des Peupliers Merville,,,,19 Allée des Peupliers,,,,59660
+19 Allée des Peupliers 59660,,,,19 Allée des Peupliers,,,Merville,
+19 Allée des Peupliers,2.632940,50.639541,,19 Allée des Peupliers,,,,59660
+160 Rue du Becquerel Mons-en-Barœul,,,,160 Rue du Becquerel,,,,59370
+160 Rue du Becquerel 59370,,,,160 Rue du Becquerel,,,Mons-en-Barœul,
+160 Rue du Becquerel,3.099317,50.635803,,160 Rue du Becquerel,,,,59370
+1 Rue de la Feuillée Montay,,,,1 Rue de la Feuillée,,,,59360
+1 Rue de la Feuillée 59360,,,,1 Rue de la Feuillée,,,Montay,
+1 Rue de la Feuillée,3.539689,50.118812,,1 Rue de la Feuillée,,,,59360
+361 Rue du Congo Mouvaux,,,,361 Rue du Congo,,,,59420
+361 Rue du Congo 59420,,,,361 Rue du Congo,,,Mouvaux,
+361 Rue du Congo,3.153066,50.703059,,361 Rue du Congo,,,,59420
+16 Rue Montigny Neuf-Berquin,,,,16 Rue Montigny,,,,59940
+16 Rue Montigny 59940,,,,16 Rue Montigny,,,Neuf-Berquin,
+16 Rue Montigny,2.677298,50.660866,,16 Rue Montigny,,,,59940
+96 Rue du Général de Gaulle La Neuville,,,,96 Rue du Général de Gaulle,,,,59239
+96 Rue du Général de Gaulle 59239,,,,96 Rue du Général de Gaulle,,,La Neuville,
+96 Rue du Général de Gaulle,3.047970,50.491887,2,96 Rue du Général de Gaulle,,,,59239
+94 Avenue des Lilas Nieppe,,,,94 Avenue des Lilas,,,,59850
+94 Avenue des Lilas 59850,,,,94 Avenue des Lilas,,,Nieppe,
+94 Avenue des Lilas,2.845615,50.700406,,94 Avenue des Lilas,,,,59850
+185 Rue de la Haute Ville Odomez,,,,185 Rue de la Haute Ville,,,,59970
+185 Rue de la Haute Ville 59970,,,,185 Rue de la Haute Ville,,,Odomez,
+185 Rue de la Haute Ville,3.525402,50.450805,,185 Rue de la Haute Ville,,,,59970
+104 Rue Claude Jean Orchies,,,,104 Rue Claude Jean,,,,59310
+104 Rue Claude Jean 59310,,,,104 Rue Claude Jean,,,Orchies,
+104 Rue Claude Jean,3.251419,50.468616,,104 Rue Claude Jean,,,,59310
+609 Route de Wormhout Oudezeele,,,,609 Route de Wormhout,,,,59670
+609 Route de Wormhout 59670,,,,609 Route de Wormhout,,,Oudezeele,
+609 Route de Wormhout,2.506480,50.851650,,609 Route de Wormhout,,,,59670
+18 Rue Pasteur Pérenchies,,,,18 Rue Pasteur,,,,59840
+18 Rue Pasteur 59840,,,,18 Rue Pasteur,,,Pérenchies,
+18 Rue Pasteur,2.970613,50.667235,2,18 Rue Pasteur,,,,59840
+1 Chemin des Moulins Vc 2 Pitgam,,,,1 Chemin des Moulins Vc 2,,,,59284
+1 Chemin des Moulins Vc 2 59284,,,,1 Chemin des Moulins Vc 2,,,Pitgam,
+1 Chemin des Moulins Vc 2,2.336700,50.933208,,1 Chemin des Moulins Vc 2,,,,59284
+13 Clos des Pommiers Préseau,,,,13 Clos des Pommiers,,,,59990
+13 Clos des Pommiers 59990,,,,13 Clos des Pommiers,,,Préseau,
+13 Clos des Pommiers,3.571570,50.309031,,13 Clos des Pommiers,,,,59990
+36 Route de Wylder Quaëdypre,,,,36 Route de Wylder,,,,59380
+36 Route de Wylder 59380,,,,36 Route de Wylder,,,Quaëdypre,
+36 Route de Wylder,2.456855,50.933267,,36 Route de Wylder,,,,59380
+45 Rue du Maréchal Foch Quesnoy-sur-Deûle,,,,45 Rue du Maréchal Foch,,,,59890
+45 Rue du Maréchal Foch 59890,,,,45 Rue du Maréchal Foch,,,Quesnoy-sur-Deûle,
+45 Rue du Maréchal Foch,3.003627,50.711636,2,45 Rue du Maréchal Foch,,,,59890
+56B Ruelle Patelette Râches,,,,56 BIS Ruelle Patelette,,,,59194
+56B Ruelle Patelette 59194,,,,56 BIS Ruelle Patelette,,,Râches,
+56B Ruelle Patelette,3.133180,50.411388,,56 BIS Ruelle Patelette,,,,59194
+37 Rue Henri Barbusse Raismes,,,,37 Rue Henri Barbusse,,,,59590
+37 Rue Henri Barbusse 59590,,,,37 Rue Henri Barbusse,,,Raismes,
+37 Rue Henri Barbusse,3.496558,50.384737,,37 Rue Henri Barbusse,,,,59590
+12 Rue du Château Renescure,,,,12 Rue du Château,,,,59173
+12 Rue du Château 59173,,,,12 Rue du Château,,,Renescure,
+12 Rue du Château,2.367303,50.728072,,12 Rue du Château,,,,59173
+14 Rue André Malraux Ronchin,,,,14 Rue André Malraux,,,,59790
+14 Rue André Malraux 59790,,,,14 Rue André Malraux,,,Ronchin,
+14 Rue André Malraux,3.085307,50.606800,,14 Rue André Malraux,,,,59790
+6 Rue de l'Abbé Lemire Roncq,,,,6 Rue de l'Abbé Lemire,,,,59223
+6 Rue de l'Abbé Lemire 59223,,,,6 Rue de l'Abbé Lemire,,,Roncq,
+6 Rue de l'Abbé Lemire,3.130111,50.734933,2,6 Rue de l'Abbé Lemire,,,,59223
+10 Rue Arthur Rimbaud Roost-Warendin,,,,10 Rue Arthur Rimbaud,,,,59286
+10 Rue Arthur Rimbaud 59286,,,,10 Rue Arthur Rimbaud,,,Roost-Warendin,
+10 Rue Arthur Rimbaud,3.113307,50.418723,2,10 Rue Arthur Rimbaud,,,,59286
+16 Boulevard de Beaurepaire Roubaix,,,,16 Boulevard de Beaurepaire,,,,59100
+16 Boulevard de Beaurepaire 59100,,,,16 Boulevard de Beaurepaire,,,Roubaix,
+16 Boulevard de Beaurepaire,3.191057,50.691005,,16 Boulevard de Beaurepaire,,,,59100
+9 Rue Desaix Roubaix,,,,9 Rue Desaix,,,,59100
+9 Rue Desaix 59100,,,,9 Rue Desaix,,,Roubaix,
+9 Rue Desaix,3.192618,50.688999,,9 Rue Desaix,,,,59100
+294 Rue Ingres Roubaix,,,,294 Rue Ingres,,,,59100
+294 Rue Ingres 59100,,,,294 Rue Ingres,,,Roubaix,
+294 Rue Ingres,3.186472,50.674927,,294 Rue Ingres,,,,59100
+16 Rue Marengo Roubaix,,,,16 Rue Marengo,,,,59100
+16 Rue Marengo 59100,,,,16 Rue Marengo,,,Roubaix,
+16 Rue Marengo,3.174831,50.704305,,16 Rue Marengo,,,,59100
+38 Boulevard de la République Roubaix,,,,38 Boulevard de la République,,,,59100
+38 Boulevard de la République 59100,,,,38 Boulevard de la République,,,Roubaix,
+38 Boulevard de la République,3.161079,50.701551,,38 Boulevard de la République,,,,59100
+46 Rue du Grand-Fort Rousies,,,,46 Rue du Grand-Fort,,,,59131
+46 Rue du Grand-Fort 59131,,,,46 Rue du Grand-Fort,,,Rousies,
+46 Rue du Grand-Fort,3.977902,50.266603,,46 Rue du Grand-Fort,,,,59131
+28 Rue Pasteur Sainghin-en-Mélantois,,,,28 Rue Pasteur,,,,59262
+28 Rue Pasteur 59262,,,,28 Rue Pasteur,,,Sainghin-en-Mélantois,
+28 Rue Pasteur,3.177454,50.589714,,28 Rue Pasteur,,,,59262
+158 Rue de la Collinière Saint-Amand-les-Eaux,,,,158 Rue de la Collinière,,,,59230
+158 Rue de la Collinière 59230,,,,158 Rue de la Collinière,,,Saint-Amand-les-Eaux,
+158 Rue de la Collinière,3.430691,50.436078,,158 Rue de la Collinière,,,,59230
+25 Rue de Thumelart Saint-Amand-les-Eaux,,,,25 Rue de Thumelart,,,,59230
+25 Rue de Thumelart 59230,,,,25 Rue de Thumelart,,,Saint-Amand-les-Eaux,
+25 Rue de Thumelart,3.442172,50.446925,,25 Rue de Thumelart,,,,59230
+9 Rue Victor Hugo Saint-Aubert,,,,9 Rue Victor Hugo,,,,59188
+9 Rue Victor Hugo 59188,,,,9 Rue Victor Hugo,,,Saint-Aubert,
+9 Rue Victor Hugo,3.420311,50.206752,,9 Rue Victor Hugo,,,,59188
+32A Rue Charles Giraud Saint-Saulve,,,,32A Rue Charles Giraud,,,,59880
+32A Rue Charles Giraud 59880,,,,32A Rue Charles Giraud,,,Saint-Saulve,
+32A Rue Charles Giraud,3.557418,50.373649,,32A Rue Charles Giraud,,,,59880
+12 Rue Emile Dubois Salomé,,,,12 Rue Emile Dubois,,,,59496
+12 Rue Emile Dubois 59496,,,,12 Rue Emile Dubois,,,Salomé,
+12 Rue Emile Dubois,2.848427,50.534044,,12 Rue Emile Dubois,,,,59496
+38 Rue Arthur Breucq Saultain,,,,38 Rue Arthur Breucq,,,,59990
+38 Rue Arthur Breucq 59990,,,,38 Rue Arthur Breucq,,,Saultain,
+38 Rue Arthur Breucq,3.572094,50.333981,,38 Rue Arthur Breucq,,,,59990
+32 Rue de la Naviette Seclin,,,,32 Rue de la Naviette,,,,59113
+32 Rue de la Naviette 59113,,,,32 Rue de la Naviette,,,Seclin,
+32 Rue de la Naviette,3.013429,50.541161,,32 Rue de la Naviette,,,,59113
+40 Rue Alcide Moché Sin-le-Noble,,,,40 Rue Alcide Moché,,,,59450
+40 Rue Alcide Moché 59450,,,,40 Rue Alcide Moché,,,Sin-le-Noble,
+40 Rue Alcide Moché,3.114885,50.366988,,40 Rue Alcide Moché,,,,59450
+12 Résidence Alexia Iv Sin-le-Noble,,,,12 Résidence Alexia Iv,,,,59450
+12 Résidence Alexia Iv 59450,,,,12 Résidence Alexia Iv,,,Sin-le-Noble,
+12 Résidence Alexia Iv,3.099176,50.345457,,12 Résidence Alexia Iv,,,,59450
+19 Rue de Fayence Somain,,,,19 Rue de Fayence,,,,59490
+19 Rue de Fayence 59490,,,,19 Rue de Fayence,,,Somain,
+19 Rue de Fayence,3.268381,50.372871,,19 Rue de Fayence,,,,59490
+7 Chemin de Champs Steene,,,,7 Chemin de Champs,,,,59380
+7 Chemin de Champs 59380,,,,7 Chemin de Champs,,,Steene,
+7 Chemin de Champs,2.371346,50.950241,,7 Chemin de Champs,,,,59380
+7 Rue Jean Jaurès Templemars,,,,7 Rue Jean Jaurès,,,,59175
+7 Rue Jean Jaurès 59175,,,,7 Rue Jean Jaurès,,,Templemars,
+7 Rue Jean Jaurès,3.055701,50.568724,,7 Rue Jean Jaurès,,,,59175
+188 Rue des Pierres Téteghem,,,,188 Rue des Pierres,,,,59229
+188 Rue des Pierres 59229,,,,188 Rue des Pierres,,,Téteghem-Coudekerque-Village,
+188 Rue des Pierres,2.454387,51.007269,,188 Rue des Pierres,,,,59229
+16 Rue des Azalées Toufflers,,,,16 Rue des Azalées,,,,59390
+16 Rue des Azalées 59390,,,,16 Rue des Azalées,,,Toufflers,
+16 Rue des Azalées,3.225370,50.664541,,16 Rue des Azalées,,,,59390
+379 Rue du Blanc Seau Tourcoing,,,,379 Rue du Blanc Seau,,,,59200
+379 Rue du Blanc Seau 59200,,,,379 Rue du Blanc Seau,,,Tourcoing,
+379 Rue du Blanc Seau,3.152676,50.700555,,379 Rue du Blanc Seau,,,,59200
+20 Rue de Creil Tourcoing,,,,20 Rue de Creil,,,,59200
+20 Rue de Creil 59200,,,,20 Rue de Creil,,,Tourcoing,
+20 Rue de Creil,3.176990,50.725963,,20 Rue de Creil,,,,59200
+37 Rue du Général Douay Tourcoing,,,,37 Rue du Général Douay,,,,59200
+37 Rue du Général Douay 59200,,,,37 Rue du Général Douay,,,Tourcoing,
+37 Rue du Général Douay,3.144455,50.727136,,37 Rue du Général Douay,,,,59200
+103 Rue de Magenta Tourcoing,,,,103 Rue de Magenta,,,,59200
+103 Rue de Magenta 59200,,,,103 Rue de Magenta,,,Tourcoing,
+103 Rue de Magenta,3.160952,50.708694,,103 Rue de Magenta,,,,59200
+143 Chaussée Pierre Curie Tourcoing,,,,143 Chaussée Pierre Curie,,,,59200
+143 Chaussée Pierre Curie 59200,,,,143 Chaussée Pierre Curie,,,Tourcoing,
+143 Chaussée Pierre Curie,3.179949,50.734156,,143 Chaussée Pierre Curie,,,,59200
+7 Place de la Victoire Tourcoing,,,,7 Place de la Victoire,,,,59200
+7 Place de la Victoire 59200,,,,7 Place de la Victoire,,,Tourcoing,
+7 Place de la Victoire,3.157999,50.718157,,7 Place de la Victoire,,,,59200
+8 Résidence J Dupont R d'Peupliers Trith-Saint-Léger,,,,8 Résidence J Dupont R d'Peupliers,,,,59125
+8 Résidence J Dupont R d'Peupliers 59125,,,,8 Résidence J Dupont R d'Peupliers,,,Trith-Saint-Léger,
+8 Résidence J Dupont R d'Peupliers,3.508119,50.338944,,8 Résidence J Dupont R d'Peupliers,,,,59125
+5 Avenue de Denain Valenciennes,,,,5 Avenue de Denain,,,,59300
+5 Avenue de Denain 59300,,,,5 Avenue de Denain,,,Valenciennes,
+5 Avenue de Denain,3.503930,50.356503,,5 Avenue de Denain,,,,59300
+11 Avenue du Maréchal Leclerc Valenciennes,,,,11 Avenue du Maréchal Leclerc,,,,59300
+11 Avenue du Maréchal Leclerc 59300,,,,11 Avenue du Maréchal Leclerc,,,Valenciennes,
+11 Avenue du Maréchal Leclerc,3.519411,50.363943,,11 Avenue du Maréchal Leclerc,,,,59300
+47 Clos des Tonneliers Le Vignoble Valenciennes,,,,47 Clos des Tonneliers Le Vignoble,,,,59300
+47 Clos des Tonneliers Le Vignoble 59300,,,,47 Clos des Tonneliers Le Vignoble,,,Valenciennes,
+47 Clos des Tonneliers Le Vignoble,3.503491,50.350439,,47 Clos des Tonneliers Le Vignoble,,,,59300
+289 Rue du Pain Sec Vieux-Berquin,,,,289 Rue du Pain Sec,,,,59232
+289 Rue du Pain Sec 59232,,,,289 Rue du Pain Sec,,,Vieux-Berquin,
+289 Rue du Pain Sec,2.591522,50.709381,,289 Rue du Pain Sec,,,,59232
+2 Rue Aimable Liénard Vieux-Reng,,,,2 Rue Aimable Liénard,,,,59600
+2 Rue Aimable Liénard 59600,,,,2 Rue Aimable Liénard,,,Vieux-Reng,
+2 Rue Aimable Liénard,4.066714,50.326416,,2 Rue Aimable Liénard,,,,59600
+21 Voie Communale Groupement du Montsorel Wahagnies,,,,21 Voie Communale Groupement du Montsorel,,,,59261
+21 Voie Communale Groupement du Montsorel 59261,,,,21 Voie Communale Groupement du Montsorel,,,Wahagnies,
+21 Voie Communale Groupement du Montsorel,3.037608,50.479890,,21 Voie Communale Groupement du Montsorel,,,,59261
+169 Rue de l'Agrippin Wambrechies,,,,169 Rue de l'Agrippin,,,,59118
+169 Rue de l'Agrippin 59118,,,,169 Rue de l'Agrippin,,,Wambrechies,
+169 Rue de l'Agrippin,3.045818,50.686316,,169 Rue de l'Agrippin,,,,59118
+38 Rue Firmaine Warlaing,,,,38 Rue Firmaine,,,,59870
+38 Rue Firmaine 59870,,,,38 Rue Firmaine,,,Warlaing,
+38 Rue Firmaine,3.315390,50.411146,,38 Rue Firmaine,,,,59870
+54 Avenue de la Marne Wasquehal,,,,54 Avenue de la Marne,,,,59290
+54 Avenue de la Marne 59290,,,,54 Avenue de la Marne,,,Wasquehal,
+54 Avenue de la Marne,3.126854,50.688405,,54 Avenue de la Marne,,,,59290
+2 Rue Marcel Fertein Wattignies,,,,2 Rue Marcel Fertein,,,,59139
+2 Rue Marcel Fertein 59139,,,,2 Rue Marcel Fertein,,,Wattignies,
+2 Rue Marcel Fertein,3.050171,50.600171,,2 Rue Marcel Fertein,,,,59139
+39 Rue Couteau Wattrelos,,,,39 Rue Couteau,,,,59150
+39 Rue Couteau 59150,,,,39 Rue Couteau,,,Wattrelos,
+39 Rue Couteau,3.201617,50.697077,,39 Rue Couteau,,,,59150
+16 Square Léon Marlot Wattrelos,,,,16 Square Léon Marlot,,,,59150
+16 Square Léon Marlot 59150,,,,16 Square Léon Marlot,,,Wattrelos,
+16 Square Léon Marlot,3.205423,50.699003,,16 Square Léon Marlot,,,,59150
+432BIS Rue du Sapin Vert Wattrelos,,,,432BIS Rue du Sapin Vert,,,,59150
+432BIS Rue du Sapin Vert 59150,,,,432BIS Rue du Sapin Vert,,,Wattrelos,
+432BIS Rue du Sapin Vert,3.184997,50.713501,,432BIS Rue du Sapin Vert,,,,59150
+55 Rue Raymond Poincaré Wavrin,,,,55 Rue Raymond Poincaré,,,,59136
+55 Rue Raymond Poincaré 59136,,,,55 Rue Raymond Poincaré,,,Wavrin,
+55 Rue Raymond Poincaré,2.946462,50.571316,,55 Rue Raymond Poincaré,,,,59136
+54 Rue Théodore Brasme Wicres,,,,54 Rue Théodore Brasme,,,,59134
+54 Rue Théodore Brasme 59134,,,,54 Rue Théodore Brasme,,,Wicres,
+54 Rue Théodore Brasme,2.865642,50.570858,,54 Rue Théodore Brasme,,,,59134
+434 Route de Steenvoorde Wormhout,,,,434 Route de Steenvoorde,,,,59470
+434 Route de Steenvoorde 59470,,,,434 Route de Steenvoorde,,,Wormhout,
+434 Route de Steenvoorde,2.473476,50.879144,,434 Route de Steenvoorde,,,,59470
+300 Rue d'Avesnes Agnez-lès-Duisans,,,,300 Rue d'Avesnes,,,,62161
+300 Rue d'Avesnes 62161,,,,300 Rue d'Avesnes,,,Agnez-lès-Duisans,
+300 Rue d'Avesnes,2.650494,50.313989,,300 Rue d'Avesnes,,,,62161
+74 Rue Henri Béthouart Airon-Saint-Vaast,,,,74 Rue Henri Béthouart,,,,62180
+74 Rue Henri Béthouart 62180,,,,74 Rue Henri Béthouart,,,Airon-Saint-Vaast,
+74 Rue Henri Béthouart,1.660878,50.432106,,74 Rue Henri Béthouart,,,,62180
+6 Chaussée Brunehaut Amettes,,,,6 Chaussée Brunehaut,,,,62260
+6 Chaussée Brunehaut 62260,,,,6 Chaussée Brunehaut,,,Amettes,
+6 Chaussée Brunehaut,2.406646,50.532101,,6 Chaussée Brunehaut,,,,62260
+9 Rue des Hortensias Annezin,,,,9 Rue des Hortensias,,,,62232
+9 Rue des Hortensias 62232,,,,9 Rue des Hortensias,,,Annezin,
+9 Rue des Hortensias,2.613845,50.537138,,9 Rue des Hortensias,,,,62232
+32 Rue d'Oppy Arleux-en-Gohelle,,,,32 Rue d'Oppy,,,,62580
+32 Rue d'Oppy 62580,,,,32 Rue d'Oppy,,,Arleux-en-Gohelle,
+32 Rue d'Oppy,2.873808,50.361775,,32 Rue d'Oppy,,,,62580
+9 Rue du Bloc Arras,,,,9 Rue du Bloc,,,,62000
+9 Rue du Bloc 62000,,,,9 Rue du Bloc,,,Arras,
+9 Rue du Bloc,2.772323,50.293568,,9 Rue du Bloc,,,,62000
+26 Avenue Jean Jaurès Arras,,,,26 Avenue Jean Jaurès,,,,62000
+26 Avenue Jean Jaurès 62000,,,,26 Avenue Jean Jaurès,,,Arras,
+26 Avenue Jean Jaurès,2.779460,50.279490,,26 Avenue Jean Jaurès,,,,62000
+4 Impasse Zéphyr Thomas Arras,,,,4 Impasse Zéphyr Thomas,,,,62000
+4 Impasse Zéphyr Thomas 62000,,,,4 Impasse Zéphyr Thomas,,,Arras,
+4 Impasse Zéphyr Thomas,2.748897,50.292704,,4 Impasse Zéphyr Thomas,,,,62000
+22 Rue du Paradis Auchel,,,,22 Rue du Paradis,,,,62260
+22 Rue du Paradis 62260,,,,22 Rue du Paradis,,,Auchel,
+22 Rue du Paradis,2.482407,50.512785,,22 Rue du Paradis,,,,62260
+15 Rue Accary Audresselles,,,,15 Rue Accary,,,,62164
+15 Rue Accary 62164,,,,15 Rue Accary,,,Audresselles,
+15 Rue Accary,1.592125,50.822883,,15 Rue Accary,,,,62164
+14 Rue Boussingault Avion,,,,14 Rue Boussingault,,,,62210
+14 Rue Boussingault 62210,,,,14 Rue Boussingault,,,Avion,
+14 Rue Boussingault,2.835133,50.408002,,14 Rue Boussingault,,,,62210
+3BIS Rue de Moyenneville Ayette,,,,3BIS Rue de Moyenneville,,,,62116
+3BIS Rue de Moyenneville 62116,,,,3BIS Rue de Moyenneville,,,Ayette,
+3BIS Rue de Moyenneville,2.736687,50.176547,,3BIS Rue de Moyenneville,,,,62116
+45 Rue d'Houdain Barlin,,,,45 Rue d'Houdain,,,,62620
+45 Rue d'Houdain 62620,,,,45 Rue d'Houdain,,,Barlin,
+45 Rue d'Houdain,2.610775,50.459324,,45 Rue d'Houdain,,,,62620
+15 Rue Simone Jagu Beaurains,,,,15 Rue Simone Jagu,,,,62217
+15 Rue Simone Jagu 62217,,,,15 Rue Simone Jagu,,,Beaurains,
+15 Rue Simone Jagu,2.782739,50.267254,,15 Rue Simone Jagu,,,,62217
+4 Rue de la Marine Berck,,,,4 Rue de la Marine,,,,62600
+4 Rue de la Marine 62600,,,,4 Rue de la Marine,,,Berck,
+4 Rue de la Marine,1.583967,50.407390,,4 Rue de la Marine,,,,62600
+307 RUE DU BEAU MARAIS Béthune,,,,307 RUE DU BEAU MARAIS,,,,62400
+307 RUE DU BEAU MARAIS 62400,,,,307 RUE DU BEAU MARAIS,,,Béthune,
+307 RUE DU BEAU MARAIS,2.649996,50.532409,,307 RUE DU BEAU MARAIS,,,,62400
+2 Rue Parmentier Béthune,,,,2 Rue Parmentier,,,,62400
+2 Rue Parmentier 62400,,,,2 Rue Parmentier,,,Béthune,
+2 Rue Parmentier,2.626935,50.527897,,2 Rue Parmentier,,,,62400
+155 Rue Germon Beuvry,,,,155 Rue Germon,,,,62660
+155 Rue Germon 62660,,,,155 Rue Germon,,,Beuvry,
+155 Rue Germon,2.691955,50.532343,,155 Rue Germon,,,,62660
+4 Rue Lamartine Billy-Berclau,,,,4 Rue Lamartine,,,,62138
+4 Rue Lamartine 62138,,,,4 Rue Lamartine,,,Billy-Berclau,
+4 Rue Lamartine,2.877387,50.523379,,4 Rue Lamartine,,,,62138
+31 Rue de l'Hermitage Blendecques,,,,31 Rue de l'Hermitage,,,,62575
+31 Rue de l'Hermitage 62575,,,,31 Rue de l'Hermitage,,,Blendecques,
+31 Rue de l'Hermitage,2.266427,50.712505,,31 Rue de l'Hermitage,,,,62575
+44 Rue de l'Amiral Bruix Boulogne-sur-Mer,,,,44 Rue de l'Amiral Bruix,,,,62200
+44 Rue de l'Amiral Bruix 62200,,,,44 Rue de l'Amiral Bruix,,,Boulogne-sur-Mer,
+44 Rue de l'Amiral Bruix,1.603580,50.723069,,44 Rue de l'Amiral Bruix,,,,62200
+89 Rue Faidherbe Boulogne-sur-Mer,,,,89 Rue Faidherbe,,,,62200
+89 Rue Faidherbe 62200,,,,89 Rue Faidherbe,,,Boulogne-sur-Mer,
+89 Rue Faidherbe,1.606249,50.725833,,89 Rue Faidherbe,,,,62200
+318 Boulevard Sainte-Beuve Boulogne-sur-Mer,,,,318 Boulevard Sainte-Beuve,,,,62200
+318 Boulevard Sainte-Beuve 62200,,,,318 Boulevard Sainte-Beuve,,,Boulogne-sur-Mer,
+318 Boulevard Sainte-Beuve,1.594486,50.735660,,318 Boulevard Sainte-Beuve,,,,62200
+26 Rue de Corbehem Brebières,,,,26 Rue de Corbehem,,,,62117
+26 Rue de Corbehem 62117,,,,26 Rue de Corbehem,,,Brebières,
+26 Rue de Corbehem,3.025246,50.337436,,26 Rue de Corbehem,,,,62117
+126 Rue Coquel Bruay-la-Buissière,,,,126 Rue Coquel,,,,62700
+126 Rue Coquel 62700,,,,126 Rue Coquel,,,Bruay-la-Buissière,
+126 Rue Coquel,2.543460,50.490531,,126 Rue Coquel,,,,62700
+12 Rue de Pologne Bruay-la-Buissière,,,,12 Rue de Pologne,,,,62700
+12 Rue de Pologne 62700,,,,12 Rue de Pologne,,,Bruay-la-Buissière,
+12 Rue de Pologne,2.530334,50.491633,,12 Rue de Pologne,,,,62700
+1 Rue d'Enghien Bully-les-Mines,,,,1 Rue d'Enghien,,,,62160
+1 Rue d'Enghien 62160,,,,1 Rue d'Enghien,,,Bully-les-Mines,
+1 Rue d'Enghien,2.740679,50.441568,,1 Rue d'Enghien,,,,62160
+2 Rue des Planchettes Busnes,,,,2 Rue des Planchettes,,,,62350
+2 Rue des Planchettes 62350,,,,2 Rue des Planchettes,,,Busnes,
+2 Rue des Planchettes,2.516540,50.588893,,2 Rue des Planchettes,,,,62350
+24 Rue du Château D'Eau Calais,,,,24 Rue du Château D'Eau,,,,62100
+24 Rue du Château D'Eau 62100,,,,24 Rue du Château D'Eau,,,Calais,
+24 Rue du Château D'Eau,1.851840,50.945275,,24 Rue du Château D'Eau,,,,62100
+1 Quai de la Gendarmerie Calais,,,,1 Quai de la Gendarmerie,,,,62100
+1 Quai de la Gendarmerie 62100,,,,1 Quai de la Gendarmerie,,,Calais,
+1 Quai de la Gendarmerie,1.858472,50.952986,,1 Quai de la Gendarmerie,,,,62100
+40 Rue de Malaga Calais,,,,40 Rue de Malaga,,,,62100
+40 Rue de Malaga 62100,,,,40 Rue de Malaga,,,Calais,
+40 Rue de Malaga,1.834182,50.945823,,40 Rue de Malaga,,,,62100
+34BIS Chemin de Régniers Calais,,,,34BIS Chemin de Régniers,,,,62100
+34BIS Chemin de Régniers 62100,,,,34BIS Chemin de Régniers,,,Calais,
+34BIS Chemin de Régniers,1.853723,50.934830,,34BIS Chemin de Régniers,,,,62100
+115 Rue de Camblain Calonne-Ricouart,,,,115 Rue de Camblain,,,,62470
+115 Rue de Camblain 62470,,,,115 Rue de Camblain,,,Calonne-Ricouart,
+115 Rue de Camblain,2.467224,50.497597,,115 Rue de Camblain,,,,62470
+50 Allée des Milouins Camiers,,,,50 Allée des Milouins,,,,62176
+50 Allée des Milouins 62176,,,,50 Allée des Milouins,,,Camiers,
+50 Allée des Milouins,1.598317,50.571714,,50 Allée des Milouins,,,,62176
+76 Rue Émile Zola Carvin,,,,76 Rue Émile Zola,,,,62220
+76 Rue Émile Zola 62220,,,,76 Rue Émile Zola,,,Carvin,
+76 Rue Émile Zola,2.953786,50.494631,,76 Rue Émile Zola,,,,62220
+15 Rue Laure Marelle Cauchy-à-la-Tour,,,,15 Rue Laure Marelle,,,,62260
+15 Rue Laure Marelle 62260,,,,15 Rue Laure Marelle,,,Cauchy-à-la-Tour,
+15 Rue Laure Marelle,2.456806,50.504145,,15 Rue Laure Marelle,,,,62260
+2BIS Rue de l'Église Condette,,,,2BIS Rue de l'Église,,,,62360
+2BIS Rue de l'Église 62360,,,,2BIS Rue de l'Église,,,Condette,
+2BIS Rue de l'Église,1.639961,50.653854,,2BIS Rue de l'Église,,,,62360
+118BIS Rue Principale Coulomby,,,,118BIS Rue Principale,,,,62380
+118BIS Rue Principale 62380,,,,118BIS Rue Principale,,,Coulomby,
+118BIS Rue Principale,2.011533,50.706109,,118BIS Rue Principale,,,,62380
+3 Rue des Martinets Courrières,,,,3 Rue des Martinets,,,,62710
+3 Rue des Martinets 62710,,,,3 Rue des Martinets,,,Courrières,
+3 Rue des Martinets,2.957550,50.455963,,3 Rue des Martinets,,,,62710
+496 Rue Emile Grevet Cucq,,,,496 Rue Emile Grevet,,,,62780
+496 Rue Emile Grevet 62780,,,,496 Rue Emile Grevet,,,Cucq,
+496 Rue Emile Grevet,1.626047,50.501951,,496 Rue Emile Grevet,,,,62780
+25 Rue de Verdun Dainville,,,,25 Rue de Verdun,,,,62000
+25 Rue de Verdun 62000,,,,25 Rue de Verdun,,,Dainville,
+25 Rue de Verdun,2.730205,50.280899,,25 Rue de Verdun,,,,62000
+13 Rue Ionesco Divion,,,,13 Rue Ionesco,,,,62460
+13 Rue Ionesco 62460,,,,13 Rue Ionesco,,,Divion,
+13 Rue Ionesco,2.491434,50.473712,,13 Rue Ionesco,,,,62460
+30 Rue Cuvillier Douvrin,,,,30 Rue Cuvillier,,,,62138
+30 Rue Cuvillier 62138,,,,30 Rue Cuvillier,,,Douvrin,
+30 Rue Cuvillier,2.829620,50.510804,,30 Rue Cuvillier,,,,62138
+1410 Rue de Cassel Ecques,,,,1410 Rue de Cassel,,,,62129
+1410 Rue de Cassel 62129,,,,1410 Rue de Cassel,,,Ecques,
+1410 Rue de Cassel,2.295753,50.661206,,1410 Rue de Cassel,,,,62129
+59 Rue de la Courtille Équihen-Plage,,,,59 Rue de la Courtille,,,,62224
+59 Rue de la Courtille 62224,,,,59 Rue de la Courtille,,,Équihen-Plage,
+59 Rue de la Courtille,1.575372,50.681205,,59 Rue de la Courtille,,,,62224
+1 Rue du Château d'Eau Étaples,,,,1 Rue du Château d'Eau,,,,62630
+1 Rue du Château d'Eau 62630,,,,1 Rue du Château d'Eau,,,Étaples,
+1 Rue du Château d'Eau,1.652837,50.518803,,1 Rue du Château d'Eau,,,,62630
+65 Rue d'Arras Fampoux,,,,65 Rue d'Arras,,,,62118
+65 Rue d'Arras 62118,,,,65 Rue d'Arras,,,Fampoux,
+65 Rue d'Arras,2.863444,50.301568,,65 Rue d'Arras,,,,62118
+29 Rue de la Malassise Fleurbaix,,,,29 Rue de la Malassise,,,,62840
+29 Rue de la Malassise 62840,,,,29 Rue de la Malassise,,,Fleurbaix,
+29 Rue de la Malassise,2.836445,50.652153,,29 Rue de la Malassise,,,,62840
+17 Rue Léo Lagrange Fresnicourt-le-Dolmen,,,,17 Rue Léo Lagrange,,,,62150
+17 Rue Léo Lagrange 62150,,,,17 Rue Léo Lagrange,,,Fresnicourt-le-Dolmen,
+17 Rue Léo Lagrange,2.586904,50.423836,,17 Rue Léo Lagrange,,,,62150
+33 Rue Marcel Sembat Givenchy-en-Gohelle,,,,33 Rue Marcel Sembat,,,,62580
+33 Rue Marcel Sembat 62580,,,,33 Rue Marcel Sembat,,,Givenchy-en-Gohelle,
+33 Rue Marcel Sembat,2.768739,50.394576,,33 Rue Marcel Sembat,,,,62580
+6 Rue Louis Legay Grenay,,,,6 Rue Louis Legay,,,,62160
+6 Rue Louis Legay 62160,,,,6 Rue Louis Legay,,,Grenay,
+6 Rue Louis Legay,2.743214,50.446963,,6 Rue Louis Legay,,,,62160
+14 Avenue de Verdun Guînes,,,,14 Avenue de Verdun,,,,62340
+14 Avenue de Verdun 62340,,,,14 Avenue de Verdun,,,Guînes,
+14 Avenue de Verdun,1.863325,50.865374,,14 Avenue de Verdun,,,,62340
+16 Rue de l'Église Ham-en-Artois,,,,16 Rue de l'Église,,,,62190
+16 Rue de l'Église 62190,,,,16 Rue de l'Église,,,Ham-en-Artois,
+16 Rue de l'Église,2.453457,50.589796,,16 Rue de l'Église,,,,62190
+20 Rue de Saint-Claude Harnes,,,,20 Rue de Saint-Claude,,,,62440
+20 Rue de Saint-Claude 62440,,,,20 Rue de Saint-Claude,,,Harnes,
+20 Rue de Saint-Claude,2.885522,50.443679,,20 Rue de Saint-Claude,,,,62440
+67 Rue du Docteur Laennec Hénin-Beaumont,,,,67 Rue du Docteur Laennec,,,,62110
+67 Rue du Docteur Laennec 62110,,,,67 Rue du Docteur Laennec,,,Hénin-Beaumont,
+67 Rue du Docteur Laennec,2.946247,50.430665,,67 Rue du Docteur Laennec,,,,62110
+133 Rue Mirabeau Hénin-Beaumont,,,,133 Rue Mirabeau,,,,62110
+133 Rue Mirabeau 62110,,,,133 Rue Mirabeau,,,Hénin-Beaumont,
+133 Rue Mirabeau,2.943184,50.426527,,133 Rue Mirabeau,,,,62110
+16 Rue Berthelot Hersin-Coupigny,,,,16 Rue Berthelot,,,,62530
+16 Rue Berthelot 62530,,,,16 Rue Berthelot,,,Hersin-Coupigny,
+16 Rue Berthelot,2.651906,50.454255,,16 Rue Berthelot,,,,62530
+67 Rue d'Aire Heuchin,,,,67 Rue d'Aire,,,,62134
+67 Rue d'Aire 62134,,,,67 Rue d'Aire,,,Heuchin,
+67 Rue d'Aire,2.273693,50.480533,,67 Rue d'Aire,,,,62134
+73 Rue de Vincq Houlle,,,,73 Rue de Vincq,,,,62910
+73 Rue de Vincq 62910,,,,73 Rue de Vincq,,,Houlle,
+73 Rue de Vincq,2.196549,50.809475,,73 Rue de Vincq,,,,62910
+15 Rue de la Roupie Isbergues,,,,15 Rue de la Roupie,,,,62330
+15 Rue de la Roupie 62330,,,,15 Rue de la Roupie,,,Isbergues,
+15 Rue de la Roupie,2.436322,50.630290,,15 Rue de la Roupie,,,,62330
+12 Rue de Prédefin Laires,,,,12 Rue de Prédefin,,,,62960
+12 Rue de Prédefin 62960,,,,12 Rue de Prédefin,,,Laires,
+12 Rue de Prédefin,2.257489,50.537882,,12 Rue de Prédefin,,,,62960
+29 Rue de Doullens Leforest,,,,29 Rue de Doullens,,,,62790
+29 Rue de Doullens 62790,,,,29 Rue de Doullens,,,Leforest,
+29 Rue de Doullens,3.057061,50.442445,,29 Rue de Doullens,,,,62790
+6 Rue du 19 Mars 1962 Lens,,,,6 Rue du 19 Mars 1962,,,,62300
+6 Rue du 19 Mars 1962 62300,,,,6 Rue du 19 Mars 1962,,,Lens,
+6 Rue du 19 Mars 1962,2.840617,50.431926,,6 Rue du 19 Mars 1962,,,,62300
+209 Rue Molière Lens,,,,209 Rue Molière,,,,62300
+209 Rue Molière 62300,,,,209 Rue Molière,,,Lens,
+209 Rue Molière,2.796306,50.437101,,209 Rue Molière,,,,62300
+2132 Rue Delflie Lestrem,,,,2132 Rue Delflie,,,,62136
+2132 Rue Delflie 62136,,,,2132 Rue Delflie,,,Lestrem,
+2132 Rue Delflie,2.653285,50.600295,,2132 Rue Delflie,,,,62136
+5 Rue Denfert Rochereau Liévin,,,,5 Rue Denfert Rochereau,,,,62800
+5 Rue Denfert Rochereau 62800,,,,5 Rue Denfert Rochereau,,,Liévin,
+5 Rue Denfert Rochereau,2.773937,50.414615,,5 Rue Denfert Rochereau,,,,62800
+4 Rue Mozart Liévin,,,,4 Rue Wolfgang Mozart,,,,62800
+4 Rue Mozart 62800,,,,4 Rue Wolfgang Mozart,,,Liévin,
+4 Rue Mozart,2.764032,50.420897,,4 Rue Wolfgang Mozart,,,,62800
+135 Rue de la Haye Lillers,,,,135 Rue de la Haye,,,,62190
+135 Rue de la Haye 62190,,,,135 Rue de la Haye,,,Lillers,
+135 Rue de la Haye,2.458961,50.564003,,135 Rue de la Haye,,,,62190
+53 Rue Léon Blum Loison-sous-Lens,,,,53 Rue Léon Blum,,,,62218
+53 Rue Léon Blum 62218,,,,53 Rue Léon Blum,,,Loison-sous-Lens,
+53 Rue Léon Blum,2.862614,50.438520,,53 Rue Léon Blum,,,,62218
+20 Rue Decrombecque Loos-en-Gohelle,,,,20 Rue Decrombecque,,,,62750
+20 Rue Decrombecque 62750,,,,20 Rue Decrombecque,,,Loos-en-Gohelle,
+20 Rue Decrombecque,2.799763,50.457953,,20 Rue Decrombecque,,,,62750
+5 Rue des Charbonniers Magnicourt-en-Comte,,,,5 Rue des Charbonniers,,,,62127
+5 Rue des Charbonniers 62127,,,,5 Rue des Charbonniers,,,Magnicourt-en-Comte,
+5 Rue des Charbonniers,2.485575,50.403960,,5 Rue des Charbonniers,,,,62127
+630 Avenue de Verdun Marck,,,,630 Avenue de Verdun,,,,62730
+630 Avenue de Verdun 62730,,,,630 Avenue de Verdun,,,Marck,
+630 Avenue de Verdun,1.939797,50.953148,,630 Avenue de Verdun,,,,62730
+48 Rue d'Etrun Marœuil,,,,48 Rue d'Etrun,,,,62161
+48 Rue d'Etrun 62161,,,,48 Rue d'Etrun,,,Marœuil,
+48 Rue d'Etrun,2.705610,50.321447,,48 Rue d'Etrun,,,,62161
+5 Ruelle Monniez Mazingarbe,,,,5 Ruelle Monniez,,,,62670
+5 Ruelle Monniez 62670,,,,5 Ruelle Monniez,,,Mazingarbe,
+5 Ruelle Monniez,2.720090,50.474622,,5 Ruelle Monniez,,,,62670
+119B Rue Pierre Simon Méricourt,,,,119B Rue Pierre Simon,,,,62680
+119B Rue Pierre Simon 62680,,,,119B Rue Pierre Simon,,,Méricourt,
+119B Rue Pierre Simon,2.882195,50.411390,,119B Rue Pierre Simon,,,,62680
+21 Rue Thomas Meurchin,,,,21 Rue Thomas,,,,62410
+21 Rue Thomas 62410,,,,21 Rue Thomas,,,Meurchin,
+21 Rue Thomas,2.881511,50.497457,,21 Rue Thomas,,,,62410
+25 Rue de Sartène Montigny-en-Gohelle,,,,25 Rue de Sartène,,,,62640
+25 Rue de Sartène 62640,,,,25 Rue de Sartène,,,Montigny-en-Gohelle,
+25 Rue de Sartène,2.939533,50.430042,,25 Rue de Sartène,,,,62640
+2 Allée des Geais Neufchâtel-Hardelot,,,,2 Allée des Geais,,,,62152
+2 Allée des Geais 62152,,,,2 Allée des Geais,,,Neufchâtel-Hardelot,
+2 Allée des Geais,1.601782,50.630593,,2 Allée des Geais,,,,62152
+8022 Rue Fleming Nœux-les-Mines,,,,8022 Rue Fleming,,,,62290
+8022 Rue Fleming 62290,,,,8022 Rue Fleming,,,Nœux-les-Mines,
+8022 Rue Fleming,2.656455,50.477240,,8022 Rue Fleming,,,,62290
+63 Rue Arthur Lamendin Noyelles-Godault,,,,63 Rue Arthur Lamendin,,,,62950
+63 Rue Arthur Lamendin 62950,,,,63 Rue Arthur Lamendin,,,Noyelles-Godault,
+63 Rue Arthur Lamendin,2.998968,50.416686,,63 Rue Arthur Lamendin,,,,62950
+91 Rue du 11 Novembre Noyelles-sous-Lens,,,,91 Rue du 11 Novembre,,,,62221
+91 Rue du 11 Novembre 62221,,,,91 Rue du 11 Novembre,,,Noyelles-sous-Lens,
+91 Rue du 11 Novembre,2.875325,50.433573,,91 Rue du 11 Novembre,,,,62221
+4 Impasse Savary Bouquet Oignies,,,,4 Impasse Savary Bouquet,,,,62590
+4 Impasse Savary Bouquet 62590,,,,4 Impasse Savary Bouquet,,,Oignies,
+4 Impasse Savary Bouquet,3.011311,50.467954,,4 Impasse Savary Bouquet,,,,62590
+2 Square Musset Outreau,,,,2 Square Musset,,,,62230
+2 Square Musset 62230,,,,2 Square Musset,,,Outreau,
+2 Square Musset,1.586048,50.702582,,2 Square Musset,,,,62230
+37 Rue de Verdun Pas-en-Artois,,,,37 Rue de Verdun,,,,62760
+37 Rue de Verdun 62760,,,,37 Rue de Verdun,,,Pas-en-Artois,
+37 Rue de Verdun,2.484169,50.160290,,37 Rue de Verdun,,,,62760
+195 Rue Carnot Le Portel,,,,195 Rue Carnot,,,,62480
+195 Rue Carnot 62480,,,,195 Rue Carnot,,,Le Portel,
+195 Rue Carnot,1.581045,50.710159,,195 Rue Carnot,,,,62480
+42 Rue du Marais Quiestède,,,,42 Rue du Marais,,,,62120
+42 Rue du Marais 62120,,,,42 Rue du Marais,,,Quiestède,
+42 Rue du Marais,2.339940,50.680402,,42 Rue du Marais,,,,62120
+33 Rue de la Moulière Remilly-Wirquin,,,,33 Rue de la Moulière,,,,62380
+33 Rue de la Moulière 62380,,,,33 Rue de la Moulière,,,Remilly-Wirquin,
+33 Rue de la Moulière,2.157895,50.663168,,33 Rue de la Moulière,,,,62380
+300 Rue du Moulin de Landrethun Rodelinghem,,,,300 Rue du Moulin de Landrethun,,,,62610
+300 Rue du Moulin de Landrethun 62610,,,,300 Rue du Moulin de Landrethun,,,Rodelinghem,
+300 Rue du Moulin de Landrethun,1.945174,50.830030,,300 Rue du Moulin de Landrethun,,,,62610
+10 Ruelle de l'Hôpital Ruitz,,,,10 Ruelle de l'Hôpital,,,,62620
+10 Ruelle de l'Hôpital 62620,,,,10 Ruelle de l'Hôpital,,,Ruitz,
+10 Ruelle de l'Hôpital,2.593997,50.466773,,10 Ruelle de l'Hôpital,,,,62620
+40 Rue Jean Jacques Rousseau Sains-en-Gohelle,,,,40 Rue Jean Jacques Rousseau,,,,62114
+40 Rue Jean Jacques Rousseau 62114,,,,40 Rue Jean Jacques Rousseau,,,Sains-en-Gohelle,
+40 Rue Jean Jacques Rousseau,2.681755,50.450067,,40 Rue Jean Jacques Rousseau,,,,62114
+81 Rue de Calais Saint-Folquin,,,,81 Rue de Calais,,,,62370
+81 Rue de Calais 62370,,,,81 Rue de Calais,,,Saint-Folquin,
+81 Rue de Calais,2.123362,50.945957,,81 Rue de Calais,,,,62370
+47 Avenue du Moulin Saint-Léonard,,,,47 Avenue du Moulin,,,,62360
+47 Avenue du Moulin 62360,,,,47 Avenue du Moulin,,,Saint-Léonard,
+47 Avenue du Moulin,1.629806,50.687663,,47 Avenue du Moulin,,,,62360
+54 Rue Marteau Saint-Martin-Boulogne,,,,54 Rue Marteau,,,,62280
+54 Rue Marteau 62280,,,,54 Rue Marteau,,,Saint-Martin-Boulogne,
+54 Rue Marteau,1.636167,50.726677,,54 Rue Marteau,,,,62280
+23B Rue du Doulac Saint-Omer,,,,23B Rue du Doulac,,,,62500
+23B Rue du Doulac 62500,,,,23B Rue du Doulac,,,Saint-Omer,
+23B Rue du Doulac,2.268552,50.767091,,23B Rue du Doulac,,,,62500
+3 Rue Lamartine Saint-Pol-sur-Ternoise,,,,3 Rue Lamartine,,,,62130
+3 Rue Lamartine 62130,,,,3 Rue Lamartine,,,Saint-Pol-sur-Ternoise,
+3 Rue Lamartine,2.335829,50.385229,,3 Rue Lamartine,,,,62130
+11 Rue de Ronchin Sallaumines,,,,11 Rue de Ronchin,,,,62430
+11 Rue de Ronchin 62430,,,,11 Rue de Ronchin,,,Sallaumines,
+11 Rue de Ronchin,2.860679,50.417529,,11 Rue de Ronchin,,,,62430
+39 Rue du Marais Savy-Berlette,,,,39 Rue du Marais,,,,62690
+39 Rue du Marais 62690,,,,39 Rue du Marais,,,Savy-Berlette,
+39 Rue du Marais,2.571683,50.356247,,39 Rue du Marais,,,,62690
+5 Ruellette La Ruellette Teneur,,,,5 Ruellette La Ruellette,,,,62134
+5 Ruellette La Ruellette 62134,,,,5 Ruellette La Ruellette,,,Teneur,
+5 Ruellette La Ruellette,2.233334,50.453258,,5 Ruellette La Ruellette,,,,62134
+85 Rue de Londres Le Touquet-Paris-Plage,,,,85 Rue de Londres,,,,62520
+85 Rue de Londres 62520,,,,85 Rue de Londres,,,Le Touquet-Paris-Plage,
+85 Rue de Londres,1.583615,50.522788,,85 Rue de Londres,,,,62520
+4 Rue Courbet Vendin-le-Vieil,,,,4 Rue Courbet,,,,62880
+4 Rue Courbet 62880,,,,4 Rue Courbet,,,Vendin-le-Vieil,
+4 Rue Courbet,2.840093,50.449185,,4 Rue Courbet,,,,62880
+27 Rue Constant Martin Verquin,,,,27 Rue Constant Martin,,,,62131
+27 Rue Constant Martin 62131,,,,27 Rue Constant Martin,,,Verquin,
+27 Rue Constant Martin,2.641294,50.501418,,27 Rue Constant Martin,,,,62131
+15 Rue Roger Salengro Vimy,,,,15 Rue Roger Salengro,,,,62580
+15 Rue Roger Salengro 62580,,,,15 Rue Roger Salengro,,,Vimy,
+15 Rue Roger Salengro,2.801865,50.370954,,15 Rue Roger Salengro,,,,62580
+8 Rue du Haut Wamin,,,,8 Rue du Haut,,,,62770
+8 Rue du Haut 62770,,,,8 Rue du Haut,,,Wamin,
+8 Rue du Haut,2.055461,50.415592,,8 Rue du Haut,,,,62770
+20 Rue Jean Moulin Wimereux,,,,20 Rue Jean Moulin,,,,62930
+20 Rue Jean Moulin 62930,,,,20 Rue Jean Moulin,,,Wimereux,
+20 Rue Jean Moulin,1.614382,50.775737,,20 Rue Jean Moulin,,,,62930
+7 Avenue de la Verrerie Wingles,,,,7 Avenue de la Verrerie,,,,62410
+7 Avenue de la Verrerie 62410,,,,7 Avenue de la Verrerie,,,Wingles,
+7 Avenue de la Verrerie,2.870264,50.493851,,7 Avenue de la Verrerie,,,,62410
+1596 Rue de la Montoire Zutkerque,,,,1596 Rue de la Montoire,,,,62370
+1596 Rue de la Montoire 62370,,,,1596 Rue de la Montoire,,,Zutkerque,
+1596 Rue de la Montoire,2.028339,50.851355,,1596 Rue de la Montoire,,,,62370
+augustines arras,,,2,Petit Chemin des Augustines,,,Arras,
+augustines arras,,,,Rue des Augustines,,,Arras,
+rue jean jaures Helemmes,,,,Rue Jean Jaurès,,,,59491
+rue charles saint venant lomme,,,,Rue Charles Saint-Venant,,,Lille,59160

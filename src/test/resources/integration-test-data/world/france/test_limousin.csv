@@ -1,0 +1,106 @@
+query,lon,lat,limit,expected_name,expected_housenumber,expected_street,expected_city,expected_postcode
+16 Rue Blaise Raynal Brive-la-Gaillarde,,,,16 Rue Blaise Raynal,,,,19100
+16 Rue Blaise Raynal 19100,,,,16 Rue Blaise Raynal,,,Brive-la-Gaillarde,
+16 Rue Blaise Raynal,1.535265,45.157895,,16 Rue Blaise Raynal,,,,19100
+1 Avenue Guynemer Brive-la-Gaillarde,,,,1 Avenue Guynemer,,,,19100
+1 Avenue Guynemer 19100,,,,1 Avenue Guynemer,,,Brive-la-Gaillarde,
+1 Avenue Guynemer,1.505766,45.151186,,1 Avenue Guynemer,,,,19100
+3 Rue Paul Bordier Brive-la-Gaillarde,,,,3 Rue Paul Bordier,,,,19100
+3 Rue Paul Bordier 19100,,,,3 Rue Paul Bordier,,,Brive-la-Gaillarde,
+3 Rue Paul Bordier,1.530909,45.167170,,3 Rue Paul Bordier,,,,19100
+4 Rue du Tisserand Corrèze,,,,4 Rue du Tisserand,,,,19800
+4 Rue du Tisserand 19800,,,,4 Rue du Tisserand,,,Corrèze,
+4 Rue du Tisserand,1.873542,45.372870,,4 Rue du Tisserand,,,,19800
+27 Rue Aliénor d'Aquitaine Malemort-sur-Corrèze,,,,27 Rue Aliénor d'Aquitaine,,,,19360
+27 Rue Aliénor d'Aquitaine 19360,,,,27 Rue Aliénor d'Aquitaine,,,Malemort-sur-Corrèze,
+27 Rue Aliénor d'Aquitaine,1.555503,45.173976,,27 Rue Aliénor d'Aquitaine,,,,19360
+32 Impasse de Saint-Jean Objat,,,,32 Impasse de Saint-Jean,,,,19130
+32 Impasse de Saint-Jean 19130,,,,32 Impasse de Saint-Jean,,,Objat,
+32 Impasse de Saint-Jean,1.402727,45.280168,,32 Impasse de Saint-Jean,,,,19130
+5 Allée de la Rechèze Troche,,,,5 Allée de la Rechèze,,,,19230
+5 Allée de la Rechèze 19230,,,,5 Allée de la Rechèze,,,Troche,
+5 Allée de la Rechèze,1.448137,45.383012,,5 Allée de la Rechèze,,,,19230
+14 Impasse des Bouleaux Ussel,,,,14 Impasse des Bouleaux,,,,19200
+14 Impasse des Bouleaux 19200,,,,14 Impasse des Bouleaux,,,Ussel,
+14 Impasse des Bouleaux,2.321441,45.548217,,14 Impasse des Bouleaux,,,,19200
+2 Rue Claude Monet Boussac,,,,2 Rue Claude Monet,,,,23600
+2 Rue Claude Monet 23600,,,,2 Rue Claude Monet,,,Boussac,
+2 Rue Claude Monet,2.228363,46.346141,,2 Rue Claude Monet,,,,23600
+53 Faubourg Monneix Évaux-les-Bains,,,,53 Faubourg Monneix,,,,23110
+53 Faubourg Monneix 23110,,,,53 Faubourg Monneix,,,Évaux-les-Bains,
+53 Faubourg Monneix,2.492872,46.174087,,53 Faubourg Monneix,,,,23110
+9 Rue du Marché Guéret,,,,9 Rue du Marché,,,,23000
+9 Rue du Marché 23000,,,,9 Rue du Marché,,,Guéret,
+9 Rue du Marché,1.868474,46.170670,,9 Rue du Marché,,,,23000
+18 Rue du Cheix Rougnat,,,,18 Rue du Cheix,,,,23700
+18 Rue du Cheix 23700,,,,18 Rue du Cheix,,,Rougnat,
+18 Rue du Cheix,2.500174,46.052893,,18 Rue du Cheix,,,,23700
+25 Route de la Croix-Pierre Saint-Moreil,,,,25 Route de la Croix-Pierre,,,,23400
+25 Route de la Croix-Pierre 23400,,,,25 Route de la Croix-Pierre,,,Saint-Moreil,
+25 Route de la Croix-Pierre,1.691059,45.854509,,25 Route de la Croix-Pierre,,,,23400
+18 Rue des Roses Bellac,,,,18 Rue des Roses,,,,87300
+18 Rue des Roses 87300,,,,18 Rue des Roses,,,Bellac,
+18 Rue des Roses,1.056114,46.124870,,18 Rue des Roses,,,,87300
+20 Rue du Clos Bussière-Poitevine,,,,20 Rue du Clos,,,,87320
+20 Rue du Clos 87320,,,,20 Rue du Clos,,,Bussière-Poitevine,
+20 Rue du Clos,0.904117,46.234280,,20 Rue du Clos,,,,87320
+2 Espace Camille Samy Châteauneuf-la-Forêt,,,,2 Espace Camille Samy,,,,87130
+2 Espace Camille Samy 87130,,,,2 Espace Camille Samy,,,Châteauneuf-la-Forêt,
+2 Espace Camille Samy,1.603867,45.713566,,2 Espace Camille Samy,,,,87130
+28BIS Route du Landou Couzeix,,,,28BIS Route du Landou,,,,87270
+28BIS Route du Landou 87270,,,,28BIS Route du Landou,,,Couzeix,
+28BIS Route du Landou,1.208714,45.863047,,28BIS Route du Landou,,,,87270
+6 Rue Saint-Michel Le Dorat,,,,6 Rue Saint-Michel,,,,87210
+6 Rue Saint-Michel 87210,,,,6 Rue Saint-Michel,,,Le Dorat,
+6 Rue Saint-Michel,1.080443,46.214103,,6 Rue Saint-Michel,,,,87210
+1 Place du 8 Mai 1945 Feytiat,,,,1 Place du 8 Mai 1945,,,,87220
+1 Place du 8 Mai 1945 87220,,,,1 Place du 8 Mai 1945,,,Feytiat,
+1 Place du 8 Mai 1945,1.333052,45.811397,,1 Place du 8 Mai 1945,,,,87220
+450 Rue Edith Piaf Jourgnac,,,,450 Rue Edith Piaf,,,,87800
+450 Rue Edith Piaf 87800,,,,450 Rue Edith Piaf,,,Jourgnac,
+450 Rue Edith Piaf,1.194919,45.725790,,450 Rue Edith Piaf,,,,87800
+19 Rue Alphonse Daudet Limoges,,,,19 Rue Alphonse Daudet,,,,87000
+19 Rue Alphonse Daudet 87000,,,,19 Rue Alphonse Daudet,,,Limoges,
+19 Rue Alphonse Daudet,1.236357,45.845385,,19 Rue Alphonse Daudet,,,,87000
+3 Impasse Charles Bichet Limoges,,,,3 Impasse Charles Bichet,,,,87000
+3 Impasse Charles Bichet 87000,,,,3 Impasse Charles Bichet,,,Limoges,
+3 Impasse Charles Bichet,1.263414,45.818336,,3 Impasse Charles Bichet,,,,87000
+10 Rue François Chénieux Limoges,,,,10 Rue François Chénieux,,,,87000
+10 Rue François Chénieux 87000,,,,10 Rue François Chénieux,,,Limoges,
+10 Rue François Chénieux,1.255877,45.833836,,10 Rue François Chénieux,,,,87000
+13 Cours Jourdan Limoges,,,,13 Cours Jourdan,,,,87000
+13 Cours Jourdan 87000,,,,13 Cours Jourdan,,,Limoges,
+13 Cours Jourdan,1.264267,45.833205,,13 Cours Jourdan,,,,87000
+16 Rue Mozart Limoges,,,,16 Rue Mozart,,,,87000
+16 Rue Mozart 87000,,,,16 Rue Mozart,,,Limoges,
+16 Rue Mozart,1.252692,45.822628,,16 Rue Mozart,,,,87000
+5 Rue Saint-Aurélien Limoges,,,,5 Rue Saint-Aurélien,,,,87000
+5 Rue Saint-Aurélien 87000,,,,5 Rue Saint-Aurélien,,,Limoges,
+5 Rue Saint-Aurélien,1.257774,45.828111,,5 Rue Saint-Aurélien,,,,87000
+10 Route de Saint-Martial Mézières-sur-Issoire,,,,10 Route de Saint-Martial,,,,87330
+10 Route de Saint-Martial 87330,,,,10 Route de Saint-Martial,,,Mézières-sur-Issoire,
+10 Route de Saint-Martial,0.907516,46.108916,,10 Route de Saint-Martial,,,,87330
+4 Allée Molière Le Palais-sur-Vienne,,,,4 Allée Molière,,,,87410
+4 Allée Molière 87410,,,,4 Allée Molière,,,Le Palais-sur-Vienne,
+4 Allée Molière,1.322074,45.862695,,4 Allée Molière,,,,87410
+6 Chemin de la Vie Creuse Peyrat-de-Bellac,,,,6 Chemin de la Vie Creuse,,,,87300
+6 Chemin de la Vie Creuse 87300,,,,6 Chemin de la Vie Creuse,,,Peyrat-de-Bellac,
+6 Chemin de la Vie Creuse,1.031307,46.139247,,6 Chemin de la Vie Creuse,,,,87300
+3 Chemin des Marguerites Rochechouart,,,,3 Chemin des Marguerites,,,,87600
+3 Chemin des Marguerites 87600,,,,3 Chemin des Marguerites,,,Rochechouart,
+3 Chemin des Marguerites,0.841283,45.836296,,3 Chemin des Marguerites,,,,87600
+14 Rue du Poète Saint-Georges-les-Landes,,,,14 Rue du Poète,,,,87160
+14 Rue du Poète 87160,,,,14 Rue du Poète,,,Saint-Georges-les-Landes,
+14 Rue du Poète,1.336370,46.341664,,14 Rue du Poète,,,,87160
+34 Rue du Relais Saint-Junien,,,,34 Rue du Relais,,,,87200
+34 Rue du Relais 87200,,,,34 Rue du Relais,,,Saint-Junien,
+34 Rue du Relais,0.885007,45.879445,,34 Rue du Relais,,,,87200
+15 Domaine de Rochefaye Saint-Laurent-sur-Gorre,,,,15 Domaine de Rochefaye,,,,87310
+15 Domaine de Rochefaye 87310,,,,15 Domaine de Rochefaye,,,Saint-Laurent-sur-Gorre,
+15 Domaine de Rochefaye,1.004355,45.768738,,15 Domaine de Rochefaye,,,,87310
+2 Impasse du Rieu Saint-Sulpice-Laurière,,,,2 Impasse du Rieu,,,,87370
+2 Impasse du Rieu 87370,,,,2 Impasse du Rieu,,,Saint-Sulpice-Laurière,
+2 Impasse du Rieu,1.484240,46.047127,,2 Impasse du Rieu,,,,87370
+4 Rue du Gué de Luchapt Thiat,,,,4 Rue du Gué de Luchapt,,,,87320
+4 Rue du Gué de Luchapt 87320,,,,4 Rue du Gué de Luchapt,,,Thiat,
+4 Rue du Gué de Luchapt,0.973287,46.264691,,4 Rue du Gué de Luchapt,,,,87320

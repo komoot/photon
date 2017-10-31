@@ -1,0 +1,340 @@
+query,lon,lat,limit,expected_name,expected_housenumber,expected_street,expected_city,expected_postcode
+4 Rue Louis Aragon Athies-sous-Laon,,,,4 Rue Louis Aragon,,,,02840
+4 Rue Louis Aragon 02840,,,,4 Rue Louis Aragon,,,Athies-sous-Laon,
+4 Rue Louis Aragon,3.678912,49.571947,,4 Rue Louis Aragon,,,,02840
+2 Rue du Stade Beautor,,,,2 Rue du Stade,,,,02800
+2 Rue du Stade 02800,,,,2 Rue du Stade,,,Beautor,
+2 Rue du Stade,3.346538,49.656461,,2 Rue du Stade,,,,02800
+303 Rue du Château Billy-sur-Aisne,,,,303 Rue du Château,,,,02200
+303 Rue du Château 02200,,,,303 Rue du Château,,,Billy-sur-Aisne,
+303 Rue du Château,3.385649,49.353834,,303 Rue du Château,,,,02200
+1 Rue de Vailly Bourg-et-Comin,,,,1 Rue de Vailly,,,,02160
+1 Rue de Vailly 02160,,,,1 Rue de Vailly,,,Bourg-et-Comin,
+1 Rue de Vailly,3.656285,49.397290,,1 Rue de Vailly,,,,02160
+7 Rue du Calvaire Bucy-lès-Pierrepont,,,,7 Rue du Calvaire,,,,02350
+7 Rue du Calvaire 02350,,,,7 Rue du Calvaire,,,Bucy-lès-Pierrepont,
+7 Rue du Calvaire,3.902808,49.646259,,7 Rue du Calvaire,,,,02350
+19 Route de Villiers Charly-sur-Marne,,,,19 Route de Villiers,,,,02310
+19 Route de Villiers 02310,,,,19 Route de Villiers,,,Charly-sur-Marne,
+19 Route de Villiers,3.270307,48.983488,,19 Route de Villiers,,,,02310
+3 Résidence Coteau Saint-Vincent Château-Thierry,,,,3 Résidence Coteau Saint-Vincent,,,,02400
+3 Résidence Coteau Saint-Vincent 02400,,,,3 Résidence Coteau Saint-Vincent,,,Château-Thierry,
+3 Résidence Coteau Saint-Vincent,3.393621,49.055252,,3 Résidence Coteau Saint-Vincent,,,,02400
+1 Rue du Vélodrome Chauny,,,,1 Rue du Vélodrome,,,,02300
+1 Rue du Vélodrome 02300,,,,1 Rue du Vélodrome,,,Chauny,
+1 Rue du Vélodrome,3.211315,49.618154,,1 Rue du Vélodrome,,,,02300
+6 Chemin de Puisieux Colonfay,,,,6 Chemin de Puisieux,,,,02120
+6 Chemin de Puisieux 02120,,,,6 Chemin de Puisieux,,,Colonfay,
+6 Chemin de Puisieux,3.709768,49.856597,,6 Chemin de Puisieux,,,,02120
+5 D 8 l'Esperance Croix-Fonsomme,,,,5 D 8 l'Esperance,,,,02110
+5 D 8 l'Esperance 02110,,,,5 D 8 l'Esperance,,,Croix-Fonsomme,
+5 D 8 l'Esperance,3.393975,49.940694,,5 D 8 l'Esperance,,,,02110
+12 Allée Comte de Lostanges Épaux-Bézu,,,,12 Allée Comte de Lostanges,,,,02400
+12 Allée Comte de Lostanges 02400,,,,12 Allée Comte de Lostanges,,,Épaux-Bézu,
+12 Allée Comte de Lostanges,3.345901,49.109409,,12 Allée Comte de Lostanges,,,,02400
+9 Rue de Libération Faucoucourt,,,,9 Rue de Libération,,,,02320
+9 Rue de Libération 02320,,,,9 Rue de Libération,,,Faucoucourt,
+9 Rue de Libération,3.464754,49.531215,,9 Rue de Libération,,,,02320
+12 Lotissement du Chertemps Fontaine-lès-Vervins,,,,12 Lotissement du Chertemps,,,,02140
+12 Lotissement du Chertemps 02140,,,,12 Lotissement du Chertemps,,,Fontaine-lès-Vervins,
+12 Lotissement du Chertemps,3.890474,49.832171,,12 Lotissement du Chertemps,,,,02140
+69 Rue Pierre Sémard Gauchy,,,,69 Rue Pierre Sémard,,,,02430
+69 Rue Pierre Sémard 02430,,,,69 Rue Pierre Sémard,,,Gauchy,
+69 Rue Pierre Sémard,3.286292,49.832078,,69 Rue Pierre Sémard,,,,02430
+348 Rue de Vervins Guise,,,,348 Rue de Vervins,,,,02120
+348 Rue de Vervins 02120,,,,348 Rue de Vervins,,,Guise,
+348 Rue de Vervins,3.630901,49.893466,,348 Rue de Vervins,,,,02120
+68TER Rue de Guise Hirson,,,,68TER Rue de Guise,,,,02500
+68TER Rue de Guise 02500,,,,68TER Rue de Guise,,,Hirson,
+68TER Rue de Guise,4.078064,49.921699,,68TER Rue de Guise,,,,02500
+39 Rue Louis Philipon Juvigny,,,,39 Rue Louis Philipon,,,,02880
+39 Rue Louis Philipon 02880,,,,39 Rue Louis Philipon,,,Juvigny,
+39 Rue Louis Philipon,3.315111,49.448050,,39 Rue Louis Philipon,,,,02880
+4 Rue des Minimes Laon,,,,4 Rue des Minimes,,,,02000
+4 Rue des Minimes 02000,,,,4 Rue des Minimes,,,Laon,
+4 Rue des Minimes,3.650553,49.575085,,4 Rue des Minimes,,,,02000
+4 Rue Vidame Lhuys,,,,4 Rue Vidame,,,,02220
+4 Rue Vidame 02220,,,,4 Rue Vidame,,,Lhuys,
+4 Rue Vidame,3.556260,49.281769,,4 Rue Vidame,,,,02220
+1 Rue de Vervins Martigny,,,,1 Rue de Vervins,,,,02500
+1 Rue de Vervins 02500,,,,1 Rue de Vervins,,,Martigny,
+1 Rue de Vervins,4.132027,49.858366,,1 Rue de Vervins,,,,02500
+44 Rue Clemenceau Montcornet,,,,44 Rue Clemenceau,,,,02340
+44 Rue Clemenceau 02340,,,,44 Rue Clemenceau,,,Montcornet,
+44 Rue Clemenceau,4.011548,49.694718,,44 Rue Clemenceau,,,,02340
+6 Chemin du Lavoir Neuilly-Saint-Front,,,,6 Chemin du Lavoir,,,,02470
+6 Chemin du Lavoir 02470,,,,6 Chemin du Lavoir,,,Neuilly-Saint-Front,
+6 Chemin du Lavoir,3.271091,49.155358,,6 Chemin du Lavoir,,,,02470
+9 Rue du Bois Thomas Omissy,,,,9 Rue du Bois Thomas,,,,02100
+9 Rue du Bois Thomas 02100,,,,9 Rue du Bois Thomas,,,Omissy,
+9 Rue du Bois Thomas,3.315398,49.883146,,9 Rue du Bois Thomas,,,,02100
+20 Rue Heureuse Plomion,,,,20 Rue Heureuse,,,,02140
+20 Rue Heureuse 02140,,,,20 Rue Heureuse,,,Plomion,
+20 Rue Heureuse,4.035620,49.841641,,20 Rue Heureuse,,,,02140
+13 Rue des Fontaines Romery,,,,13 Rue des Fontaines,,,,02120
+13 Rue des Fontaines 02120,,,,13 Rue des Fontaines,,,Romery,
+13 Rue des Fontaines,3.726609,49.898339,,13 Rue des Fontaines,,,,02120
+21 Cité du Gen Leclerc Saint-Michel,,,,21 Cité du Gen Leclerc,,,,02830
+21 Cité du Gen Leclerc 02830,,,,21 Cité du Gen Leclerc,,,Saint-Michel,
+21 Cité du Gen Leclerc,4.139871,49.921938,,21 Cité du Gen Leclerc,,,,02830
+42 Rue de la Chaussée Romaine Saint-Quentin,,,,42 Rue de la Chaussée Romaine,,,,02100
+42 Rue de la Chaussée Romaine 02100,,,,42 Rue de la Chaussée Romaine,,,Saint-Quentin,
+42 Rue de la Chaussée Romaine,3.271552,49.846256,,42 Rue de la Chaussée Romaine,,,,02100
+7 Rue George Sand Saint-Quentin,,,,7 Rue George Sand,,,,02100
+7 Rue George Sand 02100,,,,7 Rue George Sand,,,Saint-Quentin,
+7 Rue George Sand,3.275500,49.838821,,7 Rue George Sand,,,,02100
+74 Rue de Lunéville Saint-Quentin,,,,74 Rue de Lunéville,,,,02100
+74 Rue de Lunéville 02100,,,,74 Rue de Lunéville,,,Saint-Quentin,
+74 Rue de Lunéville,3.296356,49.855525,,74 Rue de Lunéville,,,,02100
+12 Rue Roger Salengro Saint-Quentin,,,,12 Rue Roger Salengro,,,,02100
+12 Rue Roger Salengro 02100,,,,12 Rue Roger Salengro,,,Saint-Quentin,
+12 Rue Roger Salengro,3.278396,49.838660,,12 Rue Roger Salengro,,,,02100
+4 Sentier Derrière Les Jardins Septmonts,,,,4 Sentier Derrière Les Jardins,,,,02200
+4 Sentier Derrière Les Jardins 02200,,,,4 Sentier Derrière Les Jardins,,,Septmonts,
+4 Sentier Derrière Les Jardins,3.361645,49.332634,,4 Sentier Derrière Les Jardins,,,,02200
+13 Avenue Choron Soissons,,,,13 Avenue Choron,,,,02200
+13 Avenue Choron 02200,,,,13 Avenue Choron,,,Soissons,
+13 Avenue Choron,3.318307,49.386554,,13 Avenue Choron,,,,02200
+41 Rue de Vailly Soissons,,,,41 Rue de Vailly,,,,02200
+41 Rue de Vailly 02200,,,,41 Rue de Vailly,,,Soissons,
+41 Rue de Vailly,3.345489,49.390296,,41 Rue de Vailly,,,,02200
+2 Avenue Jean Rostand Tergnier,,,,2 Avenue Jean Rostand,,,,02700
+2 Avenue Jean Rostand 02700,,,,2 Avenue Jean Rostand,,,Tergnier,
+2 Avenue Jean Rostand,3.290371,49.657452,,2 Avenue Jean Rostand,,,,02700
+3 Petite Rue Petite Rue Saint-Vincent Vailly-sur-Aisne,,,,3 Petite Rue Petite Rue Saint-Vincent,,,,02370
+3 Petite Rue Petite Rue Saint-Vincent 02370,,,,3 Petite Rue Petite Rue Saint-Vincent,,,Vailly-sur-Aisne,
+3 Petite Rue Petite Rue Saint-Vincent,3.514706,49.410506,,3 Petite Rue Petite Rue Saint-Vincent,,,,02370
+4 Rue des Lisses Vervins,,,,4 Rue des Lisses,,,,02140
+4 Rue des Lisses 02140,,,,4 Rue des Lisses,,,Vervins,
+4 Rue des Lisses,3.904097,49.830958,,4 Rue des Lisses,,,,02140
+9 Rue Pasteur Villers-Cotterêts,,,,9 Rue Pasteur,,,,02600
+9 Rue Pasteur 02600,,,,9 Rue Pasteur,,,Villers-Cotterêts,
+9 Rue Pasteur,3.085251,49.254680,,9 Rue Pasteur,,,,02600
+3 Rue de la Paix Andeville,,,,3 Rue de la Paix,,,,60570
+3 Rue de la Paix 60570,,,,3 Rue de la Paix,,,Andeville,
+3 Rue de la Paix,2.163663,49.257087,,3 Rue de la Paix,,,,60570
+178 Allée des Pins Auneuil,,,,178 Allée des Pins,,,,60390
+178 Allée des Pins 60390,,,,178 Allée des Pins,,,Auneuil,
+178 Allée des Pins,1.991846,49.363783,,178 Allée des Pins,,,,60390
+434 Rue de la Clergerie Bargny,,,,434 Rue de la Clergerie,,,,60620
+434 Rue de la Clergerie 60620,,,,434 Rue de la Clergerie,,,Bargny,
+434 Rue de la Clergerie,2.958529,49.174537,,434 Rue de la Clergerie,,,,60620
+12 Rue Gay Lussac Beauvais,,,,12 Rue Gay Lussac,,,,60000
+12 Rue Gay Lussac 60000,,,,12 Rue Gay Lussac,,,Beauvais,
+12 Rue Gay Lussac,2.108064,49.409261,,12 Rue Gay Lussac,,,,60000
+99 Rue de Savignies Beauvais,,,,99 Rue de Savignies,,,,60000
+99 Rue de Savignies 60000,,,,99 Rue de Savignies,,,Beauvais,
+99 Rue de Savignies,2.058320,49.439276,,99 Rue de Savignies,,,,60000
+36 Rue Beauxis Lagrave Betz,,,,36 Rue Beauxis Lagrave,,,,60620
+36 Rue Beauxis Lagrave 60620,,,,36 Rue Beauxis Lagrave,,,Betz,
+36 Rue Beauxis Lagrave,2.962609,49.154069,,36 Rue Beauxis Lagrave,,,,60620
+16 Rue Robert Roussey Bouconvillers,,,,16 Rue Robert Roussey,,,,60240
+16 Rue Robert Roussey 60240,,,,16 Rue Robert Roussey,,,Bouconvillers,
+16 Rue Robert Roussey,1.903446,49.176166,,16 Rue Robert Roussey,,,,60240
+92 Rue de Picardie Brétigny,,,,92 Rue de Picardie,,,,60400
+92 Rue de Picardie 60400,,,,92 Rue de Picardie,,,Brétigny,
+92 Rue de Picardie,3.111538,49.566666,,92 Rue de Picardie,,,,60400
+213 Rue du Couvent Cambronne-lès-Clermont,,,,213 Rue du Couvent,,,,60290
+213 Rue du Couvent 60290,,,,213 Rue du Couvent,,,Cambronne-lès-Clermont,
+213 Rue du Couvent,2.414057,49.320418,,213 Rue du Couvent,,,,60290
+262 Rue d'Acate Chambly,,,,262 Rue d'Acate,,,,60230
+262 Rue d'Acate 60230,,,,262 Rue d'Acate,,,Chambly,
+262 Rue d'Acate,2.240369,49.171935,,262 Rue d'Acate,,,,60230
+8 Impasse du Château Chaumont-en-Vexin,,,,8 Impasse du Château,,,,60240
+8 Impasse du Château 60240,,,,8 Impasse du Château,,,Chaumont-en-Vexin,
+8 Impasse du Château,1.874027,49.265112,,8 Impasse du Château,,,,60240
+16 Rue de la Mairie Cires-lès-Mello,,,,16 Rue de la Mairie,,,,60660
+16 Rue de la Mairie 60660,,,,16 Rue de la Mairie,,,Cires-lès-Mello,
+16 Rue de la Mairie,2.358563,49.275059,,16 Rue de la Mairie,,,,60660
+3 Place du Change Compiègne,,,,3 Place du Change,,,,60200
+3 Place du Change 60200,,,,3 Place du Change,,,Compiègne,
+3 Place du Change,2.824334,49.416662,,3 Place du Change,,,,60200
+27 Square du 6e Spahis Compiègne,,,,27 Square du 6e Spahis,,,,60200
+27 Square du 6e Spahis 60200,,,,27 Square du 6e Spahis,,,Compiègne,
+27 Square du 6e Spahis,2.841704,49.422980,,27 Square du 6e Spahis,,,,60200
+69 Rue Gambetta Creil,,,,69 Rue Gambetta,,,,60100
+69 Rue Gambetta 60100,,,,69 Rue Gambetta,,,Creil,
+69 Rue Gambetta,2.473543,49.265148,,69 Rue Gambetta,,,,60100
+42 Avenue de Senlis Crépy-en-Valois,,,,42 Avenue de Senlis,,,,60800
+42 Avenue de Senlis 60800,,,,42 Avenue de Senlis,,,Crépy-en-Valois,
+42 Avenue de Senlis,2.874676,49.232580,,42 Avenue de Senlis,,,,60800
+100BIS Rue du Bos Delincourt,,,,100BIS Rue du Bos,,,,60240
+100BIS Rue du Bos 60240,,,,100BIS Rue du Bos,,,Delincourt,
+100BIS Rue du Bos,1.833112,49.238679,,100BIS Rue du Bos,,,,60240
+149 Avenue de Flandres Estrées-Saint-Denis,,,,149 Avenue de Flandres,,,,60190
+149 Avenue de Flandres 60190,,,,149 Avenue de Flandres,,,Estrées-Saint-Denis,
+149 Avenue de Flandres,2.640098,49.430558,,149 Avenue de Flandres,,,,60190
+311 Rue de Calais Fontaine-Saint-Lucien,,,,311 Rue de Calais,,,,60480
+311 Rue de Calais 60480,,,,311 Rue de Calais,,,Fontaine-Saint-Lucien,
+311 Rue de Calais,2.147425,49.499141,,311 Rue de Calais,,,,60480
+172 Rue de Massival Gilocourt,,,,172 Rue de Massival,,,,60129
+172 Rue de Massival 60129,,,,172 Rue de Massival,,,Gilocourt,
+172 Rue de Massival,2.890232,49.289512,,172 Rue de Massival,,,,60129
+21 Rue d'Amiens Grandvilliers,,,,21 Rue d'Amiens,,,,60210
+21 Rue d'Amiens 60210,,,,21 Rue d'Amiens,,,Grandvilliers,
+21 Rue d'Amiens,1.941860,49.665801,,21 Rue d'Amiens,,,,60210
+9 Rue de la Forêt Hermes,,,,9 Rue de la Forêt,,,,60370
+9 Rue de la Forêt 60370,,,,9 Rue de la Forêt,,,Hermes,
+9 Rue de la Forêt,2.246185,49.367279,,9 Rue de la Forêt,,,,60370
+6 Rue des Sources Lachapelle-aux-Pots,,,,6 Rue des Sources,,,,60650
+6 Rue des Sources 60650,,,,6 Rue des Sources,,,Lachapelle-aux-Pots,
+6 Rue des Sources,1.929924,49.449737,,6 Rue des Sources,,,,60650
+2 Rue Principale Lalandelle,,,,2 Rue Principale,,,,60850
+2 Rue Principale 60850,,,,2 Rue Principale,,,Lalandelle,
+2 Rue Principale,1.873980,49.400010,,2 Rue Principale,,,,60850
+159 Rue de l'Abattoir Liancourt,,,,159 Rue de l'Abattoir,,,,60140
+159 Rue de l'Abattoir 60140,,,,159 Rue de l'Abattoir,,,Liancourt,
+159 Rue de l'Abattoir,2.457045,49.327998,,159 Rue de l'Abattoir,,,,60140
+5 Rue du Pont du Matz Machemont,,,,5 Rue du Pont du Matz,,,,60150
+5 Rue du Pont du Matz 60150,,,,5 Rue du Pont du Matz,,,Machemont,
+5 Rue du Pont du Matz,2.883644,49.488752,,5 Rue du Pont du Matz,,,,60150
+162 Rue de Ressons Marquéglise,,,,162 Rue de Ressons,,,,60490
+162 Rue de Ressons 60490,,,,162 Rue de Ressons,,,Marquéglise,
+162 Rue de Ressons,2.762482,49.518370,,162 Rue de Ressons,,,,60490
+15 Allée des Pervenches Le Mesnil-en-Thelle,,,,15 Allée des Pervenches,,,,60530
+15 Allée des Pervenches 60530,,,,15 Allée des Pervenches,,,Le Mesnil-en-Thelle,
+15 Allée des Pervenches,2.283826,49.180586,,15 Allée des Pervenches,,,,60530
+48 Rue Porte de Baron Montagny-Sainte-Félicité,,,,48 Rue Porte de Baron,,,,60950
+48 Rue Porte de Baron 60950,,,,48 Rue Porte de Baron,,,Montagny-Sainte-Félicité,
+48 Rue Porte de Baron,2.739514,49.132574,,48 Rue Porte de Baron,,,,60950
+4 Rue des Vignes Mortefontaine,,,,4 Rue des Vignes,,,,60128
+4 Rue des Vignes 60128,,,,4 Rue des Vignes,,,Mortefontaine,
+4 Rue des Vignes,2.597408,49.114145,,4 Rue des Vignes,,,,60128
+11 Impasse d'Ormeteau Neuilly-en-Thelle,,,,11 Impasse d'Ormeteau,,,,60530
+11 Impasse d'Ormeteau 60530,,,,11 Impasse d'Ormeteau,,,Neuilly-en-Thelle,
+11 Impasse d'Ormeteau,2.281941,49.228247,,11 Impasse d'Ormeteau,,,,60530
+7 Allée Georges Bizet Nogent-sur-Oise,,,,7 Allée Georges Bizet,,,,60180
+7 Allée Georges Bizet 60180,,,,7 Allée Georges Bizet,,,Nogent-sur-Oise,
+7 Allée Georges Bizet,2.459467,49.270311,,7 Allée Georges Bizet,,,,60180
+52 Rue de Lille Noyon,,,,52 Rue de Lille,,,,60400
+52 Rue de Lille 60400,,,,52 Rue de Lille,,,Noyon,
+52 Rue de Lille,3.002430,49.584211,,52 Rue de Lille,,,,60400
+1 Rue Triolet Péroy-les-Gombries,,,,1 Rue Triolet,,,,60440
+1 Rue Triolet 60440,,,,1 Rue Triolet,,,Péroy-les-Gombries,
+1 Rue Triolet,2.848159,49.162912,,1 Rue Triolet,,,,60440
+338 Rue Basse Pontpoint,,,,338 Rue Basse,,,,60700
+338 Rue Basse 60700,,,,338 Rue Basse,,,Pontpoint,
+338 Rue Basse,2.639452,49.302614,,338 Rue Basse,,,,60700
+11 Rue Principale Prévillers,,,,11 Rue Principale,,,,60360
+11 Rue Principale 60360,,,,11 Rue Principale,,,Prévillers,
+11 Rue Principale,1.996165,49.609573,,11 Rue Principale,,,,60360
+136 Rue de la Fertière Ribécourt-Dreslincourt,,,,136 Rue de la Fertière,,,,60170
+136 Rue de la Fertière 60170,,,,136 Rue de la Fertière,,,Ribécourt-Dreslincourt,
+136 Rue de la Fertière,2.920746,49.516935,,136 Rue de la Fertière,,,,60170
+3 Rue de la Motte Sacy-le-Petit,,,,3 Rue de la Motte,,,,60190
+3 Rue de la Motte 60190,,,,3 Rue de la Motte,,,Sacy-le-Petit,
+3 Rue de la Motte,2.630412,49.361633,,3 Rue de la Motte,,,,60190
+19 Rue du Général de Gaulle Saint-Just-en-Chaussée,,,,19 Rue du Général de Gaulle,,,,60130
+19 Rue du Général de Gaulle 60130,,,,19 Rue du Général de Gaulle,,,Saint-Just-en-Chaussée,
+19 Rue du Général de Gaulle,2.424132,49.504402,,19 Rue du Général de Gaulle,,,,60130
+5 Rue de la Faïencerie Saint-Paul,,,,5 Rue de la Faïencerie,,,,60650
+5 Rue de la Faïencerie 60650,,,,5 Rue de la Faïencerie,,,Saint-Paul,
+5 Rue de la Faïencerie,2.007764,49.430673,,5 Rue de la Faïencerie,,,,60650
+9 Rue du Clos de la Chatelaine Senlis,,,,9 Rue du Clos de la Chatelaine,,,,60300
+9 Rue du Clos de la Chatelaine 60300,,,,9 Rue du Clos de la Chatelaine,,,Senlis,
+9 Rue du Clos de la Chatelaine,2.573152,49.201123,,9 Rue du Clos de la Chatelaine,,,,60300
+90 Rue de Montdidier Suzoy,,,,90 Rue de Montdidier,,,,60400
+90 Rue de Montdidier 60400,,,,90 Rue de Montdidier,,,Suzoy,
+90 Rue de Montdidier,2.947591,49.580856,,90 Rue de Montdidier,,,,60400
+5A Rue du Point du Jour Tracy-le-Mont,,,,5A Rue du Point du Jour,,,,60170
+5A Rue du Point du Jour 60170,,,,5A Rue du Point du Jour,,,Tracy-le-Mont,
+5A Rue du Point du Jour,3.006271,49.467697,,5A Rue du Point du Jour,,,,60170
+14 Chemin des Côtes Le Vaumain,,,,14 Chemin des Côtes,,,,60590
+14 Chemin des Côtes 60590,,,,14 Chemin des Côtes,,,Le Vaumain,
+14 Chemin des Côtes,1.860397,49.349100,,14 Chemin des Côtes,,,,60590
+20 Rue de la Vallee Sainte-Genevieve Verneuil-en-Halatte,,,,20 Rue de la Vallee Sainte-Genevieve,,,,60550
+20 Rue de la Vallee Sainte-Genevieve 60550,,,,20 Rue de la Vallee Sainte-Genevieve,,,Verneuil-en-Halatte,
+20 Rue de la Vallee Sainte-Genevieve,2.526466,49.274395,,20 Rue de la Vallee Sainte-Genevieve,,,,60550
+10 Rue de la Gare Villers-sur-Coudun,,,,10 Rue de la Gare,,,,60150
+10 Rue de la Gare 60150,,,,10 Rue de la Gare,,,Villers-sur-Coudun,
+10 Rue de la Gare,2.796574,49.480220,,10 Rue de la Gare,,,,60150
+7 Rue Mautort Abbeville,,,,7 Rue Mautort,,,,80100
+7 Rue Mautort 80100,,,,7 Rue Mautort,,,Abbeville,
+7 Rue Mautort,1.796008,50.105115,,7 Rue Mautort,,,,80100
+7 Avenue de Flandres Ailly-sur-Noye,,,,7 Avenue de Flandres,,,,80250
+7 Avenue de Flandres 80250,,,,7 Avenue de Flandres,,,Ailly-sur-Noye,
+7 Avenue de Flandres,2.371491,49.756589,,7 Avenue de Flandres,,,,80250
+103 Rue Jean Jaurès Albert,,,,103 Rue Jean Jaurès,,,,80300
+103 Rue Jean Jaurès 80300,,,,103 Rue Jean Jaurès,,,Albert,
+103 Rue Jean Jaurès,2.649792,49.996853,,103 Rue Jean Jaurès,,,,80300
+16 Rue Auguste Renoir Amiens,,,,16 Rue Auguste Renoir,,,,80000
+16 Rue Auguste Renoir 80000,,,,16 Rue Auguste Renoir,,,Amiens,
+16 Rue Auguste Renoir,2.299846,49.914432,,16 Rue Auguste Renoir,,,,80000
+45 Rue du Comte Raoul Amiens,,,,45 Rue du Comte Raoul,,,,80000
+45 Rue du Comte Raoul 80000,,,,45 Rue du Comte Raoul,,,Amiens,
+45 Rue du Comte Raoul,2.315133,49.884827,,45 Rue du Comte Raoul,,,,80000
+32 Boulevard des Fédérés Amiens,,,,32 Boulevard des Fédérés,,,,80000
+32 Boulevard des Fédérés 80000,,,,32 Boulevard des Fédérés,,,Amiens,
+32 Boulevard des Fédérés,2.283949,49.894936,,32 Boulevard des Fédérés,,,,80000
+207 Chaussée Jules Ferry Amiens,,,,207 Chaussée Jules Ferry,,,,80000
+207 Chaussée Jules Ferry 80000,,,,207 Chaussée Jules Ferry,,,Amiens,
+207 Chaussée Jules Ferry,2.330111,49.881449,,207 Chaussée Jules Ferry,,,,80000
+15 Rue Neuve-Dejean Amiens,,,,15 Rue Neuve-Dejean,,,,80000
+15 Rue Neuve-Dejean 80000,,,,15 Rue Neuve-Dejean,,,Amiens,
+15 Rue Neuve-Dejean,2.317871,49.891452,,15 Rue Neuve-Dejean,,,,80000
+21 Rue Sagebien Amiens,,,,21 Rue Sagebien,,,,80000
+21 Rue Sagebien 80000,,,,21 Rue Sagebien,,,Amiens,
+21 Rue Sagebien,2.290934,49.879121,,21 Rue Sagebien,,,,80000
+18 Rue Watteau Amiens,,,,18 Rue Watteau,,,,80000
+18 Rue Watteau 80000,,,,18 Rue Watteau,,,Amiens,
+18 Rue Watteau,2.299377,49.913924,,18 Rue Watteau,,,,80000
+46 Rue du Général Leclerc Beauval,,,,46 Rue du Général Leclerc,,,,80630
+46 Rue du Général Leclerc 80630,,,,46 Rue du Général Leclerc,,,Beauval,
+46 Rue du Général Leclerc,2.329654,50.106097,,46 Rue du Général Leclerc,,,,80630
+40 Rue Alphonse Tellier Boves,,,,40 Rue Alphonse Tellier,,,,80440
+40 Rue Alphonse Tellier 80440,,,,40 Rue Alphonse Tellier,,,Boves,
+40 Rue Alphonse Tellier,2.383901,49.842418,,40 Rue Alphonse Tellier,,,,80440
+7 Rue Marie Curie Camon,,,,7 Rue Marie Curie,,,,80450
+7 Rue Marie Curie 80450,,,,7 Rue Marie Curie,,,Camon,
+7 Rue Marie Curie,2.336398,49.895592,,7 Rue Marie Curie,,,,80450
+364 Hurt Cayeux-sur-Mer,,,,364 Hurt,,,,80410
+364 Hurt 80410,,,,364 Hurt,,,Cayeux-sur-Mer,
+364 Hurt,1.523273,50.172369,,364 Hurt,,,,80410
+2 Rue de Coulonvillers Cramont,,,,2 Rue de Coulonvillers,,,,80370
+2 Rue de Coulonvillers 80370,,,,2 Rue de Coulonvillers,,,Cramont,
+2 Rue de Coulonvillers,2.051850,50.147018,,2 Rue de Coulonvillers,,,,80370
+30 Rue du Bourg Doullens,,,,30 Rue du Bourg,,,,80600
+30 Rue du Bourg 80600,,,,30 Rue du Bourg,,,Doullens,
+30 Rue du Bourg,2.340888,50.155290,,30 Rue du Bourg,,,,80600
+1 Lotissement des Jardins Eppeville,,,,1 Lotissement des Jardins,,,,80400
+1 Lotissement des Jardins 80400,,,,1 Lotissement des Jardins,,,Eppeville,
+1 Lotissement des Jardins,3.064184,49.741836,,1 Lotissement des Jardins,,,,80400
+13 Rue d'en Bas Foucaucourt-Hors-Nesle,,,,13 Rue d'en Bas,,,,80140
+13 Rue d'en Bas 80140,,,,13 Rue d'en Bas,,,Foucaucourt-Hors-Nesle,
+13 Rue d'en Bas,1.725727,49.917335,,13 Rue d'en Bas,,,,80140
+15 Rue des Rainvillers Hallencourt,,,,15 Rue des Rainvillers,,,,80490
+15 Rue des Rainvillers 80490,,,,15 Rue des Rainvillers,,,Hallencourt,
+15 Rue des Rainvillers,1.874789,49.988574,,15 Rue des Rainvillers,,,,80490
+1 Rue de Bezencourt Hornoy-le-Bourg,,,,1 Rue de Bezencourt,,,,80640
+1 Rue de Bezencourt 80640,,,,1 Rue de Bezencourt,,,Hornoy-le-Bourg,
+1 Rue de Bezencourt,1.864063,49.827968,,1 Rue de Bezencourt,,,,80640
+24 Rue Gérard Philipe Longueau,,,,24 Rue Gérard Philipe,,,,80330
+24 Rue Gérard Philipe 80330,,,,24 Rue Gérard Philipe,,,Longueau,
+24 Rue Gérard Philipe,2.362020,49.871947,,24 Rue Gérard Philipe,,,,80330
+5 Rue du Bordet Miraumont,,,,5 Rue du Bordet,,,,80300
+5 Rue du Bordet 80300,,,,5 Rue du Bordet,,,Miraumont,
+5 Rue du Bordet,2.726320,50.092582,,5 Rue du Bordet,,,,80300
+8 Place Verte Oisemont,,,,8 Place Verte,,,,80140
+8 Place Verte 80140,,,,8 Place Verte,,,Oisemont,
+8 Place Verte,1.771397,49.955438,,8 Place Verte,,,,80140
+3BIS Rue Festonval Pierregot,,,,3BIS Rue Festonval,,,,80260
+3BIS Rue Festonval 80260,,,,3BIS Rue Festonval,,,Pierregot,
+3BIS Rue Festonval,2.379097,50.002176,,3BIS Rue Festonval,,,,80260
+11 Rue de la 2E Division Blindée Le Quesne,,,,11 Rue de la 2E Division Blindée,,,,80430
+11 Rue de la 2E Division Blindée 80430,,,,11 Rue de la 2E Division Blindée,,,Le Quesne,
+11 Rue de la 2E Division Blindée,1.790083,49.853216,,11 Rue de la 2E Division Blindée,,,,80430
+3TER Rue Pasteur Roye,,,,3TER Rue Pasteur,,,,80700
+3TER Rue Pasteur 80700,,,,3TER Rue Pasteur,,,Roye,
+3TER Rue Pasteur,2.791594,49.697424,,3TER Rue Pasteur,,,,80700
+20 Rue d'en Haut Saint-Léger-lès-Domart,,,,20 Rue d'en Haut,,,,80780
+20 Rue d'en Haut 80780,,,,20 Rue d'en Haut,,,Saint-Léger-lès-Domart,
+20 Rue d'en Haut,2.142348,50.055549,,20 Rue d'en Haut,,,,80780
+137 Rue Jean Catelas Saleux,,,,137 Rue Jean Catelas,,,,80480
+137 Rue Jean Catelas 80480,,,,137 Rue Jean Catelas,,,Saleux,
+137 Rue Jean Catelas,2.237530,49.857428,,137 Rue Jean Catelas,,,,80480
+12 Rue de Bas Vaudricourt,,,,12 Rue de Bas,,,,80230
+12 Rue de Bas 80230,,,,12 Rue de Bas,,,Vaudricourt,
+12 Rue de Bas,1.553176,50.120772,,12 Rue de Bas,,,,80230
+38 Route de Callenges Vron,,,,38 Route de Callenges,,,,80120
+38 Route de Callenges 80120,,,,38 Route de Callenges,,,Vron,
+38 Route de Callenges,1.759335,50.309294,,38 Route de Callenges,,,,80120

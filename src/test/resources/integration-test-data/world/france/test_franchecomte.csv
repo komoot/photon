@@ -1,0 +1,187 @@
+query,lon,lat,limit,expected_name,expected_housenumber,expected_street,expected_city,expected_postcode
+13 Rue des Cités du Parc Audincourt,,,,13 Rue des Cités du Parc,,,,25400
+13 Rue des Cités du Parc 25400,,,,13 Rue des Cités du Parc,,,Audincourt,
+13 Rue des Cités du Parc,6.838678,47.477260,,13 Rue des Cités du Parc,,,,25400
+6 Impasse de la Combe Bart,,,,6 Impasse de la Combe,,,,25420
+6 Impasse de la Combe 25420,,,,6 Impasse de la Combe,,,Bart,
+6 Impasse de la Combe,6.760767,47.494454,,6 Impasse de la Combe,,,,25420
+9TER Avenue Arthur Gaulard Besançon,,,,9TER Avenue Arthur Gaulard,,,,25000
+9TER Avenue Arthur Gaulard 25000,,,,9TER Avenue Arthur Gaulard,,,Besançon,
+9TER Avenue Arthur Gaulard,6.033302,47.235734,,9TER Avenue Arthur Gaulard,,,,25000
+6 Rue des Fluttes Agasses Besançon,,,,6 Rue des Fluttes Agasses,,,,25000
+6 Rue des Fluttes Agasses 25000,,,,6 Rue des Fluttes Agasses,,,Besançon,
+6 Rue des Fluttes Agasses,6.029131,47.257356,,6 Rue des Fluttes Agasses,,,,25000
+21 Chemin de Palente Besançon,,,,21 Chemin de Palente,,,,25000
+21 Chemin de Palente 25000,,,,21 Chemin de Palente,,,Besançon,
+21 Chemin de Palente,6.049113,47.267004,,21 Chemin de Palente,,,,25000
+11 Rue Henri Bretagne Bethoncourt,,,,11 Rue Henri Bretagne,,,,25200
+11 Rue Henri Bretagne 25200,,,,11 Rue Henri Bretagne,,,Bethoncourt,
+11 Rue Henri Bretagne,6.793921,47.526935,,11 Rue Henri Bretagne,,,,25200
+12 Rue des Bauchets Brognard,,,,12 Rue des Bauchets,,,,25600
+12 Rue des Bauchets 25600,,,,12 Rue des Bauchets,,,Brognard,
+12 Rue des Bauchets,6.861625,47.527155,,12 Rue des Bauchets,,,,25600
+3 Voie Communale Grande Rue Chaux-lès-Passavant,,,,3 Voie Communale Grande Rue,,,,25530
+3 Voie Communale Grande Rue 25530,,,,3 Voie Communale Grande Rue,,,Chaux-lès-Passavant,
+3 Voie Communale Grande Rue,6.355875,47.232831,,3 Voie Communale Grande Rue,,,,25530
+11 Rue des Écoles Dampierre-sur-le-Doubs,,,,11 Rue des Écoles,,,,25420
+11 Rue des Écoles 25420,,,,11 Rue des Écoles,,,Dampierre-sur-le-Doubs,
+11 Rue des Écoles,6.736575,47.474900,,11 Rue des Écoles,,,,25420
+4 Rue des Acacias Émagny,,,,4 Rue des Acacias,,,,25170
+4 Rue des Acacias 25170,,,,4 Rue des Acacias,,,Émagny,
+4 Rue des Acacias,5.869936,47.310739,,4 Rue des Acacias,,,,25170
+3 Rue de Verdun Fesches-le-Châtel,,,,3 Rue de Verdun,,,,25490
+3 Rue de Verdun 25490,,,,3 Rue de Verdun,,,Fesches-le-Châtel,
+3 Rue de Verdun,6.912476,47.522955,,3 Rue de Verdun,,,,25490
+2 Rue de la Vierge Gennes,,,,2 Rue de la Vierge,,,,25660
+2 Rue de la Vierge 25660,,,,2 Rue de la Vierge,,,Gennes,
+2 Rue de la Vierge,6.122875,47.241570,,2 Rue de la Vierge,,,,25660
+5 Rue des Jardins Hérimoncourt,,,,5 Rue des Jardins,,,,25310
+5 Rue des Jardins 25310,,,,5 Rue des Jardins,,,Hérimoncourt,
+5 Rue des Jardins,6.882118,47.445937,,5 Rue des Jardins,,,,25310
+7BIS Rue du Temple Villers-le-Lac,,,,7BIS Rue du Temple,,,,25130
+7BIS Rue du Temple 25130,,,,7BIS Rue du Temple,,,Villers-le-Lac,
+7BIS Rue du Temple,6.683169,47.059668,,7BIS Rue du Temple,,,,25130
+3 Rue du Chalet Malans,,,,3 Rue du Chalet,,,,25330
+3 Rue du Chalet 25330,,,,3 Rue du Chalet,,,Malans,
+3 Rue du Chalet,6.031905,47.047892,,3 Rue du Chalet,,,,25330
+28 Rue de la Rançonnière Métabief,,,,28 Rue de la Rançonnière,,,,25370
+28 Rue de la Rançonnière 25370,,,,28 Rue de la Rançonnière,,,Métabief,
+28 Rue de la Rançonnière,6.346866,46.768748,,28 Rue de la Rançonnière,,,,25370
+3 Impasse des Prés Montbéliard,,,,3 Impasse des Prés,,,,25200
+3 Impasse des Prés 25200,,,,3 Impasse des Prés,,,Montbéliard,
+3 Impasse des Prés,6.787316,47.521539,,3 Impasse des Prés,,,,25200
+10 Rue de la Chaussée Morteau,,,,10 Rue de la Chaussée,,,,25500
+10 Rue de la Chaussée 25500,,,,10 Rue de la Chaussée,,,Morteau,
+10 Rue de la Chaussée,6.602351,47.056447,,10 Rue de la Chaussée,,,,25500
+2 Rue du Chanoine Renaud Ornans,,,,2 Rue du Chanoine Renaud,,,,25290
+2 Rue du Chanoine Renaud 25290,,,,2 Rue du Chanoine Renaud,,,Ornans,
+2 Rue du Chanoine Renaud,6.139398,47.098687,,2 Rue du Chanoine Renaud,,,,25290
+25 Rue Arago Pontarlier,,,,25 Rue Arago,,,,25300
+25 Rue Arago 25300,,,,25 Rue Arago,,,Pontarlier,
+25 Rue Arago,6.340043,46.913420,,25 Rue Arago,,,,25300
+41C Rue du 12 Septembre Pont-de-Roide,,,,41C Rue du 12 Septembre,,,,25150
+41C Rue du 12 Septembre 25150,,,,41C Rue du 12 Septembre,,,Pont-de-Roide,
+41C Rue du 12 Septembre,6.767064,47.379425,,41C Rue du 12 Septembre,,,,25150
+28 Rue de Champonot Roulans,,,,28 Rue de Champonot,,,,25640
+28 Rue de Champonot 25640,,,,28 Rue de Champonot,,,Roulans,
+28 Rue de Champonot,6.234419,47.318534,,28 Rue de Champonot,,,,25640
+11 Rue Les Perrières Sancey-le-Grand,,,,11 Rue Les Perrières,,,,25430
+11 Rue Les Perrières 25430,,,,11 Rue Les Perrières,,,Sancey-le-Grand,
+11 Rue Les Perrières,6.586225,47.302039,,11 Rue Les Perrières,,,,25430
+7 Rue de Bournois Soye,,,,7 Rue de Bournois,,,,25250
+7 Rue de Bournois 25250,,,,7 Rue de Bournois,,,Soye,
+7 Rue de Bournois,6.498261,47.446654,,7 Rue de Bournois,,,,25250
+4BIS Rue des Buis Valentigney,,,,4BIS Rue des Buis,,,,25700
+4BIS Rue des Buis 25700,,,,4BIS Rue des Buis,,,Valentigney,
+4BIS Rue des Buis,6.827798,47.466687,,4BIS Rue des Buis,,,,25700
+2 Rue du Chateau d'Eau Viéthorey,,,,2 Rue du Chateau d'Eau,,,,25340
+2 Rue du Chateau d'Eau 25340,,,,2 Rue du Chateau d'Eau,,,Viéthorey,
+2 Rue du Chateau d'Eau,6.430471,47.424688,,2 Rue du Chateau d'Eau,,,,25340
+3 Rue du Bois Aumur,,,,3 Rue du Bois,,,,39410
+3 Rue du Bois 39410,,,,3 Rue du Bois,,,Aumur,
+3 Rue du Bois,5.352416,47.055722,,3 Rue du Bois,,,,39410
+12 LA COTE DES BELETTES Bracon,,,,12 LA COTE DES BELETTES,,,,39110
+12 LA COTE DES BELETTES 39110,,,,12 LA COTE DES BELETTES,,,Bracon,
+12 LA COTE DES BELETTES,5.886580,46.914550,,12 LA COTE DES BELETTES,,,,39110
+9A Impasse du Tunnel Champvans,,,,9A Impasse du Tunnel,,,,39100
+9A Impasse du Tunnel 39100,,,,9A Impasse du Tunnel,,,Champvans,
+9A Impasse du Tunnel,5.450449,47.106639,,9A Impasse du Tunnel,,,,39100
+2 Rue des Saules Cize,,,,2 Rue des Saules,,,,39300
+2 Rue des Saules 39300,,,,2 Rue des Saules,,,Cize,
+2 Rue des Saules,5.908900,46.731107,,2 Rue des Saules,,,,39300
+43 Rue d'Alsace Damparis,,,,43 Rue d'Alsace,,,,39500
+43 Rue d'Alsace 39500,,,,43 Rue d'Alsace,,,Damparis,
+43 Rue d'Alsace,5.411958,47.068153,,43 Rue d'Alsace,,,,39500
+4 Rue des Gardes Dole,,,,4 Rue des Gardes,,,,39100
+4 Rue des Gardes 39100,,,,4 Rue des Gardes,,,Dole,
+4 Rue des Gardes,5.481158,47.090678,,4 Rue des Gardes,,,,39100
+4 Impasse de la Combe Écrille,,,,4 Impasse de la Combe,,,,39270
+4 Impasse de la Combe 39270,,,,4 Impasse de la Combe,,,Écrille,
+4 Impasse de la Combe,5.629383,46.506205,,4 Impasse de la Combe,,,,39270
+2 Rue des Perrodins Gigny,,,,2 Rue des Perrodins,,,,39320
+2 Rue des Perrodins 39320,,,,2 Rue des Perrodins,,,Gigny,
+2 Rue des Perrodins,5.478474,46.450127,,2 Rue des Perrodins,,,,39320
+14 Avenue Camille Prost Lons-le-Saunier,,,,14 Avenue Camille Prost,,,,39000
+14 Avenue Camille Prost 39000,,,,14 Avenue Camille Prost,,,Lons-le-Saunier,
+14 Avenue Camille Prost,5.567459,46.671617,,14 Avenue Camille Prost,,,,39000
+9 Impasse de l'Alambic Maynal,,,,9 Impasse de l'Alambic,,,,39190
+9 Impasse de l'Alambic 39190,,,,9 Impasse de l'Alambic,,,Maynal,
+9 Impasse de l'Alambic,5.419226,46.556207,,9 Impasse de l'Alambic,,,,39190
+13 Rue Henri Ponard Montmorot,,,,13 Rue Henri Ponard,,,,39570
+13 Rue Henri Ponard 39570,,,,13 Rue Henri Ponard,,,Montmorot,
+13 Rue Henri Ponard,5.524156,46.678019,,13 Rue Henri Ponard,,,,39570
+544 Route de Champagnole Ney,,,,544 Route de Champagnole,,,,39300
+544 Route de Champagnole 39300,,,,544 Route de Champagnole,,,Ney,
+544 Route de Champagnole,5.894406,46.737226,,544 Route de Champagnole,,,,39300
+120 Chemin du Milieu Le Pin,,,,120 Chemin du Milieu,,,,39210
+120 Chemin du Milieu 39210,,,,120 Chemin du Milieu,,,Le Pin,
+120 Chemin du Milieu,5.568293,46.706344,,120 Chemin du Milieu,,,,39210
+10 Rue de Gray Ranchot,,,,10 Rue de Gray,,,,39700
+10 Rue de Gray 39700,,,,10 Rue de Gray,,,Ranchot,
+10 Rue de Gray,5.721617,47.152031,,10 Rue de Gray,,,,39700
+18 Rue du Collège Saint-Claude,,,,18 Rue du Collège,,,,39200
+18 Rue du Collège 39200,,,,18 Rue du Collège,,,Saint-Claude,
+18 Rue du Collège,5.865220,46.389434,,18 Rue du Collège,,,,39200
+60 Rue de la République Salins-les-Bains,,,,60 Rue de la République,,,,39110
+60 Rue de la République 39110,,,,60 Rue de la République,,,Salins-les-Bains,
+60 Rue de la République,5.877548,46.934385,,60 Rue de la République,,,,39110
+2 Lotissement de la Source Thoirette,,,,2 Lotissement de la Source,,,,39240
+2 Lotissement de la Source 39240,,,,2 Lotissement de la Source,,,Thoirette,
+2 Lotissement de la Source,5.518774,46.265174,,2 Lotissement de la Source,,,,39240
+14 Route de Nevy Voiteur,,,,14 Route de Nevy,,,,39210
+14 Route de Nevy 39210,,,,14 Route de Nevy,,,Voiteur,
+14 Route de Nevy,5.612596,46.753849,,14 Route de Nevy,,,,39210
+12 Route de Bussières Boulot,,,,12 Route de Bussières,,,,70190
+12 Route de Bussières 70190,,,,12 Route de Bussières,,,Boulot,
+12 Route de Bussières,5.962335,47.341876,,12 Route de Bussières,,,,70190
+9 Rue de la Crottière Choye,,,,9 Rue de la Crottière,,,,70700
+9 Rue de la Crottière 70700,,,,9 Rue de la Crottière,,,Choye,
+9 Rue de la Crottière,5.764126,47.388209,,9 Rue de la Crottière,,,,70700
+5 Place de la Gare Faucogney-et-la-Mer,,,,5 Place de la Gare,,,,70310
+5 Place de la Gare 70310,,,,5 Place de la Gare,,,Faucogney-et-la-Mer,
+5 Place de la Gare,6.562944,47.846449,,5 Place de la Gare,,,,70310
+9 Rue de la Croisette Frotey-lès-Lure,,,,9 Rue de la Croisette,,,,70200
+9 Rue de la Croisette 70200,,,,9 Rue de la Croisette,,,Frotey-lès-Lure,
+9 Rue de la Croisette,6.557208,47.652409,,9 Rue de la Croisette,,,,70200
+3 Chemin des Combes Héricourt,,,,3 Chemin des Combes,,,,70400
+3 Chemin des Combes 70400,,,,3 Chemin des Combes,,,Héricourt,
+3 Chemin des Combes,6.779222,47.545099,,3 Chemin des Combes,,,,70400
+10 Rue Lasalle Lure,,,,10 Rue Lasalle,,,,70200
+10 Rue Lasalle 70200,,,,10 Rue Lasalle,,,Lure,
+10 Rue Lasalle,6.504907,47.675916,,10 Rue Lasalle,,,,70200
+13 Rue de la Fontaine Montboillon,,,,13 Rue de la Fontaine,,,,70700
+13 Rue de la Fontaine 70700,,,,13 Rue de la Fontaine,,,Montboillon,
+13 Rue de la Fontaine,5.922623,47.372848,,13 Rue de la Fontaine,,,,70700
+30 Rue du Rapois Plancher-Bas,,,,30 Rue du Rapois,,,,70290
+30 Rue du Rapois 70290,,,,30 Rue du Rapois,,,Plancher-Bas,
+30 Rue du Rapois,6.723711,47.737453,,30 Rue du Rapois,,,,70290
+2 Rue du Tacot Rioz,,,,2 Rue du Tacot,,,,70190
+2 Rue du Tacot 70190,,,,2 Rue du Tacot,,,Rioz,
+2 Rue du Tacot,6.067185,47.425715,,2 Rue du Tacot,,,,70190
+2 Rue de la Fontaine Saulnot,,,,2 Rue de la Fontaine,,,,70400
+2 Rue de la Fontaine 70400,,,,2 Rue de la Fontaine,,,Saulnot,
+2 Rue de la Fontaine,6.629135,47.562783,,2 Rue de la Fontaine,,,,70400
+13BIS Rue des Planchottes Velet,,,,13BIS Rue des Planchottes,,,,70100
+13BIS Rue des Planchottes 70100,,,,13BIS Rue des Planchottes,,,Velet,
+13BIS Rue des Planchottes,5.562849,47.427122,,13BIS Rue des Planchottes,,,,70100
+7 Rue du Pre Aux Vernes Villersexel,,,,7 Rue du Pre Aux Vernes,,,,70110
+7 Rue du Pre Aux Vernes 70110,,,,7 Rue du Pre Aux Vernes,,,Villersexel,
+7 Rue du Pre Aux Vernes,6.423483,47.546044,,7 Rue du Pre Aux Vernes,,,,70110
+6A Avenue du Champ de Mars Belfort,,,,6A Avenue du Champ de Mars,,,,90000
+6A Avenue du Champ de Mars 90000,,,,6A Avenue du Champ de Mars,,,Belfort,
+6A Avenue du Champ de Mars,6.857771,47.650695,,6A Avenue du Champ de Mars,,,,90000
+11 Rue de Valenciennes Belfort,,,,11 Rue de Valenciennes,,,,90000
+11 Rue de Valenciennes 90000,,,,11 Rue de Valenciennes,,,Belfort,
+11 Rue de Valenciennes,6.851994,47.642109,,11 Rue de Valenciennes,,,,90000
+16 Rue de la Coursière Danjoutin,,,,16 Rue de la Coursière,,,,90400
+16 Rue de la Coursière 90400,,,,16 Rue de la Coursière,,,Danjoutin,
+16 Rue de la Coursière,6.857924,47.616649,,16 Rue de la Coursière,,,,90400
+24 Rue du Thiamont Évette-Salbert,,,,24 Rue du Thiamont,,,,90350
+24 Rue du Thiamont 90350,,,,24 Rue du Thiamont,,,Évette-Salbert,
+24 Rue du Thiamont,6.790198,47.667140,,24 Rue du Thiamont,,,,90350
+4 Rue Sur la Côte Lebetain,,,,4 Rue Sur la Côte,,,,90100
+4 Rue Sur la Côte 90100,,,,4 Rue Sur la Côte,,,Lebetain,
+4 Rue Sur la Côte,6.973595,47.487491,,4 Rue Sur la Côte,,,,90100
+3 Rue du Château Roppe,,,,3 Rue du Château,,,,90380
+3 Rue du Château 90380,,,,3 Rue du Château,,,Roppe,
+3 Rue du Château,6.920818,47.666964,,3 Rue du Château,,,,90380

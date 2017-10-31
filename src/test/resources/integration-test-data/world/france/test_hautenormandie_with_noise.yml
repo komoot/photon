@@ -1,0 +1,31 @@
+1 CHEMIN DE LA FALAISE LE SEMAPHORE NEUVILLE LES 76370 DIEPPE:
+  expected:
+    name: 1 Chemin des Falaises
+    postcode: 76370
+    city: Dieppe
+  limit: 3
+'513 RUE DE PARIS Porte:00506':
+  citycode: 76681
+  expected:
+    name: 513 Rue de Paris
+    city: Sotteville-lès-Rouen
+8 RUE ML DELATTRE DE TASSIGNY 76600 LE HAVRE:
+  expected:
+    name: 8 Rue du Maréchal de Lattre de Tassigny
+    city: Le Havre
+45 RUE DU M DE LATTRE DE TASSIGN PLEIADE A 3 CK 0002 76130 MONT ST AIGNAN:
+  expected:
+    name: 45 Rue Maréchal de Lattre de Tassigny
+    city: Mont-Saint-Aignan
+02 AVENUE MARYSE BASTIE CAGE B 76800 ST ETIENNE DU ROUVRAY:
+  expected:
+    name: 2 Avenue Maryse Bastié
+    city: Saint-Étienne-du-Rouvray
+11 RUE HAUDRY AU REZ DE CHAUSSEE 76600 LE HAVRE:
+  expected:
+    name: 11 Rue Haudry
+    city: Le Havre
+5 CHEMIN DU BOIS JOLI ALVIMARE 76640 FAUVILLE EN CAUX:
+  expected:
+    name: 5 Chemin du Bois Joli
+    city: Alvimare

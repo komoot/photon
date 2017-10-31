@@ -1,0 +1,226 @@
+query,lon,lat,limit,expected_name,expected_housenumber,expected_street,expected_city,expected_postcode
+13 Rue des Rouliers Les Authieux,,,,13 Rue des Rouliers,,,,27220
+13 Rue des Rouliers 27220,,,,13 Rue des Rouliers,,,Les Authieux,
+13 Rue des Rouliers,1.234970,48.900906,,13 Rue des Rouliers,,,,27220
+7 Rue du Noyer Bernay,,,,7 Rue du Noyer,,,,27300
+7 Rue du Noyer 27300,,,,7 Rue du Noyer,,,Bernay,
+7 Rue du Noyer,0.590570,49.094897,,7 Rue du Noyer,,,,27300
+604 Rue du Champ Aux Moines Le Bosc-Roger-en-Roumois,,,,604 Rue du Champ Aux Moines,,,,27670
+604 Rue du Champ Aux Moines 27670,,,,604 Rue du Champ Aux Moines,,,Le Bosc-Roger-en-Roumois,
+604 Rue du Champ Aux Moines,0.912920,49.293280,,604 Rue du Champ Aux Moines,,,,27670
+14 Rue des Jardins Bourneville,,,,14 Rue des Jardins,,,,27500
+14 Rue des Jardins 27500,,,,14 Rue des Jardins,,,Bourneville,
+14 Rue des Jardins,0.623808,49.391871,,14 Rue des Jardins,,,,27500
+25 Rue du Pressoir Bueil,,,,25 Rue du Pressoir,,,,27730
+25 Rue du Pressoir 27730,,,,25 Rue du Pressoir,,,Bueil,
+25 Rue du Pressoir,1.441543,48.936503,,25 Rue du Pressoir,,,,27730
+8 Rue Louis Aragon Conches-en-Ouche,,,,8 Rue Louis Aragon,,,,27190
+8 Rue Louis Aragon 27190,,,,8 Rue Louis Aragon,,,Conches-en-Ouche,
+8 Rue Louis Aragon,0.933788,48.954948,,8 Rue Louis Aragon,,,,27190
+312 Rue Saint-Jacques Écaquelon,,,,312 Rue Saint-Jacques,,,,27290
+312 Rue Saint-Jacques 27290,,,,312 Rue Saint-Jacques,,,Écaquelon,
+312 Rue Saint-Jacques,0.728013,49.290787,,312 Rue Saint-Jacques,,,,27290
+35 Boulevard Gambetta Évreux,,,,35 Boulevard Gambetta,,,,27000
+35 Boulevard Gambetta 27000,,,,35 Boulevard Gambetta,,,Évreux,
+35 Boulevard Gambetta,1.148740,49.019156,,35 Boulevard Gambetta,,,,27000
+2 Rue de la Verderie Évreux,,,,2 Rue de la Verderie,,,,27000
+2 Rue de la Verderie 27000,,,,2 Rue de la Verderie,,,Évreux,
+2 Rue de la Verderie,1.156091,49.036569,,2 Rue de la Verderie,,,,27000
+21A Rue Abbe Pouchard Gaillon,,,,21A Rue Abbe Pouchard,,,,27600
+21A Rue Abbe Pouchard 27600,,,,21A Rue Abbe Pouchard,,,Gaillon,
+21A Rue Abbe Pouchard,1.326741,49.160142,,21A Rue Abbe Pouchard,,,,27600
+53 Rue de la Libération Gisors,,,,53 Rue de la Libération,,,,27140
+53 Rue de la Libération 27140,,,,53 Rue de la Libération,,,Gisors,
+53 Rue de la Libération,1.780065,49.274664,,53 Rue de la Libération,,,,27140
+3 Chemin des Renardières Hardencourt-Cocherel,,,,3 Chemin des Renardières,,,,27120
+3 Chemin des Renardières 27120,,,,3 Chemin des Renardières,,,Hardencourt-Cocherel,
+3 Chemin des Renardières,1.315255,49.040892,,3 Chemin des Renardières,,,,27120
+9 Impasse des Pervenches Incarville,,,,9 Impasse des Pervenches,,,,27400
+9 Impasse des Pervenches 27400,,,,9 Impasse des Pervenches,,,Incarville,
+9 Impasse des Pervenches,1.174025,49.235357,,9 Impasse des Pervenches,,,,27400
+38 Rue Pierre Mendès France Louviers,,,,38 Rue Pierre Mendès France,,,,27400
+38 Rue Pierre Mendès France 27400,,,,38 Rue Pierre Mendès France,,,Louviers,
+38 Rue Pierre Mendès France,1.169084,49.214763,,38 Rue Pierre Mendès France,,,,27400
+545 Rue Pasteur Montaure,,,,545 Rue Pasteur,,,,27400
+545 Rue Pasteur 27400,,,,545 Rue Pasteur,,,Montaure,
+545 Rue Pasteur,1.082702,49.246724,,545 Rue Pasteur,,,,27400
+3 Rue des Préaux Pinterville,,,,3 Rue des Préaux,,,,27400
+3 Rue des Préaux 27400,,,,3 Rue des Préaux,,,Pinterville,
+3 Rue des Préaux,1.177433,49.191197,,3 Rue des Préaux,,,,27400
+8404 Rue de Masures Poses,,,,8404 Rue de Masures,,,,27740
+8404 Rue de Masures 27740,,,,8404 Rue de Masures,,,Poses,
+8404 Rue de Masures,1.225037,49.308282,,8404 Rue de Masures,,,,27740
+19 Rue de la Grange Vimont Saint-Aubin-sur-Gaillon,,,,19 Rue de la Grange Vimont,,,,27600
+19 Rue de la Grange Vimont 27600,,,,19 Rue de la Grange Vimont,,,Saint-Aubin-sur-Gaillon,
+19 Rue de la Grange Vimont,1.335503,49.141125,,19 Rue de la Grange Vimont,,,,27600
+326 Route de la Croix Blanche Saint-Maclou,,,,326 Route de la Croix Blanche,,,,27210
+326 Route de la Croix Blanche 27210,,,,326 Route de la Croix Blanche,,,Saint-Maclou,
+326 Route de la Croix Blanche,0.428597,49.357349,,326 Route de la Croix Blanche,,,,27210
+10 Rue des Longchamps Saint-Pierre-des-Fleurs,,,,10 Rue des Longchamps,,,,27370
+10 Rue des Longchamps 27370,,,,10 Rue des Longchamps,,,Saint-Pierre-des-Fleurs,
+10 Rue des Longchamps,0.965997,49.252260,,10 Rue des Longchamps,,,,27370
+6 Route de Pont de l'Arche Surtauville,,,,6 Route de Pont de l'Arche,,,,27400
+6 Route de Pont de l'Arche 27400,,,,6 Route de Pont de l'Arche,,,Surtauville,
+6 Route de Pont de l'Arche,1.050641,49.207324,,6 Route de Pont de l'Arche,,,,27400
+11 Rue de la Mairie La Vacherie,,,,11 Rue de la Mairie,,,,27400
+11 Rue de la Mairie 27400,,,,11 Rue de la Mairie,,,La Vacherie,
+11 Rue de la Mairie,1.148132,49.119791,,11 Rue de la Mairie,,,,27400
+2 Rue des Coteaux Vernon,,,,2 Rue des Coteaux,,,,27200
+2 Rue des Coteaux 27200,,,,2 Rue des Coteaux,,,Vernon,
+2 Rue des Coteaux,1.458266,49.083851,,2 Rue des Coteaux,,,,27200
+3 Impasse de la Mare des Champs Sylvains-les-Moulins,,,,3 Impasse de la Mare des Champs,,,,27240
+3 Impasse de la Mare des Champs 27240,,,,3 Impasse de la Mare des Champs,,,Sylvains-les-Moulins,
+3 Impasse de la Mare des Champs,1.098074,48.906151,,3 Impasse de la Mare des Champs,,,,27240
+5 Sentier des Noyers Autretot,,,,5 Sentier des Noyers,,,,76190
+5 Sentier des Noyers 76190,,,,5 Sentier des Noyers,,,Autretot,
+5 Sentier des Noyers,0.730148,49.651844,,5 Sentier des Noyers,,,,76190
+83 Route de Saint-Jean de la Neuville Beuzeville-la-Grenier,,,,83 Route de Saint-Jean de la Neuville,,,,76210
+83 Route de Saint-Jean de la Neuville 76210,,,,83 Route de Saint-Jean de la Neuville,,,Beuzeville-la-Grenier,
+83 Route de Saint-Jean de la Neuville,0.420601,49.594948,,83 Route de Saint-Jean de la Neuville,,,,76210
+1995 Chemin de la Bretèque Bois-Guillaume,,,,1995 Chemin de la Bretèque,,,,76420
+1995 Chemin de la Bretèque 76420,,,,1995 Chemin de la Bretèque,,,Bois-Guillaume,
+1995 Chemin de la Bretèque,1.103663,49.488150,,1995 Chemin de la Bretèque,,,,76420
+12 Rue Henri Ferric Bolbec,,,,12 Rue Henri Ferric,,,,76210
+12 Rue Henri Ferric 76210,,,,12 Rue Henri Ferric,,,Bolbec,
+12 Rue Henri Ferric,0.475851,49.569928,,12 Rue Henri Ferric,,,,76210
+56 Rue Jeanne d'Arc Bracquemont,,,,56 Rue Jeanne d'Arc,,,,76370
+56 Rue Jeanne d'Arc 76370,,,,56 Rue Jeanne d'Arc,,,Bracquemont,
+56 Rue Jeanne d'Arc,1.152023,49.939255,,56 Rue Jeanne d'Arc,,,,76370
+22 Rue Blanqui Caudebec-lès-Elbeuf,,,,22 Rue Blanqui,,,,76320
+22 Rue Blanqui 76320,,,,22 Rue Blanqui,,,Caudebec-lès-Elbeuf,
+22 Rue Blanqui,1.015540,49.285464,,22 Rue Blanqui,,,,76320
+346 Rue des Pinsons Clères,,,,346 Rue des Pinsons,,,,76690
+346 Rue des Pinsons 76690,,,,346 Rue des Pinsons,,,Clères,
+346 Rue des Pinsons,1.111553,49.601816,,346 Rue des Pinsons,,,,76690
+334 Route de Dieppe Déville-lès-Rouen,,,,334 Route de Dieppe,,,,76250
+334 Route de Dieppe 76250,,,,334 Route de Dieppe,,,Déville-lès-Rouen,
+334 Route de Dieppe,1.050768,49.468706,,334 Route de Dieppe,,,,76250
+89 Rue Général Leclerc Dieppe,,,,89 Rue Général Leclerc,,,,76200
+89 Rue Général Leclerc 76200,,,,89 Rue Général Leclerc,,,Dieppe,
+89 Rue Général Leclerc,1.117153,49.937543,,89 Rue Général Leclerc,,,,76200
+743 Route de Rouen Duclair,,,,743 Route de Rouen,,,,76480
+743 Route de Rouen 76480,,,,743 Route de Rouen,,,Duclair,
+743 Route de Rouen,0.885740,49.484719,,743 Route de Rouen,,,,76480
+5 Rue de la Lézarde Épouville,,,,5 Rue de la Lézarde,,,,76133
+5 Rue de la Lézarde 76133,,,,5 Rue de la Lézarde,,,Épouville,
+5 Rue de la Lézarde,0.225959,49.561027,,5 Rue de la Lézarde,,,,76133
+16 Rue Cauchoise Fécamp,,,,16 Rue Cauchoise,,,,76400
+16 Rue Cauchoise 76400,,,,16 Rue Cauchoise,,,Fécamp,
+16 Rue Cauchoise,0.382559,49.751537,,16 Rue Cauchoise,,,,76400
+26 Square Saint-Ouen Fécamp,,,,26 Square Saint-Ouen,,,,76400
+26 Square Saint-Ouen 76400,,,,26 Square Saint-Ouen,,,Fécamp,
+26 Square Saint-Ouen,0.405837,49.750482,,26 Square Saint-Ouen,,,,76400
+21 Rue du Hameau Martin Goderville,,,,21 Rue du Hameau Martin,,,,76110
+21 Rue du Hameau Martin 76110,,,,21 Rue du Hameau Martin,,,Goderville,
+21 Rue du Hameau Martin,0.361758,49.645224,,21 Rue du Hameau Martin,,,,76110
+315 Rue de l'Église Gouy,,,,315 Rue de l'Église,,,,76520
+315 Rue de l'Église 76520,,,,315 Rue de l'Église,,,Gouy,
+315 Rue de l'Église,1.145677,49.352913,,315 Rue de l'Église,,,,76520
+15A Avenue du Général Leclerc Le Grand-Quevilly,,,,15A Avenue du Général Leclerc,,,,76120
+15A Avenue du Général Leclerc 76120,,,,15A Avenue du Général Leclerc,,,Le Grand-Quevilly,
+15A Avenue du Général Leclerc,1.050397,49.419664,,15A Avenue du Général Leclerc,,,,76120
+13 Quai de la Douane Harfleur,,,,13 Quai de la Douane,,,,76700
+13 Quai de la Douane 76700,,,,13 Quai de la Douane,,,Harfleur,
+13 Quai de la Douane,0.197408,49.505426,,13 Quai de la Douane,,,,76700
+53 Rue Auguste Rispal Le Havre,,,,53 Rue Auguste Rispal,,,,76620
+53 Rue Auguste Rispal 76620,,,,53 Rue Auguste Rispal,,,Le Havre,
+53 Rue Auguste Rispal,0.141466,49.493119,,53 Rue Auguste Rispal,,,,76620
+14 Rue de Cronstadt Le Havre,,,,14 Rue de Cronstadt,,,,76620
+14 Rue de Cronstadt 76620,,,,14 Rue de Cronstadt,,,Le Havre,
+14 Rue de Cronstadt,0.118016,49.502934,,14 Rue de Cronstadt,,,,76620
+73 Rue Frédéric Bellanger Le Havre,,,,73 Rue Frédéric Bellanger,,,,76620
+73 Rue Frédéric Bellanger 76620,,,,73 Rue Frédéric Bellanger,,,Le Havre,
+73 Rue Frédéric Bellanger,0.098739,49.495559,,73 Rue Frédéric Bellanger,,,,76620
+100 Rue Jean Maridor Le Havre,,,,100 Rue Jean Maridor,,,,76620
+100 Rue Jean Maridor 76620,,,,100 Rue Jean Maridor,,,Le Havre,
+100 Rue Jean Maridor,0.161824,49.501670,,100 Rue Jean Maridor,,,,76620
+57 Place Maurice Blard Le Havre,,,,57 Place Maurice Blard,,,,76620
+57 Place Maurice Blard 76620,,,,57 Place Maurice Blard,,,Le Havre,
+57 Place Maurice Blard,0.161205,49.522488,,57 Place Maurice Blard,,,,76620
+176 Cours de la République Le Havre,,,,176 Cours de la République,,,,76620
+176 Cours de la République 76620,,,,176 Cours de la République,,,Le Havre,
+176 Cours de la République,0.130347,49.499782,,176 Cours de la République,,,,76620
+22 Rue Zamenhof Le Havre,,,,22 Rue Zamenhof,,,,76620
+22 Rue Zamenhof 76620,,,,22 Rue Zamenhof,,,Le Havre,
+22 Rue Zamenhof,0.110717,49.506427,,22 Rue Zamenhof,,,,76620
+1 Rue Kinkerville Lillebonne,,,,1 Rue Kinkerville,,,,76170
+1 Rue Kinkerville 76170,,,,1 Rue Kinkerville,,,Lillebonne,
+1 Rue Kinkerville,0.538023,49.517609,,1 Rue Kinkerville,,,,76170
+531 Rue Émile Zola Malaunay,,,,531 Rue Émile Zola,,,,76770
+531 Rue Émile Zola 76770,,,,531 Rue Émile Zola,,,Malaunay,
+531 Rue Émile Zola,1.027502,49.532250,,531 Rue Émile Zola,,,,76770
+116 Rue des Tisserands Mélamare,,,,116 Rue des Tisserands,,,,76170
+116 Rue des Tisserands 76170,,,,116 Rue des Tisserands,,,Mélamare,
+116 Rue des Tisserands,0.453998,49.537440,,116 Rue des Tisserands,,,,76170
+17 Rue Félix Faure Montivilliers,,,,17 Rue Félix Faure,,,,76290
+17 Rue Félix Faure 76290,,,,17 Rue Félix Faure,,,Montivilliers,
+17 Rue Félix Faure,0.194612,49.545841,,17 Rue Félix Faure,,,,76290
+12 Rue Jacques Boutrolles d'Estaimbuc Mont-Saint-Aignan,,,,12 Rue Jacques Boutrolles d'Estaimbuc,,,,76130
+12 Rue Jacques Boutrolles d'Estaimbuc 76130,,,,12 Rue Jacques Boutrolles d'Estaimbuc,,,Mont-Saint-Aignan,
+12 Rue Jacques Boutrolles d'Estaimbuc,1.077756,49.460585,,12 Rue Jacques Boutrolles d'Estaimbuc,,,,76130
+548 Rue du Froc aux Moines La Neuville-Chant-d'Oisel,,,,548 Rue du Froc aux Moines,,,,76520
+548 Rue du Froc aux Moines 76520,,,,548 Rue du Froc aux Moines,,,La Neuville-Chant-d'Oisel,
+548 Rue du Froc aux Moines,1.246127,49.372657,,548 Rue du Froc aux Moines,,,,76520
+22 Rue Antoine Laurent de Lavoisier Franqueville-Saint-Pierre,,,,22 Rue Antoine Laurent de Lavoisier,,,,76520
+22 Rue Antoine Laurent de Lavoisier 76520,,,,22 Rue Antoine Laurent de Lavoisier,,,Franqueville-Saint-Pierre,
+22 Rue Antoine Laurent de Lavoisier,1.162197,49.401051,,22 Rue Antoine Laurent de Lavoisier,,,,76520
+11 Rue Armand Salacrou Octeville-sur-Mer,,,,11 Rue Armand Salacrou,,,,76930
+11 Rue Armand Salacrou 76930,,,,11 Rue Armand Salacrou,,,Octeville-sur-Mer,
+11 Rue Armand Salacrou,0.128136,49.557246,,11 Rue Armand Salacrou,,,,76930
+344 Chemin du Hamelet Oudalle,,,,344 Chemin du Hamelet,,,,76430
+344 Chemin du Hamelet 76430,,,,344 Chemin du Hamelet,,,Oudalle,
+344 Chemin du Hamelet,0.316363,49.508413,,344 Chemin du Hamelet,,,,76430
+218 Avenue des Alliés Le Petit-Quevilly,,,,218 Avenue des Alliés,,,,76140
+218 Avenue des Alliés 76140,,,,218 Avenue des Alliés,,,Le Petit-Quevilly,
+218 Avenue des Alliés,1.054599,49.423888,,218 Avenue des Alliés,,,,76140
+1 Rue du Val du Tot Petiville,,,,1 Rue du Val du Tot,,,,76330
+1 Rue du Val du Tot 76330,,,,1 Rue du Val du Tot,,,Petiville,
+1 Rue du Val du Tot,0.590030,49.459649,,1 Rue du Val du Tot,,,,76330
+187 Rue Annie de Pène Rouen,,,,187 Rue Annie de Pène,,,,76000
+187 Rue Annie de Pène 76000,,,,187 Rue Annie de Pène,,,Rouen,
+187 Rue Annie de Pène,1.117021,49.433809,,187 Rue Annie de Pène,,,,76000
+18 Rue du Docteur Paul Hélot Rouen,,,,18 Rue du Docteur Paul Hélot,,,,76000
+18 Rue du Docteur Paul Hélot 76000,,,,18 Rue du Docteur Paul Hélot,,,Rouen,
+18 Rue du Docteur Paul Hélot,1.130281,49.444134,,18 Rue du Docteur Paul Hélot,,,,76000
+11 Cité Léveillé Rouen,,,,11 Cité Léveillé,,,,76000
+11 Cité Léveillé 76000,,,,11 Cité Léveillé,,,Rouen,
+11 Cité Léveillé,1.120472,49.435710,,11 Cité Léveillé,,,,76000
+13 Rue Repainville Rouen,,,,13 Rue Repainville,,,,76000
+13 Rue Repainville 76000,,,,13 Rue Repainville,,,Rouen,
+13 Rue Repainville,1.134594,49.435497,,13 Rue Repainville,,,,76000
+1 Impasse Douche Sainte-Adresse,,,,1 Impasse Douche,,,,76310
+1 Impasse Douche 76310,,,,1 Impasse Douche,,,Sainte-Adresse,
+1 Impasse Douche,0.082490,49.508955,,1 Impasse Douche,,,,76310
+22 Rue Prevost Saint-Aubin-lès-Elbeuf,,,,22 Rue Prevost,,,,76410
+22 Rue Prevost 76410,,,,22 Rue Prevost,,,Saint-Aubin-lès-Elbeuf,
+22 Rue Prevost,1.016989,49.298788,,22 Rue Prevost,,,,76410
+43 Rue Hubert Latham Saint-Étienne-du-Rouvray,,,,43 Rue Hubert Latham,,,,76800
+43 Rue Hubert Latham 76800,,,,43 Rue Hubert Latham,,,Saint-Étienne-du-Rouvray,
+43 Rue Hubert Latham,1.079453,49.396008,,43 Rue Hubert Latham,,,,76800
+3056 Rue des Canadiens Saint-Jacques-sur-Darnétal,,,,3056 Rue des Canadiens,,,,76160
+3056 Rue des Canadiens 76160,,,,3056 Rue des Canadiens,,,Saint-Jacques-sur-Darnétal,
+3056 Rue des Canadiens,1.207715,49.460822,,3056 Rue des Canadiens,,,,76160
+2 Chemin du Sapin Saint-Martin-du-Manoir,,,,2 Chemin du Sapin,,,,76290
+2 Chemin du Sapin 76290,,,,2 Chemin du Sapin,,,Saint-Martin-du-Manoir,
+2 Chemin du Sapin,0.233531,49.530025,,2 Chemin du Sapin,,,,76290
+224 Chemin de Villers Saint-Pierre-de-Varengeville,,,,224 Chemin de Villers,,,,76480
+224 Chemin de Villers 76480,,,,224 Chemin de Villers,,,Saint-Pierre-de-Varengeville,
+224 Chemin de Villers,0.916695,49.506322,,224 Chemin de Villers,,,,76480
+8 Rue Marcel Dupré Saint-Valery-en-Caux,,,,8 Rue Marcel Dupré,,,,76460
+8 Rue Marcel Dupré 76460,,,,8 Rue Marcel Dupré,,,Saint-Valery-en-Caux,
+8 Rue Marcel Dupré,0.717066,49.859225,,8 Rue Marcel Dupré,,,,76460
+40 Rue des Épis Sotteville-lès-Rouen,,,,40 Rue des Épis,,,,76300
+40 Rue des Épis 76300,,,,40 Rue des Épis,,,Sotteville-lès-Rouen,
+40 Rue des Épis,1.085740,49.417869,,40 Rue des Épis,,,,76300
+6 Rue du Rond-Point du 14 Juillet Sotteville-lès-Rouen,,,,6 Rue du Rond-Point du 14 Juillet,,,,76300
+6 Rue du Rond-Point du 14 Juillet 76300,,,,6 Rue du Rond-Point du 14 Juillet,,,Sotteville-lès-Rouen,
+6 Rue du Rond-Point du 14 Juillet,1.091610,49.406994,,6 Rue du Rond-Point du 14 Juillet,,,,76300
+113 Rue Gay Lussac Le Trait,,,,113 Rue Gay Lussac,,,,76580
+113 Rue Gay Lussac 76580,,,,113 Rue Gay Lussac,,,Le Trait,
+113 Rue Gay Lussac,0.815537,49.476693,,113 Rue Gay Lussac,,,,76580
+126 Impasse de la Forêt Vatteville-la-Rue,,,,126 Impasse de la Forêt,,,,76940
+126 Impasse de la Forêt 76940,,,,126 Impasse de la Forêt,,,Vatteville-la-Rue,
+126 Impasse de la Forêt,0.652682,49.445441,,126 Impasse de la Forêt,,,,76940
+4B Rue de la Croix-rouge Yvetot,,,,4B Rue de la Croix-rouge,,,,76190
+4B Rue de la Croix-rouge 76190,,,,4B Rue de la Croix-rouge,,,Yvetot,
+4B Rue de la Croix-rouge,0.760384,49.620362,,4B Rue de la Croix-rouge,,,,76190

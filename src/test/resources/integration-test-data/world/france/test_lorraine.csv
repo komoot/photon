@@ -1,0 +1,385 @@
+query,lon,lat,limit,expected_name,expected_housenumber,expected_street,expected_city,expected_postcode
+2 Rue Rodicq Audun-le-Roman,,,,2 Rue Rodicq,,,,54560
+2 Rue Rodicq 54560,,,,2 Rue Rodicq,,,Audun-le-Roman,
+2 Rue Rodicq,5.892380,49.369621,,2 Rue Rodicq,,,,54560
+2 Route de Grand Champ Baslieux,,,,2 Route de Grand Champ,,,,54620
+2 Route de Grand Champ 54620,,,,2 Route de Grand Champ,,,Baslieux,
+2 Route de Grand Champ,5.755811,49.435419,,2 Route de Grand Champ,,,,54620
+3 Rue Croix Pierson Blainville-sur-l'Eau,,,,3 Rue Croix Pierson,,,,54360
+3 Rue Croix Pierson 54360,,,,3 Rue Croix Pierson,,,Blainville-sur-l'Eau,
+3 Rue Croix Pierson,6.393294,48.551391,,3 Rue Croix Pierson,,,,54360
+4 Rue des Corvées Bouxières-aux-Dames,,,,4 Rue des Corvées,,,,54136
+4 Rue des Corvées 54136,,,,4 Rue des Corvées,,,Bouxières-aux-Dames,
+4 Rue des Corvées,6.166931,48.750386,,4 Rue des Corvées,,,,54136
+8B Rue des Prayés Cerville,,,,8B Rue des Prayés,,,,54420
+8B Rue des Prayés 54420,,,,8B Rue des Prayés,,,Cerville,
+8B Rue des Prayés,6.313293,48.695141,,8B Rue des Prayés,,,,54420
+107 Rue Capitaine Paturaud Chaudeney-sur-Moselle,,,,107 Rue Capitaine Paturaud,,,,54200
+107 Rue Capitaine Paturaud 54200,,,,107 Rue Capitaine Paturaud,,,Chaudeney-sur-Moselle,
+107 Rue Capitaine Paturaud,5.904495,48.651795,,107 Rue Capitaine Paturaud,,,,54200
+8 Rue de Guyenne Cosnes-et-Romain,,,,8 Rue de Guyenne,,,,54400
+8 Rue de Guyenne 54400,,,,8 Rue de Guyenne,,,Cosnes-et-Romain,
+8 Rue de Guyenne,5.712454,49.518355,,8 Rue de Guyenne,,,,54400
+26 Rue de l'Aître Deneuvre,,,,26 Rue de l'Aître,,,,54120
+26 Rue de l'Aître 54120,,,,26 Rue de l'Aître,,,Deneuvre,
+26 Rue de l'Aître,6.739213,48.438624,,26 Rue de l'Aître,,,,54120
+7 Rue René II Dombasle-sur-Meurthe,,,,7 Rue René II,,,,54110
+7 Rue René II 54110,,,,7 Rue René II,,,Dombasle-sur-Meurthe,
+7 Rue René II,6.353086,48.616015,,7 Rue René II,,,,54110
+26 Rue Grande Rue Emberménil,,,,26 Rue Grande Rue,,,,54370
+26 Rue Grande Rue 54370,,,,26 Rue Grande Rue,,,Emberménil,
+26 Rue Grande Rue,6.696898,48.629866,,26 Rue Grande Rue,,,,54370
+8 Rue des Bouvreuils Fléville-devant-Nancy,,,,8 Rue des Bouvreuils,,,,54710
+8 Rue des Bouvreuils 54710,,,,8 Rue des Bouvreuils,,,Fléville-devant-Nancy,
+8 Rue des Bouvreuils,6.196211,48.623269,,8 Rue des Bouvreuils,,,,54710
+150 Rue de Nancy Frouard,,,,150 Rue de Nancy,,,,54390
+150 Rue de Nancy 54390,,,,150 Rue de Nancy,,,Frouard,
+150 Rue de Nancy,6.149027,48.747467,,150 Rue de Nancy,,,,54390
+16 Rue de la Prairie Hagéville,,,,16 Rue de la Prairie,,,,54470
+16 Rue de la Prairie 54470,,,,16 Rue de la Prairie,,,Hagéville,
+16 Rue de la Prairie,5.857967,49.031059,,16 Rue de la Prairie,,,,54470
+20 Avenue de la Concorde Herserange,,,,20 Avenue de la Concorde,,,,54440
+20 Avenue de la Concorde 54440,,,,20 Avenue de la Concorde,,,Herserange,
+20 Avenue de la Concorde,5.802451,49.523951,,20 Avenue de la Concorde,,,,54440
+3 Rue Ambroise Croizat Hussigny-Godbrange,,,,3 Rue Ambroise Croizat,,,,54590
+3 Rue Ambroise Croizat 54590,,,,3 Rue Ambroise Croizat,,,Hussigny-Godbrange,
+3 Rue Ambroise Croizat,5.879281,49.491592,,3 Rue Ambroise Croizat,,,,54590
+29 Rue du Général Leclerc Jarville-la-Malgrange,,,,29 Rue du Général Leclerc,,,,54140
+29 Rue du Général Leclerc 54140,,,,29 Rue du Général Leclerc,,,Jarville-la-Malgrange,
+29 Rue du Général Leclerc,6.198028,48.669645,,29 Rue du Général Leclerc,,,,54140
+26 Rue du Pré Joudreville,,,,26 Rue du Pré,,,,54490
+26 Rue du Pré 54490,,,,26 Rue du Pré,,,Joudreville,
+26 Rue du Pré,5.782937,49.298076,,26 Rue du Pré,,,,54490
+7 Rue Aristide Briand Laxou,,,,7 Rue Aristide Briand,,,,54520
+7 Rue Aristide Briand 54520,,,,7 Rue Aristide Briand,,,Laxou,
+7 Rue Aristide Briand,6.156813,48.684706,,7 Rue Aristide Briand,,,,54520
+6 Rue Romain Fontaine Lexy,,,,6 Rue Romain Fontaine,,,,54720
+6 Rue Romain Fontaine 54720,,,,6 Rue Romain Fontaine,,,Lexy,
+6 Rue Romain Fontaine,5.721460,49.502525,,6 Rue Romain Fontaine,,,,54720
+44 Rue Val Fleuri Longuyon,,,,44 Rue Val Fleuri,,,,54260
+44 Rue Val Fleuri 54260,,,,44 Rue Val Fleuri,,,Longuyon,
+44 Rue Val Fleuri,5.597922,49.441250,,44 Rue Val Fleuri,,,,54260
+116 Impasse Camille Corot Ludres,,,,116 Impasse Camille Corot,,,,54710
+116 Impasse Camille Corot 54710,,,,116 Impasse Camille Corot,,,Ludres,
+116 Impasse Camille Corot,6.175372,48.614483,,116 Impasse Camille Corot,,,,54710
+8 Rue du 8e Régiment de Dragons Lunéville,,,,8 Rue du 8e Régiment de Dragons,,,,54300
+8 Rue du 8e Régiment de Dragons 54300,,,,8 Rue du 8e Régiment de Dragons,,,Lunéville,
+8 Rue du 8e Régiment de Dragons,6.480252,48.598314,,8 Rue du 8e Régiment de Dragons,,,,54300
+66A Rue du Colonel Driant Malzéville,,,,66A Rue du Colonel Driant,,,,54220
+66A Rue du Colonel Driant 54220,,,,66A Rue du Colonel Driant,,,Malzéville,
+66A Rue du Colonel Driant,6.192648,48.704086,,66A Rue du Colonel Driant,,,,54220
+4 Allée David Maxéville,,,,4 Allée David,,,,54320
+4 Allée David 54320,,,,4 Allée David,,,Maxéville,
+4 Allée David,6.164980,48.711377,,4 Allée David,,,,54320
+18 Lotissement Le Clos du Moulin Moineville,,,,18 Lotissement Le Clos du Moulin,,,,54580
+18 Lotissement Le Clos du Moulin 54580,,,,18 Lotissement Le Clos du Moulin,,,Moineville,
+18 Lotissement Le Clos du Moulin,5.937011,49.201362,,18 Lotissement Le Clos du Moulin,,,,54580
+1 Grande Rue Moriviller,,,,1 Grande Rue,,,,54830
+1 Grande Rue 54830,,,,1 Grande Rue,,,Moriviller,
+1 Grande Rue,6.441924,48.477836,,1 Grande Rue,,,,54830
+12 Rue Col Courtot de Cissey Nancy,,,,12 Rue Col Courtot de Cissey,,,,54100
+12 Rue Col Courtot de Cissey 54100,,,,12 Rue Col Courtot de Cissey,,,Nancy,
+12 Rue Col Courtot de Cissey,6.166971,48.674640,,12 Rue Col Courtot de Cissey,,,,54100
+17 Rue Jacquard Nancy,,,,17 Rue Jacquard,,,,54100
+17 Rue Jacquard 54100,,,,17 Rue Jacquard,,,Nancy,
+17 Rue Jacquard,6.178094,48.694502,,17 Rue Jacquard,,,,54100
+14 Impasse Pierre Crevisier Nancy,,,,14 Impasse Pierre Crevisier,,,,54100
+14 Impasse Pierre Crevisier 54100,,,,14 Impasse Pierre Crevisier,,,Nancy,
+14 Impasse Pierre Crevisier,6.172921,48.682482,,14 Impasse Pierre Crevisier,,,,54100
+23 Allée des Bégonias Neuves-Maisons,,,,23 Allée des Bégonias,,,,54230
+23 Allée des Bégonias 54230,,,,23 Allée des Bégonias,,,Neuves-Maisons,
+23 Allée des Bégonias,6.107208,48.626714,,23 Allée des Bégonias,,,,54230
+15 Rue Joly Pagny-sur-Moselle,,,,15 Rue Joly,,,,54530
+15 Rue Joly 54530,,,,15 Rue Joly,,,Pagny-sur-Moselle,
+15 Rue Joly,6.018681,48.984346,,15 Rue Joly,,,,54530
+625 Avenue de Champagne Pont-à-Mousson,,,,625 Avenue de Champagne,,,,54700
+625 Avenue de Champagne 54700,,,,625 Avenue de Champagne,,,Pont-à-Mousson,
+625 Avenue de Champagne,6.056007,48.915788,,625 Avenue de Champagne,,,,54700
+34 Les Blés d'Or Pulnoy,,,,34 Les Blés d'Or,,,,54425
+34 Les Blés d'Or 54425,,,,34 Les Blés d'Or,,,Pulnoy,
+34 Les Blés d'Or,6.259623,48.705402,,34 Les Blés d'Or,,,,54425
+16 Rue du Capitaine Clochette Rosières-aux-Salines,,,,16 Rue du Capitaine Clochette,,,,54110
+16 Rue du Capitaine Clochette 54110,,,,16 Rue du Capitaine Clochette,,,Rosières-aux-Salines,
+16 Rue du Capitaine Clochette,6.331426,48.594490,,16 Rue du Capitaine Clochette,,,,54110
+2B Chemin des Aulnois Saint-Nicolas-de-Port,,,,2B Chemin des Aulnois,,,,54210
+2B Chemin des Aulnois 54210,,,,2B Chemin des Aulnois,,,Saint-Nicolas-de-Port,
+2B Chemin des Aulnois,6.299142,48.622458,,2B Chemin des Aulnois,,,,54210
+22 Rue de Provence Saulxures-lès-Nancy,,,,22 Rue de Provence,,,,54420
+22 Rue de Provence 54420,,,,22 Rue de Provence,,,Saulxures-lès-Nancy,
+22 Rue de Provence,6.237845,48.679343,,22 Rue de Provence,,,,54420
+27 Rue de Fagnoux Thiaville-sur-Meurthe,,,,27 Rue de Fagnoux,,,,54120
+27 Rue de Fagnoux 54120,,,,27 Rue de Fagnoux,,,Thiaville-sur-Meurthe,
+27 Rue de Fagnoux,6.794692,48.409750,,27 Rue de Fagnoux,,,,54120
+39 Rue Drouas Toul,,,,39 Rue Drouas,,,,54200
+39 Rue Drouas 54200,,,,39 Rue Drouas,,,Toul,
+39 Rue Drouas,5.895344,48.675347,,39 Rue Drouas,,,,54200
+1BIS Place de la République Tucquegnieux,,,,1BIS Place de la République,,,,54640
+1BIS Place de la République 54640,,,,1BIS Place de la République,,,Tucquegnieux,
+1BIS Place de la République,5.882822,49.298468,,1BIS Place de la République,,,,54640
+16 Rue Jean Mermoz Vandœuvre-lès-Nancy,,,,16 Rue Jean Mermoz,,,,54500
+16 Rue Jean Mermoz 54500,,,,16 Rue Jean Mermoz,,,Vandœuvre-lès-Nancy,
+16 Rue Jean Mermoz,6.186954,48.655240,,16 Rue Jean Mermoz,,,,54500
+24 Rue du Maréchal Foch Vézelise,,,,24 Rue du Maréchal Foch,,,,54330
+24 Rue du Maréchal Foch 54330,,,,24 Rue du Maréchal Foch,,,Vézelise,
+24 Rue du Maréchal Foch,6.092112,48.487799,,24 Rue du Maréchal Foch,,,,54330
+12 Square des Noisetiers Villers-lès-Nancy,,,,12 Square des Noisetiers,,,,54600
+12 Square des Noisetiers 54600,,,,12 Square des Noisetiers,,,Villers-lès-Nancy,
+12 Square des Noisetiers,6.105362,48.658591,,12 Square des Noisetiers,,,,54600
+4BIS Rue Yvonne Baratte Villette,,,,4BIS Rue Yvonne Baratte,,,,54260
+4BIS Rue Yvonne Baratte 54260,,,,4BIS Rue Yvonne Baratte,,,Villette,
+4BIS Rue Yvonne Baratte,5.547660,49.474362,,4BIS Rue Yvonne Baratte,,,,54260
+1 Rue de la Porte Espagnole Damvillers,,,,1 Rue de la Porte Espagnole,,,,55150
+1 Rue de la Porte Espagnole 55150,,,,1 Rue de la Porte Espagnole,,,Damvillers,
+1 Rue de la Porte Espagnole,5.402175,49.343775,,1 Rue de la Porte Espagnole,,,,55150
+87 Rue Leroux Ligny-en-Barrois,,,,87 Rue Leroux,,,,55500
+87 Rue Leroux 55500,,,,87 Rue Leroux,,,Ligny-en-Barrois,
+87 Rue Leroux,5.319590,48.690459,,87 Rue Leroux,,,,55500
+48 Rue Raymond Poincaré Revigny-sur-Ornain,,,,48 Rue Raymond Poincaré,,,,55800
+48 Rue Raymond Poincaré 55800,,,,48 Rue Raymond Poincaré,,,Revigny-sur-Ornain,
+48 Rue Raymond Poincaré,4.983539,48.829802,,48 Rue Raymond Poincaré,,,,55800
+5 Rue de Bezonvaux Verdun,,,,5 Rue de Bezonvaux,,,,55100
+5 Rue de Bezonvaux 55100,,,,5 Rue de Bezonvaux,,,Verdun,
+5 Rue de Bezonvaux,5.395082,49.162609,,5 Rue de Bezonvaux,,,,55100
+57 Avenue Trentieme Corps Verdun,,,,57 Avenue Trentieme Corps,,,,55100
+57 Avenue Trentieme Corps 55100,,,,57 Avenue Trentieme Corps,,,Verdun,
+57 Avenue Trentieme Corps,5.407287,49.165509,,57 Avenue Trentieme Corps,,,,55100
+80  Amanvillers,,,,80 ,,,,57865
+80  57865,,,,80 ,,,Amanvillers,
+80 ,6.040720,49.166561,,80 ,,,,57865
+23  Ars-sur-Moselle,,,,23 ,,,,57130
+23  57130,,,,23 ,,,Ars-sur-Moselle,
+23 ,6.059680,49.079122,,23 ,,,,57130
+1A Rue Saint-Gorgon Aumetz,,,,1A Rue Saint-Gorgon,,,,57710
+1A Rue Saint-Gorgon 57710,,,,1A Rue Saint-Gorgon,,,Aumetz,
+1A Rue Saint-Gorgon,5.942295,49.415786,,1A Rue Saint-Gorgon,,,,57710
+129 Rue de l'Église Berthelming,,,,129 Rue de l'Église,,,,57930
+129 Rue de l'Église 57930,,,,129 Rue de l'Église,,,Berthelming,
+129 Rue de l'Église,7.006118,48.817773,,129 Rue de l'Église,,,,57930
+17 Rue du Val de Blies Blies-Ébersing,,,,17 Rue du Val de Blies,,,,57200
+17 Rue du Val de Blies 57200,,,,17 Rue du Val de Blies,,,Blies-Ébersing,
+17 Rue du Val de Blies,7.136689,49.126028,,17 Rue du Val de Blies,,,,57200
+15 Rue de l'Église Breistroff-la-Grande,,,,15 Rue de l'Église,,,,57570
+15 Rue de l'Église 57570,,,,15 Rue de l'Église,,,Breistroff-la-Grande,
+15 Rue de l'Église,6.214418,49.457274,,15 Rue de l'Église,,,,57570
+21  Châtel-Saint-Germain,,,,21 ,,,,57160
+21  57160,,,,21 ,,,Châtel-Saint-Germain,
+21 ,6.079211,49.120764,,21 ,,,,57160
+17 Allée des Glycines Courcelles-Chaussy,,,,17 Allée des Glycines,,,,57530
+17 Allée des Glycines 57530,,,,17 Allée des Glycines,,,Courcelles-Chaussy,
+17 Allée des Glycines,6.398452,49.103600,,17 Allée des Glycines,,,,57530
+32 Boulevard Rabelais Creutzwald,,,,32 Boulevard Rabelais,,,,57150
+32 Boulevard Rabelais 57150,,,,32 Boulevard Rabelais,,,Creutzwald,
+32 Boulevard Rabelais,6.702144,49.205289,,32 Boulevard Rabelais,,,,57150
+12 Rue des Anciens Fours à Chaux Distroff,,,,12 Rue des Anciens Fours à Chaux,,,,57925
+12 Rue des Anciens Fours à Chaux 57925,,,,12 Rue des Anciens Fours à Chaux,,,Distroff,
+12 Rue des Anciens Fours à Chaux,6.270634,49.336111,,12 Rue des Anciens Fours à Chaux,,,,57925
+37 Chaussee Robert Schuman Évrange,,,,37 Chaussee Robert Schuman,,,,57570
+37 Chaussee Robert Schuman 57570,,,,37 Chaussee Robert Schuman,,,Évrange,
+37 Chaussee Robert Schuman,6.193377,49.505147,,37 Chaussee Robert Schuman,,,,57570
+16 Allée des Hêtres Farébersviller,,,,16 Allée des Hêtres,,,,57450
+16 Allée des Hêtres 57450,,,,16 Allée des Hêtres,,,Farébersviller,
+16 Allée des Hêtres,6.886268,49.114054,,16 Allée des Hêtres,,,,57450
+48 Rue de la Centrale Florange,,,,48 Rue de la Centrale,,,,57190
+48 Rue de la Centrale 57190,,,,48 Rue de la Centrale,,,Florange,
+48 Rue de la Centrale,6.114303,49.320592,,48 Rue de la Centrale,,,,57190
+19 LES CAPUCINES Forbach,,,,19 LES CAPUCINES,,,,57600
+19 LES CAPUCINES 57600,,,,19 LES CAPUCINES,,,Forbach,
+19 LES CAPUCINES,6.886604,49.178708,,19 LES CAPUCINES,,,,57600
+17 Rue du Caveau Freyming-Merlebach,,,,17 Rue du Caveau,,,,57800
+17 Rue du Caveau 57800,,,,17 Rue du Caveau,,,Freyming-Merlebach,
+17 Rue du Caveau,6.782246,49.142567,,17 Rue du Caveau,,,,57800
+4BIS Rue de Civaux Gomelange,,,,4BIS Rue de Civaux,,,,57220
+4BIS Rue de Civaux 57220,,,,4BIS Rue de Civaux,,,Gomelange,
+4BIS Rue de Civaux,6.469572,49.241981,,4BIS Rue de Civaux,,,,57220
+6 Lotissement Les Tilleuls Guessling-Hémering,,,,6 Lotissement Les Tilleuls,,,,57380
+6 Lotissement Les Tilleuls 57380,,,,6 Lotissement Les Tilleuls,,,Guessling-Hémering,
+6 Lotissement Les Tilleuls,6.656295,49.017853,,6 Lotissement Les Tilleuls,,,,57380
+15 Rue de Siltzheim Hambach,,,,15 Rue de Siltzheim,,,,57910
+15 Rue de Siltzheim 57910,,,,15 Rue de Siltzheim,,,Hambach,
+15 Rue de Siltzheim,7.044724,49.064107,,15 Rue de Siltzheim,,,,57910
+21 Rue Pierre Mendès-France Hayange,,,,21 Rue Pierre Mendès-France,,,,57700
+21 Rue Pierre Mendès-France 57700,,,,21 Rue Pierre Mendès-France,,,Hayange,
+21 Rue Pierre Mendès-France,6.074455,49.331884,,21 Rue Pierre Mendès-France,,,,57700
+29 Rue de la Gendarmerie Hettange-Grande,,,,29 Rue de la Gendarmerie,,,,57330
+29 Rue de la Gendarmerie 57330,,,,29 Rue de la Gendarmerie,,,Hettange-Grande,
+29 Rue de la Gendarmerie,6.158461,49.400168,,29 Rue de la Gendarmerie,,,,57330
+70 Rue de Carling L'Hôpital,,,,70 Rue de Carling,,,,57490
+70 Rue de Carling 57490,,,,70 Rue de Carling,,,L'Hôpital,
+70 Rue de Carling,6.721758,49.161782,,70 Rue de Carling,,,,57490
+20 Rue de Cantevanne Kanfen,,,,20 Rue de Cantevanne,,,,57330
+20 Rue de Cantevanne 57330,,,,20 Rue de Cantevanne,,,Kanfen,
+20 Rue de Cantevanne,6.114941,49.436686,,20 Rue de Cantevanne,,,,57330
+13 Rue des Cyclamens Langatte,,,,13 Rue des Cyclamens,,,,57400
+13 Rue des Cyclamens 57400,,,,13 Rue des Cyclamens,,,Langatte,
+13 Rue des Cyclamens,6.952854,48.764246,,13 Rue des Cyclamens,,,,57400
+89  Longeville-lès-Metz,,,,89 ,,,,57050
+89  57050,,,,89 ,,,Longeville-lès-Metz,
+89 ,6.152375,49.115174,,89 ,,,,57050
+19 Rue Jacqueline Auriol Maizières-lès-Metz,,,,19 Rue Jacqueline Auriol,,,,57280
+19 Rue Jacqueline Auriol 57280,,,,19 Rue Jacqueline Auriol,,,Maizières-lès-Metz,
+19 Rue Jacqueline Auriol,6.154913,49.216282,,19 Rue Jacqueline Auriol,,,,57280
+99 Rue de la République Marange-Silvange,,,,99 Rue de la République,,,,57535
+99 Rue de la République 57535,,,,99 Rue de la République,,,Marange-Silvange,
+99 Rue de la République,6.102787,49.210191,,99 Rue de la République,,,,57535
+29  Marly,,,,29 ,,,,57155
+29  57155,,,,29 ,,,Marly,
+29 ,6.149609,49.077384,,29 ,,,,57155
+31  Metz,,,,31 ,,,,57000
+31  57000,,,,31 ,,,Metz,
+31 ,6.181387,49.118684,,31 ,,,,57000
+17B  Metz,,,,17B ,,,,57000
+17B  57000,,,,17B ,,,Metz,
+17B ,6.207192,49.121177,,17B ,,,,57000
+6 Place Saint-Roch Metz,,,,6 Place Saint-Roch,,,,57000
+6 Place Saint-Roch 57000,,,,6 Place Saint-Roch,,,Metz,
+6 Place Saint-Roch,6.184833,49.078058,,6 Place Saint-Roch,,,,57000
+39 Rue de l'Église Monneren,,,,39 Rue de l'Église,,,,57920
+39 Rue de l'Église 57920,,,,39 Rue de l'Église,,,Monneren,
+39 Rue de l'Église,6.414402,49.345336,,39 Rue de l'Église,,,,57920
+57  Montigny-lès-Metz,,,,57 ,,,,57950
+57  57950,,,,57 ,,,Montigny-lès-Metz,
+57 ,6.155775,49.086756,,57 ,,,,57950
+56 Rue du Bois Moyeuvre-Grande,,,,56 Rue du Bois,,,,57250
+56 Rue du Bois 57250,,,,56 Rue du Bois,,,Moyeuvre-Grande,
+56 Rue du Bois,6.049844,49.261298,,56 Rue du Bois,,,,57250
+36 Rue des Vosges Niderviller,,,,36 Rue des Vosges,,,,57565
+36 Rue des Vosges 57565,,,,36 Rue des Vosges,,,Niderviller,
+36 Rue des Vosges,7.110308,48.709410,,36 Rue des Vosges,,,,57565
+9 Rue du Maraicher Ogy,,,,9 Rue du Maraicher,,,,57530
+9 Rue du Maraicher 57530,,,,9 Rue du Maraicher,,,Ogy,
+9 Rue du Maraicher,6.313492,49.105433,,9 Rue du Maraicher,,,,57530
+28 Rue Roger Cadel Petite-Rosselle,,,,28 Rue Roger Cadel,,,,57540
+28 Rue Roger Cadel 57540,,,,28 Rue Roger Cadel,,,Petite-Rosselle,
+28 Rue Roger Cadel,6.867734,49.215023,,28 Rue Roger Cadel,,,,57540
+2 Impasse Prairial Porcelette,,,,2 Impasse Prairial,,,,57890
+2 Impasse Prairial 57890,,,,2 Impasse Prairial,,,Porcelette,
+2 Impasse Prairial,6.652172,49.160997,,2 Impasse Prairial,,,,57890
+12 Rue des Saules Réding,,,,12 Rue des Saules,,,,57445
+12 Rue des Saules 57445,,,,12 Rue des Saules,,,Réding,
+12 Rue des Saules,7.110521,48.750958,,12 Rue des Saules,,,,57445
+13 Rue de la Paix Rohrbach-lès-Bitche,,,,13 Rue de la Paix,,,,57410
+13 Rue de la Paix 57410,,,,13 Rue de la Paix,,,Rohrbach-lès-Bitche,
+13 Rue de la Paix,7.268006,49.043447,,13 Rue de la Paix,,,,57410
+3 Rue Sainte-Anne Roussy-le-Village,,,,3 Rue Sainte-Anne,,,,57330
+3 Rue Sainte-Anne 57330,,,,3 Rue Sainte-Anne,,,Roussy-le-Village,
+3 Rue Sainte-Anne,6.172500,49.457716,,3 Rue Sainte-Anne,,,,57330
+2 Rue des Roitelets Saint-Avold,,,,2 Rue des Roitelets,,,,57500
+2 Rue des Roitelets 57500,,,,2 Rue des Roitelets,,,Saint-Avold,
+2 Rue des Roitelets,6.706979,49.132441,,2 Rue des Roitelets,,,,57500
+2  Saint-Privat-la-Montagne,,,,2 ,,,,57855
+2  57855,,,,2 ,,,Saint-Privat-la-Montagne,
+2 ,6.032949,49.186655,,2 ,,,,57855
+11 Rue du Stade Sarrebourg,,,,11 Rue du Stade,,,,57400
+11 Rue du Stade 57400,,,,11 Rue du Stade,,,Sarrebourg,
+11 Rue du Stade,7.048087,48.727653,,11 Rue du Stade,,,,57400
+6 Rue Saint-Jean Neunkirch Sarreguemines,,,,6 Rue Saint-Jean Neunkirch,,,,57200
+6 Rue Saint-Jean Neunkirch 57200,,,,6 Rue Saint-Jean Neunkirch,,,Sarreguemines,
+6 Rue Saint-Jean Neunkirch,7.083101,49.123785,,6 Rue Saint-Jean Neunkirch,,,,57200
+39 Rue de Verdun Semécourt,,,,39 Rue de Verdun,,,,57280
+39 Rue de Verdun 57280,,,,39 Rue de Verdun,,,Semécourt,
+39 Rue de Verdun,6.131372,49.194569,,39 Rue de Verdun,,,,57280
+22 Rue Auguste Delaune Talange,,,,22 Rue Auguste Delaune,,,,57525
+22 Rue Auguste Delaune 57525,,,,22 Rue Auguste Delaune,,,Talange,
+22 Rue Auguste Delaune,6.178087,49.237491,,22 Rue Auguste Delaune,,,,57525
+22 Rue de l'Agriculture Thionville,,,,22 Rue de l'Agriculture,,,,57100
+22 Rue de l'Agriculture 57100,,,,22 Rue de l'Agriculture,,,Thionville,
+22 Rue de l'Agriculture,6.152628,49.367933,,22 Rue de l'Agriculture,,,,57100
+13 Rue de Nancy Thionville,,,,13 Rue de Nancy,,,,57100
+13 Rue de Nancy 57100,,,,13 Rue de Nancy,,,Thionville,
+13 Rue de Nancy,6.156236,49.355361,,13 Rue de Nancy,,,,57100
+7BIS Rue des Jardins Uckange,,,,7BIS Rue des Jardins,,,,57270
+7BIS Rue des Jardins 57270,,,,7BIS Rue des Jardins,,,Uckange,
+7BIS Rue des Jardins,6.149693,49.304631,,7BIS Rue des Jardins,,,,57270
+9  Vernéville,,,,9 ,,,,57130
+9  57130,,,,9 ,,,Vernéville,
+9 ,6.001320,49.146568,,9 ,,,,57130
+5 Rue du Rebberg Volmunster,,,,5 Rue du Rebberg,,,,57720
+5 Rue du Rebberg 57720,,,,5 Rue du Rebberg,,,Volmunster,
+5 Rue du Rebberg,7.350800,49.123287,,5 Rue du Rebberg,,,,57720
+17  Woippy,,,,17 ,,,,57140
+17  57140,,,,17 ,,,Woippy,
+17 ,6.162780,49.145480,,17 ,,,,57140
+72 Route de Thionville Yutz,,,,72 Route de Thionville,,,,57970
+72 Route de Thionville 57970,,,,72 Route de Thionville,,,Yutz,
+72 Route de Thionville,6.177599,49.348295,,72 Route de Thionville,,,,57970
+338 Rue de la Passée La Baffe,,,,338 Rue de la Passée,,,,88460
+338 Rue de la Passée 88460,,,,338 Rue de la Passée,,,La Baffe,
+338 Rue de la Passée,6.573556,48.163578,,338 Rue de la Passée,,,,88460
+16 Chemin des Champis La Bresse,,,,16 Chemin des Champis,,,,88250
+16 Chemin des Champis 88250,,,,16 Chemin des Champis,,,La Bresse,
+16 Chemin des Champis,6.914273,48.024788,,16 Chemin des Champis,,,,88250
+1 Rue Abbé Bertrand Certilleux,,,,1 Rue Abbé Bertrand,,,,88300
+1 Rue Abbé Bertrand 88300,,,,1 Rue Abbé Bertrand,,,Certilleux,
+1 Rue Abbé Bertrand,5.727775,48.312059,,1 Rue Abbé Bertrand,,,,88300
+6 Za La Moise Châtenois,,,,6 Za La Moise,,,,88170
+6 Za La Moise 88170,,,,6 Za La Moise,,,Châtenois,
+6 Za La Moise,5.838397,48.307565,,6 Za La Moise,,,,88170
+17 Route du Droit Cornimont,,,,17 Route du Droit,,,,88310
+17 Route du Droit 88310,,,,17 Route du Droit,,,Cornimont,
+17 Route du Droit,6.828505,47.968317,,17 Route du Droit,,,,88310
+79 Rue de Jeuxey Dogneville,,,,79 Rue de Jeuxey,,,,88000
+79 Rue de Jeuxey 88000,,,,79 Rue de Jeuxey,,,Dogneville,
+79 Rue de Jeuxey,6.460782,48.221337,,79 Rue de Jeuxey,,,,88000
+25 Rue Antoine Réveillé Épinal,,,,25 Rue Antoine Réveillé,,,,88000
+25 Rue Antoine Réveillé 88000,,,,25 Rue Antoine Réveillé,,,Épinal,
+25 Rue Antoine Réveillé,6.452649,48.184187,,25 Rue Antoine Réveillé,,,,88000
+40 Rue de Nancy Épinal,,,,40 Rue de Nancy,,,,88000
+40 Rue de Nancy 88000,,,,40 Rue de Nancy,,,Épinal,
+40 Rue de Nancy,6.441918,48.183545,,40 Rue de Nancy,,,,88000
+13 Route de la Sure Ferdrupt,,,,13 Route de la Sure,,,,88360
+13 Route de la Sure 88360,,,,13 Route de la Sure,,,Ferdrupt,
+13 Route de la Sure,6.731762,47.903679,,13 Route de la Sure,,,,88360
+341 Allée des Marronniers Frizon,,,,341 Allée des Marronniers,,,,88440
+341 Allée des Marronniers 88440,,,,341 Allée des Marronniers,,,Frizon,
+341 Allée des Marronniers,6.364601,48.288761,,341 Allée des Marronniers,,,,88440
+1253 Rue de Xertigny Girancourt,,,,1253 Rue de Xertigny,,,,88390
+1253 Rue de Xertigny 88390,,,,1253 Rue de Xertigny,,,Girancourt,
+1253 Rue de Xertigny,6.316916,48.154983,,1253 Rue de Xertigny,,,,88390
+22 Rue du Pré Genêt Granges-sur-Vologne,,,,22 Rue du Pré Genêt,,,,88640
+22 Rue du Pré Genêt 88640,,,,22 Rue du Pré Genêt,,,Granges-sur-Vologne,
+22 Rue du Pré Genêt,6.796522,48.148165,,22 Rue du Pré Genêt,,,,88640
+2 Rue du Château Jeanménil,,,,2 Rue du Château,,,,88700
+2 Rue du Château 88700,,,,2 Rue du Château,,,Jeanménil,
+2 Rue du Château,6.691300,48.335693,,2 Rue du Château,,,,88700
+395 Route de Bénifosse Mandray,,,,395 Route de Bénifosse,,,,88650
+395 Route de Bénifosse 88650,,,,395 Route de Bénifosse,,,Mandray,
+395 Route de Bénifosse,6.990715,48.218958,,395 Route de Bénifosse,,,,88650
+730 Rue du Mervaux Monthureux-sur-Saône,,,,730 Rue du Mervaux,,,,88410
+730 Rue du Mervaux 88410,,,,730 Rue du Mervaux,,,Monthureux-sur-Saône,
+730 Rue du Mervaux,5.941710,48.014821,,730 Rue du Mervaux,,,,88410
+18 Rue de Bouillemont La Neuveville-devant-Lépanges,,,,18 Rue de Bouillemont,,,,88600
+18 Rue de Bouillemont 88600,,,,18 Rue de Bouillemont,,,La Neuveville-devant-Lépanges,
+18 Rue de Bouillemont,6.668623,48.161122,,18 Rue de Bouillemont,,,,88600
+57 Rue de la Mairie Les Poulières,,,,57 Rue de la Mairie,,,,88600
+57 Rue de la Mairie 88600,,,,57 Rue de la Mairie,,,Les Poulières,
+57 Rue de la Mairie,6.797999,48.202256,,57 Rue de la Mairie,,,,88600
+13 Rue de Belle Vue Raon-l'Étape,,,,13 Rue de Belle Vue,,,,88110
+13 Rue de Belle Vue 88110,,,,13 Rue de Belle Vue,,,Raon-l'Étape,
+13 Rue de Belle Vue,6.853030,48.405012,,13 Rue de Belle Vue,,,,88110
+8BIS Rue Suchet Remiremont,,,,8BIS Rue Suchet,,,,88200
+8BIS Rue Suchet 88200,,,,8BIS Rue Suchet,,,Remiremont,
+8BIS Rue Suchet,6.587520,48.018065,,8BIS Rue Suchet,,,,88200
+6 Chemin de la Ruelle Saint-Benoît-la-Chipotte,,,,6 Chemin de la Ruelle,,,,88700
+6 Chemin de la Ruelle 88700,,,,6 Chemin de la Ruelle,,,Saint-Benoît-la-Chipotte,
+6 Chemin de la Ruelle,6.734459,48.355270,,6 Chemin de la Ruelle,,,,88700
+26 Rue Rovel Saint-Dié-des-Vosges,,,,26 Rue Rovel,,,,88100
+26 Rue Rovel 88100,,,,26 Rue Rovel,,,Saint-Dié-des-Vosges,
+26 Rue Rovel,6.944663,48.292217,,26 Rue Rovel,,,,88100
+212 Rue du Bousson Saint-Michel-sur-Meurthe,,,,212 Rue du Bousson,,,,88470
+212 Rue du Bousson 88470,,,,212 Rue du Bousson,,,Saint-Michel-sur-Meurthe,
+212 Rue du Bousson,6.884638,48.309582,,212 Rue du Bousson,,,,88470
+26BIS Rue Grande Rue Saulxures-lès-Bulgnéville,,,,26BIS Rue Grande Rue,,,,88140
+26BIS Rue Grande Rue 88140,,,,26BIS Rue Grande Rue,,,Saulxures-lès-Bulgnéville,
+26BIS Rue Grande Rue,5.807235,48.199855,,26BIS Rue Grande Rue,,,,88140
+7 Chemin des Épines Tendon,,,,7 Chemin des Épines,,,,88460
+7 Chemin des Épines 88460,,,,7 Chemin des Épines,,,Tendon,
+7 Chemin des Épines,6.676193,48.119403,,7 Chemin des Épines,,,,88460
+153 Rue du Docteur Guegniot Tignécourt,,,,153 Rue du Docteur Guegniot,,,,88320
+153 Rue du Docteur Guegniot 88320,,,,153 Rue du Docteur Guegniot,,,Tignécourt,
+153 Rue du Docteur Guegniot,5.892333,48.042130,,153 Rue du Docteur Guegniot,,,,88320
+4 Rue du Stade Le Val-d'Ajol,,,,4 Rue du Stade,,,,88340
+4 Rue du Stade 88340,,,,4 Rue du Stade,,,Le Val-d'Ajol,
+4 Rue du Stade,6.480783,47.926149,,4 Rue du Stade,,,,88340
+68 Rue de Nancy Vittel,,,,68 Rue de Nancy,,,,88800
+68 Rue de Nancy 88800,,,,68 Rue de Nancy,,,Vittel,
+68 Rue de Nancy,5.943299,48.198982,,68 Rue de Nancy,,,,88800

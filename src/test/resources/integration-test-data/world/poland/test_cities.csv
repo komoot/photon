@@ -1,0 +1,61 @@
+comment;query;expected_coordinate;expected_name;expected_country;lang
+"node 1697487051 from osm";"Toruń";53.0210671,18.618612,1000;"Toruń";"Poland";en
+"node 1697586141 from osm";"Grudziądz";53.4726574,18.7721235,1000;"Grudziądz";"Poland";en
+"node 1697928657 from osm";"Kalisz";51.7577649,18.083346,1000;"Kalisz";"Poland";en
+"node 1751621506 from osm";"Włocławek";52.6510589,19.0641019,1000;"Włocławek";"Poland";en
+"node 1751621527 from osm";"Płock";52.5464521,19.7008606,1000;"Płock";"Poland";en
+"node 1751621551 from osm";"Tychy";50.1144798,18.9966163,1000;"Tychy";"Poland";en
+"node 1763537504 from osm";"Krosno";49.6938071,21.7651511,1000;"Krosno";"Poland";en
+"node 1838666975 from osm";"Kraków";50.0619474,19.9368564,1000;"Kraków";"Poland";en
+"node 1854937117 from osm";"Siedlce";52.1663803,22.2765626,1000;"Siedlce";"Poland";en
+"node 2110720553 from osm";"Kielce";50.8717883,20.6308354,1000;"Kielce";"Poland";en
+"node 2154460153 from osm";"Jastrzębie-Zdrój";49.9519085,18.6023614,1000;"Jastrzębie-Zdrój";"Poland";en
+"node 26432122 from osm";"Gdańsk";54.3482259,18.6542888,1000;"Gdańsk";"Poland";en
+"node 26432430 from osm";"Gdynia";54.5164982,18.5402738,1000;"Gdynia";"Poland";en
+"node 26553042 from osm";"Szczecin";53.4302122,14.5509784,1000;"Szczecin";"Poland";en
+"node 26553051 from osm";"Zielona Góra";51.9382922,15.5045677,1000;"Zielona Góra";"Poland";en
+"node 27161819 from osm";"Poznań";52.4082296,16.9333644,1000;"Poznań";"Poland";en
+"node 28900665 from osm";"Gliwice";50.294113,18.6657306,1000;"Gliwice";"Poland";en
+"node 29573582 from osm";"Chorzów";50.2978791,18.9544466,1000;"Chorzów";"Poland";en
+"node 30014556 from osm";"Lublin";51.2506153,22.5700403,1000;"Lublin";"Poland";en
+"node 30094969 from osm";"Łódź";51.768749,19.4569817,1000;"Łódź";"Poland";en
+"node 31337673 from osm";"Bydgoszcz";53.1256104,18.0090126,1000;"Bydgoszcz";"Poland";en
+"node 31345720 from osm";"Słupsk";54.4649331,17.028073,1000;"Słupsk";"Poland";en
+"node 31346920 from osm";"Koszalin";54.19092,16.17707,1000;"Koszalin";"Poland";en
+"node 31530688 from osm";"Sopot";54.4446674,18.5685868,1000;"Sopot";"Poland";en
+"node 31532258 from osm";"Elbląg";54.1585851,19.4059242,1000;"Elbląg";"Poland";en
+"node 31702832 from osm";"Biała Podlaska";52.0322191,23.1173198,1000;"Biała Podlaska";"Poland";en
+"node 31796470 from osm";"Legnica";51.2018141,16.1670897,1000;"Legnica";"Poland";en
+"node 31867745 from osm";"Radom";51.4027306,21.1572247,1000;"Radom";"Poland";en
+"node 31887921 from osm";"Tarnobrzeg";50.5718757,21.6785203,1000;"Tarnobrzeg";"Poland";en
+"node 31900531 from osm";"Siemianowice Śląskie";50.3052029,19.0275635,1000;"Siemianowice Śląskie";"Poland";en
+"node 31901874 from osm";"Katowice";50.2593174,19.0218414,1000;"Katowice";"Poland";en
+"node 31901916 from osm";"Jaworzno";50.203439,19.2721559,1000;"Jaworzno";"Poland";en
+"node 31902385 from osm";"Częstochowa";50.8120466,19.113213,1000;"Częstochowa";"Poland";en
+"node 31916531 from osm";"Zabrze";50.308417,18.7866909,1000;"Zabrze";"Poland";en
+"node 31916711 from osm";"Wałbrzych";50.7659054,16.2825424,1000;"Wałbrzych";"Poland";en
+"node 31916888 from osm";"Świętochłowice";50.2907059,18.9214033,1000;"Świętochłowice";"Poland";en
+"node 31917353 from osm";"Ruda Śląska";50.2732418,18.8594072,1000;"Ruda Śląska";"Poland";en
+"node 32566103 from osm";"Olsztyn";53.774931,20.4817592,1000;"Olsztyn";"Poland";en
+"node 34662230 from osm";"Rzeszów";50.0374531,22.0047174,1000;"Rzeszów";"Poland";en
+"node 34811728 from osm";"Tarnów";50.0124852,20.9881387,1000;"Tarnów";"Poland";en;2
+"node 46715854 from osm";"Nowy Sącz";49.6249173,20.691346,1000;"Nowy Sącz";"Poland";en
+"node 60038888 from osm";"Białystok";53.132398,23.1591679,1000;"Białystok";"Poland";en
+"node 128054630 from osm";"Opole";50.6668184,17.9236408,1000;"Opole";"Poland";en
+"node 155462541 from osm";"Leszno";51.8434452,16.5743776,1000;"Leszno";"Poland";en
+"node 171379806 from osm";"Bytom";50.3470387,18.9231857,1000;"Bytom";"Poland";en
+"node 190817334 from osm";"Sosnowiec";50.2806917,19.1349298,1000;"Sosnowiec";"Poland";en
+"node 246693057 from osm";"Jelenia Góra";50.9031028,15.7344306,1000;"Jelenia Góra";"Poland";en
+"node 253523175 from osm";"Bielsko-Biała";49.822118,19.0448936,1000;"Bielsko-Biała";"Poland";en
+"node 253525668 from osm";"Rybnik";50.0955793,18.5419933,1000;"Rybnik";"Poland";en
+"node 253543591 from osm";"Chełm";51.134682,23.4817302,1000;"Chełm";"Poland";en
+"node 253546793 from osm";"Przemyśl";49.7821562,22.7692634,1000;"Przemyśl";"Poland";en
+"node 253548556 from osm";"Zamość";50.717063,23.2525653,1000;"Zamość";"Poland";en
+"node 253552911 from osm";"Piekary Śląskie";50.3840312,18.9456429,1000;"Piekary Śląskie";"Poland";en
+"node 357913636 from osm";"Gorzów Wielkopolski";52.7309926,15.2400451,1000;"Gorzów Wielkopolski";"Poland";en
+"node 418392093 from osm";"Wrocław";51.1089776,17.0326689,1000;"Wrocław";"Poland";en
+"node 428339515 from osm";"Warszawa";52.2319237,21.0067265,1000;"Warszawa";"Poland";en
+"node 769235431 from osm";"Piotrków Trybunalski";51.4097039,19.6876129,1000;"Piotrków Trybunalski";"Poland";en
+"node 1243678001 from osm";"Żory";50.0454961,18.6943479,1000;"Żory";"Poland";en
+"node 1282380456 from osm";"Mysłowice";50.2414715,19.1414528,1000;"Mysłowice";"Poland";en
+"node 1507719599 from osm";"Dąbrowa Górnicza";50.3309808,19.1963279,1000;"Dąbrowa Górnicza";"Poland";en

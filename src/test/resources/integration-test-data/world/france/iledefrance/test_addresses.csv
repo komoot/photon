@@ -1,0 +1,937 @@
+query,lon,lat,limit,expected_name,expected_housenumber,expected_street,expected_city,expected_postcode
+34 Avenue de l'Opéra Paris,,,,34 Avenue de l'Opéra,,,,75002
+34 Avenue de l'Opéra 75002,,,,34 Avenue de l'Opéra,,,Paris,
+34 Avenue de l'Opéra,2.333370,48.868659,,34 Avenue de l'Opéra,,,,75002
+19B Rue des Deux Ponts Paris,,,,19B Rue des Deux Ponts,,,,75004
+19B Rue des Deux Ponts 75004,,,,19B Rue des Deux Ponts,,,Paris,
+19B Rue des Deux Ponts,2.356355,48.851728,,19B Rue des Deux Ponts,,,,75004
+25 Quai de Montebello Paris,,,,25 Quai de Montebello,,,,75005
+25 Quai de Montebello 75005,,,,25 Quai de Montebello,,,Paris,
+25 Quai de Montebello,2.347712,48.852487,,25 Quai de Montebello,,,,75005
+7T Rue Servandoni Paris,,,,7T Rue Servandoni,,,,75006
+7T Rue Servandoni 75006,,,,7T Rue Servandoni,,,Paris,
+7T Rue Servandoni,2.334795,48.850291,,7T Rue Servandoni,,,,75006
+29 Rue de Bassano Paris,,,,29 Rue de Bassano,,,,75008
+29 Rue de Bassano 75008,,,,29 Rue de Bassano,,,Paris,
+29 Rue de Bassano,2.298874,48.870420,,29 Rue de Bassano,,,,75008
+104 Rue Blanche Paris,,,,104 Rue Blanche,,,,75009
+104 Rue Blanche 75009,,,,104 Rue Blanche,,,Paris,
+104 Rue Blanche,2.332395,48.883345,,104 Rue Blanche,,,,75009
+15 Rue du Buisson Saint-Louis Paris,,,,15 Rue du Buisson Saint-Louis,,,,75010
+15 Rue du Buisson Saint-Louis 75010,,,,15 Rue du Buisson Saint-Louis,,,Paris,
+15 Rue du Buisson Saint-Louis,2.373500,48.872447,,15 Rue du Buisson Saint-Louis,,,,75010
+39 Rue des Boulets Paris,,,,39 Rue des Boulets,,,,75011
+39 Rue des Boulets 75011,,,,39 Rue des Boulets,,,Paris,
+39 Rue des Boulets,2.389308,48.851710,,39 Rue des Boulets,,,,75011
+41 Avenue de la République Paris,,,,41 Avenue de la République,,,,75011
+41 Avenue de la République 75011,,,,41 Avenue de la République,,,Paris,
+41 Avenue de la République,2.374896,48.865338,,41 Avenue de la République,,,,75011
+91 Avenue Daumesnil Paris,,,,91 Avenue Daumesnil,,,,75012
+91 Avenue Daumesnil 75012,,,,91 Avenue Daumesnil,,,Paris,
+91 Avenue Daumesnil,2.379139,48.845647,,91 Avenue Daumesnil,,,,75012
+54 Avenue des Terroirs de France Paris,,,,54 Avenue des Terroirs de France,,,,75012
+54 Avenue des Terroirs de France 75012,,,,54 Avenue des Terroirs de France,,,Paris,
+54 Avenue des Terroirs de France,2.389139,48.832148,,54 Avenue des Terroirs de France,,,,75012
+11 Rue de l'Espérance Paris,,,,11 Rue de l'Espérance,,,,75013
+11 Rue de l'Espérance 75013,,,,11 Rue de l'Espérance,,,Paris,
+11 Rue de l'Espérance,2.348655,48.827233,,11 Rue de l'Espérance,,,,75013
+31 Rue Primo Levi Paris,,,,31 Rue Primo Levi,,,,75013
+31 Rue Primo Levi 75013,,,,31 Rue Primo Levi,,,Paris,
+31 Rue Primo Levi,2.377597,48.830024,,31 Rue Primo Levi,,,,75013
+9 Rue du Couédic Paris,,,,9 Rue du Couédic,,,,75014
+9 Rue du Couédic 75014,,,,9 Rue du Couédic,,,Paris,
+9 Rue du Couédic,2.333423,48.830178,,9 Rue du Couédic,,,,75014
+64 Rue de la Santé Paris,,,,64 Rue de la Santé,,,,75014
+64 Rue de la Santé 75014,,,,64 Rue de la Santé,,,Paris,
+64 Rue de la Santé,2.341136,48.830622,,64 Rue de la Santé,,,,75014
+35 Rue Duranton Paris,,,,35 Rue Duranton,,,,75015
+35 Rue Duranton 75015,,,,35 Rue Duranton,,,Paris,
+35 Rue Duranton,2.288023,48.839117,,35 Rue Duranton,,,,75015
+1 Rue Mathurin Régnier Paris,,,,1 Rue Mathurin Régnier,,,,75015
+1 Rue Mathurin Régnier 75015,,,,1 Rue Mathurin Régnier,,,Paris,
+1 Rue Mathurin Régnier,2.306889,48.840943,,1 Rue Mathurin Régnier,,,,75015
+49 Rue Boileau Paris,,,,49 Rue Boileau,,,,75016
+49 Rue Boileau 75016,,,,49 Rue Boileau,,,Paris,
+49 Rue Boileau,2.263469,48.843767,,49 Rue Boileau,,,,75016
+3 Place Léon Deubel Paris,,,,3 Place Léon Deubel,,,,75016
+3 Place Léon Deubel 75016,,,,3 Place Léon Deubel,,,Paris,
+3 Place Léon Deubel,2.259248,48.837899,,3 Place Léon Deubel,,,,75016
+31 Avenue de Versailles Paris,,,,31 Avenue de Versailles,,,,75016
+31 Avenue de Versailles 75016,,,,31 Avenue de Versailles,,,Paris,
+31 Avenue de Versailles,2.276102,48.849519,,31 Avenue de Versailles,,,,75016
+7 Rue Gustave Doré Paris,,,,7 Rue Gustave Doré,,,,75017
+7 Rue Gustave Doré 75017,,,,7 Rue Gustave Doré,,,Paris,
+7 Rue Gustave Doré,2.302565,48.886480,,7 Rue Gustave Doré,,,,75017
+12 Rue Vernier Paris,,,,12 Rue Vernier,,,,75017
+12 Rue Vernier 75017,,,,12 Rue Vernier,,,Paris,
+12 Rue Vernier,2.290906,48.883356,,12 Rue Vernier,,,,75017
+57 Rue de la Goutte d'Or Paris,,,,57 Rue de la Goutte d'Or,,,,75018
+57 Rue de la Goutte d'Or 75018,,,,57 Rue de la Goutte d'Or,,,Paris,
+57 Rue de la Goutte d'Or,2.350989,48.885028,,57 Rue de la Goutte d'Or,,,,75018
+80 Avenue de Saint-Ouen Paris,,,,80 Avenue de Saint-Ouen,,,,75018
+80 Avenue de Saint-Ouen 75018,,,,80 Avenue de Saint-Ouen,,,Paris,
+80 Avenue de Saint-Ouen,2.327333,48.892222,,80 Avenue de Saint-Ouen,,,,75018
+10 Rue du Général Brunet Paris,,,,10 Rue du Général Brunet,,,,75019
+10 Rue du Général Brunet 75019,,,,10 Rue du Général Brunet,,,Paris,
+10 Rue du Général Brunet,2.390874,48.880406,,10 Rue du Général Brunet,,,,75019
+18 Rue Suzanne Masson Paris,,,,18 Rue Suzanne Masson,,,,75019
+18 Rue Suzanne Masson 75019,,,,18 Rue Suzanne Masson,,,Paris,
+18 Rue Suzanne Masson,2.371374,48.888577,,18 Rue Suzanne Masson,,,,75019
+100 Rue des Haies Paris,,,,100 Rue des Haies,,,,75020
+100 Rue des Haies 75020,,,,100 Rue des Haies,,,Paris,
+100 Rue des Haies,2.404295,48.855644,,100 Rue des Haies,,,,75020
+4 Rue du Repos Paris,,,,4 Rue du Repos,,,,75020
+4 Rue du Repos 75020,,,,4 Rue du Repos,,,Paris,
+4 Rue du Repos,2.391937,48.858150,,4 Rue du Repos,,,,75020
+28 Rue de la Belle Marie Barbizon,,,,28 Rue de la Belle Marie,,,,77630
+28 Rue de la Belle Marie 77630,,,,28 Rue de la Belle Marie,,,Barbizon,
+28 Rue de la Belle Marie,2.601323,48.439768,,28 Rue de la Belle Marie,,,,77630
+3 Rue du Centre Boissy-le-Châtel,,,,3 Rue du Centre,,,,77169
+3 Rue du Centre 77169,,,,3 Rue du Centre,,,Boissy-le-Châtel,
+3 Rue du Centre,3.136898,48.821008,,3 Rue du Centre,,,,77169
+11 Rue de la Grenouillère Brie-Comte-Robert,,,,11 Rue de la Grenouillère,,,,77170
+11 Rue de la Grenouillère 77170,,,,11 Rue de la Grenouillère,,,Brie-Comte-Robert,
+11 Rue de la Grenouillère,2.611226,48.690539,,11 Rue de la Grenouillère,,,,77170
+25 Promenade des Golfeurs Bussy-Saint-Georges,,,,25 Promenade des Golfeurs,,,,77600
+25 Promenade des Golfeurs 77600,,,,25 Promenade des Golfeurs,,,Bussy-Saint-Georges,
+25 Promenade des Golfeurs,2.709096,48.848578,,25 Promenade des Golfeurs,,,,77600
+58 Rue des Epis d'Or Cerneux,,,,58 Rue des Épis d'Or,,,,77320
+58 Rue des Epis d'Or 77320,,,,58 Rue des Épis d'Or,,,Cerneux,
+58 Rue des Epis d'Or,3.351117,48.698393,,58 Rue des Épis d'Or,,,,77320
+96 Rue des Moulins Chalautre-la-Petite,,,,96 Rue des Moulins,,,,77160
+96 Rue des Moulins 77160,,,,96 Rue des Moulins,,,Chalautre-la-Petite,
+96 Rue des Moulins,3.312520,48.529170,,96 Rue des Moulins,,,,77160
+16 Rue Jean Moulin Champs-sur-Marne,,,,16 Rue Jean Moulin,,,,77420
+16 Rue Jean Moulin 77420,,,,16 Rue Jean Moulin,,,Champs-sur-Marne,
+16 Rue Jean Moulin,2.607726,48.850439,,16 Rue Jean Moulin,,,,77420
+25 Rue Aristide Briand Chartrettes,,,,25 Rue Aristide Briand,,,,77590
+25 Rue Aristide Briand 77590,,,,25 Rue Aristide Briand,,,Chartrettes,
+25 Rue Aristide Briand,2.694857,48.490361,,25 Rue Aristide Briand,,,,77590
+29BIS Avenue des Abbesses Chelles,,,,29BIS Avenue des Abbesses,,,,77500
+29BIS Avenue des Abbesses 77500,,,,29BIS Avenue des Abbesses,,,Chelles,
+29BIS Avenue des Abbesses,2.578605,48.875230,,29BIS Avenue des Abbesses,,,,77500
+1 Allée des Geais Chelles,,,,1 Allée des Geais,,,,77500
+1 Allée des Geais 77500,,,,1 Allée des Geais,,,Chelles,
+1 Allée des Geais,2.601246,48.886763,,1 Allée des Geais,,,,77500
+1 Rue du Rêve Chelles,,,,1 Rue du Rêve,,,,77500
+1 Rue du Rêve 77500,,,,1 Rue du Rêve,,,Chelles,
+1 Rue du Rêve,2.604386,48.879869,,1 Rue du Rêve,,,,77500
+6 Rue Romy Schneider Chevry-Cossigny,,,,6 Rue Romy Schneider,,,,77173
+6 Rue Romy Schneider 77173,,,,6 Rue Romy Schneider,,,Chevry-Cossigny,
+6 Rue Romy Schneider,2.661320,48.726746,,6 Rue Romy Schneider,,,,77173
+14 Rue des Brisaciers Collégien,,,,14 Rue des Brisaciers,,,,77090
+14 Rue des Brisaciers 77090,,,,14 Rue des Brisaciers,,,Collégien,
+14 Rue des Brisaciers,2.676648,48.836407,,14 Rue des Brisaciers,,,,77090
+13 Allée des Rouges Gorges Combs-la-Ville,,,,13 Allée des Rouges Gorges,,,,77380
+13 Allée des Rouges Gorges 77380,,,,13 Allée des Rouges Gorges,,,Combs-la-Ville,
+13 Allée des Rouges Gorges,2.562337,48.660754,,13 Allée des Rouges Gorges,,,,77380
+5 Place du Marché Coulommiers,,,,5 Place du Marché,,,,77120
+5 Place du Marché 77120,,,,5 Place du Marché,,,Coulommiers,
+5 Place du Marché,3.083966,48.814277,,5 Place du Marché,,,,77120
+5 Allée de la Résidence du Cavoy Courtry,,,,5 Allée de la Résidence du Cavoy,,,,77181
+5 Allée de la Résidence du Cavoy 77181,,,,5 Allée de la Résidence du Cavoy,,,Courtry,
+5 Allée de la Résidence du Cavoy,2.596807,48.912661,,5 Allée de la Résidence du Cavoy,,,,77181
+388D Avenue Émile Zola Dammarie-les-Lys,,,,388D Avenue Émile Zola,,,,77190
+388D Avenue Émile Zola 77190,,,,388D Avenue Émile Zola,,,Dammarie-les-Lys,
+388D Avenue Émile Zola,2.642424,48.517265,,388D Avenue Émile Zola,,,,77190
+12 Allée Saint-Rémy Dammartin-en-Goële,,,,12 Allée Saint-Rémy,,,,77230
+12 Allée Saint-Rémy 77230,,,,12 Allée Saint-Rémy,,,Dammartin-en-Goële,
+12 Allée Saint-Rémy,2.691440,49.053944,,12 Allée Saint-Rémy,,,,77230
+59 Avenue de l'Europe Émerainville,,,,59 Avenue de l'Europe,,,,77184
+59 Avenue de l'Europe 77184,,,,59 Avenue de l'Europe,,,Émerainville,
+59 Avenue de l'Europe,2.603183,48.829959,,59 Avenue de l'Europe,,,,77184
+36 Rue Robert Legraverend La Ferté-Gaucher,,,,36 Rue Robert Legraverend,,,,77320
+36 Rue Robert Legraverend 77320,,,,36 Rue Robert Legraverend,,,La Ferté-Gaucher,
+36 Rue Robert Legraverend,3.304499,48.786881,,36 Rue Robert Legraverend,,,,77320
+9 Rue de Fleury Fontainebleau,,,,9 Rue de Fleury,,,,77300
+9 Rue de Fleury 77300,,,,9 Rue de Fleury,,,Fontainebleau,
+9 Rue de Fleury,2.694572,48.404830,,9 Rue de Fleury,,,,77300
+418 Rue du Général de Gaulle Fouju,,,,418 Rue du Général de Gaulle,,,,77390
+418 Rue du Général de Gaulle 77390,,,,418 Rue du Général de Gaulle,,,Fouju,
+418 Rue du Général de Gaulle,2.776990,48.584491,,418 Rue du Général de Gaulle,,,,77390
+19 Avenue du Parc Gretz-Armainvilliers,,,,19 Avenue du Parc,,,,77220
+19 Avenue du Parc 77220,,,,19 Avenue du Parc,,,Gretz-Armainvilliers,
+19 Avenue du Parc,2.712342,48.738898,,19 Avenue du Parc,,,,77220
+1 Rue de la Fontaine du Sault Héricy,,,,1 Rue de la Fontaine du Sault,,,,77850
+1 Rue de la Fontaine du Sault 77850,,,,1 Rue de la Fontaine du Sault,,,Héricy,
+1 Rue de la Fontaine du Sault,2.766645,48.449632,,1 Rue de la Fontaine du Sault,,,,77850
+14 Ruelle du Moulin Brûlé Jouy-sur-Morin,,,,14 Ruelle du Moulin Brûlé,,,,77320
+14 Ruelle du Moulin Brûlé 77320,,,,14 Ruelle du Moulin Brûlé,,,Jouy-sur-Morin,
+14 Ruelle du Moulin Brûlé,3.283984,48.794960,,14 Ruelle du Moulin Brûlé,,,,77320
+27 Sentier Petite Sente Verte Lagny-sur-Marne,,,,27 Sentier Petite Sente Verte,,,,77400
+27 Sentier Petite Sente Verte 77400,,,,27 Sentier Petite Sente Verte,,,Lagny-sur-Marne,
+27 Sentier Petite Sente Verte,2.696427,48.869306,,27 Sentier Petite Sente Verte,,,,77400
+59 Rue du Colombier Lieusaint,,,,59 Rue du Colombier,,,,77127
+59 Rue du Colombier 77127,,,,59 Rue du Colombier,,,Lieusaint,
+59 Rue du Colombier,2.545728,48.631980,,59 Rue du Colombier,,,,77127
+2 Boulevard du Mandinet Lognes,,,,2 Boulevard du Mandinet,,,,77185
+2 Boulevard du Mandinet 77185,,,,2 Boulevard du Mandinet,,,Lognes,
+2 Boulevard du Mandinet,2.633376,48.834116,,2 Boulevard du Mandinet,,,,77185
+8 Rue du Pavé du Roy Maison-Rouge,,,,8 Rue du Pavé du Roy,,,,77370
+8 Rue du Pavé du Roy 77370,,,,8 Rue du Pavé du Roy,,,Maison-Rouge,
+8 Rue du Pavé du Roy,3.151995,48.559041,,8 Rue du Pavé du Roy,,,,77370
+41 Allée des Colibris Meaux,,,,41 Allée des Colibris,,,,77100
+41 Allée des Colibris 77100,,,,41 Allée des Colibris,,,Meaux,
+41 Allée des Colibris,2.897398,48.952428,,41 Allée des Colibris,,,,77100
+5 Impasse du Sabot Meaux,,,,5 Impasse du Sabot,,,,77100
+5 Impasse du Sabot 77100,,,,5 Impasse du Sabot,,,Meaux,
+5 Impasse du Sabot,2.877052,48.969322,,5 Impasse du Sabot,,,,77100
+15BIS Rue de l'Écluse Melun,,,,15BIS Rue de l'Écluse,,,,77000
+15BIS Rue de l'Écluse 77000,,,,15BIS Rue de l'Écluse,,,Melun,
+15BIS Rue de l'Écluse,2.649881,48.534508,,15BIS Rue de l'Écluse,,,,77000
+6 Rue Camille Desmoulins Mitry-Mory,,,,6 Rue Camille Desmoulins,,,,77290
+6 Rue Camille Desmoulins 77290,,,,6 Rue Camille Desmoulins,,,Mitry-Mory,
+6 Rue Camille Desmoulins,2.585772,48.963210,,6 Rue Camille Desmoulins,,,,77290
+23 Impasse du Cuché Moisenay,,,,23 Impasse du Cuché,,,,77950
+23 Impasse du Cuché 77950,,,,23 Impasse du Cuché,,,Moisenay,
+23 Impasse du Cuché,2.742529,48.562150,,23 Impasse du Cuché,,,,77950
+11TER Rue des Joncs Montereau-sur-le-Jard,,,,11TER Rue des Joncs,,,,77950
+11TER Rue des Joncs 77950,,,,11TER Rue des Joncs,,,Montereau-sur-le-Jard,
+11TER Rue des Joncs,2.687637,48.596864,,11TER Rue des Joncs,,,,77950
+6 Rue Turgot Montry,,,,6 Rue Turgot,,,,77450
+6 Rue Turgot 77450,,,,6 Rue Turgot,,,Montry,
+6 Rue Turgot,2.834731,48.886887,,6 Rue Turgot,,,,77450
+68 Rue du Pont de l'Amour Mouroux,,,,68 Rue du Pont de l'Amour,,,,77120
+68 Rue du Pont de l'Amour 77120,,,,68 Rue du Pont de l'Amour,,,Mouroux,
+68 Rue du Pont de l'Amour,3.051250,48.812266,,68 Rue du Pont de l'Amour,,,,77120
+1 Place de Violaine Nanteuil-sur-Marne,,,,1 Place de Violaine,,,,77730
+1 Place de Violaine 77730,,,,1 Place de Violaine,,,Nanteuil-sur-Marne,
+1 Place de Violaine,3.219987,48.978660,,1 Place de Violaine,,,,77730
+21 Rue Alphonse Allais Ozoir-la-Ferrière,,,,21 Rue Alphonse Allais,,,,77330
+21 Rue Alphonse Allais 77330,,,,21 Rue Alphonse Allais,,,Ozoir-la-Ferrière,
+21 Rue Alphonse Allais,2.678021,48.764851,,21 Rue Alphonse Allais,,,,77330
+38 Rue Salvadore Allende Ozoir-la-Ferrière,,,,38 Rue Salvador Allende,,,,77330
+38 Rue Salvadore Allende 77330,,,,38 Rue Salvador Allende,,,Ozoir-la-Ferrière,
+38 Rue Salvadore Allende,2.664067,48.761201,,38 Rue Salvador Allende,,,,77330
+70 Rue des Chênes Pomponne,,,,70 Rue des Chênes,,,,77400
+70 Rue des Chênes 77400,,,,70 Rue des Chênes,,,Pomponne,
+70 Rue des Chênes,2.692666,48.884409,,70 Rue des Chênes,,,,77400
+12 Rue Jean Charcot Pontault-Combault,,,,12 Rue Jean Charcot,,,,77340
+12 Rue Jean Charcot 77340,,,,12 Rue Jean Charcot,,,Pontault-Combault,
+12 Rue Jean Charcot,2.615703,48.788818,,12 Rue Jean Charcot,,,,77340
+121 Avenue de Fontainebleau Pringy,,,,121 Avenue de Fontainebleau,,,,77310
+121 Avenue de Fontainebleau 77310,,,,121 Avenue de Fontainebleau,,,Pringy,
+121 Avenue de Fontainebleau,2.563317,48.519226,,121 Avenue de Fontainebleau,,,,77310
+226 Avenue Foch Quincy-Voisins,,,,226 Avenue Foch,,,,77860
+226 Avenue Foch 77860,,,,226 Avenue Foch,,,Quincy-Voisins,
+226 Avenue Foch,2.879693,48.903778,,226 Avenue Foch,,,,77860
+1 Rue Dian Fossey Roissy-en-Brie,,,,1 Rue Dian Fossey,,,,77680
+1 Rue Dian Fossey 77680,,,,1 Rue Dian Fossey,,,Roissy-en-Brie,
+1 Rue Dian Fossey,2.636304,48.802602,,1 Rue Dian Fossey,,,,77680
+10 Chemin des Marêts Rupéreux,,,,10 Chemin des Marêts,,,,77560
+10 Chemin des Marêts 77560,,,,10 Chemin des Marêts,,,Rupéreux,
+10 Chemin des Marêts,3.328342,48.637860,,10 Chemin des Marêts,,,,77560
+27 Allée des Fougères Saint-Fargeau-Ponthierry,,,,27 Allée des Fougères,,,,77310
+27 Allée des Fougères 77310,,,,27 Allée des Fougères,,,Saint-Fargeau-Ponthierry,
+27 Allée des Fougères,2.527830,48.568169,,27 Allée des Fougères,,,,77310
+11 Chemin du Château Saint-Mard,,,,11 Chemin du Château,,,,77230
+11 Chemin du Château 77230,,,,11 Chemin du Château,,,Saint-Mard,
+11 Chemin du Château,2.686862,49.035977,,11 Chemin du Château,,,,77230
+20 Rue du Buat Saint-Soupplets,,,,20 Rue du Buat,,,,77165
+20 Rue du Buat 77165,,,,20 Rue du Buat,,,Saint-Soupplets,
+20 Rue du Buat,2.805044,49.036803,,20 Rue du Buat,,,,77165
+3 Rue du Nord Savigny-le-Temple,,,,3 Rue du Nord,,,,77176
+3 Rue du Nord 77176,,,,3 Rue du Nord,,,Savigny-le-Temple,
+3 Rue du Nord,2.578030,48.576265,,3 Rue du Nord,,,,77176
+9 Place des Tilleuls Savigny-le-Temple,,,,9 Place des Tilleuls,,,,77176
+9 Place des Tilleuls 77176,,,,9 Place des Tilleuls,,,Savigny-le-Temple,
+9 Place des Tilleuls,2.554402,48.603569,,9 Place des Tilleuls,,,,77176
+19 Rue des Étards Solers,,,,19 Rue des Étards,,,,77111
+19 Rue des Étards 77111,,,,19 Rue des Étards,,,Solers,
+19 Rue des Étards,2.723154,48.658812,,19 Rue des Étards,,,,77111
+3BIS Rue Jeanne d'Arc Thorigny-sur-Marne,,,,3BIS Rue Jeanne d'Arc,,,,77400
+3BIS Rue Jeanne d'Arc 77400,,,,3BIS Rue Jeanne d'Arc,,,Thorigny-sur-Marne,
+3BIS Rue Jeanne d'Arc,2.705756,48.885759,,3BIS Rue Jeanne d'Arc,,,,77400
+3 Rue du Martray Tournan-en-Brie,,,,3 Rue du Martray,,,,77220
+3 Rue du Martray 77220,,,,3 Rue du Martray,,,Tournan-en-Brie,
+3 Rue du Martray,2.768281,48.739259,,3 Rue du Martray,,,,77220
+11 Avenue Jean Jaurès Vaires-sur-Marne,,,,11 Avenue Jean Jaurès,,,,77360
+11 Avenue Jean Jaurès 77360,,,,11 Avenue Jean Jaurès,,,Vaires-sur-Marne,
+11 Avenue Jean Jaurès,2.638424,48.874141,,11 Avenue Jean Jaurès,,,,77360
+13 Rue du Grand Pressoir Vaux-le-Pénil,,,,13 Rue du Grand Pressoir,,,,77000
+13 Rue du Grand Pressoir 77000,,,,13 Rue du Grand Pressoir,,,Vaux-le-Pénil,
+13 Rue du Grand Pressoir,2.678439,48.527469,,13 Rue du Grand Pressoir,,,,77000
+1 Rue de la Madeleine Vert-Saint-Denis,,,,1 Rue de la Madeleine,,,,77240
+1 Rue de la Madeleine 77240,,,,1 Rue de la Madeleine,,,Vert-Saint-Denis,
+1 Rue de la Madeleine,2.653626,48.570361,,1 Rue de la Madeleine,,,,77240
+27 Rue René Lefebvre Villiers-sous-Grez,,,,27 Rue René Lefebvre,,,,77760
+27 Rue René Lefebvre 77760,,,,27 Rue René Lefebvre,,,Villiers-sous-Grez,
+27 Rue René Lefebvre,2.649723,48.320311,,27 Rue René Lefebvre,,,,77760
+1 Rue du Général Schweisguth Andrésy,,,,1 Rue du Général Schweisguth,,,,78570
+1 Rue du Général Schweisguth 78570,,,,1 Rue du Général Schweisguth,,,Andrésy,
+1 Rue du Général Schweisguth,2.070849,48.990886,,1 Rue du Général Schweisguth,,,,78570
+13 Rue de Maule Bazemont,,,,13 Rue de Maule,,,,78580
+13 Rue de Maule 78580,,,,13 Rue de Maule,,,Bazemont,
+13 Rue de Maule,1.867066,48.928404,,13 Rue de Maule,,,,78580
+1 Rue Raimu Bois-d'Arcy,,,,1 Rue Raimu,,,,78390
+1 Rue Raimu 78390,,,,1 Rue Raimu,,,Bois-d'Arcy,
+1 Rue Raimu,2.010724,48.805834,,1 Rue Raimu,,,,78390
+34 Rue Pasteur Buchelay,,,,34 Rue Pasteur,,,,78200
+34 Rue Pasteur 78200,,,,34 Rue Pasteur,,,Buchelay,
+34 Rue Pasteur,1.673060,48.982348,,34 Rue Pasteur,,,,78200
+21 Allée des Chardonnerets Cernay-la-Ville,,,,21 Allée des Chardonnerets,,,,78720
+21 Allée des Chardonnerets 78720,,,,21 Allée des Chardonnerets,,,Cernay-la-Ville,
+21 Allée des Chardonnerets,1.977011,48.671943,,21 Allée des Chardonnerets,,,,78720
+106 Avenue Gambetta Chatou,,,,106 Avenue Gambetta,,,,78400
+106 Avenue Gambetta 78400,,,,106 Avenue Gambetta,,,Chatou,
+106 Avenue Gambetta,2.170231,48.901294,,106 Avenue Gambetta,,,,78400
+28 Avenue de Montespan Le Chesnay,,,,28 Avenue de Montespan,,,,78150
+28 Avenue de Montespan 78150,,,,28 Avenue de Montespan,,,Le Chesnay,
+28 Avenue de Montespan,2.138017,48.821708,,28 Avenue de Montespan,,,,78150
+8 Rue du Hallier Condé-sur-Vesgre,,,,8 Rue du Hallier,,,,78113
+8 Rue du Hallier 78113,,,,8 Rue du Hallier,,,Condé-sur-Vesgre,
+8 Rue du Hallier,1.668307,48.740372,,8 Rue du Hallier,,,,78113
+1 Rue J B Drapier Conflans-Sainte-Honorine,,,,1 Rue Jean-Baptiste Drapier,,,,78700
+1 Rue J B Drapier 78700,,,,1 Rue Jean-Baptiste Drapier,,,Conflans-Sainte-Honorine,
+1 Rue J B Drapier,2.076490,48.996703,,1 Rue Jean-Baptiste Drapier,,,,78700
+58BIS Avenue de Verdun Croissy-sur-Seine,,,,58BIS Avenue de Verdun,,,,78290
+58BIS Avenue de Verdun 78290,,,,58BIS Avenue de Verdun,,,Croissy-sur-Seine,
+58BIS Avenue de Verdun,2.138273,48.882568,,58BIS Avenue de Verdun,,,,78290
+23 Rue du Pont Élancourt,,,,23 Rue du Pont,,,,78990
+23 Rue du Pont 78990,,,,23 Rue du Pont,,,Élancourt,
+23 Rue du Pont,1.957560,48.778507,,23 Rue du Pont,,,,78990
+15 Chemin du Clos Saint-Martin L'Étang-la-Ville,,,,15 Chemin du Clos Saint-Martin,,,,78620
+15 Chemin du Clos Saint-Martin 78620,,,,15 Chemin du Clos Saint-Martin,,,L'Étang-la-Ville,
+15 Chemin du Clos Saint-Martin,2.064458,48.866240,,15 Chemin du Clos Saint-Martin,,,,78620
+9 Rue des Vergers Freneuse,,,,9 Rue des Vergers,,,,78840
+9 Rue des Vergers 78840,,,,9 Rue des Vergers,,,Freneuse,
+9 Rue des Vergers,1.602650,49.042899,,9 Rue des Vergers,,,,78840
+56 Rue Molière Guyancourt,,,,56 Rue Molière,,,,78280
+56 Rue Molière 78280,,,,56 Rue Molière,,,Guyancourt,
+56 Rue Molière,2.062847,48.765592,,56 Rue Molière,,,,78280
+17BIS Rue Joseph Bara Houilles,,,,17BIS Rue Joseph Bara,,,,78800
+17BIS Rue Joseph Bara 78800,,,,17BIS Rue Joseph Bara,,,Houilles,
+17BIS Rue Joseph Bara,2.198203,48.925140,,17BIS Rue Joseph Bara,,,,78800
+38QUATER Route de la Roche Limetz-Villez,,,,38QUATER Route de la Roche,,,,78270
+38QUATER Route de la Roche 78270,,,,38QUATER Route de la Roche,,,Limetz-Villez,
+38QUATER Route de la Roche,1.553745,49.063118,,38QUATER Route de la Roche,,,,78270
+9 Allée des Droits de l'Homme Magny-les-Hameaux,,,,9 Allée des Droits de l'Homme,,,,78114
+9 Allée des Droits de l'Homme 78114,,,,9 Allée des Droits de l'Homme,,,Magny-les-Hameaux,
+9 Allée des Droits de l'Homme,2.080906,48.721113,,9 Allée des Droits de l'Homme,,,,78114
+19 Rue de l'Union Maisons-Laffitte,,,,19 Rue de l'Union,,,,78600
+19 Rue de l'Union 78600,,,,19 Rue de l'Union,,,Maisons-Laffitte,
+19 Rue de l'Union,2.137465,48.948797,,19 Rue de l'Union,,,,78600
+31 Rue de Bellevue Mantes-la-Ville,,,,31 Rue de Bellevue,,,,78711
+31 Rue de Bellevue 78711,,,,31 Rue de Bellevue,,,Mantes-la-Ville,
+31 Rue de Bellevue,1.717671,48.980143,,31 Rue de Bellevue,,,,78711
+30 Rue des Harias Mareil-sur-Mauldre,,,,30 Rue des Harias,,,,78124
+30 Rue des Harias 78124,,,,30 Rue des Harias,,,Mareil-sur-Mauldre,
+30 Rue des Harias,1.885278,48.886708,,30 Rue des Harias,,,,78124
+5 Square du Clermontois Maurepas,,,,5 Square du Clermontois,,,,78310
+5 Square du Clermontois 78310,,,,5 Square du Clermontois,,,Maurepas,
+5 Square du Clermontois,1.935409,48.771257,,5 Square du Clermontois,,,,78310
+19BIS Avenue de la République Le Mesnil-le-Roi,,,,19BIS Avenue de la République,,,,78600
+19BIS Avenue de la République 78600,,,,19BIS Avenue de la République,,,Le Mesnil-le-Roi,
+19BIS Avenue de la République,2.136457,48.938763,,19BIS Avenue de la République,,,,78600
+12 Quai George Sand Montesson,,,,12 Quai George Sand,,,,78360
+12 Quai George Sand 78360,,,,12 Quai George Sand,,,Montesson,
+12 Quai George Sand,2.137131,48.930695,,12 Quai George Sand,,,,78360
+5 Square de la Mare aux Renards Montigny-le-Bretonneux,,,,5 Square de la Mare aux Renards,,,,78180
+5 Square de la Mare aux Renards 78180,,,,5 Square de la Mare aux Renards,,,Montigny-le-Bretonneux,
+5 Square de la Mare aux Renards,2.031763,48.766802,,5 Square de la Mare aux Renards,,,,78180
+16BIS Rue des Cent Arpents Neauphle-le-Château,,,,16BIS Rue des Cent Arpents,,,,78640
+16BIS Rue des Cent Arpents 78640,,,,16BIS Rue des Cent Arpents,,,Neauphle-le-Château,
+16BIS Rue des Cent Arpents,1.904235,48.821573,,16BIS Rue des Cent Arpents,,,,78640
+2 Allée de la Reine des Reinettes Orgeval,,,,2 Allée de la Reine des Reinettes,,,,78630
+2 Allée de la Reine des Reinettes 78630,,,,2 Allée de la Reine des Reinettes,,,Orgeval,
+2 Allée de la Reine des Reinettes,1.974228,48.927248,,2 Allée de la Reine des Reinettes,,,,78630
+6 Rue Jean Giono Plaisir,,,,6 Rue Jean Giono,,,,78370
+6 Rue Jean Giono 78370,,,,6 Rue Jean Giono,,,Plaisir,
+6 Rue Jean Giono,1.927648,48.820644,,6 Rue Jean Giono,,,,78370
+6 Rue du 8 Mai 1945 Poissy,,,,6 Rue du 8 Mai 1945,,,,78300
+6 Rue du 8 Mai 1945 78300,,,,6 Rue du 8 Mai 1945,,,Poissy,
+6 Rue du 8 Mai 1945,2.044059,48.928205,,6 Rue du 8 Mai 1945,,,,78300
+30 Rue du Clos Batant Rambouillet,,,,30 Rue du Clos-Batant,,,,78120
+30 Rue du Clos Batant 78120,,,,30 Rue du Clos-Batant,,,Rambouillet,
+30 Rue du Clos Batant,1.855534,48.652697,,30 Rue du Clos-Batant,,,,78120
+21 Route de Houdan Richebourg,,,,21 Route de Houdan,,,,78550
+21 Route de Houdan 78550,,,,21 Route de Houdan,,,Richebourg,
+21 Route de Houdan,1.631829,48.818202,,21 Route de Houdan,,,,78550
+3 Rue Danès de Montardat Saint-Germain-en-Laye,,,,3 Rue Danès de Montardat,,,,78100
+3 Rue Danès de Montardat 78100,,,,3 Rue Danès de Montardat,,,Saint-Germain-en-Laye,
+3 Rue Danès de Montardat,2.090213,48.896754,,3 Rue Danès de Montardat,,,,78100
+11 Boulevard des Plants Saint-Nom-la-Bretèche,,,,11 Boulevard des Plants,,,,78860
+11 Boulevard des Plants 78860,,,,11 Boulevard des Plants,,,Saint-Nom-la-Bretèche,
+11 Boulevard des Plants,2.030803,48.863978,,11 Boulevard des Plants,,,,78860
+1 Rue Jean-Baptiste Clément Sartrouville,,,,1 Rue Jean-Baptiste Clément,,,,78500
+1 Rue Jean-Baptiste Clément 78500,,,,1 Rue Jean-Baptiste Clément,,,Sartrouville,
+1 Rue Jean-Baptiste Clément,2.172660,48.933436,,1 Rue Jean-Baptiste Clément,,,,78500
+32 Rue des Peupliers Septeuil,,,,32 Rue des Peupliers,,,,78790
+32 Rue des Peupliers 78790,,,,32 Rue des Peupliers,,,Septeuil,
+32 Rue des Peupliers,1.679875,48.888224,,32 Rue des Peupliers,,,,78790
+14 Rue de l'Echenet Triel-sur-Seine,,,,14 Rue de l'Echenet,,,,78510
+14 Rue de l'Echenet 78510,,,,14 Rue de l'Echenet,,,Triel-sur-Seine,
+14 Rue de l'Echenet,1.994298,48.989454,,14 Rue de l'Echenet,,,,78510
+113 Rue Mozart Vélizy-Villacoublay,,,,113 Rue Mozart,,,,78140
+113 Rue Mozart 78140,,,,113 Rue Mozart,,,Vélizy-Villacoublay,
+113 Rue Mozart,2.169868,48.785538,,113 Rue Mozart,,,,78140
+21 Avenue du Chemin Vert La Verrière,,,,21 Avenue du Chemin Vert,,,,78320
+21 Avenue du Chemin Vert 78320,,,,21 Avenue du Chemin Vert,,,La Verrière,
+21 Avenue du Chemin Vert,1.956724,48.752346,,21 Avenue du Chemin Vert,,,,78320
+4 Impasse Nattier Versailles,,,,4 Impasse Nattier,,,,78000
+4 Impasse Nattier 78000,,,,4 Impasse Nattier,,,Versailles,
+4 Impasse Nattier,2.135036,48.813061,,4 Impasse Nattier,,,,78000
+36BIS Avenue Georges Clemenceau Le Vésinet,,,,36BIS Avenue Georges Clemenceau,,,,78110
+36BIS Avenue Georges Clemenceau 78110,,,,36BIS Avenue Georges Clemenceau,,,Le Vésinet,
+36BIS Avenue Georges Clemenceau,2.134034,48.887017,,36BIS Avenue Georges Clemenceau,,,,78110
+4 Rue du Pavillon Villette,,,,4 Rue du Pavillon,,,,78930
+4 Rue du Pavillon 78930,,,,4 Rue du Pavillon,,,Villette,
+4 Rue du Pavillon,1.691405,48.927760,,4 Rue du Pavillon,,,,78930
+3 Rue Jean Mermoz Voisins-le-Bretonneux,,,,3 Rue Jean Mermoz,,,,78960
+3 Rue Jean Mermoz 78960,,,,3 Rue Jean Mermoz,,,Voisins-le-Bretonneux,
+3 Rue Jean Mermoz,2.040601,48.760333,,3 Rue Jean Mermoz,,,,78960
+26 Avenue de l'Europe Athis-Mons,,,,26 Avenue de l'Europe,,,,91200
+26 Avenue de l'Europe 91200,,,,26 Avenue de l'Europe,,,Athis-Mons,
+26 Avenue de l'Europe,2.408811,48.719534,,26 Avenue de l'Europe,,,,91200
+1 Route de Morigny Auvers-Saint-Georges,,,,1 Route de Morigny,,,,91580
+1 Route de Morigny 91580,,,,1 Route de Morigny,,,Auvers-Saint-Georges,
+1 Route de Morigny,2.198262,48.478983,,1 Route de Morigny,,,,91580
+38 Rue Odilon Redon Bièvres,,,,38 Rue Odilon Redon,,,,91570
+38 Rue Odilon Redon 91570,,,,38 Rue Odilon Redon,,,Bièvres,
+38 Rue Odilon Redon,2.214667,48.756643,,38 Rue Odilon Redon,,,,91570
+22 Rue du Petit Pont Bondoufle,,,,22 Rue du Petit Pont,,,,91070
+22 Rue du Petit Pont 91070,,,,22 Rue du Petit Pont,,,Bondoufle,
+22 Rue du Petit Pont,2.385285,48.611678,,22 Rue du Petit Pont,,,,91070
+4 Rue Ducrot Brétigny-sur-Orge,,,,4 Rue Ernest Ducros,,,,91220
+4 Rue Ducrot 91220,,,,4 Ernest Ducros,,,Brétigny-sur-Orge,
+4 Rue Ducrot,2.304230,48.612895,,4 Ernest Ducros,,,,91220
+5 Rue des Sarments Breuillet,,,,5 Rue des Sarments,,,,91650
+5 Rue des Sarments 91650,,,,5 Rue des Sarments,,,Breuillet,
+5 Rue des Sarments,2.179375,48.574880,,5 Rue des Sarments,,,,91650
+16 Avenue Montaigne Brunoy,,,,16 Avenue Montaigne,,,,91800
+16 Avenue Montaigne 91800,,,,16 Avenue Montaigne,,,Brunoy,
+16 Avenue Montaigne,2.509264,48.697386,,16 Avenue Montaigne,,,,91800
+41 Rue Max Ernst Bures-sur-Yvette,,,,41 Rue Max Ernst,,,,91440
+41 Rue Max Ernst 91440,,,,41 Rue Max Ernst,,,Bures-sur-Yvette,
+41 Rue Max Ernst,2.156776,48.679705,,41 Rue Max Ernst,,,,91440
+5 Rue de la Pierre Blanche Cheptainville,,,,5 Rue de la Pierre Blanche,,,,91630
+5 Rue de la Pierre Blanche 91630,,,,5 Rue de la Pierre Blanche,,,Cheptainville,
+5 Rue de la Pierre Blanche,2.285627,48.557539,,5 Rue de la Pierre Blanche,,,,91630
+114 Rue Georges Le Dû Corbeil-Essonnes,,,,114 Rue Georges Le Dû,,,,91100
+114 Rue Georges Le Dû 91100,,,,114 Rue Georges Le Dû,,,Corbeil-Essonnes,
+114 Rue Georges Le Dû,2.473044,48.593543,,114 Rue Georges Le Dû,,,,91100
+25 Allée des Libellules Le Coudray-Montceaux,,,,25 Allée des Libellules,,,,91830
+25 Allée des Libellules 91830,,,,25 Allée des Libellules,,,Le Coudray-Montceaux,
+25 Allée des Libellules,2.506447,48.567273,,25 Allée des Libellules,,,,91830
+60 Rue de l'Égalité D'Huison-Longueville,,,,60 Rue de l'Égalité,,,,91590
+60 Rue de l'Égalité 91590,,,,60 Rue de l'Égalité,,,D'Huison-Longueville,
+60 Rue de l'Égalité,2.336809,48.455205,,60 Rue de l'Égalité,,,,91590
+13 Rue Etienne Rabot Draveil,,,,13 Rue Etienne Rabot,,,,91210
+13 Rue Etienne Rabot 91210,,,,13 Rue Etienne Rabot,,,Draveil,
+13 Rue Etienne Rabot,2.420713,48.675950,,13 Rue Etienne Rabot,,,,91210
+17 Avenue d'Arpajon Égly,,,,17 Avenue d'Arpajon,,,,91520
+17 Avenue d'Arpajon 91520,,,,17 Avenue d'Arpajon,,,Égly,
+17 Avenue d'Arpajon,2.229800,48.582000,,17 Avenue d'Arpajon,,,,91520
+30 Rue Guillemette de Bure Étampes,,,,30 Rue Guillemette de Bure,,,,91150
+30 Rue Guillemette de Bure 91150,,,,30 Rue Guillemette de Bure,,,Étampes,
+30 Rue Guillemette de Bure,2.140833,48.431631,,30 Rue Guillemette de Bure,,,,91150
+32 Rue Alfred de Musset Étréchy,,,,32 Rue Alfred de Musset,,,,91580
+32 Rue Alfred de Musset 91580,,,,32 Rue Alfred de Musset,,,Étréchy,
+32 Rue Alfred de Musset,2.183701,48.486284,,32 Rue Alfred de Musset,,,,91580
+25 Rue du Bas Côt La Ferté-Alais,,,,25 Rue du Bas Côt,,,,91590
+25 Rue du Bas Côt 91590,,,,25 Rue du Bas Côt,,,La Ferté-Alais,
+25 Rue du Bas Côt,2.367180,48.480410,,25 Rue du Bas Côt,,,,91590
+60 Avenue du Général Leclerc Gif-sur-Yvette,,,,60 Avenue du Général Leclerc,,,,91190
+60 Avenue du Général Leclerc 91190,,,,60 Avenue du Général Leclerc,,,Gif-sur-Yvette,
+60 Avenue du Général Leclerc,2.123581,48.704754,,60 Avenue du Général Leclerc,,,,91190
+8 Allée du Signal Grigny,,,,8 Allée du Signal,,,,91350
+8 Allée du Signal 91350,,,,8 Allée du Signal,,,Grigny,
+8 Allée du Signal,2.368053,48.646693,,8 Allée du Signal,,,,91350
+1 Avenue Mozart Itteville,,,,1 Avenue Mozart,,,,91760
+1 Avenue Mozart 91760,,,,1 Avenue Mozart,,,Itteville,
+1 Avenue Mozart,2.342568,48.532450,,1 Avenue Mozart,,,,91760
+46 Rue de la Ferme Lardy,,,,46 Rue de la Ferme,,,,91510
+46 Rue de la Ferme 91510,,,,46 Rue de la Ferme,,,Lardy,
+46 Rue de la Ferme,2.297476,48.535438,,46 Rue de la Ferme,,,,91510
+71 Rue de la Division Leclerc Linas,,,,71 Rue de la Division Leclerc,,,,91310
+71 Rue de la Division Leclerc 91310,,,,71 Rue de la Division Leclerc,,,Linas,
+71 Rue de la Division Leclerc,2.266607,48.632622,,71 Rue de la Division Leclerc,,,,91310
+25 Rue des Glaneurs Longjumeau,,,,25 Rue des Glaneurs,,,,91160
+25 Rue des Glaneurs 91160,,,,25 Rue des Glaneurs,,,Longjumeau,
+25 Rue des Glaneurs,2.300980,48.680790,,25 Rue des Glaneurs,,,,91160
+10BIS Route de Briis Marcoussis,,,,10BIS Route de Briis,,,,91460
+10BIS Route de Briis 91460,,,,10BIS Route de Briis,,,Marcoussis,
+10BIS Route de Briis,2.221816,48.636926,,10BIS Route de Briis,,,,91460
+31 Rue Jean Mermoz Massy,,,,31 Rue Jean Mermoz,,,,91300
+31 Rue Jean Mermoz 91300,,,,31 Rue Jean Mermoz,,,Massy,
+31 Rue Jean Mermoz,2.280368,48.728678,,31 Rue Jean Mermoz,,,,91300
+82 Rue du Petit Mennecy Mennecy,,,,82 Rue du Petit Mennecy,,,,91540
+82 Rue du Petit Mennecy 91540,,,,82 Rue du Petit Mennecy,,,Mennecy,
+82 Rue du Petit Mennecy,2.443676,48.575897,,82 Rue du Petit Mennecy,,,,91540
+19 Rue de la Janvrerie Les Molières,,,,19 Rue de la Janvrerie,,,,91470
+19 Rue de la Janvrerie 91470,,,,19 Rue de la Janvrerie,,,Les Molières,
+19 Rue de la Janvrerie,2.072290,48.676280,,19 Rue de la Janvrerie,,,,91470
+43BIS Rue Raymond Paumier Montgeron,,,,43BIS Rue Raymond Paumier,,,,91230
+43BIS Rue Raymond Paumier 91230,,,,43BIS Rue Raymond Paumier,,,Montgeron,
+43BIS Rue Raymond Paumier,2.447216,48.704176,,43BIS Rue Raymond Paumier,,,,91230
+14 Rue Jean Moulin Morangis,,,,14 Rue Jean Moulin,,,,91420
+14 Rue Jean Moulin 91420,,,,14 Rue Jean Moulin,,,Morangis,
+14 Rue Jean Moulin,2.333888,48.705800,,14 Rue Jean Moulin,,,,91420
+16 Avenue Fernand Léger Morsang-sur-Orge,,,,16 Avenue Fernand Léger,,,,91390
+16 Avenue Fernand Léger 91390,,,,16 Avenue Fernand Léger,,,Morsang-sur-Orge,
+16 Avenue Fernand Léger,2.344638,48.651070,,16 Avenue Fernand Léger,,,,91390
+2 Rue Rosa Luxembourg La Norville,,,,2 Rue Rosa Luxembourg,,,,91290
+2 Rue Rosa Luxembourg 91290,,,,2 Rue Rosa Luxembourg,,,La Norville,
+2 Rue Rosa Luxembourg,2.261681,48.592445,,2 Rue Rosa Luxembourg,,,,91290
+13 Rue Florian Orsay,,,,13 Rue Florian,,,,91400
+13 Rue Florian 91400,,,,13 Rue Florian,,,Orsay,
+13 Rue Florian,2.195807,48.704238,,13 Rue Florian,,,,91400
+111 Boulevard de Lozère Palaiseau,,,,111 Boulevard de Lozère,,,,91120
+111 Boulevard de Lozère 91120,,,,111 Boulevard de Lozère,,,Palaiseau,
+111 Boulevard de Lozère,2.226641,48.706181,,111 Boulevard de Lozère,,,,91120
+75 Rue Romain Rolland Paray-Vieille-Poste,,,,75 Rue Romain Rolland,,,,91550
+75 Rue Romain Rolland 91550,,,,75 Rue Romain Rolland,,,Paray-Vieille-Poste,
+75 Rue Romain Rolland,2.365385,48.706465,,75 Rue Romain Rolland,,,,91550
+61 Avenue Daumesnil Ris-Orangis,,,,61 Avenue Daumesnil,,,,91130
+61 Avenue Daumesnil 91130,,,,61 Avenue Daumesnil,,,Ris-Orangis,
+61 Avenue Daumesnil,2.413883,48.652699,,61 Avenue Daumesnil,,,,91130
+79 Avenue de Dourdan Saint-Chéron,,,,79 Avenue de Dourdan,,,,91530
+79 Avenue de Dourdan 91530,,,,79 Avenue de Dourdan,,,Saint-Chéron,
+79 Avenue de Dourdan,2.111262,48.546852,,79 Avenue de Dourdan,,,,91530
+15 Rue Henri Sellier Sainte-Geneviève-des-Bois,,,,15 Rue Henri Sellier,,,,91700
+15 Rue Henri Sellier 91700,,,,15 Rue Henri Sellier,,,Sainte-Geneviève-des-Bois,
+15 Rue Henri Sellier,2.326752,48.635399,,15 Rue Henri Sellier,,,,91700
+25 Route de Corbeil Saint-Germain-lès-Arpajon,,,,25 Route de Corbeil,,,,91180
+25 Route de Corbeil 91180,,,,25 Route de Corbeil,,,Saint-Germain-lès-Arpajon,
+25 Route de Corbeil,2.263717,48.594748,,25 Route de Corbeil,,,,91180
+3BIS Rue Chopin Saint-Michel-sur-Orge,,,,3BIS Rue Chopin,,,,91240
+3BIS Rue Chopin 91240,,,,3BIS Rue Chopin,,,Saint-Michel-sur-Orge,
+3BIS Rue Chopin,2.309541,48.644930,,3BIS Rue Chopin,,,,91240
+8 Rue des Cottages Saintry-sur-Seine,,,,8 Rue des Cottages,,,,91250
+8 Rue des Cottages 91250,,,,8 Rue des Cottages,,,Saintry-sur-Seine,
+8 Rue des Cottages,2.501485,48.596520,,8 Rue des Cottages,,,,91250
+43 Rue d'Auerstaedt Savigny-sur-Orge,,,,43 Rue d'Auerstaedt,,,,91600
+43 Rue d'Auerstaedt 91600,,,,43 Rue d'Auerstaedt,,,Savigny-sur-Orge,
+43 Rue d'Auerstaedt,2.333478,48.688868,,43 Rue d'Auerstaedt,,,,91600
+15 Avenue Linné Savigny-sur-Orge,,,,15 Avenue Linné,,,,91600
+15 Avenue Linné 91600,,,,15 Avenue Linné,,,Savigny-sur-Orge,
+15 Avenue Linné,2.345229,48.688703,,15 Avenue Linné,,,,91600
+862 Rue des Sources Sermaise,,,,862 Rue des Sources,,,,91530
+862 Rue des Sources 91530,,,,862 Rue des Sources,,,Sermaise,
+862 Rue des Sources,2.101442,48.538864,,862 Rue des Sources,,,,91530
+12BIS Chemin d'Orveau Vayres-sur-Essonne,,,,12BIS Chemin d'Orveau,,,,91820
+12BIS Chemin d'Orveau 91820,,,,12BIS Chemin d'Orveau,,,Vayres-sur-Essonne,
+12BIS Chemin d'Orveau,2.351197,48.438203,,12BIS Chemin d'Orveau,,,,91820
+6 Rue Pierre Semard Vigneux-sur-Seine,,,,6 Rue Pierre Semard,,,,91270
+6 Rue Pierre Semard 91270,,,,6 Rue Pierre Semard,,,Vigneux-sur-Seine,
+6 Rue Pierre Semard,2.431447,48.695518,,6 Rue Pierre Semard,,,,91270
+8 Rue des Écoles La Ville-du-Bois,,,,8 Rue des Écoles,,,,91620
+8 Rue des Écoles 91620,,,,8 Rue des Écoles,,,La Ville-du-Bois,
+8 Rue des Écoles,2.268867,48.661650,,8 Rue des Écoles,,,,91620
+11 Allée des Cerisiers Villiers-sur-Orge,,,,11 Allée des Cerisiers,,,,91700
+11 Allée des Cerisiers 91700,,,,11 Allée des Cerisiers,,,Villiers-sur-Orge,
+11 Allée des Cerisiers,2.291457,48.655138,,11 Allée des Cerisiers,,,,91700
+34 Avenue du Pavillon Viry-Châtillon,,,,34 Avenue du Pavillon,,,,91170
+34 Avenue du Pavillon 91170,,,,34 Avenue du Pavillon,,,Viry-Châtillon,
+34 Avenue du Pavillon,2.364577,48.649220,,34 Avenue du Pavillon,,,,91170
+24 Rue des Faisans Yerres,,,,24 Rue des Faisans,,,,91330
+24 Rue des Faisans 91330,,,,24 Rue des Faisans,,,Yerres,
+24 Rue des Faisans,2.509156,48.719221,,24 Rue des Faisans,,,,91330
+10 Rue des Grouettes Antony,,,,10 Rue des Grouettes,,,,92160
+10 Rue des Grouettes 92160,,,,10 Rue des Grouettes,,,Antony,
+10 Rue des Grouettes,2.286678,48.756008,,10 Rue des Grouettes,,,,92160
+18 Rue Robert Doisy Antony,,,,18 Rue Robert Doisy,,,,92160
+18 Rue Robert Doisy 92160,,,,18 Rue Robert Doisy,,,Antony,
+18 Rue Robert Doisy,2.296120,48.756926,,18 Rue Robert Doisy,,,,92160
+22 Rue Jeanne d'Arc Asnières-sur-Seine,,,,22 Rue Jeanne d'Arc,,,,92600
+22 Rue Jeanne d'Arc 92600,,,,22 Rue Jeanne d'Arc,,,Asnières-sur-Seine,
+22 Rue Jeanne d'Arc,2.280829,48.921107,,22 Rue Jeanne d'Arc,,,,92600
+3 Rue Madame Curie Bagneux,,,,3 Rue Madame Curie,,,,92220
+3 Rue Madame Curie 92220,,,,3 Rue Madame Curie,,,Bagneux,
+3 Rue Madame Curie,2.315417,48.795933,,3 Rue Madame Curie,,,,92220
+9 Villa Schutz et Daumain Bois-Colombes,,,,9 Villa Schutz et Daumain,,,,92270
+9 Villa Schutz et Daumain 92270,,,,9 Villa Schutz et Daumain,,,Bois-Colombes,
+9 Villa Schutz et Daumain,2.274382,48.917142,,9 Villa Schutz et Daumain,,,,92270
+65 Rue Marcel Dassault Boulogne-Billancourt,,,,65 Rue Marcel Dassault,,,,92100
+65 Rue Marcel Dassault 92100,,,,65 Rue Marcel Dassault,,,Boulogne-Billancourt,
+65 Rue Marcel Dassault,2.250925,48.834668,,65 Rue Marcel Dassault,,,,92100
+4 Rue Pasteur Bourg-la-Reine,,,,4 Rue Pasteur,,,,92340
+4 Rue Pasteur 92340,,,,4 Rue Pasteur,,,Bourg-la-Reine,
+4 Rue Pasteur,2.314162,48.773352,,4 Rue Pasteur,,,,92340
+80 Rue Lasègue Châtillon,,,,80 Rue Lasègue,,,,92320
+80 Rue Lasègue 92320,,,,80 Rue Lasègue,,,Châtillon,
+80 Rue Lasègue,2.280198,48.802575,,80 Rue Lasègue,,,,92320
+5BIS Rue de Bièvres Clamart,,,,5BIS Rue de Bièvres,,,,92140
+5BIS Rue de Bièvres 92140,,,,5BIS Rue de Bièvres,,,Clamart,
+5BIS Rue de Bièvres,2.265419,48.799049,,5BIS Rue de Bièvres,,,,92140
+122 Rue Marie Fichet Clamart,,,,122 Rue Marie Fichet,,,,92140
+122 Rue Marie Fichet 92140,,,,122 Rue Marie Fichet,,,Clamart,
+122 Rue Marie Fichet,2.229741,48.779069,,122 Rue Marie Fichet,,,,92140
+80 Rue Martre Clichy,,,,80 Rue Martre,,,,92110
+80 Rue Martre 92110,,,,80 Rue Martre,,,Clichy,
+80 Rue Martre,2.306857,48.902501,,80 Rue Martre,,,,92110
+13 Villa Eugène Colombes,,,,13 Villa Eugène,,,,92700
+13 Villa Eugène 92700,,,,13 Villa Eugène,,,Colombes,
+13 Villa Eugène,2.260929,48.915812,,13 Villa Eugène,,,,92700
+10 Rue de la Paix Colombes,,,,10 Rue de la Paix,,,,92700
+10 Rue de la Paix 92700,,,,10 Rue de la Paix,,,Colombes,
+10 Rue de la Paix,2.242662,48.912737,,10 Rue de la Paix,,,,92700
+30BIS Rue Gaultier Courbevoie,,,,30BIS Rue Gaultier,,,,92400
+30BIS Rue Gaultier 92400,,,,30BIS Rue Gaultier,,,Courbevoie,
+30BIS Rue Gaultier,2.242143,48.898357,,30BIS Rue Gaultier,,,,92400
+8 Rue des Moulins à Vent Fontenay-aux-Roses,,,,8 Rue des Moulins à Vent,,,,92260
+8 Rue des Moulins à Vent 92260,,,,8 Rue des Moulins à Vent,,,Fontenay-aux-Roses,
+8 Rue des Moulins à Vent,2.278073,48.794179,,8 Rue des Moulins à Vent,,,,92260
+59 Rue de Plaisance La Garenne-Colombes,,,,59 Rue de Plaisance,,,,92250
+59 Rue de Plaisance 92250,,,,59 Rue de Plaisance,,,La Garenne-Colombes,
+59 Rue de Plaisance,2.252950,48.906330,,59 Rue de Plaisance,,,,92250
+42 Rue Danton Issy-les-Moulineaux,,,,42 Rue Danton,,,,92130
+42 Rue Danton 92130,,,,42 Rue Danton,,,Issy-les-Moulineaux,
+42 Rue Danton,2.271859,48.823909,,42 Rue Danton,,,,92130
+46 Rue Jules Guesde Levallois-Perret,,,,46 Rue Jules Guesde,,,,92300
+46 Rue Jules Guesde 92300,,,,46 Rue Jules Guesde,,,Levallois-Perret,
+46 Rue Jules Guesde,2.292734,48.893173,,46 Rue Jules Guesde,,,,92300
+19 Rue de la Tour Malakoff,,,,19 Rue de la Tour,,,,92240
+19 Rue de la Tour 92240,,,,19 Rue de la Tour,,,Malakoff,
+19 Rue de la Tour,2.305675,48.823213,,19 Rue de la Tour,,,,92240
+8 Rue Amaury Duval Montrouge,,,,8 Rue Amaury Duval,,,,92120
+8 Rue Amaury Duval 92120,,,,8 Rue Amaury Duval,,,Montrouge,
+8 Rue Amaury Duval,2.323514,48.816985,,8 Rue Amaury Duval,,,,92120
+31 Rue des Fleurs Nanterre,,,,31 Rue des Fleurs,,,,92000
+31 Rue des Fleurs 92000,,,,31 Rue des Fleurs,,,Nanterre,
+31 Rue des Fleurs,2.204486,48.885187,,31 Rue des Fleurs,,,,92000
+58 Rue de Suresnes Nanterre,,,,58 Rue de Suresnes,,,,92000
+58 Rue de Suresnes 92000,,,,58 Rue de Suresnes,,,Nanterre,
+58 Rue de Suresnes,2.211166,48.885495,,58 Rue de Suresnes,,,,92000
+19 Rue Amédée Usséglio Le Plessis-Robinson,,,,19 Rue Amédée Usséglio,,,,92350
+19 Rue Amédée Usséglio 92350,,,,19 Rue Amédée Usséglio,,,Le Plessis-Robinson,
+19 Rue Amédée Usséglio,2.254586,48.781121,,19 Rue Amédée Usséglio,,,,92350
+4 Rue des Alizes Rueil-Malmaison,,,,4 Rue des Alizes,,,,92500
+4 Rue des Alizes 92500,,,,4 Rue des Alizes,,,Rueil-Malmaison,
+4 Rue des Alizes,2.193308,48.860188,,4 Rue des Alizes,,,,92500
+22 Rue Haute Rueil-Malmaison,,,,22 Rue Haute,,,,92500
+22 Rue Haute 92500,,,,22 Rue Haute,,,Rueil-Malmaison,
+22 Rue Haute,2.183094,48.874937,,22 Rue Haute,,,,92500
+23 Rue Armengaud Saint-Cloud,,,,23 Rue Armengaud,,,,92210
+23 Rue Armengaud 92210,,,,23 Rue Armengaud,,,Saint-Cloud,
+23 Rue Armengaud,2.216710,48.848047,,23 Rue Armengaud,,,,92210
+9 Rue Massenet Sceaux,,,,9 Rue Massenet,,,,92330
+9 Rue Massenet 92330,,,,9 Rue Massenet,,,Sceaux,
+9 Rue Massenet,2.309102,48.783919,,9 Rue Massenet,,,,92330
+1 Rue Gustave Flourens Suresnes,,,,1 Rue Gustave Flourens,,,,92150
+1 Rue Gustave Flourens 92150,,,,1 Rue Gustave Flourens,,,Suresnes,
+1 Rue Gustave Flourens,2.229349,48.871257,,1 Rue Gustave Flourens,,,,92150
+6 Boulevard de Jardy Vaucresson,,,,6 Boulevard de Jardy,,,,92420
+6 Boulevard de Jardy 92420,,,,6 Boulevard de Jardy,,,Vaucresson,
+6 Boulevard de Jardy,2.155615,48.837116,,6 Boulevard de Jardy,,,,92420
+25 Rue d'Amiens Aulnay-sous-Bois,,,,25 Rue d'Amiens,,,,93600
+25 Rue d'Amiens 93600,,,,25 Rue d'Amiens,,,Aulnay-sous-Bois,
+25 Rue d'Amiens,2.485722,48.922312,,25 Rue d'Amiens,,,,93600
+10 Rue Frédéric Mistral Aulnay-sous-Bois,,,,10 Rue Frédéric Mistral,,,,93600
+10 Rue Frédéric Mistral 93600,,,,10 Rue Frédéric Mistral,,,Aulnay-sous-Bois,
+10 Rue Frédéric Mistral,2.489945,48.918039,,10 Rue Frédéric Mistral,,,,93600
+14 Rue Paul Fouquet Aulnay-sous-Bois,,,,14 Rue Paul Fouquet,,,,93600
+14 Rue Paul Fouquet 93600,,,,14 Rue Paul Fouquet,,,Aulnay-sous-Bois,
+14 Rue Paul Fouquet,2.483256,48.936786,,14 Rue Paul Fouquet,,,,93600
+6 Rue des Fossillons Bagnolet,,,,6 Rue des Fossillons,,,,93170
+6 Rue des Fossillons 93170,,,,6 Rue des Fossillons,,,Bagnolet,
+6 Rue des Fossillons,2.423188,48.868803,,6 Rue des Fossillons,,,,93170
+83 Rue Emile Paladilhe Le Blanc-Mesnil,,,,83 Rue Emile Paladilhe,,,,93150
+83 Rue Emile Paladilhe 93150,,,,83 Rue Emile Paladilhe,,,Le Blanc-Mesnil,
+83 Rue Emile Paladilhe,2.470884,48.939067,,83 Rue Emile Paladilhe,,,,93150
+29 Avenue Romain Rolland Le Blanc-Mesnil,,,,29 Avenue Romain Rolland,,,,93150
+29 Avenue Romain Rolland 93150,,,,29 Avenue Romain Rolland,,,Le Blanc-Mesnil,
+29 Avenue Romain Rolland,2.465491,48.934498,,29 Avenue Romain Rolland,,,,93150
+5 Rue de la Nouvelle Dehli Bobigny,,,,5 Rue de la Nouvelle Dehli,,,,93000
+5 Rue de la Nouvelle Dehli 93000,,,,5 Rue de la Nouvelle Dehli,,,Bobigny,
+5 Rue de la Nouvelle Dehli,2.473920,48.910320,,5 Rue de la Nouvelle Dehli,,,,93000
+23 Rue Jules Guesde Bondy,,,,23 Rue Jules Guesde,,,,93140
+23 Rue Jules Guesde 93140,,,,23 Rue Jules Guesde,,,Bondy,
+23 Rue Jules Guesde,2.475792,48.903883,,23 Rue Jules Guesde,,,,93140
+42 Allée de Bellevue Clichy-sous-Bois,,,,42 Allée de Bellevue,,,,93390
+42 Allée de Bellevue 93390,,,,42 Allée de Bellevue,,,Clichy-sous-Bois,
+42 Allée de Bellevue,2.548898,48.914918,,42 Allée de Bellevue,,,,93390
+30 Avenue Jean Mermoz La Courneuve,,,,30 Avenue Jean Mermoz,,,,93120
+30 Avenue Jean Mermoz 93120,,,,30 Avenue Jean Mermoz,,,La Courneuve,
+30 Avenue Jean Mermoz,2.402357,48.932070,,30 Avenue Jean Mermoz,,,,93120
+27 Rue de la Démocratie Drancy,,,,27 Rue de la Démocratie,,,,93700
+27 Rue de la Démocratie 93700,,,,27 Rue de la Démocratie,,,Drancy,
+27 Rue de la Démocratie,2.443509,48.917072,,27 Rue de la Démocratie,,,,93700
+15 Rue des Lilas Drancy,,,,15 Rue des Lilas,,,,93700
+15 Rue des Lilas 93700,,,,15 Rue des Lilas,,,Drancy,
+15 Rue des Lilas,2.434937,48.924877,,15 Rue des Lilas,,,,93700
+17 Rue Laetitia et Henri Tredez Dugny,,,,17 Rue Laetitia et Henri Tredez,,,,93440
+17 Rue Laetitia et Henri Tredez 93440,,,,17 Rue Laetitia et Henri Tredez,,,Dugny,
+17 Rue Laetitia et Henri Tredez,2.411917,48.950601,,17 Rue Laetitia et Henri Tredez,,,,93440
+7 Rue des Amandiers Gagny,,,,7 Rue des Amandiers,,,,93220
+7 Rue des Amandiers 93220,,,,7 Rue des Amandiers,,,Gagny,
+7 Rue des Amandiers,2.552309,48.875323,,7 Rue des Amandiers,,,,93220
+58 Avenue des Marronniers Gagny,,,,58 Avenue des Marronniers,,,,93220
+58 Avenue des Marronniers 93220,,,,58 Avenue des Marronniers,,,Gagny,
+58 Avenue des Marronniers,2.559416,48.872188,,58 Avenue des Marronniers,,,,93220
+24 Avenue des Princes Gournay-sur-Marne,,,,24 Avenue des Princes,,,,93460
+24 Avenue des Princes 93460,,,,24 Avenue des Princes,,,Gournay-sur-Marne,
+24 Avenue des Princes,2.581917,48.857715,,24 Avenue des Princes,,,,93460
+13 Rue de Simiane Livry-Gargan,,,,13 Rue de Simiane,,,,93190
+13 Rue de Simiane 93190,,,,13 Rue de Simiane,,,Livry-Gargan,
+13 Rue de Simiane,2.528842,48.914333,,13 Rue de Simiane,,,,93190
+38 Avenue Quesnay Livry-Gargan,,,,38 Avenue Quesnay,,,,93190
+38 Avenue Quesnay 93190,,,,38 Avenue Quesnay,,,Livry-Gargan,
+38 Avenue Quesnay,2.513375,48.912616,,38 Avenue Quesnay,,,,93190
+10 Boulevard Hardy Montfermeil,,,,10 Boulevard Hardy,,,,93370
+10 Boulevard Hardy 93370,,,,10 Boulevard Hardy,,,Montfermeil,
+10 Boulevard Hardy,2.564488,48.904038,,10 Boulevard Hardy,,,,93370
+55 Rue Carnot Montreuil,,,,55 Rue Carnot,,,,93100
+55 Rue Carnot 93100,,,,55 Rue Carnot,,,Montreuil,
+55 Rue Carnot,2.441415,48.854502,,55 Rue Carnot,,,,93100
+8 Rue Louise Montreuil,,,,8 Rue Louise,,,,93100
+8 Rue Louise 93100,,,,8 Rue Louise,,,Montreuil,
+8 Rue Louise,2.457656,48.872582,,8 Rue Louise,,,,93100
+40 Rue de Saint-Antoine Montreuil,,,,40 Rue de Saint-Antoine,,,,93100
+40 Rue de Saint-Antoine 93100,,,,40 Rue de Saint-Antoine,,,Montreuil,
+40 Rue de Saint-Antoine,2.456648,48.865159,,40 Rue de Saint-Antoine,,,,93100
+33TER Rue Raspail Neuilly-Plaisance,,,,33TER Rue Raspail,,,,93360
+33TER Rue Raspail 93360,,,,33TER Rue Raspail,,,Neuilly-Plaisance,
+33TER Rue Raspail,2.512366,48.856233,,33TER Rue Raspail,,,,93360
+28 Rue du Brayer Noisy-le-Grand,,,,28 Rue du Brayer,,,,93160
+28 Rue du Brayer 93160,,,,28 Rue du Brayer,,,Noisy-le-Grand,
+28 Rue du Brayer,2.546562,48.848766,,28 Rue du Brayer,,,,93160
+1 Rue Pierre Brossolette Noisy-le-Grand,,,,1 Rue Pierre Brossolette,,,,93160
+1 Rue Pierre Brossolette 93160,,,,1 Rue Pierre Brossolette,,,Noisy-le-Grand,
+1 Rue Pierre Brossolette,2.528870,48.843689,,1 Rue Pierre Brossolette,,,,93160
+1 Allée Klebert Noisy-le-Sec,,,,1 Allée Klebert,,,,93130
+1 Allée Klebert 93130,,,,1 Allée Klebert,,,Noisy-le-Sec,
+1 Allée Klebert,2.471885,48.897436,,1 Allée Klebert,,,,93130
+4 Rue Sainte-Marguerite Pantin,,,,4 Rue Sainte-Marguerite,,,,93500
+4 Rue Sainte-Marguerite 93500,,,,4 Rue Sainte-Marguerite,,,Pantin,
+4 Rue Sainte-Marguerite,2.391414,48.901062,,4 Rue Sainte-Marguerite,,,,93500
+4BIS Allée Thiesset Les Pavillons-sous-Bois,,,,4BIS Allée Thiesset,,,,93320
+4BIS Allée Thiesset 93320,,,,4BIS Allée Thiesset,,,Les Pavillons-sous-Bois,
+4BIS Allée Thiesset,2.506036,48.917058,,4BIS Allée Thiesset,,,,93320
+72 Avenue Édouard Vaillant Le Pré-Saint-Gervais,,,,72 Avenue Édouard Vaillant,,,,93310
+72 Avenue Édouard Vaillant 93310,,,,72 Avenue Édouard Vaillant,,,Le Pré-Saint-Gervais,
+72 Avenue Édouard Vaillant,2.409652,48.880999,,72 Avenue Édouard Vaillant,,,,93310
+84 Rue Jean Lemoine Romainville,,,,84 Rue Jean Lemoine,,,,93230
+84 Rue Jean Lemoine 93230,,,,84 Rue Jean Lemoine,,,Romainville,
+84 Rue Jean Lemoine,2.446053,48.878784,,84 Rue Jean Lemoine,,,,93230
+19 Avenue du Président John Kennedy Rosny-sous-Bois,,,,19 Avenue du Président John Kennedy,,,,93110
+19 Avenue du Président John Kennedy 93110,,,,19 Avenue du Président John Kennedy,,,Rosny-sous-Bois,
+19 Avenue du Président John Kennedy,2.487719,48.878153,,19 Avenue du Président John Kennedy,,,,93110
+39 Rue Loubet Saint-Denis,,,,39 Rue Loubet,,,,93200
+39 Rue Loubet 93200,,,,39 Rue Loubet,,,Saint-Denis,
+39 Rue Loubet,2.359363,48.948737,,39 Rue Loubet,,,,93200
+8 Rue Mathieu Saint-Ouen,,,,8 Rue Mathieu,,,,93400
+8 Rue Mathieu 93400,,,,8 Rue Mathieu,,,Saint-Ouen,
+8 Rue Mathieu,2.336726,48.905019,,8 Rue Mathieu,,,,93400
+48 Avenue de Livry Sevran,,,,48 Avenue de Livry,,,,93270
+48 Avenue de Livry 93270,,,,48 Avenue de Livry,,,Sevran,
+48 Avenue de Livry,2.537690,48.932286,,48 Avenue de Livry,,,,93270
+6 Avenue Jean Moulin Stains,,,,6 Avenue Jean Moulin,,,,93240
+6 Avenue Jean Moulin 93240,,,,6 Avenue Jean Moulin,,,Stains,
+6 Avenue Jean Moulin,2.392780,48.956541,,6 Avenue Jean Moulin,,,,93240
+13 Avenue Cuvier Tremblay-en-France,,,,13 Avenue Cuvier,,,,93290
+13 Avenue Cuvier 93290,,,,13 Avenue Cuvier,,,Tremblay-en-France,
+13 Avenue Cuvier,2.576959,48.959160,,13 Avenue Cuvier,,,,93290
+32BIS Rue des Vosges Tremblay-en-France,,,,32BIS Rue des Vosges,,,,93290
+32BIS Rue des Vosges 93290,,,,32BIS Rue des Vosges,,,Tremblay-en-France,
+32BIS Rue des Vosges,2.578161,48.942858,,32BIS Rue des Vosges,,,,93290
+20 Avenue Lespinasse Villemomble,,,,20 Avenue Lespinasse,,,,93250
+20 Avenue Lespinasse 93250,,,,20 Avenue Lespinasse,,,Villemomble,
+20 Avenue Lespinasse,2.517988,48.881659,,20 Avenue Lespinasse,,,,93250
+15 Rue Georges Bougault Villepinte,,,,15 Rue Georges Bougault,,,,93420
+15 Rue Georges Bougault 93420,,,,15 Rue Georges Bougault,,,Villepinte,
+15 Rue Georges Bougault,2.528761,48.968198,,15 Rue Georges Bougault,,,,93420
+4 Rue Maurice Paillard Villetaneuse,,,,4 Rue Maurice Paillard,,,,93430
+4 Rue Maurice Paillard 93430,,,,4 Rue Maurice Paillard,,,Villetaneuse,
+4 Rue Maurice Paillard,2.346720,48.955582,,4 Rue Maurice Paillard,,,,93430
+77 Rue Victor Hugo Alfortville,,,,77 Rue Victor Hugo,,,,94140
+77 Rue Victor Hugo 94140,,,,77 Rue Victor Hugo,,,Alfortville,
+77 Rue Victor Hugo,2.424299,48.803865,,77 Rue Victor Hugo,,,,94140
+8 Allée des Sources Boissy-Saint-Léger,,,,8 Allée des Sources,,,,94470
+8 Allée des Sources 94470,,,,8 Allée des Sources,,,Boissy-Saint-Léger,
+8 Allée des Sources,2.506852,48.750020,,8 Allée des Sources,,,,94470
+6 Rue Ange Rubaud Cachan,,,,6 Rue Ange Rubaud,,,,94230
+6 Rue Ange Rubaud 94230,,,,6 Rue Ange Rubaud,,,Cachan,
+6 Rue Ange Rubaud,2.331972,48.785616,,6 Rue Ange Rubaud,,,,94230
+51 Rue du Bois-l'Abbé Champigny-sur-Marne,,,,51 Rue du Bois-l'Abbé,,,,94500
+51 Rue du Bois-l'Abbé 94500,,,,51 Rue du Bois-l'Abbé,,,Champigny-sur-Marne,
+51 Rue du Bois-l'Abbé,2.542121,48.810435,,51 Rue du Bois-l'Abbé,,,,94500
+6 Villa Laversin Champigny-sur-Marne,,,,6 Villa Laversin,,,,94500
+6 Villa Laversin 94500,,,,6 Villa Laversin,,,Champigny-sur-Marne,
+6 Villa Laversin,2.505780,48.822390,,6 Villa Laversin,,,,94500
+11 Impasse des Vergers Champigny-sur-Marne,,,,11 Impasse des Vergers,,,,94500
+11 Impasse des Vergers 94500,,,,11 Impasse des Vergers,,,Champigny-sur-Marne,
+11 Impasse des Vergers,2.521424,48.813282,,11 Impasse des Vergers,,,,94500
+12 Avenue Thérèse Chennevières-sur-Marne,,,,12 Avenue Thérèse,,,,94430
+12 Avenue Thérèse 94430,,,,12 Avenue Thérèse,,,Chennevières-sur-Marne,
+12 Avenue Thérèse,2.538231,48.801484,,12 Avenue Thérèse,,,,94430
+89 Avenue du Maréchal de Lattre de Tassigny Choisy-le-Roi,,,,89 Avenue du Maréchal de Lattre de Tassigny,,,,94600
+89 Avenue du Maréchal de Lattre de Tassigny 94600,,,,89 Avenue du Maréchal de Lattre de Tassigny,,,Choisy-le-Roi,
+89 Avenue du Maréchal de Lattre de Tassigny,2.405060,48.755321,,89 Avenue du Maréchal de Lattre de Tassigny,,,,94600
+2 Avenue du Maréchal Foch Créteil,,,,2 Avenue du Maréchal Foch,,,,94000
+2 Avenue du Maréchal Foch 94000,,,,2 Avenue du Maréchal Foch,,,Créteil,
+2 Avenue du Maréchal Foch,2.440394,48.772065,,2 Avenue du Maréchal Foch,,,,94000
+5 Boulevard Henri Ruel Fontenay-sous-Bois,,,,5 Boulevard Henri Ruel,,,,94120
+5 Boulevard Henri Ruel 94120,,,,5 Boulevard Henri Ruel,,,Fontenay-sous-Bois,
+5 Boulevard Henri Ruel,2.466629,48.842771,,5 Boulevard Henri Ruel,,,,94120
+20 Rue Jules Guesde Fresnes,,,,20 Rue Jules Guesde,,,,94260
+20 Rue Jules Guesde 94260,,,,20 Rue Jules Guesde,,,Fresnes,
+20 Rue Jules Guesde,2.314301,48.760445,,20 Rue Jules Guesde,,,,94260
+9 Rue du 8 Mai 1945 L'Haÿ-les-Roses,,,,9 Rue du 8 Mai 1945,,,,94240
+9 Rue du 8 Mai 1945 94240,,,,9 Rue du 8 Mai 1945,,,L'Haÿ-les-Roses,
+9 Rue du 8 Mai 1945,2.330291,48.778614,,9 Rue du 8 Mai 1945,,,,94240
+30 Rue Pasteur Ivry-sur-Seine,,,,30 Rue Pasteur,,,,94200
+30 Rue Pasteur 94200,,,,30 Rue Pasteur,,,Ivry-sur-Seine,
+30 Rue Pasteur,2.382760,48.816849,,30 Rue Pasteur,,,,94200
+74 Rue du Général Leclerc Le Kremlin-Bicêtre,,,,74 Rue du Général Leclerc,,,,94270
+74 Rue du Général Leclerc 94270,,,,74 Rue du Général Leclerc,,,Le Kremlin-Bicêtre,
+74 Rue du Général Leclerc,2.358054,48.811095,,74 Rue du Général Leclerc,,,,94270
+42 Rue Edmond Nocard Maisons-Alfort,,,,42 Rue Edmond Nocard,,,,94700
+42 Rue Edmond Nocard 94700,,,,42 Rue Edmond Nocard,,,Maisons-Alfort,
+42 Rue Edmond Nocard,2.428785,48.812660,,42 Rue Edmond Nocard,,,,94700
+4 Rue des Perdrix Mandres-les-Roses,,,,4 Rue des Perdrix,,,,94520
+4 Rue des Perdrix 94520,,,,4 Rue des Perdrix,,,Mandres-les-Roses,
+4 Rue des Perdrix,2.558741,48.710072,,4 Rue des Perdrix,,,,94520
+8 Rue Saint-Sébastien Nogent-sur-Marne,,,,8 Rue Saint-Sébastien,,,,94130
+8 Rue Saint-Sébastien 94130,,,,8 Rue Saint-Sébastien,,,Nogent-sur-Marne,
+8 Rue Saint-Sébastien,2.485685,48.837408,,8 Rue Saint-Sébastien,,,,94130
+4 Rue de Bellevue Ormesson-sur-Marne,,,,4 Rue de Bellevue,,,,94490
+4 Rue de Bellevue 94490,,,,4 Rue de Bellevue,,,Ormesson-sur-Marne,
+4 Rue de Bellevue,2.523104,48.778971,,4 Rue de Bellevue,,,,94490
+28 Rue du Bel-Air Le Perreux-sur-Marne,,,,28 Rue du Bel-Air,,,,94170
+28 Rue du Bel-Air 94170,,,,28 Rue du Bel-Air,,,Le Perreux-sur-Marne,
+28 Rue du Bel-Air,2.498401,48.844630,,28 Rue du Bel-Air,,,,94170
+17 Rue Traversière Le Perreux-sur-Marne,,,,17 Rue Traversière,,,,94170
+17 Rue Traversière 94170,,,,17 Rue Traversière,,,Le Perreux-sur-Marne,
+17 Rue Traversière,2.510280,48.848700,,17 Rue Traversière,,,,94170
+23 Avenue Lamartine La Queue-en-Brie,,,,23 Avenue Lamartine,,,,94510
+23 Avenue Lamartine 94510,,,,23 Avenue Lamartine,,,La Queue-en-Brie,
+23 Avenue Lamartine,2.572509,48.794531,,23 Avenue Lamartine,,,,94510
+16 Rue de Beaujeu Saint-Maur-des-Fossés,,,,16 Rue de Beaujeu,,,,94100
+16 Rue de Beaujeu 94100,,,,16 Rue de Beaujeu,,,Saint-Maur-des-Fossés,
+16 Rue de Beaujeu,2.477810,48.797308,,16 Rue de Beaujeu,,,,94100
+24 Allée Ferret Briet Saint-Maur-des-Fossés,,,,24 Allée Ferret Briet,,,,94100
+24 Allée Ferret Briet 94100,,,,24 Allée Ferret Briet,,,Saint-Maur-des-Fossés,
+24 Allée Ferret Briet,2.472462,48.798063,,24 Allée Ferret Briet,,,,94100
+14 Avenue de la Mésange Saint-Maur-des-Fossés,,,,14 Avenue de la Mésange,,,,94100
+14 Avenue de la Mésange 94100,,,,14 Avenue de la Mésange,,,Saint-Maur-des-Fossés,
+14 Avenue de la Mésange,2.500070,48.801484,,14 Avenue de la Mésange,,,,94100
+43 Boulevard Voltaire Saint-Maur-des-Fossés,,,,43 Boulevard Voltaire,,,,94100
+43 Boulevard Voltaire 94100,,,,43 Boulevard Voltaire,,,Saint-Maur-des-Fossés,
+43 Boulevard Voltaire,2.508060,48.790674,,43 Boulevard Voltaire,,,,94100
+33 Sentier des Clos Sucy-en-Brie,,,,33 Sentier des Clos,,,,94370
+33 Sentier des Clos 94370,,,,33 Sentier des Clos,,,Sucy-en-Brie,
+33 Sentier des Clos,2.518731,48.767132,,33 Sentier des Clos,,,,94370
+25 Avenue Léon Marchand Thiais,,,,25 Avenue Léon Marchand,,,,94320
+25 Avenue Léon Marchand 94320,,,,25 Avenue Léon Marchand,,,Thiais,
+25 Avenue Léon Marchand,2.388859,48.766059,,25 Avenue Léon Marchand,,,,94320
+30 Rue des Mardelles Villecresnes,,,,30 Rue des Mardelles,,,,94440
+30 Rue des Mardelles 94440,,,,30 Rue des Mardelles,,,Villecresnes,
+30 Rue des Mardelles,2.525679,48.711904,,30 Rue des Mardelles,,,,94440
+73 Boulevard Maxime Gorki Villejuif,,,,73 Boulevard Maxime Gorki,,,,94800
+73 Boulevard Maxime Gorki 94800,,,,73 Boulevard Maxime Gorki,,,Villejuif,
+73 Boulevard Maxime Gorki,2.369059,48.794894,,73 Boulevard Maxime Gorki,,,,94800
+2 Place Louis Jacquart Villeneuve-le-Roi,,,,2 Place Louis Jacquart,,,,94290
+2 Place Louis Jacquart 94290,,,,2 Place Louis Jacquart,,,Villeneuve-le-Roi,
+2 Place Louis Jacquart,2.416746,48.734077,,2 Place Louis Jacquart,,,,94290
+3 Rue Jacquard Villeneuve-Saint-Georges,,,,3 Rue Jacquard,,,,94190
+3 Rue Jacquard 94190,,,,3 Rue Jacquard,,,Villeneuve-Saint-Georges,
+3 Rue Jacquard,2.447333,48.746102,,3 Rue Jacquard,,,,94190
+24 Rue J J Rousseau Villiers-sur-Marne,,,,24 Rue Jean-Jacques Rousseau,,,,94350
+24 Rue J J Rousseau 94350,,,,24 Rue Jean-Jacques Rousseau,,,Villiers-sur-Marne,
+24 Rue J J Rousseau,2.533222,48.820029,,24 Rue Jean-Jacques Rousseau,,,,94350
+47 Rue de la Prévoyance Vincennes,,,,47 Rue de la Prévoyance,,,,94300
+47 Rue de la Prévoyance 94300,,,,47 Rue de la Prévoyance,,,Vincennes,
+47 Rue de la Prévoyance,2.420582,48.848496,,47 Rue de la Prévoyance,,,,94300
+32 Avenue Eugène Pelletan Vitry-sur-Seine,,,,32 Avenue Eugène Pelletan,,,,94400
+32 Avenue Eugène Pelletan 94400,,,,32 Avenue Eugène Pelletan,,,Vitry-sur-Seine,
+32 Avenue Eugène Pelletan,2.385079,48.794448,,32 Avenue Eugène Pelletan,,,,94400
+25 Avenue Pierre Brossolette Vitry-sur-Seine,,,,25 Avenue Pierre Brossolette,,,,94400
+25 Avenue Pierre Brossolette 94400,,,,25 Avenue Pierre Brossolette,,,Vitry-sur-Seine,
+25 Avenue Pierre Brossolette,2.403031,48.803379,,25 Avenue Pierre Brossolette,,,,94400
+13 Rue du Docteur Roux Argenteuil,,,,13 Rue du Docteur Roux,,,,95100
+13 Rue du Docteur Roux 95100,,,,13 Rue du Docteur Roux,,,Argenteuil,
+13 Rue du Docteur Roux,2.227171,48.942175,,13 Rue du Docteur Roux,,,,95100
+28 Rue de la Luitte Argenteuil,,,,28 Rue de la Luitte,,,,95100
+28 Rue de la Luitte 95100,,,,28 Rue de la Luitte,,,Argenteuil,
+28 Rue de la Luitte,2.277504,48.959994,,28 Rue de la Luitte,,,,95100
+6 Rue de la Rosière Argenteuil,,,,6 Rue de la Rosière,,,,95100
+6 Rue de la Rosière 95100,,,,6 Rue de la Rosière,,,Argenteuil,
+6 Rue de la Rosière,2.236446,48.961134,,6 Rue de la Rosière,,,,95100
+12 Rue Schmitz Auvers-sur-Oise,,,,12 Rue Schmitz,,,,95430
+12 Rue Schmitz 95430,,,,12 Rue Schmitz,,,Auvers-sur-Oise,
+12 Rue Schmitz,2.126431,49.066041,,12 Rue Schmitz,,,,95430
+2 Rue du Maréchal Foch Bezons,,,,2 Rue du Maréchal Foch,,,,95870
+2 Rue du Maréchal Foch 95870,,,,2 Rue du Maréchal Foch,,,Bezons,
+2 Rue du Maréchal Foch,2.205703,48.928269,,2 Rue du Maréchal Foch,,,,95870
+34 Rue des Heuruelles Pourpres Cergy,,,,34 Rue des Heuruelles Pourpres,,,,95000
+34 Rue des Heuruelles Pourpres 95000,,,,34 Rue des Heuruelles Pourpres,,,Cergy,
+34 Rue des Heuruelles Pourpres,2.056722,49.046782,,34 Rue des Heuruelles Pourpres,,,,95000
+36 Rue des Brûlis Chaumontel,,,,36 Rue des Brûlis,,,,95270
+36 Rue des Brûlis 95270,,,,36 Rue des Brûlis,,,Chaumontel,
+36 Rue des Brûlis,2.435961,49.123668,,36 Rue des Brûlis,,,,95270
+1 Rue Jonas Deuil-la-Barre,,,,1 Rue Jonas,,,,95170
+1 Rue Jonas 95170,,,,1 Rue Jonas,,,Deuil-la-Barre,
+1 Rue Jonas,2.325579,48.963833,,1 Rue Jonas,,,,95170
+11 Avenue de l'Alliance Eaubonne,,,,11 Avenue de l'Alliance,,,,95600
+11 Avenue de l'Alliance 95600,,,,11 Avenue de l'Alliance,,,Eaubonne,
+11 Avenue de l'Alliance,2.288625,48.978438,,11 Avenue de l'Alliance,,,,95600
+8BIS Boulevard Cotte Enghien-les-Bains,,,,8BIS Boulevard Cotte,,,,95880
+8BIS Boulevard Cotte 95880,,,,8BIS Boulevard Cotte,,,Enghien-les-Bains,
+8BIS Boulevard Cotte,2.307069,48.967950,,8BIS Boulevard Cotte,,,,95880
+3 Rue Constant Coquelin Ermont,,,,3 Rue Constant Coquelin,,,,95120
+3 Rue Constant Coquelin 95120,,,,3 Rue Constant Coquelin,,,Ermont,
+3 Rue Constant Coquelin,2.252361,49.000971,,3 Rue Constant Coquelin,,,,95120
+7 Allée Paul Cézanne Ézanville,,,,7 Allée Paul Cézanne,,,,95460
+7 Allée Paul Cézanne 95460,,,,7 Allée Paul Cézanne,,,Ézanville,
+7 Allée Paul Cézanne,2.341404,49.037278,,7 Allée Paul Cézanne,,,,95460
+15 Allée des Érables Franconville,,,,15 Allée des Érables,,,,95130
+15 Allée des Érables 95130,,,,15 Allée des Érables,,,Franconville,
+15 Allée des Érables,2.213699,48.988501,,15 Allée des Érables,,,,95130
+15 Rue Pasteur Garges-lès-Gonesse,,,,15 Rue Pasteur,,,,95140
+15 Rue Pasteur 95140,,,,15 Rue Pasteur,,,Garges-lès-Gonesse,
+15 Rue Pasteur,2.398733,48.961269,,15 Rue Pasteur,,,,95140
+23 Rue Armand Carrel Goussainville,,,,23 Rue Armand Carrel,,,,95190
+23 Rue Armand Carrel 95190,,,,23 Rue Armand Carrel,,,Goussainville,
+23 Rue Armand Carrel,2.480700,49.032815,,23 Rue Armand Carrel,,,,95190
+9 Rue des Pensées Goussainville,,,,9 Rue des Pensées,,,,95190
+9 Rue des Pensées 95190,,,,9 Rue des Pensées,,,Goussainville,
+9 Rue des Pensées,2.470030,49.026778,,9 Rue des Pensées,,,,95190
+21 Avenue de la Chesnaie Herblay,,,,21 Avenue de la Chesnaie,,,,95220
+21 Avenue de la Chesnaie 95220,,,,21 Avenue de la Chesnaie,,,Herblay,
+21 Avenue de la Chesnaie,2.158023,49.000849,,21 Avenue de la Chesnaie,,,,95220
+2 Place du Truffier Herblay,,,,2 Place du Truffier,,,,95220
+2 Place du Truffier 95220,,,,2 Place du Truffier,,,Herblay,
+2 Place du Truffier,2.154336,49.002014,,2 Place du Truffier,,,,95220
+9 Place de la Hayette Jouy-le-Moutier,,,,9 Place de la Hayette,,,,95280
+9 Place de la Hayette 95280,,,,9 Place de la Hayette,,,Jouy-le-Moutier,
+9 Place de la Hayette,2.038193,49.007774,,9 Place de la Hayette,,,,95280
+8 Allée du Pré Aux Cerfs Luzarches,,,,8 Allée du Pré aux Cerfs,,,,95270
+8 Allée du Pré Aux Cerfs 95270,,,,8 Allée du Pré aux Cerfs,,,Luzarches,
+8 Allée du Pré Aux Cerfs,2.419913,49.119635,,8 Allée du Pré aux Cerfs,,,,95270
+63 Avenue Joliot Curie Mériel,,,,63 Avenue Joliot Curie,,,,95630
+63 Avenue Joliot Curie 95630,,,,63 Avenue Joliot Curie,,,Mériel,
+63 Avenue Joliot Curie,2.218536,49.073935,,63 Avenue Joliot Curie,,,,95630
+20 Chemin du Clos Prie Montmagny,,,,20 Chemin du Clos Prie,,,,95360
+20 Chemin du Clos Prie 95360,,,,20 Chemin du Clos Prie,,,Montmagny,
+20 Chemin du Clos Prie,2.358622,48.975244,,20 Chemin du Clos Prie,,,,95360
+65 Rue de la République Montmorency,,,,65 Rue de la République,,,,95160
+65 Rue de la République 95160,,,,65 Rue de la République,,,Montmorency,
+65 Rue de la République,2.309600,48.979099,,65 Rue de la République,,,,95160
+10 Rue des Voltigeurs Osny,,,,10 Rue des Voltigeurs,,,,95520
+10 Rue des Voltigeurs 95520,,,,10 Rue des Voltigeurs,,,Osny,
+10 Rue des Voltigeurs,2.069673,49.068445,,10 Rue des Voltigeurs,,,,95520
+54 Rue des Etannets Pontoise,,,,54 Rue des Etannets,,,,95000
+54 Rue des Etannets 95000,,,,54 Rue des Etannets,,,Pontoise,
+54 Rue des Etannets,2.090192,49.050837,,54 Rue des Etannets,,,,95000
+29 Avenue Lacour Saint-Gratien,,,,29 Avenue Lacour,,,,95210
+29 Avenue Lacour 95210,,,,29 Avenue Lacour,,,Saint-Gratien,
+29 Avenue Lacour,2.286127,48.973875,,29 Avenue Lacour,,,,95210
+4 Allée de la Paix Saint-Leu-la-Forêt,,,,4 Allée de la Paix,,,,95320
+4 Allée de la Paix 95320,,,,4 Allée de la Paix,,,Saint-Leu-la-Forêt,
+4 Allée de la Paix,2.238786,49.019158,,4 Allée de la Paix,,,,95320
+47 Rue d'Ermont Saint-Prix,,,,47 Rue d'Ermont,,,,95390
+47 Rue d'Ermont 95390,,,,47 Rue d'Ermont,,,Saint-Prix,
+47 Rue d'Ermont,2.261729,49.006435,,47 Rue d'Ermont,,,,95390
+79 Rue du Maréchal Joffre Sannois,,,,79 Rue du Maréchal Joffre,,,,95110
+79 Rue du Maréchal Joffre 95110,,,,79 Rue du Maréchal Joffre,,,Sannois,
+79 Rue du Maréchal Joffre,2.263790,48.974390,,79 Rue du Maréchal Joffre,,,,95110
+21BIS Rue des Saules Soisy-sous-Montmorency,,,,21BIS Rue des Saules,,,,95230
+21BIS Rue des Saules 95230,,,,21BIS Rue des Saules,,,Soisy-sous-Montmorency,
+21BIS Rue des Saules,2.310314,48.991199,,21BIS Rue des Saules,,,,95230
+45 Chemin des Petits Sentiers Taverny,,,,45 Chemin des Petits Sentiers,,,,95150
+45 Chemin des Petits Sentiers 95150,,,,45 Chemin des Petits Sentiers,,,Taverny,
+45 Chemin des Petits Sentiers,2.222019,49.017998,,45 Chemin des Petits Sentiers,,,,95150
+28 Rue Messidor Vauréal,,,,28 Rue Messidor,,,,95490
+28 Rue Messidor 95490,,,,28 Rue Messidor,,,Vauréal,
+28 Rue Messidor,2.013060,49.028342,,28 Rue Messidor,,,,95490

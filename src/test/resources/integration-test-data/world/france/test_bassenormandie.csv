@@ -1,0 +1,229 @@
+query,lon,lat,limit,expected_name,expected_housenumber,expected_street,expected_city,expected_postcode
+18 Rue Saint-Marc Aunay-sur-Odon,,,,18 Rue Saint-Marc,,,,14260
+18 Rue Saint-Marc 14260,,,,18 Rue Saint-Marc,,,Aunay-sur-Odon,
+18 Rue Saint-Marc,-0.627101,49.021805,,18 Rue Saint-Marc,,,,14260
+9 Passage Michel Béziers Bayeux,,,,9 Passage Michel Béziers,,,,14400
+9 Passage Michel Béziers 14400,,,,9 Passage Michel Béziers,,,Bayeux,
+9 Passage Michel Béziers,-0.713213,49.277722,,9 Passage Michel Béziers,,,,14400
+86 Rue du Rgt de la Chaudiere Bernières-sur-Mer,,,,86 Rue du Rgt de la Chaudiere,,,,14990
+86 Rue du Rgt de la Chaudiere 14990,,,,86 Rue du Rgt de la Chaudiere,,,Bernières-sur-Mer,
+86 Rue du Rgt de la Chaudiere,-0.422321,49.332500,,86 Rue du Rgt de la Chaudiere,,,,14990
+89 Route d'Ussy Bons-Tassilly,,,,89 Route d'Ussy,,,,14420
+89 Route d'Ussy 14420,,,,89 Route d'Ussy,,,Bons-Tassilly,
+89 Route d'Ussy,-0.243054,48.955145,,89 Route d'Ussy,,,,14420
+33 Avenue des Drakkars Cabourg,,,,33 Avenue des Drakkars,,,,14390
+33 Avenue des Drakkars 14390,,,,33 Avenue des Drakkars,,,Cabourg,
+33 Avenue des Drakkars,-0.133886,49.282587,,33 Avenue des Drakkars,,,,14390
+7 Rue des Champs Saint-Michel Caen,,,,7 Rue des Champs Saint-Michel,,,,14000
+7 Rue des Champs Saint-Michel 14000,,,,7 Rue des Champs Saint-Michel,,,Caen,
+7 Rue des Champs Saint-Michel,-0.392564,49.189438,,7 Rue des Champs Saint-Michel,,,,14000
+17 Rue Hélène Boucher Caen,,,,17 Rue Hélène Boucher,,,,14000
+17 Rue Hélène Boucher 14000,,,,17 Rue Hélène Boucher,,,Caen,
+17 Rue Hélène Boucher,-0.395184,49.176706,,17 Rue Hélène Boucher,,,,14000
+24 Place Reine Mathilde Caen,,,,24 Place Reine Mathilde,,,,14000
+24 Place Reine Mathilde 14000,,,,24 Place Reine Mathilde,,,Caen,
+24 Place Reine Mathilde,-0.353216,49.187424,,24 Place Reine Mathilde,,,,14000
+3760 Route d'Englesqueville Cambremer,,,,3760 Route d'Englesqueville,,,,14340
+3760 Route d'Englesqueville 14340,,,,3760 Route d'Englesqueville,,,Cambremer,
+3760 Route d'Englesqueville,0.019266,49.163252,,3760 Route d'Englesqueville,,,,14340
+5 Impasse Maupassant Colombelles,,,,5 Impasse Maupassant,,,,14460
+5 Impasse Maupassant 14460,,,,5 Impasse Maupassant,,,Colombelles,
+5 Impasse Maupassant,-0.288755,49.207755,,5 Impasse Maupassant,,,,14460
+9 Allée de la Brise Courseulles-sur-Mer,,,,9 Allée de la Brise,,,,14470
+9 Allée de la Brise 14470,,,,9 Allée de la Brise,,,Courseulles-sur-Mer,
+9 Allée de la Brise,-0.452680,49.334418,,9 Allée de la Brise,,,,14470
+32 Rue Jean Mermoz Deauville,,,,32 Rue Jean Mermoz,,,,14800
+32 Rue Jean Mermoz 14800,,,,32 Rue Jean Mermoz,,,Deauville,
+32 Rue Jean Mermoz,0.072366,49.360433,,32 Rue Jean Mermoz,,,,14800
+11 Rue du Berry Douvres-la-Délivrande,,,,11 Rue du Berry,,,,14440
+11 Rue du Berry 14440,,,,11 Rue du Berry,,,Douvres-la-Délivrande,
+11 Rue du Berry,-0.371878,49.293598,,11 Rue du Berry,,,,14440
+33 Rue de la Pillardière Évrecy,,,,33 Rue de la Pillardière,,,,14210
+33 Rue de la Pillardière 14210,,,,33 Rue de la Pillardière,,,Évrecy,
+33 Rue de la Pillardière,-0.496321,49.104357,,33 Rue de la Pillardière,,,,14210
+10 Rue des Sources Fontaine-Étoupefour,,,,10 Rue des Sources,,,,14790
+10 Rue des Sources 14790,,,,10 Rue des Sources,,,Fontaine-Étoupefour,
+10 Rue des Sources,-0.464679,49.138912,,10 Rue des Sources,,,,14790
+1 Rue Saint-Laurent Glos,,,,1 Rue Saint-Laurent,,,,14100
+1 Rue Saint-Laurent 14100,,,,1 Rue Saint-Laurent,,,Glos,
+1 Rue Saint-Laurent,0.275892,49.124347,,1 Rue Saint-Laurent,,,,14100
+1002 Boulevard du Grand Parc Hérouville-Saint-Clair,,,,1002 Boulevard du Grand Parc,,,,14200
+1002 Boulevard du Grand Parc 14200,,,,1002 Boulevard du Grand Parc,,,Hérouville-Saint-Clair,
+1002 Boulevard du Grand Parc,-0.335811,49.198851,,1002 Boulevard du Grand Parc,,,,14200
+143 Rue des Bains Houlgate,,,,143 Rue des Bains,,,,14510
+143 Rue des Bains 14510,,,,143 Rue des Bains,,,Houlgate,
+143 Rue des Bains,-0.084596,49.298742,,143 Rue des Bains,,,,14510
+52 Rue Lieutenant Paul Duhomme Jort,,,,52 Rue Lieutenant Paul Duhomme,,,,14170
+52 Rue Lieutenant Paul Duhomme 14170,,,,52 Rue Lieutenant Paul Duhomme,,,Jort,
+52 Rue Lieutenant Paul Duhomme,-0.080118,48.972326,,52 Rue Lieutenant Paul Duhomme,,,,14170
+50 Rue du Général Leclerc Lisieux,,,,50 Rue du Général Leclerc,,,,14100
+50 Rue du Général Leclerc 14100,,,,50 Rue du Général Leclerc,,,Lisieux,
+50 Rue du Général Leclerc,0.224186,49.151151,,50 Rue du Général Leclerc,,,,14100
+443 Rue des Flaguais Le Molay-Littry,,,,443 Rue des Flaguais,,,,14330
+443 Rue des Flaguais 14330,,,,443 Rue des Flaguais,,,Le Molay-Littry,
+443 Rue des Flaguais,-0.883137,49.229209,,443 Rue des Flaguais,,,,14330
+12 Rue de l'Église Maltot,,,,12 Rue de l'Église,,,,14930
+12 Rue de l'Église 14930,,,,12 Rue de l'Église,,,Maltot,
+12 Rue de l'Église,-0.433676,49.125541,,12 Rue de l'Église,,,,14930
+6 Rue des Lilas Mézidon-Canon,,,,6 Rue des Lilas,,,,14270
+6 Rue des Lilas 14270,,,,6 Rue des Lilas,,,Mézidon-Canon,
+6 Rue des Lilas,-0.070416,49.075957,,6 Rue des Lilas,,,,14270
+17 Rue Pierre Cingal Moult,,,,17 Rue Pierre Cingal,,,,14370
+17 Rue Pierre Cingal 14370,,,,17 Rue Pierre Cingal,,,Moult,
+17 Rue Pierre Cingal,-0.164475,49.113356,,17 Rue Pierre Cingal,,,,14370
+95 Boulevard du Maréchal Joffre Ouistreham,,,,95 Boulevard du Maréchal Joffre,,,,14150
+95 Boulevard du Maréchal Joffre 14150,,,,95 Boulevard du Maréchal Joffre,,,Ouistreham,
+95 Boulevard du Maréchal Joffre,-0.275063,49.291441,,95 Boulevard du Maréchal Joffre,,,,14150
+980 Route du Coupe Gorge Le Pré-d'Auge,,,,980 Route du Coupe Gorge,,,,14340
+980 Route du Coupe Gorge 14340,,,,980 Route du Coupe Gorge,,,Le Pré-d'Auge,
+980 Route du Coupe Gorge,0.114970,49.137527,,980 Route du Coupe Gorge,,,,14340
+60 Rue Gustave Canet Saint-Aubin-sur-Mer,,,,60 Rue Gustave Canet,,,,14750
+60 Rue Gustave Canet 14750,,,,60 Rue Gustave Canet,,,Saint-Aubin-sur-Mer,
+60 Rue Gustave Canet,-0.394122,49.331963,,60 Rue Gustave Canet,,,,14750
+5 Rue du Clos de la Folie Sainte-Honorine-des-Pertes,,,,5 Rue du Clos de la Folie,,,,14520
+5 Rue du Clos de la Folie 14520,,,,5 Rue du Clos de la Folie,,,Sainte-Honorine-des-Pertes,
+5 Rue du Clos de la Folie,-0.805685,49.348463,,5 Rue du Clos de la Folie,,,,14520
+97 Boulevard Churchill Saint-Pierre-sur-Dives,,,,97 Boulevard Churchill,,,,14170
+97 Boulevard Churchill 14170,,,,97 Boulevard Churchill,,,Saint-Pierre-sur-Dives,
+97 Boulevard Churchill,-0.031209,49.012303,,97 Boulevard Churchill,,,,14170
+48 Rue Saint-Pierre Sommervieu,,,,48 Rue Saint-Pierre,,,,14400
+48 Rue Saint-Pierre 14400,,,,48 Rue Saint-Pierre,,,Sommervieu,
+48 Rue Saint-Pierre,-0.655822,49.290097,,48 Rue Saint-Pierre,,,,14400
+3 Route du Molay-Littry Trévières,,,,3 Route du Molay-Littry,,,,14710
+3 Route du Molay-Littry 14710,,,,3 Route du Molay-Littry,,,Trévières,
+3 Route du Molay-Littry,-0.905015,49.304517,,3 Route du Molay-Littry,,,,14710
+9 Rue de Chatillon Varaville,,,,9 Rue de Chatillon,,,,14390
+9 Rue de Chatillon 14390,,,,9 Rue de Chatillon,,,Varaville,
+9 Rue de Chatillon,-0.140725,49.287847,,9 Rue de Chatillon,,,,14390
+9 Rue Auguste Briard Villers-Bocage,,,,9 Rue Auguste Briard,,,,14310
+9 Rue Auguste Briard 14310,,,,9 Rue Auguste Briard,,,Villers-Bocage,
+9 Rue Auguste Briard,-0.652023,49.078749,,9 Rue Auguste Briard,,,,14310
+38 Rue de la Delotière Vire,,,,38 Rue de la Delotière,,,,14500
+38 Rue de la Delotière 14500,,,,38 Rue de la Delotière,,,Vire,
+38 Rue de la Delotière,-0.890560,48.831757,,38 Rue de la Delotière,,,,14500
+33 Rue de l'Église Airel,,,,33 Rue de l'Église,,,,50680
+33 Rue de l'Église 50680,,,,33 Rue de l'Église,,,Airel,
+33 Rue de l'Église,-1.079203,49.223226,,33 Rue de l'Église,,,,50680
+247A Rue des Écoles Barfleur,,,,247A Rue des Écoles,,,,50760
+247A Rue des Écoles 50760,,,,247A Rue des Écoles,,,Barfleur,
+247A Rue des Écoles,-1.263517,49.673195,,247A Rue des Écoles,,,,50760
+61 Route de la Louverie Blainville-sur-Mer,,,,61 Route de la Louverie,,,,50560
+61 Route de la Louverie 50560,,,,61 Route de la Louverie,,,Blainville-sur-Mer,
+61 Route de la Louverie,-1.573924,49.067923,,61 Route de la Louverie,,,,50560
+29 Avenue de Lydney Bréhal,,,,29 Avenue de Lydney,,,,50290
+29 Avenue de Lydney 50290,,,,29 Avenue de Lydney,,,Bréhal,
+29 Avenue de Lydney,-1.506618,48.901296,,29 Avenue de Lydney,,,,50290
+28 L Hôtel Corbet Camprond,,,,28 L Hôtel Corbet,,,,50210
+28 L Hôtel Corbet 50210,,,,28 L Hôtel Corbet,,,Camprond,
+28 L Hôtel Corbet,-1.336652,49.083834,,28 L Hôtel Corbet,,,,50210
+6E Route de la Pierre Champeaux,,,,6E Route de la Pierre,,,,50530
+6E Route de la Pierre 50530,,,,6E Route de la Pierre,,,Champeaux,
+6E Route de la Pierre,-1.507455,48.735623,,6E Route de la Pierre,,,,50530
+13BIS Rue des Moulins Cherbourg-Octeville,,,,13BIS Rue des Moulins,,,,50100
+13BIS Rue des Moulins 50100,,,,13BIS Rue des Moulins,,,Cherbourg-Octeville,
+13BIS Rue des Moulins,-1.622949,49.641577,,13BIS Rue des Moulins,,,,50100
+10 Route de la Croix Faucon Chérencé-le-Héron,,,,10 Route de la Croix Faucon,,,,50800
+10 Route de la Croix Faucon 50800,,,,10 Route de la Croix Faucon,,,Chérencé-le-Héron,
+10 Route de la Croix Faucon,-1.199837,48.801555,,10 Route de la Croix Faucon,,,,50800
+2 Rue du Tram Coutances,,,,2 Rue du Tram,,,,50200
+2 Rue du Tram 50200,,,,2 Rue du Tram,,,Coutances,
+2 Rue du Tram,-1.442964,49.035526,,2 Rue du Tram,,,,50200
+6 Rue de la Corniche Donville-les-Bains,,,,6 Rue de la Corniche,,,,50350
+6 Rue de la Corniche 50350,,,,6 Rue de la Corniche,,,Donville-les-Bains,
+6 Rue de la Corniche,-1.584717,48.847264,,6 Rue de la Corniche,,,,50350
+1BIS Rue de la Hougue Équeurdreville-Hainneville,,,,1BIS Rue de la Hougue,,,,50120
+1BIS Rue de la Hougue 50120,,,,1BIS Rue de la Hougue,,,Équeurdreville-Hainneville,
+1BIS Rue de la Hougue,-1.659285,49.653833,,1BIS Rue de la Hougue,,,,50120
+19 Route du Mesnil Garnier Fleury,,,,19 Route du Mesnil Garnier,,,,50800
+19 Route du Mesnil Garnier 50800,,,,19 Route du Mesnil Garnier,,,Fleury,
+19 Route du Mesnil Garnier,-1.256316,48.847291,,19 Route du Mesnil Garnier,,,,50800
+10 Rue de la Lande Gourfaleur,,,,10 Rue de la Lande,,,,50750
+10 Rue de la Lande 50750,,,,10 Rue de la Lande,,,Gourfaleur,
+10 Rue de la Lande,-1.117736,49.065309,,10 Rue de la Lande,,,,50750
+40 Rue des Prairies Granville,,,,40 Rue des Prairies,,,,50400
+40 Rue des Prairies 50400,,,,40 Rue des Prairies,,,Granville,
+40 Rue des Prairies,-1.577940,48.840580,,40 Rue des Prairies,,,,50400
+4 Rue des Planquettes La Haye-du-Puits,,,,4 Rue des Planquettes,,,,50250
+4 Rue des Planquettes 50250,,,,4 Rue des Planquettes,,,La Haye-du-Puits,
+4 Rue des Planquettes,-1.548115,49.289565,,4 Rue des Planquettes,,,,50250
+19 Rue de la Lande Lozon,,,,19 Rue de la Lande,,,,50570
+19 Rue de la Lande 50570,,,,19 Rue de la Lande,,,Lozon,
+19 Rue de la Lande,-1.282685,49.142136,,19 Rue de la Lande,,,,50570
+10 Impasse de l'Arguilliere Montmartin-sur-Mer,,,,10 Impasse de l'Arguilliere,,,,50590
+10 Impasse de l'Arguilliere 50590,,,,10 Impasse de l'Arguilliere,,,Montmartin-sur-Mer,
+10 Impasse de l'Arguilliere,-1.537870,48.987487,,10 Impasse de l'Arguilliere,,,,50590
+1 Rue du Hamel au Doyen Percy,,,,1 Rue du Hamel au Doyen,,,,50410
+1 Rue du Hamel au Doyen 50410,,,,1 Rue du Hamel au Doyen,,,Percy,
+1 Rue du Hamel au Doyen,-1.194251,48.916643,,1 Rue du Hamel au Doyen,,,,50410
+7 Rue Monseigneur Aubry Pont-Hébert,,,,7 Rue Monseigneur Aubry,,,,50880
+7 Rue Monseigneur Aubry 50880,,,,7 Rue Monseigneur Aubry,,,Pont-Hébert,
+7 Rue Monseigneur Aubry,-1.127774,49.165112,,7 Rue Monseigneur Aubry,,,,50880
+23 Rue Vieille Rue Querqueville,,,,23 Rue Vieille Rue,,,,50460
+23 Rue Vieille Rue 50460,,,,23 Rue Vieille Rue,,,Querqueville,
+23 Rue Vieille Rue,-1.693933,49.665743,,23 Rue Vieille Rue,,,,50460
+15A Le Chouquee Saint-Amand,,,,15A Le Chouquee,,,,50160
+15A Le Chouquee 50160,,,,15A Le Chouquee,,,Saint-Amand,
+15A Le Chouquee,-0.993074,49.051137,,15A Le Chouquee,,,,50160
+124 Rue Lucien Lelièvre Saint-Hilaire-du-Harcouët,,,,124 Rue Lucien Lelièvre,,,,50600
+124 Rue Lucien Lelièvre 50600,,,,124 Rue Lucien Lelièvre,,,Saint-Hilaire-du-Harcouët,
+124 Rue Lucien Lelièvre,-1.095365,48.571679,,124 Rue Lucien Lelièvre,,,,50600
+140 Rue de Christchurch Saint-Lô,,,,140 Rue de Christchurch,,,,50000
+140 Rue de Christchurch 50000,,,,140 Rue de Christchurch,,,Saint-Lô,
+140 Rue de Christchurch,-1.084042,49.103318,,140 Rue de Christchurch,,,,50000
+10 Rue de la Vanne Saint-Martin-de-Cenilly,,,,10 Rue de la Vanne,,,,50210
+10 Rue de la Vanne 50210,,,,10 Rue de la Vanne,,,Saint-Martin-de-Cenilly,
+10 Rue de la Vanne,-1.277440,48.972670,,10 Rue de la Vanne,,,,50210
+80 Rue du Seuil Marin Saint-Pair-sur-Mer,,,,80 Rue du Seuil Marin,,,,50380
+80 Rue du Seuil Marin 50380,,,,80 Rue du Seuil Marin,,,Saint-Pair-sur-Mer,
+80 Rue du Seuil Marin,-1.569000,48.790993,,80 Rue du Seuil Marin,,,,50380
+5 Rue des Charmilles Saint-Senier-sous-Avranches,,,,5 Rue des Charmilles,,,,50300
+5 Rue des Charmilles 50300,,,,5 Rue des Charmilles,,,Saint-Senier-sous-Avranches,
+5 Rue des Charmilles,-1.338815,48.682223,,5 Rue des Charmilles,,,,50300
+49 Cité Beauséjour Sourdeval,,,,49 Cité Beauséjour,,,,50150
+49 Cité Beauséjour 50150,,,,49 Cité Beauséjour,,,Sourdeval,
+49 Cité Beauséjour,-0.934331,48.724459,,49 Cité Beauséjour,,,,50150
+1 Rue du Bois Tourlaville,,,,1 Rue du Bois,,,,50110
+1 Rue du Bois 50110,,,,1 Rue du Bois,,,Tourlaville,
+1 Rue du Bois,-1.603478,49.637369,,1 Rue du Bois,,,,50110
+380 Rue au Bon Tourville-sur-Sienne,,,,380 Rue au Bon,,,,50200
+380 Rue au Bon 50200,,,,380 Rue au Bon,,,Tourville-sur-Sienne,
+380 Rue au Bon,-1.549687,49.049394,,380 Rue au Bon,,,,50200
+2 Rue de la Grande Vallée Vauville,,,,2 Rue de la Grande Vallée,,,,50440
+2 Rue de la Grande Vallée 50440,,,,2 Rue de la Grande Vallée,,,Vauville,
+2 Rue de la Grande Vallée,-1.845956,49.636883,,2 Rue de la Grande Vallée,,,,50440
+8 Rue Landon Alençon,,,,8 Rue Landon,,,,61000
+8 Rue Landon 61000,,,,8 Rue Landon,,,Alençon,
+8 Rue Landon,0.090141,48.420447,,8 Rue Landon,,,,61000
+13 Rue de L'Île de France Argentan,,,,13 Rue de L'Île de France,,,,61200
+13 Rue de L'Île de France 61200,,,,13 Rue de L'Île de France,,,Argentan,
+13 Rue de L'Île de France,-0.025680,48.749541,,13 Rue de L'Île de France,,,,61200
+16 Place de la République Bellême,,,,16 Place de la République,,,,61130
+16 Place de la République 61130,,,,16 Place de la République,,,Bellême,
+16 Place de la République,0.560025,48.376618,,16 Place de la République,,,,61130
+2 Rue des Écoles La Chapelle-Montligeon,,,,2 Rue des Écoles,,,,61400
+2 Rue des Écoles 61400,,,,2 Rue des Écoles,,,La Chapelle-Montligeon,
+2 Rue des Écoles,0.653781,48.483731,,2 Rue des Écoles,,,,61400
+3BIS Rue du Mont Margantin Domfront,,,,3BIS Rue du Mont Margantin,,,,61700
+3BIS Rue du Mont Margantin 61700,,,,3BIS Rue du Mont Margantin,,,Domfront,
+3BIS Rue du Mont Margantin,-0.646376,48.591039,,3BIS Rue du Mont Margantin,,,,61700
+10 Rue de la Chaussée Flers,,,,10 Rue de la Chaussée,,,,61100
+10 Rue de la Chaussée 61100,,,,10 Rue de la Chaussée,,,Flers,
+10 Rue de la Chaussée,-0.570136,48.746542,,10 Rue de la Chaussée,,,,61100
+26 Rue du Carrouge Le Gué-de-la-Chaîne,,,,26 Rue du Carrouge,,,,61130
+26 Rue du Carrouge 61130,,,,26 Rue du Carrouge,,,Le Gué-de-la-Chaîne,
+26 Rue du Carrouge,0.520481,48.378791,,26 Rue du Carrouge,,,,61130
+2 Rue des Rosiers Lonrai,,,,2 Rue des Rosiers,,,,61250
+2 Rue des Rosiers 61250,,,,2 Rue des Rosiers,,,Lonrai,
+2 Rue des Rosiers,0.040771,48.460925,,2 Rue des Rosiers,,,,61250
+9 Route de Sees Nonant-le-Pin,,,,9 Route de Sees,,,,61240
+9 Route de Sees 61240,,,,9 Route de Sees,,,Nonant-le-Pin,
+9 Route de Sees,0.221824,48.704743,,9 Route de Sees,,,,61240
+25 Rue des Groseillers Saint-Georges-des-Groseillers,,,,25 Rue des Groseillers,,,,61100
+25 Rue des Groseillers 61100,,,,25 Rue des Groseillers,,,Saint-Georges-des-Groseillers,
+25 Rue des Groseillers,-0.563678,48.772614,,25 Rue des Groseillers,,,,61100
+3 Rue Louis Hamel Saint-Ouen-sur-Iton,,,,3 Rue Louis Hamel,,,,61300
+3 Rue Louis Hamel 61300,,,,3 Rue Louis Hamel,,,Saint-Ouen-sur-Iton,
+3 Rue Louis Hamel,0.693262,48.736242,,3 Rue Louis Hamel,,,,61300
+15 Rue de la Chesnaie Bagnoles-de-l'Orne,,,,15 Rue de la Chesnaie,,,,61140
+15 Rue de la Chesnaie 61140,,,,15 Rue de la Chesnaie,,,Bagnoles-de-l'Orne,
+15 Rue de la Chesnaie,-0.429536,48.547443,,15 Rue de la Chesnaie,,,,61140
