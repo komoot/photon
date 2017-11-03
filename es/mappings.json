@@ -1,504 +1,483 @@
 {
-	"place":
-	{
+	"place": {
 		"dynamic": "false",
-		"_all":
-		{
-			"enabled": false	
+		"_all": {
+			"enabled": false
 		},
-		"_source":
-		{
-			"excludes": ["context.*"]	
+		"_source": {
+			"excludes": [
+				"context.*"
+			]
 		},
-		"properties":
-		{
-			"city":
-			{
-				"properties":
-				{
-					"de":
-					{
+		"properties": {
+			"city": {
+				"properties": {
+					"de": {
 						"type": "string",
 						"index": "no",
-						"copy_to": ["collector.de"]	
+						"copy_to": [
+							"collector.de"
+						]
 					},
-					"default":
-					{
+					"default": {
 						"type": "string",
 						"index": "no",
-						"copy_to": ["collector.default"]	
+						"copy_to": [
+							"collector.default"
+						]
 					},
-					"en":
-					{
+					"en": {
 						"type": "string",
 						"index": "no",
-						"copy_to": ["collector.en"]	
+						"copy_to": [
+							"collector.en"
+						]
 					},
-					"fr":
-					{
+					"fr": {
 						"type": "string",
 						"index": "no",
-						"copy_to": ["collector.fr"]	
+						"copy_to": [
+							"collector.fr"
+						]
 					},
-					"it":
-					{
+					"it": {
 						"type": "string",
 						"index": "no",
-						"copy_to": ["collector.it"]	
-					}	
-				}	
+						"copy_to": [
+							"collector.it"
+						]
+					}
+				}
 			},
-			"collector":
-			{
-				"properties":
-				{
-					"de":
-					{
+			"collector": {
+				"properties": {
+					"de": {
 						"type": "string",
 						"index": "no",
-						"fields":
-						{
-							"ngrams":
-							{
+						"fields": {
+							"ngrams": {
 								"type": "string",
 								"analyzer": "index_ngram",
-								"search_analyzer": "search_ngram"	
+								"search_analyzer": "search_ngram"
 							},
-							"raw":
-							{
+							"raw": {
 								"type": "string",
-								"analyzer": "index_raw"	
-							}	
+								"analyzer": "index_raw"
+							}
 						},
-						"copy_to": ["collector.de"]	
+						"copy_to": [
+							"collector.de"
+						]
 					},
-					"default":
-					{
+					"default": {
 						"type": "string",
 						"analyzer": "index_ngram",
-						"fields":
-						{
-							"raw":
-							{
+						"fields": {
+							"raw": {
 								"type": "string",
-								"analyzer": "index_raw"	
-							}	
-						}	
+								"analyzer": "index_raw"
+							}
+						}
 					},
-					"en":
-					{
+					"en": {
 						"type": "string",
 						"index": "no",
-						"fields":
-						{
-							"ngrams":
-							{
+						"fields": {
+							"ngrams": {
 								"type": "string",
 								"analyzer": "index_ngram",
-								"search_analyzer": "search_ngram"	
+								"search_analyzer": "search_ngram"
 							},
-							"raw":
-							{
+							"raw": {
 								"type": "string",
-								"analyzer": "index_raw"	
-							}	
+								"analyzer": "index_raw"
+							}
 						},
-						"copy_to": ["collector.en"]	
+						"copy_to": [
+							"collector.en"
+						]
 					},
-					"fr":
-					{
+					"fr": {
 						"type": "string",
 						"index": "no",
-						"fields":
-						{
-							"ngrams":
-							{
+						"fields": {
+							"ngrams": {
 								"type": "string",
 								"analyzer": "index_ngram",
-								"search_analyzer": "search_ngram"	
+								"search_analyzer": "search_ngram"
 							},
-							"raw":
-							{
+							"raw": {
 								"type": "string",
-								"analyzer": "index_raw"	
-							}	
+								"analyzer": "index_raw"
+							}
 						},
-						"copy_to": ["collector.fr"]	
+						"copy_to": [
+							"collector.fr"
+						]
 					},
-					"it":
-					{
+					"it": {
 						"type": "string",
 						"index": "no",
-						"fields":
-						{
-							"ngrams":
-							{
+						"fields": {
+							"ngrams": {
 								"type": "string",
 								"analyzer": "index_ngram",
-								"search_analyzer": "search_ngram"	
+								"search_analyzer": "search_ngram"
 							},
-							"raw":
-							{
+							"raw": {
 								"type": "string",
-								"analyzer": "index_raw"	
-							}	
+								"analyzer": "index_raw"
+							}
 						},
-						"copy_to": ["collector.it"]	
-					}	
-				}	
+						"copy_to": [
+							"collector.it"
+						]
+					}
+				}
 			},
-			"context":
-			{
-				"properties":
-				{
-					"de":
-					{
+			"context": {
+				"properties": {
+					"de": {
 						"type": "string",
 						"index": "no",
-						"copy_to": ["collector.de"]	
+						"copy_to": [
+							"collector.de"
+						]
 					},
-					"default":
-					{
+					"default": {
 						"type": "string",
 						"index": "no",
-						"copy_to": ["collector.default"]	
+						"copy_to": [
+							"collector.default"
+						]
 					},
-					"en":
-					{
+					"en": {
 						"type": "string",
 						"index": "no",
-						"copy_to": ["collector.en"]	
+						"copy_to": [
+							"collector.en"
+						]
 					},
-					"fr":
-					{
+					"fr": {
 						"type": "string",
 						"index": "no",
-						"copy_to": ["collector.fr"]	
+						"copy_to": [
+							"collector.fr"
+						]
 					},
-					"it":
-					{
+					"it": {
 						"type": "string",
 						"index": "no",
-						"copy_to": ["collector.it"]	
-					}	
-				}	
+						"copy_to": [
+							"collector.it"
+						]
+					}
+				}
 			},
-			"coordinate":
-			{
-				"type": "geo_point"	
+			"coordinate": {
+				"type": "geo_point"
 			},
-			"country":
-			{
-				"properties":
-				{
-					"de":
-					{
+			"country": {
+				"properties": {
+					"de": {
 						"type": "string",
 						"index": "no",
-						"copy_to": ["collector.de"]	
+						"copy_to": [
+							"collector.de"
+						]
 					},
-					"default":
-					{
+					"default": {
 						"type": "string",
 						"index": "no",
-						"copy_to": ["collector.default"]	
+						"copy_to": [
+							"collector.default"
+						]
 					},
-					"en":
-					{
+					"en": {
 						"type": "string",
 						"index": "no",
-						"copy_to": ["collector.en"]	
+						"copy_to": [
+							"collector.en"
+						]
 					},
-					"fr":
-					{
+					"fr": {
 						"type": "string",
 						"index": "no",
-						"copy_to": ["collector.fr"]	
+						"copy_to": [
+							"collector.fr"
+						]
 					},
-					"it":
-					{
+					"it": {
 						"type": "string",
 						"index": "no",
-						"copy_to": ["collector.it"]	
-					}	
-				}	
+						"copy_to": [
+							"collector.it"
+						]
+					}
+				}
 			},
-			"housenumber":
-			{
+			"housenumber": {
 				"type": "string",
 				"index": "not_analyzed",
-				"copy_to": ["collector.default"]	
+				"copy_to": [
+					"collector.default"
+				]
 			},
-			"importance":
-			{
-				"type": "float"	
+			"importance": {
+				"type": "float"
 			},
-			"name":
-			{
-				"properties":
-				{
-					"alt":
-					{
+			"name": {
+				"properties": {
+					"alt": {
 						"type": "string",
 						"index": "no",
-						"fields":
-						{
-							"raw":
-							{
+						"fields": {
+							"raw": {
 								"type": "string",
-								"analyzer": "index_raw"	
-							}	
+								"analyzer": "index_raw"
+							}
 						},
-						"copy_to": ["collector.default"]	
+						"copy_to": [
+							"collector.default"
+						]
 					},
-					"de":
-					{
+					"de": {
 						"type": "string",
 						"index": "no",
-						"fields":
-						{
-							"ngrams":
-							{
+						"fields": {
+							"ngrams": {
 								"type": "string",
 								"analyzer": "index_ngram",
-								"search_analyzer": "search_ngram"	
+								"search_analyzer": "search_ngram"
 							},
-							"raw":
-							{
+							"raw": {
 								"type": "string",
-								"analyzer": "index_raw"	
-							}	
+								"analyzer": "index_raw"
+							}
 						},
-						"copy_to": ["collector.de"]	
+						"copy_to": [
+							"collector.de"
+						]
 					},
-					"default":
-					{
+					"default": {
 						"type": "string",
 						"index": "no",
-						"copy_to": 
-						[
+						"copy_to": [
 							"collector.default",
 							"name.en",
 							"name.de",
 							"name.fr",
-							"name.it"	
-						]	
+							"name.it"
+						]
 					},
-					"en":
-					{
+					"en": {
 						"type": "string",
 						"index": "no",
-						"fields":
-						{
-							"ngrams":
-							{
+						"fields": {
+							"ngrams": {
 								"type": "string",
 								"analyzer": "index_ngram",
-								"search_analyzer": "search_ngram"	
+								"search_analyzer": "search_ngram"
 							},
-							"raw":
-							{
+							"raw": {
 								"type": "string",
-								"analyzer": "index_raw"	
-							}	
+								"analyzer": "index_raw"
+							}
 						},
-						"copy_to": ["collector.en"]	
+						"copy_to": [
+							"collector.en"
+						]
 					},
-					"fr":
-					{
+					"fr": {
 						"type": "string",
 						"index": "no",
-						"fields":
-						{
-							"ngrams":
-							{
+						"fields": {
+							"ngrams": {
 								"type": "string",
 								"analyzer": "index_ngram",
-								"search_analyzer": "search_ngram"	
+								"search_analyzer": "search_ngram"
 							},
-							"raw":
-							{
+							"raw": {
 								"type": "string",
-								"analyzer": "index_raw"	
-							}	
+								"analyzer": "index_raw"
+							}
 						},
-						"copy_to": ["collector.fr"]	
+						"copy_to": [
+							"collector.fr"
+						]
 					},
-					"int":
-					{
+					"int": {
 						"type": "string",
 						"index": "no",
-						"fields":
-						{
-							"raw":
-							{
+						"fields": {
+							"raw": {
 								"type": "string",
-								"analyzer": "index_raw"	
-							}	
+								"analyzer": "index_raw"
+							}
 						},
-						"copy_to": ["collector.default"]	
+						"copy_to": [
+							"collector.default"
+						]
 					},
-					"it":
-					{
+					"it": {
 						"type": "string",
 						"index": "no",
-						"fields":
-						{
-							"ngrams":
-							{
+						"fields": {
+							"ngrams": {
 								"type": "string",
 								"analyzer": "index_ngram",
-								"search_analyzer": "search_ngram"	
+								"search_analyzer": "search_ngram"
 							},
-							"raw":
-							{
+							"raw": {
 								"type": "string",
-								"analyzer": "index_raw"	
-							}	
+								"analyzer": "index_raw"
+							}
 						},
-						"copy_to": ["collector.it"]	
+						"copy_to": [
+							"collector.it"
+						]
 					},
-					"loc":
-					{
+					"loc": {
 						"type": "string",
 						"index": "no",
-						"fields":
-						{
-							"raw":
-							{
+						"fields": {
+							"raw": {
 								"type": "string",
-								"analyzer": "index_raw"	
-							}	
+								"analyzer": "index_raw"
+							}
 						},
-						"copy_to": ["collector.default"]	
+						"copy_to": [
+							"collector.default"
+						]
 					},
-					"old":
-					{
+					"old": {
 						"type": "string",
 						"index": "no",
-						"fields":
-						{
-							"raw":
-							{
+						"fields": {
+							"raw": {
 								"type": "string",
-								"analyzer": "index_raw"	
-							}	
+								"analyzer": "index_raw"
+							}
 						},
-						"copy_to": ["collector.default"]	
+						"copy_to": [
+							"collector.default"
+						]
 					},
-					"reg":
-					{
+					"reg": {
 						"type": "string",
 						"index": "no",
-						"fields":
-						{
-							"raw":
-							{
+						"fields": {
+							"raw": {
 								"type": "string",
-								"analyzer": "index_raw"	
-							}	
+								"analyzer": "index_raw"
+							}
 						},
-						"copy_to": ["collector.default"]	
-					}	
-				}	
+						"copy_to": [
+							"collector.default"
+						]
+					}
+				}
 			},
-			"osm_id":
-			{
-				"type": "long"	
+			"osm_id": {
+				"type": "long"
 			},
-			"osm_key":
-			{
+			"osm_key": {
 				"type": "string",
-				"index": "not_analyzed"	
+				"index": "not_analyzed"
 			},
-			"osm_type":
-			{
+			"osm_type": {
 				"type": "string",
-				"index": "no"	
+				"index": "no"
 			},
-			"osm_value":
-			{
+			"osm_value": {
 				"type": "string",
-				"index": "not_analyzed"	
+				"index": "not_analyzed"
 			},
-			"postcode":
-			{
+			"postcode": {
 				"type": "string",
 				"index": "no",
-				"copy_to": ["collector.default"]	
+				"copy_to": [
+					"collector.default"
+				]
 			},
-			"state":
-			{
-				"properties":
-				{
-					"de":
-					{
+			"state": {
+				"properties": {
+					"de": {
 						"type": "string",
 						"index": "no",
-						"copy_to": ["collector.de"]	
+						"copy_to": [
+							"collector.de"
+						]
 					},
-					"default":
-					{
+					"default": {
 						"type": "string",
 						"index": "no",
-						"copy_to": ["collector.default"]	
+						"copy_to": [
+							"collector.default"
+						]
 					},
-					"en":
-					{
+					"en": {
 						"type": "string",
 						"index": "no",
-						"copy_to": ["collector.en"]	
+						"copy_to": [
+							"collector.en"
+						]
 					},
-					"fr":
-					{
+					"fr": {
 						"type": "string",
 						"index": "no",
-						"copy_to": ["collector.fr"]	
+						"copy_to": [
+							"collector.fr"
+						]
 					},
-					"it":
-					{
+					"it": {
 						"type": "string",
 						"index": "no",
-						"copy_to": ["collector.it"]	
-					}	
-				}	
+						"copy_to": [
+							"collector.it"
+						]
+					}
+				}
 			},
-			"street":
-			{
-				"properties":
-				{
-					"de":
-					{
+			"street": {
+				"properties": {
+					"de": {
 						"type": "string",
 						"index": "no",
-						"copy_to": ["collector.de"]	
+						"copy_to": [
+							"collector.de"
+						]
 					},
-					"default":
-					{
+					"default": {
 						"type": "string",
 						"index": "no",
-						"copy_to": ["collector.default"]	
+						"copy_to": [
+							"collector.default"
+						]
 					},
-					"en":
-					{
+					"en": {
 						"type": "string",
 						"index": "no",
-						"copy_to": ["collector.en"]	
+						"copy_to": [
+							"collector.en"
+						]
 					},
-					"fr":
-					{
+					"fr": {
 						"type": "string",
 						"index": "no",
-						"copy_to": ["collector.fr"]	
+						"copy_to": [
+							"collector.fr"
+						]
 					},
-					"it":
-					{
+					"it": {
 						"type": "string",
 						"index": "no",
-						"copy_to": ["collector.it"]	
-					}	
-				}	
-			}	
-		}	
-	}	
+						"copy_to": [
+							"collector.it"
+						]
+					}
+				}
+			}
+		}
+	}
 }

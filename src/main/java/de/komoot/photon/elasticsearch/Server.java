@@ -60,12 +60,12 @@ public class Server {
 	}
     }
 
-    public Server(CommandLineArgs args) {
+    public Server(CommandLineArgs args) throws Exception {
 	this(args.getCluster(), args.getDataDirectory(), args.getLanguages(), args.getTransportAddresses(), false);
     }
 
     public Server(String clusterName, String mainDirectory, String languages, String transportAddresses,
-	    boolean isTest) {
+	    boolean isTest) throws Exception {
 	try {
 	    if (SystemUtils.IS_OS_WINDOWS) {
 		setupDirectories(new URL("file:///" + mainDirectory));
@@ -74,6 +74,7 @@ public class Server {
 	    }
 	} catch (Exception e) {
 	    log.error("Can't create directories: ", e);
+	    throw e;
 	}
 	this.clusterName = clusterName;
 	this.languages = languages.split(",");

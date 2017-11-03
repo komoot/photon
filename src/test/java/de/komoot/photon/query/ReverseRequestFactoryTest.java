@@ -133,7 +133,7 @@ public class ReverseRequestFactoryTest {
         Mockito.when(mockRequest.queryParams("radius")).thenReturn("5.1");
         ReverseRequestFactory reverseRequestFactory = new ReverseRequestFactory(ImmutableSet.of("en"));
         reverseRequest = reverseRequestFactory.create(mockRequest);
-        Assert.assertEquals(reverseRequest.getRadius(), 5.0d, 0);
+        Assert.assertEquals(reverseRequest.getRadius(), 5.1d, 0);
         Mockito.verify(mockRequest, Mockito.times(1)).queryParams("radius");
     }
 
