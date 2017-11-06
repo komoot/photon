@@ -36,7 +36,7 @@ public class TagFilterQueryBuilderSearchTest extends ESBaseTester {
 
 
     @Before
-    public void setUp() throws IOException {
+    public void setUp() throws Exception {
         setUpES();
         ImmutableList<String> tags = ImmutableList.of("tourism", "attraction",
                                                       "tourism", "hotel",

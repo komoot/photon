@@ -22,7 +22,7 @@ public class ESBaseTester {
 		shutdownES();
 	}
 
-	public void setUpES() throws IOException {
+	public void setUpES() throws Exception {
 		server = new Server("photon", new File("./target/es_photon").getAbsolutePath(), "en", "", true).start();
 		server.recreateIndex();
 		refresh();
