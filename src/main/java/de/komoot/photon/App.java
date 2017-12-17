@@ -1,5 +1,7 @@
 package de.komoot.photon;
 
+
+
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
 import de.komoot.photon.elasticsearch.Server;
@@ -16,16 +18,19 @@ import java.io.IOException;
 
 import static spark.Spark.*;
 
+
+
 @Slf4j
 public class App {
 
-	public static void main(String[] rawArgs) {
+	public static void main(String[] rawArgs) throws Exception {
 		// parse command line arguments
 		CommandLineArgs args = new CommandLineArgs();
 		final JCommander jCommander = new JCommander(args);
 		try {
 			jCommander.parse(rawArgs);
-		} catch(ParameterException e) {
+		}
+		catch (ParameterException e) {
 			log.warn("could not start photon: " + e.getMessage());
 			jCommander.usage();
 			return;
@@ -61,11 +66,13 @@ public class App {
 
 			// no special action specified -> normal mode: start search API
 			startApi(args, esClient);
-		} finally {
-			if(shutdownES)
-				esServer.shutdown();
+		}
+		finally {
+			if(shutdownES) esServer.shutdown();
 		}
 	}
+
+
 
 	/**
 	 * dump elastic search index and create a new and empty one
@@ -75,13 +82,16 @@ public class App {
 	private static void startRecreatingIndex(Server esServer) {
 		try {
 			esServer.recreateIndex();
-		} catch(IOException e) {
+		}
+		catch (IOException e) {
 			log.error("cannot setup index, elastic search config files not readable", e);
 			return;
 		}
 
 		log.info("deleted photon index and created an empty new one.");
 	}
+
+
 
 	/**
 	 * take nominatim data and dump it to json
@@ -96,10 +106,13 @@ public class App {
 			nominatimConnector.setImporter(jsonDumper);
 			nominatimConnector.readEntireDatabase();
 			log.info("json dump was created: " + filename);
-		} catch(FileNotFoundException e) {
+		}
+		catch (FileNotFoundException e) {
 			log.error("cannot create dump", e);
 		}
 	}
+
+
 
 	/**
 	 * take nominatim data to fill elastic search index
@@ -111,7 +124,8 @@ public class App {
 	private static void startNominatimImport(CommandLineArgs args, Server esServer, Client esNodeClient) {
 		try {
 			esServer.recreateIndex(); // dump previous data
-		} catch(IOException e) {
+		}
+		catch (IOException e) {
 			log.error("cannot setup index, elastic search config files not readable", e);
 			return;
 		}
@@ -122,12 +136,15 @@ public class App {
 		nominatimConnector.setImporter(importer);
 		try {
 			nominatimConnector.readEntireDatabase();
-		} catch(Exception e) {
+		}
+		catch (Exception e) {
 			log.info("error importing from nominatim: " + e.getMessage());
 		}
 
 		log.info("imported data from nominatim to photon with languages: " + args.getLanguages());
 	}
+
+
 
 	/**
 	 * start api to accept search requests via http

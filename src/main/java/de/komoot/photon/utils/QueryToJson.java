@@ -16,12 +16,14 @@ public class QueryToJson implements OneWayConverter<QueryBuilder, String> {
 
     @Override
     public String convert(QueryBuilder anItem) {
-        try {
-            BytesReference bytes = anItem.toXContent(JsonXContent.contentBuilder(), new ToXContent.MapParams(null)).bytes();
-            return new String(bytes.toBytes(), "UTF-8");
-        } catch (IOException e) {
-            log.error("Unable to transform querybuilder to a json string due to an exception", e);
-            return null;
-        }
+	try {
+	    BytesReference bytes = anItem.toXContent(JsonXContent.contentBuilder(), new ToXContent.MapParams(null))
+		    .bytes();
+
+	    return bytes.utf8ToString();
+	} catch (IOException e) {
+	    log.error("Unable to transform querybuilder to a json string due to an exception", e);
+	    throw new RuntimeException("Unable to transform querybuilder to a json string due to an exception", e);
+	}
     }
 }

@@ -4,8 +4,6 @@ import de.komoot.photon.elasticsearch.Server;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.admin.indices.refresh.RefreshRequest;
 import org.elasticsearch.client.Client;
-import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.indices.IndexMissingException;
 import org.junit.*;
 
 import java.io.File;
@@ -24,9 +22,10 @@ public class ESBaseTester {
 		shutdownES();
 	}
 
-	public void setUpES() throws IOException {
+	public void setUpES() throws Exception {
 		server = new Server("photon", new File("./target/es_photon").getAbsolutePath(), "en", "", true).start();
 		server.recreateIndex();
+		refresh();
 	}
 
 	protected Client getClient() {
@@ -43,16 +42,11 @@ public class ESBaseTester {
 		getClient().admin().indices().refresh(new RefreshRequest(indexName)).actionGet();
 	}
 
-	protected void deleteAll() {
-		try {
-			getClient().prepareDeleteByQuery(indexName).setQuery(QueryBuilders.matchAllQuery()).execute().actionGet();
-		} catch(IndexMissingException ex) {
-		}
-
-		refresh();
-	}
-
 	public void shutdownES() {
 		server.shutdown();
+	}
+	
+	public void deleteIndex()	{
+	    server.deleteIndex();
 	}
 }

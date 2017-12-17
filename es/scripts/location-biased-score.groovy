@@ -1,1 +1,0 @@
-dist = doc['coordinate'].distanceInKm(lat, lon); 0.5 + ( 1.5 / (1.0 + dist/40.0) )

@@ -5,6 +5,7 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.PrecisionModel;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import spark.QueryParamsMap;
@@ -17,12 +18,22 @@ import spark.Request;
 public class PhotonRequestFactory {
     private final LanguageChecker languageChecker;
     private final static GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
+    
+    protected static HashSet<String> m_hsRequestQueryParams = new HashSet<>(Arrays.asList("lang", "q", "lon", "lat", "limit", "distance_sort", "osm_tag"));
 
     public PhotonRequestFactory(Set<String> supportedLanguages) {
         this.languageChecker = new LanguageChecker(supportedLanguages);
     }
 
     public <R extends PhotonRequest> R create(Request webRequest) throws BadRequestException {
+        
+        
+        for(String queryParam: webRequest.queryParams())
+            if(!m_hsRequestQueryParams.contains(queryParam))
+                throw new BadRequestException(400, "unknown query parameter '" + queryParam + "'.  Allowed parameters are: " + m_hsRequestQueryParams);
+        
+        
+        
         String language = webRequest.queryParams("lang");
         language = language == null ? "en" : language;
         languageChecker.apply(language);
@@ -42,13 +53,25 @@ public class PhotonRequestFactory {
         } catch (Exception nfe) {
             //ignore
         }
+        Boolean locationDistanceSort = true;
+        try {
+            if(webRequest.queryParams("distance_sort") == null)
+                locationDistanceSort = true;
+            else
+                locationDistanceSort = Boolean.valueOf(webRequest.queryParams("distance_sort"));
+            
+        } catch (Exception nfe) {
+            //ignore
+        }
         QueryParamsMap tagFiltersQueryMap = webRequest.queryMap("osm_tag");
         if (!new CheckIfFilteredRequest().execute(tagFiltersQueryMap)) {
-            return (R) new PhotonRequest(query, limit, locationForBias, language);
+            return (R) new PhotonRequest(query, limit, locationForBias, locationDistanceSort, language);
         }
-        FilteredPhotonRequest photonRequest = new FilteredPhotonRequest(query, limit, locationForBias, language);
+        FilteredPhotonRequest photonRequest = new FilteredPhotonRequest(query, limit, locationForBias, locationDistanceSort, language);
         String[] tagFilters = tagFiltersQueryMap.values();
         setUpTagFilters(photonRequest, tagFilters);
+        
+        
         return (R) photonRequest;
     }
 

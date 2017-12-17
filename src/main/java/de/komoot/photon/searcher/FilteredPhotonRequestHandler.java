@@ -27,6 +27,7 @@ public class FilteredPhotonRequestHandler extends AbstractPhotonRequestHandler<F
         Set<String> excludeValues = photonRequest.notValues();
         Map<String, Set<String>> excludeTagValues = photonRequest.tagNotValues();
         Point locationBias = photonRequest.getLocationForBias();
+        Boolean locationDistanceSort = photonRequest.getLocationDistanceSort();
         return PhotonQueryBuilder.
                                          builder(photonRequest.getQuery(), photonRequest.getLanguage()).
                                          withTags(includeTags).
@@ -36,7 +37,7 @@ public class FilteredPhotonRequestHandler extends AbstractPhotonRequestHandler<F
                                          withoutKeys(excludeKeys).
                                          withoutValues(excludeValues).
                                          withTagsNotValues(excludeTagValues).
-                                         withLocationBias(locationBias);
+                                         withLocationBias(locationBias, locationDistanceSort);
     }
 
 }

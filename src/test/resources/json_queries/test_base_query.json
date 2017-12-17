@@ -1,102 +1,164 @@
 {
-  "filtered": {
-    "query": {
-      "function_score": {
-        "query": {
-          "bool": {
-            "must": {
-              "bool": {
-                "should": [
-                  {
-                    "match": {
-                      "collector.default": {
-                        "query": "berlin",
-                        "type": "boolean",
-                        "analyzer": "search_ngram",
-                        "fuzziness": 1,
-                        "prefix_length": 2,
-                        "minimum_should_match": "100%"
-                      }
-                    }
-                  },
-                  {
-                    "match": {
-                      "collector.en.ngrams": {
-                        "query": "berlin",
-                        "type": "boolean",
-                        "analyzer": "search_ngram",
-                        "fuzziness": 1,
-                        "prefix_length": 2,
-                        "minimum_should_match": "100%"
-                      }
-                    }
-                  }
-                ],
-                "minimum_should_match": "1"
-              }
-            },
-            "should": [
-              {
-                "match": {
-                  "name.en.raw": {
-                    "query": "berlin",
-                    "type": "boolean",
-                    "analyzer": "search_raw",
-                    "boost": 200.0
-                  }
-                }
-              },
-              {
-                "match": {
-                  "collector.en.raw": {
-                    "query": "berlin",
-                    "type": "boolean",
-                    "analyzer": "search_raw",
-                    "boost": 100.0
-                  }
-                }
-              }
-            ]
-          }
-        },
-        "functions": [
-          {
-            "script_score": {
-              "script": "general-score",
-              "lang": "groovy"
-            }
-          }
-        ],
-        "score_mode": "multiply",
-        "boost_mode": "multiply"
-      }
-    },
-    "filter": {
-      "or": {
-        "filters": [
-          {
-            "missing": {
-              "field": "housenumber"
-            }
-          },
-          {
-            "query": {
-              "match": {
-                "housenumber": {
-                  "query": "berlin",
-                  "type": "boolean",
-                  "analyzer": "standard"
-                }
-              }
-            }
-          },
-          {
-            "exists": {
-              "field": "name.en.raw"
-            }
-          }
-        ]
-      }
-    }
-  }
+	"bool": {
+		"must": [
+			{
+				"function_score": {
+					"query": {
+						"bool": {
+							"must": [
+								{
+									"bool": {
+										"should": [
+											{
+												"match": {
+													"collector.default": {
+														"query": "berlin",
+														"operator": "OR",
+														"analyzer": "search_ngram",
+														"fuzziness": "0",
+														"prefix_length": 2,
+														"max_expansions": 50,
+														"minimum_should_match": "100%",
+														"fuzzy_transpositions": true,
+														"lenient": false,
+														"zero_terms_query": "NONE",
+														"boost": 1.0
+													}
+												}
+											},
+											{
+												"match": {
+													"collector.en.ngrams": {
+														"query": "berlin",
+														"operator": "OR",
+														"analyzer": "search_ngram",
+														"fuzziness": "0",
+														"prefix_length": 2,
+														"max_expansions": 50,
+														"minimum_should_match": "100%",
+														"fuzzy_transpositions": true,
+														"lenient": false,
+														"zero_terms_query": "NONE",
+														"boost": 1.0
+													}
+												}
+											}
+										],
+										"disable_coord": false,
+										"adjust_pure_negative": true,
+										"minimum_should_match": "1",
+										"boost": 1.0
+									}
+								}
+							],
+							"should": [
+								{
+									"match": {
+										"name.en.raw": {
+											"query": "berlin",
+											"operator": "OR",
+											"analyzer": "search_raw",
+											"prefix_length": 0,
+											"max_expansions": 50,
+											"fuzzy_transpositions": true,
+											"lenient": false,
+											"zero_terms_query": "NONE",
+											"boost": 200.0
+										}
+									}
+								},
+								{
+									"match": {
+										"collector.en.raw": {
+											"query": "berlin",
+											"operator": "OR",
+											"analyzer": "search_raw",
+											"prefix_length": 0,
+											"max_expansions": 50,
+											"fuzzy_transpositions": true,
+											"lenient": false,
+											"zero_terms_query": "NONE",
+											"boost": 100.0
+										}
+									}
+								}
+							],
+							"disable_coord": false,
+							"adjust_pure_negative": true,
+							"boost": 1.0
+						}
+					},
+					"functions": [
+						{
+							"filter": {
+								"match_all": {
+									"boost": 1.0
+								}
+							},
+							"script_score": {
+								"script": {
+									"inline": "double score = 1 + doc['importance'].value * 100; score",
+									"lang": "painless"
+								}
+							}
+						}
+					],
+					"score_mode": "multiply",
+					"boost_mode": "multiply",
+					"max_boost": 3.4028235E38,
+					"boost": 1.0
+				}
+			}
+		],
+		"filter": [
+			{
+				"bool": {
+					"should": [
+						{
+							"bool": {
+								"must_not": [
+									{
+										"exists": {
+											"field": "housenumber",
+											"boost": 1.0
+										}
+									}
+								],
+								"disable_coord": false,
+								"adjust_pure_negative": true,
+								"boost": 1.0
+							}
+						},
+						{
+							"match": {
+								"housenumber": {
+									"query": "berlin",
+									"operator": "OR",
+									"analyzer": "standard",
+									"prefix_length": 0,
+									"max_expansions": 50,
+									"fuzzy_transpositions": true,
+									"lenient": false,
+									"zero_terms_query": "NONE",
+									"boost": 1.0
+								}
+							}
+						},
+						{
+							"exists": {
+								"field": "name.en.raw",
+								"boost": 1.0
+							}
+						}
+					],
+					"disable_coord": false,
+					"adjust_pure_negative": true,
+					"boost": 1.0
+				}
+			}
+		],
+		"disable_coord": false,
+		"adjust_pure_negative": true,
+		"boost": 1.0
+	}
 }
