@@ -12,6 +12,7 @@ import org.elasticsearch.client.Client;
 import spark.Request;
 import spark.Response;
 import spark.Route;
+import spark.RouteImpl;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -157,28 +158,19 @@ public class App {
 		setIpAddress(args.getListenIp());
 
 		// setup search API
-		get(new SearchRequestHandler("api", esNodeClient, args.getLanguages()));
-		get(new SearchRequestHandler("api/", esNodeClient, args.getLanguages()));
-		get(new ReverseSearchRequestHandler("reverse", esNodeClient, args.getLanguages()));
-		get(new ReverseSearchRequestHandler("reverse/", esNodeClient, args.getLanguages()));
+		get("api", new SearchRequestHandler("api", esNodeClient, args.getLanguages()));
+		get("api/", new SearchRequestHandler("api/", esNodeClient, args.getLanguages()));
+		get("reverse", new ReverseSearchRequestHandler("reverse", esNodeClient, args.getLanguages()));
+		get("reverse/", new ReverseSearchRequestHandler("reverse/", esNodeClient, args.getLanguages()));
 
 		// setup update API
 		final NominatimUpdater nominatimUpdater = new NominatimUpdater(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
 		Updater updater = new de.komoot.photon.elasticsearch.Updater(esNodeClient, args.getLanguages());
 		nominatimUpdater.setUpdater(updater);
 
-		get(new Route("/nominatim-update") {
-			@Override
-			public Object handle(Request request, Response response) {
-				Thread nominatimUpdaterThread = new Thread() {
-					@Override
-					public void run() {
-						nominatimUpdater.update();
-					}
-				};
-				nominatimUpdaterThread.start();
-				return "nominatim update started (more information in console output) ...";
-			}
+		get("/nominatim-update", (Request request, Response response) -> {
+			new Thread(() -> nominatimUpdater.update()).start();
+			return "nominatim update started (more information in console output) ...";
 		});
 	}
 }

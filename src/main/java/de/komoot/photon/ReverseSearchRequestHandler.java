@@ -17,12 +17,15 @@ import org.json.JSONObject;
 import spark.Request;
 import spark.Response;
 import spark.Route;
+import spark.RouteImpl;
+
+import static spark.Spark.halt;
 
 /**
  *
  * @author svantulden
  */
-public class ReverseSearchRequestHandler <R extends ReverseRequest> extends Route {
+public class ReverseSearchRequestHandler <R extends ReverseRequest> extends RouteImpl {
     private final ReverseRequestFactory reverseRequestFactory;
     private final ReverseRequestHandlerFactory requestHandlerFactory;
     private final ConvertToGeoJson geoJsonConverter;

@@ -25,6 +25,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Set;
 import org.elasticsearch.client.Client;
+import spark.RouteImpl;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(SimplePhotonRequestHandler.class)
@@ -33,7 +34,7 @@ public class SearchRequestHandlerTest {
     public void testConstructor() throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
         Client client = Mockito.mock(Client.class);
         SearchRequestHandler searchRequestHandler = new SearchRequestHandler("any", client, "en,fr");
-        String path = ReflectionTestUtil.getFieldValue(searchRequestHandler, Route.class, "path");
+        String path = ReflectionTestUtil.getFieldValue(searchRequestHandler, RouteImpl.class, "path");
         Assert.assertEquals("any", path);
         PhotonRequestFactory photonRequestFactory = ReflectionTestUtil.getFieldValue(searchRequestHandler, searchRequestHandler.getClass(), "photonRequestFactory");
         LanguageChecker languageChecker = ReflectionTestUtil.getFieldValue(photonRequestFactory, photonRequestFactory.getClass(), "languageChecker");
