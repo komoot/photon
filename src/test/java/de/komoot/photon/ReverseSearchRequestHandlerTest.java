@@ -30,6 +30,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Set;
 import org.elasticsearch.client.Client;
+import spark.RouteImpl;
+
 /**
  *
  * @author svantulden
@@ -42,7 +44,7 @@ public class ReverseSearchRequestHandlerTest {
     public void testConstructor() throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
         Client client = Mockito.mock(Client.class);
         ReverseSearchRequestHandler reverseSearchRequestHandler = new ReverseSearchRequestHandler("any", client, "en,fr");
-        String path = ReflectionTestUtil.getFieldValue(reverseSearchRequestHandler, Route.class, "path");
+        String path = ReflectionTestUtil.getFieldValue(reverseSearchRequestHandler, RouteImpl.class, "path");
         Assert.assertEquals("any", path);
         ReverseRequestFactory reverseRequestFactory = ReflectionTestUtil.getFieldValue(reverseSearchRequestHandler, reverseSearchRequestHandler.getClass(), "reverseRequestFactory");
         LanguageChecker languageChecker = ReflectionTestUtil.getFieldValue(reverseRequestFactory, reverseRequestFactory.getClass(), "languageChecker");

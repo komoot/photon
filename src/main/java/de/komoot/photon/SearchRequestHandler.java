@@ -7,21 +7,23 @@ import de.komoot.photon.searcher.BaseElasticsearchSearcher;
 import de.komoot.photon.searcher.PhotonRequestHandler;
 import de.komoot.photon.searcher.PhotonRequestHandlerFactory;
 import de.komoot.photon.utils.ConvertToGeoJson;
+import org.elasticsearch.client.Client;
 import org.json.JSONObject;
 import spark.Request;
 import spark.Response;
-import spark.Route;
+import spark.RouteImpl;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import org.elasticsearch.client.Client;
+
+import static spark.Spark.halt;
 
 /**
  * Created by Sachin Dole on 2/12/2015.
  */
-public class SearchRequestHandler<R extends PhotonRequest> extends Route {
+public class SearchRequestHandler<R extends PhotonRequest> extends RouteImpl {
     private final PhotonRequestFactory photonRequestFactory;
     private final PhotonRequestHandlerFactory requestHandlerFactory;
     private final ConvertToGeoJson geoJsonConverter;

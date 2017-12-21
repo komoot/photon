@@ -34,7 +34,7 @@ import de.komoot.photon.CommandLineArgs;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * Helper class to start/stop elasticserach node and get elasticsearch clients
+ * Helper class to start/stop elasticsearch node and get elasticsearch clients
  *
  * @author felix
  */
