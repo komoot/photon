@@ -34,6 +34,12 @@
 			<artifactId>transport</artifactId>
 			<version>${elasticsearch.version}</version>
 		</dependency>
+		<dependency><!-- required by elasticsearch to avoid warning on startup,
+		    see https://github.com/elastic/elasticsearch/issues/13245 -->
+			<groupId>org.elasticsearch</groupId>
+			<artifactId>jna</artifactId>
+			<version>4.4.0</version>
+		</dependency>
 		<dependency>
 			<groupId>postgresql</groupId>
 			<artifactId>postgresql</artifactId>
