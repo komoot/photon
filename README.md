@@ -6,7 +6,7 @@ _Photon_ is an open source geocoder built for [OpenStreetMap](http://www.osm.org
 
 _Photon_ was started by [komoot](http://www.komoot.de) and provides search-as-you-type and multilingual support. It's used in production with thousands of requests per minute at [www.komoot.de](http://www.komoot.de). Find our public API and demo on [photon.komoot.de](http://photon.komoot.de).
 
-We are a young project, feel free to test and participate!
+Feel free to test and participate!
 
 ### Features
 - high performance
@@ -22,7 +22,7 @@ We are a young project, feel free to test and participate!
 
 ### Installation
 
-photon requires java, at least version 6.
+photon requires java, at least version 8.
 
 get photon
 ```bash
