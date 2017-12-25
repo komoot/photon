@@ -1,5 +1,7 @@
 # photon
 
+[![Build Status](https://secure.travis-ci.org/komoot/photon.png?branch=master)](http://travis-ci.org/komoot/photon)
+
 _Photon_ is an open source geocoder built for [OpenStreetMap](http://www.osm.org) data. It is based on [elasticsearch](http://elasticsearch.org/) - an efficient, powerful and highly scalable search platform.
 
 _Photon_ was started by [komoot](http://www.komoot.de) and provides search-as-you-type and multilingual support. It's used in production with thousands of requests per minute at [www.komoot.de](http://www.komoot.de). Find our public API and demo on [photon.komoot.de](http://photon.komoot.de).
