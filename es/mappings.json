@@ -217,7 +217,7 @@
 				}
 			},
 			"housenumber": {
-				"type": "keyword",
+				"type": "text",
 				"index": true,
 				"copy_to": [
 					"collector.default"
