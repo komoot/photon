@@ -56,7 +56,8 @@
 		"char_filter": {
 			"punctuationgreedy": {
 				"type": "pattern_replace",
-				"pattern": "[\\.,]"
+				"pattern": "[\\.,]",
+				"replacement": " "
 			}
 		},
 		"filter": {
