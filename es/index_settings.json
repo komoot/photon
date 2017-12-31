@@ -75,7 +75,7 @@
 		"char_filter": {
 			"punctuationgreedy": {
 				"type": "pattern_replace",
-				"pattern": "[\\.,]",
+				"pattern": "[\\.,']",
 				"replacement": " "
 			},
 			"remove_ws_hnr_suffix": {
