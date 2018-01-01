@@ -219,6 +219,8 @@
 			"housenumber": {
 				"type": "text",
 				"index": true,
+				"analyzer": "index_housenumber",
+				"search_analyzer": "standard",
 				"copy_to": [
 					"collector.default"
 				]

@@ -40,6 +40,16 @@
 					"unique"
 				],
 				"tokenizer": "standard"
+			},
+			"index_housenumber": {
+				"char_filter": [
+					"punctuationgreedy",
+					"remove_ws_hnr_suffix"
+				],
+				"filter": [
+					"lowercase",
+					"preserving_word_delimiter"],
+				"tokenizer": "standard" 
 			}
 		},
 		"tokenizer": {
@@ -58,12 +68,21 @@
 				"type": "pattern_replace",
 				"pattern": "[\\.,]",
 				"replacement": " "
+			},
+			"remove_ws_hnr_suffix": {
+				"type": "pattern_replace",
+				"pattern": "(\\d+)\\s(?=\\p{L}\\b)",
+				"replacement": "$1"
 			}
 		},
 		"filter": {
 			"photonlength": {
 				"min": "2",
 				"type": "length"
+			},
+			"preserving_word_delimiter": { 
+				"type": "word_delimiter",
+				"preserve_original": "true"
 			}
 		}
 	}
