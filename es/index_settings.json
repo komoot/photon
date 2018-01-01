@@ -2,8 +2,12 @@
 	"analysis": {
 		"analyzer": {
 			"index_ngram": {
+				"char_filter": [
+					"remove_ws_hnr_suffix"
+				],
 				"tokenizer": "edge_ngram",
 				"filter": [
+					"preserving_word_delimiter",
 					"lowercase",
 					"german_normalization"
 				]
