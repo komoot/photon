@@ -3,6 +3,7 @@
 		"analyzer": {
 			"index_ngram": {
 				"char_filter": [
+					"punctuationgreedy",
 					"remove_ws_hnr_suffix"
 				],
 				"tokenizer": "edge_ngram",
@@ -13,6 +14,9 @@
 				]
 			},
 			"search_ngram": {
+				"char_filter": [
+					"punctuationgreedy"
+				],
 				"tokenizer": "standard",
 				"filter": [
 					"lowercase",
