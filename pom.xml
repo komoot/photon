@@ -5,7 +5,7 @@
 
 	<groupId>de.komoot.photon</groupId>
 	<artifactId>photon</artifactId>
-	<version>0.2.9-SNAPSHOT</version>
+	<version>0.3-alpha1</version>
 
 	<dependencies>
 		<dependency>
