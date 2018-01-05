@@ -8,6 +8,8 @@ import org.junit.Test;
 
 import java.util.List;
 
+import static org.junit.Assert.assertEquals;
+
 /**
  * date: 13.02.15
  *
