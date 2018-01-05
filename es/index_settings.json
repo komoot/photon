@@ -10,7 +10,8 @@
 				"filter": [
 					"preserving_word_delimiter",
 					"lowercase",
-					"german_normalization"
+					"german_normalization",
+					"unique"
 				]
 			},
 			"search_ngram": {
