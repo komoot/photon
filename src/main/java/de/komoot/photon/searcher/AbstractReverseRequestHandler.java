@@ -20,7 +20,7 @@ public abstract class AbstractReverseRequestHandler <R extends ReverseRequest> i
     }        
 
     @Override
-    public final List<JSONObject> handle(R photonRequest) {
+    public List<JSONObject> handle(R photonRequest) {
         TagFilterQueryBuilder queryBuilder = buildQuery(photonRequest);
         SearchResponse results = elasticsearchSearcher.search(queryBuilder.buildQuery(), photonRequest.getLimit(), photonRequest.getLocation(), 
                 photonRequest.getLocationDistanceSort());
