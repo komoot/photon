@@ -12,14 +12,13 @@ import org.mockito.Mockito;
 import spark.Request;
 
 /**
- *
  * @author svantulden
  */
 public class ReverseRequestFactoryTest {
 
     private ReverseRequest reverseRequest;
 
-    public void requestWithLongitudeLatitude(Request mockRequest, Double longitude, Double latitude){
+    public void requestWithLongitudeLatitude(Request mockRequest, Double longitude, Double latitude) {
         Mockito.when(mockRequest.queryParams("lon")).thenReturn(longitude.toString());
         Mockito.when(mockRequest.queryParams("lat")).thenReturn(latitude.toString());
     }

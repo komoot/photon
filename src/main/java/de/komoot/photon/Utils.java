@@ -19,156 +19,156 @@ import java.util.Set;
  * @author christoph
  */
 public class Utils {
-	private static final Joiner commaJoiner = Joiner.on(", ").skipNulls();
+    private static final Joiner commaJoiner = Joiner.on(", ").skipNulls();
 
-	public static XContentBuilder convert(PhotonDoc doc, String[] languages) throws IOException {
-		XContentBuilder builder = XContentFactory.jsonBuilder().startObject()
-				.field(Constants.OSM_ID, doc.getOsmId())
-				.field(Constants.OSM_TYPE, doc.getOsmType())
-				.field(Constants.OSM_KEY, doc.getTagKey())
-				.field(Constants.OSM_VALUE, doc.getTagValue())
-				.field(Constants.IMPORTANCE, doc.getImportance());
+    public static XContentBuilder convert(PhotonDoc doc, String[] languages) throws IOException {
+        XContentBuilder builder = XContentFactory.jsonBuilder().startObject()
+                .field(Constants.OSM_ID, doc.getOsmId())
+                .field(Constants.OSM_TYPE, doc.getOsmType())
+                .field(Constants.OSM_KEY, doc.getTagKey())
+                .field(Constants.OSM_VALUE, doc.getTagValue())
+                .field(Constants.IMPORTANCE, doc.getImportance());
 
-		if(doc.getCentroid() != null) {
-			builder.startObject("coordinate")
-					.field("lat", doc.getCentroid().getY())
-					.field("lon", doc.getCentroid().getX())
-					.endObject();
-		}
+        if (doc.getCentroid() != null) {
+            builder.startObject("coordinate")
+                    .field("lat", doc.getCentroid().getY())
+                    .field("lon", doc.getCentroid().getX())
+                    .endObject();
+        }
 
-		if(doc.getHouseNumber() != null) {
-			builder.field("housenumber", doc.getHouseNumber());
-		}
+        if (doc.getHouseNumber() != null) {
+            builder.field("housenumber", doc.getHouseNumber());
+        }
 
-		if(doc.getPostcode() != null) {
-			builder.field("postcode", doc.getPostcode());
-		}
+        if (doc.getPostcode() != null) {
+            builder.field("postcode", doc.getPostcode());
+        }
 
-		writeName(builder, doc.getName(), languages);
-		writeIntlNames(builder, doc.getCity(), "city", languages);
-		writeIntlNames(builder, doc.getCountry(), "country", languages);
-		writeIntlNames(builder, doc.getState(), "state", languages);
-		writeIntlNames(builder, doc.getStreet(), "street", languages);
-		writeContext(builder, doc.getContext(), languages);
-		writeExtent(builder, doc.getBbox());
+        writeName(builder, doc.getName(), languages);
+        writeIntlNames(builder, doc.getCity(), "city", languages);
+        writeIntlNames(builder, doc.getCountry(), "country", languages);
+        writeIntlNames(builder, doc.getState(), "state", languages);
+        writeIntlNames(builder, doc.getStreet(), "street", languages);
+        writeContext(builder, doc.getContext(), languages);
+        writeExtent(builder, doc.getBbox());
 
-		builder.endObject();
-		
-		
-		return builder;
-	}
+        builder.endObject();
 
-	private static void writeExtent(XContentBuilder builder, Envelope bbox) throws IOException {
-		if(bbox == null) return;
 
-		if(bbox.getArea() == 0.) return;
+        return builder;
+    }
 
-		// http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/mapping-geo-shape-type.html#_envelope
-		builder.startObject("extent");
-		builder.field("type", "envelope");
+    private static void writeExtent(XContentBuilder builder, Envelope bbox) throws IOException {
+        if (bbox == null) return;
 
-		builder.startArray("coordinates");
-		builder.startArray().value(bbox.getMinX()).value(bbox.getMaxY()).endArray();
-		builder.startArray().value(bbox.getMaxX()).value(bbox.getMinY()).endArray();
+        if (bbox.getArea() == 0.) return;
 
-		builder.endArray();
-		builder.endObject();
-	}
+        // http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/mapping-geo-shape-type.html#_envelope
+        builder.startObject("extent");
+        builder.field("type", "envelope");
 
-	private static void writeName(XContentBuilder builder, Map<String, String> name, String[] languages) throws IOException {
-		Map<String, String> fNames = filterNames(name, languages);
+        builder.startArray("coordinates");
+        builder.startArray().value(bbox.getMinX()).value(bbox.getMaxY()).endArray();
+        builder.startArray().value(bbox.getMaxX()).value(bbox.getMinY()).endArray();
 
-		if(name.get("alt_name") != null)
-			fNames.put("alt", name.get("alt_name"));
+        builder.endArray();
+        builder.endObject();
+    }
 
-		if(name.get("int_name") != null)
-			fNames.put("int", name.get("int_name"));
+    private static void writeName(XContentBuilder builder, Map<String, String> name, String[] languages) throws IOException {
+        Map<String, String> fNames = filterNames(name, languages);
 
-		if(name.get("loc_name") != null)
-			fNames.put("loc", name.get("loc_name"));
+        if (name.get("alt_name") != null)
+            fNames.put("alt", name.get("alt_name"));
 
-		if(name.get("old_name") != null)
-			fNames.put("old", name.get("old_name"));
+        if (name.get("int_name") != null)
+            fNames.put("int", name.get("int_name"));
 
-		if(name.get("reg_name") != null)
-			fNames.put("reg", name.get("reg_name"));
+        if (name.get("loc_name") != null)
+            fNames.put("loc", name.get("loc_name"));
 
-		write(builder, fNames, "name");
-	}
+        if (name.get("old_name") != null)
+            fNames.put("old", name.get("old_name"));
 
-	private static void write(XContentBuilder builder, Map<String, String> fNames, String name) throws IOException {
-		if(fNames.isEmpty()) return;
+        if (name.get("reg_name") != null)
+            fNames.put("reg", name.get("reg_name"));
 
-		builder.startObject(name);
-		for(Map.Entry<String, String> entry : fNames.entrySet()) {
-			builder.field(entry.getKey(), entry.getValue());
-		}
-		builder.endObject();
-	}
+        write(builder, fNames, "name");
+    }
 
-	protected static void writeContext(XContentBuilder builder, Set<Map<String, String>> contexts, String[] languages) throws IOException {
-		final SetMultimap<String, String> multimap = HashMultimap.create();
+    private static void write(XContentBuilder builder, Map<String, String> fNames, String name) throws IOException {
+        if (fNames.isEmpty()) return;
 
-		for(Map<String, String> context : contexts) {
-			if(context.get("name") != null) {
-				multimap.put("default", context.get("name"));
-			}
-		}
+        builder.startObject(name);
+        for (Map.Entry<String, String> entry : fNames.entrySet()) {
+            builder.field(entry.getKey(), entry.getValue());
+        }
+        builder.endObject();
+    }
 
-		for(String language : languages) {
-			for(Map<String, String> context : contexts) {
-				if(context.get("name:" + language) != null) {
-					multimap.put(language, context.get("name:" + language));
-				}
-			}
-		}
+    protected static void writeContext(XContentBuilder builder, Set<Map<String, String>> contexts, String[] languages) throws IOException {
+        final SetMultimap<String, String> multimap = HashMultimap.create();
 
-		final Map<String, Collection<String>> map = multimap.asMap();
-		if(!multimap.isEmpty()) {
-			builder.startObject("context");
-			for(Map.Entry<String, Collection<String>> entry : map.entrySet()) {
-				builder.field(entry.getKey(), commaJoiner.join(entry.getValue()));
-			}
-			builder.endObject();
-		}
-	}
+        for (Map<String, String> context : contexts) {
+            if (context.get("name") != null) {
+                multimap.put("default", context.get("name"));
+            }
+        }
 
-	private static void writeIntlNames(XContentBuilder builder, Map<String, String> names, String name, String[] languages) throws IOException {
-		Map<String, String> fNames = filterNames(names, languages);
-		write(builder, fNames, name);
-	}
+        for (String language : languages) {
+            for (Map<String, String> context : contexts) {
+                if (context.get("name:" + language) != null) {
+                    multimap.put(language, context.get("name:" + language));
+                }
+            }
+        }
 
-	private static Map<String, String> filterNames(Map<String, String> names, String[] languages) {
-		return filterNames(names, new HashMap<String, String>(), languages);
-	}
+        final Map<String, Collection<String>> map = multimap.asMap();
+        if (!multimap.isEmpty()) {
+            builder.startObject("context");
+            for (Map.Entry<String, Collection<String>> entry : map.entrySet()) {
+                builder.field(entry.getKey(), commaJoiner.join(entry.getValue()));
+            }
+            builder.endObject();
+        }
+    }
 
-	private static Map<String, String> filterNames(Map<String, String> names, HashMap<String, String> filteredNames, String[] languages) {
-		if(names == null) return filteredNames;
+    private static void writeIntlNames(XContentBuilder builder, Map<String, String> names, String name, String[] languages) throws IOException {
+        Map<String, String> fNames = filterNames(names, languages);
+        write(builder, fNames, name);
+    }
 
-		if(names.get("name") != null) {
-			filteredNames.put("default", names.get("name"));
-		}
+    private static Map<String, String> filterNames(Map<String, String> names, String[] languages) {
+        return filterNames(names, new HashMap<String, String>(), languages);
+    }
 
-		for(String language : languages) {
-			if(names.get("name:" + language) != null) {
-				filteredNames.put(language, names.get("name:" + language));
-			}
-		}
+    private static Map<String, String> filterNames(Map<String, String> names, HashMap<String, String> filteredNames, String[] languages) {
+        if (names == null) return filteredNames;
 
-		return filteredNames;
-	}
+        if (names.get("name") != null) {
+            filteredNames.put("default", names.get("name"));
+        }
 
-	// http://stackoverflow.com/a/4031040/1437096
-	public static String stripNonDigits(
-			final CharSequence input /* inspired by seh's comment */) {
-		final StringBuilder sb = new StringBuilder(
-				input.length() /* also inspired by seh's comment */);
-		for(int i = 0; i < input.length(); i++) {
-			final char c = input.charAt(i);
-			if(c > 47 && c < 58) {
-				sb.append(c);
-			}
-		}
-		return sb.toString();
-	}
+        for (String language : languages) {
+            if (names.get("name:" + language) != null) {
+                filteredNames.put(language, names.get("name:" + language));
+            }
+        }
+
+        return filteredNames;
+    }
+
+    // http://stackoverflow.com/a/4031040/1437096
+    public static String stripNonDigits(
+            final CharSequence input /* inspired by seh's comment */) {
+        final StringBuilder sb = new StringBuilder(
+                input.length() /* also inspired by seh's comment */);
+        for (int i = 0; i < input.length(); i++) {
+            final char c = input.charAt(i);
+            if (c > 47 && c < 58) {
+                sb.append(c);
+            }
+        }
+        return sb.toString();
+    }
 }

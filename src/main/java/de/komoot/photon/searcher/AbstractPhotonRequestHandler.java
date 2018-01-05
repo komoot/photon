@@ -17,7 +17,7 @@ public abstract class AbstractPhotonRequestHandler<R extends PhotonRequest> impl
 
     public AbstractPhotonRequestHandler(ElasticsearchSearcher elasticsearchSearcher) {
         this.elasticsearchSearcher = elasticsearchSearcher;
-    }        
+    }
 
     @Override
     public final List<JSONObject> handle(R photonRequest) {

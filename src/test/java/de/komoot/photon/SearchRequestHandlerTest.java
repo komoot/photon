@@ -8,6 +8,7 @@ import de.komoot.photon.query.PhotonRequestFactory;
 import de.komoot.photon.searcher.PhotonRequestHandlerFactory;
 import de.komoot.photon.searcher.SimplePhotonRequestHandler;
 import de.komoot.photon.utils.ConvertToGeoJson;
+import org.elasticsearch.client.Client;
 import org.hamcrest.core.IsEqual;
 import org.json.JSONObject;
 import org.junit.Assert;
@@ -20,13 +21,11 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import spark.Request;
 import spark.Response;
-import spark.Route;
+import spark.RouteImpl;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Set;
-import org.elasticsearch.client.Client;
-import spark.RouteImpl;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(SimplePhotonRequestHandler.class)

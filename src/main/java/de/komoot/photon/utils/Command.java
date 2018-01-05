@@ -8,6 +8,7 @@ package de.komoot.photon.utils;
 public interface Command<R, O> {
     /**
      * Do something with operands of type {@link O} and return the result of type {@link R}
+     *
      * @param operand
      * @return
      */

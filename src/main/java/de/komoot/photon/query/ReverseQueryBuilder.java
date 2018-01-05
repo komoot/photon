@@ -2,16 +2,15 @@ package de.komoot.photon.query;
 
 import com.google.common.collect.ImmutableSet;
 import com.vividsolutions.jts.geom.Point;
-import java.util.Map;
-import java.util.Set;
-
+import org.elasticsearch.common.unit.DistanceUnit;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.common.unit.DistanceUnit;
+
+import java.util.Map;
+import java.util.Set;
 
 /**
- *
  * @author svantulden
  */
 public class ReverseQueryBuilder implements TagFilterQueryBuilder {
@@ -24,122 +23,122 @@ public class ReverseQueryBuilder implements TagFilterQueryBuilder {
     private String queryStringFilter;
 
     private ReverseQueryBuilder(Point location, Double radius, String queryStringFilter) {
-	this.location = location;
-	this.radius = radius;
-	this.queryStringFilter = queryStringFilter;
+        this.location = location;
+        this.radius = radius;
+        this.queryStringFilter = queryStringFilter;
     }
 
     public static TagFilterQueryBuilder builder(Point location, Double radius, String queryStringFilter) {
-	return new ReverseQueryBuilder(location, radius, queryStringFilter);
+        return new ReverseQueryBuilder(location, radius, queryStringFilter);
     }
 
     @Override
     public TagFilterQueryBuilder withLimit(Integer limit) {
-	this.limit = limit == null || limit < 0 ? 0 : limit;
-	this.limit = this.limit > 5000 ? 5000 : this.limit;
+        this.limit = limit == null || limit < 0 ? 0 : limit;
+        this.limit = this.limit > 5000 ? 5000 : this.limit;
 
-	return this;
+        return this;
     }
 
     @Override
     public TagFilterQueryBuilder withLocationBias(Point point, Boolean locationDistanceSort) {
-	throw new RuntimeException(new NoSuchMethodException("this method is not implemented (NOOP)"));
+        throw new RuntimeException(new NoSuchMethodException("this method is not implemented (NOOP)"));
     }
 
     @Override
     public TagFilterQueryBuilder withTags(Map<String, Set<String>> tags) {
-	throw new RuntimeException(new NoSuchMethodException("this method is not implemented (NOOP)"));
+        throw new RuntimeException(new NoSuchMethodException("this method is not implemented (NOOP)"));
     }
 
     @Override
     public TagFilterQueryBuilder withKeys(Set<String> keys) {
-	throw new RuntimeException(new NoSuchMethodException("this method is not implemented (NOOP)"));
+        throw new RuntimeException(new NoSuchMethodException("this method is not implemented (NOOP)"));
     }
 
     @Override
     public TagFilterQueryBuilder withValues(Set<String> values) {
-	throw new RuntimeException(new NoSuchMethodException("this method is not implemented (NOOP)"));
+        throw new RuntimeException(new NoSuchMethodException("this method is not implemented (NOOP)"));
     }
 
     @Override
     public TagFilterQueryBuilder withTagsNotValues(Map<String, Set<String>> tags) {
-	throw new RuntimeException(new NoSuchMethodException("this method is not implemented (NOOP)"));
+        throw new RuntimeException(new NoSuchMethodException("this method is not implemented (NOOP)"));
     }
 
     @Override
     public TagFilterQueryBuilder withoutTags(Map<String, Set<String>> tagsToExclude) {
-	throw new RuntimeException(new NoSuchMethodException("this method is not implemented (NOOP)"));
+        throw new RuntimeException(new NoSuchMethodException("this method is not implemented (NOOP)"));
     }
 
     @Override
     public TagFilterQueryBuilder withoutKeys(Set<String> keysToExclude) {
-	throw new RuntimeException(new NoSuchMethodException("this method is not implemented (NOOP)"));
+        throw new RuntimeException(new NoSuchMethodException("this method is not implemented (NOOP)"));
     }
 
     @Override
     public TagFilterQueryBuilder withoutValues(Set<String> valuesToExclude) {
-	throw new RuntimeException(new NoSuchMethodException("this method is not implemented (NOOP)"));
+        throw new RuntimeException(new NoSuchMethodException("this method is not implemented (NOOP)"));
     }
 
     @Override
     public TagFilterQueryBuilder withKeys(String... keys) {
-	return this.withKeys(ImmutableSet.<String>builder().add(keys).build());
+        return this.withKeys(ImmutableSet.<String>builder().add(keys).build());
     }
 
     @Override
     public TagFilterQueryBuilder withValues(String... values) {
-	return this.withValues(ImmutableSet.<String>builder().add(values).build());
+        return this.withValues(ImmutableSet.<String>builder().add(values).build());
     }
 
     @Override
     public TagFilterQueryBuilder withoutKeys(String... keysToExclude) {
-	return this.withoutKeys(ImmutableSet.<String>builder().add(keysToExclude).build());
+        return this.withoutKeys(ImmutableSet.<String>builder().add(keysToExclude).build());
     }
 
     @Override
     public TagFilterQueryBuilder withoutValues(String... valuesToExclude) {
-	return this.withoutValues(ImmutableSet.<String>builder().add(valuesToExclude).build());
+        return this.withoutValues(ImmutableSet.<String>builder().add(valuesToExclude).build());
     }
 
     @Override
     public TagFilterQueryBuilder withStrictMatch() {
-	throw new RuntimeException(new NoSuchMethodException("this method is not implemented (NOOP)"));
+        throw new RuntimeException(new NoSuchMethodException("this method is not implemented (NOOP)"));
     }
 
     @Override
     public TagFilterQueryBuilder withLenientMatch() {
-	throw new RuntimeException(new NoSuchMethodException("this method is not implemented (NOOP)"));
+        throw new RuntimeException(new NoSuchMethodException("this method is not implemented (NOOP)"));
     }
 
     @Override
     public QueryBuilder buildQuery() {
-	QueryBuilder fb = QueryBuilders.geoDistanceQuery("coordinate").point(location.getY(), location.getX())
-		.distance(radius, DistanceUnit.KILOMETERS);
+        QueryBuilder fb = QueryBuilders.geoDistanceQuery("coordinate").point(location.getY(), location.getX())
+                .distance(radius, DistanceUnit.KILOMETERS);
 
-	BoolQueryBuilder finalQuery;
+        BoolQueryBuilder finalQuery;
 
-	if (queryStringFilter != null && queryStringFilter.trim().length() > 0)
-	    finalQuery = QueryBuilders.boolQuery().must(QueryBuilders.queryStringQuery(queryStringFilter)).filter(fb);
-	else
-	    finalQuery = QueryBuilders.boolQuery().must(QueryBuilders.matchAllQuery()).filter(fb);
+        if (queryStringFilter != null && queryStringFilter.trim().length() > 0)
+            finalQuery = QueryBuilders.boolQuery().must(QueryBuilders.queryStringQuery(queryStringFilter)).filter(fb);
+        else
+            finalQuery = QueryBuilders.boolQuery().must(QueryBuilders.matchAllQuery()).filter(fb);
 
-	return finalQuery;
+        return finalQuery;
     }
 
     @Override
     public Integer getLimit() {
-	return limit;
+        return limit;
     }
 
     private Boolean checkTags(Set<String> keys) {
-	return !(keys == null || keys.isEmpty());
+        return !(keys == null || keys.isEmpty());
     }
 
     private Boolean checkTags(Map<String, Set<String>> tags) {
-	return !(tags == null || tags.isEmpty());
+        return !(tags == null || tags.isEmpty());
     }
 
     private enum State {
-	PLAIN, FILTERED, QUERY_ALREADY_BUILT, FINISHED,
+        PLAIN, FILTERED, QUERY_ALREADY_BUILT, FINISHED,
     }
 }

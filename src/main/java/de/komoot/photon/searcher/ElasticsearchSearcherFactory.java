@@ -16,7 +16,7 @@ public class ElasticsearchSearcherFactory {
     public ElasticsearchSearcherFactory(Client client) {
         this.client = client;
     }
-    
+
     public ElasticsearchSearcher getSearcher(PhotonRequest photonRequest) {
         if (photonRequest instanceof FilteredPhotonRequest) {
             return new BaseElasticsearchSearcher(client);
