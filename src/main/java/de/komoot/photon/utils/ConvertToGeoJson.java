@@ -17,7 +17,6 @@ public class ConvertToGeoJson extends Converter<List<JSONObject>, JSONObject> {
      * will not be valid.
      *
      * @param listOfPlaces places to be converted to geojson
-     *
      * @return geojson object
      */
     @Override
@@ -34,7 +33,6 @@ public class ConvertToGeoJson extends Converter<List<JSONObject>, JSONObject> {
      * places.
      *
      * @param jsonObject a list of places in geojson format
-     *
      * @return the list of places from the geojson.
      */
     @Override

@@ -18,6 +18,6 @@ public class ElasticsearchSearcherFactoryTest {
         Mockito.when(mockPhotonRequest.getLimit()).thenReturn(15);
         Mockito.when(mockPhotonRequest.keys()).thenReturn(ImmutableSet.of("aTag"));
         ElasticsearchSearcher searcher = elasticsearchSearcherFactory.getSearcher(mockPhotonRequest);
-        Assert.assertEquals(BaseElasticsearchSearcher.class,searcher.getClass());
+        Assert.assertEquals(BaseElasticsearchSearcher.class, searcher.getClass());
     }
 }

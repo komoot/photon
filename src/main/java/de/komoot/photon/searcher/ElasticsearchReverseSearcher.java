@@ -5,7 +5,6 @@ import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.index.query.QueryBuilder;
 
 /**
- *
  * @author svantulden
  */
 public interface ElasticsearchReverseSearcher {

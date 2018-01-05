@@ -6,15 +6,15 @@ package de.komoot.photon;
  * @author felix
  */
 public interface Importer {
-	/**
-	 * a new document was imported
-	 *
-	 * @param doc
-	 */
-	public void add(PhotonDoc doc);
+    /**
+     * a new document was imported
+     *
+     * @param doc
+     */
+    public void add(PhotonDoc doc);
 
-	/**
-	 * import is finished
-	 */
-	public void finish();
+    /**
+     * import is finished
+     */
+    public void finish();
 }

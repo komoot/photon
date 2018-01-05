@@ -16,7 +16,7 @@ public class FilteredPhotonRequestHandler extends AbstractPhotonRequestHandler<F
     public FilteredPhotonRequestHandler(ElasticsearchSearcher elasticsearchSearcher) {
         super(elasticsearchSearcher);
     }
-    
+
     @Override
     public TagFilterQueryBuilder buildQuery(FilteredPhotonRequest photonRequest) {
         Map<String, Set<String>> includeTags = photonRequest.tags();
@@ -29,15 +29,15 @@ public class FilteredPhotonRequestHandler extends AbstractPhotonRequestHandler<F
         Point locationBias = photonRequest.getLocationForBias();
         Boolean locationDistanceSort = photonRequest.getLocationDistanceSort();
         return PhotonQueryBuilder.
-                                         builder(photonRequest.getQuery(), photonRequest.getLanguage()).
-                                         withTags(includeTags).
-                                         withKeys(includeKeys).
-                                         withValues(includeValues).
-                                         withoutTags(excludeTags).
-                                         withoutKeys(excludeKeys).
-                                         withoutValues(excludeValues).
-                                         withTagsNotValues(excludeTagValues).
-                                         withLocationBias(locationBias, locationDistanceSort);
+                builder(photonRequest.getQuery(), photonRequest.getLanguage()).
+                withTags(includeTags).
+                withKeys(includeKeys).
+                withValues(includeValues).
+                withoutTags(excludeTags).
+                withoutKeys(excludeKeys).
+                withoutValues(excludeValues).
+                withTagsNotValues(excludeTagValues).
+                withLocationBias(locationBias, locationDistanceSort);
     }
 
 }

@@ -8,6 +8,6 @@ import lombok.Data;
 @Data
 public class UpdateRow {
 
-	public Long placeId;
-	public Integer indexdStatus; // 1 - index, 2 - update, 100 - delete
+    public Long placeId;
+    public Integer indexdStatus; // 1 - index, 2 - update, 100 - delete
 }
