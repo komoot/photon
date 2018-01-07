@@ -13,28 +13,28 @@ import java.io.PrintWriter;
  */
 @Slf4j
 public class JsonDumper implements Importer {
-	private PrintWriter writer = null;
-	private final String[] languages;
+    private PrintWriter writer = null;
+    private final String[] languages;
 
-	public JsonDumper(String filename, String languages) throws FileNotFoundException {
-		this.writer = new PrintWriter(filename);
-		this.languages = languages.split(",");
-	}
+    public JsonDumper(String filename, String languages) throws FileNotFoundException {
+        this.writer = new PrintWriter(filename);
+        this.languages = languages.split(",");
+    }
 
-	@Override
-	public void add(PhotonDoc doc) {
-		try {
-			writer.println("{\"index\": {}}");
-			writer.println(Utils.convert(doc, this.languages).string());
-		} catch(IOException e) {
-			log.error("error writing json file", e);
-		}
-	}
+    @Override
+    public void add(PhotonDoc doc) {
+        try {
+            writer.println("{\"index\": {}}");
+            writer.println(Utils.convert(doc, this.languages).string());
+        } catch (IOException e) {
+            log.error("error writing json file", e);
+        }
+    }
 
-	@Override
-	public void finish() {
-		if(writer != null) {
-			writer.close();
-		}
-	}
+    @Override
+    public void finish() {
+        if (writer != null) {
+            writer.close();
+        }
+    }
 }

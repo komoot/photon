@@ -24,12 +24,13 @@ Feel free to test and participate!
 
 photon requires java, at least version 8.
 
-get photon
+Get photon, at least 0.3, from [the releases](https://github.com/komoot/photon/releases) and start it:
+
 ```bash
-wget http://photon.komoot.de/data/photon-0.2.7.jar
+java -jar photon-*.jar
 ```
 
-download search index (31G gb compressed, 56.3 gb uncompressed, worldwide coverage, languages: English, German, French and Italian). The search index is updated weekly and thankfully provided by [graphhopper](https://graphhopper.com/) with the support of [lonvia](https://github.com/lonvia).
+Download the search index (53G gb compressed, worldwide coverage, languages: English, German, French and Italian). The search index is updated weekly and thankfully provided by [GraphHopper](https://www.graphhopper.com/) with the support of [lonvia](https://github.com/lonvia).
 
 Make sure you have bzip2 or pbzip2 installed and execute one of these two commands in your shell. This will download, uncompress and extract the huge database in one step:
 
@@ -38,16 +39,12 @@ wget -O - http://download1.graphhopper.com/public/photon-db-latest.tar.bz2 | bzi
 # you can significantly speed up extracting using pbzip2 (recommended):
 wget -O - http://download1.graphhopper.com/public/photon-db-latest.tar.bz2 | pbzip2 -cd | tar x
  ```
- 
-start photon
-```bash
-java -jar photon-0.2.7.jar
-```
+
+To use an older version of ElasticSearch please download the data from [here](http://download1.graphhopper.com/public/photon-ES-17-db-171019.tar.bz2) (Nov 2017) via wget as described above and use version [0.2.7 of photon](http://photon.komoot.de/data/photon-0.2.7.jar) (Oct 2016).
 
 Check the URL `http://localhost:2322/api?q=berlin` to see if photon is running without problems. You may want to use our [leaflet plugin](https://github.com/komoot/leaflet.photon) to see the results on a map.
 
-discover more of photon's feature with its usage `java -jar photon-0.2.7.jar -h`.
-
+discover more of photon's feature with its usage `java -jar photon-*.jar -h`.
 
 
 ### Customized Search Data
@@ -55,7 +52,7 @@ If you need search data in other languages or restricted to a country you will n
 Once you have your [nominatim](https://github.com/twain47/Nominatim) database ready, you can import the data to photon:
 
 ```bash
-java -jar photon-0.2.7.jar -nominatim-import -host localhost -port 5432 -database nominatim -user nominatim -password ... -languages es,fr
+java -jar photon-*.jar -nominatim-import -host localhost -port 5432 -database nominatim -user nominatim -password ... -languages es,fr
 ```
 
 The import of worldwide data set will take some hours/days, ssd disk are recommended to accelerate nominatim queries.
@@ -65,7 +62,7 @@ The import of worldwide data set will take some hours/days, ssd disk are recomme
 In order to update from nominatim, you must start photon with the nominatim database credentials on the command line:
 
 ```bash
-java -jar photon-0.2.7.jar -host localhost -port 5432 -database nominatim -user nominatim -password ...
+java -jar photon-*.jar -host localhost -port 5432 -database nominatim -user nominatim -password ...
 ```
 
 A nominatim setup is also a requirement to have continuous updates. To keep in sync with the latest OSM changes run:
@@ -83,10 +80,6 @@ curl http://localhost:2322/nominatim-update
 
 
 ### Search API
-#### Start Photon
-```bash
-java -jar photon-0.2.7.jar
-```
 
 #### Search
 ```

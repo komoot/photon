@@ -10,6 +10,7 @@ import de.komoot.photon.searcher.PhotonRequestHandler;
 import de.komoot.photon.searcher.PhotonRequestHandlerFactory;
 import de.komoot.photon.searcher.SimplePhotonRequestHandler;
 import de.komoot.photon.utils.ConvertToGeoJson;
+import org.elasticsearch.client.Client;
 import org.hamcrest.core.IsEqual;
 import org.json.JSONObject;
 import org.junit.Assert;
@@ -18,13 +19,12 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import spark.Request;
 import spark.Response;
+import spark.RouteImpl;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import org.elasticsearch.client.Client;
-import spark.RouteImpl;
 
 public class SearchRequestHandlerTest {
     @Test
