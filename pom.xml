@@ -253,6 +253,9 @@
 			<resource>
 				<directory>es/</directory>
 			</resource>
+			<resource>
+				<directory>src/main/resources/</directory>
+			</resource>
 		</resources>
 	</build>
 	<properties>
