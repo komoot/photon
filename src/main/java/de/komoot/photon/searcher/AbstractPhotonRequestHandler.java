@@ -20,7 +20,7 @@ public abstract class AbstractPhotonRequestHandler<R extends PhotonRequest> impl
     }
 
     @Override
-    public final List<JSONObject> handle(R photonRequest) {
+    public List<JSONObject> handle(R photonRequest) {
         TagFilterQueryBuilder queryBuilder = buildQuery(photonRequest);
         Integer limit = photonRequest.getLimit();
         SearchResponse results = elasticsearchSearcher.search(queryBuilder.buildQuery(), limit);
