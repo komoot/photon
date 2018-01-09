@@ -96,7 +96,7 @@ public class App {
             final JsonDumper jsonDumper = new JsonDumper(filename, args.getLanguages());
             NominatimConnector nominatimConnector = new NominatimConnector(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
             nominatimConnector.setImporter(jsonDumper);
-            nominatimConnector.readEntireDatabase();
+            nominatimConnector.readEntireDatabase(args.getCountryCodes().split(","));
             log.info("json dump was created: " + filename);
         } catch (FileNotFoundException e) {
             log.error("cannot create dump", e);
@@ -124,7 +124,7 @@ public class App {
         NominatimConnector nominatimConnector = new NominatimConnector(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
         nominatimConnector.setImporter(importer);
         try {
-            nominatimConnector.readEntireDatabase();
+            nominatimConnector.readEntireDatabase(args.getCountryCodes().split(","));
         } catch (Exception e) {
             log.info("error importing from nominatim: " + e.getMessage());
         }
