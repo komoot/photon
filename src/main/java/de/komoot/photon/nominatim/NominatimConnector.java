@@ -305,7 +305,7 @@ public class NominatimConnector {
      * parses every relevant row in placex, creates a corresponding document and calls the {@link #importer} for every document
      */
     public void readEntireDatabase(String... countryCodes) {
-        log.info("start importing documents from nominatim ...");
+        log.info("start importing documents from nominatim (" + (countryCodes.length == 0 ? "global" : String.join(",", countryCodes)) + ")");
         final AtomicLong counter = new AtomicLong();
 
         final int progressInterval = 50000;
@@ -360,7 +360,7 @@ public class NominatimConnector {
                 }
             }
         });
-        
+
         template.query("SELECT place_id, osm_id, parent_place_id, startnumber, endnumber, interpolationtype, postcode, country_code, linegeo " +
                 " FROM location_property_osmline " +
                 whereCountryCodeStr +
