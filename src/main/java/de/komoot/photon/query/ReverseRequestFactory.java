@@ -24,12 +24,10 @@ public class ReverseRequestFactory {
     }
 
     public <R extends ReverseRequest> R create(Request webRequest) throws BadRequestException {
-
-
-        for (String queryParam : webRequest.queryParams())
+        for (String queryParam : webRequest.queryParams()) {
             if (!m_hsRequestQueryParams.contains(queryParam))
                 throw new BadRequestException(400, "unknown query parameter '" + queryParam + "'.  Allowed parameters are: " + m_hsRequestQueryParams);
-
+        }
 
         String language = webRequest.queryParams("lang");
         language = language == null ? "en" : language;

@@ -21,7 +21,8 @@ public class ESBaseTester {
     }
 
     public void setUpES() throws Exception {
-        server = new Server("photon", new File("./target/es_photon").getAbsolutePath(), "en", "", true).start();
+        server = new Server("photon", new File("./target/es_photon").getAbsolutePath(), "en", "").
+                start();
         server.recreateIndex();
         refresh();
     }
@@ -41,7 +42,8 @@ public class ESBaseTester {
     }
 
     public void shutdownES() {
-        server.shutdown();
+        if (server != null)
+            server.shutdown();
     }
 
     public void deleteIndex() {

@@ -34,7 +34,6 @@ public class TagFilterQueryBuilderSearchTest extends ESBaseTester {
     private Client client;
     private List<PhotonDoc> testData;
 
-
     @Before
     public void setUp() throws Exception {
         setUpES();

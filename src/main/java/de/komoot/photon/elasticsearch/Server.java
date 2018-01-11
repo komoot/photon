@@ -4,7 +4,6 @@ import de.komoot.photon.CommandLineArgs;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.SystemUtils;
-import org.elasticsearch.action.admin.indices.delete.DeleteIndexResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.Settings;
@@ -47,8 +46,6 @@ public class Server {
 
     private File esDirectory;
 
-    private final boolean isTest;
-
     private final String[] languages;
 
     private String transportAddresses;
@@ -60,11 +57,10 @@ public class Server {
     }
 
     public Server(CommandLineArgs args) throws Exception {
-        this(args.getCluster(), args.getDataDirectory(), args.getLanguages(), args.getTransportAddresses(), false);
+        this(args.getCluster(), args.getDataDirectory(), args.getLanguages(), args.getTransportAddresses());
     }
 
-    public Server(String clusterName, String mainDirectory, String languages, String transportAddresses,
-                  boolean isTest) throws Exception {
+    public Server(String clusterName, String mainDirectory, String languages, String transportAddresses) throws Exception {
         try {
             if (SystemUtils.IS_OS_WINDOWS) {
                 setupDirectories(new URL("file:///" + mainDirectory));
@@ -77,7 +73,6 @@ public class Server {
         this.clusterName = clusterName;
         this.languages = languages.split(",");
         this.transportAddresses = transportAddresses;
-        this.isTest = isTest;
     }
 
     public Server start() {
@@ -202,11 +197,11 @@ public class Server {
         log.info("mapping created: " + mappingsJSON.toString());
     }
 
-    public DeleteIndexResponse deleteIndex() {
+    public void deleteIndex() {
         try {
-            return this.getClient().admin().indices().prepareDelete("photon").execute().actionGet();
+            this.getClient().admin().indices().prepareDelete("photon").execute().actionGet();
         } catch (IndexNotFoundException e) {
-            throw new RuntimeException(e);
+            // ignore
         }
     }
 
@@ -255,8 +250,7 @@ public class Server {
             return mappingsObject.put("place", placeObject);
         }
 
-        log.error(
-                "cannot add languages to mapping.json, please double-check the mappings.json or the language values supplied");
+        log.error("cannot add languages to mapping.json, please double-check the mappings.json or the language values supplied");
         return null;
     }
 
