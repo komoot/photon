@@ -304,8 +304,8 @@ public class NominatimConnector {
     /**
      * parses every relevant row in placex, creates a corresponding document and calls the {@link #importer} for every document
      */
-    public void readEntireDatabase() {
-        log.info("start importing documents from nominatim ...");
+    public void readEntireDatabase(String... countryCodes) {
+        log.info("start importing documents from nominatim (" + (countryCodes.length == 0 ? "global" : String.join(",", countryCodes)) + ")");
         final AtomicLong counter = new AtomicLong();
 
         final int progressInterval = 50000;
@@ -314,8 +314,24 @@ public class NominatimConnector {
         final BlockingQueue<PhotonDoc> documents = new LinkedBlockingDeque<PhotonDoc>(20);
         Thread importThread = new Thread(new ImportThread(documents));
         importThread.start();
+        String andCountryCodeStr = "", whereCountryCodeStr = "";
+        if (countryCodes.length > 0) {
+            String countryCodeStr = "";
+            for (String cc : countryCodes) {
+                if (cc.length() != 2)
+                    throw new IllegalArgumentException("country code invalid " + cc);
+                if (!countryCodeStr.isEmpty())
+                    countryCodeStr += ",";
+                countryCodeStr += "'" + cc.toLowerCase() + "'";
+            }
+            andCountryCodeStr = "AND country_code in (" + countryCodeStr + ")";
+            whereCountryCodeStr = "WHERE country_code in (" + countryCodeStr + ")";
+        }
 
-        template.query("SELECT " + selectColsPlaceX + " FROM placex WHERE linked_place_id IS NULL AND centroid IS NOT NULL ORDER BY geometry_sector; ", new RowCallbackHandler() {
+        template.query("SELECT " + selectColsPlaceX +
+                " FROM placex " +
+                " WHERE linked_place_id IS NULL AND centroid IS NOT NULL " + andCountryCodeStr +
+                " ORDER BY geometry_sector; ", new RowCallbackHandler() {
             @Override
             public void processRow(ResultSet rs) throws SQLException {
                 // turns a placex row into a photon document that gathers all de-normalised information
@@ -345,8 +361,10 @@ public class NominatimConnector {
             }
         });
 
-
-        template.query("SELECT place_id, osm_id, parent_place_id, startnumber, endnumber, interpolationtype, postcode, country_code, linegeo FROM location_property_osmline ORDER BY geometry_sector; ", new RowCallbackHandler() {
+        template.query("SELECT place_id, osm_id, parent_place_id, startnumber, endnumber, interpolationtype, postcode, country_code, linegeo " +
+                " FROM location_property_osmline " +
+                whereCountryCodeStr +
+                " ORDER BY geometry_sector; ", new RowCallbackHandler() {
             @Override
             public void processRow(ResultSet rs) throws SQLException {
                 NominatimResult docs = osmlineRowMapper.mapRow(rs, 0);
