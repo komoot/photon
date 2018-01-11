@@ -72,8 +72,7 @@ public class Server {
                 setupDirectories(new URL("file://" + mainDirectory));
             }
         } catch (Exception e) {
-            log.error("Can't create directories: ", e);
-            throw e;
+            throw new RuntimeException("Can't create directories: ", e);
         }
         this.clusterName = clusterName;
         this.languages = languages.split(",");
@@ -123,7 +122,7 @@ public class Server {
                 esClient = esNode.client();
 
             } catch (NodeValidationException e) {
-                log.error("Error while starting elasticsearch server", e);
+                throw new RuntimeException("Error while starting elasticsearch server", e);
             }
 
         }
@@ -140,7 +139,7 @@ public class Server {
 
             esClient.close();
         } catch (IOException e) {
-            log.error("Error during elasticsearch server shutdown", e);
+            throw new RuntimeException("Error during elasticsearch server shutdown", e);
         }
     }
 
@@ -207,8 +206,7 @@ public class Server {
         try {
             return this.getClient().admin().indices().prepareDelete("photon").execute().actionGet();
         } catch (IndexNotFoundException e) {
-            // index did not exist
-            return null;
+            throw new RuntimeException(e);
         }
     }
 

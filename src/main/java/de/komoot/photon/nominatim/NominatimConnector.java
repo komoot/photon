@@ -295,7 +295,9 @@ public class NominatimConnector {
                     if (doc == FINAL_DOCUMENT)
                         break;
                     importer.add(doc);
-                } catch (InterruptedException e) { /* safe to ignore? */ }
+                } catch (InterruptedException e) {
+                    log.info("interrupted exception ", e);
+                }
             }
             importer.finish();
         }
