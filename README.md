@@ -49,10 +49,18 @@ discover more of photon's feature with its usage `java -jar photon-*.jar -h`.
 
 ### Customized Search Data
 If you need search data in other languages or restricted to a country you will need to create your search data by your own.
-Once you have your [nominatim](https://github.com/twain47/Nominatim) database ready, you can import the data to photon:
+Once you have your [nominatim](https://github.com/twain47/Nominatim) database ready, you can import the data to photon.
+
+If you haven't already set a password for your nominatim database user, do it now (change user name and password as you like, below):
 
 ```bash
-java -jar photon-*.jar -nominatim-import -host localhost -port 5432 -database nominatim -user nominatim -password ... -languages es,fr
+su postgres
+psql
+ALTER USER nominatim WITH ENCRYPTED PASSWORD 'mysecretpassword';
+```
+Import the data to photon:
+```bash
+java -jar photon-*.jar -nominatim-import -host localhost -port 5432 -database nominatim -user nominatim -password mysecretpassword -languages es,fr
 ```
 
 The import of worldwide data set will take some hours/days, ssd disk are recommended to accelerate nominatim queries.
