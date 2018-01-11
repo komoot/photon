@@ -21,7 +21,7 @@ public class ESBaseTester {
     }
 
     public void setUpES() throws Exception {
-        server = new Server("photon", new File("./target/es_photon").getAbsolutePath(), "en", "", true).start();
+        server = new Server("photon_test", new File("./target/es_photon").getAbsolutePath(), "en", "", true).start();
         server.recreateIndex();
         refresh();
     }
