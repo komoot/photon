@@ -95,7 +95,7 @@ public class App {
             final JsonDumper jsonDumper = new JsonDumper(filename, args.getLanguages());
             NominatimConnector nominatimConnector = new NominatimConnector(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
             nominatimConnector.setImporter(jsonDumper);
-            nominatimConnector.readEntireDatabase();
+            nominatimConnector.readEntireDatabase(args.getCountryCodes().split(","));
             log.info("json dump was created: " + filename);
         } catch (FileNotFoundException e) {
             log.error("cannot create dump", e);
@@ -121,7 +121,7 @@ public class App {
         de.komoot.photon.elasticsearch.Importer importer = new de.komoot.photon.elasticsearch.Importer(esNodeClient, args.getLanguages());
         NominatimConnector nominatimConnector = new NominatimConnector(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
         nominatimConnector.setImporter(importer);
-        nominatimConnector.readEntireDatabase();
+        nominatimConnector.readEntireDatabase(args.getCountryCodes().split(","));
 
         log.info("imported data from nominatim to photon with languages: " + args.getLanguages());
     }
