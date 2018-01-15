@@ -56,7 +56,7 @@ public class Server {
         }
     }
 
-    public Server(CommandLineArgs args) throws Exception {
+    public Server(CommandLineArgs args) {
         this(args.getCluster(), args.getDataDirectory(), args.getLanguages(), args.getTransportAddresses());
     }
 
