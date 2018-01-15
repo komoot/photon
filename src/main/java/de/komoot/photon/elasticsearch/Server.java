@@ -60,7 +60,7 @@ public class Server {
         this(args.getCluster(), args.getDataDirectory(), args.getLanguages(), args.getTransportAddresses());
     }
 
-    public Server(String clusterName, String mainDirectory, String languages, String transportAddresses) throws Exception {
+    public Server(String clusterName, String mainDirectory, String languages, String transportAddresses) {
         try {
             if (SystemUtils.IS_OS_WINDOWS) {
                 setupDirectories(new URL("file:///" + mainDirectory));
