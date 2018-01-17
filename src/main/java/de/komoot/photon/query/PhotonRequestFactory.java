@@ -19,7 +19,7 @@ public class PhotonRequestFactory {
     private final LanguageChecker languageChecker;
     private final static GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
 
-    protected static HashSet<String> m_hsRequestQueryParams = new HashSet<>(Arrays.asList("lang", "q", "lon", "lat", "limit", "distance_sort", "osm_tag"));
+    protected static HashSet<String> m_hsRequestQueryParams = new HashSet<>(Arrays.asList("formula", "lang", "q", "lon", "lat", "limit", "distance_sort", "osm_tag"));
 
     public PhotonRequestFactory(Set<String> supportedLanguages) {
         this.languageChecker = new LanguageChecker(supportedLanguages);
@@ -52,21 +52,18 @@ public class PhotonRequestFactory {
         } catch (Exception nfe) {
             //ignore
         }
-        Boolean locationDistanceSort = true;
-        try {
-            if (webRequest.queryParams("distance_sort") == null)
-                locationDistanceSort = true;
-            else
-                locationDistanceSort = Boolean.valueOf(webRequest.queryParams("distance_sort"));
 
-        } catch (Exception nfe) {
-            //ignore
-        }
+        String formula = webRequest.queryParamOrDefault("formula", "");
+        if (!formula.isEmpty() && !formula.contains("dist"))
+            throw new BadRequestException(400, "formula must contain 'dist' parameter");
+        if (formula.contains(";"))
+            throw new BadRequestException(400, "formula must not contain semicolon");
+
         QueryParamsMap tagFiltersQueryMap = webRequest.queryMap("osm_tag");
         if (!new CheckIfFilteredRequest().execute(tagFiltersQueryMap)) {
-            return (R) new PhotonRequest(query, limit, locationForBias, locationDistanceSort, language);
+            return (R) new PhotonRequest(query, limit, locationForBias, formula, language);
         }
-        FilteredPhotonRequest photonRequest = new FilteredPhotonRequest(query, limit, locationForBias, locationDistanceSort, language);
+        FilteredPhotonRequest photonRequest = new FilteredPhotonRequest(query, limit, locationForBias, formula, language);
         String[] tagFilters = tagFiltersQueryMap.values();
         setUpTagFilters(photonRequest, tagFilters);
 

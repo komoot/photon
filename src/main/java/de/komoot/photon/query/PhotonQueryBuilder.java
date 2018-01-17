@@ -117,37 +117,24 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder {
 
 
     @Override
-    public TagFilterQueryBuilder withLocationBias(Point point, Boolean locationDistanceSort) {
+    public TagFilterQueryBuilder withLocationBias(Point point, String formula) {
         if (point == null) return this;
         Map<String, Object> params = newHashMap();
         params.put("lon", point.getX());
         params.put("lat", point.getY());
 
-        // this is former location-biased-score, now inline exemplary debugged score: 0.5000002150154673, is multiplied with the scores from other query
-        // parts: 2150.804 (basequery) * 31,7 (importance doc value-script, former general-score) the score from the location distance is very small with
-        // respect to the score of the other query parts, thus it has a very small, up to zero, influence to the final sorting of the documents
-        String strCode = "double dist = doc['coordinate'].planeDistance(params.lat, params.lon); double score = 0.5 + ( 1.5 / (1.0 + dist * 1000 /40.0)); score";
+        if (formula.isEmpty())
+            formula = "0.9 + 1.0 / (1.0 + dist * 0.001 / 10.0)";
+
+        System.out.println(formula);
+        // distance unit from planeDistance is meter
+        String strCode = "double dist = doc['coordinate'].planeDistance(params.lat, params.lon); double score = " + formula + "; score";
         ScriptScoreFunctionBuilder builder = ScoreFunctionBuilders.scriptFunction(new Script(ScriptType.INLINE, "painless", strCode, params));
 
-        // in the case we want to sort against the location distance, only the
-        // according function score is relevant
-        if (locationDistanceSort) {
-
-            m_alFilterFunction4QueryBuilder.clear();
-            m_alFilterFunction4QueryBuilder.add(new FilterFunctionBuilder(builder));
-
-            m_finalQueryWithoutTagFilterBuilder =
-                    new FunctionScoreQueryBuilder(m_query4QueryBuilder, m_alFilterFunction4QueryBuilder.toArray(new FilterFunctionBuilder[0]))
-                            .boostMode(CombineFunction.REPLACE).scoreMode(ScoreMode.MULTIPLY);
-
-        } else {
-
-            m_alFilterFunction4QueryBuilder.add(new FilterFunctionBuilder(builder));
-
-            m_finalQueryWithoutTagFilterBuilder =
-                    new FunctionScoreQueryBuilder(m_query4QueryBuilder, m_alFilterFunction4QueryBuilder.toArray(new FilterFunctionBuilder[0]))
-                            .boostMode(CombineFunction.MULTIPLY).scoreMode(ScoreMode.MULTIPLY);
-        }
+        m_alFilterFunction4QueryBuilder.add(new FilterFunctionBuilder(builder));
+        m_finalQueryWithoutTagFilterBuilder =
+                new FunctionScoreQueryBuilder(m_query4QueryBuilder, m_alFilterFunction4QueryBuilder.toArray(new FilterFunctionBuilder[0]))
+                        .boostMode(CombineFunction.MULTIPLY).scoreMode(ScoreMode.MULTIPLY);
 
         return this;
     }
@@ -315,8 +302,7 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder {
 
 
     /**
-     * When this method is called, all filters are placed inside their {@link OrQueryBuilder OR} or {@link AndQueryBuilder AND} containers and the top level filter
-     * builder is built. Subsequent invocations of this method have no additional effect. Note that after this method is called, calling other methods on this class also
+     * Subsequent invocations of this method have no additional effect. Note that after this method is called, calling other methods on this class also
      * have no effect.
      *
      * @see TagFilterQueryBuilder#buildQuery()

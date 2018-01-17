@@ -69,17 +69,11 @@ public class ReverseRequestFactory {
         }
 
         String queryStringFilter = webRequest.queryParams("query_string_filter");
-
-        Boolean locationDistanceSort = true;
-        try {
-            if (webRequest.queryParams("distance_sort") == null)
-                locationDistanceSort = true;
-            else
-                locationDistanceSort = Boolean.valueOf(webRequest.queryParams("distance_sort"));
-
-        } catch (Exception nfe) {
-            throw new BadRequestException(400, "invalid search term 'query_string_filter', can only be true|false");
-        }
+        String formula = webRequest.queryParamOrDefault("formula", "");
+        if (!formula.contains("dist"))
+            throw new BadRequestException(400, "formula must contain dist parameter");
+        if (formula.contains(";"))
+            throw new BadRequestException(400, "formula must not contain semicolon");
 
         Integer limit = 1;
         String limitParam = webRequest.queryParams("limit");
@@ -98,7 +92,7 @@ public class ReverseRequestFactory {
         }
 
 
-        ReverseRequest reverseRequest = new ReverseRequest(location, language, radius, queryStringFilter, limit, locationDistanceSort);
+        ReverseRequest reverseRequest = new ReverseRequest(location, language, radius, queryStringFilter, limit, formula);
 
         return (R) reverseRequest;
     }

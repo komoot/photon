@@ -12,13 +12,13 @@ public class PhotonRequest implements Serializable {
     private Integer limit;
     private Point locationForBias;
     private String language;
-    private Boolean locationDistanceSort = true;
+    private String formula = "";
 
-    public PhotonRequest(String query, Integer limit, Point locationForBias, Boolean locationDistanceSort, String language) {
+    public PhotonRequest(String query, Integer limit, Point locationForBias, String formula, String language) {
         this.query = query;
         this.limit = limit;
         this.locationForBias = locationForBias;
-        this.locationDistanceSort = locationDistanceSort;
+        this.formula = formula;
         this.language = language;
     }
 
@@ -34,8 +34,8 @@ public class PhotonRequest implements Serializable {
         return locationForBias;
     }
 
-    public Boolean getLocationDistanceSort() {
-        return locationDistanceSort;
+    public String getFormula() {
+        return formula;
     }
 
     public String getLanguage() {

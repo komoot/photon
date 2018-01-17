@@ -41,7 +41,7 @@ public class ReverseQueryBuilder implements TagFilterQueryBuilder {
     }
 
     @Override
-    public TagFilterQueryBuilder withLocationBias(Point point, Boolean locationDistanceSort) {
+    public TagFilterQueryBuilder withLocationBias(Point point, String formula) {
         throw new RuntimeException(new NoSuchMethodException("this method is not implemented (NOOP)"));
     }
 
