@@ -54,10 +54,12 @@ public class PhotonRequestFactory {
         }
 
         String formula = webRequest.queryParamOrDefault("formula", "");
-        if (!formula.isEmpty() && !formula.contains("dist"))
-            throw new BadRequestException(400, "formula must contain 'dist' parameter");
-        if (formula.contains(";"))
-            throw new BadRequestException(400, "formula must not contain semicolon");
+        if (formula != null) {
+            if (!formula.isEmpty() && !formula.contains("dist"))
+                throw new BadRequestException(400, "formula must contain 'dist' parameter");
+            if (formula.contains(";"))
+                throw new BadRequestException(400, "formula must not contain semicolon");
+        }
 
         QueryParamsMap tagFiltersQueryMap = webRequest.queryMap("osm_tag");
         if (!new CheckIfFilteredRequest().execute(tagFiltersQueryMap)) {
