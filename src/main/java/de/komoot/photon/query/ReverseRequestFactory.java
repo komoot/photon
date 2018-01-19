@@ -71,12 +71,12 @@ public class ReverseRequestFactory {
         String queryStringFilter = webRequest.queryParams("query_string_filter");
         String formula = webRequest.queryParamOrDefault("formula", "");
         if (formula != null) {
-            if (!formula.contains("dist"))
+            if (!formula.isEmpty() && !formula.contains("dist"))
                 throw new BadRequestException(400, "formula must contain dist parameter");
             if (formula.contains(";"))
                 throw new BadRequestException(400, "formula must not contain semicolon");
         }
-        
+
         Integer limit = 1;
         String limitParam = webRequest.queryParams("limit");
         if (limitParam != null) {
