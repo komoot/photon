@@ -1,0 +1,142 @@
+query,lon,lat,limit,expected_name,expected_housenumber,expected_street,expected_city,expected_postcode
+36 Rue Alexandre Ribot Charleville-Mézières,,,,36 Rue Alexandre Ribot,,,,08000
+36 Rue Alexandre Ribot 08000,,,,36 Rue Alexandre Ribot,,,Charleville-Mézières,
+36 Rue Alexandre Ribot,4.692834,49.762267,,36 Rue Alexandre Ribot,,,,08000
+19 Rue de la Haie Forest Charleville-Mézières,,,,19 Rue de la Haie Forest,,,,08000
+19 Rue de la Haie Forest 08000,,,,19 Rue de la Haie Forest,,,Charleville-Mézières,
+19 Rue de la Haie Forest,4.707697,49.762260,,19 Rue de la Haie Forest,,,,08000
+1 Rue Robert Coispine Charleville-Mézières,,,,1 Rue Robert Coispine,,,,08000
+1 Rue Robert Coispine 08000,,,,1 Rue Robert Coispine,,,Charleville-Mézières,
+1 Rue Robert Coispine,4.728837,49.776240,,1 Rue Robert Coispine,,,,08000
+59 Ruelle des Bos Biaux Fumay,,,,59 Ruelle des Bos Biaux,,,,08170
+59 Ruelle des Bos Biaux 08170,,,,59 Ruelle des Bos Biaux,,,Fumay,
+59 Ruelle des Bos Biaux,4.709419,49.993740,,59 Ruelle des Bos Biaux,,,,08170
+21 Rue de la Gravelle Les Hautes-Rivières,,,,21 Rue de la Gravelle,,,,08800
+21 Rue de la Gravelle 08800,,,,21 Rue de la Gravelle,,,Les Hautes-Rivières,
+21 Rue de la Gravelle,4.848680,49.874857,,21 Rue de la Gravelle,,,,08800
+8 Rue Mirabeau Nouzonville,,,,8 Rue Mirabeau,,,,08700
+8 Rue Mirabeau 08700,,,,8 Rue Mirabeau,,,Nouzonville,
+8 Rue Mirabeau,4.749088,49.812759,,8 Rue Mirabeau,,,,08700
+7 Rue de Rome Rethel,,,,7 Rue de Rome,,,,08300
+7 Rue de Rome 08300,,,,7 Rue de Rome,,,Rethel,
+7 Rue de Rome,4.359087,49.508235,,7 Rue de Rome,,,,08300
+3 Rue Thiers Sedan,,,,3 Rue Thiers,,,,08200
+3 Rue Thiers 08200,,,,3 Rue Thiers,,,Sedan,
+3 Rue Thiers,4.941802,49.701606,,3 Rue Thiers,,,,08200
+2 Rue Maurice Thorez Vivier-au-Court,,,,2 Rue Maurice Thorez,,,,08440
+2 Rue Maurice Thorez 08440,,,,2 Rue Maurice Thorez,,,Vivier-au-Court,
+2 Rue Maurice Thorez,4.833177,49.731886,,2 Rue Maurice Thorez,,,,08440
+14 Rue du Lavoir Les Bordes-Aumont,,,,14 Rue du Lavoir,,,,10800
+14 Rue du Lavoir 10800,,,,14 Rue du Lavoir,,,Les Bordes-Aumont,
+14 Rue du Lavoir,4.131931,48.188106,,14 Rue du Lavoir,,,,10800
+2 Rue du Prof Jacques Monod La Chapelle-Saint-Luc,,,,2 Rue du Prof Jacques Monod,,,,10600
+2 Rue du Prof Jacques Monod 10600,,,,2 Rue du Prof Jacques Monod,,,La Chapelle-Saint-Luc,
+2 Rue du Prof Jacques Monod,4.062153,48.320304,,2 Rue du Prof Jacques Monod,,,,10600
+6 Rue des Anc Combattants En Afn Gélannes,,,,6 Rue des Anc Combattants En Afn,,,,10100
+6 Rue des Anc Combattants En Afn 10100,,,,6 Rue des Anc Combattants En Afn,,,Gélannes,
+6 Rue des Anc Combattants En Afn,3.671526,48.488513,,6 Rue des Anc Combattants En Afn,,,,10100
+52 Rue Lamartine Les Noës-près-Troyes,,,,52 Rue Lamartine,,,,10420
+52 Rue Lamartine 10420,,,,52 Rue Lamartine,,,Les Noës-près-Troyes,
+52 Rue Lamartine,4.039084,48.301085,,52 Rue Lamartine,,,,10420
+8 Rue du Pont Les Riceys,,,,8 Rue du Pont,,,,10340
+8 Rue du Pont 10340,,,,8 Rue du Pont,,,Les Riceys,
+8 Rue du Pont,4.369641,47.994290,,8 Rue du Pont,,,,10340
+1 Rue Henri Millet Romilly-sur-Seine,,,,1 Rue Henri Millet,,,,10100
+1 Rue Henri Millet 10100,,,,1 Rue Henri Millet,,,Romilly-sur-Seine,
+1 Rue Henri Millet,3.725025,48.520924,,1 Rue Henri Millet,,,,10100
+72 Route d'Auxerre Saint-André-les-Vergers,,,,72 Route d'Auxerre,,,,10120
+72 Route d'Auxerre 10120,,,,72 Route d'Auxerre,,,Saint-André-les-Vergers,
+72 Route d'Auxerre,4.063074,48.276773,,72 Route d'Auxerre,,,,10120
+92 Boulevard de Dijon Saint-Julien-les-Villas,,,,92 Boulevard de Dijon,,,,10800
+92 Boulevard de Dijon 10800,,,,92 Boulevard de Dijon,,,Saint-Julien-les-Villas,
+92 Boulevard de Dijon,4.086304,48.271765,,92 Boulevard de Dijon,,,,10800
+7TER Rue des Mésanges Saint-Parres-aux-Tertres,,,,7TER Rue des Mésanges,,,,10410
+7TER Rue des Mésanges 10410,,,,7TER Rue des Mésanges,,,Saint-Parres-aux-Tertres,
+7TER Rue des Mésanges,4.117906,48.295986,,7TER Rue des Mésanges,,,,10410
+707 Rue des Hainelles Souligny,,,,707 Rue des Hainelles,,,,10320
+707 Rue des Hainelles 10320,,,,707 Rue des Hainelles,,,Souligny,
+707 Rue des Hainelles,4.003768,48.209416,,707 Rue des Hainelles,,,,10320
+98 Rue Étienne Pedron Troyes,,,,98 Rue Étienne Pedron,,,,10000
+98 Rue Étienne Pedron 10000,,,,98 Rue Étienne Pedron,,,Troyes,
+98 Rue Étienne Pedron,4.074901,48.314462,,98 Rue Étienne Pedron,,,,10000
+8 Rue Paul Lafargue Troyes,,,,8 Rue Paul Lafargue,,,,10000
+8 Rue Paul Lafargue 10000,,,,8 Rue Paul Lafargue,,,Troyes,
+8 Rue Paul Lafargue,4.089487,48.291149,,8 Rue Paul Lafargue,,,,10000
+4 Rue du Haut Villery,,,,4 Rue du Haut,,,,10320
+4 Rue du Haut 10320,,,,4 Rue du Haut,,,Villery,
+4 Rue du Haut,4.017812,48.171256,,4 Rue du Haut,,,,10320
+1 Route de Reims Bétheny,,,,1 Route de Reims,,,,51450
+1 Route de Reims 51450,,,,1 Route de Reims,,,Bétheny,
+1 Route de Reims,4.056697,49.283142,,1 Route de Reims,,,,51450
+53 Rue Chevalier Châlons-en-Champagne,,,,53 Rue Chevalier,,,,51000
+53 Rue Chevalier 51000,,,,53 Rue Chevalier,,,Châlons-en-Champagne,
+53 Rue Chevalier,4.374463,48.962045,,53 Rue Chevalier,,,,51000
+32 Rue Maxime David Châlons-en-Champagne,,,,32 Rue Maxime David,,,,51000
+32 Rue Maxime David 51000,,,,32 Rue Maxime David,,,Châlons-en-Champagne,
+32 Rue Maxime David,4.350607,48.959426,,32 Rue Maxime David,,,,51000
+26 Voie Communale Résidence Les Tamaris Compertrix,,,,26 Voie Communale Résidence Les Tamaris,,,,51510
+26 Voie Communale Résidence Les Tamaris 51510,,,,26 Voie Communale Résidence Les Tamaris,,,Compertrix,
+26 Voie Communale Résidence Les Tamaris,4.348143,48.938559,,26 Voie Communale Résidence Les Tamaris,,,,51510
+175 Rue de la Libération Cramant,,,,175 Rue de la Libération,,,,51530
+175 Rue de la Libération 51530,,,,175 Rue de la Libération,,,Cramant,
+175 Rue de la Libération,3.991424,48.984642,,175 Rue de la Libération,,,,51530
+24 Rue Maurice Cerveaux Épernay,,,,24 Rue Maurice Cerveaux,,,,51200
+24 Rue Maurice Cerveaux 51200,,,,24 Rue Maurice Cerveaux,,,Épernay,
+24 Rue Maurice Cerveaux,3.960426,49.039449,,24 Rue Maurice Cerveaux,,,,51200
+12 Rue Cave Labbé Fismes,,,,12 Rue Cave Labbé,,,,51170
+12 Rue Cave Labbé 51170,,,,12 Rue Cave Labbé,,,Fismes,
+12 Rue Cave Labbé,3.678957,49.310475,,12 Rue Cave Labbé,,,,51170
+20 Rue des Mûriers Loivre,,,,20 Rue des Mûriers,,,,51220
+20 Rue des Mûriers 51220,,,,20 Rue des Mûriers,,,Loivre,
+20 Rue des Mûriers,3.984738,49.343236,,20 Rue des Mûriers,,,,51220
+6 Ruelle des Cotons Recy,,,,6 Ruelle des Cotons,,,,51520
+6 Ruelle des Cotons 51520,,,,6 Ruelle des Cotons,,,Recy,
+6 Ruelle des Cotons,4.310643,48.988206,,6 Ruelle des Cotons,,,,51520
+36 Boulevard Carteret Reims,,,,36 Boulevard Carteret,,,,51100
+36 Boulevard Carteret 51100,,,,36 Boulevard Carteret,,,Reims,
+36 Boulevard Carteret,4.048212,49.258186,,36 Boulevard Carteret,,,,51100
+1BIS Rue Edmé Moreau Reims,,,,1BIS Rue Edmé Moreau,,,,51100
+1BIS Rue Edmé Moreau 51100,,,,1BIS Rue Edmé Moreau,,,Reims,
+1BIS Rue Edmé Moreau,4.027579,49.279338,,1BIS Rue Edmé Moreau,,,,51100
+13 Rue Jacques Cellier Reims,,,,13 Rue Jacques Cellier,,,,51100
+13 Rue Jacques Cellier 51100,,,,13 Rue Jacques Cellier,,,Reims,
+13 Rue Jacques Cellier,4.029197,49.280848,,13 Rue Jacques Cellier,,,,51100
+2 Allée Marcel Cheval Reims,,,,2 Allée Marcel Cheval,,,,51100
+2 Allée Marcel Cheval 51100,,,,2 Allée Marcel Cheval,,,Reims,
+2 Allée Marcel Cheval,4.010638,49.238315,,2 Allée Marcel Cheval,,,,51100
+3 Allée Raoul Ponchon Reims,,,,3 Allée Raoul Ponchon,,,,51100
+3 Allée Raoul Ponchon 51100,,,,3 Allée Raoul Ponchon,,,Reims,
+3 Allée Raoul Ponchon,4.028643,49.224722,,3 Allée Raoul Ponchon,,,,51100
+5 Rue des Cheminots Les Rivières-Henruel,,,,5 Rue des Cheminots,,,,51300
+5 Rue des Cheminots 51300,,,,5 Rue des Cheminots,,,Les Rivières-Henruel,
+5 Rue des Cheminots,4.563654,48.654470,,5 Rue des Cheminots,,,,51300
+3 Rue des Rondes Sainte-Menehould,,,,3 Rue des Rondes,,,,51800
+3 Rue des Rondes 51800,,,,3 Rue des Rondes,,,Sainte-Menehould,
+3 Rue des Rondes,4.900179,49.092698,,3 Rue des Rondes,,,,51800
+25 Rue Jean Jaurès Tinqueux,,,,25 Rue Jean Jaurès,,,,51430
+25 Rue Jean Jaurès 51430,,,,25 Rue Jean Jaurès,,,Tinqueux,
+25 Rue Jean Jaurès,3.994585,49.251321,,25 Rue Jean Jaurès,,,,51430
+15 Rue de la Pépinière Vitry-le-François,,,,15 Rue de la Pépinière,,,,51300
+15 Rue de la Pépinière 51300,,,,15 Rue de la Pépinière,,,Vitry-le-François,
+15 Rue de la Pépinière,4.585770,48.716909,,15 Rue de la Pépinière,,,,51300
+39 Rue de la Vivarde Chancenay,,,,39 Rue de la Vivarde,,,,52100
+39 Rue de la Vivarde 52100,,,,39 Rue de la Vivarde,,,Chancenay,
+39 Rue de la Vivarde,4.993608,48.675268,,39 Rue de la Vivarde,,,,52100
+35 Rue Lévy-Alphandéry Chaumont,,,,35 Rue Lévy-Alphandéry,,,,52000
+35 Rue Lévy-Alphandéry 52000,,,,35 Rue Lévy-Alphandéry,,,Chaumont,
+35 Rue Lévy-Alphandéry,5.135919,48.106428,,35 Rue Lévy-Alphandéry,,,,52000
+23 Route du Der Éclaron-Braucourt-Sainte-Livière,,,,23 Route du Der,,,,52290
+23 Route du Der 52290,,,,23 Route du Der,,,Éclaron-Braucourt-Sainte-Livière,
+23 Route du Der,4.863770,48.586881,,23 Route du Der,,,,52290
+20 Rue du Grand Bie Langres,,,,20 Rue du Grand Bie,,,,52200
+20 Rue du Grand Bie 52200,,,,20 Rue du Grand Bie,,,Langres,
+20 Rue du Grand Bie,5.332716,47.862026,,20 Rue du Grand Bie,,,,52200
+15 Rue André Theuriet Prolongée Saint-Dizier,,,,15 Rue André Theuriet Prolongée,,,,52100
+15 Rue André Theuriet Prolongée 52100,,,,15 Rue André Theuriet Prolongée,,,Saint-Dizier,
+15 Rue André Theuriet Prolongée,4.955728,48.641445,,15 Rue André Theuriet Prolongée,,,,52100
+3 Rue Paul Cézanne Saint-Dizier,,,,3 Rue Paul Cézanne,,,,52100
+3 Rue Paul Cézanne 52100,,,,3 Rue Paul Cézanne,,,Saint-Dizier,
+3 Rue Paul Cézanne,4.969206,48.643365,,3 Rue Paul Cézanne,,,,52100
+30 Rue des Jardins Wassy,,,,30 Rue des Jardins,,,,52130
+30 Rue des Jardins 52130,,,,30 Rue des Jardins,,,Wassy,
+30 Rue des Jardins,4.944818,48.501168,,30 Rue des Jardins,,,,52130

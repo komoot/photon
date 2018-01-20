@@ -1,0 +1,4 @@
+query,lon,lat,limit,expected_name,expected_housenumber,expected_street,expected_city,expected_postcode
+840 Rue des Platanes Ghisonaccia,,,,840 Rue des Platanes,,,,20240
+840 Rue des Platanes 20240,,,,840 Rue des Platanes,,,Ghisonaccia,
+840 Rue des Platanes,9.377350,42.059717,,840 Rue des Platanes,,,,20240

@@ -1,0 +1,79 @@
+y:
+    expected:
+        name: Y
+        postcode: 80190
+
+ay:
+    expected:
+        name: Ay
+        postcode: 51160
+
+bu:
+    expected:
+        name: Bû
+        postcode: 28410
+
+by:
+    expected:
+        name: By
+        postcode: 25440
+
+eu:
+    expected:
+        name: Eu
+        postcode: 76260
+
+fa:
+    expected:
+        name: Fa
+        postcode: 11260
+
+gy:
+    expected:
+        name: Gy
+        postcode: 70700
+
+oo:
+    expected:
+        name: Oô
+        postcode: 31110
+
+oz:
+    expected:
+        name: Oz
+        postcode: 38114
+
+py:
+    expected:
+        name: Py
+        postcode: 66360
+
+ri:
+    expected:
+        name: Ri
+        postcode: 61210
+
+ry:
+    expected:
+        name: Ry
+        postcode: 76116
+
+sy:
+    expected:
+        name: Sy
+        postcode: 08390
+
+ur:
+    expected:
+        name: Ur
+        postcode: 66760
+
+us:
+    expected:
+        name: Us
+        postcode: 95450
+
+uz:
+    expected:
+        name: Uz
+        postcode: 65400

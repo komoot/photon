@@ -5,6 +5,7 @@ dependency-reduced-pom.xml
 .idea/
 *.iml
 *.~*
+*~
 
 __pycache__
 

@@ -1,0 +1,298 @@
+query,lon,lat,limit,expected_name,expected_housenumber,expected_street,expected_city,expected_postcode
+24 Grande Rue Athie,,,,24 Grande Rue,,,,21500
+24 Grande Rue 21500,,,,24 Grande Rue,,,Athie,
+24 Grande Rue,4.253269,47.566787,,24 Grande Rue,,,,21500
+4 Rue du Collège Beaune,,,,4 Rue du Collège,,,,21200
+4 Rue du Collège 21200,,,,4 Rue du Collège,,,Beaune,
+4 Rue du Collège,4.838783,47.026356,,4 Rue du Collège,,,,21200
+13 Rue Saint-Vincent Bellefond,,,,13 Rue Saint-Vincent,,,,21490
+13 Rue Saint-Vincent 21490,,,,13 Rue Saint-Vincent,,,Bellefond,
+13 Rue Saint-Vincent,5.074413,47.381875,,13 Rue Saint-Vincent,,,,21490
+156BIS Route de Dijon Brazey-en-Plaine,,,,156BIS Route de Dijon,,,,21470
+156BIS Route de Dijon 21470,,,,156BIS Route de Dijon,,,Brazey-en-Plaine,
+156BIS Route de Dijon,5.204185,47.148796,,156BIS Route de Dijon,,,,21470
+3 Rue Sainte-Anne Chanceaux,,,,3 Rue Sainte-Anne,,,,21440
+3 Rue Sainte-Anne 21440,,,,3 Rue Sainte-Anne,,,Chanceaux,
+3 Rue Sainte-Anne,4.715233,47.520151,,3 Rue Sainte-Anne,,,,21440
+1 Rue des Tulipes Chenôve,,,,1 Rue des Tulipes,,,,21300
+1 Rue des Tulipes 21300,,,,1 Rue des Tulipes,,,Chenôve,
+1 Rue des Tulipes,5.008249,47.301763,,1 Rue des Tulipes,,,,21300
+5 Rue du Lavoir Corcelles-lès-Cîteaux,,,,5 Rue du Lavoir,,,,21910
+5 Rue du Lavoir 21910,,,,5 Rue du Lavoir,,,Corcelles-lès-Cîteaux,
+5 Rue du Lavoir,5.078406,47.172034,,5 Rue du Lavoir,,,,21910
+1 Rue de l'Aviation Darois,,,,1 Rue de l'Aviation,,,,21121
+1 Rue de l'Aviation 21121,,,,1 Rue de l'Aviation,,,Darois,
+1 Rue de l'Aviation,4.942688,47.389129,,1 Rue de l'Aviation,,,,21121
+4 Impasse Chanoine Henri Latour Dijon,,,,4 Impasse Chanoine Henri Latour,,,,21000
+4 Impasse Chanoine Henri Latour 21000,,,,4 Impasse Chanoine Henri Latour,,,Dijon,
+4 Impasse Chanoine Henri Latour,5.000011,47.309527,,4 Impasse Chanoine Henri Latour,,,,21000
+9 Rue Ernest Bouteiller Dijon,,,,9 Rue Ernest Bouteiller,,,,21000
+9 Rue Ernest Bouteiller 21000,,,,9 Rue Ernest Bouteiller,,,Dijon,
+9 Rue Ernest Bouteiller,5.071487,47.326336,,9 Rue Ernest Bouteiller,,,,21000
+13 Rue Joliet Dijon,,,,13 Rue Joliet,,,,21000
+13 Rue Joliet 21000,,,,13 Rue Joliet,,,Dijon,
+13 Rue Joliet,5.028789,47.319177,,13 Rue Joliet,,,,21000
+6 Rue Mozart Dijon,,,,6 Rue Mozart,,,,21000
+6 Rue Mozart 21000,,,,6 Rue Mozart,,,Dijon,
+6 Rue Mozart,5.034097,47.313372,,6 Rue Mozart,,,,21000
+28 Boulevard Thiers Dijon,,,,28 Boulevard Thiers,,,,21000
+28 Boulevard Thiers 21000,,,,28 Boulevard Thiers,,,Dijon,
+28 Boulevard Thiers,5.051525,47.321987,,28 Boulevard Thiers,,,,21000
+3 Rue Marie-Louise May Fénay,,,,3 Rue Marie-Louise May,,,,21600
+3 Rue Marie-Louise May 21600,,,,3 Rue Marie-Louise May,,,Fénay,
+3 Rue Marie-Louise May,5.062533,47.234678,,3 Rue Marie-Louise May,,,,21600
+15 Route de Fontaine-Française Fontenelle,,,,15 Route de Fontaine-Française,,,,21610
+15 Route de Fontaine-Française 21610,,,,15 Route de Fontaine-Française,,,Fontenelle,
+15 Route de Fontaine-Française,5.372210,47.502951,,15 Route de Fontaine-Française,,,,21610
+17 Rue de l'Hotel de Ville Grancey-sur-Ource,,,,17 Rue de l'Hotel de Ville,,,,21570
+17 Rue de l'Hotel de Ville 21570,,,,17 Rue de l'Hotel de Ville,,,Grancey-sur-Ource,
+17 Rue de l'Hotel de Ville,4.587953,48.006944,,17 Rue de l'Hotel de Ville,,,,21570
+44 Rue de Bourgogne Lamarche-sur-Saône,,,,44 Rue de Bourgogne,,,,21760
+44 Rue de Bourgogne 21760,,,,44 Rue de Bourgogne,,,Lamarche-sur-Saône,
+44 Rue de Bourgogne,5.386350,47.263203,,44 Rue de Bourgogne,,,,21760
+17 Quai de la Hutte Losne,,,,17 Quai de la Hutte,,,,21170
+17 Quai de la Hutte 21170,,,,17 Quai de la Hutte,,,Losne,
+17 Quai de la Hutte,5.261214,47.099622,,17 Quai de la Hutte,,,,21170
+24 Route des Grands Crus Marsannay-la-Côte,,,,24 Route des Grands Crus,,,,21160
+24 Route des Grands Crus 21160,,,,24 Route des Grands Crus,,,Marsannay-la-Côte,
+24 Route des Grands Crus,4.994218,47.276745,,24 Route des Grands Crus,,,,21160
+11 Allée Paul Jeannin Mirebeau-sur-Bèze,,,,11 Allée Paul Jeannin,,,,21310
+11 Allée Paul Jeannin 21310,,,,11 Allée Paul Jeannin,,,Mirebeau-sur-Bèze,
+11 Allée Paul Jeannin,5.324462,47.399248,,11 Allée Paul Jeannin,,,,21310
+1 Route Départementale 108 (Thil) Nan-sous-Thil,,,,1 Route Départementale 108 (Thil),,,,21390
+1 Route Départementale 108 (Thil) 21390,,,,1 Route Départementale 108 (Thil),,,Nan-sous-Thil,
+1 Route Départementale 108 (Thil),4.354976,47.393448,,1 Route Départementale 108 (Thil),,,,21390
+6 Rue de la Houblonnière Orgeux,,,,6 Rue de la Houblonnière,,,,21490
+6 Rue de la Houblonnière 21490,,,,6 Rue de la Houblonnière,,,Orgeux,
+6 Rue de la Houblonnière,5.151066,47.359584,,6 Rue de la Houblonnière,,,,21490
+81 Rue du Lac Pont-et-Massène,,,,81 Rue du Lac,,,,21140
+81 Rue du Lac 21140,,,,81 Rue du Lac,,,Pont-et-Massène,
+81 Rue du Lac,4.350314,47.461973,,81 Rue du Lac,,,,21140
+3 Rue-des-Prés Remilly-en-Montagne,,,,3 Rue-des-Prés,,,,21540
+3 Rue-des-Prés 21540,,,,3 Rue-des-Prés,,,Remilly-en-Montagne,
+3 Rue-des-Prés,4.733800,47.292970,,3 Rue-des-Prés,,,,21540
+1 Route de Dijon Saint-Broing-les-Moines,,,,1 Route de Dijon,,,,21290
+1 Route de Dijon 21290,,,,1 Route de Dijon,,,Saint-Broing-les-Moines,
+1 Route de Dijon,4.843186,47.694492,,1 Route de Dijon,,,,21290
+27 Avenue de la Gare Saulieu,,,,27 Avenue de la Gare,,,,21210
+27 Avenue de la Gare 21210,,,,27 Avenue de la Gare,,,Saulieu,
+27 Avenue de la Gare,4.235228,47.282311,,27 Avenue de la Gare,,,,21210
+11 Rue du Lycée Semur-en-Auxois,,,,11 Rue du Lycée,,,,21140
+11 Rue du Lycée 21140,,,,11 Rue du Lycée,,,Semur-en-Auxois,
+11 Rue du Lycée,4.334649,47.493159,,11 Rue du Lycée,,,,21140
+16 Rue Édouard Herriot Talant,,,,16 Rue Édouard Herriot,,,,21240
+16 Rue Édouard Herriot 21240,,,,16 Rue Édouard Herriot,,,Talant,
+16 Rue Édouard Herriot,5.012036,47.338432,,16 Rue Édouard Herriot,,,,21240
+1C Grande Rue Trouhaut,,,,1C Grande Rue,,,,21440
+1C Grande Rue 21440,,,,1C Grande Rue,,,Trouhaut,
+1C Grande Rue,4.760961,47.389819,,1C Grande Rue,,,,21440
+4 Place du Creux Bleu Villecomte,,,,4 Place du Creux Bleu,,,,21120
+4 Place du Creux Bleu 21120,,,,4 Place du Creux Bleu,,,Villecomte,
+4 Place du Creux Bleu,5.034470,47.511141,,4 Place du Creux Bleu,,,,21120
+24 Rue des Bertranges La Charité-sur-Loire,,,,24 Rue des Bertranges,,,,58400
+24 Rue des Bertranges 58400,,,,24 Rue des Bertranges,,,La Charité-sur-Loire,
+24 Rue des Bertranges,3.031383,47.179550,,24 Rue des Bertranges,,,,58400
+4 Rue J F Fremillon Chaulgnes,,,,4 Rue J F Fremillon,,,,58400
+4 Rue J F Fremillon 58400,,,,4 Rue J F Fremillon,,,Chaulgnes,
+4 Rue J F Fremillon,3.103273,47.129348,,4 Rue J F Fremillon,,,,58400
+12 Rue de l'Est Cosne-Cours-sur-Loire,,,,12 Rue de l'Est,,,,58200
+12 Rue de l'Est 58200,,,,12 Rue de l'Est,,,Cosne-Cours-sur-Loire,
+12 Rue de l'Est,2.924009,47.404667,,12 Rue de l'Est,,,,58200
+17 Rue de Villecourt Coulanges-lès-Nevers,,,,17 Rue de Villecourt,,,,58660
+17 Rue de Villecourt 58660,,,,17 Rue de Villecourt,,,Coulanges-lès-Nevers,
+17 Rue de Villecourt,3.174468,47.012787,,17 Rue de Villecourt,,,,58660
+16 Rue du 11 Novembre Entrains-sur-Nohain,,,,16 Rue du 11 Novembre,,,,58410
+16 Rue du 11 Novembre 58410,,,,16 Rue du 11 Novembre,,,Entrains-sur-Nohain,
+16 Rue du 11 Novembre,3.262848,47.470686,,16 Rue du 11 Novembre,,,,58410
+21 Rue des Bertranges Guérigny,,,,21 Rue des Bertranges,,,,58130
+21 Rue des Bertranges 58130,,,,21 Rue des Bertranges,,,Guérigny,
+21 Rue des Bertranges,3.198042,47.097949,,21 Rue des Bertranges,,,,58130
+12 Rue Saint-André Luzy,,,,12 Rue Saint-André,,,,58170
+12 Rue Saint-André 58170,,,,12 Rue Saint-André,,,Luzy,
+12 Rue Saint-André,3.966893,46.784338,,12 Rue Saint-André,,,,58170
+33BIS Rue du Château de Mouron Mesves-sur-Loire,,,,33BIS Rue du Château de Mouron,,,,58400
+33BIS Rue du Château de Mouron 58400,,,,33BIS Rue du Château de Mouron,,,Mesves-sur-Loire,
+33BIS Rue du Château de Mouron,2.993473,47.239763,,33BIS Rue du Château de Mouron,,,,58400
+52BIS Rue des Chauvelles Nevers,,,,52BIS Rue des Chauvelles,,,,58000
+52BIS Rue des Chauvelles 58000,,,,52BIS Rue des Chauvelles,,,Nevers,
+52BIS Rue des Chauvelles,3.158502,46.997534,,52BIS Rue des Chauvelles,,,,58000
+75 Rue de Nievre Nevers,,,,75 Rue de Nievre,,,,58000
+75 Rue de Nievre 58000,,,,75 Rue de Nievre,,,Nevers,
+75 Rue de Nievre,3.163578,46.989696,,75 Rue de Nievre,,,,58000
+15 Rue des Vièvres Pougues-les-Eaux,,,,15 Rue des Vièvres,,,,58320
+15 Rue des Vièvres 58320,,,,15 Rue des Vièvres,,,Pougues-les-Eaux,
+15 Rue des Vièvres,3.096560,47.072665,,15 Rue des Vièvres,,,,58320
+14 Rue des Hortensias Saint-Éloi,,,,14 Rue des Hortensias,,,,58000
+14 Rue des Hortensias 58000,,,,14 Rue des Hortensias,,,Saint-Éloi,
+14 Rue des Hortensias,3.224584,46.978799,,14 Rue des Hortensias,,,,58000
+40 Rue de Paris Saint-Pierre-le-Moûtier,,,,40 Rue de Paris,,,,58240
+40 Rue de Paris 58240,,,,40 Rue de Paris,,,Saint-Pierre-le-Moûtier,
+40 Rue de Paris,3.118768,46.790789,,40 Rue de Paris,,,,58240
+1121 Rue des Vannes Urzy,,,,1121 Rue des Vannes,,,,58130
+1121 Rue des Vannes 58130,,,,1121 Rue des Vannes,,,Urzy,
+1121 Rue des Vannes,3.217883,47.063581,,1121 Rue des Vannes,,,,58130
+23 Rue de l'Hôtel de Ville Varzy,,,,23 Rue de l'Hôtel de Ville,,,,58210
+23 Rue de l'Hôtel de Ville 58210,,,,23 Rue de l'Hôtel de Ville,,,Varzy,
+23 Rue de l'Hôtel de Ville,3.388507,47.359084,,23 Rue de l'Hôtel de Ville,,,,58210
+4 Rue des Violettes Autun,,,,4 Rue des Violettes,,,,71400
+4 Rue des Violettes 71400,,,,4 Rue des Violettes,,,Autun,
+4 Rue des Violettes,4.310056,46.967358,,4 Rue des Violettes,,,,71400
+12 Rue d'Autun Bourbon-Lancy,,,,12 Rue d'Autun,,,,71140
+12 Rue d'Autun 71140,,,,12 Rue d'Autun,,,Bourbon-Lancy,
+12 Rue d'Autun,3.773894,46.625257,,12 Rue d'Autun,,,,71140
+10 Rue du Bourg Broye,,,,10 Rue du Bourg,,,,71190
+10 Rue du Bourg 71190,,,,10 Rue du Bourg,,,Broye,
+10 Rue du Bourg,4.291076,46.872049,,10 Rue du Bourg,,,,71190
+17 Rue du 56e Régiment d'Infanterie Chalon-sur-Saône,,,,17 Rue du 56e Régiment d'Infanterie,,,,71100
+17 Rue du 56e Régiment d'Infanterie 71100,,,,17 Rue du 56e Régiment d'Infanterie,,,Chalon-sur-Saône,
+17 Rue du 56e Régiment d'Infanterie,4.852113,46.791946,,17 Rue du 56e Régiment d'Infanterie,,,,71100
+7 Place Saint-Jean de Maizel Chalon-sur-Saône,,,,7 Place Saint-Jean de Maizel,,,,71100
+7 Place Saint-Jean de Maizel 71100,,,,7 Place Saint-Jean de Maizel,,,Chalon-sur-Saône,
+7 Place Saint-Jean de Maizel,4.851335,46.779107,,7 Place Saint-Jean de Maizel,,,,71100
+65 Chemin des Gérards Charnay-lès-Mâcon,,,,65 Chemin des Gérards,,,,71850
+65 Chemin des Gérards 71850,,,,65 Chemin des Gérards,,,Charnay-lès-Mâcon,
+65 Chemin des Gérards,4.793601,46.320406,,65 Chemin des Gérards,,,,71850
+16 Rue de L'Église Chaudenay,,,,16 Rue de L'Église,,,,71150
+16 Rue de L'Église 71150,,,,16 Rue de L'Église,,,Chaudenay,
+16 Rue de L'Église,4.791164,46.914744,,16 Rue de L'Église,,,,71150
+5 Rue de la Petite Rivière Cluny,,,,5 Rue de la Petite Rivière,,,,71250
+5 Rue de la Petite Rivière 71250,,,,5 Rue de la Petite Rivière,,,Cluny,
+5 Rue de la Petite Rivière,4.661548,46.432432,,5 Rue de la Petite Rivière,,,,71250
+28 Rue de Madagascar Le Creusot,,,,28 Rue de Madagascar,,,,71200
+28 Rue de Madagascar 71200,,,,28 Rue de Madagascar,,,Le Creusot,
+28 Rue de Madagascar,4.457958,46.801965,,28 Rue de Madagascar,,,,71200
+3 Impasse des Troënes Cuiseaux,,,,3 Impasse des Troënes,,,,71480
+3 Impasse des Troënes 71480,,,,3 Impasse des Troënes,,,Cuiseaux,
+3 Impasse des Troënes,5.379804,46.493779,,3 Impasse des Troënes,,,,71480
+56 Rue du Verdier Digoin,,,,56 Rue du Verdier,,,,71160
+56 Rue du Verdier 71160,,,,56 Rue du Verdier,,,Digoin,
+56 Rue du Verdier,3.990858,46.500649,,56 Rue du Verdier,,,,71160
+4 Rue des Saules Fontaines,,,,4 Rue des Saules,,,,71150
+4 Rue des Saules 71150,,,,4 Rue des Saules,,,Fontaines,
+4 Rue des Saules,4.773386,46.850065,,4 Rue des Saules,,,,71150
+24 Route de Saint-Martin Guerfand,,,,24 Route de Saint-Martin,,,,71620
+24 Route de Saint-Martin 71620,,,,24 Route de Saint-Martin,,,Guerfand,
+24 Route de Saint-Martin,5.036003,46.790758,,24 Route de Saint-Martin,,,,71620
+4 Route de Saint-Vallerin Jully-lès-Buxy,,,,4 Route de Saint-Vallerin,,,,71390
+4 Route de Saint-Vallerin 71390,,,,4 Route de Saint-Vallerin,,,Jully-lès-Buxy,
+4 Route de Saint-Vallerin,4.688681,46.689391,,4 Route de Saint-Vallerin,,,,71390
+1109 Route de Tournus Lugny,,,,1109 Route de Tournus,,,,71260
+1109 Route de Tournus 71260,,,,1109 Route de Tournus,,,Lugny,
+1109 Route de Tournus,4.823467,46.489877,,1109 Route de Tournus,,,,71260
+14 Rue Poitevin Mâcon,,,,14 Rue Poitevin,,,,71000
+14 Rue Poitevin 71000,,,,14 Rue Poitevin,,,Mâcon,
+14 Rue Poitevin,4.823572,46.306242,,14 Rue Poitevin,,,,71000
+37BIS Route de Louhans Mervans,,,,37BIS Route de Louhans,,,,71310
+37BIS Route de Louhans 71310,,,,37BIS Route de Louhans,,,Mervans,
+37BIS Route de Louhans,5.184382,46.795166,,37BIS Route de Louhans,,,,71310
+42 Rue de la Loge Montceau-les-Mines,,,,42 Rue de la Loge,,,,71300
+42 Rue de la Loge 71300,,,,42 Rue de la Loge,,,Montceau-les-Mines,
+42 Rue de la Loge,4.380076,46.679128,,42 Rue de la Loge,,,,71300
+58 Avenue de la République Montchanin,,,,58 Avenue de la République,,,,71210
+58 Avenue de la République 71210,,,,58 Avenue de la République,,,Montchanin,
+58 Avenue de la République,4.468646,46.749520,,58 Avenue de la République,,,,71210
+14 Rue des Deux Ponts Paray-le-Monial,,,,14 Rue des Deux Ponts,,,,71600
+14 Rue des Deux Ponts 71600,,,,14 Rue des Deux Ponts,,,Paray-le-Monial,
+14 Rue des Deux Ponts,4.118971,46.449980,,14 Rue des Deux Ponts,,,,71600
+206 Chemin des Loureaux Ratte,,,,206 Chemin des Loureaux,,,,71500
+206 Chemin des Loureaux 71500,,,,206 Chemin des Loureaux,,,Ratte,
+206 Chemin des Loureaux,5.299614,46.626826,,206 Chemin des Loureaux,,,,71500
+430 Route de Tronchy Saint-Étienne-en-Bresse,,,,430 Route de Tronchy,,,,71370
+430 Route de Tronchy 71370,,,,430 Route de Tronchy,,,Saint-Étienne-en-Bresse,
+430 Route de Tronchy,5.054819,46.709305,,430 Route de Tronchy,,,,71370
+12 Rue des Chavannes Saint-Marcel,,,,12 Rue des Chavannes,,,,71380
+12 Rue des Chavannes 71380,,,,12 Rue des Chavannes,,,Saint-Marcel,
+12 Rue des Chavannes,4.870054,46.778206,,12 Rue des Chavannes,,,,71380
+3 Impasse Mon Calme Saint-Rémy,,,,3 Impasse Mon Calme,,,,71100
+3 Impasse Mon Calme 71100,,,,3 Impasse Mon Calme,,,Saint-Rémy,
+3 Impasse Mon Calme,4.821576,46.765561,,3 Impasse Mon Calme,,,,71100
+44 Rue Jean Moulin Saint-Vallier,,,,44 Rue Jean Moulin,,,,71230
+44 Rue Jean Moulin 71230,,,,44 Rue Jean Moulin,,,Saint-Vallier,
+44 Rue Jean Moulin,4.328327,46.633568,,44 Rue Jean Moulin,,,,71230
+4124 Rue de Saint-Eugène Sanvignes-les-Mines,,,,4124 Rue de Saint-Eugène,,,,71410
+4124 Rue de Saint-Eugène 71410,,,,4124 Rue de Saint-Eugène,,,Sanvignes-les-Mines,
+4124 Rue de Saint-Eugène,4.247602,46.680129,,4124 Rue de Saint-Eugène,,,,71410
+10 Hameau Grand Cerisier Simard,,,,10 Hameau Grand Cerisier,,,,71330
+10 Hameau Grand Cerisier 71330,,,,10 Hameau Grand Cerisier,,,Simard,
+10 Hameau Grand Cerisier,5.159487,46.731799,,10 Hameau Grand Cerisier,,,,71330
+17BIS Grande Rue Tramayes,,,,17BIS Grande Rue,,,,71520
+17BIS Grande Rue 71520,,,,17BIS Grande Rue,,,Tramayes,
+17BIS Grande Rue,4.601749,46.308017,,17BIS Grande Rue,,,,71520
+7X Rue du Gué Arcy-sur-Cure,,,,7X Rue du Gué,,,,89270
+7X Rue du Gué 89270,,,,7X Rue du Gué,,,Arcy-sur-Cure,
+7X Rue du Gué,3.758783,47.602710,,7X Rue du Gué,,,,89270
+7 Rue de l'Egalite Auxerre,,,,7 Rue de l'Egalite,,,,89000
+7 Rue de l'Egalite 89000,,,,7 Rue de l'Egalite,,,Auxerre,
+7 Rue de l'Egalite,3.566932,47.795060,,7 Rue de l'Egalite,,,,89000
+1BIS Avenue de la Puisaye Auxerre,,,,1BIS Avenue de la Puisaye,,,,89000
+1BIS Avenue de la Puisaye 89000,,,,1BIS Avenue de la Puisaye,,,Auxerre,
+1BIS Avenue de la Puisaye,3.565595,47.789647,,1BIS Avenue de la Puisaye,,,,89000
+2BIS Rue de la Résistance Bassou,,,,2BIS Rue de la Résistance,,,,89400
+2BIS Rue de la Résistance 89400,,,,2BIS Rue de la Résistance,,,Bassou,
+2BIS Rue de la Résistance,3.516142,47.921069,,2BIS Rue de la Résistance,,,,89400
+16 Rue Palériau Brienon-sur-Armançon,,,,16 Rue Palériau,,,,89210
+16 Rue Palériau 89210,,,,16 Rue Palériau,,,Brienon-sur-Armançon,
+16 Rue Palériau,3.615113,47.986431,,16 Rue Palériau,,,,89210
+7 Rue des Baudons Champignelles,,,,7 Rue des Baudons,,,,89350
+7 Rue des Baudons 89350,,,,7 Rue des Baudons,,,Champignelles,
+7 Rue des Baudons,3.079963,47.779630,,7 Rue des Baudons,,,,89350
+14 Rue du Cedec Charny,,,,14 Rue du Cedec,,,,89120
+14 Rue du Cedec 89120,,,,14 Rue du Cedec,,,Charny,
+14 Rue du Cedec,3.096112,47.877677,,14 Rue du Cedec,,,,89120
+40 Rue de l'Étang Jussier Chevannes,,,,40 Rue de l'Étang Jussier,,,,89240
+40 Rue de l'Étang Jussier 89240,,,,40 Rue de l'Étang Jussier,,,Chevannes,
+40 Rue de l'Étang Jussier,3.489512,47.771753,,40 Rue de l'Étang Jussier,,,,89240
+10 Rue des Ecossais Cravant,,,,10 Rue des Ecossais,,,,89460
+10 Rue des Ecossais 89460,,,,10 Rue des Ecossais,,,Cravant,
+10 Rue des Ecossais,3.691448,47.682661,,10 Rue des Ecossais,,,,89460
+30 Route de Vaux Escolives-Sainte-Camille,,,,30 Route de Vaux,,,,89290
+30 Route de Vaux 89290,,,,30 Route de Vaux,,,Escolives-Sainte-Camille,
+30 Route de Vaux,3.596056,47.733201,,30 Route de Vaux,,,,89290
+2 Rue Haute Gron,,,,2 Rue Haute,,,,89100
+2 Rue Haute 89100,,,,2 Rue Haute,,,Gron,
+2 Rue Haute,3.262000,48.160868,,2 Rue Haute,,,,89100
+3 RUE MARCELIN BERTHELOT Joigny,,,,3 RUE MARCELIN BERTHELOT,,,,89300
+3 RUE MARCELIN BERTHELOT 89300,,,,3 RUE MARCELIN BERTHELOT,,,Joigny,
+3 RUE MARCELIN BERTHELOT,3.416979,47.980896,,3 RUE MARCELIN BERTHELOT,,,,89300
+2 Grande Rue Looze,,,,2 Grande Rue,,,,89300
+2 Grande Rue 89300,,,,2 Grande Rue,,,Looze,
+2 Grande Rue,3.440687,47.992249,,2 Grande Rue,,,,89300
+17 Avenue Edouard Branly Migennes,,,,17 Avenue Edouard Branly,,,,89400
+17 Avenue Edouard Branly 89400,,,,17 Avenue Edouard Branly,,,Migennes,
+17 Avenue Edouard Branly,3.524378,47.965564,,17 Avenue Edouard Branly,,,,89400
+16 Rue d'Argenteuil Moulins-en-Tonnerrois,,,,16 Rue d'Argenteuil,,,,89310
+16 Rue d'Argenteuil 89310,,,,16 Rue d'Argenteuil,,,Moulins-en-Tonnerrois,
+16 Rue d'Argenteuil,4.036176,47.731363,,16 Rue d'Argenteuil,,,,89310
+13 Rue du Bas de Bréandes Perrigny,,,,13 Rue du Bas de Bréandes,,,,89000
+13 Rue du Bas de Bréandes 89000,,,,13 Rue du Bas de Bréandes,,,Perrigny,
+13 Rue du Bas de Bréandes,3.541638,47.825559,,13 Rue du Bas de Bréandes,,,,89000
+7 Rue André Henriat Rogny-les-Sept-Écluses,,,,7 Rue André Henriat,,,,89220
+7 Rue André Henriat 89220,,,,7 Rue André Henriat,,,Rogny-les-Sept-Écluses,
+7 Rue André Henriat,2.881517,47.743506,,7 Rue André Henriat,,,,89220
+38 Rue de la Maladrerie Saint-Florentin,,,,38 Rue de la Maladrerie,,,,89600
+38 Rue de la Maladrerie 89600,,,,38 Rue de la Maladrerie,,,Saint-Florentin,
+38 Rue de la Maladrerie,3.722243,47.996211,,38 Rue de la Maladrerie,,,,89600
+4 Rue du Vieux Poux Saint-Maurice-Thizouaille,,,,4 Rue du Vieux Poux,,,,89110
+4 Rue du Vieux Poux 89110,,,,4 Rue du Vieux Poux,,,Saint-Maurice-Thizouaille,
+4 Rue du Vieux Poux,3.366185,47.833027,,4 Rue du Vieux Poux,,,,89110
+83BIS Rue Bellocier Sens,,,,83BIS Rue Bellocier,,,,89100
+83BIS Rue Bellocier 89100,,,,83BIS Rue Bellocier,,,Sens,
+83BIS Rue Bellocier,3.268558,48.202523,,83BIS Rue Bellocier,,,,89100
+127 Avenue de Sénigallia Sens,,,,127 Avenue de Sénigallia,,,,89100
+127 Avenue de Sénigallia 89100,,,,127 Avenue de Sénigallia,,,Sens,
+127 Avenue de Sénigallia,3.284523,48.189124,,127 Avenue de Sénigallia,,,,89100
+3 Grande Rue Saint-Martin Thorigny-sur-Oreuse,,,,3 Grande Rue Saint-Martin,,,,89260
+3 Grande Rue Saint-Martin 89260,,,,3 Grande Rue Saint-Martin,,,Thorigny-sur-Oreuse,
+3 Grande Rue Saint-Martin,3.331917,48.293328,,3 Grande Rue Saint-Martin,,,,89260
+28 Rue du Chemin Vert Vareilles,,,,28 Rue du Chemin Vert,,,,89320
+28 Rue du Chemin Vert 89320,,,,28 Rue du Chemin Vert,,,Vareilles,
+28 Rue du Chemin Vert,3.474266,48.173335,,28 Rue du Chemin Vert,,,,89320
+75 Rue du Port Villeblevin,,,,75 Rue du Port,,,,89340
+75 Rue du Port 89340,,,,75 Rue du Port,,,Villeblevin,
+75 Rue du Port,3.092251,48.325781,,75 Rue du Port,,,,89340
+40 Rue du Grain d'Anis Villeneuve-sur-Yonne,,,,40 Rue du Grain d'Anis,,,,89500
+40 Rue du Grain d'Anis 89500,,,,40 Rue du Grain d'Anis,,,Villeneuve-sur-Yonne,
+40 Rue du Grain d'Anis,3.284952,48.079943,,40 Rue du Grain d'Anis,,,,89500
+114 Rue des Arcys Volgré,,,,114 Rue des Arcys,,,,89710
+114 Rue des Arcys 89710,,,,114 Rue des Arcys,,,Volgré,
+114 Rue des Arcys,3.328024,47.920675,,114 Rue des Arcys,,,,89710

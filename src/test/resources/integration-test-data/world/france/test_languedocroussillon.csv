@@ -1,0 +1,451 @@
+query,lon,lat,limit,expected_name,expected_housenumber,expected_street,expected_city,expected_postcode
+11 Rue du Fort Barbaira,,,,11 Rue du Fort,,,,11800
+11 Rue du Fort 11800,,,,11 Rue du Fort,,,Barbaira,
+11 Rue du Fort,2.509534,43.183902,,11 Rue du Fort,,,,11800
+34 Avenue des Anciens Combattants Capendu,,,,34 Avenue des Anciens Combattants,,,,11700
+34 Avenue des Anciens Combattants 11700,,,,34 Avenue des Anciens Combattants,,,Capendu,
+34 Avenue des Anciens Combattants,2.555346,43.185447,,34 Avenue des Anciens Combattants,,,,11700
+9 Rue des Études Carcassonne,,,,9 Rue des Études,,,,11000
+9 Rue des Études 11000,,,,9 Rue des Études,,,Carcassonne,
+9 Rue des Études,2.348515,43.211265,,9 Rue des Études,,,,11000
+7 Place Marcou Carcassonne,,,,7 Place Marcou,,,,11000
+7 Place Marcou 11000,,,,7 Place Marcou,,,Carcassonne,
+7 Place Marcou,2.364929,43.206461,,7 Place Marcou,,,,11000
+102 Rue Trivalle Carcassonne,,,,102 Rue Trivalle,,,,11000
+102 Rue Trivalle 11000,,,,102 Rue Trivalle,,,Carcassonne,
+102 Rue Trivalle,2.364638,43.209361,,102 Rue Trivalle,,,,11000
+9 Avenue des Bosquets Caux-et-Sauzens,,,,9 Avenue des Bosquets,,,,11170
+9 Avenue des Bosquets 11170,,,,9 Avenue des Bosquets,,,Caux-et-Sauzens,
+9 Avenue des Bosquets,2.257166,43.220486,,9 Avenue des Bosquets,,,,11170
+13 Avenue Frédéric Mistral Coursan,,,,13 Avenue Frédéric Mistral,,,,11110
+13 Avenue Frédéric Mistral 11110,,,,13 Avenue Frédéric Mistral,,,Coursan,
+13 Avenue Frédéric Mistral,3.057388,43.234421,,13 Avenue Frédéric Mistral,,,,11110
+225 Rue de l'Égalité Espéraza,,,,225 Rue de l'Égalité,,,,11260
+225 Rue de l'Égalité 11260,,,,225 Rue de l'Égalité,,,Espéraza,
+225 Rue de l'Égalité,2.220285,42.936589,,225 Rue de l'Égalité,,,,11260
+19BIS Rue des Pétrels Fleury,,,,19BIS Rue des Pétrels,,,,11560
+19BIS Rue des Pétrels 11560,,,,19BIS Rue des Pétrels,,,Fleury,
+19BIS Rue des Pétrels,3.182476,43.177115,,19BIS Rue des Pétrels,,,,11560
+20 Chalets 10E Rangée Gruissan,,,,20 Chalets 10E Rangée,,,,11430
+20 Chalets 10E Rangée 11430,,,,20 Chalets 10E Rangée,,,Gruissan,
+20 Chalets 10E Rangée,3.117681,43.107258,,20 Chalets 10E Rangée,,,,11430
+4 Rue Émile Bertrand Leucate,,,,4 Rue Émile Bertrand,,,,11370
+4 Rue Émile Bertrand 11370,,,,4 Rue Émile Bertrand,,,Leucate,
+4 Rue Émile Bertrand,3.036168,42.931546,,4 Rue Émile Bertrand,,,,11370
+5 Rue Peyronnet Lézignan-Corbières,,,,5 Rue Peyronnet,,,,11200
+5 Rue Peyronnet 11200,,,,5 Rue Peyronnet,,,Lézignan-Corbières,
+5 Rue Peyronnet,2.759861,43.199386,,5 Rue Peyronnet,,,,11200
+7 Rue du Cers Luc-sur-Orbieu,,,,7 Rue du Cers,,,,11200
+7 Rue du Cers 11200,,,,7 Rue du Cers,,,Luc-sur-Orbieu,
+7 Rue du Cers,2.783382,43.175923,,7 Rue du Cers,,,,11200
+6 Place du Monument aux Morts Moussan,,,,6 Place du Monument aux Morts,,,,11120
+6 Place du Monument aux Morts 11120,,,,6 Place du Monument aux Morts,,,Moussan,
+6 Place du Monument aux Morts,2.949762,43.231694,,6 Place du Monument aux Morts,,,,11120
+59 Avenue de la Coupe Narbonne,,,,59 Avenue de la Coupe,,,,11100
+59 Avenue de la Coupe 11100,,,,59 Avenue de la Coupe,,,Narbonne,
+59 Avenue de la Coupe,2.975098,43.157952,,59 Avenue de la Coupe,,,,11100
+24 Rue du Maine Narbonne,,,,24 Rue du Maine,,,,11100
+24 Rue du Maine 11100,,,,24 Rue du Maine,,,Narbonne,
+24 Rue du Maine,3.017903,43.196987,,24 Rue du Maine,,,,11100
+80 Rue Turenne Narbonne,,,,80 Rue Turenne,,,,11100
+80 Rue Turenne 11100,,,,80 Rue Turenne,,,Narbonne,
+80 Rue Turenne,3.001646,43.176403,,80 Rue Turenne,,,,11100
+94 Avenue Saint-Marc Ornaisons,,,,94 Avenue Saint-Marc,,,,11200
+94 Avenue Saint-Marc 11200,,,,94 Avenue Saint-Marc,,,Ornaisons,
+94 Avenue Saint-Marc,2.831688,43.181145,,94 Avenue Saint-Marc,,,,11200
+1 Place de la Provence Pezens,,,,1 Place de la Provence,,,,11170
+1 Place de la Provence 11170,,,,1 Place de la Provence,,,Pezens,
+1 Place de la Provence,2.269912,43.256630,,1 Place de la Provence,,,,11170
+32 Rue Saint-Blaise Rieux-Minervois,,,,32 Rue Saint-Blaise,,,,11160
+32 Rue Saint-Blaise 11160,,,,32 Rue Saint-Blaise,,,Rieux-Minervois,
+32 Rue Saint-Blaise,2.588036,43.282774,,32 Rue Saint-Blaise,,,,11160
+18 Rue de l'Aubier Sallèles-d'Aude,,,,18 Rue de l'Aubier,,,,11590
+18 Rue de l'Aubier 11590,,,,18 Rue de l'Aubier,,,Sallèles-d'Aude,
+18 Rue de l'Aubier,2.946255,43.265117,,18 Rue de l'Aubier,,,,11590
+8 Rue Jules Michelet Sigean,,,,8 Rue Jules Michelet,,,,11130
+8 Rue Jules Michelet 11130,,,,8 Rue Jules Michelet,,,Sigean,
+8 Rue Jules Michelet,2.976562,43.020260,,8 Rue Jules Michelet,,,,11130
+31 Rue des Carriers Villegailhenc,,,,31 Rue des Carriers,,,,11600
+31 Rue des Carriers 11600,,,,31 Rue des Carriers,,,Villegailhenc,
+31 Rue des Carriers,2.354165,43.269483,,31 Rue des Carriers,,,,11600
+4 Rue du Pommier Aimargues,,,,4 Rue du Pommier,,,,30470
+4 Rue du Pommier 30470,,,,4 Rue du Pommier,,,Aimargues,
+4 Rue du Pommier,4.201634,43.699408,,4 Rue du Pommier,,,,30470
+12 Rue Jean Aicard Alès,,,,12 Rue Jean Aicard,,,,30100
+12 Rue Jean Aicard 30100,,,,12 Rue Jean Aicard,,,Alès,
+12 Rue Jean Aicard,4.094476,44.131753,,12 Rue Jean Aicard,,,,30100
+15 Rue Taisson Alès,,,,15 Rue Taisson,,,,30100
+15 Rue Taisson 30100,,,,15 Rue Taisson,,,Alès,
+15 Rue Taisson,4.078452,44.124384,,15 Rue Taisson,,,,30100
+28 Rue de la République Les Angles,,,,28 Rue de la République,,,,30133
+28 Rue de la République 30133,,,,28 Rue de la République,,,Les Angles,
+28 Rue de la République,4.766360,43.952370,,28 Rue de la République,,,,30133
+1031 Avenue Alphonse Daudet Bagnols-sur-Cèze,,,,1031 Avenue Alphonse Daudet,,,,30200
+1031 Avenue Alphonse Daudet 30200,,,,1031 Avenue Alphonse Daudet,,,Bagnols-sur-Cèze,
+1031 Avenue Alphonse Daudet,4.613304,44.152982,,1031 Avenue Alphonse Daudet,,,,30200
+40 Chemin de la Source Bagnols-sur-Cèze,,,,40 Chemin de la Source,,,,30200
+40 Chemin de la Source 30200,,,,40 Chemin de la Source,,,Bagnols-sur-Cèze,
+40 Chemin de la Source,4.607519,44.153717,,40 Chemin de la Source,,,,30200
+362 Chemin de l'Esquillon Beauvoisin,,,,362 Chemin de l'Esquillon,,,,30640
+362 Chemin de l'Esquillon 30640,,,,362 Chemin de l'Esquillon,,,Beauvoisin,
+362 Chemin de l'Esquillon,4.314159,43.714694,,362 Chemin de l'Esquillon,,,,30640
+360B Chemin de Marguerittes Bezouce,,,,360B Chemin de Marguerittes,,,,30320
+360B Chemin de Marguerittes 30320,,,,360B Chemin de Marguerittes,,,Bezouce,
+360B Chemin de Marguerittes,4.485703,43.879085,,360B Chemin de Marguerittes,,,,30320
+1 Chemin des Ayres Le Cailar,,,,1 Chemin des Ayres,,,,30740
+1 Chemin des Ayres 30740,,,,1 Chemin des Ayres,,,Le Cailar,
+1 Chemin des Ayres,4.234116,43.675602,,1 Chemin des Ayres,,,,30740
+1 Rue Turion Sabatier Castillon-du-Gard,,,,1 Rue Turion Sabatier,,,,30210
+1 Rue Turion Sabatier 30210,,,,1 Rue Turion Sabatier,,,Castillon-du-Gard,
+1 Rue Turion Sabatier,4.554719,43.970894,,1 Rue Turion Sabatier,,,,30210
+1 Rue du Moulin à Huile Combas,,,,1 Rue du Moulin à Huile,,,,30250
+1 Rue du Moulin à Huile 30250,,,,1 Rue du Moulin à Huile,,,Combas,
+1 Rue du Moulin à Huile,4.112049,43.853998,,1 Rue du Moulin à Huile,,,,30250
+26 Rue de la Costière Garons,,,,26 Rue de la Costière,,,,30128
+26 Rue de la Costière 30128,,,,26 Rue de la Costière,,,Garons,
+26 Rue de la Costière,4.431799,43.765668,,26 Rue de la Costière,,,,30128
+15 Impasse des Cigales Le Grau-du-Roi,,,,15 Impasse des Cigales,,,,30240
+15 Impasse des Cigales 30240,,,,15 Impasse des Cigales,,,Le Grau-du-Roi,
+15 Impasse des Cigales,4.143067,43.520524,,15 Impasse des Cigales,,,,30240
+505 Rue Emile Zola Laudun-l'Ardoise,,,,505 Rue Emile Zola,,,,30290
+505 Rue Emile Zola 30290,,,,505 Rue Emile Zola,,,Laudun-l'Ardoise,
+505 Rue Emile Zola,4.669990,44.106979,,505 Rue Emile Zola,,,,30290
+9 Rue des Anciens Combattants Marguerittes,,,,9 Rue des Anciens Combattants,,,,30320
+9 Rue des Anciens Combattants 30320,,,,9 Rue des Anciens Combattants,,,Marguerittes,
+9 Rue des Anciens Combattants,4.437148,43.854392,,9 Rue des Anciens Combattants,,,,30320
+10 Rue Alphonse Daudet Milhaud,,,,10 Rue Alphonse Daudet,,,,30540
+10 Rue Alphonse Daudet 30540,,,,10 Rue Alphonse Daudet,,,Milhaud,
+10 Rue Alphonse Daudet,4.317366,43.792677,,10 Rue Alphonse Daudet,,,,30540
+40 Rue du Temple Mus,,,,40 Rue du Temple,,,,30121
+40 Rue du Temple 30121,,,,40 Rue du Temple,,,Mus,
+40 Rue du Temple,4.200455,43.740178,,40 Rue du Temple,,,,30121
+212 Impasse Bonne Brise Nîmes,,,,212 Impasse Bonne Brise,,,,30000
+212 Impasse Bonne Brise 30000,,,,212 Impasse Bonne Brise,,,Nîmes,
+212 Impasse Bonne Brise,4.332683,43.837978,,212 Impasse Bonne Brise,,,,30000
+18 Rue Edmond Rostand Nîmes,,,,18 Rue Edmond Rostand,,,,30000
+18 Rue Edmond Rostand 30000,,,,18 Rue Edmond Rostand,,,Nîmes,
+18 Rue Edmond Rostand,4.369179,43.850030,,18 Rue Edmond Rostand,,,,30000
+29B Avenue Jean Jaurès Nîmes,,,,29B Avenue Jean Jaurès,,,,30000
+29B Avenue Jean Jaurès 30000,,,,29B Avenue Jean Jaurès,,,Nîmes,
+29B Avenue Jean Jaurès,4.351594,43.834145,,29B Avenue Jean Jaurès,,,,30000
+130 Impasse des Orchidées Nîmes,,,,130 Impasse des Orchidées,,,,30000
+130 Impasse des Orchidées 30000,,,,130 Impasse des Orchidées,,,Nîmes,
+130 Impasse des Orchidées,4.381477,43.810838,,130 Impasse des Orchidées,,,,30000
+58 Rue Sainte-Perpétue Nîmes,,,,58 Rue Sainte-Perpétue,,,,30000
+58 Rue Sainte-Perpétue 30000,,,,58 Rue Sainte-Perpétue,,,Nîmes,
+58 Rue Sainte-Perpétue,4.376036,43.836243,,58 Rue Sainte-Perpétue,,,,30000
+19 Avenue Gaston Doumergue Pont-Saint-Esprit,,,,19 Avenue Gaston Doumergue,,,,30130
+19 Avenue Gaston Doumergue 30130,,,,19 Avenue Gaston Doumergue,,,Pont-Saint-Esprit,
+19 Avenue Gaston Doumergue,4.646512,44.254628,,19 Avenue Gaston Doumergue,,,,30130
+177 Voie Romaine Quissac,,,,177 Voie Romaine,,,,30260
+177 Voie Romaine 30260,,,,177 Voie Romaine,,,Quissac,
+177 Voie Romaine,4.005736,43.905849,,177 Voie Romaine,,,,30260
+35 Rue du 19 Mars 1962 Roquemaure,,,,35 Rue du 19 Mars 1962,,,,30150
+35 Rue du 19 Mars 1962 30150,,,,35 Rue du 19 Mars 1962,,,Roquemaure,
+35 Rue du 19 Mars 1962,4.785823,44.046466,,35 Rue du 19 Mars 1962,,,,30150
+5 Chemin de la Rouvière Saint-Bauzély,,,,5 Chemin de la Rouvière,,,,30730
+5 Chemin de la Rouvière 30730,,,,5 Chemin de la Rouvière,,,Saint-Bauzély,
+5 Chemin de la Rouvière,4.200742,43.921346,,5 Chemin de la Rouvière,,,,30730
+4 Impasse de l'Aqueduc Saint-Gervasy,,,,4 Impasse de l'Aqueduc,,,,30320
+4 Impasse de l'Aqueduc 30320,,,,4 Impasse de l'Aqueduc,,,Saint-Gervasy,
+4 Impasse de l'Aqueduc,4.463123,43.877580,,4 Impasse de l'Aqueduc,,,,30320
+170 Chemin de Saint-Hilaire A Trouillas Saint-Hilaire-de-Brethmas,,,,170 Chemin de Saint-Hilaire A Trouillas,,,,30560
+170 Chemin de Saint-Hilaire A Trouillas 30560,,,,170 Chemin de Saint-Hilaire A Trouillas,,,Saint-Hilaire-de-Brethmas,
+170 Chemin de Saint-Hilaire A Trouillas,4.127880,44.081987,,170 Chemin de Saint-Hilaire A Trouillas,,,,30560
+59 Rue Pierre-Babinot Saint-Laurent-d'Aigouze,,,,59 Rue Pierre-Babinot,,,,30220
+59 Rue Pierre-Babinot 30220,,,,59 Rue Pierre-Babinot,,,Saint-Laurent-d'Aigouze,
+59 Rue Pierre-Babinot,4.194101,43.634416,,59 Rue Pierre-Babinot,,,,30220
+99 Chemin du Viget Saint-Privat-des-Vieux,,,,99 Chemin du Viget,,,,30340
+99 Chemin du Viget 30340,,,,99 Chemin du Viget,,,Saint-Privat-des-Vieux,
+99 Chemin du Viget,4.120706,44.149931,,99 Chemin du Viget,,,,30340
+18 Rue Frédéric Mistral Saze,,,,18 Rue Frédéric Mistral,,,,30650
+18 Rue Frédéric Mistral 30650,,,,18 Rue Frédéric Mistral,,,Saze,
+18 Rue Frédéric Mistral,4.681719,43.942595,,18 Rue Frédéric Mistral,,,,30650
+12 Rue des Tamaris Uchaud,,,,12 Rue des Tamaris,,,,30620
+12 Rue des Tamaris 30620,,,,12 Rue des Tamaris,,,Uchaud,
+12 Rue des Tamaris,4.272253,43.757794,,12 Rue des Tamaris,,,,30620
+6 Rue Posquière Vauvert,,,,6 Rue Posquière,,,,30640
+6 Rue Posquière 30640,,,,6 Rue Posquière,,,Vauvert,
+6 Rue Posquière,4.277792,43.692519,,6 Rue Posquière,,,,30640
+895 Route du Pont de la Croix Le Vigan,,,,895 Route du Pont de la Croix,,,,30120
+895 Route du Pont de la Croix 30120,,,,895 Route du Pont de la Croix,,,Le Vigan,
+895 Route du Pont de la Croix,3.624068,43.989618,,895 Route du Pont de la Croix,,,,30120
+1 Impasse Di Capellus Rodilhan,,,,1 Impasse Di Capellus,,,,30230
+1 Impasse Di Capellus 30230,,,,1 Impasse Di Capellus,,,Rodilhan,
+1 Impasse Di Capellus,4.431379,43.830745,,1 Impasse Di Capellus,,,,30230
+9 Rue Francois Le Courtier Agde,,,,9 Rue Francois Le Courtier,,,,34300
+9 Rue Francois Le Courtier 34300,,,,9 Rue Francois Le Courtier,,,Agde,
+9 Rue Francois Le Courtier,3.458278,43.292557,,9 Rue Francois Le Courtier,,,,34300
+12 Rue Saint-Cesaire Agde,,,,12 Rue Saint-Cesaire,,,,34300
+12 Rue Saint-Cesaire 34300,,,,12 Rue Saint-Cesaire,,,Agde,
+12 Rue Saint-Cesaire,3.470905,43.300621,,12 Rue Saint-Cesaire,,,,34300
+5 Rue du Maréchal Leclerc Aspiran,,,,5 Rue du Maréchal Leclerc,,,,34800
+5 Rue du Maréchal Leclerc 34800,,,,5 Rue du Maréchal Leclerc,,,Aspiran,
+5 Rue du Maréchal Leclerc,3.449806,43.565690,,5 Rue du Maréchal Leclerc,,,,34800
+8 Impasse des Primevères Balaruc-les-Bains,,,,8 Impasse des Primevères,,,,34540
+8 Impasse des Primevères 34540,,,,8 Impasse des Primevères,,,Balaruc-les-Bains,
+8 Impasse des Primevères,3.703653,43.445346,,8 Impasse des Primevères,,,,34540
+3 Rue de l'Abreuvoir Berlou,,,,3 Rue de l'Abreuvoir,,,,34360
+3 Rue de l'Abreuvoir 34360,,,,3 Rue de l'Abreuvoir,,,Berlou,
+3 Rue de l'Abreuvoir,2.963197,43.492135,,3 Rue de l'Abreuvoir,,,,34360
+1456 Avenue du Préfet Claude Érignac Béziers,,,,1456 Avenue du Préfet Claude Érignac,,,,34500
+1456 Avenue du Préfet Claude Érignac 34500,,,,1456 Avenue du Préfet Claude Érignac,,,Béziers,
+1456 Avenue du Préfet Claude Érignac,3.213129,43.365010,,1456 Avenue du Préfet Claude Érignac,,,,34500
+23 Rue Honoré Daumier Béziers,,,,23 Rue Honoré Daumier,,,,34500
+23 Rue Honoré Daumier 34500,,,,23 Rue Honoré Daumier,,,Béziers,
+23 Rue Honoré Daumier,3.225281,43.347295,,23 Rue Honoré Daumier,,,,34500
+69 Rue Louis Pasteur Béziers,,,,69 Rue Louis Pasteur,,,,34500
+69 Rue Louis Pasteur 34500,,,,69 Rue Louis Pasteur,,,Béziers,
+69 Rue Louis Pasteur,3.228097,43.337448,,69 Rue Louis Pasteur,,,,34500
+59 Avenue Vingt Deux Aout 1944 Béziers,,,,59 Avenue Vingt Deux Aout 1944,,,,34500
+59 Avenue Vingt Deux Aout 1944 34500,,,,59 Avenue Vingt Deux Aout 1944,,,Béziers,
+59 Avenue Vingt Deux Aout 1944,3.220144,43.344142,,59 Avenue Vingt Deux Aout 1944,,,,34500
+3BIS Place de l'Église Brignac,,,,3BIS Place de l'Église,,,,34800
+3BIS Place de l'Église 34800,,,,3BIS Place de l'Église,,,Brignac,
+3BIS Place de l'Église,3.474652,43.623487,,3BIS Place de l'Église,,,,34800
+4 Rue Bacchus Castelnau-le-Lez,,,,4 Rue Bacchus,,,,34170
+4 Rue Bacchus 34170,,,,4 Rue Bacchus,,,Castelnau-le-Lez,
+4 Rue Bacchus,3.925686,43.644586,,4 Rue Bacchus,,,,34170
+57 Rue de la Tramontane Castries,,,,57 Rue de la Tramontane,,,,34160
+57 Rue de la Tramontane 34160,,,,57 Rue de la Tramontane,,,Castries,
+57 Rue de la Tramontane,3.976670,43.680666,,57 Rue de la Tramontane,,,,34160
+6 Placette des Mûriers Cazouls-lès-Béziers,,,,6 Placette des Mûriers,,,,34370
+6 Placette des Mûriers 34370,,,,6 Placette des Mûriers,,,Cazouls-lès-Béziers,
+6 Placette des Mûriers,3.101653,43.385824,,6 Placette des Mûriers,,,,34370
+316 Chemin de Sauviac Claret,,,,316 Chemin de Sauviac,,,,34270
+316 Chemin de Sauviac 34270,,,,316 Chemin de Sauviac,,,Claret,
+316 Chemin de Sauviac,3.903328,43.853370,,316 Chemin de Sauviac,,,,34270
+3 Rue des Coronilles Cournonsec,,,,3 Rue des Coronilles,,,,34660
+3 Rue des Coronilles 34660,,,,3 Rue des Coronilles,,,Cournonsec,
+3 Rue des Coronilles,3.698226,43.543795,,3 Rue des Coronilles,,,,34660
+16 Rue de la Sauvagine Le Crès,,,,16 Rue de la Sauvagine,,,,34920
+16 Rue de la Sauvagine 34920,,,,16 Rue de la Sauvagine,,,Le Crès,
+16 Rue de la Sauvagine,3.935624,43.663918,,16 Rue de la Sauvagine,,,,34920
+1 Rue des Peupliers Florensac,,,,1 Rue des Peupliers,,,,34510
+1 Rue des Peupliers 34510,,,,1 Rue des Peupliers,,,Florensac,
+1 Rue des Peupliers,3.475458,43.383614,,1 Rue des Peupliers,,,,34510
+10 Impasse des Primevères Frontignan,,,,10 Impasse des Primevères,,,,34110
+10 Impasse des Primevères 34110,,,,10 Impasse des Primevères,,,Frontignan,
+10 Impasse des Primevères,3.732403,43.434947,,10 Impasse des Primevères,,,,34110
+11 Avenue des Treilles Gigean,,,,11 Avenue des Treilles,,,,34770
+11 Avenue des Treilles 34770,,,,11 Avenue des Treilles,,,Gigean,
+11 Avenue des Treilles,3.707620,43.498863,,11 Avenue des Treilles,,,,34770
+3 Rue du Languedoc Jacou,,,,3 Rue du Languedoc,,,,34830
+3 Rue du Languedoc 34830,,,,3 Rue du Languedoc,,,Jacou,
+3 Rue du Languedoc,3.909344,43.658735,,3 Rue du Languedoc,,,,34830
+7 Rue des Flamants Roses Lansargues,,,,7 Rue des Flamants Roses,,,,34130
+7 Rue des Flamants Roses 34130,,,,7 Rue des Flamants Roses,,,Lansargues,
+7 Rue des Flamants Roses,4.070892,43.652730,,7 Rue des Flamants Roses,,,,34130
+28 Rue Pasiphae Lattes,,,,28 Rue Pasiphae,,,,34970
+28 Rue Pasiphae 34970,,,,28 Rue Pasiphae,,,Lattes,
+28 Rue Pasiphae,3.902711,43.576892,,28 Rue Pasiphae,,,,34970
+20 Impasse Raimu Lignan-sur-Orb,,,,20 Impasse Raimu,,,,34490
+20 Impasse Raimu 34490,,,,20 Impasse Raimu,,,Lignan-sur-Orb,
+20 Impasse Raimu,3.175538,43.379525,,20 Impasse Raimu,,,,34490
+14 Impasse du Cordelier Lunel,,,,14 Impasse du Cordelier,,,,34400
+14 Impasse du Cordelier 34400,,,,14 Impasse du Cordelier,,,Lunel,
+14 Impasse du Cordelier,4.134210,43.670959,,14 Impasse du Cordelier,,,,34400
+604 Avenue du Vidourle Lunel,,,,604 Avenue du Vidourle,,,,34400
+604 Avenue du Vidourle 34400,,,,604 Avenue du Vidourle,,,Lunel,
+604 Avenue du Vidourle,4.150523,43.683924,,604 Avenue du Vidourle,,,,34400
+316 Rue de Poussan Maraussan,,,,316 Rue de Poussan,,,,34370
+316 Rue de Poussan 34370,,,,316 Rue de Poussan,,,Maraussan,
+316 Rue de Poussan,3.159766,43.362898,,316 Rue de Poussan,,,,34370
+33 Place du Théatre Marseillan,,,,33 Place du Théatre,,,,34340
+33 Place du Théatre 34340,,,,33 Place du Théatre,,,Marseillan,
+33 Place du Théatre,3.529230,43.353799,,33 Place du Théatre,,,,34340
+163 Avenue Grassion Cibrand Carnon Mauguio,,,,163 Avenue Grassion Cibrand Carnon,,,,34280
+163 Avenue Grassion Cibrand Carnon 34280,,,,163 Avenue Grassion Cibrand Carnon,,,Mauguio,
+163 Avenue Grassion Cibrand Carnon,3.984266,43.546303,,163 Avenue Grassion Cibrand Carnon,,,,34280
+4 Rue Gaffarot Mèze,,,,4 Rue Gaffarot,,,,34140
+4 Rue Gaffarot 34140,,,,4 Rue Gaffarot,,,Mèze,
+4 Rue Gaffarot,3.608495,43.425989,,4 Rue Gaffarot,,,,34140
+8 Rue du Commerce Montagnac,,,,8 Rue du Commerce,,,,34530
+8 Rue du Commerce 34530,,,,8 Rue du Commerce,,,Montagnac,
+8 Rue du Commerce,3.483892,43.478951,,8 Rue du Commerce,,,,34530
+276 Côte des Ecureuils Montferrier-sur-Lez,,,,276 Côte des Ecureuils,,,,34980
+276 Côte des Ecureuils 34980,,,,276 Côte des Ecureuils,,,Montferrier-sur-Lez,
+276 Côte des Ecureuils,3.844786,43.672044,,276 Côte des Ecureuils,,,,34980
+6B Boulevard Berthelot Montpellier,,,,6B Boulevard Berthelot,,,,34090
+6B Boulevard Berthelot 34090,,,,6B Boulevard Berthelot,,,Montpellier,
+6B Boulevard Berthelot,3.870413,43.600639,,6B Boulevard Berthelot,,,,34090
+435 Rue de la Croix Verte Montpellier,,,,435 Rue de la Croix Verte,,,,34090
+435 Rue de la Croix Verte 34090,,,,435 Rue de la Croix Verte,,,Montpellier,
+435 Rue de la Croix Verte,3.838657,43.646070,,435 Rue de la Croix Verte,,,,34090
+5 Rue Général Riu Montpellier,,,,5 Rue Général Riu,,,,34090
+5 Rue Général Riu 34090,,,,5 Rue Général Riu,,,Montpellier,
+5 Rue Général Riu,3.882132,43.604499,,5 Rue Général Riu,,,,34090
+166B Avenue de Lodève Montpellier,,,,166B Avenue de Lodève,,,,34090
+166B Avenue de Lodève 34090,,,,166B Avenue de Lodève,,,Montpellier,
+166B Avenue de Lodève,3.842268,43.613285,,166B Avenue de Lodève,,,,34090
+33 Avenue de Palavas Montpellier,,,,33 Avenue de Palavas,,,,34090
+33 Avenue de Palavas 34090,,,,33 Avenue de Palavas,,,Montpellier,
+33 Avenue de Palavas,3.885154,43.599471,,33 Avenue de Palavas,,,,34090
+265 Rue Romy Schneider Montpellier,,,,265 Rue Romy Schneider,,,,34090
+265 Rue Romy Schneider 34090,,,,265 Rue Romy Schneider,,,Montpellier,
+265 Rue Romy Schneider,3.860698,43.587038,,265 Rue Romy Schneider,,,,34090
+7 Place Jacques Mirouze Montpellier,,,,7 Place Jacques Mirouze,,,,34090
+7 Place Jacques Mirouze 34090,,,,7 Place Jacques Mirouze,,,Montpellier,
+7 Place Jacques Mirouze,3.869907,43.612749,,7 Place Jacques Mirouze,,,,34090
+6 Avenue Bonnafé Edouard Murviel-lès-Béziers,,,,6 Avenue Bonnafé Edouard,,,,34490
+6 Avenue Bonnafé Edouard 34490,,,,6 Avenue Bonnafé Edouard,,,Murviel-lès-Béziers,
+6 Avenue Bonnafé Edouard,3.145488,43.442514,,6 Avenue Bonnafé Edouard,,,,34490
+3 Rue du Garajou Octon,,,,3 Rue du Garajou,,,,34800
+3 Rue du Garajou 34800,,,,3 Rue du Garajou,,,Octon,
+3 Rue du Garajou,3.304937,43.655922,,3 Rue du Garajou,,,,34800
+12 Avenue des Adrets Pérols,,,,12 Avenue des Adrets,,,,34470
+12 Avenue des Adrets 34470,,,,12 Avenue des Adrets,,,Pérols,
+12 Avenue des Adrets,3.941266,43.565554,,12 Avenue des Adrets,,,,34470
+6 Avenue Yves Brayer Pézenas,,,,6 Avenue Yves Brayer,,,,34120
+6 Avenue Yves Brayer 34120,,,,6 Avenue Yves Brayer,,,Pézenas,
+6 Avenue Yves Brayer,3.412110,43.454349,,6 Avenue Yves Brayer,,,,34120
+11 Rue Peiro Signado Portiragnes,,,,11 Rue Peiro Signado,,,,34420
+11 Rue Peiro Signado 34420,,,,11 Rue Peiro Signado,,,Portiragnes,
+11 Rue Peiro Signado,3.328685,43.308784,,11 Rue Peiro Signado,,,,34420
+1161 Route de Vendargues Prades-le-Lez,,,,1161 Route de Vendargues,,,,34730
+1161 Route de Vendargues 34730,,,,1161 Route de Vendargues,,,Prades-le-Lez,
+1161 Route de Vendargues,3.874166,43.692918,,1161 Route de Vendargues,,,,34730
+7 Impasse Suzanne Valadon Roujan,,,,7 Impasse Suzanne Valadon,,,,34320
+7 Impasse Suzanne Valadon 34320,,,,7 Impasse Suzanne Valadon,,,Roujan,
+7 Impasse Suzanne Valadon,3.308522,43.502234,,7 Impasse Suzanne Valadon,,,,34320
+5 Place Constantine Saint-Chinian,,,,5 Place Constantine,,,,34360
+5 Place Constantine 34360,,,,5 Place Constantine,,,Saint-Chinian,
+5 Place Constantine,2.945469,43.421672,,5 Place Constantine,,,,34360
+358 Rue du Carignan Saint-Gély-du-Fesc,,,,358 Rue du Carignan,,,,34980
+358 Rue du Carignan 34980,,,,358 Rue du Carignan,,,Saint-Gély-du-Fesc,
+358 Rue du Carignan,3.800204,43.703765,,358 Rue du Carignan,,,,34980
+8 Allée des Chênes Verts Saint-Georges-d'Orques,,,,8 Allée des Chênes Verts,,,,34680
+8 Allée des Chênes Verts 34680,,,,8 Allée des Chênes Verts,,,Saint-Georges-d'Orques,
+8 Allée des Chênes Verts,3.772187,43.608772,,8 Allée des Chênes Verts,,,,34680
+162 Rue du Château d'Eau Saint-Just,,,,162 Rue du Château d'Eau,,,,34400
+162 Rue du Château d'Eau 34400,,,,162 Rue du Château d'Eau,,,Saint-Just,
+162 Rue du Château d'Eau,4.113536,43.659521,,162 Rue du Château d'Eau,,,,34400
+17 Avenue de la Gare Saint-Pons-de-Thomières,,,,17 Avenue de la Gare,,,,34220
+17 Avenue de la Gare 34220,,,,17 Avenue de la Gare,,,Saint-Pons-de-Thomières,
+17 Avenue de la Gare,2.764949,43.487970,,17 Avenue de la Gare,,,,34220
+24 Chemin de Mazeilles Sauvian,,,,24 Chemin de Mazeilles,,,,34410
+24 Chemin de Mazeilles 34410,,,,24 Chemin de Mazeilles,,,Sauvian,
+24 Chemin de Mazeilles,3.266183,43.288052,,24 Chemin de Mazeilles,,,,34410
+6 Rue des Cigales Servian,,,,6 Rue des Cigales,,,,34290
+6 Rue des Cigales 34290,,,,6 Rue des Cigales,,,Servian,
+6 Rue des Cigales,3.303321,43.431253,,6 Rue des Cigales,,,,34290
+43 Rue Garenne Prolongée Sète,,,,43 Rue Garenne Prolongée,,,,34200
+43 Rue Garenne Prolongée 34200,,,,43 Rue Garenne Prolongée,,,Sète,
+43 Rue Garenne Prolongée,3.693808,43.400036,,43 Rue Garenne Prolongée,,,,34200
+3 Rue Raspail Sète,,,,3 Rue Raspail,,,,34200
+3 Rue Raspail 34200,,,,3 Rue Raspail,,,Sète,
+3 Rue Raspail,3.696695,43.409426,,3 Rue Raspail,,,,34200
+18 Rue Docteur Philémon Rastoul Thézan-lès-Béziers,,,,18 Rue Docteur Philémon Rastoul,,,,34490
+18 Rue Docteur Philémon Rastoul 34490,,,,18 Rue Docteur Philémon Rastoul,,,Thézan-lès-Béziers,
+18 Rue Docteur Philémon Rastoul,3.169923,43.420932,,18 Rue Docteur Philémon Rastoul,,,,34490
+8 Cami Founjut Valras-Plage,,,,8 Cami Founjut,,,,34350
+8 Cami Founjut 34350,,,,8 Cami Founjut,,,Valras-Plage,
+8 Cami Founjut,3.281590,43.243623,,8 Cami Founjut,,,,34350
+9 Rue de l'Aqueduc Romain Vendres,,,,9 Rue de l'Aqueduc Romain,,,,34350
+9 Rue de l'Aqueduc Romain 34350,,,,9 Rue de l'Aqueduc Romain,,,Vendres,
+9 Rue de l'Aqueduc Romain,3.226602,43.267294,,9 Rue de l'Aqueduc Romain,,,,34350
+14 Avenue de la Gare Villeneuve-lès-Béziers,,,,14 Avenue de la Gare,,,,34500
+14 Avenue de la Gare 34500,,,,14 Avenue de la Gare,,,Villeneuve-lès-Béziers,
+14 Avenue de la Gare,3.282143,43.319310,,14 Avenue de la Gare,,,,34500
+11 Rue du Peyrou Villeveyrac,,,,11 Rue du Peyrou,,,,34560
+11 Rue du Peyrou 34560,,,,11 Rue du Peyrou,,,Villeveyrac,
+11 Rue du Peyrou,3.607753,43.502270,,11 Rue du Peyrou,,,,34560
+14TER Route Mazet Nationale 599 Marvejols,,,,14TER Route Mazet Nationale 599,,,,48100
+14TER Route Mazet Nationale 599 48100,,,,14TER Route Mazet Nationale 599,,,Marvejols,
+14TER Route Mazet Nationale 599,3.303988,44.554247,,14TER Route Mazet Nationale 599,,,,48100
+2 Rue du Clerc Saint-Alban-sur-Limagnole,,,,2 Rue du Clerc,,,,48120
+2 Rue du Clerc 48120,,,,2 Rue du Clerc,,,Saint-Alban-sur-Limagnole,
+2 Rue du Clerc,3.388011,44.780860,,2 Rue du Clerc,,,,48120
+11 Rue Leconte de l'Isle Argelès-sur-Mer,,,,11 Rue Leconte de l'Isle,,,,66700
+11 Rue Leconte de l'Isle 66700,,,,11 Rue Leconte de l'Isle,,,Argelès-sur-Mer,
+11 Rue Leconte de l'Isle,3.027548,42.546754,,11 Rue Leconte de l'Isle,,,,66700
+28 Rue des Eaux Vives Baho,,,,28 Rue des Eaux Vives,,,,66540
+28 Rue des Eaux Vives 66540,,,,28 Rue des Eaux Vives,,,Baho,
+28 Rue des Eaux Vives,2.819128,42.703493,,28 Rue des Eaux Vives,,,,66540
+23 Boulevard du Grau Saint-Ange Le Barcarès,,,,23 Boulevard du Grau Saint-Ange,,,,66420
+23 Boulevard du Grau Saint-Ange 66420,,,,23 Boulevard du Grau Saint-Ange,,,Le Barcarès,
+23 Boulevard du Grau Saint-Ange,3.036387,42.785588,,23 Boulevard du Grau Saint-Ange,,,,66420
+74 Avenue d'en Carbouner Le Boulou,,,,74 Avenue d'en Carbouner,,,,66160
+74 Avenue d'en Carbouner 66160,,,,74 Avenue d'en Carbouner,,,Le Boulou,
+74 Avenue d'en Carbouner,2.861910,42.510944,,74 Avenue d'en Carbouner,,,,66160
+2 Rue Josep Andreu Toront Cabestany,,,,2 Rue Josep Andreu Toront,,,,66330
+2 Rue Josep Andreu Toront 66330,,,,2 Rue Josep Andreu Toront,,,Cabestany,
+2 Rue Josep Andreu Toront,2.944853,42.683315,,2 Rue Josep Andreu Toront,,,,66330
+1 Avenue de la Méditerranée Canet-en-Roussillon,,,,1 Avenue de la Méditerranée,,,,66140
+1 Avenue de la Méditerranée 66140,,,,1 Avenue de la Méditerranée,,,Canet-en-Roussillon,
+1 Avenue de la Méditerranée,3.034686,42.693510,,1 Avenue de la Méditerranée,,,,66140
+1 Rue du Fenouilledes Caudiès-de-Fenouillèdes,,,,1 Rue du Fenouilledes,,,,66220
+1 Rue du Fenouilledes 66220,,,,1 Rue du Fenouilledes,,,Caudiès-de-Fenouillèdes,
+1 Rue du Fenouilledes,2.378770,42.810042,,1 Rue du Fenouilledes,,,,66220
+2 Rue des Fleurs Codalet,,,,2 Rue des Fleurs,,,,66500
+2 Rue des Fleurs 66500,,,,2 Rue des Fleurs,,,Codalet,
+2 Rue des Fleurs,2.416550,42.610137,,2 Rue des Fleurs,,,,66500
+7 Rue de la Paix Elne,,,,7 Rue de la Paix,,,,66200
+7 Rue de la Paix 66200,,,,7 Rue de la Paix,,,Elne,
+7 Rue de la Paix,2.971105,42.598901,,7 Rue de la Paix,,,,66200
+1 Rue Lafayette Ille-sur-Têt,,,,1 Rue Lafayette,,,,66130
+1 Rue Lafayette 66130,,,,1 Rue Lafayette,,,Ille-sur-Têt,
+1 Rue Lafayette,2.624681,42.670506,,1 Rue Lafayette,,,,66130
+23BIS Rue Gabriel Fauré Llupia,,,,23BIS Rue Gabriel Fauré,,,,66300
+23BIS Rue Gabriel Fauré 66300,,,,23BIS Rue Gabriel Fauré,,,Llupia,
+23BIS Rue Gabriel Fauré,2.769904,42.618383,,23BIS Rue Gabriel Fauré,,,,66300
+4 PLA DES MICOCOULIERS Montesquieu-des-Albères,,,,4 PLA DES MICOCOULIERS,,,,66740
+4 PLA DES MICOCOULIERS 66740,,,,4 PLA DES MICOCOULIERS,,,Montesquieu-des-Albères,
+4 PLA DES MICOCOULIERS,2.880025,42.541218,,4 PLA DES MICOCOULIERS,,,,66740
+6 Rue Alfred de Vigny Perpignan,,,,6 Rue Alfred de Vigny,,,,66000
+6 Rue Alfred de Vigny 66000,,,,6 Rue Alfred de Vigny,,,Perpignan,
+6 Rue Alfred de Vigny,2.886713,42.694318,,6 Rue Alfred de Vigny,,,,66000
+105 Avenue du Commandant Ernest Soubielle Perpignan,,,,105 Avenue du Commandant Ernest Soubielle,,,,66000
+105 Avenue du Commandant Ernest Soubielle 66000,,,,105 Avenue du Commandant Ernest Soubielle,,,Perpignan,
+105 Avenue du Commandant Ernest Soubielle,2.884283,42.703166,,105 Avenue du Commandant Ernest Soubielle,,,,66000
+11 Rue George Sand Perpignan,,,,11 Rue George Sand,,,,66000
+11 Rue George Sand 66000,,,,11 Rue George Sand,,,Perpignan,
+11 Rue George Sand,2.891835,42.689197,,11 Rue George Sand,,,,66000
+26 Rue René Laennec Perpignan,,,,26 Rue René Laennec,,,,66000
+26 Rue René Laennec 66000,,,,26 Rue René Laennec,,,Perpignan,
+26 Rue René Laennec,2.902351,42.692287,,26 Rue René Laennec,,,,66000
+32 Rue Paul Fort Perpignan,,,,32 Rue Paul Fort,,,,66000
+32 Rue Paul Fort 66000,,,,32 Rue Paul Fort,,,Perpignan,
+32 Rue Paul Fort,2.888390,42.707765,,32 Rue Paul Fort,,,,66000
+11 Rue Henri Stendhal Perpignan,,,,11 Rue Henri Stendhal,,,,66000
+11 Rue Henri Stendhal 66000,,,,11 Rue Henri Stendhal,,,Perpignan,
+11 Rue Henri Stendhal,2.876308,42.697946,,11 Rue Henri Stendhal,,,,66000
+2 Rue Beausejour Pia,,,,2 Rue Beausejour,,,,66380
+2 Rue Beausejour 66380,,,,2 Rue Beausejour,,,Pia,
+2 Rue Beausejour,2.919665,42.746028,,2 Rue Beausejour,,,,66380
+13 Rue des Oeillets Ponteilla,,,,13 Rue des Oeillets,,,,66300
+13 Rue des Oeillets 66300,,,,13 Rue des Oeillets,,,Ponteilla,
+13 Rue des Oeillets,2.815055,42.624872,,13 Rue des Oeillets,,,,66300
+45 Route Nationale Ria-Sirach,,,,45 Route Nationale,,,,66500
+45 Route Nationale 66500,,,,45 Route Nationale,,,Ria-Sirach,
+45 Route Nationale,2.396960,42.605818,,45 Route Nationale,,,,66500
+26 Rue Saint-Ferréol Saint-André,,,,26 Rue Saint-Ferréol,,,,66690
+26 Rue Saint-Ferréol 66690,,,,26 Rue Saint-Ferréol,,,Saint-André,
+26 Rue Saint-Ferréol,2.971316,42.554208,,26 Rue Saint-Ferréol,,,,66690
+44 Résidence Les Casellas Saint-Cyprien,,,,44 Résidence Les Casellas,,,,66750
+44 Résidence Les Casellas 66750,,,,44 Résidence Les Casellas,,,Saint-Cyprien,
+44 Résidence Les Casellas,3.029163,42.629779,,44 Résidence Les Casellas,,,,66750
+27 Avenue des Albères Saint-Génis-des-Fontaines,,,,27 Avenue des Albères,,,,66740
+27 Avenue des Albères 66740,,,,27 Avenue des Albères,,,Saint-Génis-des-Fontaines,
+27 Avenue des Albères,2.921021,42.542822,,27 Avenue des Albères,,,,66740
+11 Rue Jean Bart Saint-Laurent-de-la-Salanque,,,,11 Rue Jean Bart,,,,66250
+11 Rue Jean Bart 66250,,,,11 Rue Jean Bart,,,Saint-Laurent-de-la-Salanque,
+11 Rue Jean Bart,2.989447,42.771453,,11 Rue Jean Bart,,,,66250
+4 Rue des Pommiers Sainte-Marie,,,,4 Rue des Pommiers,,,,66470
+4 Rue des Pommiers 66470,,,,4 Rue des Pommiers,,,Sainte-Marie,
+4 Rue des Pommiers,3.027917,42.734895,,4 Rue des Pommiers,,,,66470
+26 Avenue du Roussillon Salses-le-Château,,,,26 Avenue du Roussillon,,,,66600
+26 Avenue du Roussillon 66600,,,,26 Avenue du Roussillon,,,Salses-le-Château,
+26 Avenue du Roussillon,2.915768,42.832438,,26 Avenue du Roussillon,,,,66600
+2 Place Louis Blanc Tautavel,,,,2 Place Louis Blanc,,,,66720
+2 Place Louis Blanc 66720,,,,2 Place Louis Blanc,,,Tautavel,
+2 Place Louis Blanc,2.745706,42.813517,,2 Place Louis Blanc,,,,66720
+8 Rue de la Concorde Torreilles,,,,8 Rue de la Concorde,,,,66440
+8 Rue de la Concorde 66440,,,,8 Rue de la Concorde,,,Torreilles,
+8 Rue de la Concorde,2.994477,42.754457,,8 Rue de la Concorde,,,,66440
+14 Boulevard du Cady Vernet-les-Bains,,,,14 Boulevard du Cady,,,,66820
+14 Boulevard du Cady 66820,,,,14 Boulevard du Cady,,,Vernet-les-Bains,
+14 Boulevard du Cady,2.387726,42.547151,,14 Boulevard du Cady,,,,66820
+166 Avenue du Général de Gaulle Vinça,,,,166 Avenue du Général de Gaulle,,,,66320
+166 Avenue du Général de Gaulle 66320,,,,166 Avenue du Général de Gaulle,,,Vinça,
+166 Avenue du Général de Gaulle,2.522040,42.644502,,166 Avenue du Général de Gaulle,,,,66320

@@ -1,0 +1,286 @@
+query,lon,lat,limit,expected_name,expected_housenumber,expected_street,expected_city,expected_postcode
+25 Rue du Presbytère Barembach,,,,25 Rue du Presbytère,,,,67130
+25 Rue du Presbytère 67130,,,,25 Rue du Presbytère,,,Barembach,
+25 Rue du Presbytère,7.226703,48.476278,,25 Rue du Presbytère,,,,67130
+11 Rue de la Caverne Bernardswiller,,,,11 Rue de la Caverne,,,,67210
+11 Rue de la Caverne 67210,,,,11 Rue de la Caverne,,,Bernardswiller,
+11 Rue de la Caverne,7.464688,48.452444,,11 Rue de la Caverne,,,,67210
+18 Rue des Faisans Bischoffsheim,,,,18 Rue des Faisans,,,,67870
+18 Rue des Faisans 67870,,,,18 Rue des Faisans,,,Bischoffsheim,
+18 Rue des Faisans,7.491344,48.489234,,18 Rue des Faisans,,,,67870
+3A Rue de l'Église Bœrsch,,,,3A Rue de l'Église,,,,67530
+3A Rue de l'Église 67530,,,,3A Rue de l'Église,,,Bœrsch,
+3A Rue de l'Église,7.440072,48.478118,,3A Rue de l'Église,,,,67530
+117 Rue du Général de Gaulle La Broque,,,,117 Rue du Général de Gaulle,,,,67570
+117 Rue du Général de Gaulle 67570,,,,117 Rue du Général de Gaulle,,,La Broque,
+117 Rue du Général de Gaulle,7.212540,48.469093,,117 Rue du Général de Gaulle,,,,67570
+20 Rue du Luberon Châtenois,,,,20 Rue du Luberon,,,,67730
+20 Rue du Luberon 67730,,,,20 Rue du Luberon,,,Châtenois,
+20 Rue du Luberon,7.408357,48.268283,,20 Rue du Luberon,,,,67730
+9 Rue de l'Étang Dehlingen,,,,9 Rue de l'Étang,,,,67430
+9 Rue de l'Étang 67430,,,,9 Rue de l'Étang,,,Dehlingen,
+9 Rue de l'Étang,7.192760,48.981824,,9 Rue de l'Étang,,,,67430
+121 Rue des Jardins Dossenheim-sur-Zinsel,,,,121 Rue des Jardins,,,,67330
+121 Rue des Jardins 67330,,,,121 Rue des Jardins,,,Dossenheim-sur-Zinsel,
+121 Rue des Jardins,7.403113,48.804362,,121 Rue des Jardins,,,,67330
+2 Rue des Tilleuls Duttlenheim,,,,2 Rue des Tilleuls,,,,67120
+2 Rue des Tilleuls 67120,,,,2 Rue des Tilleuls,,,Duttlenheim,
+2 Rue des Tilleuls,7.564662,48.526747,,2 Rue des Tilleuls,,,,67120
+20 Rue des Griottes Entzheim,,,,20 Rue des Griottes,,,,67960
+20 Rue des Griottes 67960,,,,20 Rue des Griottes,,,Entzheim,
+20 Rue des Griottes,7.642586,48.531972,,20 Rue des Griottes,,,,67960
+1B Rue des Fleurs Eschau,,,,1B Rue des Fleurs,,,,67114
+1B Rue des Fleurs 67114,,,,1B Rue des Fleurs,,,Eschau,
+1B Rue des Fleurs,7.723727,48.486679,,1B Rue des Fleurs,,,,67114
+5 Rue des Jardins Frœschwiller,,,,5 Rue des Jardins,,,,67360
+5 Rue des Jardins 67360,,,,5 Rue des Jardins,,,Frœschwiller,
+5 Rue des Jardins,7.723738,48.945068,,5 Rue des Jardins,,,,67360
+4 Rue des Pierres Gerstheim,,,,4 Rue des Pierres,,,,67150
+4 Rue des Pierres 67150,,,,4 Rue des Pierres,,,Gerstheim,
+4 Rue des Pierres,7.702393,48.382072,,4 Rue des Pierres,,,,67150
+4 Rue des Traîneaux Gries,,,,4 Rue des Traîneaux,,,,67500
+4 Rue des Traîneaux 67500,,,,4 Rue des Traîneaux,,,Gries,
+4 Rue des Traîneaux,7.810676,48.756553,,4 Rue des Traîneaux,,,,67500
+5 Rue du Colonel d'Oberkirch Haguenau,,,,5 Rue du Colonel d'Oberkirch,,,,67580
+5 Rue du Colonel d'Oberkirch 67580,,,,5 Rue du Colonel d'Oberkirch,,,Haguenau,
+5 Rue du Colonel d'Oberkirch,7.784920,48.802638,,5 Rue du Colonel d'Oberkirch,,,,67580
+100 Route de Strasbourg Haguenau,,,,100 Route de Strasbourg,,,,67580
+100 Route de Strasbourg 67580,,,,100 Route de Strasbourg,,,Haguenau,
+100 Route de Strasbourg,7.767325,48.801744,,100 Route de Strasbourg,,,,67580
+8 Rue de Bischwiller Herrlisheim,,,,8 Rue de Bischwiller,,,,67850
+8 Rue de Bischwiller 67850,,,,8 Rue de Bischwiller,,,Herrlisheim,
+8 Rue de Bischwiller,7.906353,48.733468,,8 Rue de Bischwiller,,,,67850
+7 Rue André Malraux Hœnheim,,,,7 Rue André Malraux,,,,67800
+7 Rue André Malraux 67800,,,,7 Rue André Malraux,,,Hœnheim,
+7 Rue André Malraux,7.760714,48.623107,,7 Rue André Malraux,,,,67800
+12 Rue du Presbytère Holtzheim,,,,12 Rue du Presbytère,,,,67810
+12 Rue du Presbytère 67810,,,,12 Rue du Presbytère,,,Holtzheim,
+12 Rue du Presbytère,7.640938,48.560281,,12 Rue du Presbytère,,,,67810
+9 Rue des Roseaux Illkirch-Graffenstaden,,,,9 Rue des Roseaux,,,,67400
+9 Rue des Roseaux 67400,,,,9 Rue des Roseaux,,,Illkirch-Graffenstaden,
+9 Rue des Roseaux,7.719366,48.519699,,9 Rue des Roseaux,,,,67400
+138 Rue de la Libération Keskastel,,,,138 Rue de la Libération,,,,67260
+138 Rue de la Libération 67260,,,,138 Rue de la Libération,,,Keskastel,
+138 Rue de la Libération,7.044614,48.978884,,138 Rue de la Libération,,,,67260
+2 Route des Romains Kuttolsheim,,,,2 Route des Romains,,,,67520
+2 Route des Romains 67520,,,,2 Route des Romains,,,Kuttolsheim,
+2 Route des Romains,7.528702,48.642353,,2 Route des Romains,,,,67520
+16 Rue du Canal Lingolsheim,,,,16 Rue du Canal,,,,67380
+16 Rue du Canal 67380,,,,16 Rue du Canal,,,Lingolsheim,
+16 Rue du Canal,7.684866,48.563852,,16 Rue du Canal,,,,67380
+13 Rue de la Rivière Mackenheim,,,,13 Rue de la Rivière,,,,67390
+13 Rue de la Rivière 67390,,,,13 Rue de la Rivière,,,Mackenheim,
+13 Rue de la Rivière,7.566034,48.183103,,13 Rue de la Rivière,,,,67390
+84 Rue de Strasbourg Meistratzheim,,,,84 Rue de Strasbourg,,,,67210
+84 Rue de Strasbourg 67210,,,,84 Rue de Strasbourg,,,Meistratzheim,
+84 Rue de Strasbourg,7.548649,48.448995,,84 Rue de Strasbourg,,,,67210
+22A Rue Kling Molsheim,,,,22A Rue Kling,,,,67120
+22A Rue Kling 67120,,,,22A Rue Kling,,,Molsheim,
+22A Rue Kling,7.491387,48.537723,,22A Rue Kling,,,,67120
+4 Rue Gounod Mundolsheim,,,,4 Rue Gounod,,,,67450
+4 Rue Gounod 67450,,,,4 Rue Gounod,,,Mundolsheim,
+4 Rue Gounod,7.710180,48.638481,,4 Rue Gounod,,,,67450
+7 Impasse des la Corderie Niederbronn-les-Bains,,,,7 Impasse des la Corderie,,,,67110
+7 Impasse des la Corderie 67110,,,,7 Impasse des la Corderie,,,Niederbronn-les-Bains,
+7 Impasse des la Corderie,7.652212,48.944879,,7 Impasse des la Corderie,,,,67110
+10 Rue du Général Walter Obenheim,,,,10 Rue du Général Walter,,,,67230
+10 Rue du Général Walter 67230,,,,10 Rue du Général Walter,,,Obenheim,
+10 Rue du Général Walter,7.689310,48.358187,,10 Rue du Général Walter,,,,67230
+4 Rue de Bouxwiller Obermodern-Zutzendorf,,,,4 Rue de Bouxwiller,,,,67330
+4 Rue de Bouxwiller 67330,,,,4 Rue de Bouxwiller,,,Obermodern-Zutzendorf,
+4 Rue de Bouxwiller,7.538443,48.844463,,4 Rue de Bouxwiller,,,,67330
+1 Rue de la Glockengrube Obersteinbach,,,,1 Rue de la Glockengrube,,,,67510
+1 Rue de la Glockengrube 67510,,,,1 Rue de la Glockengrube,,,Obersteinbach,
+1 Rue de la Glockengrube,7.690583,49.034806,,1 Rue de la Glockengrube,,,,67510
+42 Rue du Maréchal Foch Ostwald,,,,42 Rue du Maréchal Foch,,,,67540
+42 Rue du Maréchal Foch 67540,,,,42 Rue du Maréchal Foch,,,Ostwald,
+42 Rue du Maréchal Foch,7.710164,48.539864,,42 Rue du Maréchal Foch,,,,67540
+275 Route des Princes A Champenay Plaine,,,,275 Route des Princes A Champenay,,,,67420
+275 Route des Princes A Champenay 67420,,,,275 Route des Princes A Champenay,,,Plaine,
+275 Route des Princes A Champenay,7.128735,48.416770,,275 Route des Princes A Champenay,,,,67420
+9 Rue du Climont Reichstett,,,,9 Rue du Climont,,,,67116
+9 Rue du Climont 67116,,,,9 Rue du Climont,,,Reichstett,
+9 Rue du Climont,7.748732,48.643798,,9 Rue du Climont,,,,67116
+18 Rue Neumatt Rohrwiller,,,,18 Rue Neumatt,,,,67410
+18 Rue Neumatt 67410,,,,18 Rue Neumatt,,,Rohrwiller,
+18 Rue Neumatt,7.911118,48.756954,,18 Rue Neumatt,,,,67410
+18 Rue Neuve Rountzenheim,,,,18 Rue Neuve,,,,67480
+18 Rue Neuve 67480,,,,18 Rue Neuve,,,Rountzenheim,
+18 Rue Neuve,8.005745,48.816675,,18 Rue Neuve,,,,67480
+1 Rue devant le Sapinot Saulxures,,,,1 Rue devant le Sapinot,,,,67420
+1 Rue devant le Sapinot 67420,,,,1 Rue devant le Sapinot,,,Saulxures,
+1 Rue devant le Sapinot,7.130698,48.391071,,1 Rue devant le Sapinot,,,,67420
+1 Rue Sainte-Odile Scherwiller,,,,1 Rue Sainte-Odile,,,,67750
+1 Rue Sainte-Odile 67750,,,,1 Rue Sainte-Odile,,,Scherwiller,
+1 Rue Sainte-Odile,7.425547,48.287263,,1 Rue Sainte-Odile,,,,67750
+85 Rue Principale Schirrhein,,,,85 Rue Principale,,,,67240
+85 Rue Principale 67240,,,,85 Rue Principale,,,Schirrhein,
+85 Rue Principale,7.907268,48.801731,,85 Rue Principale,,,,67240
+15 Rue du Bernstein Sélestat,,,,15 Rue du Bernstein,,,,67600
+15 Rue du Bernstein 67600,,,,15 Rue du Bernstein,,,Sélestat,
+15 Rue du Bernstein,7.439836,48.265841,,15 Rue du Bernstein,,,,67600
+27 Rue du Rhin Seltz,,,,27 Rue du Rhin,,,,67470
+27 Rue du Rhin 67470,,,,27 Rue du Rhin,,,Seltz,
+27 Rue du Rhin,8.108368,48.891956,,27 Rue du Rhin,,,,67470
+12 Rue de la Montée Soufflenheim,,,,12 Rue de la Montée,,,,67620
+12 Rue de la Montée 67620,,,,12 Rue de la Montée,,,Soufflenheim,
+12 Rue de la Montée,7.960217,48.830964,,12 Rue de la Montée,,,,67620
+31 Rue Ampère Strasbourg,,,,31 Rue Ampère,,,,67200
+31 Rue Ampère 67200,,,,31 Rue Ampère,,,Strasbourg,
+31 Rue Ampère,7.787299,48.559960,,31 Rue Ampère,,,,67200
+20 Rue des Coquelicots Strasbourg,,,,20 Rue des Coquelicots,,,,67200
+20 Rue des Coquelicots 67200,,,,20 Rue des Coquelicots,,,Strasbourg,
+20 Rue des Coquelicots,7.713764,48.591024,,20 Rue des Coquelicots,,,,67200
+4A Rue Grimling Strasbourg,,,,4A Rue Grimling,,,,67200
+4A Rue Grimling 67200,,,,4A Rue Grimling,,,Strasbourg,
+4A Rue Grimling,7.716049,48.592258,,4A Rue Grimling,,,,67200
+16 Rue Martin Bucer Strasbourg,,,,16 Rue Martin Bucer,,,,67200
+16 Rue Martin Bucer 67200,,,,16 Rue Martin Bucer,,,Strasbourg,
+16 Rue Martin Bucer,7.733269,48.581744,,16 Rue Martin Bucer,,,,67200
+7 Allée de la Robertsau Strasbourg,,,,7 Allée de la Robertsau,,,,67200
+7 Allée de la Robertsau 67200,,,,7 Allée de la Robertsau,,,Strasbourg,
+7 Allée de la Robertsau,7.763822,48.587026,,7 Allée de la Robertsau,,,,67200
+364 Route de la Wantzenau Strasbourg,,,,364 Route de la Wantzenau,,,,67200
+364 Route de la Wantzenau 67200,,,,364 Route de la Wantzenau,,,Strasbourg,
+364 Route de la Wantzenau,7.805397,48.626456,,364 Route de la Wantzenau,,,,67200
+2 Rue du Tramway Truchtersheim,,,,2 Rue du Tramway,,,,67370
+2 Rue du Tramway 67370,,,,2 Rue du Tramway,,,Truchtersheim,
+2 Rue du Tramway,7.604881,48.660365,,2 Rue du Tramway,,,,67370
+30 Rue de Neuve-Église Villé,,,,30 Rue de Neuve-Église,,,,67220
+30 Rue de Neuve-Église 67220,,,,30 Rue de Neuve-Église,,,Villé,
+30 Rue de Neuve-Église,7.308993,48.339872,,30 Rue de Neuve-Église,,,,67220
+16 Rue des Glaïeuls Wasselonne,,,,16 Rue des Glaïeuls,,,,67310
+16 Rue des Glaïeuls 67310,,,,16 Rue des Glaïeuls,,,Wasselonne,
+16 Rue des Glaïeuls,7.435555,48.642018,,16 Rue des Glaïeuls,,,,67310
+37 Rue de la République Weyersheim,,,,37 Rue de la République,,,,67720
+37 Rue de la République 67720,,,,37 Rue de la République,,,Weyersheim,
+37 Rue de la République,7.801562,48.713851,,37 Rue de la République,,,,67720
+16 Rue de la Pépinière Wissembourg,,,,16 Rue de la Pépinière,,,,67160
+16 Rue de la Pépinière 67160,,,,16 Rue de la Pépinière,,,Wissembourg,
+16 Rue de la Pépinière,7.945915,49.030927,,16 Rue de la Pépinière,,,,67160
+33 Rue Griesberg Zinswiller,,,,33 Rue Griesberg,,,,67110
+33 Rue Griesberg 67110,,,,33 Rue Griesberg,,,Zinswiller,
+33 Rue Griesberg,7.591655,48.914191,,33 Rue Griesberg,,,,67110
+16 Rue Gabarret Attenschwiller,,,,16 Rue Gabarret,,,,68220
+16 Rue Gabarret 68220,,,,16 Rue Gabarret,,,Attenschwiller,
+16 Rue Gabarret,7.460162,47.568486,,16 Rue Gabarret,,,,68220
+66 Rue Principale Battenheim,,,,66 Rue Principale,,,,68390
+66 Rue Principale 68390,,,,66 Rue Principale,,,Battenheim,
+66 Rue Principale,7.382636,47.819767,,66 Rue Principale,,,,68390
+3 Rue Principale Bisel,,,,3 Rue Principale,,,,68580
+3 Rue Principale 68580,,,,3 Rue Principale,,,Bisel,
+3 Rue Principale,7.217449,47.535778,,3 Rue Principale,,,,68580
+34 Rue de la Gare Breitenbach-Haut-Rhin,,,,34 Rue de la Gare,,,,68380
+34 Rue de la Gare 68380,,,,34 Rue de la Gare,,,Breitenbach-Haut-Rhin,
+34 Rue de la Gare,7.099529,48.024870,,34 Rue de la Gare,,,,68380
+30 Rue Oberdorf Carspach,,,,30 Rue Oberdorf,,,,68130
+30 Rue Oberdorf 68130,,,,30 Rue Oberdorf,,,Carspach,
+30 Rue Oberdorf,7.207591,47.616122,,30 Rue Oberdorf,,,,68130
+45 Rue du Cardinal Mercier Colmar,,,,45 Rue du Cardinal Mercier,,,,68000
+45 Rue du Cardinal Mercier 68000,,,,45 Rue du Cardinal Mercier,,,Colmar,
+45 Rue du Cardinal Mercier,7.341848,48.071366,,45 Rue du Cardinal Mercier,,,,68000
+4 Rue Nefftzer Colmar,,,,4 Rue Nefftzer,,,,68000
+4 Rue Nefftzer 68000,,,,4 Rue Nefftzer,,,Colmar,
+4 Rue Nefftzer,7.366773,48.078512,,4 Rue Nefftzer,,,,68000
+5 Rue des Jonquilles Dannemarie,,,,5 Rue des Jonquilles,,,,68210
+5 Rue des Jonquilles 68210,,,,5 Rue des Jonquilles,,,Dannemarie,
+5 Rue des Jonquilles,7.131367,47.628606,,5 Rue des Jonquilles,,,,68210
+16 Rue Jean Rasser Ensisheim,,,,16 Rue Jean Rasser,,,,68190
+16 Rue Jean Rasser 68190,,,,16 Rue Jean Rasser,,,Ensisheim,
+16 Rue Jean Rasser,7.353161,47.868393,,16 Rue Jean Rasser,,,,68190
+3 Rue de la Wanne Flaxlanden,,,,3 Rue de la Wanne,,,,68720
+3 Rue de la Wanne 68720,,,,3 Rue de la Wanne,,,Flaxlanden,
+3 Rue de la Wanne,7.314013,47.694769,,3 Rue de la Wanne,,,,68720
+15 Rue du Général de Gaulle Guebwiller,,,,15 Rue du Général de Gaulle,,,,68500
+15 Rue du Général de Gaulle 68500,,,,15 Rue du Général de Gaulle,,,Guebwiller,
+15 Rue du Général de Gaulle,7.213803,47.909945,,15 Rue du Général de Gaulle,,,,68500
+48 Rue de Delle Hagenbach,,,,48 Rue de Delle,,,,68210
+48 Rue de Delle 68210,,,,48 Rue de Delle,,,Hagenbach,
+48 Rue de Delle,7.155796,47.649741,,48 Rue de Delle,,,,68210
+1 Rue des Perdrix Herrlisheim-près-Colmar,,,,1 Rue des Perdrix,,,,68420
+1 Rue des Perdrix 68420,,,,1 Rue des Perdrix,,,Herrlisheim-près-Colmar,
+1 Rue des Perdrix,7.322201,48.021958,,1 Rue des Perdrix,,,,68420
+7C Rue de la Hardt Hombourg,,,,7C Rue de la Hardt,,,,68490
+7C Rue de la Hardt 68490,,,,7C Rue de la Hardt,,,Hombourg,
+7C Rue de la Hardt,7.503440,47.758244,,7C Rue de la Hardt,,,,68490
+3 Route d'Elsenheim Illhaeusern,,,,3 Route d'Elsenheim,,,,68970
+3 Route d'Elsenheim 68970,,,,3 Route d'Elsenheim,,,Illhaeusern,
+3 Route d'Elsenheim,7.437233,48.182285,,3 Route d'Elsenheim,,,,68970
+41 Rue Ostein Issenheim,,,,41 Rue Ostein,,,,68500
+41 Rue Ostein 68500,,,,41 Rue Ostein,,,Issenheim,
+41 Rue Ostein,7.258484,47.903761,,41 Rue Ostein,,,,68500
+19 Rue de Brest Kingersheim,,,,19 Rue de Brest,,,,68260
+19 Rue de Brest 68260,,,,19 Rue de Brest,,,Kingersheim,
+19 Rue de Brest,7.342510,47.791139,,19 Rue de Brest,,,,68260
+2 Rue des Violettes Kunheim,,,,2 Rue des Violettes,,,,68320
+2 Rue des Violettes 68320,,,,2 Rue des Violettes,,,Kunheim,
+2 Rue des Violettes,7.540050,48.074840,,2 Rue des Violettes,,,,68320
+12 Rue du Cuir Luemschwiller,,,,12 Rue du Cuir,,,,68720
+12 Rue du Cuir 68720,,,,12 Rue du Cuir,,,Luemschwiller,
+12 Rue du Cuir,7.289562,47.654579,,12 Rue du Cuir,,,,68720
+3 Rue du Gaschney Metzeral,,,,3 Rue du Gaschney,,,,68380
+3 Rue du Gaschney 68380,,,,3 Rue du Gaschney,,,Metzeral,
+3 Rue du Gaschney,7.071714,48.015184,,3 Rue du Gaschney,,,,68380
+9 Rue du 1er Septembre Muespach,,,,9 Rue du 1er Septembre,,,,68640
+9 Rue du 1er Septembre 68640,,,,9 Rue du 1er Septembre,,,Muespach,
+9 Rue du 1er Septembre,7.374443,47.547891,,9 Rue du 1er Septembre,,,,68640
+13 Rue du Docteur Léon Mangeney Mulhouse,,,,13 Rue du Docteur Léon Mangeney,,,,68200
+13 Rue du Docteur Léon Mangeney 68200,,,,13 Rue du Docteur Léon Mangeney,,,Mulhouse,
+13 Rue du Docteur Léon Mangeney,7.342555,47.726494,,13 Rue du Docteur Léon Mangeney,,,,68200
+10 Avenue du Maréchal Joffre Mulhouse,,,,10 Avenue du Maréchal Joffre,,,,68200
+10 Avenue du Maréchal Joffre 68200,,,,10 Avenue du Maréchal Joffre,,,Mulhouse,
+10 Avenue du Maréchal Joffre,7.342825,47.745284,,10 Avenue du Maréchal Joffre,,,,68200
+52 Rue des Taillis Mulhouse,,,,52 Rue des Taillis,,,,68200
+52 Rue des Taillis 68200,,,,52 Rue des Taillis,,,Mulhouse,
+52 Rue des Taillis,7.333585,47.779997,,52 Rue des Taillis,,,,68200
+22 Rue de l'Avenir Niederentzen,,,,22 Rue de l'Avenir,,,,68127
+22 Rue de l'Avenir 68127,,,,22 Rue de l'Avenir,,,Niederentzen,
+22 Rue de l'Avenir,7.383667,47.950845,,22 Rue de l'Avenir,,,,68127
+8 Rue des Églantines Osenbach,,,,8 Rue des Églantines,,,,68570
+8 Rue des Églantines 68570,,,,8 Rue des Églantines,,,Osenbach,
+8 Rue des Églantines,7.213712,47.990746,,8 Rue des Églantines,,,,68570
+15 Rue de Bretagne Pulversheim,,,,15 Rue de Bretagne,,,,68840
+15 Rue de Bretagne 68840,,,,15 Rue de Bretagne,,,Pulversheim,
+15 Rue de Bretagne,7.306745,47.839383,,15 Rue de Bretagne,,,,68840
+4 Rue de l'Iris Ribeauvillé,,,,4 Rue de l'Iris,,,,68150
+4 Rue de l'Iris 68150,,,,4 Rue de l'Iris,,,Ribeauvillé,
+4 Rue de l'Iris,7.340012,48.192233,,4 Rue de l'Iris,,,,68150
+8 Rue des Vanneaux Riedwihr,,,,8 Rue des Vanneaux,,,,68320
+8 Rue des Vanneaux 68320,,,,8 Rue des Vanneaux,,,Riedwihr,
+8 Rue des Vanneaux,7.446697,48.128654,,8 Rue des Vanneaux,,,,68320
+10 Route de Thann Roderen,,,,10 Route de Thann,,,,68800
+10 Route de Thann 68800,,,,10 Route de Thann,,,Roderen,
+10 Route de Thann,7.094919,47.780043,,10 Route de Thann,,,,68800
+6 Rue de la Carrière Saint-Amarin,,,,6 Rue de la Carrière,,,,68550
+6 Rue de la Carrière 68550,,,,6 Rue de la Carrière,,,Saint-Amarin,
+6 Rue de la Carrière,7.028252,47.876003,,6 Rue de la Carrière,,,,68550
+15 Rue du Paradis Saint-Louis,,,,15 Rue du Paradis,,,,68300
+15 Rue du Paradis 68300,,,,15 Rue du Paradis,,,Saint-Louis,
+15 Rue du Paradis,7.554034,47.582951,,15 Rue du Paradis,,,,68300
+2 Rue de Bettendorf Schwoben,,,,2 Rue de Bettendorf,,,,68130
+2 Rue de Bettendorf 68130,,,,2 Rue de Bettendorf,,,Schwoben,
+2 Rue de Bettendorf,7.300961,47.616148,,2 Rue de Bettendorf,,,,68130
+9 Rue des Soeurs Soultz-Haut-Rhin,,,,9 Rue des Soeurs,,,,68360
+9 Rue des Soeurs 68360,,,,9 Rue des Soeurs,,,Soultz-Haut-Rhin,
+9 Rue des Soeurs,7.230580,47.885942,,9 Rue des Soeurs,,,,68360
+4 Rue de Roppentzwiller Steinsoultz,,,,4 Rue de Roppentzwiller,,,,68640
+4 Rue de Roppentzwiller 68640,,,,4 Rue de Roppentzwiller,,,Steinsoultz,
+4 Rue de Roppentzwiller,7.336025,47.549512,,4 Rue de Roppentzwiller,,,,68640
+33 Rue Florimont Turckheim,,,,33 Rue Florimont,,,,68230
+33 Rue Florimont 68230,,,,33 Rue Florimont,,,Turckheim,
+33 Rue Florimont,7.284214,48.089840,,33 Rue Florimont,,,,68230
+59 Rue du Maréchal Foch Village-Neuf,,,,59 Rue du Maréchal Foch,,,,68128
+59 Rue du Maréchal Foch 68128,,,,59 Rue du Maréchal Foch,,,Village-Neuf,
+59 Rue du Maréchal Foch,7.568083,47.609427,,59 Rue du Maréchal Foch,,,,68128
+42 Rue de Soultzmatt Westhalten,,,,42 Rue de Soultzmatt,,,,68250
+42 Rue de Soultzmatt 68250,,,,42 Rue de Soultzmatt,,,Westhalten,
+42 Rue de Soultzmatt,7.256254,47.957205,,42 Rue de Soultzmatt,,,,68250
+7B Rue de l'Avenir Wittelsheim,,,,7B Rue de l'Avenir,,,,68310
+7B Rue de l'Avenir 68310,,,,7B Rue de l'Avenir,,,Wittelsheim,
+7B Rue de l'Avenir,7.242469,47.805817,,7B Rue de l'Avenir,,,,68310
+12 Rue de la Forêt Wittenheim,,,,12 Rue de la Forêt,,,,68270
+12 Rue de la Forêt 68270,,,,12 Rue de la Forêt,,,Wittenheim,
+12 Rue de la Forêt,7.333542,47.808725,,12 Rue de la Forêt,,,,68270
+2 Rue Bellevue Zillisheim,,,,2 Rue Bellevue,,,,68720
+2 Rue Bellevue 68720,,,,2 Rue Bellevue,,,Zillisheim,
+2 Rue Bellevue,7.293475,47.693405,,2 Rue Bellevue,,,,68720

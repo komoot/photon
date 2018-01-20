@@ -1,0 +1,400 @@
+query,lon,lat,limit,expected_name,expected_housenumber,expected_street,expected_city,expected_postcode
+20 Rue du Béal Mirepoix,,,,20 Rue du Béal,,,,09500
+20 Rue du Béal 09500,,,,20 Rue du Béal,,,Mirepoix,
+20 Rue du Béal,1.875275,43.090606,,20 Rue du Béal,,,,09500
+88 Rue du Maréchal Clauzel Pamiers,,,,88 Rue du Maréchal Clauzel,,,,09100
+88 Rue du Maréchal Clauzel 09100,,,,88 Rue du Maréchal Clauzel,,,Pamiers,
+88 Rue du Maréchal Clauzel,1.615528,43.114813,,88 Rue du Maréchal Clauzel,,,,09100
+7 Avenue du Scios Saint-Paul-de-Jarrat,,,,7 Avenue du Scios,,,,09000
+7 Avenue du Scios 09000,,,,7 Avenue du Scios,,,Saint-Paul-de-Jarrat,
+7 Avenue du Scios,1.665204,42.914376,,7 Avenue du Scios,,,,09000
+22 Avenue des Pyrénées Villeneuve-du-Paréage,,,,22 Avenue des Pyrénées,,,,09100
+22 Avenue des Pyrénées 09100,,,,22 Avenue des Pyrénées,,,Villeneuve-du-Paréage,
+22 Avenue des Pyrénées,1.639625,43.148450,,22 Avenue des Pyrénées,,,,09100
+50 Rue de Marengo Baraqueville,,,,50 Rue de Marengo,,,,12160
+50 Rue de Marengo 12160,,,,50 Rue de Marengo,,,Baraqueville,
+50 Rue de Marengo,2.428229,44.279599,,50 Rue de Marengo,,,,12160
+35 Avenue de Calmont Espalion,,,,35 Avenue de Calmont,,,,12500
+35 Avenue de Calmont 12500,,,,35 Avenue de Calmont,,,Espalion,
+35 Avenue de Calmont,2.760378,44.517126,,35 Avenue de Calmont,,,,12500
+9 Rue du 8 Mai Livinhac-le-Haut,,,,9 Rue du 8 Mai,,,,12300
+9 Rue du 8 Mai 12300,,,,9 Rue du 8 Mai,,,Livinhac-le-Haut,
+9 Rue du 8 Mai,2.234604,44.591162,,9 Rue du 8 Mai,,,,12300
+350 Route de Creissels Millau,,,,350 Route de Creissels,,,,12100
+350 Route de Creissels 12100,,,,350 Route de Creissels,,,Millau,
+350 Route de Creissels,3.072684,44.090922,,350 Route de Creissels,,,,12100
+17 Avenue de la Castagnal Le Monastère,,,,17 Avenue de la Castagnal,,,,12000
+17 Avenue de la Castagnal 12000,,,,17 Avenue de la Castagnal,,,Le Monastère,
+17 Avenue de la Castagnal,2.570765,44.338704,,17 Avenue de la Castagnal,,,,12000
+19 Rue du Claux Onet-le-Château,,,,19 Rue du Claux,,,,12850
+19 Rue du Claux 12850,,,,19 Rue du Claux,,,Onet-le-Château,
+19 Rue du Claux,2.582102,44.368109,,19 Rue du Claux,,,,12850
+17 Place du Bourg Rodez,,,,17 Place du Bourg,,,,12000
+17 Place du Bourg 12000,,,,17 Place du Bourg,,,Rodez,
+17 Place du Bourg,2.576182,44.348581,,17 Place du Bourg,,,,12000
+673 Route de Couat Saint-Affrique,,,,673 Route de Couat,,,,12400
+673 Route de Couat 12400,,,,673 Route de Couat,,,Saint-Affrique,
+673 Route de Couat,2.891318,43.943398,,673 Route de Couat,,,,12400
+45 Avenue de Saint-Affrique Saint-Sernin-sur-Rance,,,,45 Avenue de Saint-Affrique,,,,12380
+45 Avenue de Saint-Affrique 12380,,,,45 Avenue de Saint-Affrique,,,Saint-Sernin-sur-Rance,
+45 Avenue de Saint-Affrique,2.612519,43.883029,,45 Avenue de Saint-Affrique,,,,12380
+2 Rue des Fours de la Ville Villefranche-de-Rouergue,,,,2 Rue des Fours de la Ville,,,,12200
+2 Rue des Fours de la Ville 12200,,,,2 Rue des Fours de la Ville,,,Villefranche-de-Rouergue,
+2 Rue des Fours de la Ville,2.036606,44.353242,,2 Rue des Fours de la Ville,,,,12200
+419 Chemin de Periac Aussonne,,,,419 Chemin de Periac,,,,31840
+419 Chemin de Periac 31840,,,,419 Chemin de Periac,,,Aussonne,
+419 Chemin de Periac,1.333443,43.672490,,419 Chemin de Periac,,,,31840
+4 Impasse du Champ de Mars Bagnères-de-Luchon,,,,4 Impasse du Champ de Mars,,,,31110
+4 Impasse du Champ de Mars 31110,,,,4 Impasse du Champ de Mars,,,Bagnères-de-Luchon,
+4 Impasse du Champ de Mars,0.588995,42.791852,,4 Impasse du Champ de Mars,,,,31110
+14 Résidence des Pyrénées Balma,,,,14 Résidence des Pyrénées,,,,31130
+14 Résidence des Pyrénées 31130,,,,14 Résidence des Pyrénées,,,Balma,
+14 Résidence des Pyrénées,1.493482,43.611426,,14 Résidence des Pyrénées,,,,31130
+146 Chemin de la Guiraudine Bessières,,,,146 Chemin de la Guiraudine,,,,31660
+146 Chemin de la Guiraudine 31660,,,,146 Chemin de la Guiraudine,,,Bessières,
+146 Chemin de la Guiraudine,1.578371,43.806913,,146 Chemin de la Guiraudine,,,,31660
+4 Impasse Saint-Jacques Blagnac,,,,4 Impasse Saint-Jacques,,,,31700
+4 Impasse Saint-Jacques 31700,,,,4 Impasse Saint-Jacques,,,Blagnac,
+4 Impasse Saint-Jacques,1.399946,43.634536,,4 Impasse Saint-Jacques,,,,31700
+25 Avenue du Bruguet Bruguières,,,,25 Avenue du Bruguet,,,,31150
+25 Avenue du Bruguet 31150,,,,25 Avenue du Bruguet,,,Bruguières,
+25 Avenue du Bruguet,1.414604,43.721670,,25 Avenue du Bruguet,,,,31150
+34 Rue Gambetta Carbonne,,,,34 Rue Gambetta,,,,31390
+34 Rue Gambetta 31390,,,,34 Rue Gambetta,,,Carbonne,
+34 Rue Gambetta,1.226088,43.295591,,34 Rue Gambetta,,,,31390
+15 Rue de la Barthe Castelginest,,,,15 Rue de la Barthe,,,,31780
+15 Rue de la Barthe 31780,,,,15 Rue de la Barthe,,,Castelginest,
+15 Rue de la Barthe,1.431792,43.697429,,15 Rue de la Barthe,,,,31780
+45 Grande Rue Castelnau-d'Estrétefonds,,,,45 Grande Rue,,,,31620
+45 Grande Rue 31620,,,,45 Grande Rue,,,Castelnau-d'Estrétefonds,
+45 Grande Rue,1.359837,43.781683,,45 Grande Rue,,,,31620
+12 Allée de l'Ariège Colomiers,,,,12 Allée de l'Ariège,,,,31770
+12 Allée de l'Ariège 31770,,,,12 Allée de l'Ariège,,,Colomiers,
+12 Allée de l'Ariège,1.347761,43.606676,,12 Allée de l'Ariège,,,,31770
+42 Allée de Naurouze Colomiers,,,,42 Allée de Naurouze,,,,31770
+42 Allée de Naurouze 31770,,,,42 Allée de Naurouze,,,Colomiers,
+42 Allée de Naurouze,1.348253,43.609151,,42 Allée de Naurouze,,,,31770
+16 Rue des Biches Cugnaux,,,,16 Rue des Biches,,,,31270
+16 Rue des Biches 31270,,,,16 Rue des Biches,,,Cugnaux,
+16 Rue des Biches,1.342217,43.539630,,16 Rue des Biches,,,,31270
+10 Rue Salvador Dali Daux,,,,10 Rue Salvador Dali,,,,31700
+10 Rue Salvador Dali 31700,,,,10 Rue Salvador Dali,,,Daux,
+10 Rue Salvador Dali,1.267223,43.691699,,10 Rue Salvador Dali,,,,31700
+10 Rue de la Tour de Pise Escalquens,,,,10 Rue de la Tour de Pise,,,,31750
+10 Rue de la Tour de Pise 31750,,,,10 Rue de la Tour de Pise,,,Escalquens,
+10 Rue de la Tour de Pise,1.563137,43.519955,,10 Rue de la Tour de Pise,,,,31750
+23 Rue des Hirondelles Fonsorbes,,,,23 Rue des Hirondelles,,,,31470
+23 Rue des Hirondelles 31470,,,,23 Rue des Hirondelles,,,Fonsorbes,
+23 Rue des Hirondelles,1.235674,43.535364,,23 Rue des Hirondelles,,,,31470
+5 Impasse de Saumaté Fronton,,,,5 Impasse de Saumaté,,,,31620
+5 Impasse de Saumaté 31620,,,,5 Impasse de Saumaté,,,Fronton,
+5 Impasse de Saumaté,1.369493,43.826764,,5 Impasse de Saumaté,,,,31620
+41 Rue de Vignabère Gourdan-Polignan,,,,41 Rue de Vignabère,,,,31210
+41 Rue de Vignabère 31210,,,,41 Rue de Vignabère,,,Gourdan-Polignan,
+41 Rue de Vignabère,0.582833,43.074152,,41 Rue de Vignabère,,,,31210
+11 Rue de Cier Huos,,,,11 Rue de Cier,,,,31210
+11 Rue de Cier 31210,,,,11 Rue de Cier,,,Huos,
+11 Rue de Cier,0.598731,43.073675,,11 Rue de Cier,,,,31210
+10 Passage Jean Dugaros Labastidette,,,,10 Passage Jean Dugaros,,,,31600
+10 Passage Jean Dugaros 31600,,,,10 Passage Jean Dugaros,,,Labastidette,
+10 Passage Jean Dugaros,1.247602,43.458682,,10 Passage Jean Dugaros,,,,31600
+18 Chemin de Triguebéoure Lapeyrouse-Fossat,,,,18 Chemin de Triguebéoure,,,,31180
+18 Chemin de Triguebéoure 31180,,,,18 Chemin de Triguebéoure,,,Lapeyrouse-Fossat,
+18 Chemin de Triguebéoure,1.523795,43.695258,,18 Chemin de Triguebéoure,,,,31180
+5 Impasse de la Cibelle Léguevin,,,,5 Impasse de la Cibelle,,,,31490
+5 Impasse de la Cibelle 31490,,,,5 Impasse de la Cibelle,,,Léguevin,
+5 Impasse de la Cibelle,1.229893,43.594228,,5 Impasse de la Cibelle,,,,31490
+17 Chemin de la Peyonne Longages,,,,17 Chemin de la Peyonne,,,,31410
+17 Chemin de la Peyonne 31410,,,,17 Chemin de la Peyonne,,,Longages,
+17 Chemin de la Peyonne,1.242855,43.351932,,17 Chemin de la Peyonne,,,,31410
+469 Route de Larra Merville,,,,469 Route de Larra,,,,31330
+469 Route de Larra 31330,,,,469 Route de Larra,,,Merville,
+469 Route de Larra,1.288913,43.719507,,469 Route de Larra,,,,31330
+2 Place Rhin et Danube Montastruc-la-Conseillère,,,,2 Place Rhin et Danube,,,,31380
+2 Place Rhin et Danube 31380,,,,2 Place Rhin et Danube,,,Montastruc-la-Conseillère,
+2 Place Rhin et Danube,1.584040,43.719011,,2 Place Rhin et Danube,,,,31380
+20 Rue du Salat Montrabé,,,,20 Rue du Salat,,,,31850
+20 Rue du Salat 31850,,,,20 Rue du Salat,,,Montrabé,
+20 Rue du Salat,1.520818,43.646065,,20 Rue du Salat,,,,31850
+8BIS Place Layrisson Muret,,,,8BIS Place Layrisson,,,,31600
+8BIS Place Layrisson 31600,,,,8BIS Place Layrisson,,,Muret,
+8BIS Place Layrisson,1.323743,43.460410,,8BIS Place Layrisson,,,,31600
+86 Route de Toulouse Noé,,,,86 Route de Toulouse,,,,31410
+86 Route de Toulouse 31410,,,,86 Route de Toulouse,,,Noé,
+86 Route de Toulouse,1.272693,43.351958,,86 Route de Toulouse,,,,31410
+2 Allée des Lys Pibrac,,,,2 Allée des Lys,,,,31820
+2 Allée des Lys 31820,,,,2 Allée des Lys,,,Pibrac,
+2 Allée des Lys,1.287443,43.614018,,2 Allée des Lys,,,,31820
+67 Avenue de la Casse Plaisance-du-Touch,,,,67 Avenue de la Casse,,,,31830
+67 Avenue de la Casse 31830,,,,67 Avenue de la Casse,,,Plaisance-du-Touch,
+67 Avenue de la Casse,1.283571,43.558159,,67 Avenue de la Casse,,,,31830
+6 Impasse de l'Autan Pompertuzat,,,,6 Impasse de l'Autan,,,,31450
+6 Impasse de l'Autan 31450,,,,6 Impasse de l'Autan,,,Pompertuzat,
+6 Impasse de l'Autan,1.525537,43.492975,,6 Impasse de l'Autan,,,,31450
+29 Allée Michel-Ange Quint-Fonsegrives,,,,29 Allée Michel-Ange,,,,31130
+29 Allée Michel-Ange 31130,,,,29 Allée Michel-Ange,,,Quint-Fonsegrives,
+29 Allée Michel-Ange,1.523721,43.581038,,29 Allée Michel-Ange,,,,31130
+19 Rue Edith Piaf Revel,,,,19 Rue Edith Piaf,,,,31250
+19 Rue Edith Piaf 31250,,,,19 Rue Edith Piaf,,,Revel,
+19 Rue Edith Piaf,1.993396,43.467229,,19 Rue Edith Piaf,,,,31250
+4 Rue du Pouech Roquefort-sur-Garonne,,,,4 Rue du Pouech,,,,31360
+4 Rue du Pouech 31360,,,,4 Rue du Pouech,,,Roquefort-sur-Garonne,
+4 Rue du Pouech,0.975269,43.164711,,4 Rue du Pouech,,,,31360
+36 Avenue Salvador Allende Saint-Alban,,,,36 Avenue Salvador Allende,,,,31140
+36 Avenue Salvador Allende 31140,,,,36 Avenue Salvador Allende,,,Saint-Alban,
+36 Avenue Salvador Allende,1.408942,43.686599,,36 Avenue Salvador Allende,,,,31140
+73 Rue de la République Saint-Gaudens,,,,73 Rue de la République,,,,31800
+73 Rue de la République 31800,,,,73 Rue de la République,,,Saint-Gaudens,
+73 Rue de la République,0.725995,43.108519,,73 Rue de la République,,,,31800
+1 Passage des Romarins Saint-Jean,,,,1 Passage des Romarins,,,,31240
+1 Passage des Romarins 31240,,,,1 Passage des Romarins,,,Saint-Jean,
+1 Passage des Romarins,1.500280,43.672879,,1 Passage des Romarins,,,,31240
+10 Place Bernard Sarrieu Saint-Mamet,,,,10 Place Bernard Sarrieu,,,,31110
+10 Place Bernard Sarrieu 31110,,,,10 Place Bernard Sarrieu,,,Saint-Mamet,
+10 Place Bernard Sarrieu,0.604430,42.781914,,10 Place Bernard Sarrieu,,,,31110
+2 Route de Toulouse Saint-Pierre-de-Lages,,,,2 Route de Toulouse,,,,31570
+2 Route de Toulouse 31570,,,,2 Route de Toulouse,,,Saint-Pierre-de-Lages,
+2 Route de Toulouse,1.626416,43.569242,,2 Route de Toulouse,,,,31570
+3BIS Chemin de Pins Saubens,,,,3BIS Chemin de Pins,,,,31600
+3BIS Chemin de Pins 31600,,,,3BIS Chemin de Pins,,,Saubens,
+3BIS Chemin de Pins,1.353752,43.477160,,3BIS Chemin de Pins,,,,31600
+39 Impasse Alexis de Tocqueville Toulouse,,,,39 Impasse Alexis de Tocqueville,,,,31998
+39 Impasse Alexis de Tocqueville 31998,,,,39 Impasse Alexis de Tocqueville,,,Toulouse,
+39 Impasse Alexis de Tocqueville,1.456219,43.649723,,39 Impasse Alexis de Tocqueville,,,,31998
+7 Rue Émile Barry Toulouse,,,,7 Rue Émile Barry,,,,31998
+7 Rue Émile Barry 31998,,,,7 Rue Émile Barry,,,Toulouse,
+7 Rue Émile Barry,1.471187,43.582890,,7 Rue Émile Barry,,,,31998
+78BIS Chemin des Capelles Toulouse,,,,78BIS Chemin des Capelles,,,,31998
+78BIS Chemin des Capelles 31998,,,,78BIS Chemin des Capelles,,,Toulouse,
+78BIS Chemin des Capelles,1.386358,43.603484,,78BIS Chemin des Capelles,,,,31998
+15 Rue de Coulmiers Toulouse,,,,15 Rue de Coulmiers,,,,31998
+15 Rue de Coulmiers 31998,,,,15 Rue de Coulmiers,,,Toulouse,
+15 Rue de Coulmiers,1.442824,43.612759,,15 Rue de Coulmiers,,,,31998
+19 Rue Ernest Feydeau Toulouse,,,,19 Rue Ernest Feydeau,,,,31998
+19 Rue Ernest Feydeau 31998,,,,19 Rue Ernest Feydeau,,,Toulouse,
+19 Rue Ernest Feydeau,1.470452,43.626609,,19 Rue Ernest Feydeau,,,,31998
+311B Avenue de Fronton Toulouse,,,,311B Avenue de Fronton,,,,31998
+311B Avenue de Fronton 31998,,,,311B Avenue de Fronton,,,Toulouse,
+311B Avenue de Fronton,1.431788,43.654267,,311B Avenue de Fronton,,,,31998
+8B Avenue de l'Hers Toulouse,,,,8B Avenue de l'Hers,,,,31998
+8B Avenue de l'Hers 31998,,,,8B Avenue de l'Hers,,,Toulouse,
+8B Avenue de l'Hers,1.478765,43.613088,,8B Avenue de l'Hers,,,,31998
+39 Rue Jules Clarétie Toulouse,,,,39 Rue Jules Clarétie,,,,31998
+39 Rue Jules Clarétie 31998,,,,39 Rue Jules Clarétie,,,Toulouse,
+39 Rue Jules Clarétie,1.465831,43.587717,,39 Rue Jules Clarétie,,,,31998
+3 Avenue Louis Blériot Toulouse,,,,3 Avenue Louis Blériot,,,,31998
+3 Avenue Louis Blériot 31998,,,,3 Avenue Louis Blériot,,,Toulouse,
+3 Avenue Louis Blériot,1.463928,43.600237,,3 Avenue Louis Blériot,,,,31998
+5 Rue Mireille Toulouse,,,,5 Rue Mireille,,,,31998
+5 Rue Mireille 31998,,,,5 Rue Mireille,,,Toulouse,
+5 Rue Mireille,1.475913,43.586157,,5 Rue Mireille,,,,31998
+27 Chemin de la Pélude Toulouse,,,,27 Chemin de la Pélude,,,,31998
+27 Chemin de la Pélude 31998,,,,27 Chemin de la Pélude,,,Toulouse,
+27 Chemin de la Pélude,1.460359,43.568729,,27 Chemin de la Pélude,,,,31998
+18 Chemin Reboul Toulouse,,,,18 Chemin Reboul,,,,31998
+18 Chemin Reboul 31998,,,,18 Chemin Reboul,,,Toulouse,
+18 Chemin Reboul,1.375817,43.582008,,18 Chemin Reboul,,,,31998
+42 Rue Saint-Thomas d'Aquin Toulouse,,,,42 Rue Saint-Thomas d'Aquin,,,,31998
+42 Rue Saint-Thomas d'Aquin 31998,,,,42 Rue Saint-Thomas d'Aquin,,,Toulouse,
+42 Rue Saint-Thomas d'Aquin,1.448863,43.580300,,42 Rue Saint-Thomas d'Aquin,,,,31998
+5 Rue des Troènes Toulouse,,,,5 Rue des Troènes,,,,31998
+5 Rue des Troènes 31998,,,,5 Rue des Troènes,,,Toulouse,
+5 Rue des Troènes,1.414155,43.613448,,5 Rue des Troènes,,,,31998
+27 Rue de la Digue Tournefeuille,,,,27 Rue de la Digue,,,,31170
+27 Rue de la Digue 31170,,,,27 Rue de la Digue,,,Tournefeuille,
+27 Rue de la Digue,1.346608,43.576890,,27 Rue de la Digue,,,,31170
+1 Rue de la Somme Tournefeuille,,,,1 Rue de la Somme,,,,31170
+1 Rue de la Somme 31170,,,,1 Rue de la Somme,,,Tournefeuille,
+1 Rue de la Somme,1.354722,43.580380,,1 Rue de la Somme,,,,31170
+315 Rue du Roitelet L'Union,,,,315 Rue du Roitelet,,,,31240
+315 Rue du Roitelet 31240,,,,315 Rue du Roitelet,,,L'Union,
+315 Rue du Roitelet,1.475561,43.664145,,315 Rue du Roitelet,,,,31240
+149A Route de Gargas Villariès,,,,149A Route de Gargas,,,,31380
+149A Route de Gargas 31380,,,,149A Route de Gargas,,,Villariès,
+149A Route de Gargas,1.481808,43.759822,,149A Route de Gargas,,,,31380
+2 Rue Stendhal Villemur-sur-Tarn,,,,2 Rue Stendhal,,,,31340
+2 Rue Stendhal 31340,,,,2 Rue Stendhal,,,Villemur-sur-Tarn,
+2 Rue Stendhal,1.494132,43.862727,,2 Rue Stendhal,,,,31340
+520 Chemin de Saint-Sèverin Larra,,,,520 Chemin de Saint-Sèverin,,,,31330
+520 Chemin de Saint-Sèverin 31330,,,,520 Chemin de Saint-Sèverin,,,Larra,
+520 Chemin de Saint-Sèverin,1.227467,43.727216,,520 Chemin de Saint-Sèverin,,,,31330
+15 Rue Montaigne Auch,,,,15 Rue Montaigne,,,,32000
+15 Rue Montaigne 32000,,,,15 Rue Montaigne,,,Auch,
+15 Rue Montaigne,0.593599,43.636495,,15 Rue Montaigne,,,,32000
+34 Rue Pierre Bazax Condom,,,,34 Rue Pierre Bazax,,,,32100
+34 Rue Pierre Bazax 32100,,,,34 Rue Pierre Bazax,,,Condom,
+34 Rue Pierre Bazax,0.370593,43.954792,,34 Rue Pierre Bazax,,,,32100
+2 Rue du Four Gimont,,,,2 Rue du Four,,,,32200
+2 Rue du Four 32200,,,,2 Rue du Four,,,Gimont,
+2 Rue du Four,0.877811,43.624691,,2 Rue du Four,,,,32200
+39 Rue des Frêres Danzas Lectoure,,,,39 Rue des Frêres Danzas,,,,32700
+39 Rue des Frêres Danzas 32700,,,,39 Rue des Frêres Danzas,,,Lectoure,
+39 Rue des Frêres Danzas,0.622142,43.932785,,39 Rue des Frêres Danzas,,,,32700
+25 Rue de la Paix Monguilhem,,,,25 Rue de la Paix,,,,32240
+25 Rue de la Paix 32240,,,,25 Rue de la Paix,,,Monguilhem,
+25 Rue de la Paix,-0.182436,43.856510,,25 Rue de la Paix,,,,32240
+8 Rue de Gascogne Samatan,,,,8 Rue de Gascogne,,,,32130
+8 Rue de Gascogne 32130,,,,8 Rue de Gascogne,,,Samatan,
+8 Rue de Gascogne,0.919386,43.491669,,8 Rue de Gascogne,,,,32130
+158 Rue de Montesquieu Cahors,,,,158 Rue de Montesquieu,,,,46000
+158 Rue de Montesquieu 46000,,,,158 Rue de Montesquieu,,,Cahors,
+158 Rue de Montesquieu,1.432391,44.456115,,158 Rue de Montesquieu,,,,46000
+2 Rue Jean Pons Figeac,,,,2 Rue Jean Pons,,,,46100
+2 Rue Jean Pons 46100,,,,2 Rue Jean Pons,,,Figeac,
+2 Rue Jean Pons,2.024248,44.611258,,2 Rue Jean Pons,,,,46100
+395 Route de Figeac Lamagdelaine,,,,395 Route de Figeac,,,,46090
+395 Route de Figeac 46090,,,,395 Route de Figeac,,,Lamagdelaine,
+395 Route de Figeac,1.489462,44.464150,,395 Route de Figeac,,,,46090
+834 Avenue Charles de Gaulle Saint-Laurent-les-Tours,,,,834 Avenue Charles de Gaulle,,,,46400
+834 Avenue Charles de Gaulle 46400,,,,834 Avenue Charles de Gaulle,,,Saint-Laurent-les-Tours,
+834 Avenue Charles de Gaulle,1.880234,44.867521,,834 Avenue Charles de Gaulle,,,,46400
+17 Rue du 11 Novembre Aureilhan,,,,17 Rue du 11 Novembre,,,,65800
+17 Rue du 11 Novembre 65800,,,,17 Rue du 11 Novembre,,,Aureilhan,
+17 Rue du 11 Novembre,0.090252,43.239205,,17 Rue du 11 Novembre,,,,65800
+13 Rue des Jonquilles Barbazan-Debat,,,,13 Rue des Jonquilles,,,,65690
+13 Rue des Jonquilles 65690,,,,13 Rue des Jonquilles,,,Barbazan-Debat,
+13 Rue des Jonquilles,0.114557,43.200972,,13 Rue des Jonquilles,,,,65690
+45 Route du Val d'Arros Cabanac,,,,45 Route du Val d'Arros,,,,65350
+45 Route du Val d'Arros 65350,,,,45 Route du Val d'Arros,,,Cabanac,
+45 Route du Val d'Arros,0.229914,43.277577,,45 Route du Val d'Arros,,,,65350
+11 Rue de l'Industrie Ibos,,,,11 Rue de l'Industrie,,,,65420
+11 Rue de l'Industrie 65420,,,,11 Rue de l'Industrie,,,Ibos,
+11 Rue de l'Industrie,-0.003152,43.234540,,11 Rue de l'Industrie,,,,65420
+591 Rue des Cités Lannemezan,,,,591 Rue des Cités,,,,65300
+591 Rue des Cités 65300,,,,591 Rue des Cités,,,Lannemezan,
+591 Rue des Cités,0.384133,43.103517,,591 Rue des Cités,,,,65300
+2A Avenue du Général Leclerc Lourdes,,,,2A Avenue du Général Leclerc,,,,65100
+2A Avenue du Général Leclerc 65100,,,,2A Avenue du Général Leclerc,,,Lourdes,
+2A Avenue du Général Leclerc,-0.045595,43.094215,,2A Avenue du Général Leclerc,,,,65100
+45 Allée Larbanés Maubourguet,,,,45 Allée Larbanés,,,,65700
+45 Allée Larbanés 65700,,,,45 Allée Larbanés,,,Maubourguet,
+45 Allée Larbanés,0.035290,43.467551,,45 Allée Larbanés,,,,65700
+9BIS Rue des Acacias Oursbelille,,,,9BIS Rue des Acacias,,,,65490
+9BIS Rue des Acacias 65490,,,,9BIS Rue des Acacias,,,Oursbelille,
+9BIS Rue des Acacias,0.063008,43.292879,,9BIS Rue des Acacias,,,,65490
+1 Rue Montalivet Sarrouilles,,,,1 Rue Montalivet,,,,65600
+1 Rue Montalivet 65600,,,,1 Rue Montalivet,,,Sarrouilles,
+1 Rue Montalivet,0.133299,43.221400,,1 Rue Montalivet,,,,65600
+3 Impasse Beaumarchais Tarbes,,,,3 Impasse Beaumarchais,,,,65000
+3 Impasse Beaumarchais 65000,,,,3 Impasse Beaumarchais,,,Tarbes,
+3 Impasse Beaumarchais,0.056451,43.238264,,3 Impasse Beaumarchais,,,,65000
+3BIS Rue Marcelin Berthelot Tarbes,,,,3BIS Rue Marcelin Berthelot,,,,65000
+3BIS Rue Marcelin Berthelot 65000,,,,3BIS Rue Marcelin Berthelot,,,Tarbes,
+3BIS Rue Marcelin Berthelot,0.086129,43.221717,,3BIS Rue Marcelin Berthelot,,,,65000
+2 Place Gambetta Vic-en-Bigorre,,,,2 Place Gambetta,,,,65500
+2 Place Gambetta 65500,,,,2 Place Gambetta,,,Vic-en-Bigorre,
+2 Place Gambetta,0.054735,43.385701,,2 Place Gambetta,,,,65500
+102 Rue Commandant Blanché Albi,,,,102 Rue Commandant Blanché,,,,81000
+102 Rue Commandant Blanché 81000,,,,102 Rue Commandant Blanché,,,Albi,
+102 Rue Commandant Blanché,2.155045,43.920900,,102 Rue Commandant Blanché,,,,81000
+17 Allée des Hortensias Albi,,,,17 Allée des Hortensias,,,,81000
+17 Allée des Hortensias 81000,,,,17 Allée des Hortensias,,,Albi,
+17 Allée des Hortensias,2.152183,43.938786,,17 Allée des Hortensias,,,,81000
+49 Chemin de Lapeyrouse Albi,,,,49 Chemin de Lapeyrouse,,,,81000
+49 Chemin de Lapeyrouse 81000,,,,49 Chemin de Lapeyrouse,,,Albi,
+49 Chemin de Lapeyrouse,2.172047,43.911883,,49 Chemin de Lapeyrouse,,,,81000
+58BIS Avenue de Lescure Arthès,,,,58BIS Avenue de Lescure,,,,81160
+58BIS Avenue de Lescure 81160,,,,58BIS Avenue de Lescure,,,Arthès,
+58BIS Avenue de Lescure,2.199924,43.954534,,58BIS Avenue de Lescure,,,,81160
+18 Rue des Cèdres Bout-du-Pont-de-Larn,,,,18 Rue des Cèdres,,,,81660
+18 Rue des Cèdres 81660,,,,18 Rue des Cèdres,,,Bout-du-Pont-de-Larn,
+18 Rue des Cèdres,2.400440,43.499636,,18 Rue des Cèdres,,,,81660
+44 Chemin de la Sarrade Cambon,,,,44 Chemin de la Sarrade,,,,81990
+44 Chemin de la Sarrade 81990,,,,44 Chemin de la Sarrade,,,Cambon,
+44 Chemin de la Sarrade,2.262183,43.919247,,44 Chemin de la Sarrade,,,,81990
+11 Rue de la Verrerie Carmaux,,,,11 Rue de la Verrerie,,,,81400
+11 Rue de la Verrerie 81400,,,,11 Rue de la Verrerie,,,Carmaux,
+11 Rue de la Verrerie,2.152068,44.051604,,11 Rue de la Verrerie,,,,81400
+108 Avenue Emilie de Villeneuve Castres,,,,108 Avenue Emilie de Villeneuve,,,,81100
+108 Avenue Emilie de Villeneuve 81100,,,,108 Avenue Emilie de Villeneuve,,,Castres,
+108 Avenue Emilie de Villeneuve,2.242110,43.597727,,108 Avenue Emilie de Villeneuve,,,,81100
+29 Rue Marceau Castres,,,,29 Rue Marceau,,,,81100
+29 Rue Marceau 81100,,,,29 Rue Marceau,,,Castres,
+29 Rue Marceau,2.234150,43.596623,,29 Rue Marceau,,,,81100
+47 Chemin de Tournemire Castres,,,,47 Chemin de Tournemire,,,,81100
+47 Chemin de Tournemire 81100,,,,47 Chemin de Tournemire,,,Castres,
+47 Chemin de Tournemire,2.282294,43.623520,,47 Chemin de Tournemire,,,,81100
+10 Impasse des Balitrands Gaillac,,,,10 Impasse des Balitrands,,,,81600
+10 Impasse des Balitrands 81600,,,,10 Impasse des Balitrands,,,Gaillac,
+10 Impasse des Balitrands,1.873140,43.898782,,10 Impasse des Balitrands,,,,81600
+3905 Chemin Toulze Gaillac,,,,3905 Chemin Toulze,,,,81600
+3905 Chemin Toulze 81600,,,,3905 Chemin Toulze,,,Gaillac,
+3905 Chemin Toulze,1.898205,43.925605,,3905 Chemin Toulze,,,,81600
+1 Passage de Saintonge Graulhet,,,,1 Passage de Saintonge,,,,81300
+1 Passage de Saintonge 81300,,,,1 Passage de Saintonge,,,Graulhet,
+1 Passage de Saintonge,1.998359,43.762835,,1 Passage de Saintonge,,,,81300
+10 Route de Vabre Lacrouzette,,,,10 Route de Vabre,,,,81210
+10 Route de Vabre 81210,,,,10 Route de Vabre,,,Lacrouzette,
+10 Route de Vabre,2.350142,43.663663,,10 Route de Vabre,,,,81210
+558 Chemin de la Rivayrolle Lavaur,,,,558 Chemin de la Rivayrolle,,,,81500
+558 Chemin de la Rivayrolle 81500,,,,558 Chemin de la Rivayrolle,,,Lavaur,
+558 Chemin de la Rivayrolle,1.765017,43.726153,,558 Chemin de la Rivayrolle,,,,81500
+12 Rue des Trincades Marssac-sur-Tarn,,,,12 Rue des Trincades,,,,81150
+12 Rue des Trincades 81150,,,,12 Rue des Trincades,,,Marssac-sur-Tarn,
+12 Rue des Trincades,2.033659,43.914421,,12 Rue des Trincades,,,,81150
+35 Rue de la Resse Mazamet,,,,35 Rue de la Resse,,,,81200
+35 Rue de la Resse 81200,,,,35 Rue de la Resse,,,Mazamet,
+35 Rue de la Resse,2.373371,43.484970,,35 Rue de la Resse,,,,81200
+8 Rue d'En Redon Pont-de-Larn,,,,8 Rue d'En Redon,,,,81660
+8 Rue d'En Redon 81660,,,,8 Rue d'En Redon,,,Pont-de-Larn,
+8 Rue d'En Redon,2.407498,43.513135,,8 Rue d'En Redon,,,,81660
+4 Résidence Les Jardins de Cantemerle Réalmont,,,,4 Résidence Les Jardins de Cantemerle,,,,81120
+4 Résidence Les Jardins de Cantemerle 81120,,,,4 Résidence Les Jardins de Cantemerle,,,Réalmont,
+4 Résidence Les Jardins de Cantemerle,2.182506,43.773593,,4 Résidence Les Jardins de Cantemerle,,,,81120
+8 Rue Gisclard Saint-Juéry,,,,8 Rue Gisclard,,,,81160
+8 Rue Gisclard 81160,,,,8 Rue Gisclard,,,Saint-Juéry,
+8 Rue Gisclard,2.207059,43.946941,,8 Rue Gisclard,,,,81160
+24 Rue de la Céramique Saint-Sulpice-la-Pointe,,,,24 Rue de la Céramique,,,,81370
+24 Rue de la Céramique 81370,,,,24 Rue de la Céramique,,,Saint-Sulpice-la-Pointe,
+24 Rue de la Céramique,1.676062,43.780721,,24 Rue de la Céramique,,,,81370
+5 Impasse des Lauriers Sorèze,,,,5 Impasse des Lauriers,,,,81540
+5 Impasse des Lauriers 81540,,,,5 Impasse des Lauriers,,,Sorèze,
+5 Impasse des Lauriers,2.061094,43.455193,,5 Impasse des Lauriers,,,,81540
+8 Chemin des Agals Viviers-lès-Montagnes,,,,8 Chemin des Agals,,,,81290
+8 Chemin des Agals 81290,,,,8 Chemin des Agals,,,Viviers-lès-Montagnes,
+8 Chemin des Agals,2.184001,43.565949,,8 Chemin des Agals,,,,81290
+1083 Route de la Bénèche Bioule,,,,1083 Route de la Bénèche,,,,82800
+1083 Route de la Bénèche 82800,,,,1083 Route de la Bénèche,,,Bioule,
+1083 Route de la Bénèche,1.555920,44.112465,,1083 Route de la Bénèche,,,,82800
+1998 Route des Fourrières Castelsarrasin,,,,1998 Route des Fourrières,,,,82100
+1998 Route des Fourrières 82100,,,,1998 Route des Fourrières,,,Castelsarrasin,
+1998 Route des Fourrières,1.152883,44.041996,,1998 Route des Fourrières,,,,82100
+2 Avenue du 8 Mai Caussade,,,,2 Avenue du 8 Mai,,,,82300
+2 Avenue du 8 Mai 82300,,,,2 Avenue du 8 Mai,,,Caussade,
+2 Avenue du 8 Mai,1.535793,44.161527,,2 Avenue du 8 Mai,,,,82300
+22 Avenue du Ramier Finhan,,,,22 Avenue du Ramier,,,,82700
+22 Avenue du Ramier 82700,,,,22 Avenue du Ramier,,,Finhan,
+22 Avenue du Ramier,1.213110,43.912290,,22 Avenue du Ramier,,,,82700
+134 Impasse Cazy Lacourt-Saint-Pierre,,,,134 Impasse Cazy,,,,82290
+134 Impasse Cazy 82290,,,,134 Impasse Cazy,,,Lacourt-Saint-Pierre,
+134 Impasse Cazy,1.279054,43.991185,,134 Impasse Cazy,,,,82290
+115 Impasse Cayssac Mirabel,,,,115 Impasse Cayssac,,,,82440
+115 Impasse Cayssac 82440,,,,115 Impasse Cayssac,,,Mirabel,
+115 Impasse Cayssac,1.397445,44.131762,,115 Impasse Cayssac,,,,82440
+13 Rue de la République Moissac,,,,13 Rue de la République,,,,82200
+13 Rue de la République 82200,,,,13 Rue de la République,,,Moissac,
+13 Rue de la République,1.084938,44.104206,,13 Rue de la République,,,,82200
+29 Rue Du Bac Montauban,,,,29 Rue Du Bac,,,,82000
+29 Rue Du Bac 82000,,,,29 Rue Du Bac,,,Montauban,
+29 Rue Du Bac,1.341756,44.019047,,29 Rue Du Bac,,,,82000
+1 Rue Edouard Manet Montauban,,,,1 Rue Edouard Manet,,,,82000
+1 Rue Edouard Manet 82000,,,,1 Rue Edouard Manet,,,Montauban,
+1 Rue Edouard Manet,1.371552,44.023216,,1 Rue Edouard Manet,,,,82000
+170 Chemin de Lapèyre Montauban,,,,170 Chemin de Lapèyre,,,,82000
+170 Chemin de Lapèyre 82000,,,,170 Chemin de Lapèyre,,,Montauban,
+170 Chemin de Lapèyre,1.320814,43.971842,,170 Chemin de Lapèyre,,,,82000
+1420 Rue de la Première Armée Montauban,,,,1420 Rue de la Première Armée,,,,82000
+1420 Rue de la Première Armée 82000,,,,1420 Rue de la Première Armée,,,Montauban,
+1420 Rue de la Première Armée,1.345754,44.004965,,1420 Rue de la Première Armée,,,,82000
+260 Chemin des Rosiers Montbeton,,,,260 Chemin des Rosiers,,,,82290
+260 Chemin des Rosiers 82290,,,,260 Chemin des Rosiers,,,Montbeton,
+260 Chemin des Rosiers,1.265919,44.014544,,260 Chemin des Rosiers,,,,82290
+21 Rue Marcelin Viguié Nègrepelisse,,,,21 Rue Marcelin Viguié,,,,82800
+21 Rue Marcelin Viguié 82800,,,,21 Rue Marcelin Viguié,,,Nègrepelisse,
+21 Rue Marcelin Viguié,1.522437,44.074839,,21 Rue Marcelin Viguié,,,,82800
+2486 Vieille Route Vieille Route de Montauban Saint-Étienne-de-Tulmont,,,,2486 Vieille Route Vieille Route de Montauban,,,,82410
+2486 Vieille Route Vieille Route de Montauban 82410,,,,2486 Vieille Route Vieille Route de Montauban,,,Saint-Étienne-de-Tulmont,
+2486 Vieille Route Vieille Route de Montauban,1.441828,44.051440,,2486 Vieille Route Vieille Route de Montauban,,,,82410
+28 Avenue Georges d'Esparbes Valence,,,,28 Avenue Georges d'Esparbes,,,,82400
+28 Avenue Georges d'Esparbes 82400,,,,28 Avenue Georges d'Esparbes,,,Valence,
+28 Avenue Georges d'Esparbes,0.897972,44.105391,,28 Avenue Georges d'Esparbes,,,,82400

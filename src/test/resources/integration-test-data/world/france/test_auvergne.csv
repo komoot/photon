@@ -1,0 +1,184 @@
+query,lon,lat,limit,expected_name,expected_housenumber,expected_street,expected_city,expected_postcode
+19 Avenue Fernand Auberger Bellerive-sur-Allier,,,,19 Avenue Fernand Auberger,,,,03700
+19 Avenue Fernand Auberger 03700,,,,19 Avenue Fernand Auberger,,,Bellerive-sur-Allier,
+19 Avenue Fernand Auberger,3.411255,46.113456,,19 Avenue Fernand Auberger,,,,03700
+31 Avenue de l'Europe Brugheas,,,,31 Avenue de l'Europe,,,,03700
+31 Avenue de l'Europe 03700,,,,31 Avenue de l'Europe,,,Brugheas,
+31 Avenue de l'Europe,3.392669,46.093357,,31 Avenue de l'Europe,,,,03700
+17 Avenue Marx Dormoy Commentry,,,,17 Avenue Marx Dormoy,,,,03600
+17 Avenue Marx Dormoy 03600,,,,17 Avenue Marx Dormoy,,,Commentry,
+17 Avenue Marx Dormoy,2.739995,46.294358,,17 Avenue Marx Dormoy,,,,03600
+18 Avenue du Drapeau Cusset,,,,18 Avenue du Drapeau,,,,03300
+18 Avenue du Drapeau 03300,,,,18 Avenue du Drapeau,,,Cusset,
+18 Avenue du Drapeau,3.456709,46.133141,,18 Avenue du Drapeau,,,,03300
+19 Rue Henri Martin Désertines,,,,19 Rue Henri Martin,,,,03630
+19 Rue Henri Martin 03630,,,,19 Rue Henri Martin,,,Désertines,
+19 Rue Henri Martin,2.627281,46.354071,,19 Rue Henri Martin,,,,03630
+70 Rue des Pensées Domérat,,,,70 Rue des Pensées,,,,03410
+70 Rue des Pensées 03410,,,,70 Rue des Pensées,,,Domérat,
+70 Rue des Pensées,2.570733,46.348857,,70 Rue des Pensées,,,,03410
+114 Route de Vozelle Espinasse-Vozelle,,,,114 Route de Vozelle,,,,03110
+114 Route de Vozelle 03110,,,,114 Route de Vozelle,,,Espinasse-Vozelle,
+114 Route de Vozelle,3.344051,46.131371,,114 Route de Vozelle,,,,03110
+49 Route des Nautes Magnet,,,,49 Route des Nautes,,,,03260
+49 Route des Nautes 03260,,,,49 Route des Nautes,,,Magnet,
+49 Route des Nautes,3.526694,46.221292,,49 Route des Nautes,,,,03260
+19 Rue Charles Hennecart Montluçon,,,,19 Rue Charles Hennecart,,,,03100
+19 Rue Charles Hennecart 03100,,,,19 Rue Charles Hennecart,,,Montluçon,
+19 Rue Charles Hennecart,2.598946,46.351143,,19 Rue Charles Hennecart,,,,03100
+50 Avenue Jean Macé Montluçon,,,,50 Avenue Jean Macé,,,,03100
+50 Avenue Jean Macé 03100,,,,50 Avenue Jean Macé,,,Montluçon,
+50 Avenue Jean Macé,2.581927,46.356544,,50 Avenue Jean Macé,,,,03100
+106 Rue de Rimard Montluçon,,,,106 Rue de Rimard,,,,03100
+106 Rue de Rimard 03100,,,,106 Rue de Rimard,,,Montluçon,
+106 Rue de Rimard,2.614397,46.331381,,106 Rue de Rimard,,,,03100
+7 Rue de la Font Vinée Moulins,,,,7 Rue de la Font Vinée,,,,03000
+7 Rue de la Font Vinée 03000,,,,7 Rue de la Font Vinée,,,Moulins,
+7 Rue de la Font Vinée,3.331822,46.554214,,7 Rue de la Font Vinée,,,,03000
+30 Rue Paul Constans Néris-les-Bains,,,,30 Rue Paul Constans,,,,03310
+30 Rue Paul Constans 03310,,,,30 Rue Paul Constans,,,Néris-les-Bains,
+30 Rue Paul Constans,2.665203,46.280492,,30 Rue Paul Constans,,,,03310
+1 Rue Romaine Saint-Martinien,,,,1 Rue Romaine,,,,03380
+1 Rue Romaine 03380,,,,1 Rue Romaine,,,Saint-Martinien,
+1 Rue Romaine,2.469318,46.336477,,1 Rue Romaine,,,,03380
+32 Rue des Bernachets Toulon-sur-Allier,,,,32 Rue des Bernachets,,,,03400
+32 Rue des Bernachets 03400,,,,32 Rue des Bernachets,,,Toulon-sur-Allier,
+32 Rue des Bernachets,3.367714,46.513695,,32 Rue des Bernachets,,,,03400
+1 Rue de Chamonix Vichy,,,,1 Rue de Chamonix,,,,03200
+1 Rue de Chamonix 03200,,,,1 Rue de Chamonix,,,Vichy,
+1 Rue de Chamonix,3.428307,46.135747,,1 Rue de Chamonix,,,,03200
+2 Rue de Pont-à-Mousson Vichy,,,,2 Rue de Pont-à-Mousson,,,,03200
+2 Rue de Pont-à-Mousson 03200,,,,2 Rue de Pont-à-Mousson,,,Vichy,
+2 Rue de Pont-à-Mousson,3.440982,46.116797,,2 Rue de Pont-à-Mousson,,,,03200
+8 Chemin Dela Croix de la Faloterie Yzeure,,,,8 Chemin de la Croix de la Faloterie,,,,03400
+8 Chemin Dela Croix de la Faloterie 03400,,,,8 Chemin de la Croix de la Faloterie,,,Yzeure,
+8 Chemin Dela Croix de la Faloterie,3.353359,46.577369,,8 Chemin de la Croix de la Faloterie,,,,03400
+8 Rue Fontaine de l'Aumone Aurillac,,,,8 Rue Fontaine de l'Aumone,,,,15000
+8 Rue Fontaine de l'Aumone 15000,,,,8 Rue Fontaine de l'Aumone,,,Aurillac,
+8 Rue Fontaine de l'Aumone,2.448989,44.931240,,8 Rue Fontaine de l'Aumone,,,,15000
+8 Rue de la Courtille Crandelles,,,,8 Rue de la Courtille,,,,15250
+8 Rue de la Courtille 15250,,,,8 Rue de la Courtille,,,Crandelles,
+8 Rue de la Courtille,2.347828,44.959103,,8 Rue de la Courtille,,,,15250
+46 Route de Varet Naucelles,,,,46 Route de Varet,,,,15250
+46 Route de Varet 15250,,,,46 Route de Varet,,,Naucelles,
+46 Route de Varet,2.404563,44.958991,,46 Route de Varet,,,,15250
+30 Rue des Lacs Saint-Flour,,,,30 Rue des Lacs,,,,15100
+30 Rue des Lacs 15100,,,,30 Rue des Lacs,,,Saint-Flour,
+30 Rue des Lacs,3.089826,45.032924,,30 Rue des Lacs,,,,15100
+1 Impasse Martial Lapeyre Ydes,,,,1 Impasse Martial Lapeyre,,,,15210
+1 Impasse Martial Lapeyre 15210,,,,1 Impasse Martial Lapeyre,,,Ydes,
+1 Impasse Martial Lapeyre,2.441995,45.348398,,1 Impasse Martial Lapeyre,,,,15210
+9 Place de Laufen Brioude,,,,9 Place de Laufen,,,,43100
+9 Place de Laufen 43100,,,,9 Place de Laufen,,,Brioude,
+9 Place de Laufen,3.382916,45.293457,,9 Place de Laufen,,,,43100
+21 Avenue du Gévaudan Langeac,,,,21 Avenue du Gévaudan,,,,43300
+21 Avenue du Gévaudan 43300,,,,21 Avenue du Gévaudan,,,Langeac,
+21 Avenue du Gévaudan,3.505075,45.091996,,21 Avenue du Gévaudan,,,,43300
+20 Rue du Château Le Puy-en-Velay,,,,20 Rue du Château,,,,43750
+20 Rue du Château 43750,,,,20 Rue du Château,,,Le Puy-en-Velay,
+20 Rue du Château,3.893231,45.020288,,20 Rue du Château,,,,43750
+34 Rue d'Armois Sainte-Florine,,,,34 Rue d'Armois,,,,43250
+34 Rue d'Armois 43250,,,,34 Rue d'Armois,,,Sainte-Florine,
+34 Rue d'Armois,3.314876,45.410372,,34 Rue d'Armois,,,,43250
+25 Le Suc Saint-Pal-de-Mons,,,,25 Le Suc,,,,43620
+25 Le Suc 43620,,,,25 Le Suc,,,Saint-Pal-de-Mons,
+25 Le Suc,4.273248,45.250445,,25 Le Suc,,,,43620
+59 Rue Clovis Chirin Aubière,,,,59 Rue Clovis Chirin,,,,63170
+59 Rue Clovis Chirin 63170,,,,59 Rue Clovis Chirin,,,Aubière,
+59 Rue Clovis Chirin,3.105888,45.745978,,59 Rue Clovis Chirin,,,,63170
+22 Avenue de la Croix Morand Auzat-la-Combelle,,,,22 Avenue de la Croix Morand,,,,63570
+22 Avenue de la Croix Morand 63570,,,,22 Avenue de la Croix Morand,,,Auzat-la-Combelle,
+22 Avenue de la Croix Morand,3.309161,45.438491,,22 Avenue de la Croix Morand,,,,63570
+72 Rue Nationale Beaumont,,,,72 Rue Nationale,,,,63110
+72 Rue Nationale 63110,,,,72 Rue Nationale,,,Beaumont,
+72 Rue Nationale,3.084244,45.750439,,72 Rue Nationale,,,,63110
+163 Rue du Clos Blanzat,,,,163 Rue du Clos,,,,63112
+163 Rue du Clos 63112,,,,163 Rue du Clos,,,Blanzat,
+163 Rue du Clos,3.078353,45.831110,,163 Rue du Clos,,,,63112
+1 Traverse des Sagnes Le Broc,,,,1 Traverse des Sagnes,,,,63500
+1 Traverse des Sagnes 63500,,,,1 Traverse des Sagnes,,,Le Broc,
+1 Traverse des Sagnes,3.241032,45.500459,,1 Traverse des Sagnes,,,,63500
+18 Rue de Gergovie Le Cendre,,,,18 Rue de Gergovie,,,,63670
+18 Rue de Gergovie 63670,,,,18 Rue de Gergovie,,,Le Cendre,
+18 Rue de Gergovie,3.193774,45.725774,,18 Rue de Gergovie,,,,63670
+31 Avenue de la Gare Chamalières,,,,31 Avenue de la Gare,,,,63400
+31 Avenue de la Gare 63400,,,,31 Avenue de la Gare,,,Chamalières,
+31 Avenue de la Gare,3.060120,45.767723,,31 Avenue de la Gare,,,,63400
+54 Route de Volvic - Paugnat Charbonnières-les-Varennes,,,,54 Route de Volvic - Paugnat,,,,63410
+54 Route de Volvic - Paugnat 63410,,,,54 Route de Volvic - Paugnat,,,Charbonnières-les-Varennes,
+54 Route de Volvic - Paugnat,2.984622,45.883453,,54 Route de Volvic - Paugnat,,,,63410
+7 Rue des Plantades Chauriat,,,,7 Rue des Plantades,,,,63117
+7 Rue des Plantades 63117,,,,7 Rue des Plantades,,,Chauriat,
+7 Rue des Plantades,3.279480,45.749446,,7 Rue des Plantades,,,,63117
+32 Rue de la Cartoucherie Clermont-Ferrand,,,,32 Rue de la Cartoucherie,,,,63100
+32 Rue de la Cartoucherie 63100,,,,32 Rue de la Cartoucherie,,,Clermont-Ferrand,
+32 Rue de la Cartoucherie,3.100016,45.775061,,32 Rue de la Cartoucherie,,,,63100
+3 Rue Flameng Clermont-Ferrand,,,,3 Rue Flameng,,,,63100
+3 Rue Flameng 63100,,,,3 Rue Flameng,,,Clermont-Ferrand,
+3 Rue Flameng,3.095798,45.758707,,3 Rue Flameng,,,,63100
+18 Allée des Marronniers Clermont-Ferrand,,,,18 Allée des Marronniers,,,,63100
+18 Allée des Marronniers 63100,,,,18 Allée des Marronniers,,,Clermont-Ferrand,
+18 Allée des Marronniers,3.111780,45.787719,,18 Allée des Marronniers,,,,63100
+33 Rue Saint-Antoine Clermont-Ferrand,,,,33 Rue Saint-Antoine,,,,63100
+33 Rue Saint-Antoine 63100,,,,33 Rue Saint-Antoine,,,Clermont-Ferrand,
+33 Rue Saint-Antoine,3.116173,45.792260,,33 Rue Saint-Antoine,,,,63100
+1 Rue Aristide Briand Cournon-d'Auvergne,,,,1 Rue Aristide Briand,,,,63800
+1 Rue Aristide Briand 63800,,,,1 Rue Aristide Briand,,,Cournon-d'Auvergne,
+1 Rue Aristide Briand,3.186222,45.731510,,1 Rue Aristide Briand,,,,63800
+14 Impasse de la Roseraie Cournon-d'Auvergne,,,,14 Impasse de la Roseraie,,,,63800
+14 Impasse de la Roseraie 63800,,,,14 Impasse de la Roseraie,,,Cournon-d'Auvergne,
+14 Impasse de la Roseraie,3.198639,45.727507,,14 Impasse de la Roseraie,,,,63800
+28 Rue de la Grave Durtol,,,,28 Rue de la Grave,,,,63830
+28 Rue de la Grave 63830,,,,28 Rue de la Grave,,,Durtol,
+28 Rue de la Grave,3.058386,45.795515,,28 Rue de la Grave,,,,63830
+21 Rue Moulin du Roy Gerzat,,,,21 Rue Moulin du Roy,,,,63360
+21 Rue Moulin du Roy 63360,,,,21 Rue Moulin du Roy,,,Gerzat,
+21 Rue Moulin du Roy,3.152813,45.826178,,21 Rue Moulin du Roy,,,,63360
+40 Rue du Pont Issoire,,,,40 Rue du Pont,,,,63500
+40 Rue du Pont 63500,,,,40 Rue du Pont,,,Issoire,
+40 Rue du Pont,3.248942,45.541879,,40 Rue du Pont,,,,63500
+28 Rue Bernard Roquefeuil Lezoux,,,,28 Rue Bernard Roquefeuil,,,,63190
+28 Rue Bernard Roquefeuil 63190,,,,28 Rue Bernard Roquefeuil,,,Lezoux,
+28 Rue Bernard Roquefeuil,3.391867,45.820026,,28 Rue Bernard Roquefeuil,,,,63190
+4 Place de la Petite Charme Maringues,,,,4 Place de la Petite Charme,,,,63350
+4 Place de la Petite Charme 63350,,,,4 Place de la Petite Charme,,,Maringues,
+4 Place de la Petite Charme,3.330262,45.922831,,4 Place de la Petite Charme,,,,63350
+6152 Rue Célestin Tourres Mezel,,,,6152 Rue Célestin Tourres,,,,63115
+6152 Rue Célestin Tourres 63115,,,,6152 Rue Célestin Tourres,,,Mezel,
+6152 Rue Célestin Tourres,3.238716,45.757945,,6152 Rue Célestin Tourres,,,,63115
+9 Rue Gabriel Mercier Mozac,,,,9 Rue Gabriel Mercier,,,,63200
+9 Rue Gabriel Mercier 63200,,,,9 Rue Gabriel Mercier,,,Mozac,
+9 Rue Gabriel Mercier,3.089202,45.885324,,9 Rue Gabriel Mercier,,,,63200
+1 Chemin des Patureaux Orcines,,,,1 Chemin des Patureaux,,,,63870
+1 Chemin des Patureaux 63870,,,,1 Chemin des Patureaux,,,Orcines,
+1 Chemin des Patureaux,3.001297,45.767041,,1 Chemin des Patureaux,,,,63870
+5 Rue du College Pionsat,,,,5 Rue du Collège,,,,63330
+5 Rue du College 63330,,,,5 Rue du Collège,,,Pionsat,
+5 Rue du College,2.694346,46.110744,,5 Rue du Collège,,,,63330
+11 Route d'Issoire Les Pradeaux,,,,11 Route d'Issoire,,,,63500
+11 Route d'Issoire 63500,,,,11 Route d'Issoire,,,Les Pradeaux,
+11 Route d'Issoire,3.291097,45.510355,,11 Route d'Issoire,,,,63500
+12 Rue Jean-Baptiste Clément Riom,,,,12 Rue Jean-Baptiste Clément,,,,63200
+12 Rue Jean-Baptiste Clément 63200,,,,12 Rue Jean-Baptiste Clément,,,Riom,
+12 Rue Jean-Baptiste Clément,3.086635,45.905239,,12 Rue Jean-Baptiste Clément,,,,63200
+69 Avenue de Clémensat Romagnat,,,,69 Avenue de Clémensat,,,,63540
+69 Avenue de Clémensat 63540,,,,69 Avenue de Clémensat,,,Romagnat,
+69 Avenue de Clémensat,3.082450,45.723140,,69 Avenue de Clémensat,,,,63540
+8 Rue George Sand Saint-Beauzire,,,,8 Rue George Sand,,,,63360
+8 Rue George Sand 63360,,,,8 Rue George Sand,,,Saint-Beauzire,
+8 Rue George Sand,3.175700,45.851386,,8 Rue George Sand,,,,63360
+15 Rue de Montfoulhoux Saint-Georges-sur-Allier,,,,15 Rue de Montfoulhoux,,,,63800
+15 Rue de Montfoulhoux 63800,,,,15 Rue de Montfoulhoux,,,Saint-Georges-sur-Allier,
+15 Rue de Montfoulhoux,3.243462,45.709963,,15 Rue de Montfoulhoux,,,,63800
+3 Rue du Sabotier Saurier,,,,3 Rue du Sabotier,,,,63320
+3 Rue du Sabotier 63320,,,,3 Rue du Sabotier,,,Saurier,
+3 Rue du Sabotier,3.044664,45.538395,,3 Rue du Sabotier,,,,63320
+62 Rue de la Fraternité Thiers,,,,62 Rue de la Fraternité,,,,63300
+62 Rue de la Fraternité 63300,,,,62 Rue de la Fraternité,,,Thiers,
+62 Rue de la Fraternité,3.550064,45.861050,,62 Rue de la Fraternité,,,,63300
+14 Rue du Verger Vertaizon,,,,14 Rue du Verger,,,,63910
+14 Rue du Verger 63910,,,,14 Rue du Verger,,,Vertaizon,
+14 Rue du Verger,3.286366,45.769143,,14 Rue du Verger,,,,63910
+2 Allée de la Forêt Marcenat Volvic,,,,2 Allée de la Forêt Marcenat,,,,63530
+2 Allée de la Forêt Marcenat 63530,,,,2 Allée de la Forêt Marcenat,,,Volvic,
+2 Allée de la Forêt Marcenat,2.992565,45.878299,,2 Allée de la Forêt Marcenat,,,,63530
