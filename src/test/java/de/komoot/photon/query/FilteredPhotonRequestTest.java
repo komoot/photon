@@ -14,7 +14,7 @@ public class FilteredPhotonRequestTest {
 
     @Test
     public void testNotKey() {
-        FilteredPhotonRequest filteredPhotonRequest = new FilteredPhotonRequest(null, null, null, null, null);
+        FilteredPhotonRequest filteredPhotonRequest = new FilteredPhotonRequest(null, 0, null, 0, null);
         filteredPhotonRequest.notKeys("exclude");
         filteredPhotonRequest.notKeys("exclude");
         filteredPhotonRequest.notKeys("anotherExclude");
@@ -27,7 +27,7 @@ public class FilteredPhotonRequestTest {
 
     @Test
     public void testNotTag() {
-        FilteredPhotonRequest filteredPhotonRequest = new FilteredPhotonRequest(null, null, null, null, null);
+        FilteredPhotonRequest filteredPhotonRequest = new FilteredPhotonRequest(null, 0, null, 0, null);
         filteredPhotonRequest.notTags("aKey", ImmutableSet.of("aValue"));
         filteredPhotonRequest.notTags("anotherKey", ImmutableSet.of("anotherValue"));
         Map<String, Set<String>> excludeTags = filteredPhotonRequest.notTags();
@@ -37,7 +37,7 @@ public class FilteredPhotonRequestTest {
 
     @Test
     public void testNotValue() {
-        FilteredPhotonRequest filteredPhotonRequest = new FilteredPhotonRequest(null, null, null, null, null);
+        FilteredPhotonRequest filteredPhotonRequest = new FilteredPhotonRequest(null, 0, null, 0, null);
         filteredPhotonRequest.notValues("exclude");
         filteredPhotonRequest.notValues("exclude");
         filteredPhotonRequest.notValues("anotherExclude");
@@ -48,7 +48,7 @@ public class FilteredPhotonRequestTest {
 
     @Test
     public void testKey() {
-        FilteredPhotonRequest filteredPhotonRequest = new FilteredPhotonRequest(null, null, null, null, null);
+        FilteredPhotonRequest filteredPhotonRequest = new FilteredPhotonRequest(null, 0, null, 0, null);
         filteredPhotonRequest.keys("keyToInclude");
         filteredPhotonRequest.keys("keyToInclude");
         filteredPhotonRequest.keys("anotherKeyToInclude");
@@ -57,7 +57,7 @@ public class FilteredPhotonRequestTest {
 
     @Test
     public void testTag() {
-        FilteredPhotonRequest filteredPhotonRequest = new FilteredPhotonRequest(null, null, null, null, null);
+        FilteredPhotonRequest filteredPhotonRequest = new FilteredPhotonRequest(null, 0, null, 0, null);
         filteredPhotonRequest.tags("aKey", ImmutableSet.of("aValue"));
         filteredPhotonRequest.tags("anotherKey", ImmutableSet.of("anotherValue"));
         Map<String, Set<String>> includeTags = filteredPhotonRequest.tags();
@@ -68,7 +68,7 @@ public class FilteredPhotonRequestTest {
 
     @Test
     public void testValue() {
-        FilteredPhotonRequest filteredPhotonRequest = new FilteredPhotonRequest(null, null, null, null, null);
+        FilteredPhotonRequest filteredPhotonRequest = new FilteredPhotonRequest(null, 0, null, 0, null);
         filteredPhotonRequest.values("keyToInclude");
         filteredPhotonRequest.values("keyToInclude");
         filteredPhotonRequest.values("anotherKeyToInclude");

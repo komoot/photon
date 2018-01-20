@@ -19,14 +19,14 @@ public interface TagFilterQueryBuilder {
      * @param limit number of search results to return.
      * @return
      */
-    TagFilterQueryBuilder withLimit(Integer limit);
+    TagFilterQueryBuilder withLimit(int limit);
 
     /**
      * Location bias for query. By setting this, places found will be sorted by proximity to this point.
      *
      * @param point Geographical {@link Point}
      */
-    TagFilterQueryBuilder withLocationBias(Point point, Boolean locationDistanceSort);
+    TagFilterQueryBuilder withLocationBias(Point point, double radius);
 
     /**
      * Search results will be filtered to contain places having tags as provided in the argument. For example, if the argument contains

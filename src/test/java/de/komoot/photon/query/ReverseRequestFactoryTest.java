@@ -158,7 +158,7 @@ public class ReverseRequestFactoryTest {
         Mockito.when(mockRequest.queryParams("limit")).thenReturn("51");
         ReverseRequestFactory reverseRequestFactory = new ReverseRequestFactory(ImmutableSet.of("en"));
         reverseRequest = reverseRequestFactory.create(mockRequest);
-        Assert.assertEquals(reverseRequest.getLimit().longValue(), 50);
+        Assert.assertEquals(reverseRequest.getLimit(), 50);
         Mockito.verify(mockRequest, Mockito.times(1)).queryParams("limit");
     }
 }

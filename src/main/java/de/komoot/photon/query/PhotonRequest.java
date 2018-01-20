@@ -8,17 +8,17 @@ import java.io.Serializable;
  * Created by Sachin Dole on 2/12/2015.
  */
 public class PhotonRequest implements Serializable {
-    private String query;
-    private Integer limit;
-    private Point locationForBias;
-    private String language;
-    private Boolean locationDistanceSort = true;
+    private final String query;
+    private final int limit;
+    private final Point locationForBias;
+    private final String language;
+    private final double radiusForBias;
 
-    public PhotonRequest(String query, Integer limit, Point locationForBias, Boolean locationDistanceSort, String language) {
+    public PhotonRequest(String query, int limit, Point locationForBias, double radiusForBias, String language) {
         this.query = query;
         this.limit = limit;
         this.locationForBias = locationForBias;
-        this.locationDistanceSort = locationDistanceSort;
+        this.radiusForBias = radiusForBias;
         this.language = language;
     }
 
@@ -26,7 +26,7 @@ public class PhotonRequest implements Serializable {
         return query;
     }
 
-    public Integer getLimit() {
+    public int getLimit() {
         return limit;
     }
 
@@ -34,8 +34,8 @@ public class PhotonRequest implements Serializable {
         return locationForBias;
     }
 
-    public Boolean getLocationDistanceSort() {
-        return locationDistanceSort;
+    public double getRadiusForBias() {
+        return radiusForBias;
     }
 
     public String getLanguage() {

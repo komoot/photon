@@ -8,20 +8,18 @@ import java.io.Serializable;
  * @author svantulden
  */
 public class ReverseRequest implements Serializable {
-    private Point location;
-    private String language;
-    private Double radius;
-    private Integer limit;
-    private String queryStringFilter;
-    private Boolean locationDistanceSort = true;
+    private final Point location;
+    private final String language;
+    private final double radius;
+    private final int limit;
+    private final String queryStringFilter;
 
-    public ReverseRequest(Point location, String language, Double radius, String queryStringFilter, Integer limit, Boolean locationDistanceSort) {
+    public ReverseRequest(Point location, String language, double radius, String queryStringFilter, int limit) {
         this.location = location;
         this.language = language;
         this.radius = radius;
         this.limit = limit;
         this.queryStringFilter = queryStringFilter;
-        this.locationDistanceSort = locationDistanceSort;
     }
 
     public Point getLocation() {
@@ -32,19 +30,15 @@ public class ReverseRequest implements Serializable {
         return language;
     }
 
-    public Double getRadius() {
+    public double getRadius() {
         return radius;
     }
 
-    public Integer getLimit() {
+    public int getLimit() {
         return limit;
     }
 
     public String getQueryStringFilter() {
         return queryStringFilter;
-    }
-
-    public Boolean getLocationDistanceSort() {
-        return locationDistanceSort;
     }
 }

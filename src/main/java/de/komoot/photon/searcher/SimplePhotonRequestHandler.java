@@ -16,8 +16,7 @@ public class SimplePhotonRequestHandler extends AbstractPhotonRequestHandler<Pho
     @Override
     public TagFilterQueryBuilder buildQuery(PhotonRequest photonRequest) {
         Point point = photonRequest.getLocationForBias();
-        Boolean locationDistanceSort = photonRequest.getLocationDistanceSort();
 
-        return PhotonQueryBuilder.builder(photonRequest.getQuery(), photonRequest.getLanguage()).withLocationBias(point, locationDistanceSort);
+        return PhotonQueryBuilder.builder(photonRequest.getQuery(), photonRequest.getLanguage()).withLocationBias(point, photonRequest.getRadiusForBias());
     }
 }

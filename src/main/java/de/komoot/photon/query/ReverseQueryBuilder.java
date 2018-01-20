@@ -33,15 +33,15 @@ public class ReverseQueryBuilder implements TagFilterQueryBuilder {
     }
 
     @Override
-    public TagFilterQueryBuilder withLimit(Integer limit) {
-        this.limit = limit == null || limit < 0 ? 0 : limit;
+    public TagFilterQueryBuilder withLimit(int limit) {
+        this.limit = limit < 0 ? 0 : limit;
         this.limit = this.limit > 5000 ? 5000 : this.limit;
 
         return this;
     }
 
     @Override
-    public TagFilterQueryBuilder withLocationBias(Point point, Boolean locationDistanceSort) {
+    public TagFilterQueryBuilder withLocationBias(Point point, double radius) {
         throw new RuntimeException(new NoSuchMethodException("this method is not implemented (NOOP)"));
     }
 

@@ -37,7 +37,7 @@ import static com.google.common.collect.Maps.newHashMap;
 public class PhotonQueryBuilder implements TagFilterQueryBuilder {
     private FunctionScoreQueryBuilder m_finalQueryWithoutTagFilterBuilder;
 
-    private Integer limit = 50;
+    private int limit = 50;
 
     private BoolQueryBuilder m_queryBuilderForTopLevelFilter;
 
@@ -109,15 +109,15 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder {
 
 
     @Override
-    public TagFilterQueryBuilder withLimit(Integer limit) {
-        this.limit = limit == null || limit < 1 ? 15 : limit;
+    public TagFilterQueryBuilder withLimit(int limit) {
+        this.limit = limit < 1 ? 15 : limit;
         this.limit = this.limit > 50 ? 50 : this.limit;
         return this;
     }
 
 
     @Override
-    public TagFilterQueryBuilder withLocationBias(Point point, Boolean locationDistanceSort) {
+    public TagFilterQueryBuilder withLocationBias(Point point, double radius) {
         if (point == null) return this;
         Map<String, Object> params = newHashMap();
         params.put("lon", point.getX());
@@ -126,29 +126,14 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder {
         // this is former location-biased-score, now inline exemplary debugged score: 0.5000002150154673, is multiplied with the scores from other query
         // parts: 2150.804 (basequery) * 31,7 (importance doc value-script, former general-score) the score from the location distance is very small with
         // respect to the score of the other query parts, thus it has a very small, up to zero, influence to the final sorting of the documents
-        String strCode = "double dist = doc['coordinate'].planeDistance(params.lat, params.lon); double score = 0.5 + ( 1.5 / (1.0 + dist * 1000 /40.0)); score";
+        String strCode = "double dist = doc['coordinate'].planeDistance(params.lat, params.lon); " +
+                "double score = 0.05 + 0.5 / (1.0 + ( dist * 0.001 - " + radius + ") / 10.0); " +
+                "score";
         ScriptScoreFunctionBuilder builder = ScoreFunctionBuilders.scriptFunction(new Script(ScriptType.INLINE, "painless", strCode, params));
-
-        // in the case we want to sort against the location distance, only the
-        // according function score is relevant
-        if (locationDistanceSort) {
-
-            m_alFilterFunction4QueryBuilder.clear();
-            m_alFilterFunction4QueryBuilder.add(new FilterFunctionBuilder(builder));
-
-            m_finalQueryWithoutTagFilterBuilder =
-                    new FunctionScoreQueryBuilder(m_query4QueryBuilder, m_alFilterFunction4QueryBuilder.toArray(new FilterFunctionBuilder[0]))
-                            .boostMode(CombineFunction.REPLACE).scoreMode(ScoreMode.MULTIPLY);
-
-        } else {
-
-            m_alFilterFunction4QueryBuilder.add(new FilterFunctionBuilder(builder));
-
-            m_finalQueryWithoutTagFilterBuilder =
-                    new FunctionScoreQueryBuilder(m_query4QueryBuilder, m_alFilterFunction4QueryBuilder.toArray(new FilterFunctionBuilder[0]))
-                            .boostMode(CombineFunction.MULTIPLY).scoreMode(ScoreMode.MULTIPLY);
-        }
-
+        m_alFilterFunction4QueryBuilder.add(new FilterFunctionBuilder(builder));
+        m_finalQueryWithoutTagFilterBuilder =
+                new FunctionScoreQueryBuilder(m_query4QueryBuilder, m_alFilterFunction4QueryBuilder.toArray(new FilterFunctionBuilder[0]))
+                        .boostMode(CombineFunction.MULTIPLY);
         return this;
     }
 

@@ -22,8 +22,7 @@ public class PhotonQueryBuilderTest {
     @Test
     public void testNullOrZeroIs15WithLimit() throws Exception {
         TagFilterQueryBuilder queryBuilder = PhotonQueryBuilder.builder("", "en");
-        Integer[] testValues = {null, 0, -1};
-        for (Integer testValue : testValues) {
+        for (int testValue : new int[]{0,-1}) {
             queryBuilder.withLimit(testValue);
             Integer actualLimit = ReflectionTestUtil.getFieldValue(queryBuilder, "limit");
             assertThat(actualLimit, equalTo(15));

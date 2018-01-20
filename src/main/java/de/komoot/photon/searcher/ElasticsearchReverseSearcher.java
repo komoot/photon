@@ -8,5 +8,5 @@ import org.elasticsearch.index.query.QueryBuilder;
  * @author svantulden
  */
 public interface ElasticsearchReverseSearcher {
-    SearchResponse search(QueryBuilder queryBuilder, Integer limit, Point location, Boolean locationDistanceSort);
+    SearchResponse search(QueryBuilder queryBuilder, int limit, Point location);
 }

@@ -17,7 +17,7 @@ public class ReverseRequestFactory {
     private final LanguageChecker languageChecker;
     private final static GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
 
-    protected static HashSet<String> m_hsRequestQueryParams = new HashSet<>(Arrays.asList("lang", "lon", "lat", "radius", "query_string_filter", "distance_sort", "limit"));
+    protected static HashSet<String> m_hsRequestQueryParams = new HashSet<>(Arrays.asList("lang", "lon", "lat", "radius", "query_string_filter", "limit"));
 
     public ReverseRequestFactory(Set<String> supportedLanguages) {
         this.languageChecker = new LanguageChecker(supportedLanguages);
@@ -70,17 +70,6 @@ public class ReverseRequestFactory {
 
         String queryStringFilter = webRequest.queryParams("query_string_filter");
 
-        Boolean locationDistanceSort = true;
-        try {
-            if (webRequest.queryParams("distance_sort") == null)
-                locationDistanceSort = true;
-            else
-                locationDistanceSort = Boolean.valueOf(webRequest.queryParams("distance_sort"));
-
-        } catch (Exception nfe) {
-            throw new BadRequestException(400, "invalid search term 'query_string_filter', can only be true|false");
-        }
-
         Integer limit = 1;
         String limitParam = webRequest.queryParams("limit");
         if (limitParam != null) {
@@ -97,8 +86,7 @@ public class ReverseRequestFactory {
             }
         }
 
-
-        ReverseRequest reverseRequest = new ReverseRequest(location, language, radius, queryStringFilter, limit, locationDistanceSort);
+        ReverseRequest reverseRequest = new ReverseRequest(location, language, radius, queryStringFilter, limit);
 
         return (R) reverseRequest;
     }
