@@ -123,11 +123,8 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder {
         params.put("lon", point.getX());
         params.put("lat", point.getY());
 
-        // this is former location-biased-score, now inline exemplary debugged score: 0.5000002150154673, is multiplied with the scores from other query
-        // parts: 2150.804 (basequery) * 31,7 (importance doc value-script, former general-score) the score from the location distance is very small with
-        // respect to the score of the other query parts, thus it has a very small, up to zero, influence to the final sorting of the documents
         String strCode = "double dist = doc['coordinate'].planeDistance(params.lat, params.lon); " +
-                "double score = 0.05 + 0.5 / (1.0 + ( dist * 0.001 - " + radius + ") / 10.0); " +
+                "double score = 0.1 + 0.5 / (1.0 + ( dist * 0.001 - " + radius + ") / 10.0); " +
                 "score";
         ScriptScoreFunctionBuilder builder = ScoreFunctionBuilders.scriptFunction(new Script(ScriptType.INLINE, "painless", strCode, params));
         m_alFilterFunction4QueryBuilder.add(new FilterFunctionBuilder(builder));
