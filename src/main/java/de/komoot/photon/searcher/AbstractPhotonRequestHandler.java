@@ -22,7 +22,8 @@ public abstract class AbstractPhotonRequestHandler<R extends PhotonRequest> impl
     @Override
     public List<JSONObject> handle(R photonRequest) {
         TagFilterQueryBuilder queryBuilder = buildQuery(photonRequest);
-        Integer limit = photonRequest.getLimit();
+        // for the case of deduplication we need a bit more results, #300
+        int limit = photonRequest.getLimit() > 1 ? (int) Math.round(photonRequest.getLimit() * 1.5) : 1;
         SearchResponse results = elasticsearchSearcher.search(queryBuilder.buildQuery(), limit);
         if (results.getHits().getTotalHits() == 0) {
             results = elasticsearchSearcher.search(queryBuilder.withLenientMatch().buildQuery(), limit);
