@@ -301,6 +301,21 @@ public class NominatimConnector {
         }
     }
 
+    static String convertCountryCode(String... countryCodes) {
+        String countryCodeStr = "";
+        for (String cc : countryCodes) {
+            // "".split(",") results in 'new String[]{""}' and not 'new String[0]'
+            if (cc.isEmpty())
+                continue;
+            if (cc.length() != 2)
+                throw new IllegalArgumentException("country code invalid " + cc);
+            if (!countryCodeStr.isEmpty())
+                countryCodeStr += ",";
+            countryCodeStr += "'" + cc.toLowerCase() + "'";
+        }
+        return countryCodeStr;
+    }
+
     /**
      * parses every relevant row in placex, creates a corresponding document and calls the {@link #importer} for every document
      */
@@ -315,15 +330,8 @@ public class NominatimConnector {
         Thread importThread = new Thread(new ImportThread(documents));
         importThread.start();
         String andCountryCodeStr = "", whereCountryCodeStr = "";
-        if (countryCodes.length > 0) {
-            String countryCodeStr = "";
-            for (String cc : countryCodes) {
-                if (cc.length() != 2)
-                    throw new IllegalArgumentException("country code invalid " + cc);
-                if (!countryCodeStr.isEmpty())
-                    countryCodeStr += ",";
-                countryCodeStr += "'" + cc.toLowerCase() + "'";
-            }
+        String countryCodeStr = convertCountryCode(countryCodes);
+        if (!countryCodeStr.isEmpty()) {
             andCountryCodeStr = "AND country_code in (" + countryCodeStr + ")";
             whereCountryCodeStr = "WHERE country_code in (" + countryCodeStr + ")";
         }
