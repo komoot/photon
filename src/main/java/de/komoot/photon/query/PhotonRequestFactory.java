@@ -19,7 +19,8 @@ public class PhotonRequestFactory {
     private final LanguageChecker languageChecker;
     private final static GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
 
-    protected static HashSet<String> m_hsRequestQueryParams = new HashSet<>(Arrays.asList("lang", "q", "lon", "lat", "limit", "distance_sort", "osm_tag"));
+    protected static HashSet<String> m_hsRequestQueryParams = new HashSet<>(Arrays.asList("lang", "q", "lon", "lat",
+            "limit", "distance_sort", "osm_tag", "location_bias_scale"));
 
     public PhotonRequestFactory(Set<String> supportedLanguages) {
         this.languageChecker = new LanguageChecker(supportedLanguages);
@@ -52,21 +53,18 @@ public class PhotonRequestFactory {
         } catch (Exception nfe) {
             //ignore
         }
-        Boolean locationDistanceSort = true;
-        try {
-            if (webRequest.queryParams("distance_sort") == null)
-                locationDistanceSort = true;
-            else
-                locationDistanceSort = Boolean.valueOf(webRequest.queryParams("distance_sort"));
 
+        double scale = 1.8;
+        try {
+            scale = Double.parseDouble(webRequest.queryParams("location_bias_scale"));
         } catch (Exception nfe) {
             //ignore
         }
         QueryParamsMap tagFiltersQueryMap = webRequest.queryMap("osm_tag");
         if (!new CheckIfFilteredRequest().execute(tagFiltersQueryMap)) {
-            return (R) new PhotonRequest(query, limit, locationForBias, locationDistanceSort, language);
+            return (R) new PhotonRequest(query, limit, locationForBias, scale, language);
         }
-        FilteredPhotonRequest photonRequest = new FilteredPhotonRequest(query, limit, locationForBias, locationDistanceSort, language);
+        FilteredPhotonRequest photonRequest = new FilteredPhotonRequest(query, limit, locationForBias, scale, language);
         String[] tagFilters = tagFiltersQueryMap.values();
         setUpTagFilters(photonRequest, tagFilters);
 
