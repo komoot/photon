@@ -151,11 +151,11 @@ public class Server {
         final File photonDirectory = new File(mainDirectory, "photon_data");
         this.esDirectory = new File(photonDirectory, "elasticsearch");
         final File pluginDirectory = new File(esDirectory, "plugins");
-        final File scriptsDirectory = new File(esDirectory, "config/scripts");
+        final File analysisDirectory = new File(esDirectory, "config/analysis");
         final File painlessDirectory = new File(esDirectory, "modules/lang-painless");
 
-        for (File directory : new File[]{photonDirectory, esDirectory, pluginDirectory, scriptsDirectory,
-                painlessDirectory}) {
+        for (File directory : new File[]{photonDirectory, esDirectory, pluginDirectory,
+                painlessDirectory, analysisDirectory}) {
             directory.mkdirs();
         }
 
@@ -175,6 +175,19 @@ public class Server {
         Files.copy(loader.getResourceAsStream("modules/lang-painless/plugin-security.policy"),
                 new File(painlessDirectory, "plugin-security.policy").toPath(), StandardCopyOption.REPLACE_EXISTING);
 
+        copyOrReplace("config/analysis/hyphenation_patterns.xml",
+                        new File(analysisDirectory, "hyphenation_patterns.xml"));
+
+        copyOrReplace("modules/photon-es/photon-es.jar",
+                        new File(painlessDirectory, "photon-es.jar"));
+        copyOrReplace("modules/photon-es/plugin-descriptor.properties",
+                        new File(painlessDirectory, "plugin-descriptor.properties"));
+    }
+
+    private void copyOrReplace(String resource, File destination) throws IOException {
+        final ClassLoader loader = Thread.currentThread().getContextClassLoader();
+        Files.copy(loader.getResourceAsStream(resource), destination.toPath(),
+                        StandardCopyOption.REPLACE_EXISTING);
     }
 
     public void recreateIndex() throws IOException {
@@ -200,6 +213,7 @@ public class Server {
         client.admin().indices().prepareCreate("photon").setSettings(settings.toString(), XContentType.JSON).execute().actionGet();
         ;
         client.admin().indices().preparePutMapping("photon").setType("place").setSource(mappingsJSON.toString(), XContentType.JSON).execute().actionGet();
+
         log.info("mapping created: " + mappingsJSON.toString());
     }
 

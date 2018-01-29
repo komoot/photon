@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE hyphenation-info SYSTEM "hyphenation.dtd">
+<hyphenation-info>
+<hyphen-char value="-"/>
+<hyphen-min before="2" after="2"/>
+<classes>
+@!$%^&amp;*()_-+=~`{[}]:;'|&lt;,.&gt;?/0123455789
+aA
+bB
+cC
+dD
+eE
+fF
+gG
+hH
+iI
+jJ
+kK
+lL
+mM
+nN
+oO
+pP
+qQ
+rR
+sS
+tT
+uU
+vV
+wW
+xX
+yY
+zZ
+äÄ
+åÅ
+öÖ
+üÜ
+ß
+</classes>
+
+<exceptions>
+</exceptions>
+
+<!-- 
+Numerals in the following patterns indicate word positions,
+at which a split should occure. 
+The dot represent word start/end markers.
+
+Note: even digit means: avoid split, uneven: consider split, value reflects priority   
+Because of a bug in lucene, only digits between 1-6 should be used.
+(see https://issues.apache.org/jira/browse/LUCENE-8124)
+
+Example:
+For pattern 5str. the hyphenation_decompounder would generate the following tokens:
+Hauptst => Haupts
+Hauptstr => Hauptstr, Haupt, str
+Hauptstra => Hauptstra
+
+This filter assumes to be applied after lowercasing and assci_folding/german_normalization.
+
+-->
+
+<patterns>
+5aue.
+5allee.
+5berg.
+5blick.
+5chaussee.
+5damm.
+5dorf.
+5feld.
+5felde.
+5fleck.
+5flecklein.
+5gasse.
+5garten.
+5gebiet.
+5graben.
+5hain.
+5heide.
+5hoehe.
+5hof.
+5hofe.
+5markt.
+5park.
+5platz.
+5ring.
+5stadt.
+5str.
+5strasse.
+5tal.
+5ufer.
+5wald.
+5weg.
+5werk.
+</patterns>
+
+</hyphenation-info>
