@@ -5,6 +5,7 @@ import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Point;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -18,6 +19,7 @@ import java.util.Set;
  */
 @Getter
 @Setter
+@Slf4j
 public class PhotonDoc {
     final private long placeId;
     final private String osmType;
@@ -36,6 +38,8 @@ public class PhotonDoc {
     final private int rankSearch;
 
     private Map<String, String> street;
+    private Map<String, String> neighbourhood;
+    private Map<String, String> suburb;
     private Map<String, String> city;
     private Set<Map<String, String>> context = new HashSet<Map<String, String>>();
     private Map<String, String> country;
@@ -88,6 +92,8 @@ public class PhotonDoc {
         this.linkedPlaceId = other.linkedPlaceId;
         this.rankSearch = other.rankSearch;
         this.street = other.street;
+        this.neighbourhood = other.neighbourhood;
+        this.suburb = other.suburb;
         this.city = other.city;
         this.context = other.context;
         this.country = other.country;
@@ -127,10 +133,53 @@ public class PhotonDoc {
     public void completeFromAddress() {
         String addressStreet = address != null ? address.get("street") : null;
         if (addressStreet != null) {
-            if (street == null) {
-                street = new HashMap<>();
+            if (this.street == null) {
+                this.street = new HashMap<>();
             }
-            street.put("name", addressStreet);
+            setOrReplace(addressStreet, this.street, "street");
+        }
+        
+        String addressCity = address != null ? address.get("city") : null;
+        if (addressCity != null) {
+            if (this.city == null) {
+                this.city = new HashMap<>();
+            }
+            setOrReplace(addressCity, this.city, "city");
+        }
+        
+        String addressSuburb = address != null ? address.get("suburb") : null;
+        if (addressSuburb != null) {
+            if (this.suburb == null) {
+                this.suburb = new HashMap<>();
+            }
+            setOrReplace(addressSuburb, this.suburb, "suburb");
+        }
+        
+        String addressNeighbourhood = address != null ? address.get("neighbourhood") : null;
+        if (addressNeighbourhood != null) {
+            if (this.neighbourhood == null) {
+                this.neighbourhood = new HashMap<>();
+            }
+            setOrReplace(addressNeighbourhood, this.neighbourhood, "neighbourhood");
+        }
+        
+        String addressPostCode = address != null ? address.get("postcode") : null;
+        if (addressPostCode != null && !addressPostCode.equals(this.postcode)) {
+            if (log.isDebugEnabled()) {
+                log.debug("Replacing postcode "+this.postcode+" with "+ addressPostCode+ " for osmId #" + osmId);
+            }
+            this.postcode = addressPostCode;
+        }
+    }
+
+    private void setOrReplace(String name, Map<String, String> namesMap, String field) {
+        String existingName = namesMap.get("name");
+        if (!name.equals(existingName)) {
+            if (log.isDebugEnabled()) {
+                log.debug("Replacing "+ field +" name '"+existingName+"' with '"+ name+ "' for osmId #" + osmId);
+            }
+            // TODO: do we need to add former name to context or better not, as it might have been wrong?
+            namesMap.put("name", name);
         }
     }
 }

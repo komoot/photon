@@ -489,6 +489,16 @@ public class NominatimConnector {
                 continue;
             }
 
+            if (address.isNeighbourhood() && doc.getNeighbourhood() == null) {
+                doc.setNeighbourhood(address.getName());
+                continue;
+            }
+
+            if (address.isSuburb() && doc.getSuburb() == null) {
+                doc.setSuburb(address.getName());
+                continue;
+            }
+
             if (address.isState() && doc.getState() == null) {
                 doc.setState(address.getName());
                 continue;
