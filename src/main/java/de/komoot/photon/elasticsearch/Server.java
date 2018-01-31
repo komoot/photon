@@ -153,9 +153,10 @@ public class Server {
         final File pluginDirectory = new File(esDirectory, "plugins");
         final File analysisDirectory = new File(esDirectory, "config/analysis");
         final File painlessDirectory = new File(esDirectory, "modules/lang-painless");
+        final File photonEsModuleDirectory = new File(esDirectory, "modules/photon-es");
 
         for (File directory : new File[]{photonDirectory, esDirectory, pluginDirectory,
-                painlessDirectory, analysisDirectory}) {
+                painlessDirectory, analysisDirectory, photonEsModuleDirectory}) {
             directory.mkdirs();
         }
 
@@ -179,9 +180,9 @@ public class Server {
                         new File(analysisDirectory, "hyphenation_patterns.xml"));
 
         copyOrReplace("modules/photon-es/photon-es.jar",
-                        new File(painlessDirectory, "photon-es.jar"));
+                        new File(photonEsModuleDirectory, "photon-es.jar"));
         copyOrReplace("modules/photon-es/plugin-descriptor.properties",
-                        new File(painlessDirectory, "plugin-descriptor.properties"));
+                        new File(photonEsModuleDirectory, "plugin-descriptor.properties"));
     }
 
     private void copyOrReplace(String resource, File destination) throws IOException {
