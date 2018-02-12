@@ -320,15 +320,9 @@ public class NominatimConnector {
      * parses every relevant row in placex, creates a corresponding document and calls the {@link #importer} for every document
      */
     public void readEntireDatabase(String... countryCodes) {
-        log.info("start importing documents from nominatim (" + (countryCodes.length == 0 ? "global" : String.join(",", countryCodes)) + ")");
-        final AtomicLong counter = new AtomicLong();
-
         final int progressInterval = 50000;
         final long startMillis = System.currentTimeMillis();
 
-        final BlockingQueue<PhotonDoc> documents = new LinkedBlockingDeque<PhotonDoc>(20);
-        Thread importThread = new Thread(new ImportThread(documents));
-        importThread.start();
         String andCountryCodeStr = "", whereCountryCodeStr = "";
         String countryCodeStr = convertCountryCode(countryCodes);
         if (!countryCodeStr.isEmpty()) {
@@ -336,6 +330,12 @@ public class NominatimConnector {
             whereCountryCodeStr = "WHERE country_code in (" + countryCodeStr + ")";
         }
 
+        log.info("start importing documents from nominatim (" + (countryCodeStr.isEmpty() ? "global" : countryCodeStr));
+
+        final BlockingQueue<PhotonDoc> documents = new LinkedBlockingDeque<>(20);
+        Thread importThread = new Thread(new ImportThread(documents));
+        importThread.start();
+        final AtomicLong counter = new AtomicLong();
         template.query("SELECT " + selectColsPlaceX +
                 " FROM placex " +
                 " WHERE linked_place_id IS NULL AND centroid IS NOT NULL " + andCountryCodeStr +
