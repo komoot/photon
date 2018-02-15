@@ -332,7 +332,7 @@ public class NominatimConnector {
             whereCountryCodeStr = "WHERE country_code in (" + countryCodeStr + ")";
         }
 
-        log.info("start importing documents from nominatim (" + (countryCodeStr.isEmpty() ? "global" : countryCodeStr));
+        log.info("start importing documents from nominatim (" + (countryCodeStr.isEmpty() ? "global" : countryCodeStr) + ")");
 
         final BlockingQueue<PhotonDoc> documents = new LinkedBlockingDeque<>(20);
         Thread importThread = new Thread(new ImportThread(documents));
