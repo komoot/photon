@@ -55,11 +55,14 @@ public class PhotonRequestFactory {
         }
 
         double scale = 1.8;
-        try {
-            scale = Double.parseDouble(webRequest.queryParams("location_bias_scale"));
-        } catch (Exception nfe) {
-            throw new BadRequestException(400, "invalid parameter 'distance_sort', can only be true or false");
-        }
+        String scaleStr = webRequest.queryParams("location_bias_scale");
+        if (scaleStr != null && !scaleStr.isEmpty())
+            try {
+                scale = Double.parseDouble(scaleStr);
+            } catch (Exception nfe) {
+                throw new BadRequestException(400, "invalid parameter 'location_bias_scale' must be a number");
+            }
+
         QueryParamsMap tagFiltersQueryMap = webRequest.queryMap("osm_tag");
         if (!new CheckIfFilteredRequest().execute(tagFiltersQueryMap)) {
             return (R) new PhotonRequest(query, limit, locationForBias, scale, language);
