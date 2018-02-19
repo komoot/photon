@@ -17,7 +17,6 @@ public interface TagFilterQueryBuilder {
      * Limit for number of results to return. Default is delegated to elastic search and max limit is 50.
      *
      * @param limit number of search results to return.
-     *
      * @return
      */
     TagFilterQueryBuilder withLimit(Integer limit);

@@ -31,7 +31,7 @@ public class FilteredPhotonRequestTest {
         filteredPhotonRequest.notTags("aKey", ImmutableSet.of("aValue"));
         filteredPhotonRequest.notTags("anotherKey", ImmutableSet.of("anotherValue"));
         Map<String, Set<String>> excludeTags = filteredPhotonRequest.notTags();
-        Assert.assertEquals(ImmutableMap.of("anotherKey",ImmutableSet.of("anotherValue"), "aKey",ImmutableSet.of("aValue")), excludeTags);
+        Assert.assertEquals(ImmutableMap.of("anotherKey", ImmutableSet.of("anotherValue"), "aKey", ImmutableSet.of("aValue")), excludeTags);
         Assert.assertEquals(2, excludeTags.size());
     }
 
@@ -42,36 +42,36 @@ public class FilteredPhotonRequestTest {
         filteredPhotonRequest.notValues("exclude");
         filteredPhotonRequest.notValues("anotherExclude");
         Set<String> excludeValues = filteredPhotonRequest.notValues();
-        Assert.assertEquals(ImmutableSet.of("anotherExclude","exclude"), excludeValues);
+        Assert.assertEquals(ImmutableSet.of("anotherExclude", "exclude"), excludeValues);
         Assert.assertEquals(2, excludeValues.size());
     }
 
     @Test
     public void testKey() {
-        FilteredPhotonRequest filteredPhotonRequest = new FilteredPhotonRequest(null, null, null, null,null);
+        FilteredPhotonRequest filteredPhotonRequest = new FilteredPhotonRequest(null, null, null, null, null);
         filteredPhotonRequest.keys("keyToInclude");
         filteredPhotonRequest.keys("keyToInclude");
         filteredPhotonRequest.keys("anotherKeyToInclude");
-        Assert.assertEquals(ImmutableSet.of("keyToInclude","anotherKeyToInclude"),filteredPhotonRequest.keys());
+        Assert.assertEquals(ImmutableSet.of("keyToInclude", "anotherKeyToInclude"), filteredPhotonRequest.keys());
     }
 
     @Test
     public void testTag() {
-        FilteredPhotonRequest filteredPhotonRequest = new FilteredPhotonRequest(null,null, null, null, null);
+        FilteredPhotonRequest filteredPhotonRequest = new FilteredPhotonRequest(null, null, null, null, null);
         filteredPhotonRequest.tags("aKey", ImmutableSet.of("aValue"));
         filteredPhotonRequest.tags("anotherKey", ImmutableSet.of("anotherValue"));
         Map<String, Set<String>> includeTags = filteredPhotonRequest.tags();
-        Assert.assertEquals(ImmutableMap.of("anotherKey",ImmutableSet.of("anotherValue"), "aKey",ImmutableSet.of("aValue")), includeTags);
+        Assert.assertEquals(ImmutableMap.of("anotherKey", ImmutableSet.of("anotherValue"), "aKey", ImmutableSet.of("aValue")), includeTags);
         Assert.assertEquals(2, includeTags.size());
-        
+
     }
 
     @Test
     public void testValue() {
-        FilteredPhotonRequest filteredPhotonRequest = new FilteredPhotonRequest(null,null, null, null, null);
+        FilteredPhotonRequest filteredPhotonRequest = new FilteredPhotonRequest(null, null, null, null, null);
         filteredPhotonRequest.values("keyToInclude");
         filteredPhotonRequest.values("keyToInclude");
         filteredPhotonRequest.values("anotherKeyToInclude");
-        Assert.assertEquals(ImmutableSet.of("keyToInclude","anotherKeyToInclude"),filteredPhotonRequest.values());
+        Assert.assertEquals(ImmutableSet.of("keyToInclude", "anotherKeyToInclude"), filteredPhotonRequest.values());
     }
 }

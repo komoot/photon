@@ -1,7 +1,6 @@
 package de.komoot.photon.searcher;
 
 import com.vividsolutions.jts.geom.Point;
-
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
@@ -13,28 +12,27 @@ import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
 
 /**
- *
  * @author svantulden
  */
 public class ReverseElasticsearchSearcher implements ElasticsearchReverseSearcher {
     private Client client;
 
     public ReverseElasticsearchSearcher(Client client) {
-	this.client = client;
+        this.client = client;
     }
 
     @Override
     public SearchResponse search(QueryBuilder queryBuilder, Integer limit, Point location,
-	    Boolean locationDistanceSort) {
-	TimeValue timeout = TimeValue.timeValueSeconds(7);
+                                 Boolean locationDistanceSort) {
+        TimeValue timeout = TimeValue.timeValueSeconds(7);
 
-	SearchRequestBuilder builder = client.prepareSearch("photon").setSearchType(SearchType.QUERY_AND_FETCH)
-		.setQuery(queryBuilder).setSize(limit).setTimeout(timeout);
+        SearchRequestBuilder builder = client.prepareSearch("photon").setSearchType(SearchType.QUERY_AND_FETCH)
+                .setQuery(queryBuilder).setSize(limit).setTimeout(timeout);
 
-	if (locationDistanceSort)
-	    builder.addSort(SortBuilders.geoDistanceSort("coordinate", new GeoPoint(location.getY(), location.getX()))
-		    .order(SortOrder.ASC));
+        if (locationDistanceSort)
+            builder.addSort(SortBuilders.geoDistanceSort("coordinate", new GeoPoint(location.getY(), location.getX()))
+                    .order(SortOrder.ASC));
 
-	return builder.execute().actionGet();
+        return builder.execute().actionGet();
     }
 }

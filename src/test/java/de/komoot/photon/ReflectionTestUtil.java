@@ -36,6 +36,6 @@ public class ReflectionTestUtil {
     }
 
     public static <T> void setFieldValue(Object anObject, String fieldName, T value) {
-        setFieldValue(anObject, anObject.getClass(),fieldName, value);
+        setFieldValue(anObject, anObject.getClass(), fieldName, value);
     }
 }

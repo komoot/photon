@@ -6,40 +6,30 @@
 package de.komoot.photon;
 
 import com.google.common.collect.ImmutableSet;
-import de.komoot.photon.query.BadRequestException;
-import de.komoot.photon.query.LanguageChecker;
-import de.komoot.photon.query.ReverseRequest;
-import de.komoot.photon.query.ReverseRequestFactory;
+import de.komoot.photon.query.*;
+import de.komoot.photon.searcher.ReverseRequestHandler;
 import de.komoot.photon.searcher.ReverseRequestHandlerFactory;
 import de.komoot.photon.searcher.SimpleReverseRequestHandler;
 import de.komoot.photon.utils.ConvertToGeoJson;
+import org.elasticsearch.client.Client;
 import org.hamcrest.core.IsEqual;
 import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PowerMockIgnore;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 import spark.Request;
 import spark.Response;
+import spark.RouteImpl;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
-import org.elasticsearch.client.Client;
-import spark.RouteImpl;
 
 /**
- *
  * @author svantulden
  */
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(SimpleReverseRequestHandler.class)
-@PowerMockIgnore({"javax.management.*"})
 public class ReverseSearchRequestHandlerTest {
     @Test
     public void testConstructor() throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
@@ -61,11 +51,21 @@ public class ReverseSearchRequestHandlerTest {
         ReverseRequestFactory mockReverseRequestFactory = Mockito.mock(ReverseRequestFactory.class);
         Request mockWebRequest = Mockito.mock(Request.class);
         ReflectionTestUtil.setFieldValue(reverseSearchRequestHandlerUnderTest, ReverseSearchRequestHandler.class, "reverseRequestFactory", mockReverseRequestFactory);
-        ReverseRequestHandlerFactory mockReverseRequestHandlerFactory = Mockito.mock(ReverseRequestHandlerFactory.class);
+
+        SimpleReverseRequestHandler mockSimpleReverseRequestHandler = new SimpleReverseRequestHandler(null) {
+            @Override
+            public List<JSONObject> handle(ReverseRequest photonRequest) {
+                return new ArrayList<>();
+            }
+        };
+        ReverseRequestHandlerFactory mockReverseRequestHandlerFactory = new ReverseRequestHandlerFactory(null) {
+            @Override
+            public ReverseRequestHandler<ReverseRequest> createHandler(ReverseRequest request) {
+                return mockSimpleReverseRequestHandler;
+            }
+        };
         ReflectionTestUtil.setFieldValue(reverseSearchRequestHandlerUnderTest, ReverseSearchRequestHandler.class, "requestHandlerFactory", mockReverseRequestHandlerFactory);
-        SimpleReverseRequestHandler mockSimpleReverseRequestHandler = PowerMockito.mock(SimpleReverseRequestHandler.class);
-        PowerMockito.when(mockSimpleReverseRequestHandler.handle(Mockito.any(ReverseRequest.class))).thenReturn(new ArrayList<JSONObject>());
-        Mockito.when(mockReverseRequestHandlerFactory.createHandler(Mockito.any(ReverseRequest.class))).thenReturn(mockSimpleReverseRequestHandler);
+
         ConvertToGeoJson mockConvertToGeoJson = Mockito.mock(ConvertToGeoJson.class);
         ReflectionTestUtil.setFieldValue(reverseSearchRequestHandlerUnderTest, "geoJsonConverter", mockConvertToGeoJson);
         String expectedResultString = "{\"test\":\"success\"}";

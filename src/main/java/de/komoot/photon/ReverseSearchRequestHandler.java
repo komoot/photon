@@ -3,29 +3,27 @@ package de.komoot.photon;
 import de.komoot.photon.query.BadRequestException;
 import de.komoot.photon.query.ReverseRequest;
 import de.komoot.photon.query.ReverseRequestFactory;
-import de.komoot.photon.searcher.BaseElasticsearchSearcher;
 import de.komoot.photon.searcher.ReverseElasticsearchSearcher;
 import de.komoot.photon.searcher.ReverseRequestHandler;
 import de.komoot.photon.searcher.ReverseRequestHandlerFactory;
 import de.komoot.photon.utils.ConvertToGeoJson;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 import org.elasticsearch.client.Client;
 import org.json.JSONObject;
 import spark.Request;
 import spark.Response;
-import spark.Route;
 import spark.RouteImpl;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import static spark.Spark.halt;
 
 /**
- *
  * @author svantulden
  */
-public class ReverseSearchRequestHandler <R extends ReverseRequest> extends RouteImpl {
+public class ReverseSearchRequestHandler<R extends ReverseRequest> extends RouteImpl {
     private final ReverseRequestFactory reverseRequestFactory;
     private final ReverseRequestHandlerFactory requestHandlerFactory;
     private final ConvertToGeoJson geoJsonConverter;

@@ -1,25 +1,12 @@
 package de.komoot.photon.query;
 
 
-
-import static com.google.common.collect.Maps.newHashMap;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+import com.google.common.collect.ImmutableSet;
+import com.vividsolutions.jts.geom.Point;
 import org.elasticsearch.common.lucene.search.function.CombineFunction;
 import org.elasticsearch.common.lucene.search.function.FiltersFunctionScoreQuery.ScoreMode;
 import org.elasticsearch.common.unit.Fuzziness;
-import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.MatchQueryBuilder;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.index.query.TermQueryBuilder;
-import org.elasticsearch.index.query.TermsQueryBuilder;
+import org.elasticsearch.index.query.*;
 import org.elasticsearch.index.query.functionscore.FunctionScoreQueryBuilder;
 import org.elasticsearch.index.query.functionscore.FunctionScoreQueryBuilder.FilterFunctionBuilder;
 import org.elasticsearch.index.query.functionscore.ScoreFunctionBuilders;
@@ -27,9 +14,9 @@ import org.elasticsearch.index.query.functionscore.ScriptScoreFunctionBuilder;
 import org.elasticsearch.script.Script;
 import org.elasticsearch.script.ScriptType;
 
-import com.google.common.collect.ImmutableSet;
-import com.vividsolutions.jts.geom.Point;
+import java.util.*;
 
+import static com.google.common.collect.Maps.newHashMap;
 
 
 /**
@@ -48,378 +35,355 @@ import com.vividsolutions.jts.geom.Point;
  * @see de.komoot.photon.query.TagFilterQueryBuilder
  */
 public class PhotonQueryBuilder implements TagFilterQueryBuilder {
-	private FunctionScoreQueryBuilder m_finalQueryWithoutTagFilterBuilder;
+    private FunctionScoreQueryBuilder m_finalQueryWithoutTagFilterBuilder;
 
-	private Integer limit = 50;
+    private Integer limit = 50;
 
-	private BoolQueryBuilder m_queryBuilderForTopLevelFilter;
+    private BoolQueryBuilder m_queryBuilderForTopLevelFilter;
 
-	private State state;
+    private State state;
 
-	private BoolQueryBuilder orQueryBuilderForIncludeTagFiltering = null;
+    private BoolQueryBuilder orQueryBuilderForIncludeTagFiltering = null;
 
-	private BoolQueryBuilder andQueryBuilderForExcludeTagFiltering = null;
+    private BoolQueryBuilder andQueryBuilderForExcludeTagFiltering = null;
 
-	private MatchQueryBuilder defaultMatchQueryBuilder;
+    private MatchQueryBuilder defaultMatchQueryBuilder;
 
-	private MatchQueryBuilder languageMatchQueryBuilder;
+    private MatchQueryBuilder languageMatchQueryBuilder;
 
-	private QueryBuilder m_finalQueryBuilder;
+    private QueryBuilder m_finalQueryBuilder;
 
-	protected ArrayList<FilterFunctionBuilder> m_alFilterFunction4QueryBuilder = new ArrayList<>(1);
+    protected ArrayList<FilterFunctionBuilder> m_alFilterFunction4QueryBuilder = new ArrayList<>(1);
 
-	protected QueryBuilder m_query4QueryBuilder;
+    protected QueryBuilder m_query4QueryBuilder;
 
 
+    private PhotonQueryBuilder(String query, String language) {
+        defaultMatchQueryBuilder =
+                QueryBuilders.matchQuery("collector.default", query).fuzziness(Fuzziness.ZERO).prefixLength(2).analyzer("search_ngram").minimumShouldMatch("100%");
 
-	private PhotonQueryBuilder(String query, String language) {
-		defaultMatchQueryBuilder =
-				QueryBuilders.matchQuery("collector.default", query).fuzziness(Fuzziness.ZERO).prefixLength(2).analyzer("search_ngram").minimumShouldMatch("100%");
+        languageMatchQueryBuilder = QueryBuilders.matchQuery(String.format("collector.%s.ngrams", language), query).fuzziness(Fuzziness.ZERO).prefixLength(2)
+                .analyzer("search_ngram").minimumShouldMatch("100%");
 
-		languageMatchQueryBuilder = QueryBuilders.matchQuery(String.format("collector.%s.ngrams", language), query).fuzziness(Fuzziness.ZERO).prefixLength(2)
-				.analyzer("search_ngram").minimumShouldMatch("100%");
+        // @formatter:off
+        m_query4QueryBuilder = QueryBuilders.boolQuery()
+                .must(QueryBuilders.boolQuery().should(defaultMatchQueryBuilder).should(languageMatchQueryBuilder)
+                        .minimumShouldMatch("1"))
+                .should(QueryBuilders.matchQuery(String.format("name.%s.raw", language), query).boost(200)
+                        .analyzer("search_raw"))
+                .should(QueryBuilders.matchQuery(String.format("collector.%s.raw", language), query).boost(100)
+                        .analyzer("search_raw"));
+        // @formatter:on
 
-	// @formatter:off
-	m_query4QueryBuilder = QueryBuilders.boolQuery()
-		.must(QueryBuilders.boolQuery().should(defaultMatchQueryBuilder).should(languageMatchQueryBuilder)
-			.minimumShouldMatch("1"))
-		.should(QueryBuilders.matchQuery(String.format("name.%s.raw", language), query).boost(200)
-			.analyzer("search_raw"))
-		.should(QueryBuilders.matchQuery(String.format("collector.%s.raw", language), query).boost(100)
-			.analyzer("search_raw"));
-	// @formatter:on
+        // this is former general-score, now inline
+        String strCode = "double score = 1 + doc['importance'].value * 100; score";
+        ScriptScoreFunctionBuilder functionBuilder4QueryBuilder =
+                ScoreFunctionBuilders.scriptFunction(new Script(ScriptType.INLINE, "painless", strCode, new HashMap<String, Object>()));
 
-		// this is former general-score, now inline
-		String strCode = "double score = 1 + doc['importance'].value * 100; score";
-		ScriptScoreFunctionBuilder functionBuilder4QueryBuilder =
-				ScoreFunctionBuilders.scriptFunction(new Script(ScriptType.INLINE, "painless", strCode, new HashMap<String, Object>()));
+        m_alFilterFunction4QueryBuilder.add(new FilterFunctionBuilder(functionBuilder4QueryBuilder));
 
-		m_alFilterFunction4QueryBuilder.add(new FilterFunctionBuilder(functionBuilder4QueryBuilder));
+        m_finalQueryWithoutTagFilterBuilder = new FunctionScoreQueryBuilder(m_query4QueryBuilder, m_alFilterFunction4QueryBuilder.toArray(new FilterFunctionBuilder[0]))
+                .boostMode(CombineFunction.MULTIPLY).scoreMode(ScoreMode.MULTIPLY);
 
-		m_finalQueryWithoutTagFilterBuilder = new FunctionScoreQueryBuilder(m_query4QueryBuilder, m_alFilterFunction4QueryBuilder.toArray(new FilterFunctionBuilder[0]))
-				.boostMode(CombineFunction.MULTIPLY).scoreMode(ScoreMode.MULTIPLY);
+        // @formatter:off
+        m_queryBuilderForTopLevelFilter = QueryBuilders.boolQuery()
+                .should(QueryBuilders.boolQuery().mustNot(QueryBuilders.existsQuery("housenumber")))
+                .should(QueryBuilders.matchQuery("housenumber", query).analyzer("standard"))
+                .should(QueryBuilders.existsQuery(String.format("name.%s.raw", language)));
+        // @formatter:on
 
-	// @formatter:off
-	m_queryBuilderForTopLevelFilter = QueryBuilders.boolQuery()
-		.should(QueryBuilders.boolQuery().mustNot(QueryBuilders.existsQuery("housenumber")))
-		.should(QueryBuilders.matchQuery("housenumber", query).analyzer("standard"))
-		.should(QueryBuilders.existsQuery(String.format("name.%s.raw", language)));
-	// @formatter:on
+        state = State.PLAIN;
+    }
 
-		state = State.PLAIN;
-	}
 
+    /**
+     * Create an instance of this builder which can then be embellished as needed.
+     *
+     * @param query    the value for photon query parameter "q"
+     * @param language
+     * @return An initialized {@link TagFilterQueryBuilder photon query builder}.
+     */
+    public static TagFilterQueryBuilder builder(String query, String language) {
+        return new PhotonQueryBuilder(query, language);
+    }
 
 
-	/**
-	 * Create an instance of this builder which can then be embellished as needed.
-	 *
-	 * @param query the value for photon query parameter "q"
-	 * @param language
-	 * @return An initialized {@link TagFilterQueryBuilder photon query builder}.
-	 */
-	public static TagFilterQueryBuilder builder(String query, String language) {
-		return new PhotonQueryBuilder(query, language);
-	}
+    @Override
+    public TagFilterQueryBuilder withLimit(Integer limit) {
+        this.limit = limit == null || limit < 1 ? 15 : limit;
+        this.limit = this.limit > 50 ? 50 : this.limit;
+        return this;
+    }
 
 
+    @Override
+    public TagFilterQueryBuilder withLocationBias(Point point, Boolean locationDistanceSort) {
+        if (point == null) return this;
+        Map<String, Object> params = newHashMap();
+        params.put("lon", point.getX());
+        params.put("lat", point.getY());
 
-	@Override
-	public TagFilterQueryBuilder withLimit(Integer limit) {
-		this.limit = limit == null || limit < 1 ? 15 : limit;
-		this.limit = this.limit > 50 ? 50 : this.limit;
-		return this;
-	}
+        // this is former location-biased-score, now inline exemplary debugged score: 0.5000002150154673, is multiplied with the scores from other query
+        // parts: 2150.804 (basequery) * 31,7 (importance doc value-script, former general-score) the score from the location distance is very small with
+        // respect to the score of the other query parts, thus it has a very small, up to zero, influence to the final sorting of the documents
+        String strCode = "double dist = doc['coordinate'].planeDistance(params.lat, params.lon); double score = 0.5 + ( 1.5 / (1.0 + dist * 1000 /40.0)); score";
+        ScriptScoreFunctionBuilder builder = ScoreFunctionBuilders.scriptFunction(new Script(ScriptType.INLINE, "painless", strCode, params));
 
+        // in the case we want to sort against the location distance, only the
+        // according function score is relevant
+        if (locationDistanceSort) {
 
+            m_alFilterFunction4QueryBuilder.clear();
+            m_alFilterFunction4QueryBuilder.add(new FilterFunctionBuilder(builder));
 
-	@Override
-	public TagFilterQueryBuilder withLocationBias(Point point, Boolean locationDistanceSort) {
-		if(point == null) return this;
-		Map<String, Object> params = newHashMap();
-		params.put("lon", point.getX());
-		params.put("lat", point.getY());
+            m_finalQueryWithoutTagFilterBuilder =
+                    new FunctionScoreQueryBuilder(m_query4QueryBuilder, m_alFilterFunction4QueryBuilder.toArray(new FilterFunctionBuilder[0]))
+                            .boostMode(CombineFunction.REPLACE).scoreMode(ScoreMode.MULTIPLY);
 
-		// this is former location-biased-score, now inline exemplary debugged score: 0.5000002150154673, is multiplied with the scores from other query
-		// parts: 2150.804 (basequery) * 31,7 (importance doc value-script, former general-score) the score from the location distance is very small with
-		// respect to the score of the other query parts, thus it has a very small, up to zero, influence to the final sorting of the documents
-		String strCode = "double dist = doc['coordinate'].planeDistance(params.lat, params.lon); double score = 0.5 + ( 1.5 / (1.0 + dist * 1000 /40.0)); score";
-		ScriptScoreFunctionBuilder builder = ScoreFunctionBuilders.scriptFunction(new Script(ScriptType.INLINE, "painless", strCode, params));
+        } else {
 
-		// in the case we want to sort against the location distance, only the
-		// according function score is relevant
-		if(locationDistanceSort) {
+            m_alFilterFunction4QueryBuilder.add(new FilterFunctionBuilder(builder));
 
-			m_alFilterFunction4QueryBuilder.clear();
-			m_alFilterFunction4QueryBuilder.add(new FilterFunctionBuilder(builder));
+            m_finalQueryWithoutTagFilterBuilder =
+                    new FunctionScoreQueryBuilder(m_query4QueryBuilder, m_alFilterFunction4QueryBuilder.toArray(new FilterFunctionBuilder[0]))
+                            .boostMode(CombineFunction.MULTIPLY).scoreMode(ScoreMode.MULTIPLY);
+        }
 
-			m_finalQueryWithoutTagFilterBuilder =
-					new FunctionScoreQueryBuilder(m_query4QueryBuilder, m_alFilterFunction4QueryBuilder.toArray(new FilterFunctionBuilder[0]))
-							.boostMode(CombineFunction.REPLACE).scoreMode(ScoreMode.MULTIPLY);
+        return this;
+    }
 
-		}
-		else {
 
-			m_alFilterFunction4QueryBuilder.add(new FilterFunctionBuilder(builder));
+    @Override
+    public TagFilterQueryBuilder withTags(Map<String, Set<String>> tags) {
+        if (!checkTags(tags)) return this;
 
-			m_finalQueryWithoutTagFilterBuilder =
-					new FunctionScoreQueryBuilder(m_query4QueryBuilder, m_alFilterFunction4QueryBuilder.toArray(new FilterFunctionBuilder[0]))
-							.boostMode(CombineFunction.MULTIPLY).scoreMode(ScoreMode.MULTIPLY);
-		}
+        ensureFiltered();
 
-		return this;
-	}
+        List<BoolQueryBuilder> termQueries = new ArrayList<BoolQueryBuilder>(tags.size());
+        for (String tagKey : tags.keySet()) {
+            Set<String> valuesToInclude = tags.get(tagKey);
+            TermQueryBuilder keyQuery = QueryBuilders.termQuery("osm_key", tagKey);
+            TermsQueryBuilder valueQuery = QueryBuilders.termsQuery("osm_value", valuesToInclude.toArray(new String[valuesToInclude.size()]));
+            BoolQueryBuilder includeAndQuery = QueryBuilders.boolQuery().must(keyQuery).must(valueQuery);
+            termQueries.add(includeAndQuery);
+        }
+        this.appendIncludeTermQueries(termQueries);
+        return this;
+    }
 
 
+    @Override
+    public TagFilterQueryBuilder withKeys(Set<String> keys) {
+        if (!checkTags(keys)) return this;
 
-	@Override
-	public TagFilterQueryBuilder withTags(Map<String, Set<String>> tags) {
-		if(!checkTags(tags)) return this;
+        ensureFiltered();
 
-		ensureFiltered();
+        List<TermsQueryBuilder> termQueries = new ArrayList<TermsQueryBuilder>(keys.size());
+        termQueries.add(QueryBuilders.termsQuery("osm_key", keys.toArray()));
+        this.appendIncludeTermQueries(termQueries);
+        return this;
+    }
 
-		List<BoolQueryBuilder> termQueries = new ArrayList<BoolQueryBuilder>(tags.size());
-		for (String tagKey : tags.keySet()) {
-			Set<String> valuesToInclude = tags.get(tagKey);
-			TermQueryBuilder keyQuery = QueryBuilders.termQuery("osm_key", tagKey);
-			TermsQueryBuilder valueQuery = QueryBuilders.termsQuery("osm_value", valuesToInclude.toArray(new String[valuesToInclude.size()]));
-			BoolQueryBuilder includeAndQuery = QueryBuilders.boolQuery().must(keyQuery).must(valueQuery);
-			termQueries.add(includeAndQuery);
-		}
-		this.appendIncludeTermQueries(termQueries);
-		return this;
-	}
 
+    @Override
+    public TagFilterQueryBuilder withValues(Set<String> values) {
+        if (!checkTags(values)) return this;
 
+        ensureFiltered();
 
-	@Override
-	public TagFilterQueryBuilder withKeys(Set<String> keys) {
-		if(!checkTags(keys)) return this;
+        List<TermsQueryBuilder> termQueries = new ArrayList<TermsQueryBuilder>(values.size());
+        termQueries.add(QueryBuilders.termsQuery("osm_value", values.toArray(new String[values.size()])));
+        this.appendIncludeTermQueries(termQueries);
+        return this;
+    }
 
-		ensureFiltered();
 
-		List<TermsQueryBuilder> termQueries = new ArrayList<TermsQueryBuilder>(keys.size());
-		termQueries.add(QueryBuilders.termsQuery("osm_key", keys.toArray()));
-		this.appendIncludeTermQueries(termQueries);
-		return this;
-	}
+    @Override
+    public TagFilterQueryBuilder withTagsNotValues(Map<String, Set<String>> tags) {
+        if (!checkTags(tags)) return this;
 
+        ensureFiltered();
 
+        List<BoolQueryBuilder> termQueries = new ArrayList<BoolQueryBuilder>(tags.size());
+        for (String tagKey : tags.keySet()) {
+            Set<String> valuesToInclude = tags.get(tagKey);
+            TermQueryBuilder keyQuery = QueryBuilders.termQuery("osm_key", tagKey);
+            TermsQueryBuilder valueQuery = QueryBuilders.termsQuery("osm_value", valuesToInclude.toArray(new String[valuesToInclude.size()]));
 
-	@Override
-	public TagFilterQueryBuilder withValues(Set<String> values) {
-		if(!checkTags(values)) return this;
+            BoolQueryBuilder includeAndQuery = QueryBuilders.boolQuery().must(keyQuery).mustNot(valueQuery);
 
-		ensureFiltered();
+            termQueries.add(includeAndQuery);
+        }
+        this.appendIncludeTermQueries(termQueries);
+        return this;
+    }
 
-		List<TermsQueryBuilder> termQueries = new ArrayList<TermsQueryBuilder>(values.size());
-		termQueries.add(QueryBuilders.termsQuery("osm_value", values.toArray(new String[values.size()])));
-		this.appendIncludeTermQueries(termQueries);
-		return this;
-	}
 
+    @Override
+    public TagFilterQueryBuilder withoutTags(Map<String, Set<String>> tagsToExclude) {
+        if (!checkTags(tagsToExclude)) return this;
 
+        ensureFiltered();
 
-	@Override
-	public TagFilterQueryBuilder withTagsNotValues(Map<String, Set<String>> tags) {
-		if(!checkTags(tags)) return this;
+        List<QueryBuilder> termQueries = new ArrayList<>(tagsToExclude.size());
+        for (String tagKey : tagsToExclude.keySet()) {
+            Set<String> valuesToExclude = tagsToExclude.get(tagKey);
+            TermQueryBuilder keyQuery = QueryBuilders.termQuery("osm_key", tagKey);
+            TermsQueryBuilder valueQuery = QueryBuilders.termsQuery("osm_value", valuesToExclude.toArray(new String[valuesToExclude.size()]));
 
-		ensureFiltered();
+            BoolQueryBuilder withoutTagsQuery = QueryBuilders.boolQuery().mustNot(QueryBuilders.boolQuery().must(keyQuery).must(valueQuery));
 
-		List<BoolQueryBuilder> termQueries = new ArrayList<BoolQueryBuilder>(tags.size());
-		for (String tagKey : tags.keySet()) {
-			Set<String> valuesToInclude = tags.get(tagKey);
-			TermQueryBuilder keyQuery = QueryBuilders.termQuery("osm_key", tagKey);
-			TermsQueryBuilder valueQuery = QueryBuilders.termsQuery("osm_value", valuesToInclude.toArray(new String[valuesToInclude.size()]));
+            termQueries.add(withoutTagsQuery);
+        }
 
-			BoolQueryBuilder includeAndQuery = QueryBuilders.boolQuery().must(keyQuery).mustNot(valueQuery);
+        this.appendExcludeTermQueries(termQueries);
 
-			termQueries.add(includeAndQuery);
-		}
-		this.appendIncludeTermQueries(termQueries);
-		return this;
-	}
+        return this;
+    }
 
 
+    @Override
+    public TagFilterQueryBuilder withoutKeys(Set<String> keysToExclude) {
+        if (!checkTags(keysToExclude)) return this;
 
-	@Override
-	public TagFilterQueryBuilder withoutTags(Map<String, Set<String>> tagsToExclude) {
-		if(!checkTags(tagsToExclude)) return this;
+        ensureFiltered();
 
-		ensureFiltered();
+        BoolQueryBuilder boolQuery = QueryBuilders.boolQuery().mustNot(QueryBuilders.termsQuery("osm_key", keysToExclude.toArray()));
 
-		List<QueryBuilder> termQueries = new ArrayList<>(tagsToExclude.size());
-		for (String tagKey : tagsToExclude.keySet()) {
-			Set<String> valuesToExclude = tagsToExclude.get(tagKey);
-			TermQueryBuilder keyQuery = QueryBuilders.termQuery("osm_key", tagKey);
-			TermsQueryBuilder valueQuery = QueryBuilders.termsQuery("osm_value", valuesToExclude.toArray(new String[valuesToExclude.size()]));
+        LinkedList<QueryBuilder> lList = new LinkedList<>();
+        lList.add(boolQuery);
+        this.appendExcludeTermQueries(lList);
 
-			BoolQueryBuilder withoutTagsQuery = QueryBuilders.boolQuery().mustNot(QueryBuilders.boolQuery().must(keyQuery).must(valueQuery));
+        return this;
+    }
 
-			termQueries.add(withoutTagsQuery);
-		}
 
-		this.appendExcludeTermQueries(termQueries);
+    @Override
+    public TagFilterQueryBuilder withoutValues(Set<String> valuesToExclude) {
+        if (!checkTags(valuesToExclude)) return this;
 
-		return this;
-	}
+        ensureFiltered();
 
+        BoolQueryBuilder boolQuery = QueryBuilders.boolQuery().mustNot(QueryBuilders.termsQuery("osm_value", valuesToExclude.toArray()));
 
+        LinkedList<QueryBuilder> lList = new LinkedList<>();
+        lList.add(boolQuery);
+        this.appendExcludeTermQueries(lList);
 
-	@Override
-	public TagFilterQueryBuilder withoutKeys(Set<String> keysToExclude) {
-		if(!checkTags(keysToExclude)) return this;
+        return this;
+    }
 
-		ensureFiltered();
 
-		BoolQueryBuilder boolQuery = QueryBuilders.boolQuery().mustNot(QueryBuilders.termsQuery("osm_key", keysToExclude.toArray()));
+    @Override
+    public TagFilterQueryBuilder withKeys(String... keys) {
+        return this.withKeys(ImmutableSet.<String>builder().add(keys).build());
+    }
 
-		LinkedList<QueryBuilder> lList = new LinkedList<>();
-		lList.add(boolQuery);
-		this.appendExcludeTermQueries(lList);
 
-		return this;
-	}
+    @Override
+    public TagFilterQueryBuilder withValues(String... values) {
+        return this.withValues(ImmutableSet.<String>builder().add(values).build());
+    }
 
 
+    @Override
+    public TagFilterQueryBuilder withoutKeys(String... keysToExclude) {
+        return this.withoutKeys(ImmutableSet.<String>builder().add(keysToExclude).build());
+    }
 
-	@Override
-	public TagFilterQueryBuilder withoutValues(Set<String> valuesToExclude) {
-		if(!checkTags(valuesToExclude)) return this;
 
-		ensureFiltered();
+    @Override
+    public TagFilterQueryBuilder withoutValues(String... valuesToExclude) {
+        return this.withoutValues(ImmutableSet.<String>builder().add(valuesToExclude).build());
+    }
 
-		BoolQueryBuilder boolQuery = QueryBuilders.boolQuery().mustNot(QueryBuilders.termsQuery("osm_value", valuesToExclude.toArray()));
 
-		LinkedList<QueryBuilder> lList = new LinkedList<>();
-		lList.add(boolQuery);
-		this.appendExcludeTermQueries(lList);
+    @Override
+    public TagFilterQueryBuilder withStrictMatch() {
+        defaultMatchQueryBuilder.minimumShouldMatch("100%");
+        languageMatchQueryBuilder.minimumShouldMatch("100%");
+        return this;
+    }
 
-		return this;
-	}
 
+    @Override
+    public TagFilterQueryBuilder withLenientMatch() {
+        defaultMatchQueryBuilder.fuzziness(Fuzziness.ONE).minimumShouldMatch("-1");
+        languageMatchQueryBuilder.fuzziness(Fuzziness.ONE).minimumShouldMatch("-1");
+        return this;
+    }
 
 
-	@Override
-	public TagFilterQueryBuilder withKeys(String... keys) {
-		return this.withKeys(ImmutableSet.<String> builder().add(keys).build());
-	}
+    /**
+     * When this method is called, all filters are placed inside their {@link OrQueryBuilder OR} or {@link AndQueryBuilder AND} containers and the top level filter
+     * builder is built. Subsequent invocations of this method have no additional effect. Note that after this method is called, calling other methods on this class also
+     * have no effect.
+     *
+     * @see TagFilterQueryBuilder#buildQuery()
+     */
+    @Override
+    public QueryBuilder buildQuery() {
+        if (state.equals(State.FINISHED)) return m_finalQueryBuilder;
 
+        if (state.equals(State.FILTERED)) {
 
+            if (orQueryBuilderForIncludeTagFiltering != null)
+                m_queryBuilderForTopLevelFilter.must(orQueryBuilderForIncludeTagFiltering);
+            if (andQueryBuilderForExcludeTagFiltering != null)
+                m_queryBuilderForTopLevelFilter.must(andQueryBuilderForExcludeTagFiltering);
 
-	@Override
-	public TagFilterQueryBuilder withValues(String... values) {
-		return this.withValues(ImmutableSet.<String> builder().add(values).build());
-	}
+        }
 
+        state = State.FINISHED;
 
+        m_finalQueryBuilder = QueryBuilders.boolQuery().must(m_finalQueryWithoutTagFilterBuilder).filter(m_queryBuilderForTopLevelFilter);
 
-	@Override
-	public TagFilterQueryBuilder withoutKeys(String... keysToExclude) {
-		return this.withoutKeys(ImmutableSet.<String> builder().add(keysToExclude).build());
-	}
+        return m_finalQueryBuilder;
+    }
 
 
+    @Override
+    public Integer getLimit() {
+        return limit;
+    }
 
-	@Override
-	public TagFilterQueryBuilder withoutValues(String... valuesToExclude) {
-		return this.withoutValues(ImmutableSet.<String> builder().add(valuesToExclude).build());
-	}
 
+    private Boolean checkTags(Set<String> keys) {
+        return !(keys == null || keys.isEmpty());
+    }
 
 
-	@Override
-	public TagFilterQueryBuilder withStrictMatch() {
-		defaultMatchQueryBuilder.minimumShouldMatch("100%");
-		languageMatchQueryBuilder.minimumShouldMatch("100%");
-		return this;
-	}
+    private Boolean checkTags(Map<String, Set<String>> tags) {
+        return !(tags == null || tags.isEmpty());
+    }
 
 
+    private void appendIncludeTermQueries(List<? extends QueryBuilder> termQueries) {
 
-	@Override
-	public TagFilterQueryBuilder withLenientMatch() {
-		defaultMatchQueryBuilder.fuzziness(Fuzziness.ONE).minimumShouldMatch("-1");
-		languageMatchQueryBuilder.fuzziness(Fuzziness.ONE).minimumShouldMatch("-1");
-		return this;
-	}
+        if (orQueryBuilderForIncludeTagFiltering == null)
+            orQueryBuilderForIncludeTagFiltering = QueryBuilders.boolQuery();
 
+        for (QueryBuilder eachTagFilter : termQueries)
+            orQueryBuilderForIncludeTagFiltering.should(eachTagFilter);
+    }
 
 
-	/**
-	 * When this method is called, all filters are placed inside their {@link OrQueryBuilder OR} or {@link AndQueryBuilder AND} containers and the top level filter
-	 * builder is built. Subsequent invocations of this method have no additional effect. Note that after this method is called, calling other methods on this class also
-	 * have no effect.
-	 *
-	 * @see TagFilterQueryBuilder#buildQuery()
-	 */
-	@Override
-	public QueryBuilder buildQuery() {
-		if(state.equals(State.FINISHED)) return m_finalQueryBuilder;
+    private void appendExcludeTermQueries(List<QueryBuilder> termQueries) {
 
-		if(state.equals(State.FILTERED)) {
+        if (andQueryBuilderForExcludeTagFiltering == null)
+            andQueryBuilderForExcludeTagFiltering = QueryBuilders.boolQuery();
 
-			if(orQueryBuilderForIncludeTagFiltering != null) m_queryBuilderForTopLevelFilter.must(orQueryBuilderForIncludeTagFiltering);
-			if(andQueryBuilderForExcludeTagFiltering != null) m_queryBuilderForTopLevelFilter.must(andQueryBuilderForExcludeTagFiltering);
+        for (QueryBuilder eachTagFilter : termQueries)
+            andQueryBuilderForExcludeTagFiltering.must(eachTagFilter);
+    }
 
-		}
 
-		state = State.FINISHED;
+    private void ensureFiltered() {
+        state = State.FILTERED;
+    }
 
-		m_finalQueryBuilder = QueryBuilders.boolQuery().must(m_finalQueryWithoutTagFilterBuilder).filter(m_queryBuilderForTopLevelFilter);
 
-		return m_finalQueryBuilder;
-	}
-
-
-
-	@Override
-	public Integer getLimit() {
-		return limit;
-	}
-
-
-
-	private Boolean checkTags(Set<String> keys) {
-		return !(keys == null || keys.isEmpty());
-	}
-
-
-
-	private Boolean checkTags(Map<String, Set<String>> tags) {
-		return !(tags == null || tags.isEmpty());
-	}
-
-
-
-	private void appendIncludeTermQueries(List<? extends QueryBuilder> termQueries) {
-
-		if(orQueryBuilderForIncludeTagFiltering == null) orQueryBuilderForIncludeTagFiltering = QueryBuilders.boolQuery();
-
-		for (QueryBuilder eachTagFilter : termQueries)
-			orQueryBuilderForIncludeTagFiltering.should(eachTagFilter);
-	}
-
-
-
-	private void appendExcludeTermQueries(List<QueryBuilder> termQueries) {
-
-		if(andQueryBuilderForExcludeTagFiltering == null) andQueryBuilderForExcludeTagFiltering = QueryBuilders.boolQuery();
-
-		for (QueryBuilder eachTagFilter : termQueries)
-			andQueryBuilderForExcludeTagFiltering.must(eachTagFilter);
-	}
-
-
-
-	private void ensureFiltered() {
-		state = State.FILTERED;
-	}
-
-
-
-
-	private enum State {
-		PLAIN, FILTERED, QUERY_ALREADY_BUILT, FINISHED,
-	}
+    private enum State {
+        PLAIN, FILTERED, QUERY_ALREADY_BUILT, FINISHED,
+    }
 }

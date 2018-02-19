@@ -4,12 +4,12 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.PrecisionModel;
+import spark.QueryParamsMap;
+import spark.Request;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
-import spark.QueryParamsMap;
-import spark.Request;
 
 /**
  * A factory that creates a {@link PhotonRequest} from a {@link Request web request}
@@ -18,7 +18,7 @@ import spark.Request;
 public class PhotonRequestFactory {
     private final LanguageChecker languageChecker;
     private final static GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
-    
+
     protected static HashSet<String> m_hsRequestQueryParams = new HashSet<>(Arrays.asList("lang", "q", "lon", "lat", "limit", "distance_sort", "osm_tag"));
 
     public PhotonRequestFactory(Set<String> supportedLanguages) {
@@ -26,14 +26,13 @@ public class PhotonRequestFactory {
     }
 
     public <R extends PhotonRequest> R create(Request webRequest) throws BadRequestException {
-        
-        
-        for(String queryParam: webRequest.queryParams())
-            if(!m_hsRequestQueryParams.contains(queryParam))
+
+
+        for (String queryParam : webRequest.queryParams())
+            if (!m_hsRequestQueryParams.contains(queryParam))
                 throw new BadRequestException(400, "unknown query parameter '" + queryParam + "'.  Allowed parameters are: " + m_hsRequestQueryParams);
-        
-        
-        
+
+
         String language = webRequest.queryParams("lang");
         language = language == null ? "en" : language;
         languageChecker.apply(language);
@@ -53,15 +52,11 @@ public class PhotonRequestFactory {
         } catch (Exception nfe) {
             //ignore
         }
-        Boolean locationDistanceSort = true;
+        Boolean locationDistanceSort;
         try {
-            if(webRequest.queryParams("distance_sort") == null)
-                locationDistanceSort = true;
-            else
-                locationDistanceSort = Boolean.valueOf(webRequest.queryParams("distance_sort"));
-            
+            locationDistanceSort = Boolean.valueOf(webRequest.queryParamOrDefault("distance_sort", "false"));
         } catch (Exception nfe) {
-            //ignore
+            throw new BadRequestException(400, "invalid parameter 'distance_sort', can only be true or false");
         }
         QueryParamsMap tagFiltersQueryMap = webRequest.queryMap("osm_tag");
         if (!new CheckIfFilteredRequest().execute(tagFiltersQueryMap)) {
@@ -70,8 +65,8 @@ public class PhotonRequestFactory {
         FilteredPhotonRequest photonRequest = new FilteredPhotonRequest(query, limit, locationForBias, locationDistanceSort, language);
         String[] tagFilters = tagFiltersQueryMap.values();
         setUpTagFilters(photonRequest, tagFilters);
-        
-        
+
+
         return (R) photonRequest;
     }
 
@@ -101,10 +96,10 @@ public class PhotonRequestFactory {
                         //just value
 
                         String valueCandidate = tagFilter.substring(1);
-                        if (valueCandidate.startsWith("!")){
+                        if (valueCandidate.startsWith("!")) {
                             //exclude value
                             request.notValues(valueCandidate.substring(1));
-                        }else {
+                        } else {
                             //include value
                             request.values(valueCandidate);
                         }

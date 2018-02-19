@@ -4,25 +4,25 @@ import de.komoot.photon.query.PhotonRequest;
 import de.komoot.photon.query.ReverseRequest;
 import de.komoot.photon.query.TagFilterQueryBuilder;
 import de.komoot.photon.utils.ConvertToJson;
-import java.util.List;
 import org.elasticsearch.action.search.SearchResponse;
 import org.json.JSONObject;
 
+import java.util.List;
+
 /**
- *
  * @author svantulden
  */
-public abstract class AbstractReverseRequestHandler <R extends ReverseRequest> implements ReverseRequestHandler<R> {
+public abstract class AbstractReverseRequestHandler<R extends ReverseRequest> implements ReverseRequestHandler<R> {
     private final ElasticsearchReverseSearcher elasticsearchSearcher;
 
     public AbstractReverseRequestHandler(ElasticsearchReverseSearcher elasticsearchSearcher) {
         this.elasticsearchSearcher = elasticsearchSearcher;
-    }        
+    }
 
     @Override
-    public final List<JSONObject> handle(R photonRequest) {
+    public List<JSONObject> handle(R photonRequest) {
         TagFilterQueryBuilder queryBuilder = buildQuery(photonRequest);
-        SearchResponse results = elasticsearchSearcher.search(queryBuilder.buildQuery(), photonRequest.getLimit(), photonRequest.getLocation(), 
+        SearchResponse results = elasticsearchSearcher.search(queryBuilder.buildQuery(), photonRequest.getLimit(), photonRequest.getLocation(),
                 photonRequest.getLocationDistanceSort());
         List<JSONObject> resultJsonObjects = new ConvertToJson(photonRequest.getLanguage()).convert(results);
         if (resultJsonObjects.size() > photonRequest.getLimit()) {
