@@ -53,10 +53,16 @@ public class PhotonRequestFactory {
         } catch (Exception nfe) {
             //ignore
         }
+<<<<<<< HEAD
+        Boolean locationDistanceSort;
+        try {
+            locationDistanceSort = Boolean.valueOf(webRequest.queryParamOrDefault("distance_sort", "false"));
+=======
 
         double scale = 1.8;
         try {
             scale = Double.parseDouble(webRequest.queryParams("location_bias_scale"));
+>>>>>>> issue_306
         } catch (Exception nfe) {
             throw new BadRequestException(400, "invalid parameter 'distance_sort', can only be true or false");
         }
