@@ -54,7 +54,8 @@ public class PhotonRequestFactory {
             //ignore
         }
 
-        double scale = 1.8;
+        // use not too high default value, see #306
+        double scale = 1.6;
         try {
             scale = Double.parseDouble(webRequest.queryParams("location_bias_scale"));
         } catch (Exception nfe) {
