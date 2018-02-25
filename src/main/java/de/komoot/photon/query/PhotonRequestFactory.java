@@ -54,7 +54,7 @@ public class PhotonRequestFactory {
             //ignore
         }
 
-        double scale = 1.8;
+        double scale = 1.6;
         String scaleStr = webRequest.queryParams("location_bias_scale");
         if (scaleStr != null && !scaleStr.isEmpty())
             try {
