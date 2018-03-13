@@ -77,8 +77,7 @@ public class App {
         try {
             esServer.recreateIndex();
         } catch (IOException e) {
-            log.error("cannot setup index, elastic search config files not readable", e);
-            return;
+            throw new RuntimeException("cannot setup index, elastic search config files not readable", e);
         }
 
         log.info("deleted photon index and created an empty new one.");
@@ -115,19 +114,14 @@ public class App {
         try {
             esServer.recreateIndex(); // dump previous data
         } catch (IOException e) {
-            log.error("cannot setup index, elastic search config files not readable", e);
-            return;
+            throw new RuntimeException("cannot setup index, elastic search config files not readable", e);
         }
 
         log.info("starting import from nominatim to photon with languages: " + args.getLanguages());
         de.komoot.photon.elasticsearch.Importer importer = new de.komoot.photon.elasticsearch.Importer(esNodeClient, args.getLanguages());
         NominatimConnector nominatimConnector = new NominatimConnector(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
         nominatimConnector.setImporter(importer);
-        try {
-            nominatimConnector.readEntireDatabase(args.getCountryCodes().split(","));
-        } catch (Exception e) {
-            log.info("error importing from nominatim: " + e.getMessage());
-        }
+        nominatimConnector.readEntireDatabase(args.getCountryCodes().split(","));
 
         log.info("imported data from nominatim to photon with languages: " + args.getLanguages());
     }

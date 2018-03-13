@@ -7,6 +7,7 @@ import org.elasticsearch.client.Client;
 import org.junit.After;
 
 import java.io.File;
+import java.io.IOException;
 
 /**
  * @author Peter Karich
@@ -20,8 +21,9 @@ public class ESBaseTester {
         shutdownES();
     }
 
-    public void setUpES() throws Exception {
-        server = new Server("photon_test", new File("./target/es_photon").getAbsolutePath(), "en", "", true).start();
+    public void setUpES() throws IOException {
+        server = new Server("photon-test", new File("./target/es_photon").getAbsolutePath(), "en", "").
+                start();
         server.recreateIndex();
         refresh();
     }
@@ -41,7 +43,8 @@ public class ESBaseTester {
     }
 
     public void shutdownES() {
-        server.shutdown();
+        if (server != null)
+            server.shutdown();
     }
 
     public void deleteIndex() {
