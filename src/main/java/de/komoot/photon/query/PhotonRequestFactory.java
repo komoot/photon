@@ -20,7 +20,7 @@ public class PhotonRequestFactory {
     private final static GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
 
     protected static HashSet<String> m_hsRequestQueryParams = new HashSet<>(Arrays.asList("lang", "q", "lon", "lat",
-            "limit", "distance_sort", "osm_tag", "location_bias_scale"));
+            "limit", "osm_tag", "location_bias_scale"));
 
     public PhotonRequestFactory(Set<String> supportedLanguages) {
         this.languageChecker = new LanguageChecker(supportedLanguages);
