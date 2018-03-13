@@ -54,13 +54,16 @@ public class PhotonRequestFactory {
             //ignore
         }
 
-        // use not too high default value, see #306
+        // don't use too high default value, see #306
         double scale = 1.6;
-        try {
-            scale = Double.parseDouble(webRequest.queryParams("location_bias_scale"));
-        } catch (Exception nfe) {
-            //ignore
-        }
+        String scaleStr = webRequest.queryParams("location_bias_scale");
+        if (scaleStr != null && !scaleStr.isEmpty())
+            try {
+                scale = Double.parseDouble(scaleStr);
+            } catch (Exception nfe) {
+                throw new BadRequestException(400, "invalid parameter 'location_bias_scale' must be a number");
+            }
+
         QueryParamsMap tagFiltersQueryMap = webRequest.queryMap("osm_tag");
         if (!new CheckIfFilteredRequest().execute(tagFiltersQueryMap)) {
             return (R) new PhotonRequest(query, limit, locationForBias, scale, language);
