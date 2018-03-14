@@ -99,6 +99,12 @@ http://localhost:2322/api?q=berlin
 http://localhost:2322/api?q=berlin&lon=10&lat=52
 ```
 
+Increase this bias (range is 0.1 to 10, default is 1.6)
+
+```
+http://localhost:2322/api?q=berlin&lon=10&lat=52&location_bias_scale=2
+```
+
 #### Reverse geocode a coordinate
 ```
 http://localhost:2322/reverse?lon=10&lat=52

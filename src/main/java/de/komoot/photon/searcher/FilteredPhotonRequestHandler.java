@@ -1,6 +1,5 @@
 package de.komoot.photon.searcher;
 
-import com.vividsolutions.jts.geom.Point;
 import de.komoot.photon.query.FilteredPhotonRequest;
 import de.komoot.photon.query.PhotonQueryBuilder;
 import de.komoot.photon.query.TagFilterQueryBuilder;
@@ -26,8 +25,7 @@ public class FilteredPhotonRequestHandler extends AbstractPhotonRequestHandler<F
         Set<String> excludeKeys = photonRequest.notKeys();
         Set<String> excludeValues = photonRequest.notValues();
         Map<String, Set<String>> excludeTagValues = photonRequest.tagNotValues();
-        Point locationBias = photonRequest.getLocationForBias();
-        Boolean locationDistanceSort = photonRequest.getLocationDistanceSort();
+
         return PhotonQueryBuilder.
                 builder(photonRequest.getQuery(), photonRequest.getLanguage()).
                 withTags(includeTags).
@@ -37,7 +35,7 @@ public class FilteredPhotonRequestHandler extends AbstractPhotonRequestHandler<F
                 withoutKeys(excludeKeys).
                 withoutValues(excludeValues).
                 withTagsNotValues(excludeTagValues).
-                withLocationBias(locationBias, locationDistanceSort);
+                withLocationBias(photonRequest.getLocationForBias(), photonRequest.getScaleForBias());
     }
 
 }
