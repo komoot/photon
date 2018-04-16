@@ -6,7 +6,17 @@ _Photon_ is an open source geocoder built for [OpenStreetMap](http://www.osm.org
 
 _Photon_ was started by [komoot](http://www.komoot.de) and provides search-as-you-type and multilingual support. It's used in production with thousands of requests per minute at [www.komoot.de](http://www.komoot.de). Find our public API and demo on [photon.komoot.de](http://photon.komoot.de).
 
+### Contribution
+
+All code contributions and bug reports are welcome!
+
+For questions please subscribe to our mailing list https://lists.openstreetmap.org/listinfo/photon
+
 Feel free to test and participate!
+
+### Licence
+
+Photon software is open source and licensed under [Apache License, Version 2.0](http://opensource.org/licenses/Apache-2.0)
 
 ### Features
 - high performance
@@ -200,9 +210,3 @@ http://localhost:2322/api?q=berlin&osm_tag=tourism
 
  - Photon's search configuration was developed with a specific test framework. It is written in Python and [hosted separately](https://github.com/yohanboniface/osm-geocoding-tester).
  - [R packge](https://github.com/rCarto/photon) to access photon's public API with [R](https://en.wikipedia.org/wiki/R_%28programming_language%29)
-
-### Contact
-Let us know what you think about photon! Create a github ticket or drop us an email in https://lists.openstreetmap.org/listinfo/photon
-
-### Licence
-Photon software is open source and licensed under [Apache License, Version 2.0](http://opensource.org/licenses/Apache-2.0)
