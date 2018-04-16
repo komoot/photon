@@ -10,7 +10,7 @@ _Photon_ was started by [komoot](http://www.komoot.de) and provides search-as-yo
 
 All code contributions and bug reports are welcome!
 
-For questions please subscribe to our mailing list https://lists.openstreetmap.org/listinfo/photon
+For questions please send an email to our mailing list https://lists.openstreetmap.org/listinfo/photon
 
 Feel free to test and participate!
 
