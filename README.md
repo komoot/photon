@@ -34,12 +34,6 @@ Photon software is open source and licensed under [Apache License, Version 2.0](
 
 photon requires java, at least version 8.
 
-Get photon, at least 0.3, from [the releases](https://github.com/komoot/photon/releases) and start it:
-
-```bash
-java -jar photon-*.jar
-```
-
 Download the search index (53G gb compressed, worldwide coverage, languages: English, German, French and Italian). The search index is updated weekly and thankfully provided by [GraphHopper](https://www.graphhopper.com/) with the support of [lonvia](https://github.com/lonvia).
 
 Make sure you have bzip2 or pbzip2 installed and execute one of these two commands in your shell. This will download, uncompress and extract the huge database in one step:
@@ -49,6 +43,14 @@ wget -O - http://download1.graphhopper.com/public/photon-db-latest.tar.bz2 | bzi
 # you can significantly speed up extracting using pbzip2 (recommended):
 wget -O - http://download1.graphhopper.com/public/photon-db-latest.tar.bz2 | pbzip2 -cd | tar x
  ```
+ 
+Now get photon, at least 0.3, from [the releases](https://github.com/komoot/photon/releases) and start it:
+
+```bash
+java -jar photon-*.jar
+```
+
+Use the `-data-dir` option if the data is not in the default location `./photon_data`. Before you request photon ElasticSearch needs to load some data into memory so be patient for a few seconds.
 
 To use an older version of ElasticSearch please download the data from [here](http://download1.graphhopper.com/public/photon-ES-17-db-171019.tar.bz2) (Nov 2017) via wget as described above and use version [0.2.7 of photon](http://photon.komoot.de/data/photon-0.2.7.jar) (Oct 2016).
 
