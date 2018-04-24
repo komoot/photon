@@ -145,7 +145,7 @@ If one or many query parameters named ```osm_tag``` are present, photon will att
 
 For example, to search for all places named ```berlin``` with tag of ```tourism=museum```, one should construct url as follows:
 ```
-http://localhost:2322/api?q=berlin&osm_tag=toursim:museum
+http://localhost:2322/api?q=berlin&osm_tag=tourism:museum
 ```
 
 Or, just by they key
