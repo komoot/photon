@@ -11,6 +11,7 @@
 					"preserving_word_delimiter",
 					"lowercase",
 					"german_normalization",
+					"asciifolding",
 					"unique"
 				]
 			},
@@ -21,7 +22,8 @@
 				"tokenizer": "standard",
 				"filter": [
 					"lowercase",
-					"german_normalization"
+					"german_normalization",
+					"asciifolding"
 				]
 			},
 			"index_raw": {
