@@ -79,11 +79,9 @@ public class Server {
         Settings.Builder sBuilder = Settings.builder();
         sBuilder.put("path.home", this.esDirectory.toString());
         sBuilder.put("network.host", "127.0.0.1"); // http://stackoverflow.com/a/15509589/1245622
+        sBuilder.put("cluster.name", clusterName);
 
         if (transportAddresses != null && !transportAddresses.isEmpty()) {
-
-            sBuilder.put("cluster.name", clusterName);
-
             TransportClient trClient = new PreBuiltTransportClient(sBuilder.build());
             List<String> addresses = Arrays.asList(transportAddresses.split(","));
             for (String tAddr : addresses) {
