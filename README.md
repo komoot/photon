@@ -77,15 +77,15 @@ java -jar photon-*.jar -nominatim-import -host localhost -port 5432 -database no
 
 The import of worldwide data set will take some hours/days, ssd disk are recommended to accelerate nominatim queries.
 
-#### Updating from Nominatim
+#### Updating from OSM via Nominatim
 
-In order to update from nominatim, you must start photon with the nominatim database credentials on the command line:
+In order to update nominatim from OSM and then photon from nominatim, you must start photon with the nominatim database credentials on the command line:
 
 ```bash
 java -jar photon-*.jar -host localhost -port 5432 -database nominatim -user nominatim -password ...
 ```
 
-A nominatim setup is also a requirement to have continuous updates. To keep in sync with the latest OSM changes run:
+A nominatim setup is also a requirement to have continuous updates. To keep nominatim in sync with the latest OSM changes and to update photon with nominatim afterwards run:
 
 ```bash
 export NOMINATIM_DIR=/home/nominatim/...
