@@ -317,6 +317,8 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder {
             m_finalQueryBuilder.filter(tagFilters);
         }
 
+        state = State.FINISHED;
+
         return m_finalQueryBuilder;
     }
 
