@@ -51,7 +51,7 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder {
 
     private MatchQueryBuilder languageMatchQueryBuilder;
 
-    private QueryBuilder m_finalQueryBuilder;
+    private BoolQueryBuilder m_finalQueryBuilder;
 
     protected ArrayList<FilterFunctionBuilder> m_alFilterFunction4QueryBuilder = new ArrayList<>(1);
 
@@ -306,18 +306,16 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder {
     public QueryBuilder buildQuery() {
         if (state.equals(State.FINISHED)) return m_finalQueryBuilder;
 
-        if (state.equals(State.FILTERED)) {
-
-            if (orQueryBuilderForIncludeTagFiltering != null)
-                m_queryBuilderForTopLevelFilter.must(orQueryBuilderForIncludeTagFiltering);
-            if (andQueryBuilderForExcludeTagFiltering != null)
-                m_queryBuilderForTopLevelFilter.must(andQueryBuilderForExcludeTagFiltering);
-
-        }
-
-        state = State.FINISHED;
-
         m_finalQueryBuilder = QueryBuilders.boolQuery().must(m_finalQueryWithoutTagFilterBuilder).filter(m_queryBuilderForTopLevelFilter);
+
+        if (state.equals(State.FILTERED)) {
+            BoolQueryBuilder tagFilters = QueryBuilders.boolQuery();
+            if (orQueryBuilderForIncludeTagFiltering != null)
+                tagFilters.must(orQueryBuilderForIncludeTagFiltering);
+            if (andQueryBuilderForExcludeTagFiltering != null)
+                tagFilters.must(andQueryBuilderForExcludeTagFiltering);
+            m_finalQueryBuilder.filter(tagFilters);
+        }
 
         return m_finalQueryBuilder;
     }
