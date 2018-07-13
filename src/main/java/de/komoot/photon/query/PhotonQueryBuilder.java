@@ -332,6 +332,8 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder {
         if (bboxQueryBuilder != null) 
             m_queryBuilderForTopLevelFilter.filter(bboxQueryBuilder);
 
+        state = State.FINISHED;
+
         return m_finalQueryBuilder;
     }
 
