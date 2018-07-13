@@ -54,7 +54,7 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder {
 
     private GeoBoundingBoxQueryBuilder bboxQueryBuilder;
 
-    private QueryBuilder m_finalQueryBuilder;
+    private BoolQueryBuilder m_finalQueryBuilder;
 
     protected ArrayList<FilterFunctionBuilder> m_alFilterFunction4QueryBuilder = new ArrayList<>(1);
 
@@ -318,21 +318,19 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder {
     public QueryBuilder buildQuery() {
         if (state.equals(State.FINISHED)) return m_finalQueryBuilder;
 
+        m_finalQueryBuilder = QueryBuilders.boolQuery().must(m_finalQueryWithoutTagFilterBuilder).filter(m_queryBuilderForTopLevelFilter);
+
         if (state.equals(State.FILTERED)) {
-
+            BoolQueryBuilder tagFilters = QueryBuilders.boolQuery();
             if (orQueryBuilderForIncludeTagFiltering != null)
-                m_queryBuilderForTopLevelFilter.must(orQueryBuilderForIncludeTagFiltering);
+                tagFilters.must(orQueryBuilderForIncludeTagFiltering);
             if (andQueryBuilderForExcludeTagFiltering != null)
-                m_queryBuilderForTopLevelFilter.must(andQueryBuilderForExcludeTagFiltering);
-
+                tagFilters.must(andQueryBuilderForExcludeTagFiltering);
+            m_finalQueryBuilder.filter(tagFilters);
         }
         
         if (bboxQueryBuilder != null) 
             m_queryBuilderForTopLevelFilter.filter(bboxQueryBuilder);
-
-        state = State.FINISHED;
-
-        m_finalQueryBuilder = QueryBuilders.boolQuery().must(m_finalQueryWithoutTagFilterBuilder).filter(m_queryBuilderForTopLevelFilter);
 
         return m_finalQueryBuilder;
     }
