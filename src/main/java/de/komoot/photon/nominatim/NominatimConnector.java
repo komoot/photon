@@ -446,12 +446,12 @@ public class NominatimConnector {
                 doc.setPostcode(address.getPostcode());
             }
 
-            if (address.isCity()) {
+            if (address.isCity(doc.getCountryCode())) {
                 if (doc.getCity() == null) {
                     doc.setCity(address.getName());
                 } else {
                     // there is more than one city address for this document
-                    if (address.hasPlace()) {
+                    if (address.hasPlace(doc.getCountryCode())) {
                         // this city is more important than the previous one
                         doc.getContext().add(doc.getCity()); // move previous city to context
                         doc.setCity(address.getName()); // use new city

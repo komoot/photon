@@ -1,5 +1,6 @@
 package de.komoot.photon.nominatim.model;
 
+import com.neovisionaries.i18n.CountryCode;
 import com.google.common.base.Objects;
 import lombok.Data;
 
@@ -43,7 +44,7 @@ public class AddressRow {
         return 26 <= rankAddress && rankAddress < 28;
     }
 
-    public boolean isCity() {
+    public boolean isCity(CountryCode countryCode) {
         if ("place".equals(osmKey) && Arrays.binarySearch(CITY_PLACE_VALUES, osmValue) >= 0) {
             return true;
         }
@@ -54,6 +55,10 @@ public class AddressRow {
 
         if (adminLevel != null && adminLevel == 8 && "boundary".equals(osmKey) && "administrative".equals(osmValue)) {
             return true;
+        }
+
+        if (countryCode == CountryCode.NL) {
+            return adminLevel != null && adminLevel == 10 && "boundary".equals(osmKey) && "administrative".equals(osmValue);
         }
 
         return false;
@@ -87,7 +92,10 @@ public class AddressRow {
         return postcode != null; // TODO really null?
     }
 
-    public boolean hasPlace() {
+    public boolean hasPlace(CountryCode countryCode) {
+        if (countryCode == CountryCode.NL) {
+            return adminLevel != null && adminLevel == 10;
+        }
         return place != null;
     }
 
