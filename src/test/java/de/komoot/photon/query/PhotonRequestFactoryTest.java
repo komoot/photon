@@ -2,6 +2,8 @@ package de.komoot.photon.query;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.vividsolutions.jts.geom.Envelope;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -197,4 +199,21 @@ public class PhotonRequestFactoryTest {
         Mockito.verify(mockOsmTagQueryParm, Mockito.times(2)).values();
         Assert.assertEquals(ImmutableSet.of("aValue"), filteredPhotonRequest.notValues());
     }
+    
+    @Test
+    public void testWithBboxFilter() throws Exception {
+        Request mockRequest = Mockito.mock(Request.class);
+        Mockito.when(mockRequest.queryParams("q")).thenReturn("hanover");
+        QueryParamsMap mockQueryParamsMap = Mockito.mock(QueryParamsMap.class);
+        Mockito.when(mockRequest.queryMap("osm_tag")).thenReturn(mockQueryParamsMap);
+        Mockito.when(mockRequest.queryParams("bbox")).thenReturn("9.6,52.4,9.8,52.3");   
+        
+        PhotonRequestFactory photonRequestFactory = new PhotonRequestFactory(ImmutableSet.of("en"));
+        PhotonRequest photonRequest = photonRequestFactory.create(mockRequest); 
+        
+        Mockito.verify(mockRequest, Mockito.times(1)).queryParams("bbox");
+        Assert.assertEquals(new Envelope(9.6, 9.8, 52.3, 52.4), photonRequest.getBbox());
+        
+    }
+    
 }

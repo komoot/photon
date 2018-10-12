@@ -1,6 +1,7 @@
 package de.komoot.photon.query;
 
 import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.PrecisionModel;
@@ -20,7 +21,7 @@ public class PhotonRequestFactory {
     private final static GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
 
     protected static HashSet<String> m_hsRequestQueryParams = new HashSet<>(Arrays.asList("lang", "q", "lon", "lat",
-            "limit", "osm_tag", "location_bias_scale"));
+            "bbox", "limit", "osm_tag", "location_bias_scale"));
 
     public PhotonRequestFactory(Set<String> supportedLanguages) {
         this.languageChecker = new LanguageChecker(supportedLanguages);
@@ -53,6 +54,20 @@ public class PhotonRequestFactory {
         } catch (Exception nfe) {
             //ignore
         }
+        
+        Envelope bbox = null; 
+        try {
+            String bboxParam = webRequest.queryParams("bbox");
+            String[] bboxCoords = bboxParam.split(",");
+            bbox = new Envelope(
+                            Double.valueOf(bboxCoords[0]),
+                            Double.valueOf(bboxCoords[2]),
+                            Double.valueOf(bboxCoords[1]),
+                            Double.valueOf(bboxCoords[3]));
+        } catch (Exception nfe) {
+            //ignore
+        }
+        
 
         // don't use too high default value, see #306
         double scale = 1.6;
@@ -66,9 +81,9 @@ public class PhotonRequestFactory {
 
         QueryParamsMap tagFiltersQueryMap = webRequest.queryMap("osm_tag");
         if (!new CheckIfFilteredRequest().execute(tagFiltersQueryMap)) {
-            return (R) new PhotonRequest(query, limit, locationForBias, scale, language);
+            return (R) new PhotonRequest(query, limit, bbox, locationForBias, scale, language);
         }
-        FilteredPhotonRequest photonRequest = new FilteredPhotonRequest(query, limit, locationForBias, scale, language);
+        FilteredPhotonRequest photonRequest = new FilteredPhotonRequest(query, limit, bbox, locationForBias, scale, language);
         String[] tagFilters = tagFiltersQueryMap.values();
         setUpTagFilters(photonRequest, tagFilters);
 

@@ -26,6 +26,7 @@ Photon software is open source and licensed under [Apache License, Version 2.0](
 - location bias
 - typo tolerance
 - filter by osm tag and value
+- filter by bounding box
 - reverse geocode a coordinate to an address
 - OSM data import (built upon [Nominatim](https://github.com/twain47/Nominatim)) inclusive continuous updates
 
@@ -130,6 +131,11 @@ http://localhost:2322/api?q=berlin&limit=2
 #### Adjust Language
 ```
 http://localhost:2322/api?q=berlin&lang=it
+```
+
+#### Filter results by bounding box
+```
+http://localhost:2322/api?q=berlin&bbox=9.5,51.5,11.5,53.5
 ```
 
 #### Filter results by [tags and values](http://taginfo.openstreetmap.org/projects/nominatim#tags) 
