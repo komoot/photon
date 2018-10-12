@@ -49,6 +49,19 @@ public class PhotonRequestFactory {
         
         Envelope bbox = bboxParamConverter.apply(webRequest);
         Point locationForBias = optionalLocationParamConverter.apply(webRequest);
+        
+        Envelope bbox = null; 
+        try {
+            String bboxParam = webRequest.queryParams("bbox");
+            String[] bboxCoords = bboxParam.split(",");
+            bbox = new Envelope(
+                            Double.valueOf(bboxCoords[0]),
+                            Double.valueOf(bboxCoords[2]),
+                            Double.valueOf(bboxCoords[1]),
+                            Double.valueOf(bboxCoords[3]));
+        } catch (Exception nfe) {
+            //ignore
+        }
 
         // don't use too high default value, see #306
         double scale = 1.6;
