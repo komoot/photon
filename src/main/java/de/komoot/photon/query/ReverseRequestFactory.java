@@ -66,7 +66,7 @@ public class ReverseRequestFactory {
 
         Boolean locationDistanceSort;
         try {
-            locationDistanceSort = Boolean.valueOf(webRequest.queryParamOrDefault("distance_sort", "false"));
+            locationDistanceSort = Boolean.valueOf(webRequest.queryParamOrDefault("distance_sort", "true"));
         } catch (Exception nfe) {
             throw new BadRequestException(400, "invalid parameter 'distance_sort', can only be true or false");
         }
