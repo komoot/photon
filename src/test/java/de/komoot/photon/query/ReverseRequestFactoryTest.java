@@ -21,6 +21,7 @@ public class ReverseRequestFactoryTest {
     public void requestWithLongitudeLatitude(Request mockRequest, Double longitude, Double latitude) {
         Mockito.when(mockRequest.queryParamOrDefault("lon", "")).thenReturn(longitude.toString());
         Mockito.when(mockRequest.queryParamOrDefault("lat", "")).thenReturn(latitude.toString());
+        Mockito.when(mockRequest.queryParamOrDefault("distance_sort", "true")).thenReturn("true");
     }
 
     @Test
@@ -160,5 +161,15 @@ public class ReverseRequestFactoryTest {
         reverseRequest = reverseRequestFactory.create(mockRequest);
         Assert.assertEquals(reverseRequest.getLimit().longValue(), 50);
         Mockito.verify(mockRequest, Mockito.times(1)).queryParams("limit");
+    }
+    
+    @Test
+    public void testDistanceSortDefault() throws Exception {
+        Request mockRequest = Mockito.mock(Request.class);
+        requestWithLongitudeLatitude(mockRequest, -87d, 41d);
+        ReverseRequestFactory reverseRequestFactory = new ReverseRequestFactory(ImmutableSet.of("en"));
+        reverseRequest = reverseRequestFactory.create(mockRequest);
+        Mockito.verify(mockRequest, Mockito.times(1)).queryParamOrDefault("distance_sort", "true");
+        Assert.assertEquals(true, reverseRequest.getLocationDistanceSort());
     }
 }
