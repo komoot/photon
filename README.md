@@ -136,6 +136,7 @@ http://localhost:2322/api?q=berlin&lang=it
 ```
 
 #### Filter results by bounding box
+Expected format is minLon,minLat,maxLon,maxLat. 
 ```
 http://localhost:2322/api?q=berlin&bbox=9.5,51.5,11.5,53.5
 ```
