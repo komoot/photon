@@ -17,6 +17,8 @@ public class PhotonRequestFactory {
     private final LanguageChecker languageChecker;
     private final BoundingBoxParamConverter bboxParamConverter;
     private final static LocationParamConverter optionalLocationParamConverter = new LocationParamConverter(false);
+    private final BoundingBoxParamConverter bboxParamConverter;
+
 
 
     protected static HashSet<String> m_hsRequestQueryParams = new HashSet<>(Arrays.asList("lang", "q", "lon", "lat",
@@ -49,19 +51,7 @@ public class PhotonRequestFactory {
         
         Envelope bbox = bboxParamConverter.apply(webRequest);
         Point locationForBias = optionalLocationParamConverter.apply(webRequest);
-        
-        Envelope bbox = null; 
-        try {
-            String bboxParam = webRequest.queryParams("bbox");
-            String[] bboxCoords = bboxParam.split(",");
-            bbox = new Envelope(
-                            Double.valueOf(bboxCoords[0]),
-                            Double.valueOf(bboxCoords[2]),
-                            Double.valueOf(bboxCoords[1]),
-                            Double.valueOf(bboxCoords[3]));
-        } catch (Exception nfe) {
-            //ignore
-        }
+        Envelope bbox = bboxParamConverter.apply(webRequest);
 
         // don't use too high default value, see #306
         double scale = 1.6;
