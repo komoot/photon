@@ -1,9 +1,6 @@
 package de.komoot.photon.query;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
-import com.vividsolutions.jts.geom.PrecisionModel;
 import spark.Request;
 
 import java.util.Arrays;
@@ -15,7 +12,7 @@ import java.util.Set;
  */
 public class ReverseRequestFactory {
     private final LanguageChecker languageChecker;
-    private final static GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
+    private final static LocationParamConverter mandatoryLocationParamConverter = new LocationParamConverter(true);
 
     protected static HashSet<String> m_hsRequestQueryParams = new HashSet<>(Arrays.asList("lang", "lon", "lat", "radius", "query_string_filter", "distance_sort", "limit"));
 
@@ -33,20 +30,7 @@ public class ReverseRequestFactory {
         language = language == null ? "en" : language;
         languageChecker.apply(language);
 
-        Point location;
-        try {
-            Double lon = Double.valueOf(webRequest.queryParamOrDefault("lon", ""));
-            if (lon > 180.0 || lon < -180.00) {
-                throw new BadRequestException(400, "invalid search term 'lon', expected number >= -180.0 and <= 180.0");
-            }
-            Double lat = Double.valueOf(webRequest.queryParamOrDefault("lat", ""));
-            if (lat > 90.0 || lat < -90.00) {
-                throw new BadRequestException(400, "invalid search term 'lat', expected number >= -90.0 and <= 90.0");
-            }
-            location = geometryFactory.createPoint(new Coordinate(lon, lat));
-        } catch (NumberFormatException nfe) {
-            throw new BadRequestException(400, "invalid search term 'lat' and/or 'lon', try instead lat=51.5&lon=8.0");
-        }
+        Point location = mandatoryLocationParamConverter.apply(webRequest);
 
         Double radius = 1d;
         String radiusParam = webRequest.queryParams("radius");

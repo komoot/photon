@@ -1,10 +1,7 @@
 package de.komoot.photon.query;
 
-import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
-import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
-import com.vividsolutions.jts.geom.PrecisionModel;
 import spark.QueryParamsMap;
 import spark.Request;
 
@@ -19,8 +16,8 @@ import java.util.Set;
 public class PhotonRequestFactory {
     private final LanguageChecker languageChecker;
     private final BoundingBoxParamConverter bboxParamConverter;
-    
-    private final static GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
+    private final static LocationParamConverter optionalLocationParamConverter = new LocationParamConverter(false);
+
 
     protected static HashSet<String> m_hsRequestQueryParams = new HashSet<>(Arrays.asList("lang", "q", "lon", "lat",
             "bbox", "limit", "osm_tag", "location_bias_scale"));
@@ -49,17 +46,10 @@ public class PhotonRequestFactory {
         } catch (NumberFormatException e) {
             limit = 15;
         }
-        Point locationForBias = null;
-        try {
-            Double lon = Double.valueOf(webRequest.queryParams("lon"));
-            Double lat = Double.valueOf(webRequest.queryParams("lat"));
-            locationForBias = geometryFactory.createPoint(new Coordinate(lon, lat));
-        } catch (Exception nfe) {
-            //ignore
-        }
         
         Envelope bbox = bboxParamConverter.apply(webRequest);
-        
+        Point locationForBias = optionalLocationParamConverter.apply(webRequest);
+
         // don't use too high default value, see #306
         double scale = 1.6;
         String scaleStr = webRequest.queryParams("location_bias_scale");
