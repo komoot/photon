@@ -19,8 +19,8 @@ public class ReverseRequestFactoryTest {
     private ReverseRequest reverseRequest;
 
     public void requestWithLongitudeLatitude(Request mockRequest, Double longitude, Double latitude) {
-        Mockito.when(mockRequest.queryParamOrDefault("lon", "")).thenReturn(longitude.toString());
-        Mockito.when(mockRequest.queryParamOrDefault("lat", "")).thenReturn(latitude.toString());
+        Mockito.when(mockRequest.queryParams("lon")).thenReturn(longitude.toString());
+        Mockito.when(mockRequest.queryParams("lat")).thenReturn(latitude.toString());
         Mockito.when(mockRequest.queryParamOrDefault("distance_sort", "true")).thenReturn("true");
     }
 
@@ -32,8 +32,8 @@ public class ReverseRequestFactoryTest {
         reverseRequest = reverseRequestFactory.create(mockRequest);
         Assert.assertEquals(-87, reverseRequest.getLocation().getX(), 0);
         Assert.assertEquals(41, reverseRequest.getLocation().getY(), 0);
-        Mockito.verify(mockRequest, Mockito.times(1)).queryParamOrDefault("lon", "");
-        Mockito.verify(mockRequest, Mockito.times(1)).queryParamOrDefault("lat", "");
+        Mockito.verify(mockRequest, Mockito.times(1)).queryParams("lon");
+        Mockito.verify(mockRequest, Mockito.times(1)).queryParams("lat");
     }
 
     public void assertBadRequest(Request mockRequest, String expectedMessage) {
@@ -49,11 +49,11 @@ public class ReverseRequestFactoryTest {
     @Test
     public void testWithBadLocation() throws Exception {
         Request mockRequest = Mockito.mock(Request.class);
-        Mockito.when(mockRequest.queryParamOrDefault("lon", "")).thenReturn("bad");
-        Mockito.when(mockRequest.queryParamOrDefault("lat", "")).thenReturn("bad");
+        Mockito.when(mockRequest.queryParams("lon")).thenReturn("bad");
+        Mockito.when(mockRequest.queryParams("lat")).thenReturn("bad");
         assertBadRequest(mockRequest, "invalid search term 'lat' and/or 'lon', try instead lat=51.5&lon=8.0");
-        Mockito.verify(mockRequest, Mockito.times(1)).queryParamOrDefault("lon", "");
-        Mockito.verify(mockRequest, Mockito.never()).queryParamOrDefault("lat", "");
+        Mockito.verify(mockRequest, Mockito.times(1)).queryParams("lon");
+        Mockito.verify(mockRequest, Mockito.times(1)).queryParams("lat");
     }
 
 
@@ -61,8 +61,8 @@ public class ReverseRequestFactoryTest {
         Request mockRequest = Mockito.mock(Request.class);
         requestWithLongitudeLatitude(mockRequest, (high) ? 180.01 : -180.01, 0.0);
         assertBadRequest(mockRequest, "invalid search term 'lon', expected number >= -180.0 and <= 180.0");
-        Mockito.verify(mockRequest, Mockito.times(1)).queryParamOrDefault("lon", "");
-        Mockito.verify(mockRequest, Mockito.never()).queryParamOrDefault("lat", "");
+        Mockito.verify(mockRequest, Mockito.times(1)).queryParams("lon");
+        Mockito.verify(mockRequest, Mockito.times(1)).queryParams("lat");
     }
 
     @Test
@@ -79,8 +79,8 @@ public class ReverseRequestFactoryTest {
         Request mockRequest = Mockito.mock(Request.class);
         requestWithLongitudeLatitude(mockRequest, 0.0, (high) ? 90.01 : -90.01);
         assertBadRequest(mockRequest, "invalid search term 'lat', expected number >= -90.0 and <= 90.0");
-        Mockito.verify(mockRequest, Mockito.times(1)).queryParamOrDefault("lon", "");
-        Mockito.verify(mockRequest, Mockito.times(1)).queryParamOrDefault("lat", "");
+        Mockito.verify(mockRequest, Mockito.times(1)).queryParams("lon");
+        Mockito.verify(mockRequest, Mockito.times(1)).queryParams("lat");
     }
 
     @Test
@@ -96,11 +96,11 @@ public class ReverseRequestFactoryTest {
     @Test
     public void testWithNoLocation() throws Exception {
         Request mockRequest = Mockito.mock(Request.class);
-        Mockito.when(mockRequest.queryParamOrDefault("lon", "")).thenReturn("");
-        Mockito.when(mockRequest.queryParamOrDefault("lat", "")).thenReturn("");
+        Mockito.when(mockRequest.queryParams("lon")).thenReturn("");
+        Mockito.when(mockRequest.queryParams("lat")).thenReturn("");
         assertBadRequest(mockRequest, "invalid search term 'lat' and/or 'lon', try instead lat=51.5&lon=8.0");
-        Mockito.verify(mockRequest, Mockito.times(1)).queryParamOrDefault("lon", "");
-        Mockito.verify(mockRequest, Mockito.never()).queryParamOrDefault("lat", "");
+        Mockito.verify(mockRequest, Mockito.times(1)).queryParams("lon");
+        Mockito.verify(mockRequest, Mockito.times(1)).queryParams("lat");
     }
 
     public void testWithBadParam(String paramName, String paramValue, String expectedMessage) throws Exception {
