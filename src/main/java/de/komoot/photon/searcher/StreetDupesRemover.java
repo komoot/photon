@@ -37,17 +37,18 @@ public class StreetDupesRemover implements Command<List<JSONObject>, List<JSONOb
                     // street has a postcode and name
                     String postcode = properties.getString(Constants.POSTCODE);
                     String name = properties.getString(Constants.NAME);
-                    String key;
+                    // OSM_VALUE is part of key to avoid deduplication of e.g. bus_stops and streets with same name 
+                    String key = (properties.has(Constants.OSM_VALUE) ? properties.getString(Constants.OSM_VALUE) : "") + ":";
 
                     if (language.equals("nl")) {
                         String onlyDigitsPostcode = Utils.stripNonDigits(postcode);
-                        key = onlyDigitsPostcode + ":" + name;
+                        key += onlyDigitsPostcode + ":" + name;
                     } else {
-                        key = postcode + ":" + name;
+                        key += postcode + ":" + name;
                     }
 
                     if (keys.contains(key)) {
-                        // a street with this name + postcode is already part of the result list
+                        // an osm highway object (e.g. street or bus_stop) with this osm_value + name + postcode is already part of the result list
                         continue;
                     }
                     keys.add(key);
