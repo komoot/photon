@@ -39,25 +39,28 @@ public class NominatimUpdater {
                 for (UpdateRow place : getIndexSectorPlaces(rank, (Integer) sector.get("geometry_sector"))) {
 
                     template.update("update placex set indexed_status = 0 where place_id = ?", place.getPlaceId());
-                    final PhotonDoc updatedDoc = exporter.getByPlaceId(place.getPlaceId());
+                    final List<PhotonDoc> updatedDocs = exporter.getByPlaceId(place.getPlaceId());
 
-                    switch (place.getIndexdStatus()) {
-                        case 1:
-                            if (updatedDoc.isUsefulForIndex())
-                                updater.create(updatedDoc);
-                            break;
-                        case 2:
-                            if (!updatedDoc.isUsefulForIndex())
+                    for (PhotonDoc updatedDoc : updatedDocs) {
+                        switch (place.getIndexdStatus()) {
+                            case 1:
+                                if (updatedDoc.isUsefulForIndex())
+                                    updater.create(updatedDoc);
+                                break;
+                            case 2:
+                                if (!updatedDoc.isUsefulForIndex()) {
+                                    updater.delete(place.getPlaceId());
+                                    break;
+                                }
+                                updater.updateOrCreate(updatedDoc);
+                                break;
+                            case 100:
                                 updater.delete(place.getPlaceId());
-
-                            updater.updateOrCreate(updatedDoc);
-                            break;
-                        case 100:
-                            updater.delete(place.getPlaceId());
-                            break;
-                        default:
-                            LOGGER.error(String.format("Unknown index status %d", place.getIndexdStatus()));
-                            break;
+                                break;
+                            default:
+                                LOGGER.error(String.format("Unknown index status %d", place.getIndexdStatus()));
+                                break;
+                        }
                     }
                 }
         }
