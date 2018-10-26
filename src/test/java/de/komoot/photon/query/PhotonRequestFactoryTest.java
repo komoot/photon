@@ -49,7 +49,7 @@ public class PhotonRequestFactoryTest {
         Assert.assertNull(photonRequest.getLocationForBias());
         Mockito.verify(mockRequest, Mockito.times(1)).queryParams("q");
         Mockito.verify(mockRequest, Mockito.times(1)).queryParams("lon");
-        Mockito.verify(mockRequest, Mockito.never()).queryParams("lat");
+        Mockito.verify(mockRequest, Mockito.times(1)).queryParams("lat");
     }
 
     @Test
@@ -58,15 +58,20 @@ public class PhotonRequestFactoryTest {
         Mockito.when(mockRequest.queryParams("q")).thenReturn("berlin");
         Mockito.when(mockRequest.queryParams("lon")).thenReturn("bad");
         Mockito.when(mockRequest.queryParams("lat")).thenReturn("bad");
-        PhotonRequestFactory photonRequestFactory = new PhotonRequestFactory(ImmutableSet.of("en"));
         QueryParamsMap mockQueryParamsMap = Mockito.mock(QueryParamsMap.class);
         Mockito.when(mockRequest.queryMap("osm_tag")).thenReturn(mockQueryParamsMap);
-        photonRequest = photonRequestFactory.create(mockRequest);
-        Assert.assertEquals("berlin", photonRequest.getQuery());
-        Assert.assertNull(photonRequest.getLocationForBias());
+        
+        try {
+            PhotonRequestFactory photonRequestFactory = new PhotonRequestFactory(ImmutableSet.of("en"));
+            photonRequest = photonRequestFactory.create(mockRequest);
+            Assert.fail();
+        } catch (BadRequestException e) {
+            Assert.assertEquals("invalid search term 'lat' and/or 'lon', try instead lat=51.5&lon=8.0", e.getMessage());
+        }
+        
         Mockito.verify(mockRequest, Mockito.times(1)).queryParams("q");
         Mockito.verify(mockRequest, Mockito.times(1)).queryParams("lon");
-        Mockito.verify(mockRequest, Mockito.never()).queryParams("lat");
+        Mockito.verify(mockRequest, Mockito.times(1)).queryParams("lat");
     }
 
     @Test
