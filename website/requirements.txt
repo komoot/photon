@@ -1,8 +1,8 @@
-Flask==0.10.1
-itsdangerous==0.23
-Jinja2==2.7.1
-MarkupSafe==0.18
-requests==2.0.0
-simplejson==3.3.1
-Werkzeug==0.9.4
-elasticsearch==1.0.0
+Flask==1.0.2
+itsdangerous==0.24
+Jinja2==2.10
+MarkupSafe==1.0
+requests==2.20.0
+simplejson==3.16.0
+Werkzeug==0.14.1
+elasticsearch==6.3.1

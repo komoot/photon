@@ -15,7 +15,7 @@ It has been developed with python3.4 (but should work with python2.x). We sugges
 * Install dependencies:
  ```
  cd website/photon
- pip install -r requirements.txt
+ pip install -r ../requirements.txt
  ```
 * Run the server
  ```
