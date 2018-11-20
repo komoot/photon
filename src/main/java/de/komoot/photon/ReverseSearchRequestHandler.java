@@ -28,12 +28,16 @@ public class ReverseSearchRequestHandler<R extends ReverseRequest> extends Route
     private final ReverseRequestHandlerFactory requestHandlerFactory;
     private final ConvertToGeoJson geoJsonConverter;
 
-    ReverseSearchRequestHandler(String path, Client esNodeClient, String languages) {
+    ReverseSearchRequestHandler(String path, Client esNodeClient, String languages, String cors) {
         super(path);
         Set<String> supportedLanguages = new HashSet<String>(Arrays.asList(languages.split(",")));
         this.reverseRequestFactory = new ReverseRequestFactory(supportedLanguages);
         this.geoJsonConverter = new ConvertToGeoJson();
         this.requestHandlerFactory = new ReverseRequestHandlerFactory(new ReverseElasticsearchSearcher(esNodeClient));
+        if (cors.equals("enable") && !CorsFilter.corsEnabled) {
+            CorsFilter.enableCors();
+            CorsFilter.corsEnabled = true;
+        }
     }
 
     @Override
@@ -49,8 +53,6 @@ public class ReverseSearchRequestHandler<R extends ReverseRequest> extends Route
         ReverseRequestHandler<R> handler = requestHandlerFactory.createHandler(photonRequest);
         List<JSONObject> results = handler.handle(photonRequest);
         JSONObject geoJsonResults = geoJsonConverter.convert(results);
-        response.type("application/json; charset=utf-8");
-        response.header("Access-Control-Allow-Origin", "*");
         if (request.queryParams("debug") != null)
             return geoJsonResults.toString(4);
 

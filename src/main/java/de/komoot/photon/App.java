@@ -138,10 +138,10 @@ public class App {
         setIpAddress(args.getListenIp());
 
         // setup search API
-        get("api", new SearchRequestHandler("api", esNodeClient, args.getLanguages()));
-        get("api/", new SearchRequestHandler("api/", esNodeClient, args.getLanguages()));
-        get("reverse", new ReverseSearchRequestHandler("reverse", esNodeClient, args.getLanguages()));
-        get("reverse/", new ReverseSearchRequestHandler("reverse/", esNodeClient, args.getLanguages()));
+        get("api", new SearchRequestHandler("api", esNodeClient, args.getLanguages(), args.getCors()));
+        get("api/", new SearchRequestHandler("api/", esNodeClient, args.getLanguages(), args.getCors()));
+        get("reverse", new ReverseSearchRequestHandler("reverse", esNodeClient, args.getLanguages(), args.getCors()));
+        get("reverse/", new ReverseSearchRequestHandler("reverse/", esNodeClient, args.getLanguages(), args.getCors()));
 
         // setup update API
         final NominatimUpdater nominatimUpdater = new NominatimUpdater(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());

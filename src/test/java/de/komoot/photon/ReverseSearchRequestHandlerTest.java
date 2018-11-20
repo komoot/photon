@@ -34,7 +34,7 @@ public class ReverseSearchRequestHandlerTest {
     @Test
     public void testConstructor() throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
         Client client = Mockito.mock(Client.class);
-        ReverseSearchRequestHandler reverseSearchRequestHandler = new ReverseSearchRequestHandler("any", client, "en,fr");
+        ReverseSearchRequestHandler reverseSearchRequestHandler = new ReverseSearchRequestHandler("any", client, "en,fr", "disable");
         String path = ReflectionTestUtil.getFieldValue(reverseSearchRequestHandler, RouteImpl.class, "path");
         Assert.assertEquals("any", path);
         ReverseRequestFactory reverseRequestFactory = ReflectionTestUtil.getFieldValue(reverseSearchRequestHandler, reverseSearchRequestHandler.getClass(), "reverseRequestFactory");
@@ -47,7 +47,7 @@ public class ReverseSearchRequestHandlerTest {
     @Test
     public void testHandle() throws BadRequestException {
         Client client = Mockito.mock(Client.class);
-        ReverseSearchRequestHandler reverseSearchRequestHandlerUnderTest = new ReverseSearchRequestHandler("any", client, "en,fr");
+        ReverseSearchRequestHandler reverseSearchRequestHandlerUnderTest = new ReverseSearchRequestHandler("any", client, "en,fr", "disable");
         ReverseRequestFactory mockReverseRequestFactory = Mockito.mock(ReverseRequestFactory.class);
         Request mockWebRequest = Mockito.mock(Request.class);
         ReflectionTestUtil.setFieldValue(reverseSearchRequestHandlerUnderTest, ReverseSearchRequestHandler.class, "reverseRequestFactory", mockReverseRequestFactory);

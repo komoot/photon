@@ -30,7 +30,7 @@ public class SearchRequestHandlerTest {
     @Test
     public void testConstructor() throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
         Client client = Mockito.mock(Client.class);
-        SearchRequestHandler searchRequestHandler = new SearchRequestHandler("any", client, "en,fr");
+        SearchRequestHandler searchRequestHandler = new SearchRequestHandler("any", client, "en,fr", "disable");
         String path = ReflectionTestUtil.getFieldValue(searchRequestHandler, RouteImpl.class, "path");
         Assert.assertEquals("any", path);
         PhotonRequestFactory photonRequestFactory = ReflectionTestUtil.getFieldValue(searchRequestHandler, searchRequestHandler.getClass(), "photonRequestFactory");
@@ -43,7 +43,7 @@ public class SearchRequestHandlerTest {
     @Test
     public void testHandle() throws BadRequestException {
         Client client = Mockito.mock(Client.class);
-        SearchRequestHandler searchRequestHandlerUnderTest = new SearchRequestHandler("any", client, "en,fr");
+        SearchRequestHandler searchRequestHandlerUnderTest = new SearchRequestHandler("any", client, "en,fr", "disable");
         PhotonRequestFactory mockPhotonRequestFactory = Mockito.mock(PhotonRequestFactory.class);
         Request mockWebRequest = Mockito.mock(Request.class);
         ReflectionTestUtil.setFieldValue(searchRequestHandlerUnderTest, SearchRequestHandler.class, "photonRequestFactory", mockPhotonRequestFactory);
