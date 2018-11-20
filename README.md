@@ -56,6 +56,8 @@ To use an older version of ElasticSearch please download the data from [here](ht
 
 Check the URL `http://localhost:2322/api?q=berlin` to see if photon is running without problems. You may want to use our [leaflet plugin](https://github.com/komoot/leaflet.photon) to see the results on a map.
 
+To enable CORS (cross-site requests), use `-cors enable`. By default, CORS is disabled.
+
 discover more of photon's feature with its usage `java -jar photon-*.jar -h`.
 
 
