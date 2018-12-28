@@ -377,6 +377,34 @@
 						"copy_to": [
 							"collector.default"
 						]
+					},
+					"ref": {
+						"type": "text",
+						"index": false,
+						"copy_to": [
+							"collector.default"
+						]
+					},
+					"left": {
+						"type": "text",
+						"index": false,
+						"copy_to": [
+							"collector.default"
+						]
+					},
+					"right": {
+						"type": "text",
+						"index": false,
+						"copy_to": [
+							"collector.default"
+						]
+					},
+					"short": {
+						"type": "text",
+						"index": false,
+						"copy_to": [
+							"collector.default"
+						]
 					}
 				}
 			},
