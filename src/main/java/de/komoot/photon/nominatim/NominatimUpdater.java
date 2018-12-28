@@ -39,8 +39,13 @@ public class NominatimUpdater {
                 for (UpdateRow place : getIndexSectorPlaces(rank, (Integer) sector.get("geometry_sector"))) {
 
                     template.update("update placex set indexed_status = 0 where place_id = ?", place.getPlaceId());
-                    final List<PhotonDoc> updatedDocs = exporter.getByPlaceId(place.getPlaceId());
 
+                    if (place.getIndexdStatus() == 100) {
+                        updater.delete(place.getPlaceId());
+                        continue;
+                    }
+
+                    final List<PhotonDoc> updatedDocs = exporter.getByPlaceId(place.getPlaceId());
                     for (PhotonDoc updatedDoc : updatedDocs) {
                         switch (place.getIndexdStatus()) {
                             case 1:
@@ -53,9 +58,6 @@ public class NominatimUpdater {
                                     break;
                                 }
                                 updater.updateOrCreate(updatedDoc);
-                                break;
-                            case 100:
-                                updater.delete(place.getPlaceId());
                                 break;
                             default:
                                 LOGGER.error(String.format("Unknown index status %d", place.getIndexdStatus()));
