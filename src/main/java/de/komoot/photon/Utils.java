@@ -149,6 +149,10 @@ public class Utils {
             filteredNames.put("default", names.get("name"));
         }
 
+        if (names.get("alt_name") != null) {
+            filteredNames.put("alt", names.get("alt_name"));
+        }
+
         for (String language : languages) {
             if (names.get("name:" + language) != null) {
                 filteredNames.put(language, names.get("name:" + language));
