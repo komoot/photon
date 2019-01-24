@@ -21,8 +21,14 @@ import java.util.Map;
 
 public class NominatimUpdater {
     private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(NominatimUpdater.class);
-    private final Integer minRank = 1;
-    private final Integer maxRank = 30;
+
+    private static final int CREATE = 1;
+    private static final int UPDATE = 2;
+    private static final int DELETE = 100;
+
+    private static final int MIN_RANK = 1;
+    private static final int MAX_RANK = 30;
+
     private final JdbcTemplate template;
     private final NominatimConnector exporter;
 
@@ -33,36 +39,100 @@ public class NominatimUpdater {
     }
 
     public void update() {
-        for (Integer rank = this.minRank; rank <= this.maxRank; rank++) {
+        int updatedPlaces = 0;
+        int deletedPlaces = 0;
+        for (int rank = MIN_RANK; rank <= MAX_RANK; rank++) {
             LOGGER.info(String.format("Starting rank %d", rank));
-            for (Map<String, Object> sector : getIndexSectors(rank))
+            for (Map<String, Object> sector : getIndexSectors(rank)) {
                 for (UpdateRow place : getIndexSectorPlaces(rank, (Integer) sector.get("geometry_sector"))) {
+                    long placeId = place.getPlaceId();
+                    template.update("update placex set indexed_status = 0 where place_id = ?;", placeId);
+                    
+                    Integer indexedStatus = place.getIndexdStatus();
+                    if (indexedStatus == DELETE || (indexedStatus == UPDATE && rank == MAX_RANK)) {
+                        updater.delete(placeId);
+                        if (indexedStatus == DELETE) {
+                            deletedPlaces++;
+                            continue;
+                        } else {
+                            updatedPlaces++;
+                            indexedStatus = CREATE; // always create
+                        }
+                    } else {
+                        updatedPlaces++;
+                    }
 
-                    template.update("update placex set indexed_status = 0 where place_id = ?", place.getPlaceId());
-                    final PhotonDoc updatedDoc = exporter.getByPlaceId(place.getPlaceId());
-
-                    switch (place.getIndexdStatus()) {
-                        case 1:
-                            if (updatedDoc.isUsefulForIndex())
+                    final List<PhotonDoc> updatedDocs = exporter.getByPlaceId(place.getPlaceId());
+                    boolean wasUseful = false;
+                    for (PhotonDoc updatedDoc : updatedDocs) {
+                        switch (indexedStatus) {
+                        case CREATE:
+                            if (updatedDoc.isUsefulForIndex()) {
                                 updater.create(updatedDoc);
+                            }
                             break;
-                        case 2:
-                            if (!updatedDoc.isUsefulForIndex())
-                                updater.delete(place.getPlaceId());
-
-                            updater.updateOrCreate(updatedDoc);
-                            break;
-                        case 100:
-                            updater.delete(place.getPlaceId());
+                        case UPDATE:
+                            if (updatedDoc.isUsefulForIndex()) {
+                                updater.updateOrCreate(updatedDoc);
+                                wasUseful = true;
+                            }
                             break;
                         default:
-                            LOGGER.error(String.format("Unknown index status %d", place.getIndexdStatus()));
+                            LOGGER.error(String.format("Unknown index status %d", indexedStatus));
                             break;
+                        }
+                    }
+                    if (indexedStatus == UPDATE && !wasUseful) { 
+                        // only true when rank != 30
+                        // if no documents for the place id exist this will likely cause moaning
+                        updater.delete(placeId); 
+                        updatedPlaces--;
                     }
                 }
+            }
         }
 
+        LOGGER.info(String.format("%d places created or updated, %d deleted", updatedPlaces, deletedPlaces));
+
+        // update documents generated from address interpolations
+        // .isUsefulForIndex() should always return true for documents
+        // created from interpolations so no need to check them
+        LOGGER.info("Starting interpolations");
+        int createdInterpolations = 0;
+        int updatedInterpolations = 0;
+        int deletedInterpolations = 0;
+        int interpolationDocuments = 0;
+        for (Map<String, Object> sector : template.queryForList(
+                "select geometry_sector,count(*) from location_property_osmline where indexed_status > 0 group by geometry_sector order by geometry_sector;")) {
+            for (UpdateRow place : getIndexSectorInterpolations((Integer) sector.get("geometry_sector"))) {
+                long placeId = place.getPlaceId();
+                template.update("update location_property_osmline set indexed_status = 0 where place_id = ?;", placeId);
+
+                Integer indexedStatus = place.getIndexdStatus();
+                if (indexedStatus != CREATE) {
+                    updater.delete(placeId);
+                    if (indexedStatus == DELETE) {
+                        deletedInterpolations++;
+                        continue;
+                    }
+                    updatedInterpolations++;
+                } else {
+                    createdInterpolations++;
+                }
+
+                final List<PhotonDoc> updatedDocs = exporter.getInterpolationsByPlaceId(place.getPlaceId());
+                for (PhotonDoc updatedDoc : updatedDocs) {
+                    updater.create(updatedDoc);
+                    interpolationDocuments++;
+                }
+            }
+        }
+        LOGGER.info(String.format("%d interpolations created, %d updated, %d deleted, %d documents added or updated", createdInterpolations,
+                updatedInterpolations, deletedInterpolations, interpolationDocuments));
         updater.finish();
+        template.update("update import_status set indexed=true;"); // indicate that we are finished
+ 
+        LOGGER.info("Finished updating");
     }
 
     private List<Map<String, Object>> getIndexSectors(Integer rank) {
@@ -83,7 +153,27 @@ public class NominatimUpdater {
         });
     }
 
+    private List<UpdateRow> getIndexSectorInterpolations(Integer geometrySector) {
+        return template.query("select place_id, indexed_status from location_property_osmline where geometry_sector = ? and indexed_status > 0;",
+                new Object[] { geometrySector }, new RowMapper<UpdateRow>() {
+            @Override
+            public UpdateRow mapRow(ResultSet rs, int rowNum) throws SQLException {
+                UpdateRow updateRow = new UpdateRow();
+                updateRow.setPlaceId(rs.getLong("place_id"));
+                updateRow.setIndexdStatus(rs.getInt("indexed_status"));
+                return updateRow;
+            }
+        });
+    }
+
     /**
+     * Creates a new instance
+     * 
+     * @param host Nominatim database host
+     * @param port Nominatim database port
+     * @param database Nominatim database name
+     * @param username Nominatim database username
+     * @param password Nominatim database password
      */
     public NominatimUpdater(String host, int port, String database, String username, String password) {
         BasicDataSource dataSource = new BasicDataSource();
@@ -92,8 +182,8 @@ public class NominatimUpdater {
         dataSource.setUsername(username);
         dataSource.setPassword(password);
         dataSource.setDriverClassName(JtsWrapper.class.getCanonicalName());
-        dataSource.setDefaultAutoCommit(false);
-
+        dataSource.setDefaultAutoCommit(true);
+        
         exporter = new NominatimConnector(host, port, database, username, password);
         template = new JdbcTemplate(dataSource);
     }
