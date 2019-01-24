@@ -47,8 +47,9 @@ class NominatimResult {
     }
 
     List<PhotonDoc> getDocsWithHousenumber() {
-        if (housenumbers == null || housenumbers.isEmpty())
+        if (housenumbers == null || housenumbers.isEmpty()) {
             return ImmutableList.of(doc);
+        }
 
         List<PhotonDoc> results = new ArrayList<PhotonDoc>(housenumbers.size());
         for (Map.Entry<String, Point> e : housenumbers.entrySet()) {
@@ -205,6 +206,7 @@ public class NominatimConnector {
         }
     };
     private final String selectColsPlaceX = "place_id, osm_type, osm_id, class, type, name, housenumber, postcode, extratags, ST_Envelope(geometry) AS bbox, parent_place_id, linked_place_id, rank_search, importance, country_code, centroid";
+    private final String selectColsOsmline = "place_id, osm_id, parent_place_id, startnumber, endnumber, interpolationtype, postcode, country_code, linegeo";
     private Importer importer;
 
     private Map<String, String> getCountryNames(String countrycode) {
@@ -246,8 +248,16 @@ public class NominatimConnector {
         this.importer = importer;
     }
 
-    public PhotonDoc getByPlaceId(long placeId) {
-        return template.queryForObject("SELECT " + selectColsPlaceX + " FROM placex WHERE place_id = ?", new Object[]{placeId}, placeRowMapper).getBaseDoc();
+    public List<PhotonDoc> getByPlaceId(long placeId) {
+        NominatimResult result = template.queryForObject("SELECT " + selectColsPlaceX + " FROM placex WHERE place_id = ?", new Object[] { placeId }, placeRowMapper);
+        completePlace(result.getBaseDoc());
+        return result.getDocsWithHousenumber();
+    }
+
+    public List<PhotonDoc> getInterpolationsByPlaceId(long placeId) {
+        NominatimResult result = template.queryForObject("SELECT " + selectColsOsmline + " FROM location_property_osmline WHERE place_id = ?", new Object[] { placeId }, osmlineRowMapper);
+        completePlace(result.getBaseDoc());
+        return result.getDocsWithHousenumber();
     }
 
     List<AddressRow> getAddresses(PhotonDoc doc) {
