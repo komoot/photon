@@ -54,13 +54,10 @@ public class NominatimUpdater {
                         if (indexedStatus == DELETE) {
                             deletedPlaces++;
                             continue;
-                        } else {
-                            updatedPlaces++;
-                            indexedStatus = CREATE; // always create
-                        }
-                    } else {
-                        updatedPlaces++;
-                    }
+                        } 
+                        indexedStatus = CREATE; // always create
+                    } 
+                    updatedPlaces++;
 
                     final List<PhotonDoc> updatedDocs = exporter.getByPlaceId(place.getPlaceId());
                     boolean wasUseful = false;
@@ -98,7 +95,6 @@ public class NominatimUpdater {
         // .isUsefulForIndex() should always return true for documents
         // created from interpolations so no need to check them
         LOGGER.info("Starting interpolations");
-        int createdInterpolations = 0;
         int updatedInterpolations = 0;
         int deletedInterpolations = 0;
         int interpolationDocuments = 0;
@@ -115,10 +111,8 @@ public class NominatimUpdater {
                         deletedInterpolations++;
                         continue;
                     }
-                    updatedInterpolations++;
-                } else {
-                    createdInterpolations++;
-                }
+                } 
+                updatedInterpolations++;
 
                 final List<PhotonDoc> updatedDocs = exporter.getInterpolationsByPlaceId(place.getPlaceId());
                 for (PhotonDoc updatedDoc : updatedDocs) {
@@ -127,7 +121,7 @@ public class NominatimUpdater {
                 }
             }
         }
-        LOGGER.info(String.format("%d interpolations created, %d updated, %d deleted, %d documents added or updated", createdInterpolations,
+        LOGGER.info(String.format("%d interpolations created or updated, %d deleted, %d documents added or updated", 
                 updatedInterpolations, deletedInterpolations, interpolationDocuments));
         updater.finish();
         template.update("update import_status set indexed=true;"); // indicate that we are finished
