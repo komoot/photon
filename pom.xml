@@ -156,7 +156,11 @@
             <version>1.9.2</version>
             <scope>test</scope>
         </dependency>
-
+        <dependency>
+            <groupId>com.cedarsoftware</groupId>
+            <artifactId>json-io</artifactId>
+            <version>4.10.1</version>
+        </dependency>
     </dependencies>
 
     <repositories>
