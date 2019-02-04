@@ -50,7 +50,7 @@ Now get photon, at least 0.3, from [the releases](https://github.com/komoot/phot
 java -jar photon-*.jar
 ```
 
-Use the `-data-dir` option if the data is not in the default location `./photon_data`. Before you request photon ElasticSearch needs to load some data into memory so be patient for a few seconds.
+Use the `-data-dir` option to point to the parent directory of `photon_data` if that directory is not in the default location `./photon_data`. Before you request photon ElasticSearch needs to load some data into memory so be patient for a few seconds.
 
 To use an older version of ElasticSearch please download the data from [here](http://download1.graphhopper.com/public/photon-ES-17-db-171019.tar.bz2) (Nov 2017) via wget as described above and use version [0.2.7 of photon](http://photon.komoot.de/data/photon-0.2.7.jar) (Oct 2016).
 
