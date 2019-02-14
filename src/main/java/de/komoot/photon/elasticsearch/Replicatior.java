@@ -99,6 +99,7 @@ public class Replicatior {
                     InputStream in = new BufferedInputStream(new GZIPInputStream(urlConnection.getInputStream()));
                     JsonReader reader = new JsonReader(in);
                     reader.addReader(com.vividsolutions.jts.geom.Point.class, new PointReader());
+
                     List<PhotonAction> actions = (List<PhotonAction>) reader.readObject();
                     int deletions = 0;
                     int updates = 0;
@@ -166,7 +167,14 @@ public class Replicatior {
             } else { // crash and burn
                 throw new IllegalArgumentException("PointReader unknown serialisation " + c.getClass().getCanonicalName() + " " + c.toString());
             }
-            return factory.createPoint(new Coordinate(coords[0], coords[1]));
+            if (coords[0] != null && coords[1] != null) {
+                if (((JsonObject) jOb).hasId()) {
+                    // this isn't done automatically
+                    Support.getReader(args).getObjectsRead().put(((JsonObject) jOb).getId(), coordinates);
+                }
+                return factory.createPoint(new Coordinate(coords[0], coords[1]));
+            }
+            throw new IllegalArgumentException("PointReader invlaid coordinates " + c.getClass().getCanonicalName() + " " + c.toString());
         }
     }
 }
