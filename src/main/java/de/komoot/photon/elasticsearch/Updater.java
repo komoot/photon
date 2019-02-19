@@ -61,6 +61,10 @@ public class Updater implements de.komoot.photon.Updater {
     }
 
     private void updateDocuments() {
+        if (this.bulkRequest.numberOfActions() == 0) {
+            log.warn("Update empty");
+            return;
+        }
         BulkResponse bulkResponse = bulkRequest.execute().actionGet();
         if (bulkResponse.hasFailures()) {
             log.error("error while bulk update: " + bulkResponse.buildFailureMessage());

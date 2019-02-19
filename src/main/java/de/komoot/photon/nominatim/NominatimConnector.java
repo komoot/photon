@@ -47,8 +47,9 @@ class NominatimResult {
     }
 
     List<PhotonDoc> getDocsWithHousenumber() {
-        if (housenumbers == null || housenumbers.isEmpty())
+        if (housenumbers == null || housenumbers.isEmpty()) {
             return ImmutableList.of(doc);
+        }
 
         List<PhotonDoc> results = new ArrayList<PhotonDoc>(housenumbers.size());
         for (Map.Entry<String, Point> e : housenumbers.entrySet()) {
@@ -205,6 +206,8 @@ public class NominatimConnector {
         }
     };
     private final String selectColsPlaceX = "place_id, osm_type, osm_id, class, type, name, housenumber, postcode, extratags, ST_Envelope(geometry) AS bbox, parent_place_id, linked_place_id, rank_search, importance, country_code, centroid";
+    private final String selectColsOsmline = "place_id, osm_id, parent_place_id, startnumber, endnumber, interpolationtype, postcode, country_code, linegeo";
+    private final String selectColsAddress = "p.place_id, p.osm_type, p.osm_id, p.name, p.class, p.type, p.rank_address, p.admin_level, p.postcode, p.extratags->'place' as place";
     private Importer importer;
 
     private Map<String, String> getCountryNames(String countrycode) {
@@ -246,15 +249,20 @@ public class NominatimConnector {
         this.importer = importer;
     }
 
-    public PhotonDoc getByPlaceId(long placeId) {
-        return template.queryForObject("SELECT " + selectColsPlaceX + " FROM placex WHERE place_id = ?", new Object[]{placeId}, placeRowMapper).getBaseDoc();
+    public List<PhotonDoc> getByPlaceId(long placeId) {
+        NominatimResult result = template.queryForObject("SELECT " + selectColsPlaceX + " FROM placex WHERE place_id = ?", new Object[] { placeId }, placeRowMapper);
+        completePlace(result.getBaseDoc());
+        return result.getDocsWithHousenumber();
+    }
+
+    public List<PhotonDoc> getInterpolationsByPlaceId(long placeId) {
+        NominatimResult result = template.queryForObject("SELECT " + selectColsOsmline + " FROM location_property_osmline WHERE place_id = ?", new Object[] { placeId }, osmlineRowMapper);
+        completePlace(result.getBaseDoc());
+        return result.getDocsWithHousenumber();
     }
 
     List<AddressRow> getAddresses(PhotonDoc doc) {
-        long placeId = doc.getPlaceId();
-        if (doc.getRankSearch() > 28)
-            placeId = doc.getParentPlaceId();
-        return template.query("SELECT p.place_id, p.osm_type, p.osm_id, p.name, p.class, p.type, p.rank_address, p.admin_level, p.postcode, p.extratags->'place' as place FROM placex p, place_addressline pa WHERE p.place_id = pa.address_place_id and pa.place_id = ? and pa.cached_rank_address > 4 and pa.address_place_id != ? and pa.isaddress order by rank_address desc,fromarea desc,distance asc,rank_search desc", new Object[]{placeId, doc.getPlaceId()}, new RowMapper<AddressRow>() {
+        RowMapper<AddressRow> rowMapper = new RowMapper<AddressRow>() {
             @Override
             public AddressRow mapRow(ResultSet rs, int rowNum) throws SQLException {
                 Integer adminLevel = rs.getInt("admin_level");
@@ -274,7 +282,19 @@ public class NominatimConnector {
                         rs.getLong("osm_id")
                 );
             }
-        });
+        };
+
+        boolean isPoi = doc.getRankSearch() > 28;
+        long placeId = (isPoi) ? doc.getParentPlaceId() : doc.getPlaceId();
+
+        List<AddressRow> terms = template.query("SELECT " + selectColsAddress + " FROM placex p, place_addressline pa WHERE p.place_id = pa.address_place_id and pa.place_id = ? and pa.cached_rank_address > 4 and pa.address_place_id != ? and pa.isaddress order by rank_address desc,fromarea desc,distance asc,rank_search desc", new Object[]{placeId, placeId}, rowMapper);
+
+        if (isPoi) {
+            // need to add the term for the parent place ID itself
+            terms.addAll(0, template.query("SELECT " + selectColsAddress + " FROM placex p WHERE p.place_id = ?", new Object[]{placeId}, rowMapper));
+        }
+
+        return terms;
     }
 
     private static final PhotonDoc FINAL_DOCUMENT = new PhotonDoc(0, null, 0, null, null, null, null, null, null, 0, 0, null, null, 0, 0);
