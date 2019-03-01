@@ -74,7 +74,7 @@ public class Replicatior {
     /**
      * Read the local and remote state file and then download any missing replication files
      * 
-     * FIXME: should likely throw and exception if the difference between sequence numbers is very large
+     * FIXME: should likely throw an exception if the difference between sequence numbers is very large
      *
      */
     class ReplicationTask extends TimerTask {
@@ -132,8 +132,7 @@ public class Replicatior {
                     log.info(String.format("Update done. %d deletions %d updates or additions.", deletions, updates));
                 }
             } catch (IOException e) {
-                log.error("Replicator failing", e);
-                cancel();
+                log.error("Replicator failing because ", e);
             }
         }
     }
