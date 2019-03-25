@@ -16,7 +16,7 @@
 														"operator": "OR",
 														"analyzer": "search_ngram",
 														"fuzziness": "0",
-														"prefix_length": 2,
+														"prefix_length": 6,
 														"max_expansions": 50,
 														"minimum_should_match": "100%",
 														"fuzzy_transpositions": true,
@@ -51,22 +51,7 @@
 									}
 								}
 							],
-							"should": [
-								{
-									"match": {
-										"name.en.raw": {
-											"query": "berlin",
-											"operator": "OR",
-											"analyzer": "search_raw",
-											"prefix_length": 0,
-											"max_expansions": 50,
-											"fuzzy_transpositions": true,
-											"lenient": false,
-											"zero_terms_query": "NONE",
-											"boost": 200.0
-										}
-									}
-								},
+							"should": [						
 								{
 									"match": {
 										"collector.en.raw": {
@@ -79,6 +64,51 @@
 											"lenient": false,
 											"zero_terms_query": "NONE",
 											"boost": 100.0
+										}
+									}
+                                },
+                                {
+									"match": {
+										"city.en.raw": {
+											"query": "berlin",
+											"operator": "OR",
+											"analyzer": "search_raw",
+											"prefix_length": 0,
+											"max_expansions": 50,
+											"fuzzy_transpositions": true,
+											"lenient": false,
+											"zero_terms_query": "NONE",
+											"boost": 200.0
+										}
+									}
+                                },
+                                {
+									"match": {
+										"street.en.raw": {
+											"query": "berlin",
+											"operator": "OR",
+											"analyzer": "search_raw",
+											"prefix_length": 0,
+											"max_expansions": 50,
+											"fuzzy_transpositions": true,
+											"lenient": false,
+											"zero_terms_query": "NONE",
+											"boost": 200.0
+										}
+									}
+								},
+                                {
+									"match": {
+										"name.en.raw": {
+											"query": "berlin",
+											"operator": "OR",
+											"analyzer": "search_raw",
+											"prefix_length": 0,
+											"max_expansions": 50,
+											"fuzzy_transpositions": true,
+											"lenient": false,
+											"zero_terms_query": "NONE",
+											"boost": 1.0
 										}
 									}
 								}
@@ -146,7 +176,12 @@
 						},
 						{
 							"exists": {
-								"field": "name.en.raw",
+								"field": "city.en.raw",
+								"boost": 1.0
+							}
+						},{
+							"exists": {
+								"field": "street.en.raw",
 								"boost": 1.0
 							}
 						}
