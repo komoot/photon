@@ -134,8 +134,8 @@ public class App {
      * @param esNodeClient
      */
     private static void startApi(CommandLineArgs args, Client esNodeClient) {
-        setPort(args.getListenPort());
-        setIpAddress(args.getListenIp());
+        port(args.getListenPort());
+        ipAddress(args.getListenIp());
 
         // setup search API
         get("api", new SearchRequestHandler("api", esNodeClient, args.getLanguages(), args.getCors()));
