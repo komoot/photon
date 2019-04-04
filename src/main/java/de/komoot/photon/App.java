@@ -6,6 +6,7 @@ import com.beust.jcommander.ParameterException;
 import de.komoot.photon.elasticsearch.Server;
 import de.komoot.photon.nominatim.NominatimConnector;
 import de.komoot.photon.nominatim.NominatimUpdater;
+import de.komoot.photon.utils.CorsFilter;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.client.Client;
 import spark.Request;
@@ -137,11 +138,15 @@ public class App {
         port(args.getListenPort());
         ipAddress(args.getListenIp());
 
+        if (args.isCors()) {
+            CorsFilter.enableCORS("*", "get", "*");
+        }
+        
         // setup search API
-        get("api", new SearchRequestHandler("api", esNodeClient, args.getLanguages(), args.getCors()));
-        get("api/", new SearchRequestHandler("api/", esNodeClient, args.getLanguages(), args.getCors()));
-        get("reverse", new ReverseSearchRequestHandler("reverse", esNodeClient, args.getLanguages(), args.getCors()));
-        get("reverse/", new ReverseSearchRequestHandler("reverse/", esNodeClient, args.getLanguages(), args.getCors()));
+        get("api", new SearchRequestHandler("api", esNodeClient, args.getLanguages()));
+        get("api/", new SearchRequestHandler("api/", esNodeClient, args.getLanguages()));
+        get("reverse", new ReverseSearchRequestHandler("reverse", esNodeClient, args.getLanguages()));
+        get("reverse/", new ReverseSearchRequestHandler("reverse/", esNodeClient, args.getLanguages()));
 
         // setup update API
         final NominatimUpdater nominatimUpdater = new NominatimUpdater(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
