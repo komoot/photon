@@ -28,16 +28,12 @@ public class SearchRequestHandler<R extends PhotonRequest> extends RouteImpl {
     private final PhotonRequestHandlerFactory requestHandlerFactory;
     private final ConvertToGeoJson geoJsonConverter;
 
-    SearchRequestHandler(String path, Client esNodeClient, String languages, String cors) {
+    SearchRequestHandler(String path, Client esNodeClient, String languages) {
         super(path);
         Set<String> supportedLanguages = new HashSet<String>(Arrays.asList(languages.split(",")));
         this.photonRequestFactory = new PhotonRequestFactory(supportedLanguages);
         this.geoJsonConverter = new ConvertToGeoJson();
         this.requestHandlerFactory = new PhotonRequestHandlerFactory(new BaseElasticsearchSearcher(esNodeClient));
-        if (cors.equals("enable") && !CorsFilter.corsEnabled) {
-            CorsFilter.enableCors();
-            CorsFilter.corsEnabled = true;
-        }
     }
 
     @Override
