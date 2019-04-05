@@ -140,6 +140,10 @@ public class App {
 
         if (args.isCors()) {
             CorsFilter.enableCORS("*", "get", "*");
+        } else {
+            before((request, response) -> {
+                response.type("application/json"); // in the other case set by enableCors
+            });
         }
         
         // setup search API
