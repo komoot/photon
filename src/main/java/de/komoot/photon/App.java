@@ -6,6 +6,7 @@ import com.beust.jcommander.ParameterException;
 import de.komoot.photon.elasticsearch.Server;
 import de.komoot.photon.nominatim.NominatimConnector;
 import de.komoot.photon.nominatim.NominatimUpdater;
+import de.komoot.photon.utils.CorsFilter;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.client.Client;
 import spark.Request;
@@ -26,6 +27,9 @@ public class App {
         final JCommander jCommander = new JCommander(args);
         try {
             jCommander.parse(rawArgs);
+            if (args.isCorsAnyOrigin() && args.getCorsOrigin() != null) { // these are mutually exclusive
+                throw new ParameterException("Use only one cors configuration type");
+            }
         } catch (ParameterException e) {
             log.warn("could not start photon: " + e.getMessage());
             jCommander.usage();
@@ -134,9 +138,18 @@ public class App {
      * @param esNodeClient
      */
     private static void startApi(CommandLineArgs args, Client esNodeClient) {
-        setPort(args.getListenPort());
-        setIpAddress(args.getListenIp());
+        port(args.getListenPort());
+        ipAddress(args.getListenIp());
 
+        String allowedOrigin = args.isCorsAnyOrigin() ? "*" : args.getCorsOrigin();
+        if (allowedOrigin != null) {
+            CorsFilter.enableCORS(allowedOrigin, "get", "*");
+        } else {
+            before((request, response) -> {
+                response.type("application/json"); // in the other case set by enableCors
+            });
+        }
+        
         // setup search API
         get("api", new SearchRequestHandler("api", esNodeClient, args.getLanguages()));
         get("api/", new SearchRequestHandler("api/", esNodeClient, args.getLanguages()));

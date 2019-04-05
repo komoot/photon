@@ -49,8 +49,6 @@ public class ReverseSearchRequestHandler<R extends ReverseRequest> extends Route
         ReverseRequestHandler<R> handler = requestHandlerFactory.createHandler(photonRequest);
         List<JSONObject> results = handler.handle(photonRequest);
         JSONObject geoJsonResults = geoJsonConverter.convert(results);
-        response.type("application/json; charset=utf-8");
-        response.header("Access-Control-Allow-Origin", "*");
         if (request.queryParams("debug") != null)
             return geoJsonResults.toString(4);
 

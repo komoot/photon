@@ -56,6 +56,12 @@ public class CommandLineArgs {
     @Parameter(names = "-listen-ip", description = "listen to address (default '0.0.0.0')")
     private String listenIp = "0.0.0.0";
 
+    @Parameter(names = "-cors-any", description = "enable cross-site resource sharing foe any origin ((default CORS not supported)")
+    private boolean corsAnyOrigin = false;
+    
+    @Parameter(names = "-cors-origin", description = "enable cross-site resource sharing for the specified origin (default CORS not supported)")
+    private String corsOrigin = null;
+
     @Parameter(names = "-h", description = "show help / usage")
     private boolean usage = false;
 }
