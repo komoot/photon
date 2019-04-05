@@ -27,6 +27,9 @@ public class App {
         final JCommander jCommander = new JCommander(args);
         try {
             jCommander.parse(rawArgs);
+            if (args.isCorsAnyOrigin() && args.getCorsOrigin() != null) { // these are mutually exclusive
+                throw new ParameterException("Use only one cors configuration type");
+            }
         } catch (ParameterException e) {
             log.warn("could not start photon: " + e.getMessage());
             jCommander.usage();
@@ -138,8 +141,9 @@ public class App {
         port(args.getListenPort());
         ipAddress(args.getListenIp());
 
-        if (args.isCors()) {
-            CorsFilter.enableCORS("*", "get", "*");
+        String allowedOrigin = args.isCorsAnyOrigin() ? "*" : args.getCorsOrigin();
+        if (allowedOrigin != null) {
+            CorsFilter.enableCORS(allowedOrigin, "get", "*");
         } else {
             before((request, response) -> {
                 response.type("application/json"); // in the other case set by enableCors
