@@ -159,13 +159,13 @@ public class Server {
         // copy script directory to elastic search directory
         final ClassLoader loader = Thread.currentThread().getContextClassLoader();
 
-        Files.copy(loader.getResourceAsStream("modules/lang-painless/antlr4-runtime-4.5.1-1.jar"),
-                new File(painlessDirectory, "antlr4-runtime-4.5.1-1.jar").toPath(),
+        Files.copy(loader.getResourceAsStream("modules/lang-painless/antlr4-runtime.jar"),
+                new File(painlessDirectory, "antlr4-runtime.jar").toPath(),
                 StandardCopyOption.REPLACE_EXISTING);
-        Files.copy(loader.getResourceAsStream("modules/lang-painless/asm-debug-all-5.1.jar"),
-                new File(painlessDirectory, "asm-debug-all-5.1.jar").toPath(), StandardCopyOption.REPLACE_EXISTING);
-        Files.copy(loader.getResourceAsStream("modules/lang-painless/lang-painless-5.5.0.jar"),
-                new File(painlessDirectory, "lang-painless-5.5.0.jar").toPath(), StandardCopyOption.REPLACE_EXISTING);
+        Files.copy(loader.getResourceAsStream("modules/lang-painless/asm-debug-all.jar"),
+                new File(painlessDirectory, "asm-debug-all.jar").toPath(), StandardCopyOption.REPLACE_EXISTING);
+        Files.copy(loader.getResourceAsStream("modules/lang-painless/lang-painless.jar"),
+                new File(painlessDirectory, "lang-painless.jar").toPath(), StandardCopyOption.REPLACE_EXISTING);
         Files.copy(loader.getResourceAsStream("modules/lang-painless/plugin-descriptor.properties"),
                 new File(painlessDirectory, "plugin-descriptor.properties").toPath(),
                 StandardCopyOption.REPLACE_EXISTING);
