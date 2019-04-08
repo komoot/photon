@@ -51,8 +51,6 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder {
 
     private MatchQueryBuilder languageMatchQueryBuilder;
     
-    private MatchQueryBuilder numricMatchQueryBuilder;
-
     private QueryBuilder m_finalQueryBuilder;
 
     protected ArrayList<FilterFunctionBuilder> m_alFilterFunction4QueryBuilder = new ArrayList<>(1);
