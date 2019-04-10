@@ -96,7 +96,7 @@ public class ApiIntegrationTest extends ESBaseTester {
      *
      */
     @Test
-    public void testApi()  {
+    public void testApi() {
         try {
             App.main(new String[] { "-cluster", "photon-test", "-listen-port", Integer.toString(LISTEN_PORT), "-transport-addresses", "127.0.0.1" });
             awaitInitialization();
@@ -125,15 +125,16 @@ public class ApiIntegrationTest extends ESBaseTester {
     }
 
     /**
-     * Reverse geocode test
+     * Search with location bias (this should give the last generated object which is roughly 2km away from the first)
      *
      */
     @Test
-    public void testApiReverse() {
+    public void testApiWithLocationBias() {
         try {
             App.main(new String[] { "-cluster", "photon-test", "-listen-port", Integer.toString(LISTEN_PORT), "-transport-addresses", "127.0.0.1" });
             awaitInitialization();
-            HttpURLConnection connection = (HttpURLConnection) new URL("http://127.0.0.1:" + port() + "/reverse/?lon=10&lat=47").openConnection();
+            HttpURLConnection connection = (HttpURLConnection) new URL("http://127.0.0.1:" + port() + "/api?q=berlin&limit=1&lat=52.54714&lon=13.39026")
+                    .openConnection();
             try {
                 JSONObject json = new JSONObject(
                         new BufferedReader(new InputStreamReader(connection.getInputStream())).lines().collect(Collectors.joining("\n")));
@@ -142,8 +143,41 @@ public class ApiIntegrationTest extends ESBaseTester {
                 JSONObject feature = features.getJSONObject(0);
                 JSONObject properties = feature.getJSONObject("properties");
                 assertEquals("way", properties.getString("osm_type"));
-                assertEquals("amenity", properties.getString("osm_key"));
-                assertEquals("information", properties.getString("osm_value"));
+                assertEquals("railway", properties.getString("osm_key"));
+                assertEquals("station", properties.getString("osm_value"));
+                assertEquals("berlin", properties.getString("name"));
+            } catch (JSONException jsex) {
+                fail(jsex.getMessage());
+            }
+        } catch (Exception ex) {
+            fail(ex.getMessage());
+        } finally {
+            stop();
+            awaitStop();
+            deleteIndex();
+        }
+    }
+
+    /**
+     * Reverse geocode test
+     *
+     */
+    @Test
+    public void testApiReverse() {
+        try {
+            App.main(new String[] { "-cluster", "photon-test", "-listen-port", Integer.toString(LISTEN_PORT), "-transport-addresses", "127.0.0.1" });
+            awaitInitialization();
+            HttpURLConnection connection = (HttpURLConnection) new URL("http://127.0.0.1:" + port() + "/reverse/?lon=13.38886&lat=52.51704").openConnection();
+            try {
+                JSONObject json = new JSONObject(
+                        new BufferedReader(new InputStreamReader(connection.getInputStream())).lines().collect(Collectors.joining("\n")));
+                JSONArray features = json.getJSONArray("features");
+                assertEquals(1, features.length());
+                JSONObject feature = features.getJSONObject(0);
+                JSONObject properties = feature.getJSONObject("properties");
+                assertEquals("way", properties.getString("osm_type"));
+                assertEquals("tourism", properties.getString("osm_key"));
+                assertEquals("attraction", properties.getString("osm_value"));
                 assertEquals("berlin", properties.getString("name"));
             } catch (JSONException jsex) {
                 fail(jsex.getMessage());
