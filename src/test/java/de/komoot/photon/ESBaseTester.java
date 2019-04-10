@@ -35,10 +35,10 @@ public class ESBaseTester {
 
     protected Client client;
 
-    private PhotonDoc createDoc(int id, String key, String value) {
+    private PhotonDoc createDoc(double lon, double lat, int id, int osmId, String key, String value) {
         ImmutableMap<String, String> nameMap = ImmutableMap.of("name", "berlin");
-        Point location = FACTORY.createPoint(new Coordinate(10., 47.));
-        return new PhotonDoc(id, "way", id, key, value, nameMap, null, null, null, 0, 0.5, null, location, 0, 0);
+        Point location = FACTORY.createPoint(new Coordinate(lon, lat));
+        return new PhotonDoc(id, "way", osmId, key, value, nameMap, null, null, null, 0, 0.5, null, location, 0, 0);
     }
 
     @Before
@@ -48,13 +48,19 @@ public class ESBaseTester {
                 "parking", "amenity", "restaurant", "amenity", "information", "food", "information", "railway", "station");
         client = getClient();
         Importer instance = new Importer(client, "en");
+        double lon = 13.38886;
+        double lat = 52.51704;
         for (int i = 0; i < tags.size(); i++) {
             String key = tags.get(i);
             String value = tags.get(++i);
-            PhotonDoc doc = this.createDoc(i, key, value);
+            PhotonDoc doc = this.createDoc(lon, lat, i, i, key, value);
             instance.add(doc);
-            doc = this.createDoc(i + 1, key, value);
+            lon += 0.00004;
+            lat += 0.00086;
+            doc = this.createDoc(lon, lat, i + 1, i + 1, key, value);
             instance.add(doc);
+            lon += 0.00004;
+            lat += 0.00086;
         }
         instance.finish();
         refresh();
