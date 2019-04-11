@@ -3,6 +3,7 @@ package de.komoot.photon;
 import com.google.common.base.Joiner;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
+import com.neovisionaries.i18n.CountryCode;
 import com.vividsolutions.jts.geom.Envelope;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
@@ -47,6 +48,9 @@ public class Utils {
         writeName(builder, doc.getName(), languages);
         writeIntlNames(builder, doc.getCity(), "city", languages);
         writeIntlNames(builder, doc.getCountry(), "country", languages);
+        CountryCode countryCode = doc.getCountryCode();
+        if (countryCode != null)
+            builder.field(Constants.COUNTRYCODE, countryCode.getAlpha2());
         writeIntlNames(builder, doc.getState(), "state", languages);
         writeIntlNames(builder, doc.getStreet(), "street", languages);
         writeContext(builder, doc.getContext(), languages);

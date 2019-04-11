@@ -216,6 +216,13 @@
 					}
 				}
 			},
+			"countrycode": {
+				"type": "text",
+				"index": false,
+				"copy_to": [
+					"collector.default"
+				]
+			},
 			"housenumber": {
 				"type": "text",
 				"index": true,
