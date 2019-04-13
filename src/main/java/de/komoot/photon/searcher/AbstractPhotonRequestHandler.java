@@ -38,9 +38,17 @@ public abstract class AbstractPhotonRequestHandler<R extends PhotonRequest> impl
         return resultJsonObjects;
     }
 
+    @Override
+    public String dumpQuery(R photonRequest) {
+        return buildQuery(photonRequest).buildQuery().toString();
+    }
+    
     /**
      * Given a {@link PhotonRequest photon request}, build a {@link TagFilterQueryBuilder photon specific query builder} that can be used in the {@link
      * AbstractPhotonRequestHandler#handle handle} method to execute the search.
+     * 
+     * @param photonRequest a PhotonRequest instance holding the parsed query
+     * @return an instance of a TagFilterQueryBuilder
      */
     abstract TagFilterQueryBuilder buildQuery(R photonRequest);
 }

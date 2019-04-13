@@ -17,7 +17,7 @@ public class PhotonRequestFactory {
     private final static LocationParamConverter optionalLocationParamConverter = new LocationParamConverter(false);
 
     protected static HashSet<String> m_hsRequestQueryParams = new HashSet<>(Arrays.asList("lang", "q", "lon", "lat",
-            "limit", "osm_tag", "location_bias_scale"));
+            "limit", "osm_tag", "location_bias_scale", "debug"));
 
     public PhotonRequestFactory(Set<String> supportedLanguages) {
         this.languageChecker = new LanguageChecker(supportedLanguages);
