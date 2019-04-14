@@ -32,7 +32,7 @@ public class Updater implements de.komoot.photon.Updater {
 
     @Override
     public void updateOrCreate(PhotonDoc updatedDoc) {
-        final boolean exists = this.esClient.get(this.esClient.prepareGet("photon", "place", String.valueOf(updatedDoc.getPlaceId())).request()).actionGet().isExists();
+        final boolean exists = this.esClient.get(this.esClient.prepareGet("photon", "place", String.valueOf(updatedDoc.getUid())).request()).actionGet().isExists();
         if (exists) {
             this.update(updatedDoc);
         } else {
@@ -42,7 +42,7 @@ public class Updater implements de.komoot.photon.Updater {
 
     public void create(PhotonDoc doc) {
         try {
-            this.bulkRequest.add(this.esClient.prepareIndex("photon", "place").setSource(Utils.convert(doc, this.languages)).setId(String.valueOf(doc.getPlaceId())));
+            this.bulkRequest.add(this.esClient.prepareIndex("photon", "place").setSource(Utils.convert(doc, this.languages)).setId(String.valueOf(doc.getUid())));
         } catch (IOException e) {
             log.error(String.format("creation of new doc [%s] failed", doc), e);
         }
@@ -50,7 +50,7 @@ public class Updater implements de.komoot.photon.Updater {
 
     public void update(PhotonDoc doc) {
         try {
-            this.bulkRequest.add(this.esClient.prepareUpdate("photon", "place", String.valueOf(doc.getPlaceId())).setDoc(Utils.convert(doc, this.languages)));
+            this.bulkRequest.add(this.esClient.prepareUpdate("photon", "place", String.valueOf(doc.getUid())).setDoc(Utils.convert(doc, this.languages)));
         } catch (IOException e) {
             log.error(String.format("update of new doc [%s] failed", doc), e);
         }
