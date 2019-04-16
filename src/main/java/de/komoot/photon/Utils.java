@@ -10,6 +10,7 @@ import org.elasticsearch.common.xcontent.XContentFactory;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -36,8 +37,13 @@ public class Utils {
                     .endObject();
         }
 
-        if (doc.getHouseNumber() != null) {
-            builder.field("housenumber", doc.getHouseNumber());
+        List<String>houseNumbers = doc.getHouseNumbers();
+        if (doc.getHouseNumbers() != null ) {
+            builder.startArray("housenumber");
+            for (String houseNumber:houseNumbers) {
+                builder.value(houseNumber);
+            }
+            builder.endArray();
         }
 
         if (doc.getPostcode() != null) {

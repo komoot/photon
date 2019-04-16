@@ -57,13 +57,10 @@ public class NominatimUpdater {
                             template.update("update placex set indexed_status = 0 where place_id = ?;", placeId);
 
                             Integer indexedStatus = place.getIndexdStatus();
-                            if (indexedStatus == DELETE || (indexedStatus == UPDATE && rank == MAX_RANK)) {
-                                updater.delete(placeId);
-                                if (indexedStatus == DELETE) {
-                                    deletedPlaces++;
-                                    continue;
-                                }
-                                indexedStatus = CREATE; // always create
+                            if (indexedStatus == DELETE) {
+                                updater.delete(PhotonDoc.getBaseId(place.getOsmType(), place.getOsmId(), place.getOsmKey()));
+                                deletedPlaces++;
+                                continue;
                             }
                             updatedPlaces++;
 
@@ -88,9 +85,8 @@ public class NominatimUpdater {
                                 }
                             }
                             if (indexedStatus == UPDATE && !wasUseful) {
-                                // only true when rank != 30
                                 // if no documents for the place id exist this will likely cause moaning
-                                updater.delete(placeId);
+                                updater.delete(PhotonDoc.getBaseId(place.getOsmType(), place.getOsmId(), place.getOsmKey()));
                                 updatedPlaces--;
                             }
                         }
@@ -114,7 +110,7 @@ public class NominatimUpdater {
 
                         Integer indexedStatus = place.getIndexdStatus();
                         if (indexedStatus != CREATE) {
-                            updater.delete(placeId);
+                            updater.delete("W", place.getOsmId(), "place", "house_number");
                             if (indexedStatus == DELETE) {
                                 deletedInterpolations++;
                                 continue;
@@ -156,6 +152,10 @@ public class NominatimUpdater {
                         UpdateRow updateRow = new UpdateRow();
                         updateRow.setPlaceId(rs.getLong("place_id"));
                         updateRow.setIndexdStatus(rs.getInt("indexed_status"));
+                        updateRow.setOsmType(rs.getString("osm_type"));
+                        updateRow.setOsmId(rs.getLong("osm_id"));
+                        updateRow.setOsmKey(rs.getString("osm_key"));
+                        updateRow.setOsmValue(rs.getString("osm_value"));
                         return updateRow;
                     }
                 });
@@ -169,6 +169,7 @@ public class NominatimUpdater {
                         UpdateRow updateRow = new UpdateRow();
                         updateRow.setPlaceId(rs.getLong("place_id"));
                         updateRow.setIndexdStatus(rs.getInt("indexed_status"));
+                        updateRow.setOsmId(rs.getLong("osm_id"));
                         return updateRow;
                     }
                 });

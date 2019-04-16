@@ -7,8 +7,12 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * denormalized doc with all information needed be dumped to elasticsearch
@@ -38,10 +42,11 @@ public class PhotonDoc {
     private Set<Map<String, String>> context = new HashSet<Map<String, String>>();
     private Map<String, String> country;
     private Map<String, String> state;
-    private String houseNumber;
+    private List<String> houseNumbers;
     private Point centroid;
+    private boolean isExpanded = false;
 
-    public PhotonDoc(long placeId, String osmType, long osmId, String tagKey, String tagValue, Map<String, String> name, String houseNumber, Map<String, String> extratags, Envelope bbox, long parentPlaceId, double importance, CountryCode countryCode, Point centroid, long linkedPlaceId, int rankSearch) {
+    public PhotonDoc(long placeId, String osmType, long osmId, String tagKey, String tagValue, Map<String, String> name, @Nullable List<String> houseNumbers, Map<String, String> extratags, Envelope bbox, long parentPlaceId, double importance, CountryCode countryCode, Point centroid, long linkedPlaceId, int rankSearch) {
         String place = extratags != null ? extratags.get("place") : null;
         if (place != null) {
             // take more specific extra tag information
@@ -55,7 +60,7 @@ public class PhotonDoc {
         this.tagKey = tagKey;
         this.tagValue = tagValue;
         this.name = name;
-        this.houseNumber = houseNumber;
+        this.houseNumbers = houseNumbers;
         this.extratags = extratags;
         this.bbox = bbox;
         this.parentPlaceId = parentPlaceId;
@@ -73,7 +78,7 @@ public class PhotonDoc {
         this.tagKey = other.tagKey;
         this.tagValue = other.tagValue;
         this.name = other.name;
-        this.houseNumber = other.houseNumber;
+        this.houseNumbers = other.houseNumbers;
         this.postcode = other.postcode;
         this.extratags = other.extratags;
         this.bbox = other.bbox;
@@ -88,13 +93,34 @@ public class PhotonDoc {
         this.context = other.context;
         this.country = other.country;
         this.state = other.state;
+        this.isExpanded = other.isExpanded;
     }
 
+    /**
+     * Get an id suitable for using as an ES document id
+     * 
+     * @return an id
+     */
+    @Nonnull
     public String getUid() {
-        if (houseNumber == null || houseNumber.isEmpty())
-            return String.valueOf(placeId);
-        else
-            return String.valueOf(placeId) + "." + houseNumber;
+        String id = getBaseId(osmType, osmId, tagKey);
+        if (houseNumbers == null || houseNumbers.isEmpty()) {
+            return id;
+        } else {
+            return id + (isExpanded ? "." + houseNumbers.get(0) : "");
+        }
+    }
+
+    /**
+     * Construct a base id for a document
+     * 
+     * @param elementType the OSM element type (N, W, R)
+     * @param id the id of the OSM object
+     * @param key the key typically "place" or the key of the tag 
+     * @return an id String
+     */
+    public static String getBaseId(@Nonnull String elementType, long id, @Nonnull String key) {
+        return elementType + Long.toString(id) + key;
     }
 
     /**
@@ -102,13 +128,15 @@ public class PhotonDoc {
      */
     public static PhotonDoc create(long placeId, String osmType, long osmId, Map<String, String> nameMap) {
         return new PhotonDoc(placeId, osmType, osmId, "", "", nameMap,
-                "", null, null, 0, 0, null, null, 0, 0);
+                null, null, null, 0, 0, null, null, 0, 0);
     }
 
     public boolean isUsefulForIndex() {
         if ("place".equals(tagKey) && "houses".equals(tagValue)) return false;
 
-        if (houseNumber != null) return true;
+        if (houseNumbers != null && !houseNumbers.isEmpty()) {
+            return true;
+        }
 
         if (name.isEmpty()) return false;
 
