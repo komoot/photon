@@ -109,12 +109,11 @@ public class NominatimUpdater {
                         template.update("update location_property_osmline set indexed_status = 0 where place_id = ?;", placeId);
 
                         Integer indexedStatus = place.getIndexdStatus();
-                        if (indexedStatus != CREATE) {
-                            updater.delete("W", place.getOsmId(), "place", "house_number");
-                            if (indexedStatus == DELETE) {
-                                deletedInterpolations++;
-                                continue;
-                            }
+                        // nominatim is rather flaky about setting the update flag so lets always delete
+                        updater.delete("W", place.getOsmId(), "place", "house_number");
+                        if (indexedStatus == DELETE) {
+                            deletedInterpolations++;
+                            continue;
                         }
                         updatedInterpolations++;
 
