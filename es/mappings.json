@@ -388,8 +388,8 @@
 				"index": true
 			},
 			"osm_type": {
-				"type": "text",
-				"index": false
+				"type": "keyword",
+				"index": true
 			},
 			"osm_value": {
 				"type": "keyword",
