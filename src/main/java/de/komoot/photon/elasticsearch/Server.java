@@ -1,23 +1,5 @@
 package de.komoot.photon.elasticsearch;
 
-import de.komoot.photon.CommandLineArgs;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.SystemUtils;
-import org.elasticsearch.client.Client;
-import org.elasticsearch.client.transport.TransportClient;
-import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.common.transport.InetSocketTransportAddress;
-import org.elasticsearch.index.IndexNotFoundException;
-import org.elasticsearch.node.InternalSettingsPreparer;
-import org.elasticsearch.node.Node;
-import org.elasticsearch.node.NodeValidationException;
-import org.elasticsearch.plugins.Plugin;
-import org.elasticsearch.transport.Netty4Plugin;
-import org.elasticsearch.transport.client.PreBuiltTransportClient;
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,6 +12,29 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.SystemUtils;
+import org.elasticsearch.action.admin.indices.close.CloseIndexResponse;
+import org.elasticsearch.action.admin.indices.settings.put.UpdateSettingsRequest;
+import org.elasticsearch.client.Client;
+import org.elasticsearch.client.Requests;
+import org.elasticsearch.client.transport.TransportClient;
+import org.elasticsearch.common.settings.Settings;
+import org.elasticsearch.common.transport.InetSocketTransportAddress;
+import org.elasticsearch.common.xcontent.XContentType;
+import org.elasticsearch.index.IndexNotFoundException;
+import org.elasticsearch.node.InternalSettingsPreparer;
+import org.elasticsearch.node.Node;
+import org.elasticsearch.node.NodeValidationException;
+import org.elasticsearch.plugins.Plugin;
+import org.elasticsearch.transport.Netty4Plugin;
+import org.elasticsearch.transport.client.PreBuiltTransportClient;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import de.komoot.photon.CommandLineArgs;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Helper class to start/stop elasticsearch node and get elasticsearch clients
@@ -49,6 +54,8 @@ public class Server {
     private final String[] languages;
 
     private String transportAddresses;
+    
+    private Integer shards = null;
 
     protected static class MyNode extends Node {
         public MyNode(Settings preparedSettings, Collection<Class<? extends Plugin>> classpathPlugins) {
@@ -102,7 +109,6 @@ public class Server {
         } else {
 
             try {
-
                 sBuilder.put("transport.type", "netty4").put("http.type", "netty4").put("http.enabled", "true");
                 Settings settings = sBuilder.build();
                 Collection<Class<? extends Plugin>> lList = new LinkedList<>();
@@ -188,11 +194,14 @@ public class Server {
 
         // add all langs to the mapping
         mappingsJSON = addLangsToMapping(mappingsJSON);
-        client.admin().indices().prepareCreate("photon").setSettings(IOUtils.toString(index_settings)).execute()
-                .actionGet();
-        client.admin().indices().preparePutMapping("photon").setType("place").setSource(mappingsJSON.toString())
-                .execute().actionGet();
-        log.info("mapping created: " + mappingsJSON.toString());
+        
+        JSONObject settings = new JSONObject(IOUtils.toString(index_settings));
+        if (shards != null) {
+            settings.put("index", new JSONObject("{ \"number_of_shards\":" + shards + " }"));
+        }
+        client.admin().indices().prepareCreate("photon").setSettings(settings.toString(), XContentType.JSON).execute().actionGet();; 
+        client.admin().indices().preparePutMapping("photon").setType("place").setSource(mappingsJSON.toString(), XContentType.JSON).execute().actionGet();
+        log.info("mapping created: " + mappingsJSON.toString());                        
     }
 
     public void deleteIndex() {
@@ -261,5 +270,17 @@ public class Server {
             return properties.put(key, keyObject);
         }
         return properties;
+    }
+    
+    /**
+     * Set the maximum number of shards for the embedded node
+     * This typically only makes sense for testing
+     * 
+     * @param shards the maximum number of shards
+     * @return this Server instance for chaining
+     */
+    public Server setMaxShards(int shards) {
+        this.shards = shards;
+        return this;
     }
 }

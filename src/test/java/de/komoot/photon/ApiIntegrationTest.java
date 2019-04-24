@@ -109,8 +109,8 @@ public class ApiIntegrationTest extends ESBaseTester {
                 JSONObject feature = features.getJSONObject(0);
                 JSONObject properties = feature.getJSONObject("properties");
                 assertEquals("way", properties.getString("osm_type"));
-                assertEquals("amenity", properties.getString("osm_key"));
-                assertEquals("information", properties.getString("osm_value"));
+                assertEquals("tourism", properties.getString("osm_key"));
+                assertEquals("attraction", properties.getString("osm_value"));
                 assertEquals("berlin", properties.getString("name"));
             } catch (JSONException jsex) {
                 fail(jsex.getMessage());
