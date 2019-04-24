@@ -71,8 +71,13 @@ public class ESBaseTester {
         shutdownES();
     }
 
+    /**
+     * Setup the ES server
+     * 
+     * @throws IOException
+     */
     public void setUpES() throws IOException {
-        server = new Server(clusterName, new File("./target/es_photon_test").getAbsolutePath(), "en", "").start();
+        server = new Server(clusterName, new File("./target/es_photon_test").getAbsolutePath(), "en", "").setMaxShards(1).start();
         server.recreateIndex();
         refresh();
     }
