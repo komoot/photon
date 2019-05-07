@@ -34,7 +34,8 @@ public class SearchRequestHandlerTest {
         String path = ReflectionTestUtil.getFieldValue(searchRequestHandler, RouteImpl.class, "path");
         Assert.assertEquals("any", path);
         PhotonRequestFactory photonRequestFactory = ReflectionTestUtil.getFieldValue(searchRequestHandler, searchRequestHandler.getClass(), "photonRequestFactory");
-        LanguageChecker languageChecker = ReflectionTestUtil.getFieldValue(photonRequestFactory, photonRequestFactory.getClass(), "languageChecker");
+        Object languageResolver = ReflectionTestUtil.getFieldValue(photonRequestFactory, photonRequestFactory.getClass(), "languageResolver");
+        LanguageChecker languageChecker = ReflectionTestUtil.getFieldValue(languageResolver, languageResolver.getClass(), "languageChecker");
         Set<String> supportedLanguages = ReflectionTestUtil.getFieldValue(languageChecker, languageChecker.getClass(), "supportedLanguages");
         Set<String> supportedLanguagesExpected = ImmutableSet.of("en", "fr");
         Assert.assertThat(supportedLanguages, IsEqual.equalTo(supportedLanguagesExpected));

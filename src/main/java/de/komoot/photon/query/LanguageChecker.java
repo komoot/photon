@@ -19,9 +19,13 @@ public class LanguageChecker implements Function<String, Boolean, BadRequestExce
     @Override
     public Boolean apply(String lang) throws BadRequestException {
         if (lang == null) lang = "en";
-        if (!supportedLanguages.contains(lang)) {
+        if (!isLanguageSupported(lang)) {
             throw new BadRequestException(400, "language " + lang + " is not supported, supported languages are: " + Joiner.on(", ").join(supportedLanguages));
         }
         return true;
+    }
+
+    public boolean isLanguageSupported(String lang) {
+        return this.supportedLanguages.contains(lang);
     }
 }
