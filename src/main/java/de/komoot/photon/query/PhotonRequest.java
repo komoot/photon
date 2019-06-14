@@ -1,5 +1,6 @@
 package de.komoot.photon.query;
 
+import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Point;
 
 import java.io.Serializable;
@@ -13,13 +14,15 @@ public class PhotonRequest implements Serializable {
     private Point locationForBias;
     private String language;
     private final double scale;
+    private Envelope bbox;
 
-    public PhotonRequest(String query, int limit, Point locationForBias, double scale, String language) {
+    public PhotonRequest(String query, int limit, Envelope bbox, Point locationForBias, double scale, String language) {
         this.query = query;
         this.limit = limit;
         this.locationForBias = locationForBias;
         this.scale = scale;
         this.language = language;
+        this.bbox = bbox;
     }
 
     public String getQuery() {
@@ -28,6 +31,10 @@ public class PhotonRequest implements Serializable {
 
     public Integer getLimit() {
         return limit;
+    }
+    
+    public Envelope getBbox() {
+        return bbox;
     }
 
     public Point getLocationForBias() {
