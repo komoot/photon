@@ -36,7 +36,6 @@ public class ApiIntegrationTest extends ESBaseTester {
         App.main(new String[]{"-cluster", clusterName, "-listen-port", Integer.toString(LISTEN_PORT), "-transport-addresses", "127.0.0.1"});
         awaitInitialization();
         HttpURLConnection connection = (HttpURLConnection) new URL("http://127.0.0.1:" + port() + "/api?q=berlin").openConnection();
-        String result = new BufferedReader(new InputStreamReader(connection.getInputStream())).lines().collect(Collectors.joining("\n"));
         assertNull(connection.getHeaderField("Access-Control-Allow-Origin"));
     }
 
@@ -49,7 +48,6 @@ public class ApiIntegrationTest extends ESBaseTester {
                 "-cors-any"});
         awaitInitialization();
         HttpURLConnection connection = (HttpURLConnection) new URL("http://127.0.0.1:" + port() + "/api?q=berlin").openConnection();
-        String result = new BufferedReader(new InputStreamReader(connection.getInputStream())).lines().collect(Collectors.joining("\n"));
         assertEquals("*", connection.getHeaderField("Access-Control-Allow-Origin"));
     }
 
@@ -62,7 +60,6 @@ public class ApiIntegrationTest extends ESBaseTester {
                 "-cors-origin", "www.poole.ch"});
         awaitInitialization();
         HttpURLConnection connection = (HttpURLConnection) new URL("http://127.0.0.1:" + port() + "/api?q=berlin").openConnection();
-        String result = new BufferedReader(new InputStreamReader(connection.getInputStream())).lines().collect(Collectors.joining("\n"));
         assertEquals("www.poole.ch", connection.getHeaderField("Access-Control-Allow-Origin"));
     }
 
