@@ -1,5 +1,11 @@
 package de.komoot.photon;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.Point;
+import com.vividsolutions.jts.geom.PrecisionModel;
 import de.komoot.photon.elasticsearch.Importer;
 import de.komoot.photon.elasticsearch.Server;
 import lombok.extern.slf4j.Slf4j;
@@ -8,26 +14,19 @@ import org.elasticsearch.client.Client;
 import org.junit.After;
 import org.junit.Before;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.Point;
-import com.vividsolutions.jts.geom.PrecisionModel;
-
 import java.io.File;
 import java.io.IOException;
 
 /**
  * Start an ES server with some test data that then can be queried in tests that extend this class
- * 
+ *
  * @author Peter Karich
  */
 @Slf4j
 public class ESBaseTester {
 
-    public final String  clusterName = "photon-test";
-    private final String indexName   = "photon";
+    public final String clusterName = "photon-test";
+    private final String indexName = "photon";
 
     private Server server;
 
@@ -73,7 +72,7 @@ public class ESBaseTester {
 
     /**
      * Setup the ES server
-     * 
+     *
      * @throws IOException
      */
     public void setUpES() throws IOException {
@@ -98,12 +97,12 @@ public class ESBaseTester {
      * Shutdown the ES node
      */
     public void shutdownES() {
-        if (server != null) {
+        if (server != null)
             server.shutdown();
-        }
     }
 
     public void deleteIndex() {
-        server.deleteIndex();
+        if (server != null)
+            server.deleteIndex();
     }
 }

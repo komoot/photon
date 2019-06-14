@@ -1,24 +1,10 @@
 package de.komoot.photon.elasticsearch;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.InetSocketAddress;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-
+import de.komoot.photon.CommandLineArgs;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.SystemUtils;
-import org.elasticsearch.action.admin.indices.close.CloseIndexResponse;
-import org.elasticsearch.action.admin.indices.settings.put.UpdateSettingsRequest;
 import org.elasticsearch.client.Client;
-import org.elasticsearch.client.Requests;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
@@ -33,8 +19,18 @@ import org.elasticsearch.transport.client.PreBuiltTransportClient;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import de.komoot.photon.CommandLineArgs;
-import lombok.extern.slf4j.Slf4j;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.InetSocketAddress;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Helper class to start/stop elasticsearch node and get elasticsearch clients
@@ -54,7 +50,7 @@ public class Server {
     private final String[] languages;
 
     private String transportAddresses;
-    
+
     private Integer shards = null;
 
     protected static class MyNode extends Node {
@@ -75,7 +71,7 @@ public class Server {
                 setupDirectories(new URL("file://" + mainDirectory));
             }
         } catch (Exception e) {
-            throw new RuntimeException("Can't create directories: ", e);
+            throw new RuntimeException("Can't create directories: " + mainDirectory, e);
         }
         this.clusterName = clusterName;
         this.languages = languages.split(",");
@@ -194,14 +190,15 @@ public class Server {
 
         // add all langs to the mapping
         mappingsJSON = addLangsToMapping(mappingsJSON);
-        
+
         JSONObject settings = new JSONObject(IOUtils.toString(index_settings));
         if (shards != null) {
             settings.put("index", new JSONObject("{ \"number_of_shards\":" + shards + " }"));
         }
-        client.admin().indices().prepareCreate("photon").setSettings(settings.toString(), XContentType.JSON).execute().actionGet();; 
+        client.admin().indices().prepareCreate("photon").setSettings(settings.toString(), XContentType.JSON).execute().actionGet();
+        ;
         client.admin().indices().preparePutMapping("photon").setType("place").setSource(mappingsJSON.toString(), XContentType.JSON).execute().actionGet();
-        log.info("mapping created: " + mappingsJSON.toString());                        
+        log.info("mapping created: " + mappingsJSON.toString());
     }
 
     public void deleteIndex() {
@@ -271,11 +268,11 @@ public class Server {
         }
         return properties;
     }
-    
+
     /**
      * Set the maximum number of shards for the embedded node
      * This typically only makes sense for testing
-     * 
+     *
      * @param shards the maximum number of shards
      * @return this Server instance for chaining
      */
