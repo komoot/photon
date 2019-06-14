@@ -11,7 +11,8 @@ import spark.Request;
  */
 public class BoundingBoxParamConverter implements Function<Request, Envelope, BadRequestException> {
 
-    private static final String INVALID_BBOX_ERROR_MESSAGE = "invalid search term 'bbox', expected format is: minLon,minLat,maxLon,maxLat";
+    public static final String INVALID_BBOX_ERROR_MESSAGE = "invalid number of supplied coordinates for parameter 'bbox', expected format is: minLon,minLat,maxLon,maxLat";
+    public static final String INVALID_BBOX_BOUNDS_MESSAGE = "Invalid bounds for parameter bbox, expected values minLat, maxLat element [-90,90], minLon, maxLon element [-180,180]";
 
     @Override
     public Envelope apply(Request webRequest) throws BadRequestException {
@@ -30,10 +31,10 @@ public class BoundingBoxParamConverter implements Function<Request, Envelope, Ba
             Double maxLon = Double.valueOf(bboxCoords[2]);
             Double maxLat = Double.valueOf(bboxCoords[3]);
             if (minLon > 180.0 || minLon < -180.00 || maxLon > 180.0 || maxLon < -180.00) {
-                throw new BadRequestException(400, INVALID_BBOX_ERROR_MESSAGE);
+                throw new BadRequestException(400, INVALID_BBOX_BOUNDS_MESSAGE);
             }
             if (minLat > 90.0 || minLat < -90.00 || maxLat > 90.0 || maxLat < -90.00) {
-                throw new BadRequestException(400, INVALID_BBOX_ERROR_MESSAGE);
+                throw new BadRequestException(400, INVALID_BBOX_BOUNDS_MESSAGE);
             }
             bbox = new Envelope(minLon, maxLon, minLat, maxLat);
         } catch (NumberFormatException nfe) {
