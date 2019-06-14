@@ -26,8 +26,8 @@ public class BoundingBoxParamConverter implements Function<Request, Envelope, Ba
                 throw new BadRequestException(400, INVALID_BBOX_ERROR_MESSAGE);
             }
             Double minLon = Double.valueOf(bboxCoords[0]);
-            Double minLat = Double.valueOf(bboxCoords[2]);
-            Double maxLon = Double.valueOf(bboxCoords[1]);
+            Double minLat = Double.valueOf(bboxCoords[1]);
+            Double maxLon = Double.valueOf(bboxCoords[2]);
             Double maxLat = Double.valueOf(bboxCoords[3]);
             if (minLon > 180.0 || minLon < -180.00 || maxLon > 180.0 || maxLon < -180.00) {
                 throw new BadRequestException(400, INVALID_BBOX_ERROR_MESSAGE);
@@ -35,7 +35,7 @@ public class BoundingBoxParamConverter implements Function<Request, Envelope, Ba
             if (minLat > 90.0 || minLat < -90.00 || maxLat > 90.0 || maxLat < -90.00) {
                 throw new BadRequestException(400, INVALID_BBOX_ERROR_MESSAGE);
             }
-            bbox = new Envelope(minLon, minLat, maxLon, maxLat);
+            bbox = new Envelope(minLon, maxLon, minLat, maxLat);
         } catch (NumberFormatException nfe) {
             throw new BadRequestException(400, INVALID_BBOX_ERROR_MESSAGE);
         }
