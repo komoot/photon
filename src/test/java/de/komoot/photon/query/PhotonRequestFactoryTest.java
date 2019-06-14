@@ -237,6 +237,23 @@ public class PhotonRequestFactoryTest {
         }
         Mockito.verify(mockRequest, Mockito.times(1)).queryParams("bbox");
     }
-    
+
+    @Test
+    public void testWithBadBboxFilter180() throws Exception {
+        Request mockRequest = Mockito.mock(Request.class);
+        Mockito.when(mockRequest.queryParams("q")).thenReturn("hanover");
+        QueryParamsMap mockQueryParamsMap = Mockito.mock(QueryParamsMap.class);
+        Mockito.when(mockRequest.queryMap("osm_tag")).thenReturn(mockQueryParamsMap);
+        Mockito.when(mockRequest.queryParams("bbox")).thenReturn("181,27,9.8,87");
+
+        try {
+            PhotonRequestFactory photonRequestFactory = new PhotonRequestFactory(ImmutableSet.of("en"));
+            photonRequestFactory.create(mockRequest);
+            Assert.fail();
+        } catch (BadRequestException e) {
+            Assert.assertEquals("invalid search term 'bbox', expected format is: minLon,minLat,maxLon,maxLat", e.getMessage());
+        }
+        Mockito.verify(mockRequest, Mockito.times(1)).queryParams("bbox");
+    }
     
 }
