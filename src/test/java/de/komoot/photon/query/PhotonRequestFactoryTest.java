@@ -211,7 +211,7 @@ public class PhotonRequestFactoryTest {
         Mockito.when(mockRequest.queryParams("q")).thenReturn("hanover");
         QueryParamsMap mockQueryParamsMap = Mockito.mock(QueryParamsMap.class);
         Mockito.when(mockRequest.queryMap("osm_tag")).thenReturn(mockQueryParamsMap);
-        Mockito.when(mockRequest.queryParams("bbox")).thenReturn("9.6,52.4,9.8,52.3");   
+        Mockito.when(mockRequest.queryParams("bbox")).thenReturn("9.6,52.3,9.8,52.4");
         
         PhotonRequestFactory photonRequestFactory = new PhotonRequestFactory(ImmutableSet.of("en"));
         PhotonRequest photonRequest = photonRequestFactory.create(mockRequest); 
