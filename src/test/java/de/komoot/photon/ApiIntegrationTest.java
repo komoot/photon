@@ -53,6 +53,9 @@ public class ApiIntegrationTest extends ESBaseTester {
         assertEquals("*", connection.getHeaderField("Access-Control-Allow-Origin"));
     }
 
+    /**
+     * Test that the Access-Control-Allow-Origin header is set to a specific domain
+     */
     @Test
     public void testCorsOriginIsSetToSpecificDomain() throws Exception {
         App.main(new String[]{"-cluster", clusterName, "-listen-port", Integer.toString(LISTEN_PORT), "-transport-addresses", "127.0.0.1",
