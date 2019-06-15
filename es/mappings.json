@@ -218,10 +218,7 @@
 			},
 			"countrycode": {
 				"type": "text",
-				"index": false,
-				"copy_to": [
-					"collector.default"
-				]
+				"index": false
 			},
 			"housenumber": {
 				"type": "text",
