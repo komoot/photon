@@ -11,6 +11,8 @@ import de.komoot.photon.elasticsearch.Server;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.admin.indices.refresh.RefreshRequest;
 import org.elasticsearch.client.Client;
+import org.elasticsearch.cluster.metadata.IndexMetaData;
+import org.elasticsearch.common.collect.ImmutableOpenMap;
 import org.junit.After;
 import org.junit.Before;
 
@@ -25,14 +27,11 @@ import java.io.IOException;
 @Slf4j
 public class ESBaseTester {
 
-    public final String clusterName = "photon-test";
+    final String clusterName = "photon-test";
     private final String indexName = "photon";
-
     private Server server;
-
+    Client client;
     GeometryFactory FACTORY = new GeometryFactory(new PrecisionModel(), 4326);
-
-    protected Client client;
 
     private PhotonDoc createDoc(double lon, double lat, int id, int osmId, String key, String value) {
         ImmutableMap<String, String> nameMap = ImmutableMap.of("name", "berlin");
@@ -80,9 +79,20 @@ public class ESBaseTester {
     public void setUpES(File location, boolean recreate) throws IOException {
         server = new Server(clusterName, location.getAbsolutePath(), "en", "").setMaxShards(1).
                 start();
-        if (recreate)
+        if (recreate) {
             server.recreateIndex();
-        refresh();
+            refresh();
+        } else {
+            // log.info("wait for ES to be healthy");
+            getClient().admin().cluster().prepareHealth().setWaitForYellowStatus().get();
+        }
+    }
+
+    void printIndices() {
+        ImmutableOpenMap<String, IndexMetaData> map = getClient().admin().cluster().prepareState().get().getState().getMetaData().getIndices();
+        log.info("cluster:" + clusterName + ", indices:" + map.keys());
+        if (!map.isEmpty())
+            log.info("index 0:" + map.values().iterator().next().value.getIndexUUID());
     }
 
     protected Client getClient() {

@@ -11,10 +11,10 @@ public interface Importer {
      *
      * @param doc
      */
-    public void add(PhotonDoc doc);
+    void add(PhotonDoc doc);
 
     /**
      * import is finished
      */
-    public void finish();
+    void finish();
 }

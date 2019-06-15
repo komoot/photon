@@ -6,7 +6,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
-import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -43,6 +42,7 @@ public class ImportIntegrationTest extends ESBaseTester {
                 importDone = true;
             } catch (Exception ex) {
                 removeDir(file);
+                throw new RuntimeException(ex);
             }
         }
     }
@@ -61,8 +61,8 @@ public class ImportIntegrationTest extends ESBaseTester {
         JSONObject properties = feature.getJSONObject("properties");
         assertEquals("W", properties.getString("osm_type"));
         assertEquals("highway", properties.getString("osm_key"));
-        assertEquals("primary", properties.getString("osm_value"));
-        assertEquals("berlin", properties.getString("name"));
+        assertEquals("residential", properties.getString("osm_value"));
+        assertEquals("Rue de Berlin", properties.getString("name"));
     }
 
     static boolean removeDir(File file) {
