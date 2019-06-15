@@ -17,7 +17,7 @@ import java.io.IOException;
  * @author felix
  */
 @Slf4j
-public class Importer implements de.komoot.photon.Importer {
+public class ESImporter implements de.komoot.photon.Importer {
     private int documentCount = 0;
 
     private final String indexName = "photon";
@@ -26,7 +26,7 @@ public class Importer implements de.komoot.photon.Importer {
     private BulkRequestBuilder bulkRequest;
     private final String[] languages;
 
-    public Importer(Client esClient, String languages) {
+    public ESImporter(Client esClient, String languages) {
         this.esClient = esClient;
         this.bulkRequest = esClient.prepareBulk();
         this.languages = languages.split(",");

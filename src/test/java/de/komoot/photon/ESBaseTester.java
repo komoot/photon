@@ -6,7 +6,7 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.PrecisionModel;
-import de.komoot.photon.elasticsearch.Importer;
+import de.komoot.photon.elasticsearch.ESImporter;
 import de.komoot.photon.elasticsearch.Server;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.admin.indices.refresh.RefreshRequest;
@@ -37,7 +37,7 @@ public class ESBaseTester {
     private PhotonDoc createDoc(double lon, double lat, int id, int osmId, String key, String value) {
         ImmutableMap<String, String> nameMap = ImmutableMap.of("name", "berlin");
         Point location = FACTORY.createPoint(new Coordinate(lon, lat));
-        return new PhotonDoc(id, "way", osmId, key, value, nameMap, null, null, null, 0, 0.5, null, location, 0, 0);
+        return new PhotonDoc(id, "W", osmId, key, value, nameMap, null, null, null, 0, 0.5, null, location, 0, 0);
     }
 
     @Before
@@ -46,7 +46,7 @@ public class ESBaseTester {
         ImmutableList<String> tags = ImmutableList.of("tourism", "attraction", "tourism", "hotel", "tourism", "museum", "tourism", "information", "amenity",
                 "parking", "amenity", "restaurant", "amenity", "information", "food", "information", "railway", "station");
         client = getClient();
-        Importer instance = new Importer(client, "en");
+        ESImporter instance = new ESImporter(client, "en");
         double lon = 13.38886;
         double lat = 52.51704;
         for (int i = 0; i < tags.size(); i++) {
@@ -72,12 +72,16 @@ public class ESBaseTester {
 
     /**
      * Setup the ES server
-     *
-     * @throws IOException
      */
     public void setUpES() throws IOException {
-        server = new Server(clusterName, new File("./target/es_photon_test").getAbsolutePath(), "en", "").setMaxShards(1).start();
-        server.recreateIndex();
+        setUpES(new File("./target/es_photon_test"), true);
+    }
+
+    public void setUpES(File location, boolean recreate) throws IOException {
+        server = new Server(clusterName, location.getAbsolutePath(), "en", "").setMaxShards(1).
+                start();
+        if (recreate)
+            server.recreateIndex();
         refresh();
     }
 
