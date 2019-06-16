@@ -28,7 +28,7 @@ Photon software is open source and licensed under [Apache License, Version 2.0](
 - filter by osm tag and value
 - filter by bounding box
 - reverse geocode a coordinate to an address
-- OSM data import (built upon [Nominatim](https://github.com/twain47/Nominatim)) inclusive continuous updates
+- OSM data import (built upon [Nominatim](https://github.com/openstreetmap/Nominatim)) inclusive continuous updates
 
 
 ### Installation
@@ -62,7 +62,7 @@ discover more of photon's feature with its usage `java -jar photon-*.jar -h`.
 
 ### Customized Search Data
 If you need search data in other languages or restricted to a country you will need to create your search data by your own.
-Once you have your [nominatim](https://github.com/twain47/Nominatim) database ready, you can import the data to photon.
+Once you have your [nominatim](https://github.com/openstreetmap/Nominatim) database ready, you can import the data to photon.
 
 If you haven't already set a password for your nominatim database user, do it now (change user name and password as you like, below):
 
