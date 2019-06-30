@@ -18,7 +18,7 @@ import java.util.Map;
  */
 @Slf4j
 public class ConvertToJson implements OneWayConverter<SearchResponse, List<JSONObject>> {
-    private final static String[] KEYS_LANG_UNSPEC = {Constants.OSM_ID, Constants.OSM_VALUE, Constants.OSM_KEY, Constants.POSTCODE, Constants.HOUSENUMBER, Constants.OSM_TYPE};
+    private final static String[] KEYS_LANG_UNSPEC = {Constants.OSM_ID, Constants.OSM_VALUE, Constants.OSM_KEY, Constants.POSTCODE, Constants.HOUSENUMBER, Constants.COUNTRYCODE, Constants.OSM_TYPE};
     private final static String[] KEYS_LANG_SPEC = {Constants.NAME, Constants.COUNTRY, Constants.CITY, Constants.STREET, Constants.STATE};
     private final String lang;
 

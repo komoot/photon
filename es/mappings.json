@@ -216,6 +216,10 @@
 					}
 				}
 			},
+			"countrycode": {
+				"type": "text",
+				"index": false
+			},
 			"housenumber": {
 				"type": "text",
 				"index": true,
