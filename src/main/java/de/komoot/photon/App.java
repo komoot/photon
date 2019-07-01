@@ -3,6 +3,7 @@ package de.komoot.photon;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
+import de.komoot.photon.elasticsearch.ESImporter;
 import de.komoot.photon.elasticsearch.Server;
 import de.komoot.photon.nominatim.NominatimConnector;
 import de.komoot.photon.nominatim.NominatimUpdater;
@@ -122,7 +123,7 @@ public class App {
         }
 
         log.info("starting import from nominatim to photon with languages: " + args.getLanguages());
-        de.komoot.photon.elasticsearch.Importer importer = new de.komoot.photon.elasticsearch.Importer(esNodeClient, args.getLanguages());
+        ESImporter importer = new ESImporter(esNodeClient, args.getLanguages());
         NominatimConnector nominatimConnector = new NominatimConnector(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
         nominatimConnector.setImporter(importer);
         nominatimConnector.readEntireDatabase(args.getCountryCodes().split(","));
@@ -149,7 +150,7 @@ public class App {
                 response.type("application/json"); // in the other case set by enableCors
             });
         }
-        
+
         // setup search API
         get("api", new SearchRequestHandler("api", esNodeClient, args.getLanguages()));
         get("api/", new SearchRequestHandler("api/", esNodeClient, args.getLanguages()));

@@ -3,3 +3,22 @@ language: java
 jdk:
   - oraclejdk8
   - oraclejdk9
+
+cache:
+  directories:
+    - $HOME/dump
+
+addons:
+  postgresql: "10"
+  apt:
+    packages:
+    - postgresql-10
+    - postgresql-10-postgis-2.4
+
+before_script:
+#    - psql -U postgres -c "create extension postgis"
+    - psql -c "ALTER USER peter PASSWORD 'buxdehude'" postgres
+    - createdb photontest
+    - mkdir dump
+    - if [ ! -f dump/photon.dmp ]; then wget download1.graphhopper.com/public/photon-test-data/photon-test.dmp -O dump/photon.dmp; fi
+    - pg_restore -O -d photontest photon.dmp
