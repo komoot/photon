@@ -18,6 +18,8 @@ import java.util.*;
 
 import static com.google.common.collect.Maps.newHashMap;
 
+import java.util.regex.Pattern;
+
 
 /**
  * There are four {@link de.komoot.photon.query.PhotonQueryBuilder.State states} that this query builder goes through before a query can be executed on elastic search. Of
@@ -60,8 +62,16 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder {
     private PhotonQueryBuilder(String query, String language) {      
         languageMatchQueryBuilder = QueryBuilders.matchQuery(String.format("collector.%s.ngrams", language), query).fuzziness(Fuzziness.ZERO).prefixLength(2)
                 .analyzer("search_ngram").minimumShouldMatch("100%");
-        defaultMatchQueryBuilder =
-                QueryBuilders.matchQuery("collector.default", query).fuzziness(Fuzziness.ZERO).prefixLength(6).analyzer("search_ngram").minimumShouldMatch("100%");
+
+		if (ifQueryContainThreeOrMoreDigits(query)) {
+			 defaultMatchQueryBuilder =
+                QueryBuilders.matchQuery("collector.default", query.replaceAll("\\d", "")).fuzziness(Fuzziness.ZERO).prefixLength(2).analyzer("search_ngram").minimumShouldMatch("100%");
+		} else {
+			 defaultMatchQueryBuilder =
+                QueryBuilders.matchQuery("collector.default", query).fuzziness(Fuzziness.ZERO).prefixLength(2).analyzer("search_ngram").minimumShouldMatch("100%");
+		}		
+       
+
         // @formatter:off
         m_query4QueryBuilder = QueryBuilders.boolQuery()
                 .must(QueryBuilders.boolQuery().should(defaultMatchQueryBuilder).should(languageMatchQueryBuilder).
@@ -369,4 +379,11 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder {
     private enum State {
         PLAIN, FILTERED, QUERY_ALREADY_BUILT, FINISHED,
     }
+	
+	private boolean ifQueryContainThreeOrMoreDigits(String query){
+        boolean matches = false;
+        String regex = ".*\\d{3}.*";
+        matches = Pattern.matches(regex, query);       
+        return matches;
+    } 
 }
