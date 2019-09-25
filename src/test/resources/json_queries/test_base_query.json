@@ -66,37 +66,7 @@
 											"boost": 100.0
 										}
 									}
-                                },
-                                {
-									"match": {
-										"city.en.raw": {
-											"query": "berlin",
-											"operator": "OR",
-											"analyzer": "search_raw",
-											"prefix_length": 0,
-											"max_expansions": 50,
-											"fuzzy_transpositions": true,
-											"lenient": false,
-											"zero_terms_query": "NONE",
-											"boost": 200.0
-										}
-									}
-                                },
-                                {
-									"match": {
-										"street.en.raw": {
-											"query": "berlin",
-											"operator": "OR",
-											"analyzer": "search_raw",
-											"prefix_length": 0,
-											"max_expansions": 50,
-											"fuzzy_transpositions": true,
-											"lenient": false,
-											"zero_terms_query": "NONE",
-											"boost": 200.0
-										}
-									}
-								},
+                                },                                
                                 {
 									"match": {
 										"name.en.raw": {
@@ -176,12 +146,12 @@
 						},
 						{
 							"exists": {
-								"field": "city.en.raw",
+								"field": "collector.en.raw",
 								"boost": 1.0
 							}
 						},{
 							"exists": {
-								"field": "street.en.raw",
+								"field": "name.en.raw",
 								"boost": 1.0
 							}
 						}

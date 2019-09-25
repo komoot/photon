@@ -128,10 +128,8 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder {
         m_queryBuilderForTopLevelFilter = QueryBuilders.boolQuery()
                 .should(QueryBuilders.boolQuery().mustNot(QueryBuilders.existsQuery("housenumber")))
                 .should(QueryBuilders.matchQuery("housenumber", query).analyzer("standard"))
-                .should(QueryBuilders.existsQuery(String.format("collector.%s.raw", language)))
-                .should(QueryBuilders.existsQuery(String.format("city.%s.raw", language)))
-                .should(QueryBuilders.existsQuery(String.format("street.%s.raw", language)));
-                //.should(QueryBuilders.existsQuery(String.format("name.%s.raw", language)));    
+                .should(QueryBuilders.existsQuery(String.format("collector.%s.raw", language)))          
+                .should(QueryBuilders.existsQuery(String.format("name.%s.raw", language)));    
         // @formatter:on
 
         state = State.PLAIN;
@@ -367,13 +365,12 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder {
         state = State.FINISHED;
 
         m_finalQueryBuilder = QueryBuilders.boolQuery().must(m_finalQueryWithoutTagFilterBuilder).filter(m_queryBuilderForTopLevelFilter);
-
+        
         return m_finalQueryBuilder;
     }
     
     @Override
-    public QueryBuilder buildQuerySecondRound(int queryTimes) {  
-        System.out.println("buildQuerySecondRound-queryTimes: " + queryTimes + ", State: " + state.toString() + ", queryTimes: " + queryTimes);
+    public QueryBuilder buildQuerySecondRound(int queryTimes) {         
         if (queryTimes == 1){
           state = State.PLAIN;
         }
@@ -382,8 +379,7 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder {
             return m_finalQueryBuilder; 
       
         
-        if (state.equals(State.FILTERED)) {
-            System.out.println("State.FILTERED");
+        if (state.equals(State.FILTERED)) {           
             if (orQueryBuilderForIncludeTagFiltering != null)
                 m_queryBuilderForTopLevelFilter.must(orQueryBuilderForIncludeTagFiltering);
             if (andQueryBuilderForExcludeTagFiltering != null)
@@ -460,9 +456,7 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder {
           //System.out.println("Full match: " + matcher.group(0));
           for (int i = 0; i <= matcher.groupCount(); i++) {
               if(matcher.group(i).length() > 4 ){
-//                   System.out.println("Group " + i + ": " + matcher.group(i));
-                   query = query.replaceAll(matcher.group(i),matcher.group(i).substring(0, 4));
-                   System.out.println("Shorten new Query with three digits " + query);  
+                   query = query.replaceAll(matcher.group(i),matcher.group(i).substring(0, 4));                  
               }
              
           }
