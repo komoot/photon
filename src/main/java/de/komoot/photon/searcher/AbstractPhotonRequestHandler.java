@@ -26,9 +26,27 @@ public abstract class AbstractPhotonRequestHandler<R extends PhotonRequest> impl
         int limit = photonRequest.getLimit();
         int extLimit = limit > 1 ? (int) Math.round(photonRequest.getLimit() * 1.5) : 1;
         SearchResponse results = elasticsearchSearcher.search(queryBuilder.buildQuery(), extLimit);
-        if (results.getHits().getTotalHits() == 0) {
-            results = elasticsearchSearcher.search(queryBuilder.withLenientMatch().buildQuery(), extLimit);
+//        if (results.getHits().getTotalHits() == 0) {
+//            results = elasticsearchSearcher.search(queryBuilder.withLenientMatch().buildQuery(), extLimit);
+//        }
+        int queryTimes = 1;
+        while(results.getHits().getTotalHits() == 0 && queryTimes < 5) {
+          queryTimes++;
+          switch(queryTimes) {
+            case 2: 
+              results = elasticsearchSearcher.search(queryBuilder.withLenientMatch().buildQuery(), extLimit);
+              break;
+            case 3:
+              results = elasticsearchSearcher.search(queryBuilder.buildQuerySecondRound(1), extLimit);
+              break;
+            case 4:
+              results = elasticsearchSearcher.search(queryBuilder.withLenientMatchSecondRound().buildQuerySecondRound(2), extLimit);
+              break;
+            default:
+              break;
+          }
         }
+        
         List<JSONObject> resultJsonObjects = new ConvertToJson(photonRequest.getLanguage()).convert(results);
         StreetDupesRemover streetDupesRemover = new StreetDupesRemover(photonRequest.getLanguage());
         resultJsonObjects = streetDupesRemover.execute(resultJsonObjects);
