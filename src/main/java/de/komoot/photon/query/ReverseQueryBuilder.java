@@ -141,4 +141,16 @@ public class ReverseQueryBuilder implements TagFilterQueryBuilder {
     private enum State {
         PLAIN, FILTERED, QUERY_ALREADY_BUILT, FINISHED,
     }
+
+    @Override
+    public QueryBuilder buildQuerySecondRound(int i) {
+      // TODO Auto-generated method stub
+      return null;
+    }
+
+    @Override
+    public TagFilterQueryBuilder withLenientMatchSecondRound() {
+      // TODO Auto-generated method stub
+      return null;
+    }
 }

@@ -17,7 +17,8 @@ import org.elasticsearch.script.ScriptType;
 import java.util.*;
 
 import static com.google.common.collect.Maps.newHashMap;
-
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 /**
  * There are four {@link de.komoot.photon.query.PhotonQueryBuilder.State states} that this query builder goes through before a query can be executed on elastic search. Of
@@ -36,6 +37,8 @@ import static com.google.common.collect.Maps.newHashMap;
  */
 public class PhotonQueryBuilder implements TagFilterQueryBuilder {
     private FunctionScoreQueryBuilder m_finalQueryWithoutTagFilterBuilder;
+    
+    private FunctionScoreQueryBuilder m_finalQueryWithoutTagFilterBuilderSecondRound; 
 
     private Integer limit = 50;
 
@@ -48,6 +51,8 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder {
     private BoolQueryBuilder andQueryBuilderForExcludeTagFiltering = null;
 
     private MatchQueryBuilder defaultMatchQueryBuilder;
+    
+    private MatchQueryBuilder defaultMatchQueryBuilderSecondRound;
 
     private MatchQueryBuilder languageMatchQueryBuilder;
     
@@ -56,24 +61,52 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder {
     protected ArrayList<FilterFunctionBuilder> m_alFilterFunction4QueryBuilder = new ArrayList<>(1);
 
     protected QueryBuilder m_query4QueryBuilder;
+    
+    protected QueryBuilder m_query4QueryBuilderSecondRound;
 
     private PhotonQueryBuilder(String query, String language) {      
         languageMatchQueryBuilder = QueryBuilders.matchQuery(String.format("collector.%s.ngrams", language), query).fuzziness(Fuzziness.ZERO).prefixLength(2)
                 .analyzer("search_ngram").minimumShouldMatch("100%");
-        defaultMatchQueryBuilder =
-                QueryBuilders.matchQuery("collector.default", query).fuzziness(Fuzziness.ZERO).prefixLength(6).analyzer("search_ngram").minimumShouldMatch("100%");
-        // @formatter:off
-        m_query4QueryBuilder = QueryBuilders.boolQuery()
-                .must(QueryBuilders.boolQuery().should(defaultMatchQueryBuilder).should(languageMatchQueryBuilder).
-                        minimumShouldMatch("1"))       
-                .should(QueryBuilders.matchQuery(String.format("collector.%s.raw", language), query).boost(100)
-                        .analyzer("search_raw"))
-                .should(QueryBuilders.matchQuery(String.format("city.%s.raw", language), query).boost(200)
-                        .analyzer("search_raw"))
-                .should(QueryBuilders.matchQuery(String.format("street.%s.raw", language), query).boost(200)
-                        .analyzer("search_raw"))
-                .should(QueryBuilders.matchQuery(String.format("name.%s.raw", language), query)
-                		.analyzer("search_raw"));
+        
+        if (ifQueryContainMoreThanThreeDigits(query)) {
+          //If the query contains > 3 digits, set the prefix to 2, maxExpansions to 5,if >4 digits, keeps the 4 digits only  
+          defaultMatchQueryBuilder =
+              QueryBuilders.matchQuery("collector.default", keepFourDigits(query)).fuzziness(Fuzziness.ZERO).prefixLength(2).maxExpansions(5).analyzer("search_ngram").minimumShouldMatch("100%");
+          m_query4QueryBuilder = QueryBuilders.boolQuery()
+              .must(QueryBuilders.boolQuery().should(defaultMatchQueryBuilder).should(languageMatchQueryBuilder).
+                      minimumShouldMatch("1"))       
+              .should(QueryBuilders.matchQuery(String.format("collector.%s.raw", language), query).fuzziness(Fuzziness.ZERO).prefixLength(6).boost(200)
+                      .analyzer("search_raw"))               
+              .should(QueryBuilders.matchQuery(String.format("name.%s.raw", language), query).fuzziness(Fuzziness.ZERO).prefixLength(6)
+                      .analyzer("search_raw"));
+        } else {
+          //If <3 digits, set prefix to 6 to match long term more accurate 
+          defaultMatchQueryBuilder =
+              QueryBuilders.matchQuery("collector.default", query).fuzziness(Fuzziness.ZERO).prefixLength(6).analyzer("search_ngram").minimumShouldMatch("100%");
+          m_query4QueryBuilder = QueryBuilders.boolQuery()
+              .must(QueryBuilders.boolQuery().should(defaultMatchQueryBuilder).should(languageMatchQueryBuilder).
+                      minimumShouldMatch("1"))       
+              .should(QueryBuilders.matchQuery(String.format("collector.%s.raw", language), query).boost(100)
+                      .analyzer("search_raw"))  
+             .should(QueryBuilders.matchQuery(String.format("city.%s.raw", language), query).boost(200)
+              .analyzer("search_raw"))
+              .should(QueryBuilders.matchQuery(String.format("street.%s.raw", language), query).boost(200)
+                      .analyzer("search_raw"));
+//              .should(QueryBuilders.matchQuery(String.format("name.%s.raw", language), query)
+//                      .analyzer("search_raw"));
+        } 
+        
+        //remove digits in the query for the 2 round 
+        defaultMatchQueryBuilderSecondRound  = QueryBuilders.matchQuery("collector.default", query.replaceAll("\\d", "")).fuzziness(Fuzziness.ZERO).prefixLength(2).analyzer("search_ngram").minimumShouldMatch("100%");
+        
+        // @formatter:off     
+        m_query4QueryBuilderSecondRound = QueryBuilders.boolQuery()
+            .must(QueryBuilders.boolQuery().should(defaultMatchQueryBuilderSecondRound).should(languageMatchQueryBuilder).                
+                minimumShouldMatch("1"))             
+            .should(QueryBuilders.matchQuery(String.format("collector.%s.raw", language), query).fuzziness(Fuzziness.ZERO).prefixLength(6).boost(200)
+                .analyzer("search_raw"))  
+            .should(QueryBuilders.matchQuery(String.format("name.%s.raw", language), query).fuzziness(Fuzziness.ZERO).prefixLength(6)
+                .analyzer("search_raw"));
         // @formatter:on
 
         // this is former general-score, now inline
@@ -86,12 +119,17 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder {
         m_finalQueryWithoutTagFilterBuilder = new FunctionScoreQueryBuilder(m_query4QueryBuilder, m_alFilterFunction4QueryBuilder.toArray(new FilterFunctionBuilder[0]))
                 .boostMode(CombineFunction.MULTIPLY).scoreMode(ScoreMode.MULTIPLY);
         
+        m_finalQueryWithoutTagFilterBuilderSecondRound = new FunctionScoreQueryBuilder(m_query4QueryBuilderSecondRound, m_alFilterFunction4QueryBuilder.toArray(new FilterFunctionBuilder[0]))
+                .boostMode(CombineFunction.MULTIPLY).scoreMode(ScoreMode.MULTIPLY);
+        
         // @formatter:off
         m_queryBuilderForTopLevelFilter = QueryBuilders.boolQuery()
                 .should(QueryBuilders.boolQuery().mustNot(QueryBuilders.existsQuery("housenumber")))
                 .should(QueryBuilders.matchQuery("housenumber", query).analyzer("standard"))
+                .should(QueryBuilders.existsQuery(String.format("collector.%s.raw", language)))
                 .should(QueryBuilders.existsQuery(String.format("city.%s.raw", language)))
-                .should(QueryBuilders.existsQuery(String.format("street.%s.raw", language)));    
+                .should(QueryBuilders.existsQuery(String.format("street.%s.raw", language)));
+                //.should(QueryBuilders.existsQuery(String.format("name.%s.raw", language)));    
         // @formatter:on
 
         state = State.PLAIN;
@@ -295,7 +333,13 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder {
         languageMatchQueryBuilder.fuzziness(Fuzziness.ONE).minimumShouldMatch("-1");
         return this;
     }
-
+    
+    @Override
+    public TagFilterQueryBuilder withLenientMatchSecondRound() {
+        defaultMatchQueryBuilderSecondRound.fuzziness(Fuzziness.ONE).minimumShouldMatch("-1");
+        languageMatchQueryBuilder.fuzziness(Fuzziness.ONE).minimumShouldMatch("-1");
+        return this;
+    }
 
     /**
      * When this method is called, all filters are placed inside their {@link OrQueryBuilder OR} or {@link AndQueryBuilder AND} containers and the top level filter
@@ -306,6 +350,7 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder {
      */
     @Override
     public QueryBuilder buildQuery() {
+        System.out.println("buildQuery State: " + state.toString());
         if (state.equals(State.FINISHED)) return m_finalQueryBuilder;
 
         if (state.equals(State.FILTERED)) {
@@ -320,6 +365,33 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder {
         state = State.FINISHED;
 
         m_finalQueryBuilder = QueryBuilders.boolQuery().must(m_finalQueryWithoutTagFilterBuilder).filter(m_queryBuilderForTopLevelFilter);
+
+        return m_finalQueryBuilder;
+    }
+    
+    @Override
+    public QueryBuilder buildQuerySecondRound(int queryTimes) {  
+        System.out.println("buildQuerySecondRound-queryTimes: " + queryTimes + ", State: " + state.toString() + ", queryTimes: " + queryTimes);
+        if (queryTimes == 1){
+          state = State.PLAIN;
+        }
+        
+        if (state.equals(State.FINISHED))      
+            return m_finalQueryBuilder; 
+      
+        
+        if (state.equals(State.FILTERED)) {
+            System.out.println("State.FILTERED");
+            if (orQueryBuilderForIncludeTagFiltering != null)
+                m_queryBuilderForTopLevelFilter.must(orQueryBuilderForIncludeTagFiltering);
+            if (andQueryBuilderForExcludeTagFiltering != null)
+                m_queryBuilderForTopLevelFilter.must(andQueryBuilderForExcludeTagFiltering);
+
+        }
+       
+        state = State.FINISHED;                
+    
+        m_finalQueryBuilder = QueryBuilders.boolQuery().must(m_finalQueryWithoutTagFilterBuilderSecondRound).filter(m_queryBuilderForTopLevelFilter);     
 
         return m_finalQueryBuilder;
     }
@@ -369,4 +441,30 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder {
     private enum State {
         PLAIN, FILTERED, QUERY_ALREADY_BUILT, FINISHED,
     }
+    
+    private boolean ifQueryContainMoreThanThreeDigits(String query){
+      boolean matches = false;
+      String regex = ".*\\d{3}.*";
+        matches = Pattern.matches(regex, query);       
+        return matches;
+    }
+    
+    private String keepFourDigits(String query){
+      final String regex = "\\d+";  
+      final Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
+      final Matcher matcher = pattern.matcher(query);
+      
+      while (matcher.find()) {
+          //System.out.println("Full match: " + matcher.group(0));
+          for (int i = 0; i <= matcher.groupCount(); i++) {
+              if(matcher.group(i).length() > 4 ){
+//                   System.out.println("Group " + i + ": " + matcher.group(i));
+                   query = query.replaceAll(matcher.group(i),matcher.group(i).substring(0, 4));
+                   System.out.println("Shorten new Query with three digits " + query);  
+              }
+             
+          }
+      }    
+     return query;
+  }
 }
