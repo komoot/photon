@@ -19,6 +19,7 @@ import java.util.*;
 import static com.google.common.collect.Maps.newHashMap;
 
 import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 
 /**
@@ -62,27 +63,17 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder {
     private PhotonQueryBuilder(String query, String language) {      
         languageMatchQueryBuilder = QueryBuilders.matchQuery(String.format("collector.%s.ngrams", language), query).fuzziness(Fuzziness.ZERO).prefixLength(2)
                 .analyzer("search_ngram").minimumShouldMatch("100%");
-
-		if (ifQueryContainThreeOrMoreDigits(query)) {
-			 defaultMatchQueryBuilder =
-                QueryBuilders.matchQuery("collector.default", query.replaceAll("\\d", "")).fuzziness(Fuzziness.ZERO).prefixLength(2).analyzer("search_ngram").minimumShouldMatch("100%");
-		} else {
-			 defaultMatchQueryBuilder =
-                QueryBuilders.matchQuery("collector.default", query).fuzziness(Fuzziness.ZERO).prefixLength(2).analyzer("search_ngram").minimumShouldMatch("100%");
-		}		
        
-
+		defaultMatchQueryBuilder =
+              QueryBuilders.matchQuery("collector.default", keepFourStringDigitsString(query)).fuzziness(Fuzziness.ZERO).prefixLength(2).analyzer("search_ngram").minimumShouldMatch("100%");
+			  
         // @formatter:off
         m_query4QueryBuilder = QueryBuilders.boolQuery()
                 .must(QueryBuilders.boolQuery().should(defaultMatchQueryBuilder).should(languageMatchQueryBuilder).
                         minimumShouldMatch("1"))       
-                .should(QueryBuilders.matchQuery(String.format("collector.%s.raw", language), query).boost(100)
-                        .analyzer("search_raw"))
-                .should(QueryBuilders.matchQuery(String.format("city.%s.raw", language), query).boost(200)
-                        .analyzer("search_raw"))
-                .should(QueryBuilders.matchQuery(String.format("street.%s.raw", language), query).boost(200)
-                        .analyzer("search_raw"))
-                .should(QueryBuilders.matchQuery(String.format("name.%s.raw", language), query)
+                .should(QueryBuilders.matchQuery(String.format("collector.%s.raw", language), query).fuzziness(Fuzziness.ZERO).prefixLength(6).boost(200)
+                        .analyzer("search_raw"))               
+                .should(QueryBuilders.matchQuery(String.format("name.%s.raw", language), query).fuzziness(Fuzziness.ZERO).prefixLength(6)
                 		.analyzer("search_raw"));
         // @formatter:on
 
@@ -385,5 +376,20 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder {
         String regex = ".*\\d{3}.*";
         matches = Pattern.matches(regex, query);       
         return matches;
-    } 
+    }
+	
+   private String keepFourStringDigitsString(String query){
+        final String regex = "\\d+";  
+        final Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
+        final Matcher matcher = pattern.matcher(query);
+      
+        while (matcher.find()) {         
+            for (int i = 0; i <= matcher.groupCount(); i++) {
+                if(matcher.group(i).length() > 4 ){
+                     query = query.replaceAll(matcher.group(i),matcher.group(i).substring(0, 4));                     
+                }             
+            }
+        }    
+       return query;
+    }	
 }
