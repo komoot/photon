@@ -17,6 +17,7 @@ import org.elasticsearch.script.ScriptType;
 import java.util.*;
 
 import static com.google.common.collect.Maps.newHashMap;
+
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
@@ -107,6 +108,7 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder {
                 .analyzer("search_raw"))  
             .should(QueryBuilders.matchQuery(String.format("name.%s.raw", language), query).fuzziness(Fuzziness.ZERO).prefixLength(6)
                 .analyzer("search_raw"));
+
         // @formatter:on
 
         // this is former general-score, now inline
@@ -467,4 +469,5 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder {
       }    
      return query;
   }
+
 }
