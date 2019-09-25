@@ -17,8 +17,10 @@ import org.elasticsearch.script.ScriptType;
 import java.util.*;
 
 import static com.google.common.collect.Maps.newHashMap;
+
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
+
 
 /**
  * There are four {@link de.komoot.photon.query.PhotonQueryBuilder.State states} that this query builder goes through before a query can be executed on elastic search. Of
@@ -67,7 +69,7 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder {
     private PhotonQueryBuilder(String query, String language) {      
         languageMatchQueryBuilder = QueryBuilders.matchQuery(String.format("collector.%s.ngrams", language), query).fuzziness(Fuzziness.ZERO).prefixLength(2)
                 .analyzer("search_ngram").minimumShouldMatch("100%");
-        
+
         if (ifQueryContainMoreThanThreeDigits(query)) {
           //If the query contains > 3 digits, set the prefix to 2, maxExpansions to 5,if >4 digits, keeps the 4 digits only  
           defaultMatchQueryBuilder =
@@ -87,13 +89,9 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder {
               .must(QueryBuilders.boolQuery().should(defaultMatchQueryBuilder).should(languageMatchQueryBuilder).
                       minimumShouldMatch("1"))       
               .should(QueryBuilders.matchQuery(String.format("collector.%s.raw", language), query).boost(100)
-                      .analyzer("search_raw"))  
-             .should(QueryBuilders.matchQuery(String.format("city.%s.raw", language), query).boost(200)
-              .analyzer("search_raw"))
-              .should(QueryBuilders.matchQuery(String.format("street.%s.raw", language), query).boost(200)
+                      .analyzer("search_raw")) 
+              .should(QueryBuilders.matchQuery(String.format("name.%s.raw", language), query)
                       .analyzer("search_raw"));
-//              .should(QueryBuilders.matchQuery(String.format("name.%s.raw", language), query)
-//                      .analyzer("search_raw"));
         } 
         
         //remove digits in the query for the 2 round 
@@ -107,6 +105,7 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder {
                 .analyzer("search_raw"))  
             .should(QueryBuilders.matchQuery(String.format("name.%s.raw", language), query).fuzziness(Fuzziness.ZERO).prefixLength(6)
                 .analyzer("search_raw"));
+
         // @formatter:on
 
         // this is former general-score, now inline
@@ -454,11 +453,9 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder {
       final Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
       final Matcher matcher = pattern.matcher(query);
       
-      while (matcher.find()) {
-          //System.out.println("Full match: " + matcher.group(0));
+      while (matcher.find()) {     
           for (int i = 0; i <= matcher.groupCount(); i++) {
               if(matcher.group(i).length() > 4 ){
-//                   System.out.println("Group " + i + ": " + matcher.group(i));
                    query = query.replaceAll(matcher.group(i),matcher.group(i).substring(0, 4));
                    System.out.println("Shorten new Query with three digits " + query);  
               }
@@ -467,4 +464,5 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder {
       }    
      return query;
   }
+
 }
