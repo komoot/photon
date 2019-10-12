@@ -29,13 +29,11 @@ public class Importer implements de.komoot.photon.Importer {
     private final Client esClient;
     private BulkRequestBuilder bulkRequest;
     private final String[] languages;
-    private boolean readUid;
 
-    public Importer(Client esClient, String languages, boolean readUidFromJson) {
+    public Importer(Client esClient, String languages) {
         this.esClient = esClient;
         this.bulkRequest = esClient.prepareBulk();
         this.languages = languages.split(",");
-        this.readUid = readUidFromJson;
     }
 
     @Override
@@ -51,19 +49,12 @@ public class Importer implements de.komoot.photon.Importer {
      * add a json formatted photon document.
      *
      * @param source json formatted photon document
-     * @param uid    optional uid if not present it will parse the source and picking uid or
-     *               if empty id. If both is empty it will be generated.
      */
-    public void add(String source, String uid) {
-        if (uid == null && readUid) {
-            // this is expensive as ES is parsing the BytesArray again but we would need e.g. jackson that
-            // parses the string into a Map that could be used from ES without doing the parsing work again
-            JSONObject json = new JSONObject(source);
-            uid = json.getString("uid");
-            if (uid == null)
-                // if null ES will create a random
-                uid = json.getString("id");
-        }
+    public void add(String source, String uidName) {
+        // this is expensive as ES is parsing the BytesArray again but we would need e.g. jackson that
+        // parses the string into a Map that could be used from ES without doing the parsing work again
+        JSONObject json = new JSONObject(source);
+        String uid = json.getString(uidName);
         add(new BytesArray(source), uid);
     }
 

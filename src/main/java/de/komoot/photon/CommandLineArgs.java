@@ -23,8 +23,8 @@ public class CommandLineArgs {
     @Parameter(names = "-json-import", description = "import json dump into photon (this will delete previous index)")
     private boolean jsonImport = false;
 
-    @Parameter(names = "-json-import-read-uid", description = "if uid should be read from json, might be slower")
-    private boolean jsonImportReadUid = true;
+    @Parameter(names = "-json-import-uid", description = "JSON entry to use for the UID (default is 'uid')")
+    private String jsonImportUid = "uid";
 
     @Parameter(names = "-languages", description = "languages nominatim importer should import and use at run-time, comma separated (default is 'en,fr,de,it')")
     private String languages = "en,fr,de,it";

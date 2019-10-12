@@ -20,8 +20,10 @@ public class JsonDumpConnector implements Connector {
 
     private BufferedReader reader;
     private final Importer importer;
+    private String uidName;
 
-    public JsonDumpConnector(de.komoot.photon.Importer importer, String filename) {
+    public JsonDumpConnector(de.komoot.photon.Importer importer, String filename, String uidName) {
+        this.uidName = uidName;
         if (importer instanceof Importer) {
             this.importer = (Importer) importer;
         } else {
@@ -45,7 +47,7 @@ public class JsonDumpConnector implements Connector {
                 // first line is action line, currently we assume / support only indexing
                 sourceLine = reader.readLine();
                 if (sourceLine != null)
-                    importer.add(sourceLine, null);
+                    importer.add(sourceLine, uidName);
 
                 progressMonitor.progressByOne();
             }
