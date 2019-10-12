@@ -130,9 +130,8 @@ public class App {
 
         log.info("starting import from json dump to photon with languages: " + args.getLanguages());
         log.info("note: languages should be supplied as contained in the dump.");
-        de.komoot.photon.elasticsearch.Importer importer = new de.komoot.photon.elasticsearch.Importer(esNodeClient, args.getLanguages());
-        JsonDumpConnector jsonDumpConnector = new JsonDumpConnector(args.getJsonDump());
-        jsonDumpConnector.setImporter(importer);
+        de.komoot.photon.elasticsearch.Importer importer = new de.komoot.photon.elasticsearch.Importer(esNodeClient, args.getLanguages(), args.isJsonImportReadUid());
+        JsonDumpConnector jsonDumpConnector = new JsonDumpConnector(importer, args.getJsonDump());
         try {
             jsonDumpConnector.readEntireDatabase();
         } catch (Exception e) {
@@ -158,7 +157,7 @@ public class App {
         }
 
         log.info("starting import from nominatim to photon with languages: " + args.getLanguages());
-        de.komoot.photon.elasticsearch.Importer importer = new de.komoot.photon.elasticsearch.Importer(esNodeClient, args.getLanguages());
+        de.komoot.photon.elasticsearch.Importer importer = new de.komoot.photon.elasticsearch.Importer(esNodeClient, args.getLanguages(), false);
         NominatimConnector nominatimConnector = new NominatimConnector(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
         nominatimConnector.setImporter(importer);
         nominatimConnector.readEntireDatabase(args.getCountryCodes().split(","));
