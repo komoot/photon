@@ -43,7 +43,7 @@ public class App {
             return;
         }
 
-        if (args.getJsonDump() != null && !args.isJsonImport()) {
+        if (args.getJsonDump() != null) {
             startJsonDump(args);
             return;
         }
@@ -65,7 +65,7 @@ public class App {
                 return;
             }
 
-            if (args.isJsonImport()) {
+            if (args.getJsonImport() != null) {
                 shutdownES = true;
                 startJsonDumpImport(args, esServer, esClient);
                 return;
@@ -131,7 +131,7 @@ public class App {
         log.info("starting import from json dump to photon with languages: " + args.getLanguages());
         log.info("note: languages should be supplied as contained in the dump.");
         de.komoot.photon.elasticsearch.Importer importer = new de.komoot.photon.elasticsearch.Importer(esNodeClient, args.getLanguages());
-        JsonDumpConnector jsonDumpConnector = new JsonDumpConnector(importer, args.getJsonDump(), args.getJsonImportUid());
+        JsonDumpConnector jsonDumpConnector = new JsonDumpConnector(importer, args.getJsonImport(), args.getJsonImportUid());
         try {
             jsonDumpConnector.readEntireDatabase();
         } catch (Exception e) {
