@@ -36,10 +36,6 @@ public class JsonDumpConnector implements Connector {
     }
 
     public void readEntireDatabase() {
-        if (reader == null) {
-            throw new IllegalStateException("Reader was not initialized");
-        }
-
         final ImportProgressMonitor progressMonitor = new ImportProgressMonitor();
         progressMonitor.start();
 
