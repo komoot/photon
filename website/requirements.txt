@@ -4,5 +4,5 @@ Jinja2==2.10.1
 MarkupSafe==1.0
 requests==2.20.0
 simplejson==3.16.0
-Werkzeug==0.14.1
+Werkzeug==0.15.3
 elasticsearch==6.3.1
