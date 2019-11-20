@@ -2,6 +2,7 @@ package de.komoot.photon.query;
 
 
 import com.google.common.collect.ImmutableSet;
+import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Point;
 import org.elasticsearch.common.lucene.search.function.CombineFunction;
 import org.elasticsearch.common.lucene.search.function.FiltersFunctionScoreQuery.ScoreMode;
@@ -56,8 +57,10 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder {
     private MatchQueryBuilder defaultMatchQueryBuilderSecondRound;
 
     private MatchQueryBuilder languageMatchQueryBuilder;
-    
-    private QueryBuilder m_finalQueryBuilder;
+
+    private GeoBoundingBoxQueryBuilder bboxQueryBuilder;
+
+    private BoolQueryBuilder m_finalQueryBuilder;
 
     protected ArrayList<FilterFunctionBuilder> m_alFilterFunction4QueryBuilder = new ArrayList<>(1);
 
@@ -167,6 +170,15 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder {
         m_finalQueryWithoutTagFilterBuilder =
                 new FunctionScoreQueryBuilder(m_query4QueryBuilder, m_alFilterFunction4QueryBuilder.toArray(new FilterFunctionBuilder[0]))
                         .boostMode(CombineFunction.REPLACE);
+        return this;
+    }
+    
+     @Override
+    public TagFilterQueryBuilder withBoundingBox(Envelope bbox) {
+        if (bbox == null) return this;
+        bboxQueryBuilder = new GeoBoundingBoxQueryBuilder("coordinate");
+        bboxQueryBuilder.setCorners(bbox.getMaxY(), bbox.getMinX(), bbox.getMinY(), bbox.getMaxX());
+        
         return this;
     }
 
@@ -349,14 +361,19 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder {
         System.out.println("buildQuery State: " + state.toString());
         if (state.equals(State.FINISHED)) return m_finalQueryBuilder;
 
+        m_finalQueryBuilder = QueryBuilders.boolQuery().must(m_finalQueryWithoutTagFilterBuilder).filter(m_queryBuilderForTopLevelFilter);
+
         if (state.equals(State.FILTERED)) {
-
+            BoolQueryBuilder tagFilters = QueryBuilders.boolQuery();
             if (orQueryBuilderForIncludeTagFiltering != null)
-                m_queryBuilderForTopLevelFilter.must(orQueryBuilderForIncludeTagFiltering);
+                tagFilters.must(orQueryBuilderForIncludeTagFiltering);
             if (andQueryBuilderForExcludeTagFiltering != null)
-                m_queryBuilderForTopLevelFilter.must(andQueryBuilderForExcludeTagFiltering);
-
+                tagFilters.must(andQueryBuilderForExcludeTagFiltering);
+            m_finalQueryBuilder.filter(tagFilters);
         }
+        
+        if (bboxQueryBuilder != null) 
+            m_queryBuilderForTopLevelFilter.filter(bboxQueryBuilder);
 
         state = State.FINISHED;
 

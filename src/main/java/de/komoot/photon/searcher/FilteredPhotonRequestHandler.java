@@ -35,7 +35,8 @@ public class FilteredPhotonRequestHandler extends AbstractPhotonRequestHandler<F
                 withoutKeys(excludeKeys).
                 withoutValues(excludeValues).
                 withTagsNotValues(excludeTagValues).
-                withLocationBias(photonRequest.getLocationForBias(), photonRequest.getScaleForBias());
+                withLocationBias(photonRequest.getLocationForBias(), photonRequest.getScaleForBias()).
+                withBoundingBox(photonRequest.getBbox());
     }
 
 }

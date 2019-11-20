@@ -8,6 +8,7 @@ import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
+import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.index.IndexNotFoundException;
 import org.elasticsearch.node.InternalSettingsPreparer;
 import org.elasticsearch.node.Node;
@@ -50,6 +51,8 @@ public class Server {
 
     private String transportAddresses;
 
+    private Integer shards = null;
+
     protected static class MyNode extends Node {
         public MyNode(Settings preparedSettings, Collection<Class<? extends Plugin>> classpathPlugins) {
             super(InternalSettingsPreparer.prepareEnvironment(preparedSettings, null), classpathPlugins);
@@ -68,7 +71,7 @@ public class Server {
                 setupDirectories(new URL("file://" + mainDirectory));
             }
         } catch (Exception e) {
-            throw new RuntimeException("Can't create directories: ", e);
+            throw new RuntimeException("Can't create directories: " + mainDirectory, e);
         }
         this.clusterName = clusterName;
         this.languages = languages.split(",");
@@ -102,7 +105,6 @@ public class Server {
         } else {
 
             try {
-
                 sBuilder.put("transport.type", "netty4").put("http.type", "netty4").put("http.enabled", "true");
                 Settings settings = sBuilder.build();
                 Collection<Class<? extends Plugin>> lList = new LinkedList<>();
@@ -159,13 +161,13 @@ public class Server {
         // copy script directory to elastic search directory
         final ClassLoader loader = Thread.currentThread().getContextClassLoader();
 
-        Files.copy(loader.getResourceAsStream("modules/lang-painless/antlr4-runtime-4.5.1-1.jar"),
-                new File(painlessDirectory, "antlr4-runtime-4.5.1-1.jar").toPath(),
+        Files.copy(loader.getResourceAsStream("modules/lang-painless/antlr4-runtime.jar"),
+                new File(painlessDirectory, "antlr4-runtime.jar").toPath(),
                 StandardCopyOption.REPLACE_EXISTING);
-        Files.copy(loader.getResourceAsStream("modules/lang-painless/asm-debug-all-5.1.jar"),
-                new File(painlessDirectory, "asm-debug-all-5.1.jar").toPath(), StandardCopyOption.REPLACE_EXISTING);
-        Files.copy(loader.getResourceAsStream("modules/lang-painless/lang-painless-5.5.0.jar"),
-                new File(painlessDirectory, "lang-painless-5.5.0.jar").toPath(), StandardCopyOption.REPLACE_EXISTING);
+        Files.copy(loader.getResourceAsStream("modules/lang-painless/asm-debug-all.jar"),
+                new File(painlessDirectory, "asm-debug-all.jar").toPath(), StandardCopyOption.REPLACE_EXISTING);
+        Files.copy(loader.getResourceAsStream("modules/lang-painless/lang-painless.jar"),
+                new File(painlessDirectory, "lang-painless.jar").toPath(), StandardCopyOption.REPLACE_EXISTING);
         Files.copy(loader.getResourceAsStream("modules/lang-painless/plugin-descriptor.properties"),
                 new File(painlessDirectory, "plugin-descriptor.properties").toPath(),
                 StandardCopyOption.REPLACE_EXISTING);
@@ -188,10 +190,14 @@ public class Server {
 
         // add all langs to the mapping
         mappingsJSON = addLangsToMapping(mappingsJSON);
-        client.admin().indices().prepareCreate("photon").setSettings(IOUtils.toString(index_settings)).execute()
-                .actionGet();
-        client.admin().indices().preparePutMapping("photon").setType("place").setSource(mappingsJSON.toString())
-                .execute().actionGet();
+
+        JSONObject settings = new JSONObject(IOUtils.toString(index_settings));
+        if (shards != null) {
+            settings.put("index", new JSONObject("{ \"number_of_shards\":" + shards + " }"));
+        }
+        client.admin().indices().prepareCreate("photon").setSettings(settings.toString(), XContentType.JSON).execute().actionGet();
+        ;
+        client.admin().indices().preparePutMapping("photon").setType("place").setSource(mappingsJSON.toString(), XContentType.JSON).execute().actionGet();
         log.info("mapping created: " + mappingsJSON.toString());
     }
 
@@ -261,5 +267,17 @@ public class Server {
             return properties.put(key, keyObject);
         }
         return properties;
+    }
+
+    /**
+     * Set the maximum number of shards for the embedded node
+     * This typically only makes sense for testing
+     *
+     * @param shards the maximum number of shards
+     * @return this Server instance for chaining
+     */
+    public Server setMaxShards(int shards) {
+        this.shards = shards;
+        return this;
     }
 }

@@ -24,6 +24,8 @@ import static spark.Spark.halt;
  * Created by Sachin Dole on 2/12/2015.
  */
 public class SearchRequestHandler<R extends PhotonRequest> extends RouteImpl {
+    private static final String DEBUG_PARAMETER = "debug";
+    
     private final PhotonRequestFactory photonRequestFactory;
     private final PhotonRequestHandlerFactory requestHandlerFactory;
     private final ConvertToGeoJson geoJsonConverter;
@@ -49,10 +51,12 @@ public class SearchRequestHandler<R extends PhotonRequest> extends RouteImpl {
         PhotonRequestHandler<R> handler = requestHandlerFactory.createHandler(photonRequest);
         List<JSONObject> results = handler.handle(photonRequest);
         JSONObject geoJsonResults = geoJsonConverter.convert(results);
-        response.type("application/json; charset=utf-8");
-        response.header("Access-Control-Allow-Origin", "*");
-        if (request.queryParams("debug") != null)
+        if (request.queryParams(DEBUG_PARAMETER) != null) {
+            JSONObject debug = new JSONObject();
+            debug.put("query", new JSONObject(handler.dumpQuery(photonRequest)));
+            geoJsonResults.put(DEBUG_PARAMETER, debug);
             return geoJsonResults.toString(4);
+        }
 
         return geoJsonResults.toString();
     }

@@ -1,5 +1,6 @@
 package de.komoot.photon.query;
 
+import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Point;
 
 import java.util.HashMap;
@@ -20,8 +21,8 @@ public class FilteredPhotonRequest extends PhotonRequest {
     private Map<String, Set<String>> excludeTags = new HashMap<String, Set<String>>(3);
     private Map<String, Set<String>> excludeTagValues = new HashMap<String, Set<String>>(3);
 
-    FilteredPhotonRequest(String query, int limit, Point locationForBias, double locBiasScale, String language) {
-        super(query, limit, locationForBias, locBiasScale, language);
+    FilteredPhotonRequest(String query, int limit, Envelope bbox, Point locationForBias, double locBiasScale, String language) {
+        super(query, limit, bbox, locationForBias, locBiasScale, language);
     }
 
     public Set<String> keys() {

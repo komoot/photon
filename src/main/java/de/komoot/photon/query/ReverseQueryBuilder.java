@@ -1,6 +1,7 @@
 package de.komoot.photon.query;
 
 import com.google.common.collect.ImmutableSet;
+import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Point;
 import org.elasticsearch.common.unit.DistanceUnit;
 import org.elasticsearch.index.query.BoolQueryBuilder;
@@ -42,6 +43,11 @@ public class ReverseQueryBuilder implements TagFilterQueryBuilder {
 
     @Override
     public TagFilterQueryBuilder withLocationBias(Point point, double scale) {
+        throw new RuntimeException(new NoSuchMethodException("this method is not implemented (NOOP)"));
+    }
+
+    @Override
+    public TagFilterQueryBuilder withBoundingBox(Envelope bbox) {
         throw new RuntimeException(new NoSuchMethodException("this method is not implemented (NOOP)"));
     }
 
