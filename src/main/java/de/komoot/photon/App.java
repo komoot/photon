@@ -1,8 +1,10 @@
 package de.komoot.photon;
 
-
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
+
+import de.komoot.photon.elasticsearch.ReplicationUpdater;
+import de.komoot.photon.elasticsearch.Replicatior;
 import de.komoot.photon.elasticsearch.Server;
 import de.komoot.photon.nominatim.NominatimConnector;
 import de.komoot.photon.nominatim.NominatimUpdater;
@@ -12,11 +14,11 @@ import org.elasticsearch.client.Client;
 import spark.Request;
 import spark.Response;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import static spark.Spark.*;
-
 
 @Slf4j
 public class App {
@@ -47,6 +49,11 @@ public class App {
             return;
         }
 
+        if (args.isReplicate()) {
+            startReplicationUpdate(args);
+            return;
+        }
+
         boolean shutdownES = false;
         final Server esServer = new Server(args).start();
         try {
@@ -67,10 +74,10 @@ public class App {
             // no special action specified -> normal mode: start search API
             startApi(args, esClient);
         } finally {
-            if (shutdownES) esServer.shutdown();
+            if (shutdownES)
+                esServer.shutdown();
         }
     }
-
 
     /**
      * dump elastic search index and create a new and empty one
@@ -87,7 +94,6 @@ public class App {
         log.info("deleted photon index and created an empty new one.");
     }
 
-
     /**
      * take nominatim data and dump it to json
      *
@@ -97,7 +103,8 @@ public class App {
         try {
             final String filename = args.getJsonDump();
             final JsonDumper jsonDumper = new JsonDumper(filename, args.getLanguages());
-            NominatimConnector nominatimConnector = new NominatimConnector(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
+            NominatimConnector nominatimConnector = new NominatimConnector(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(),
+                    args.getPassword());
             nominatimConnector.setImporter(jsonDumper);
             nominatimConnector.readEntireDatabase(args.getCountryCodes().split(","));
             log.info("json dump was created: " + filename);
@@ -105,7 +112,6 @@ public class App {
             log.error("cannot create dump", e);
         }
     }
-
 
     /**
      * take nominatim data to fill elastic search index
@@ -130,11 +136,22 @@ public class App {
         log.info("imported data from nominatim to photon with languages: " + args.getLanguages());
     }
 
+    /**
+     * Run generation of replication files once
+     * 
+     * @param args the arguments from the command line
+     */
+    private static void startReplicationUpdate(CommandLineArgs args) {
+        final NominatimUpdater nominatimUpdater = new NominatimUpdater(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
+        Updater updater = new ReplicationUpdater(new File(args.getReplicationDirectory()), null);
+        nominatimUpdater.setUpdater(updater);
+        nominatimUpdater.update();
+    }
 
     /**
      * start api to accept search requests via http
      *
-     * @param args
+     * @param args the arguments from the command line
      * @param esNodeClient
      */
     private static void startApi(CommandLineArgs args, Client esNodeClient) {
@@ -159,11 +176,19 @@ public class App {
         // setup update API
         final NominatimUpdater nominatimUpdater = new NominatimUpdater(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
         Updater updater = new de.komoot.photon.elasticsearch.Updater(esNodeClient, args.getLanguages());
-        nominatimUpdater.setUpdater(updater);
-
-        get("/nominatim-update", (Request request, Response response) -> {
-            new Thread(() -> nominatimUpdater.update()).start();
-            return "nominatim update started (more information in console output) ...";
-        });
+        String replicationUrl = args.getReplicationUrl();
+        if (replicationUrl == null) {
+            if (args.isGenerateFiles()) {
+                updater = new ReplicationUpdater(new File(args.getReplicationDirectory()), updater);
+            }
+            nominatimUpdater.setUpdater(updater);
+            get("/nominatim-update", (Request request, Response response) -> {
+                new Thread(() -> nominatimUpdater.update()).start();
+                return "nominatim update started (more information in console output) ...";
+            });
+        } else {
+            Replicatior replicator = new Replicatior(new File(args.getReplicationDirectory()), args.getReplicationUrl(), args.getReplicationInterval(), updater);
+            replicator.start();
+        }
     }
 }

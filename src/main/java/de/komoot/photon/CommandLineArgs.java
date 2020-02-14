@@ -61,6 +61,21 @@ public class CommandLineArgs {
     
     @Parameter(names = "-cors-origin", description = "enable cross-site resource sharing for the specified origin (default CORS not supported)")
     private String corsOrigin = null;
+    
+    @Parameter(names = "-replicate", description = "generate a replication file")
+    private boolean replicate = false;
+    
+    @Parameter(names = "-replication-dir", description = "directory for replication files (default '.')")
+    private String replicationDirectory = new File(".").getAbsolutePath();
+
+    @Parameter(names = "-generate-files", description = "generate replication files while updating from Nominatim")
+    private boolean generateFiles = false;
+    
+    @Parameter(names = "-replication-url", description = "url of base directory for file based replication (default none)")
+    private String replicationUrl = null;
+    
+    @Parameter(names = "-replication-interval", description = "interval between trying to read replication files in minutes (default 60 minutes)")
+    private int replicationInterval = 60;
 
     @Parameter(names = "-h", description = "show help / usage")
     private boolean usage = false;
