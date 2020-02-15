@@ -4,6 +4,7 @@ package de.komoot.photon;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
 import de.komoot.photon.elasticsearch.Server;
+import de.komoot.photon.json.JsonDumpConnector;
 import de.komoot.photon.nominatim.NominatimConnector;
 import de.komoot.photon.nominatim.NominatimUpdater;
 import de.komoot.photon.utils.CorsFilter;
@@ -64,6 +65,12 @@ public class App {
                 return;
             }
 
+            if (args.getJsonImport() != null) {
+                shutdownES = true;
+                startJsonDumpImport(args, esServer, esClient);
+                return;
+            }
+
             // no special action specified -> normal mode: start search API
             startApi(args, esClient);
         } finally {
@@ -104,6 +111,34 @@ public class App {
         } catch (FileNotFoundException e) {
             log.error("cannot create dump", e);
         }
+    }
+
+    /**
+     * take json dump to fill elastic search index
+     *
+     * @param args
+     * @param esServer
+     * @param esNodeClient
+     */
+    private static void startJsonDumpImport(CommandLineArgs args, Server esServer, Client esNodeClient) {
+        try {
+            esServer.recreateIndex(); // delete previous data
+        } catch (IOException e) {
+            log.error("cannot setup index, elastic search config files not readable", e);
+            return;
+        }
+
+        log.info("starting import from json dump to photon with languages: " + args.getLanguages());
+        log.info("note: languages should be supplied as contained in the dump.");
+        de.komoot.photon.elasticsearch.Importer importer = new de.komoot.photon.elasticsearch.Importer(esNodeClient, args.getLanguages());
+        JsonDumpConnector jsonDumpConnector = new JsonDumpConnector(importer, args.getJsonImport(), args.getJsonImportUid());
+        try {
+            jsonDumpConnector.readEntireDatabase();
+        } catch (Exception e) {
+            log.info("error importing from json dump: " + e.getMessage());
+        }
+
+        log.info("imported data from json dump to photon with languages: " + args.getLanguages());
     }
 
 
