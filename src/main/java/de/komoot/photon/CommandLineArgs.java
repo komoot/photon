@@ -20,6 +20,9 @@ public class CommandLineArgs {
     @Parameter(names = "-nominatim-import", description = "import nominatim database into photon (this will delete previous index)")
     private boolean nominatimImport = false;
 
+    @Parameter(names = "-nominatim-update", description = "fetch updates from nominatim database into photon and exit (this updates the index only without offering an API")
+    private boolean nominatimUpdate = false;
+
     @Parameter(names = "-languages", description = "languages nominatim importer should import and use at run-time, comma separated (default is 'en,fr,de,it')")
     private String languages = "en,fr,de,it";
 
