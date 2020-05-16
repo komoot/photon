@@ -97,6 +97,9 @@ public class Utils {
         if (name.get("reg_name") != null)
             fNames.put("reg", name.get("reg_name"));
 
+        if (name.get("addr:housename") != null)
+            fNames.put("housename", name.get("addr:housename"));
+
         write(builder, fNames, "name");
     }
 
@@ -151,6 +154,9 @@ public class Utils {
 
         if (names.get("name") != null) {
             filteredNames.put("default", names.get("name"));
+        }
+        else if (names.get("addr:housename") != null) {
+            filteredNames.put("default", names.get("addr:housename"));
         }
 
         for (String language : languages) {
