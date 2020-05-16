@@ -482,16 +482,6 @@ public class NominatimConnector {
                 continue;
             }
 
-            if (address.isCuratedCity()) {
-                if (doc.getCity() == null) {
-                    doc.setCity(address.getName());
-                } else {
-                    doc.getContext().add(doc.getCity()); // move previous city to context
-                    doc.setCity(address.getName()); // use new city
-                }
-                // do not continue as a curated city might be a state as well
-            }
-
             if (address.isStreet() && doc.getStreet() == null) {
                 doc.setStreet(address.getName());
                 continue;
