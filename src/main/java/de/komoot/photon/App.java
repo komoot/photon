@@ -71,10 +71,11 @@ public class App {
                 esClient.admin().cluster().prepareHealth().setWaitForGreenStatus().execute().actionGet();
                 final NominatimUpdater nominatimUpdater = setupNominatimUpdater(args, esClient);
                 nominatimUpdater.update();
-            } else {
-                // no special action specified -> normal mode: start search API
-                startApi(args, esClient);
+                return;
             }
+
+            // no special action specified -> normal mode: start search API
+            startApi(args, esClient);
         } finally {
             if (shutdownES) esServer.shutdown();
         }
