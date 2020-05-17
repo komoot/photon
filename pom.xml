@@ -140,7 +140,7 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>19.0</version>
+            <version>29.0-jre</version>
         </dependency>
         <dependency>
             <groupId>net.lingala.zip4j</groupId>
