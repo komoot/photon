@@ -13,6 +13,7 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 
 public class TagFilterQueryBuilderTest {
 
@@ -21,7 +22,7 @@ public class TagFilterQueryBuilderTest {
         TagFilterQueryBuilder photonQueryBuilder = PhotonQueryBuilder.builder("berlin", "en");
         InputStream resourceAsStream = this.getClass().getClassLoader()
                 .getResourceAsStream("json_queries/test_base_query.json");
-        String expectedJsonString = IOUtils.toString(resourceAsStream);
+        String expectedJsonString = IOUtils.toString(resourceAsStream, Charset.forName("utf-8"));
 
         String actualJsonString = new QueryToJson().convert(photonQueryBuilder.buildQuery());
         JsonNode actualJson = this.readJson(actualJsonString);
@@ -34,7 +35,7 @@ public class TagFilterQueryBuilderTest {
         TagFilterQueryBuilder photonQueryBuilder = PhotonQueryBuilder.builder("berlin", "fr");
         InputStream resourceAsStream = this.getClass().getClassLoader()
                 .getResourceAsStream("json_queries/test_base_query_fr.json");
-        String expectedJsonString = IOUtils.toString(resourceAsStream);
+        String expectedJsonString = IOUtils.toString(resourceAsStream, Charset.forName("utf-8"));
 
         String actualJsonString = new QueryToJson().convert(photonQueryBuilder.buildQuery());
         JsonNode actualJson = this.readJson(actualJsonString);
