@@ -76,6 +76,9 @@ public class ConvertToJson {
             return map.get(lang);
         }
 
+        if (!map.containsKey("default")) {
+            return map.get(map.keySet().toArray()[0]); // Returning first value in the map
+        }
         return map.get("default");
     }
 

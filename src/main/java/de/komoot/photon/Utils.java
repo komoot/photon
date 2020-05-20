@@ -155,9 +155,6 @@ public class Utils {
         if (names.get("name") != null) {
             filteredNames.put("default", names.get("name"));
         }
-        else if (names.get("addr:housename") != null) {
-            filteredNames.put("default", names.get("addr:housename"));
-        }
 
         for (String language : languages) {
             if (names.get("name:" + language) != null) {
