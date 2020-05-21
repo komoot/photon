@@ -4,7 +4,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import de.komoot.photon.Constants;
 import de.komoot.photon.Utils;
-import de.komoot.photon.utils.Command;
 import org.json.JSONObject;
 
 import java.util.HashSet;
@@ -17,14 +16,13 @@ import java.util.List;
  * <p/>
  * Created by Sachin Dole on 2/20/2015.
  */
-public class StreetDupesRemover implements Command<List<JSONObject>, List<JSONObject>> {
+public class StreetDupesRemover {
     private final String language;
 
     public StreetDupesRemover(String language) {
         this.language = language;
     }
 
-    @Override
     public List<JSONObject> execute(List<JSONObject>... allResults) {
         List<JSONObject> results = allResults[0];
         List<JSONObject> filteredItems = Lists.newArrayListWithCapacity(results.size());

@@ -1,13 +1,12 @@
 package de.komoot.photon.query;
 
-import de.komoot.photon.utils.Command;
 import spark.QueryParamsMap;
 
 /**
  * Created by Sachin Dole on 2/22/2015.
  */
-public class CheckIfFilteredRequest implements Command<Boolean, QueryParamsMap> {
-    @Override
+public class CheckIfFilteredRequest {
+
     public Boolean execute(QueryParamsMap... operand) {
         QueryParamsMap queryParam = operand[0];
         if (!queryParam.hasValue()) return false;

@@ -2,19 +2,17 @@ package de.komoot.photon.query;
 
 import com.vividsolutions.jts.geom.Envelope;
 
-import de.komoot.photon.utils.Function;
 import spark.Request;
 
 /**
  * Converts the bbox parameter into an Envelope and performs format checking.
  * Created by Holger Bruch on 10/13/2018.
  */
-public class BoundingBoxParamConverter implements Function<Request, Envelope, BadRequestException> {
+public class BoundingBoxParamConverter {
 
     public static final String INVALID_BBOX_ERROR_MESSAGE = "invalid number of supplied coordinates for parameter 'bbox', expected format is: minLon,minLat,maxLon,maxLat";
     public static final String INVALID_BBOX_BOUNDS_MESSAGE = "Invalid bounds for parameter bbox, expected values minLat, maxLat element [-90,90], minLon, maxLon element [-180,180]";
 
-    @Override
     public Envelope apply(Request webRequest) throws BadRequestException {
         String bboxParam = webRequest.queryParams("bbox");
         if (bboxParam == null) {

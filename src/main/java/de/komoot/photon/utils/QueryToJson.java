@@ -12,9 +12,8 @@ import java.io.IOException;
  * Created by Sachin Dole on 2/28/2015.
  */
 @Slf4j
-public class QueryToJson implements OneWayConverter<QueryBuilder, String> {
+public class QueryToJson {
 
-    @Override
     public String convert(QueryBuilder anItem) {
         try {
             BytesReference bytes = anItem.toXContent(JsonXContent.contentBuilder(), new ToXContent.MapParams(null))
