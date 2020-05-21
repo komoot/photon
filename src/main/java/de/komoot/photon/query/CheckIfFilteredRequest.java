@@ -7,7 +7,7 @@ import spark.QueryParamsMap;
  */
 public class CheckIfFilteredRequest {
 
-    public Boolean execute(QueryParamsMap... operand) {
+    public boolean execute(QueryParamsMap... operand) {
         QueryParamsMap queryParam = operand[0];
         if (!queryParam.hasValue()) return false;
         String[] tagsToFilterOn = queryParam.values();

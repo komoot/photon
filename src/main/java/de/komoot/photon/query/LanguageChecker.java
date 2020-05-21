@@ -15,7 +15,7 @@ public class LanguageChecker {
         this.supportedLanguages = supportedLanguages;
     }
 
-    public Boolean apply(String lang) throws BadRequestException {
+    public boolean apply(String lang) throws BadRequestException {
         if (lang == null) lang = "en";
         if (!supportedLanguages.contains(lang)) {
             throw new BadRequestException(400, "language " + lang + " is not supported, supported languages are: " + Joiner.on(", ").join(supportedLanguages));
