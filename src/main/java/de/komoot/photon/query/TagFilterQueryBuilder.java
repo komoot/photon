@@ -146,4 +146,8 @@ public interface TagFilterQueryBuilder {
     QueryBuilder buildQuery();
 
     Integer getLimit();
+
+    QueryBuilder buildQuerySecondRound(int i);
+
+    TagFilterQueryBuilder withLenientMatchSecondRound();
 }
