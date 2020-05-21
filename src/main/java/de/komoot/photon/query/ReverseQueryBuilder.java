@@ -15,8 +15,6 @@ import java.util.Set;
  * @author svantulden
  */
 public class ReverseQueryBuilder implements TagFilterQueryBuilder {
-    private Integer limit;
-
     private Double radius;
 
     private Point location;
@@ -31,14 +29,6 @@ public class ReverseQueryBuilder implements TagFilterQueryBuilder {
 
     public static TagFilterQueryBuilder builder(Point location, Double radius, String queryStringFilter) {
         return new ReverseQueryBuilder(location, radius, queryStringFilter);
-    }
-
-    @Override
-    public TagFilterQueryBuilder withLimit(Integer limit) {
-        this.limit = limit == null || limit < 0 ? 0 : limit;
-        this.limit = this.limit > 5000 ? 5000 : this.limit;
-
-        return this;
     }
 
     @Override
@@ -129,11 +119,6 @@ public class ReverseQueryBuilder implements TagFilterQueryBuilder {
             finalQuery = QueryBuilders.boolQuery().must(QueryBuilders.matchAllQuery()).filter(fb);
 
         return finalQuery;
-    }
-
-    @Override
-    public Integer getLimit() {
-        return limit;
     }
 
     private Boolean checkTags(Set<String> keys) {

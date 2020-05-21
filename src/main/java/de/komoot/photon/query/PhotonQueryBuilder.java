@@ -38,8 +38,6 @@ import static com.google.common.collect.Maps.newHashMap;
 public class PhotonQueryBuilder implements TagFilterQueryBuilder {
     private FunctionScoreQueryBuilder m_finalQueryWithoutTagFilterBuilder;
 
-    private Integer limit = 50;
-
     private BoolQueryBuilder m_queryBuilderForTopLevelFilter;
 
     private State state;
@@ -108,14 +106,6 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder {
      */
     public static TagFilterQueryBuilder builder(String query, String language) {
         return new PhotonQueryBuilder(query, language);
-    }
-
-
-    @Override
-    public TagFilterQueryBuilder withLimit(Integer limit) {
-        this.limit = limit == null || limit < 1 ? 15 : limit;
-        this.limit = this.limit > 50 ? 50 : this.limit;
-        return this;
     }
 
     @Override
@@ -335,12 +325,6 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder {
         state = State.FINISHED;
 
         return m_finalQueryBuilder;
-    }
-
-
-    @Override
-    public Integer getLimit() {
-        return limit;
     }
 
 
