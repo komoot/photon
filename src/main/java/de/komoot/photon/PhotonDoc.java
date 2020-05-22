@@ -131,7 +131,9 @@ public class PhotonDoc {
      * Complete doc from nominatim address information.
      */
     public void completeFromAddress() {
-        String addressStreet = address != null ? address.get("street") : null;
+        if (address == null) return;
+
+        String addressStreet = address.get("street");
         if (addressStreet != null) {
             if (this.street == null) {
                 this.street = new HashMap<>();
