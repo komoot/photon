@@ -5,16 +5,13 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.PrecisionModel;
 
-import de.komoot.photon.utils.Function;
 import spark.Request;
-
-import java.util.Set;
 
 /**
  * Converts lon/lat parameter into location and validates the given coordinates.
  * Created by Holger Bruch on 10/13/2018.
  */
-public class LocationParamConverter implements Function<Request, Point, BadRequestException> {
+public class LocationParamConverter {
     private final static GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
     private boolean mandatory;
 
@@ -22,7 +19,6 @@ public class LocationParamConverter implements Function<Request, Point, BadReque
         this.mandatory = mandatory;
     }
     
-    @Override
     public Point apply(Request webRequest) throws BadRequestException {
         Point location;
         String lonParam = webRequest.queryParams("lon");

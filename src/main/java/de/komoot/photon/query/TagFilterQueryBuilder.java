@@ -15,14 +15,6 @@ import java.util.Set;
  */
 public interface TagFilterQueryBuilder {
     /**
-     * Limit for number of results to return. Default is delegated to elastic search and max limit is 50.
-     *
-     * @param limit number of search results to return.
-     * @return
-     */
-    TagFilterQueryBuilder withLimit(Integer limit);
-
-    /**
      * Search results will be filtered to places contained in the bounding box (WGS84) provided in the argument.
      *
      * @param bbox Geographical {@link Envelope}
@@ -144,6 +136,4 @@ public interface TagFilterQueryBuilder {
      * turn all collected tags, values, inclusions, exclusions into a {@link QueryBuilder} that can be executed on elastic search
      */
     QueryBuilder buildQuery();
-
-    Integer getLimit();
 }
