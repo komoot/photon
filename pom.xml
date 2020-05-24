@@ -23,16 +23,24 @@
             <groupId>org.elasticsearch.plugin</groupId>
             <artifactId>transport-netty4-client</artifactId>
             <version>${elasticsearch.version}</version>
+
         </dependency>
         <dependency><!-- required by elasticsearch -->
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>
             <version>${log4j.version}</version>
+
         </dependency>
         <dependency>
             <groupId>org.elasticsearch.client</groupId>
             <artifactId>transport</artifactId>
             <version>${elasticsearch.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency><!-- required by elasticsearch to avoid warning on startup,
             see https://github.com/elastic/elasticsearch/issues/13245 -->
@@ -41,9 +49,9 @@
             <version>4.4.0</version>
         </dependency>
         <dependency>
-            <groupId>postgresql</groupId>
+            <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>9.1-901-1.jdbc4</version>
+            <version>42.2.12</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -59,11 +67,6 @@
             <groupId>com.beust</groupId>
             <artifactId>jcommander</artifactId>
             <version>1.78</version>
-        </dependency>
-        <dependency>
-            <groupId>org.openstreetmap.osmosis</groupId>
-            <artifactId>osmosis-hstore-jdbc</artifactId>
-            <version>0.43.1</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -90,12 +93,18 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-jdbc</artifactId>
-            <version>4.0.0.RELEASE</version>
+            <version>5.2.6.RELEASE</version>
         </dependency>
         <dependency>
-            <groupId>commons-dbcp</groupId>
-            <artifactId>commons-dbcp</artifactId>
-            <version>1.4</version>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-dbcp2</artifactId>
+            <version>2.7.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.vividsolutions</groupId>
@@ -108,9 +117,14 @@
             <version>2.8.0</version>
         </dependency>
         <dependency>
-            <groupId>postgis</groupId>
-            <artifactId>postgis-jdbc-jts</artifactId>
-            <version>1.1.5</version>
+            <groupId>net.postgis</groupId>
+            <artifactId>postgis-jdbc</artifactId>
+            <version>2.5.0</version>
+        </dependency>
+        <dependency>
+            <groupId>net.postgis</groupId>
+            <artifactId>postgis-jdbc-jtsparser</artifactId>
+            <version>2.2.1</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>

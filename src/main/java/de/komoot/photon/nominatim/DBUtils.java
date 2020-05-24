@@ -2,7 +2,6 @@ package de.komoot.photon.nominatim;
 
 import com.google.common.collect.Maps;
 import com.vividsolutions.jts.geom.Geometry;
-import org.openstreetmap.osmosis.hstore.PGHStore;
 import org.postgis.jts.JtsGeometry;
 
 import javax.annotation.Nullable;
@@ -17,16 +16,12 @@ import java.util.Map;
  */
 public class DBUtils {
     public static Map<String, String> getMap(ResultSet rs, String columnName) throws SQLException {
-        Map<String, String> tags = Maps.newHashMap();
-
-        PGHStore dbTags = (PGHStore) rs.getObject(columnName);
-        if (dbTags != null) {
-            for (Map.Entry<String, String> tagEntry : dbTags.entrySet()) {
-                tags.put(tagEntry.getKey(), tagEntry.getValue());
-            }
+        Map<String, String> map = (Map<String, String>) rs.getObject(columnName);
+        if (map == null) {
+            return Maps.newHashMap();
         }
 
-        return tags;
+        return map;
     }
 
     @Nullable

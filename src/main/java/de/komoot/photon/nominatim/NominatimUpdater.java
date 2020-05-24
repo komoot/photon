@@ -3,7 +3,7 @@ package de.komoot.photon.nominatim;
 import de.komoot.photon.PhotonDoc;
 import de.komoot.photon.Updater;
 import de.komoot.photon.nominatim.model.UpdateRow;
-import org.apache.commons.dbcp.BasicDataSource;
+import org.apache.commons.dbcp2.BasicDataSource;
 import org.postgis.jts.JtsWrapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
