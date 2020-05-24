@@ -6,6 +6,7 @@ import com.vividsolutions.jts.geom.Point;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -25,6 +26,7 @@ public class PhotonDoc {
     final private String tagValue;
     final private Map<String, String> name;
     private String postcode;
+    final private Map<String, String> address;
     final private Map<String, String> extratags;
     final private Envelope bbox;
     final private long parentPlaceId; // 0 if unset
@@ -41,7 +43,7 @@ public class PhotonDoc {
     private String houseNumber;
     private Point centroid;
 
-    public PhotonDoc(long placeId, String osmType, long osmId, String tagKey, String tagValue, Map<String, String> name, String houseNumber, Map<String, String> extratags, Envelope bbox, long parentPlaceId, double importance, CountryCode countryCode, Point centroid, long linkedPlaceId, int rankSearch) {
+    public PhotonDoc(long placeId, String osmType, long osmId, String tagKey, String tagValue, Map<String, String> name, String houseNumber, Map<String, String> address, Map<String, String> extratags, Envelope bbox, long parentPlaceId, double importance, CountryCode countryCode, Point centroid, long linkedPlaceId, int rankSearch) {
         String place = extratags != null ? extratags.get("place") : null;
         if (place != null) {
             // take more specific extra tag information
@@ -56,6 +58,7 @@ public class PhotonDoc {
         this.tagValue = tagValue;
         this.name = name;
         this.houseNumber = houseNumber;
+        this.address = address;
         this.extratags = extratags;
         this.bbox = bbox;
         this.parentPlaceId = parentPlaceId;
@@ -75,6 +78,7 @@ public class PhotonDoc {
         this.name = other.name;
         this.houseNumber = other.houseNumber;
         this.postcode = other.postcode;
+        this.address = other.address;
         this.extratags = other.extratags;
         this.bbox = other.bbox;
         this.parentPlaceId = other.parentPlaceId;
@@ -102,7 +106,7 @@ public class PhotonDoc {
      */
     public static PhotonDoc create(long placeId, String osmType, long osmId, Map<String, String> nameMap) {
         return new PhotonDoc(placeId, osmType, osmId, "", "", nameMap,
-                "", null, null, 0, 0, null, null, 0, 0);
+                "", null, null, null, 0, 0, null, null, 0, 0);
     }
 
     public boolean isUsefulForIndex() {
@@ -115,5 +119,18 @@ public class PhotonDoc {
         if (linkedPlaceId > 0) return false;
 
         return true;
+    }
+    
+    /**
+     * Complete doc from nominatim address information.
+     */
+    public void completeFromAddress() {
+        String addressStreet = address != null ? address.get("street") : null;
+        if (addressStreet != null) {
+            if (street == null) {
+                street = new HashMap<>();
+            }
+            street.put("name", addressStreet);
+        }
     }
 }
