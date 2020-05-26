@@ -168,10 +168,10 @@ public class App {
             CorsFilter.enableCORS(allowedOrigin, "get", "*");
         } else {
             before((request, response) -> {
-                response.type("application/json"); // in the other case set by enableCors
+                response.type("application/json; charset=UTF-8"); // in the other case set by enableCors
             });
         }
-        
+
         // setup search API
         get("api", new SearchRequestHandler("api", esNodeClient, args.getLanguages()));
         get("api/", new SearchRequestHandler("api/", esNodeClient, args.getLanguages()));

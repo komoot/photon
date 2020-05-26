@@ -5,12 +5,12 @@ import static spark.Spark.options;
 
 public class CorsFilter {
 
-    // 
+    //
     /**
      * Enables CORS on requests. This method is an initialization method and should be called once.
-     * 
+     *
      * As a side effect this sets the content type for the response to "application/json"
-     * 
+     *
      * @param origin permitted origin
      * @param methods permitted methods comma separated
      * @param headers permitted headers comma separated
@@ -36,7 +36,7 @@ public class CorsFilter {
             response.header("Access-Control-Allow-Origin", origin);
             response.header("Access-Control-Request-Method", methods);
             response.header("Access-Control-Allow-Headers", headers);
-            response.type("application/json");
+            response.type("application/json; charset=UTF-8");
         });
     }
 }
