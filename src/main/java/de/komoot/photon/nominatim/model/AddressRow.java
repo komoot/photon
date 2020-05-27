@@ -6,8 +6,6 @@ import lombok.Data;
 import java.util.Arrays;
 import java.util.Map;
 
-import static de.komoot.photon.Constants.STATE;
-
 /**
  * representation of an address as returned by nominatim's get_addressdata PL/pgSQL function
  *
@@ -20,15 +18,10 @@ public class AddressRow {
     final private String osmKey;
     final private String osmValue;
     final private int rankAddress;
-    final Integer adminLevel;
-    final private String postcode;
-    final private String place;
-    final private String osmType;
-    final private long osmId;
 
     static private final String[] USEFUL_CONTEXT_KEYS = new String[]{"boundary", "landuse", "place"}; // must be in alphabetic order to speed up lookup
 
-     public boolean isStreet() {
+    public boolean isStreet() {
         return 26 <= rankAddress && rankAddress < 28;
     }
 
@@ -46,14 +39,6 @@ public class AddressRow {
         }
 
         return false;
-    }
-
-    public boolean hasPostcode() {
-        return postcode != null; // TODO really null?
-    }
-
-    public boolean hasPlace() {
-        return place != null;
     }
 
     public boolean isUsefulForContext() {

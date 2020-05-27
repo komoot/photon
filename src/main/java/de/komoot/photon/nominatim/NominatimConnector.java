@@ -207,7 +207,7 @@ public class NominatimConnector {
     };
     private final String selectColsPlaceX = "place_id, osm_type, osm_id, class, type, name, housenumber, postcode, extratags, ST_Envelope(geometry) AS bbox, parent_place_id, linked_place_id, rank_search, importance, country_code, centroid";
     private final String selectColsOsmline = "place_id, osm_id, parent_place_id, startnumber, endnumber, interpolationtype, postcode, country_code, linegeo";
-    private final String selectColsAddress = "p.place_id, p.osm_type, p.osm_id, p.name, p.class, p.type, p.rank_address, p.admin_level, p.postcode, p.extratags->'place' as place";
+    private final String selectColsAddress = "p.place_id, p.name, p.class, p.type, p.rank_address";
     private Importer importer;
 
     private Map<String, String> getCountryNames(String countrycode) {
@@ -265,21 +265,12 @@ public class NominatimConnector {
         RowMapper<AddressRow> rowMapper = new RowMapper<AddressRow>() {
             @Override
             public AddressRow mapRow(ResultSet rs, int rowNum) throws SQLException {
-                Integer adminLevel = rs.getInt("admin_level");
-                if (rs.wasNull()) {
-                    adminLevel = null;
-                }
                 return new AddressRow(
                         rs.getLong("place_id"),
                         DBUtils.getMap(rs, "name"),
                         rs.getString("class"),
                         rs.getString("type"),
-                        rs.getInt("rank_address"),
-                        adminLevel,
-                        rs.getString("postcode"),
-                        rs.getString("place"),
-                        rs.getString("osm_type"),
-                        rs.getLong("osm_id")
+                        rs.getInt("rank_address")
                 );
             }
         };
@@ -461,23 +452,11 @@ public class NominatimConnector {
     private void completePlace(PhotonDoc doc) {
         final List<AddressRow> addresses = getAddresses(doc);
         for (AddressRow address : addresses) {
-
-            if (address.hasPostcode() && doc.getPostcode() == null) {
-                doc.setPostcode(address.getPostcode());
-            }
-
             if (address.isCity()) {
                 if (doc.getCity() == null) {
                     doc.setCity(address.getName());
                 } else {
-                    // there is more than one city address for this document
-                    if (address.hasPlace()) {
-                        // this city is more important than the previous one
-                        doc.getContext().add(doc.getCity()); // move previous city to context
-                        doc.setCity(address.getName()); // use new city
-                    } else {
-                        doc.getContext().add(address.getName());
-                    }
+                    doc.getContext().add(address.getName());
                 }
                 continue;
             }
