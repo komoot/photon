@@ -20,7 +20,7 @@ import java.util.Map;
 public class ConvertToJson {
     private final static String[] KEYS_LANG_UNSPEC = {Constants.OSM_ID, Constants.OSM_VALUE, Constants.OSM_KEY, Constants.POSTCODE, Constants.HOUSENUMBER, Constants.COUNTRYCODE, Constants.OSM_TYPE};
     private final static String[] KEYS_LANG_SPEC = {Constants.NAME, Constants.COUNTRY, Constants.CITY, Constants.STREET, Constants.STATE};
-    private final static String[] NAME_PRECEDENCE = {"housename", "int", "loc", "reg", "alt", "old"};
+    private final static String[] NAME_PRECEDENCE = {"default", "housename", "int", "loc", "reg", "alt", "old"};
     private final String lang;
 
     public ConvertToJson(String lang) {
