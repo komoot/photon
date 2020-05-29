@@ -32,20 +32,12 @@ public class AddressRow {
         return 26 <= rankAddress && rankAddress < 28;
     }
 
-    public boolean isNeighbourhood() {
-        if ("place".equals(osmKey) && "neighbourhood".equals(osmValue)) {
-            return true;
-        }
-        // TODO admin?
-        return false;
+    public boolean isLocality() {
+        return 22 <= rankAddress && rankAddress < 25;
     }
     
-    public boolean isSuburb() {
-        if ("place".equals(osmKey) && "suburb".equals(osmValue)) {
-            return true;
-        }
-        // TODO admin?
-        return false;
+    public boolean isDistrict() {
+        return 17 <= rankAddress && rankAddress < 21;
     }
     public boolean isCity() {
         return 13 <= rankAddress && rankAddress <= 16;

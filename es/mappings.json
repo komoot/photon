@@ -484,7 +484,7 @@
 					}
 				}
 			},
-			"suburb": {
+			"district": {
 				"properties": {
 					"de": {
 						"type": "text",
@@ -523,7 +523,7 @@
 					}
 				}
 			},
-	  	"neighbourhood": {
+	  		"locality": {
 				"properties": {
 					"de": {
 						"type": "text",

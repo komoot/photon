@@ -489,13 +489,13 @@ public class NominatimConnector {
                 continue;
             }
 
-            if (address.isNeighbourhood() && doc.getNeighbourhood() == null) {
-                doc.setNeighbourhood(address.getName());
+            if (address.isLocality() && doc.getLocality() == null) {
+                doc.setLocality(address.getName());
                 continue;
             }
 
-            if (address.isSuburb() && doc.getSuburb() == null) {
-                doc.setSuburb(address.getName());
+            if (address.isDistrict() && doc.getDistrict() == null) {
+                doc.setDistrict(address.getName());
                 continue;
             }
 

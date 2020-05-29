@@ -38,8 +38,8 @@ public class PhotonDoc {
     final private int rankSearch;
 
     private Map<String, String> street;
-    private Map<String, String> neighbourhood;
-    private Map<String, String> suburb;
+    private Map<String, String> locality;
+    private Map<String, String> district;
     private Map<String, String> city;
     private Set<Map<String, String>> context = new HashSet<Map<String, String>>();
     private Map<String, String> country;
@@ -92,8 +92,8 @@ public class PhotonDoc {
         this.linkedPlaceId = other.linkedPlaceId;
         this.rankSearch = other.rankSearch;
         this.street = other.street;
-        this.neighbourhood = other.neighbourhood;
-        this.suburb = other.suburb;
+        this.locality = other.locality;
+        this.district = other.district;
         this.city = other.city;
         this.context = other.context;
         this.country = other.country;
@@ -149,20 +149,20 @@ public class PhotonDoc {
             setOrReplace(addressCity, this.city, "city");
         }
         
-        String addressSuburb = address != null ? address.get("suburb") : null;
-        if (addressSuburb != null) {
-            if (this.suburb == null) {
-                this.suburb = new HashMap<>();
+        String addressDistrict = address != null ? address.get("suburb") : null;
+        if (addressDistrict != null) {
+            if (this.district == null) {
+                this.district = new HashMap<>();
             }
-            setOrReplace(addressSuburb, this.suburb, "suburb");
+            setOrReplace(addressDistrict, this.district, "suburb");
         }
         
-        String addressNeighbourhood = address != null ? address.get("neighbourhood") : null;
-        if (addressNeighbourhood != null) {
-            if (this.neighbourhood == null) {
-                this.neighbourhood = new HashMap<>();
+        String addressLocality = address != null ? address.get("neighbourhood") : null;
+        if (addressLocality != null) {
+            if (this.locality == null) {
+                this.locality = new HashMap<>();
             }
-            setOrReplace(addressNeighbourhood, this.neighbourhood, "neighbourhood");
+            setOrReplace(addressLocality, this.locality, "neighbourhood");
         }
         
         String addressPostCode = address != null ? address.get("postcode") : null;
@@ -180,7 +180,7 @@ public class PhotonDoc {
             if (log.isDebugEnabled()) {
                 log.debug("Replacing "+ field +" name '"+existingName+"' with '"+ name+ "' for osmId #" + osmId);
             }
-            // TODO: do we need to add former name to context or better not, as it might have been wrong?
+            namesMap.put("formerName", existingName);
             namesMap.put("name", name);
         }
     }
