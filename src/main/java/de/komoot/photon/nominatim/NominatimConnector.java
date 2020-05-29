@@ -54,8 +54,9 @@ class NominatimResult {
         List<PhotonDoc> results = new ArrayList<PhotonDoc>(housenumbers.size());
         for (Map.Entry<String, Point> e : housenumbers.entrySet()) {
             PhotonDoc copy = new PhotonDoc(doc);
-            copy.setHouseNumber(e.getKey());
+            copy.setHouseNumbers(Arrays.asList(new String[] {e.getKey()}));
             copy.setCentroid(e.getValue());
+            copy.setExpanded(true);
             results.add(copy);
         }
 
@@ -72,18 +73,20 @@ class NominatimResult {
      * @param str House number string. May be null, in which case nothing is added.
      */
     public void addHousenumbersFromString(String str) {
-        if (str == null || str.isEmpty())
+        if (str == null || str.isEmpty()) {
             return;
+        }
 
-        if (housenumbers == null)
-            housenumbers = new HashMap<String, Point>();
+        List<String> houseNumbers = new ArrayList<>();
 
-        String[] parts = str.split(";");
+        String[] parts = str.split("[;]");
         for (String part : parts) {
             String h = part.trim();
-            if (!h.isEmpty())
-                housenumbers.put(h, doc.getCentroid());
+            if (!h.isEmpty()) {
+                houseNumbers.add(h);
+            }
         }
+        doc.setHouseNumbers(houseNumbers);
     }
 
     public void addHouseNumbersFromInterpolation(long first, long last, String interpoltype, Geometry geom) {
@@ -142,7 +145,7 @@ public class NominatimConnector {
                     "place",
                     "house_number",
                     Collections.<String, String>emptyMap(), // no name
-                    (String) null,
+                    null,
                     Collections.<String, String>emptyMap(), // no extratags
                     (Envelope) null,
                     rs.getLong("parent_place_id"),
@@ -185,7 +188,7 @@ public class NominatimConnector {
                     rs.getString("class"),
                     rs.getString("type"),
                     DBUtils.getMap(rs, "name"),
-                    (String) null,
+                    null,
                     DBUtils.getMap(rs, "extratags"),
                     envelope,
                     rs.getLong("parent_place_id"),

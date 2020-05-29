@@ -10,6 +10,7 @@ import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.index.IndexNotFoundException;
+import org.elasticsearch.index.reindex.ReindexPlugin;
 import org.elasticsearch.node.InternalSettingsPreparer;
 import org.elasticsearch.node.Node;
 import org.elasticsearch.node.NodeValidationException;
@@ -110,6 +111,7 @@ public class Server {
                 Settings settings = sBuilder.build();
                 Collection<Class<? extends Plugin>> lList = new LinkedList<>();
                 lList.add(Netty4Plugin.class);
+                lList.add(ReindexPlugin.class);
                 esNode = new MyNode(settings, lList);
                 esNode.start();
 
