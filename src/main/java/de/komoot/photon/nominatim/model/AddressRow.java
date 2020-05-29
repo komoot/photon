@@ -33,11 +33,11 @@ public class AddressRow {
     }
 
     public boolean isLocality() {
-        return 22 <= rankAddress && rankAddress < 25;
+        return 22 <= rankAddress && rankAddress < 26;
     }
     
     public boolean isDistrict() {
-        return 17 <= rankAddress && rankAddress < 21;
+        return 17 <= rankAddress && rankAddress < 22;
     }
     public boolean isCity() {
         return 13 <= rankAddress && rankAddress <= 16;
