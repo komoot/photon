@@ -139,7 +139,7 @@ public class PhotonDoc {
             setOrReplace(addressStreet, this.street, "street");
         }
         
-        String addressCity = address != null ? address.get("city") : null;
+        String addressCity = address.get("city");
         if (addressCity != null) {
             if (this.city == null) {
                 this.city = new HashMap<>();
@@ -147,7 +147,7 @@ public class PhotonDoc {
             setOrReplace(addressCity, this.city, "city");
         }
         
-        String addressDistrict = address != null ? address.get("suburb") : null;
+        String addressDistrict = address.get("suburb");
         if (addressDistrict != null) {
             if (this.district == null) {
                 this.district = new HashMap<>();
@@ -155,7 +155,7 @@ public class PhotonDoc {
             setOrReplace(addressDistrict, this.district, "suburb");
         }
         
-        String addressLocality = address != null ? address.get("neighbourhood") : null;
+        String addressLocality = address.get("neighbourhood");
         if (addressLocality != null) {
             if (this.locality == null) {
                 this.locality = new HashMap<>();
@@ -163,7 +163,7 @@ public class PhotonDoc {
             setOrReplace(addressLocality, this.locality, "neighbourhood");
         }
         
-        String addressPostCode = address != null ? address.get("postcode") : null;
+        String addressPostCode = address.get("postcode");
         if (addressPostCode != null && !addressPostCode.equals(this.postcode)) {
             if (log.isDebugEnabled()) {
                 log.debug("Replacing postcode "+this.postcode+" with "+ addressPostCode+ " for osmId #" + osmId);
