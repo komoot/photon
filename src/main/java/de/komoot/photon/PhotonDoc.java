@@ -1,5 +1,6 @@
 package de.komoot.photon;
 
+import com.google.common.collect.ImmutableMap;
 import com.neovisionaries.i18n.CountryCode;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Point;
@@ -7,10 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * denormalized doc with all information needed be dumped to elasticsearch
@@ -180,7 +178,10 @@ public class PhotonDoc {
             if (log.isDebugEnabled()) {
                 log.debug("Replacing "+ field +" name '"+existingName+"' with '"+ name+ "' for osmId #" + osmId);
             }
-            namesMap.put("formerName", existingName);
+            // we keep the former name in the context as it might be helpful when looking up typos
+            if(!Objects.isNull(existingName)) {
+                context.add(ImmutableMap.of("formerName", existingName));
+            }
             namesMap.put("name", name);
         }
     }
