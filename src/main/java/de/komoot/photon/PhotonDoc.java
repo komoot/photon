@@ -133,33 +133,25 @@ public class PhotonDoc {
 
         String addressStreet = address.get("street");
         if (addressStreet != null) {
-            if (this.street == null) {
-                this.street = new HashMap<>();
-            }
+            this.street = nullToEmptyMap(this.street);
             setOrReplace(addressStreet, this.street, "street");
         }
         
         String addressCity = address.get("city");
         if (addressCity != null) {
-            if (this.city == null) {
-                this.city = new HashMap<>();
-            }
+            this.city = nullToEmptyMap(this.city);
             setOrReplace(addressCity, this.city, "city");
         }
         
         String addressDistrict = address.get("suburb");
         if (addressDistrict != null) {
-            if (this.district == null) {
-                this.district = new HashMap<>();
-            }
+            this.district = nullToEmptyMap(this.district);
             setOrReplace(addressDistrict, this.district, "suburb");
         }
         
         String addressLocality = address.get("neighbourhood");
         if (addressLocality != null) {
-            if (this.locality == null) {
-                this.locality = new HashMap<>();
-            }
+            this.locality = nullToEmptyMap(this.locality);
             setOrReplace(addressLocality, this.locality, "neighbourhood");
         }
         
@@ -170,6 +162,12 @@ public class PhotonDoc {
             }
             this.postcode = addressPostCode;
         }
+    }
+
+    private static Map<String, String> nullToEmptyMap(Map<String, String> map) {
+        if (map == null) {
+            return new HashMap<>();
+        } else return map;
     }
 
     private void setOrReplace(String name, Map<String, String> namesMap, String field) {
