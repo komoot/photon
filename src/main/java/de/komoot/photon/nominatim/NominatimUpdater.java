@@ -184,13 +184,7 @@ public class NominatimUpdater {
      * @param password Nominatim database password
      */
     public NominatimUpdater(String host, int port, String database, String username, String password) {
-        BasicDataSource dataSource = new BasicDataSource();
-
-        dataSource.setUrl(String.format("jdbc:postgresql://%s:%d/%s", host, port, database));
-        dataSource.setUsername(username);
-        dataSource.setPassword(password);
-        dataSource.setDriverClassName(JtsWrapper.class.getCanonicalName());
-        dataSource.setDefaultAutoCommit(true);
+        BasicDataSource dataSource = NominatimConnector.buildDataSource(host, port, database, username, password);
 
         exporter = new NominatimConnector(host, port, database, username, password);
         template = new JdbcTemplate(dataSource);

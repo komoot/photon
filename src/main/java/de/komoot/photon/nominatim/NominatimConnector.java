@@ -233,6 +233,13 @@ public class NominatimConnector {
      * @param password db username's password
      */
     public NominatimConnector(String host, int port, String database, String username, String password) {
+        BasicDataSource dataSource = buildDataSource(host, port, database, username, password);
+
+        template = new JdbcTemplate(dataSource);
+        template.setFetchSize(100000);
+    }
+
+    static BasicDataSource buildDataSource(String host, int port, String database, String username, String password) {
         BasicDataSource dataSource = new BasicDataSource();
 
         dataSource.setUrl(String.format("jdbc:postgres_jts://%s:%d/%s", host, port, database));
@@ -240,9 +247,7 @@ public class NominatimConnector {
         dataSource.setPassword(password);
         dataSource.setDriverClassName(JtsWrapper.class.getCanonicalName());
         dataSource.setDefaultAutoCommit(false);
-
-        template = new JdbcTemplate(dataSource);
-        template.setFetchSize(100000);
+        return dataSource;
     }
 
     public void setImporter(Importer importer) {
