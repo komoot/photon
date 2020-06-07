@@ -5,7 +5,7 @@ import spark.Request;
 
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 /**
  * @author svantulden
@@ -16,7 +16,7 @@ public class ReverseRequestFactory {
 
     protected static HashSet<String> m_hsRequestQueryParams = new HashSet<>(Arrays.asList("lang", "lon", "lat", "radius", "query_string_filter", "distance_sort", "limit"));
 
-    public ReverseRequestFactory(Set<String> supportedLanguages) {
+    public ReverseRequestFactory(List<String> supportedLanguages) {
         this.languageResolver = new RequestLanguageResolver(supportedLanguages);
     }
 

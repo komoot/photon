@@ -4,9 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import spark.Request;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import static de.komoot.photon.query.RequestLanguageResolver.ACCEPT_LANGUAGE_HEADER;
 import static de.komoot.photon.query.RequestLanguageResolver.DEFAULT_LANGUAGE;
@@ -22,8 +20,7 @@ public class RequestLanguageTest {
 
     @Before
     public void setup() {
-        Set<String> supportedLanguages = new HashSet<>(supportedLangs);
-        languageResolver = new RequestLanguageResolver(supportedLanguages);
+        languageResolver = new RequestLanguageResolver(supportedLangs);
     }
 
     @Test
@@ -56,6 +53,7 @@ public class RequestLanguageTest {
     public void testFallbackMatchingHeaderLang() {
         validateReturnedLanguage(null, "ru,pl;q=0.9,sp,fr;q=0.1", "fr");
         validateReturnedLanguage(null, "ru,pl;q=0.7,sp,de", "de");
+        validateReturnedLanguage(null, "de-DE", "de");
         validateReturnedLanguage(null, "ru,pl;q=0.9,sp", DEFAULT_LANGUAGE);
     }
 

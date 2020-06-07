@@ -7,7 +7,6 @@ import spark.utils.StringUtils;
 
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
 
 /**
  * Resolver for the response language for a web request.
@@ -17,7 +16,7 @@ public class RequestLanguageResolver {
     static final String ACCEPT_LANGUAGE_HEADER = "Accept-Language";
     static final String DEFAULT_LANGUAGE = "en";
 
-    private final Set<String> supportedLanguages;
+    private final List<String> supportedLanguages;
 
     /**
      * Get the language to use for the response to the given request.
@@ -47,20 +46,19 @@ public class RequestLanguageResolver {
      * Look for a language parameter in the request headers.
      *
      * @param webRequest Incoming HTTP request.
-     * @return A suitable language header or <b>null</b> if not could be found.
+     * @return A suitable language header or null if not could be found.
      */
     private String fallbackLanguageFromHeaders(Request webRequest) {
         String acceptLanguageHeader = webRequest.headers(ACCEPT_LANGUAGE_HEADER);
         if (StringUtils.isBlank(acceptLanguageHeader))
             return null;
+
         try {
             List<Locale.LanguageRange> languages = Locale.LanguageRange.parse(acceptLanguageHeader);
-            for (Locale.LanguageRange lang : languages)
-                if (supportedLanguages.contains(lang.getRange()))
-                    return lang.getRange();
+            return Locale.lookupTag(languages, supportedLanguages);
         } catch (Throwable e) {
-            return null;
         }
+
         return null;
     }
 

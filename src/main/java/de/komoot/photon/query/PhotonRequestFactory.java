@@ -1,6 +1,5 @@
 package de.komoot.photon.query;
 
-import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Point;
 import spark.QueryParamsMap;
@@ -8,6 +7,7 @@ import spark.Request;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -21,7 +21,7 @@ public class PhotonRequestFactory {
 
     protected static HashSet<String> m_hsRequestQueryParams = new HashSet<>(Arrays.asList("lang", "q", "lon", "lat",
             "limit", "osm_tag", "location_bias_scale", "bbox", "debug"));
-    public PhotonRequestFactory(Set<String> supportedLanguages) {
+    public PhotonRequestFactory(List<String> supportedLanguages) {
         this.languageResolver = new RequestLanguageResolver(supportedLanguages);
         this.bboxParamConverter = new BoundingBoxParamConverter();
     }

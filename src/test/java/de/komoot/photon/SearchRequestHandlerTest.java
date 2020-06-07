@@ -1,7 +1,6 @@
 package de.komoot.photon;
 
-import com.google.common.collect.ImmutableSet;
-import com.vividsolutions.jts.geom.Point;
+import com.google.common.collect.ImmutableList;
 import de.komoot.photon.query.*;
 import de.komoot.photon.searcher.PhotonRequestHandler;
 import de.komoot.photon.searcher.PhotonRequestHandlerFactory;
@@ -12,7 +11,6 @@ import org.hamcrest.core.IsEqual;
 import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Test;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import spark.Request;
 import spark.Response;
@@ -21,7 +19,6 @@ import spark.RouteImpl;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 public class SearchRequestHandlerTest {
     @Test
@@ -32,8 +29,8 @@ public class SearchRequestHandlerTest {
         Assert.assertEquals("any", path);
         PhotonRequestFactory photonRequestFactory = ReflectionTestUtil.getFieldValue(searchRequestHandler, searchRequestHandler.getClass(), "photonRequestFactory");
         Object languageResolver = ReflectionTestUtil.getFieldValue(photonRequestFactory, photonRequestFactory.getClass(), "languageResolver");
-        Set<String> supportedLanguages = ReflectionTestUtil.getFieldValue(languageResolver, languageResolver.getClass(), "supportedLanguages");
-        Set<String> supportedLanguagesExpected = ImmutableSet.of("en", "fr");
+        List<String> supportedLanguages = ReflectionTestUtil.getFieldValue(languageResolver, languageResolver.getClass(), "supportedLanguages");
+        List<String> supportedLanguagesExpected = ImmutableList.of("en", "fr");
         Assert.assertThat(supportedLanguages, IsEqual.equalTo(supportedLanguagesExpected));
     }
 
