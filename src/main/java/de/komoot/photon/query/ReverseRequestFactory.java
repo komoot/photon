@@ -11,13 +11,13 @@ import java.util.Set;
  * @author svantulden
  */
 public class ReverseRequestFactory {
-    private final LanguageChecker languageChecker;
+    private final RequestLanguageResolver languageResolver;
     private final static LocationParamConverter mandatoryLocationParamConverter = new LocationParamConverter(true);
 
     protected static HashSet<String> m_hsRequestQueryParams = new HashSet<>(Arrays.asList("lang", "lon", "lat", "radius", "query_string_filter", "distance_sort", "limit"));
 
     public ReverseRequestFactory(Set<String> supportedLanguages) {
-        this.languageChecker = new LanguageChecker(supportedLanguages);
+        this.languageResolver = new RequestLanguageResolver(supportedLanguages);
     }
 
     public <R extends ReverseRequest> R create(Request webRequest) throws BadRequestException {
@@ -26,9 +26,7 @@ public class ReverseRequestFactory {
                 throw new BadRequestException(400, "unknown query parameter '" + queryParam + "'.  Allowed parameters are: " + m_hsRequestQueryParams);
         }
 
-        String language = webRequest.queryParams("lang");
-        language = language == null ? "en" : language;
-        languageChecker.apply(language);
+        String language = languageResolver.resolveRequestedLanguage(webRequest);
 
         Point location = mandatoryLocationParamConverter.apply(webRequest);
 

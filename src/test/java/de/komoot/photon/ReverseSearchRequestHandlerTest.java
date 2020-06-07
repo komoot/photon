@@ -38,8 +38,8 @@ public class ReverseSearchRequestHandlerTest {
         String path = ReflectionTestUtil.getFieldValue(reverseSearchRequestHandler, RouteImpl.class, "path");
         Assert.assertEquals("any", path);
         ReverseRequestFactory reverseRequestFactory = ReflectionTestUtil.getFieldValue(reverseSearchRequestHandler, reverseSearchRequestHandler.getClass(), "reverseRequestFactory");
-        LanguageChecker languageChecker = ReflectionTestUtil.getFieldValue(reverseRequestFactory, reverseRequestFactory.getClass(), "languageChecker");
-        Set<String> supportedLanguages = ReflectionTestUtil.getFieldValue(languageChecker, languageChecker.getClass(), "supportedLanguages");
+        RequestLanguageResolver languageResolver = ReflectionTestUtil.getFieldValue(reverseRequestFactory, reverseRequestFactory.getClass(), "languageResolver");
+        Set<String> supportedLanguages = ReflectionTestUtil.getFieldValue(languageResolver, languageResolver.getClass(), "supportedLanguages");
         Set<String> supportedLanguagesExpected = ImmutableSet.of("en", "fr");
         Assert.assertThat(supportedLanguages, IsEqual.equalTo(supportedLanguagesExpected));
     }
