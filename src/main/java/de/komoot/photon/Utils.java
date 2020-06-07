@@ -99,6 +99,9 @@ public class Utils {
         if (name.get("reg_name") != null)
             fNames.put("reg", name.get("reg_name"));
 
+        if (name.get("addr:housename") != null)
+            fNames.put("housename", name.get("addr:housename"));
+
         write(builder, fNames, "name");
     }
 
