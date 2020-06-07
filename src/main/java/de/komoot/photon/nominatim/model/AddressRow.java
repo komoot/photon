@@ -25,6 +25,19 @@ public class AddressRow {
         return 26 <= rankAddress && rankAddress < 28;
     }
 
+    /**
+     * @return whether nominatim thinks this place is a locality (=neighbourhood)
+     */
+    public boolean isLocality() {
+        return 22 <= rankAddress && rankAddress < 26;
+    }
+
+    /**
+     * @return whether nominatim thinks this place is a district (=suburb)
+     */
+    public boolean isDistrict() {
+        return 17 <= rankAddress && rankAddress < 22;
+    }
     public boolean isCity() {
         return 13 <= rankAddress && rankAddress <= 16;
     }

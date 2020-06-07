@@ -143,6 +143,7 @@ public class NominatimConnector {
                     "house_number",
                     Collections.<String, String>emptyMap(), // no name
                     (String) null,
+                    Collections.<String, String>emptyMap(), // no address
                     Collections.<String, String>emptyMap(), // no extratags
                     (Envelope) null,
                     rs.getLong("parent_place_id"),
@@ -186,6 +187,7 @@ public class NominatimConnector {
                     rs.getString("type"),
                     DBUtils.getMap(rs, "name"),
                     (String) null,
+                    DBUtils.getMap(rs, "address"),
                     DBUtils.getMap(rs, "extratags"),
                     envelope,
                     rs.getLong("parent_place_id"),
@@ -205,7 +207,7 @@ public class NominatimConnector {
             return result;
         }
     };
-    private final String selectColsPlaceX = "place_id, osm_type, osm_id, class, type, name, housenumber, postcode, extratags, ST_Envelope(geometry) AS bbox, parent_place_id, linked_place_id, rank_search, importance, country_code, centroid";
+    private final String selectColsPlaceX = "place_id, osm_type, osm_id, class, type, name, housenumber, postcode, address, extratags, ST_Envelope(geometry) AS bbox, parent_place_id, linked_place_id, rank_search, importance, country_code, centroid";
     private final String selectColsOsmline = "place_id, osm_id, parent_place_id, startnumber, endnumber, interpolationtype, postcode, country_code, linegeo";
     private final String selectColsAddress = "p.place_id, p.name, p.class, p.type, p.rank_address";
     private Importer importer;
@@ -293,7 +295,7 @@ public class NominatimConnector {
         return terms;
     }
 
-    private static final PhotonDoc FINAL_DOCUMENT = new PhotonDoc(0, null, 0, null, null, null, null, null, null, 0, 0, null, null, 0, 0);
+    private static final PhotonDoc FINAL_DOCUMENT = new PhotonDoc(0, null, 0, null, null, null, null, null, null, null, 0, 0, null, null, 0, 0);
 
     private class ImportThread implements Runnable {
         private final BlockingQueue<PhotonDoc> documents;
@@ -471,6 +473,16 @@ public class NominatimConnector {
                 continue;
             }
 
+            if (address.isLocality() && doc.getLocality() == null) {
+                doc.setLocality(address.getName());
+                continue;
+            }
+
+            if (address.isDistrict() && doc.getDistrict() == null) {
+                doc.setDistrict(address.getName());
+                continue;
+            }
+
             if (address.isState() && doc.getState() == null) {
                 doc.setState(address.getName());
                 continue;
@@ -481,5 +493,8 @@ public class NominatimConnector {
                 doc.getContext().add(address.getName());
             }
         }
+        // finally, overwrite gathered information with higher prio
+        // address info from nominatim which should have precedence
+        doc.completeFromAddress();
     }
 }

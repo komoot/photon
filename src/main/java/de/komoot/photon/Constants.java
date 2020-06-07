@@ -12,6 +12,8 @@ public class Constants {
     public static final String COUNTRY = "country";
     public static final String COUNTRYCODE = "countrycode";
     public static final String CITY = "city";
+    public static final String DISTRICT = "district";
+    public static final String LOCALITY = "locality";
     public static final String STREET = "street";
     public static final String STATE = "state";
     public static final String TYPE = "type";

@@ -37,7 +37,7 @@ public class ESBaseTester {
     private PhotonDoc createDoc(double lon, double lat, int id, int osmId, String key, String value) {
         ImmutableMap<String, String> nameMap = ImmutableMap.of("name", "berlin");
         Point location = FACTORY.createPoint(new Coordinate(lon, lat));
-        return new PhotonDoc(id, "way", osmId, key, value, nameMap, null, null, null, 0, 0.5, null, location, 0, 0);
+        return new PhotonDoc(id, "way", osmId, key, value, nameMap, null, null, null, null, 0, 0.5, null, location, 0, 0);
     }
 
     @Before

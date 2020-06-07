@@ -53,6 +53,8 @@ public class Utils {
             builder.field(Constants.COUNTRYCODE, countryCode.getAlpha2());
         writeIntlNames(builder, doc.getState(), "state", languages);
         writeIntlNames(builder, doc.getStreet(), "street", languages);
+        writeIntlNames(builder, doc.getLocality(), "locality", languages);
+        writeIntlNames(builder, doc.getDistrict(), "district", languages);
         writeContext(builder, doc.getContext(), languages);
         writeExtent(builder, doc.getBbox());
 
