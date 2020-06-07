@@ -23,7 +23,7 @@ public class RequestLanguageTest {
     @Before
     public void setup() {
         Set<String> supportedLanguages = new HashSet<>(supportedLangs);
-        languageResolver = new RequestLanguageResolver(new LanguageChecker(supportedLanguages));
+        languageResolver = new RequestLanguageResolver(supportedLanguages);
     }
 
     @Test
@@ -77,7 +77,7 @@ public class RequestLanguageTest {
     private void validateReturnedLanguage(String queryLang, String acceptHeader, String expected) {
         Request req = buildRequest(queryLang, acceptHeader);
         try {
-            String actual = languageResolver.resolverRequestedLanguage(req);
+            String actual = languageResolver.resolveRequestedLanguage(req);
             assertEquals(expected, actual);
         } catch (BadRequestException e) {
             fail(e.getMessage());
@@ -87,7 +87,7 @@ public class RequestLanguageTest {
     private void validateNotSupported(String queryLang, String acceptHeader) {
         Request req = buildRequest(queryLang, acceptHeader);
         try {
-            languageResolver.resolverRequestedLanguage(req);
+            languageResolver.resolveRequestedLanguage(req);
             fail("Language " + queryLang + " is not supported");
         } catch (BadRequestException ignored) {
         }

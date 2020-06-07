@@ -22,7 +22,7 @@ public class PhotonRequestFactory {
     protected static HashSet<String> m_hsRequestQueryParams = new HashSet<>(Arrays.asList("lang", "q", "lon", "lat",
             "limit", "osm_tag", "location_bias_scale", "bbox", "debug"));
     public PhotonRequestFactory(Set<String> supportedLanguages) {
-        this.languageResolver = new RequestLanguageResolver(new LanguageChecker(supportedLanguages));
+        this.languageResolver = new RequestLanguageResolver(supportedLanguages);
         this.bboxParamConverter = new BoundingBoxParamConverter();
     }
 
@@ -33,7 +33,7 @@ public class PhotonRequestFactory {
             if (!m_hsRequestQueryParams.contains(queryParam))
                 throw new BadRequestException(400, "unknown query parameter '" + queryParam + "'.  Allowed parameters are: " + m_hsRequestQueryParams);
 
-        String language = languageResolver.resolverRequestedLanguage(webRequest);
+        String language = languageResolver.resolveRequestedLanguage(webRequest);
 
         String query = webRequest.queryParams("q");
         if (query == null) throw new BadRequestException(400, "missing search term 'q': /?q=berlin");

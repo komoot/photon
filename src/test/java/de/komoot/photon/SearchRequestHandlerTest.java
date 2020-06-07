@@ -2,10 +2,7 @@ package de.komoot.photon;
 
 import com.google.common.collect.ImmutableSet;
 import com.vividsolutions.jts.geom.Point;
-import de.komoot.photon.query.BadRequestException;
-import de.komoot.photon.query.LanguageChecker;
-import de.komoot.photon.query.PhotonRequest;
-import de.komoot.photon.query.PhotonRequestFactory;
+import de.komoot.photon.query.*;
 import de.komoot.photon.searcher.PhotonRequestHandler;
 import de.komoot.photon.searcher.PhotonRequestHandlerFactory;
 import de.komoot.photon.searcher.SimplePhotonRequestHandler;
@@ -35,8 +32,7 @@ public class SearchRequestHandlerTest {
         Assert.assertEquals("any", path);
         PhotonRequestFactory photonRequestFactory = ReflectionTestUtil.getFieldValue(searchRequestHandler, searchRequestHandler.getClass(), "photonRequestFactory");
         Object languageResolver = ReflectionTestUtil.getFieldValue(photonRequestFactory, photonRequestFactory.getClass(), "languageResolver");
-        LanguageChecker languageChecker = ReflectionTestUtil.getFieldValue(languageResolver, languageResolver.getClass(), "languageChecker");
-        Set<String> supportedLanguages = ReflectionTestUtil.getFieldValue(languageChecker, languageChecker.getClass(), "supportedLanguages");
+        Set<String> supportedLanguages = ReflectionTestUtil.getFieldValue(languageResolver, languageResolver.getClass(), "supportedLanguages");
         Set<String> supportedLanguagesExpected = ImmutableSet.of("en", "fr");
         Assert.assertThat(supportedLanguages, IsEqual.equalTo(supportedLanguagesExpected));
     }
