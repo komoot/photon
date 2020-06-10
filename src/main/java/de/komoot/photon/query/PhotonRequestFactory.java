@@ -1,6 +1,5 @@
 package de.komoot.photon.query;
 
-import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Point;
 import spark.QueryParamsMap;
@@ -8,6 +7,7 @@ import spark.Request;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -15,14 +15,14 @@ import java.util.Set;
  * Created by Sachin Dole on 2/12/2015.
  */
 public class PhotonRequestFactory {
-    private final LanguageChecker languageChecker;
+    private final RequestLanguageResolver languageResolver;
     private final static LocationParamConverter optionalLocationParamConverter = new LocationParamConverter(false);
     private final BoundingBoxParamConverter bboxParamConverter;
 
     protected static HashSet<String> m_hsRequestQueryParams = new HashSet<>(Arrays.asList("lang", "q", "lon", "lat",
             "limit", "osm_tag", "location_bias_scale", "bbox", "debug"));
-    public PhotonRequestFactory(Set<String> supportedLanguages) {
-        this.languageChecker = new LanguageChecker(supportedLanguages);
+    public PhotonRequestFactory(List<String> supportedLanguages) {
+        this.languageResolver = new RequestLanguageResolver(supportedLanguages);
         this.bboxParamConverter = new BoundingBoxParamConverter();
     }
 
@@ -33,10 +33,8 @@ public class PhotonRequestFactory {
             if (!m_hsRequestQueryParams.contains(queryParam))
                 throw new BadRequestException(400, "unknown query parameter '" + queryParam + "'.  Allowed parameters are: " + m_hsRequestQueryParams);
 
+        String language = languageResolver.resolveRequestedLanguage(webRequest);
 
-        String language = webRequest.queryParams("lang");
-        language = language == null ? "en" : language;
-        languageChecker.apply(language);
         String query = webRequest.queryParams("q");
         if (query == null) throw new BadRequestException(400, "missing search term 'q': /?q=berlin");
         Integer limit;
@@ -70,6 +68,7 @@ public class PhotonRequestFactory {
 
         return (R) photonRequest;
     }
+
 
     private void setUpTagFilters(FilteredPhotonRequest request, String[] tagFilters) {
         for (String tagFilter : tagFilters) {

@@ -14,9 +14,7 @@ import spark.Response;
 import spark.RouteImpl;
 
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import static spark.Spark.halt;
 
@@ -30,7 +28,7 @@ public class ReverseSearchRequestHandler<R extends ReverseRequest> extends Route
 
     ReverseSearchRequestHandler(String path, Client esNodeClient, String languages) {
         super(path);
-        Set<String> supportedLanguages = new HashSet<String>(Arrays.asList(languages.split(",")));
+        List<String> supportedLanguages = Arrays.asList(languages.split(","));
         this.reverseRequestFactory = new ReverseRequestFactory(supportedLanguages);
         this.geoJsonConverter = new ConvertToGeoJson();
         this.requestHandlerFactory = new ReverseRequestHandlerFactory(new ReverseElasticsearchSearcher(esNodeClient));

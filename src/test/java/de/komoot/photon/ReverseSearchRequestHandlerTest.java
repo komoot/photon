@@ -5,8 +5,11 @@
  */
 package de.komoot.photon;
 
-import com.google.common.collect.ImmutableSet;
-import de.komoot.photon.query.*;
+import com.google.common.collect.ImmutableList;
+import de.komoot.photon.query.BadRequestException;
+import de.komoot.photon.query.RequestLanguageResolver;
+import de.komoot.photon.query.ReverseRequest;
+import de.komoot.photon.query.ReverseRequestFactory;
 import de.komoot.photon.searcher.ReverseRequestHandler;
 import de.komoot.photon.searcher.ReverseRequestHandlerFactory;
 import de.komoot.photon.searcher.SimpleReverseRequestHandler;
@@ -24,7 +27,6 @@ import spark.RouteImpl;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 /**
  * @author svantulden
@@ -38,9 +40,9 @@ public class ReverseSearchRequestHandlerTest {
         String path = ReflectionTestUtil.getFieldValue(reverseSearchRequestHandler, RouteImpl.class, "path");
         Assert.assertEquals("any", path);
         ReverseRequestFactory reverseRequestFactory = ReflectionTestUtil.getFieldValue(reverseSearchRequestHandler, reverseSearchRequestHandler.getClass(), "reverseRequestFactory");
-        LanguageChecker languageChecker = ReflectionTestUtil.getFieldValue(reverseRequestFactory, reverseRequestFactory.getClass(), "languageChecker");
-        Set<String> supportedLanguages = ReflectionTestUtil.getFieldValue(languageChecker, languageChecker.getClass(), "supportedLanguages");
-        Set<String> supportedLanguagesExpected = ImmutableSet.of("en", "fr");
+        RequestLanguageResolver languageResolver = ReflectionTestUtil.getFieldValue(reverseRequestFactory, reverseRequestFactory.getClass(), "languageResolver");
+        List<String> supportedLanguages = ReflectionTestUtil.getFieldValue(languageResolver, languageResolver.getClass(), "supportedLanguages");
+        List<String> supportedLanguagesExpected = ImmutableList.of("en", "fr");
         Assert.assertThat(supportedLanguages, IsEqual.equalTo(supportedLanguagesExpected));
     }
 

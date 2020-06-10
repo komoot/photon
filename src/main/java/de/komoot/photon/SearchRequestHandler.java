@@ -14,9 +14,7 @@ import spark.Response;
 import spark.RouteImpl;
 
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import static spark.Spark.halt;
 
@@ -32,7 +30,7 @@ public class SearchRequestHandler<R extends PhotonRequest> extends RouteImpl {
 
     SearchRequestHandler(String path, Client esNodeClient, String languages) {
         super(path);
-        Set<String> supportedLanguages = new HashSet<String>(Arrays.asList(languages.split(",")));
+        List<String> supportedLanguages = Arrays.asList(languages.split(","));
         this.photonRequestFactory = new PhotonRequestFactory(supportedLanguages);
         this.geoJsonConverter = new ConvertToGeoJson();
         this.requestHandlerFactory = new PhotonRequestHandlerFactory(new BaseElasticsearchSearcher(esNodeClient));
