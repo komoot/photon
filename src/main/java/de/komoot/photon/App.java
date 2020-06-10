@@ -173,10 +173,10 @@ public class App {
         }
 
         // setup search API
-        get("api", new SearchRequestHandler("api", esNodeClient, args.getLanguages()));
-        get("api/", new SearchRequestHandler("api/", esNodeClient, args.getLanguages()));
-        get("reverse", new ReverseSearchRequestHandler("reverse", esNodeClient, args.getLanguages()));
-        get("reverse/", new ReverseSearchRequestHandler("reverse/", esNodeClient, args.getLanguages()));
+        get("api", new SearchRequestHandler("api", esNodeClient, args.getLanguages(), args.getDefaultLanguage()));
+        get("api/", new SearchRequestHandler("api/", esNodeClient, args.getLanguages(), args.getDefaultLanguage()));
+        get("reverse", new ReverseSearchRequestHandler("reverse", esNodeClient, args.getLanguages(), args.getDefaultLanguage()));
+        get("reverse/", new ReverseSearchRequestHandler("reverse/", esNodeClient, args.getLanguages(), args.getDefaultLanguage()));
 
         // setup update API
         final NominatimUpdater nominatimUpdater = setupNominatimUpdater(args, esNodeClient);

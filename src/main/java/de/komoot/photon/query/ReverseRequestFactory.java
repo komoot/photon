@@ -16,8 +16,8 @@ public class ReverseRequestFactory {
 
     protected static HashSet<String> m_hsRequestQueryParams = new HashSet<>(Arrays.asList("lang", "lon", "lat", "radius", "query_string_filter", "distance_sort", "limit"));
 
-    public ReverseRequestFactory(List<String> supportedLanguages) {
-        this.languageResolver = new RequestLanguageResolver(supportedLanguages);
+    public ReverseRequestFactory(List<String> supportedLanguages, String defaultLanguage) {
+        this.languageResolver = new RequestLanguageResolver(supportedLanguages, defaultLanguage);
     }
 
     public <R extends ReverseRequest> R create(Request webRequest) throws BadRequestException {
