@@ -574,7 +574,46 @@
 						]
 					}
 				}
-			}		
+			},
+			"county": {
+				"properties": {
+					"de": {
+						"type": "text",
+						"index": false,
+						"copy_to": [
+							"collector.de"
+						]
+					},
+					"default": {
+						"type": "text",
+						"index": false,
+						"copy_to": [
+							"collector.default"
+						]
+					},
+					"en": {
+						"type": "text",
+						"index": false,
+						"copy_to": [
+							"collector.en"
+						]
+					},
+					"fr": {
+						"type": "text",
+						"index": false,
+						"copy_to": [
+							"collector.fr"
+						]
+					},
+					"it": {
+						"type": "text",
+						"index": false,
+						"copy_to": [
+							"collector.it"
+						]
+					}
+				}
+			}
 		}
 	}
 }

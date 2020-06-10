@@ -483,6 +483,11 @@ public class NominatimConnector {
                 continue;
             }
 
+            if (address.isCounty() && doc.getCounty() == null) {
+                doc.setCounty(address.getName());
+                continue;
+            }
+
             if (address.isState() && doc.getState() == null) {
                 doc.setState(address.getName());
                 continue;
