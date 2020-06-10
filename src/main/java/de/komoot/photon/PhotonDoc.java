@@ -39,6 +39,7 @@ public class PhotonDoc {
     private Map<String, String> locality;
     private Map<String, String> district;
     private Map<String, String> city;
+    private Map<String, String> county; // careful, this is county not count_r_y
     private Set<Map<String, String>> context = new HashSet<Map<String, String>>();
     private Map<String, String> country;
     private Map<String, String> state;
@@ -93,6 +94,7 @@ public class PhotonDoc {
         this.locality = other.locality;
         this.district = other.district;
         this.city = other.city;
+        this.county= other.county;
         this.context = other.context;
         this.country = other.country;
         this.state = other.state;
@@ -131,30 +133,12 @@ public class PhotonDoc {
     public void completeFromAddress() {
         if (address == null) return;
 
-        String addressStreet = address.get("street");
-        if (addressStreet != null) {
-            this.street = nullToEmptyMap(this.street);
-            setOrReplace(addressStreet, this.street, "street");
-        }
-        
-        String addressCity = address.get("city");
-        if (addressCity != null) {
-            this.city = nullToEmptyMap(this.city);
-            setOrReplace(addressCity, this.city, "city");
-        }
-        
-        String addressDistrict = address.get("suburb");
-        if (addressDistrict != null) {
-            this.district = nullToEmptyMap(this.district);
-            setOrReplace(addressDistrict, this.district, "suburb");
-        }
-        
-        String addressLocality = address.get("neighbourhood");
-        if (addressLocality != null) {
-            this.locality = nullToEmptyMap(this.locality);
-            setOrReplace(addressLocality, this.locality, "neighbourhood");
-        }
-        
+        this.street = extractAddress(this.street, address, "street");
+        this.city = extractAddress(this.city, address, "city");
+        this.district = extractAddress(this.district, address, "suburb");
+        this.locality = extractAddress(this.locality, address, "neighbourhood");
+        this.county = extractAddress(this.county, address, "county");
+
         String addressPostCode = address.get("postcode");
         if (addressPostCode != null && !addressPostCode.equals(this.postcode)) {
             if (log.isDebugEnabled()) {
@@ -164,7 +148,16 @@ public class PhotonDoc {
         }
     }
 
-    private static Map<String, String> nullToEmptyMap(Map<String, String> map) {
+    private Map<String, String> extractAddress(Map<String, String> existingField, Map<String, String> completeAddress, String addressFieldName) {
+        String field = completeAddress.get(addressFieldName);
+        if(field != null) {
+            Map<String, String> map = nullToEmptyMap(existingField);
+            setOrReplace(field, map, addressFieldName);
+            return map;
+        } else return null;
+    }
+
+    private Map<String, String> nullToEmptyMap(Map<String, String> map) {
         if (map == null) {
             return new HashMap<>();
         } else return map;

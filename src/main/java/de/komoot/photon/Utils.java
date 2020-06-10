@@ -55,6 +55,7 @@ public class Utils {
         writeIntlNames(builder, doc.getStreet(), "street", languages);
         writeIntlNames(builder, doc.getLocality(), "locality", languages);
         writeIntlNames(builder, doc.getDistrict(), "district", languages);
+        writeIntlNames(builder, doc.getCounty(), "county", languages);
         writeContext(builder, doc.getContext(), languages);
         writeExtent(builder, doc.getBbox());
 

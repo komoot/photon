@@ -42,6 +42,13 @@ public class AddressRow {
         return 13 <= rankAddress && rankAddress <= 16;
     }
 
+    /**
+     * @return whether nominatim thinks this place is a county
+     */
+    public boolean isCounty() {
+        return 5 <= rankAddress && rankAddress <= 9;
+    }
+
     public boolean isPostcode() {
         if ("place".equals(osmKey) && "postcode".equals(osmValue)) {
             return true;
