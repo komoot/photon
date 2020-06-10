@@ -30,8 +30,10 @@ public class RequestLanguageTest {
     }
 
     @Test
-    public void testValidQueryLangs() {
+    public void testValidQueryLangs()
+    {
         supportedLangs.forEach(l -> validateReturnedLanguage(l, null, l));
+        validateReturnedLanguage("default", null, "default");
     }
 
     @Test
