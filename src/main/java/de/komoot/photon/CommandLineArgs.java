@@ -26,6 +26,9 @@ public class CommandLineArgs {
     @Parameter(names = "-languages", description = "languages nominatim importer should import and use at run-time, comma separated (default is 'en,fr,de,it')")
     private String languages = "en,fr,de,it";
 
+    @Parameter(names = "-default-language", description = "language to return results in when no explicit language is choosen by the user")
+    private String defaultLanguage = "default";
+
     @Parameter(names = "-country-codes", description = "country codes filter that nominatim importer should import, comma separated. If empty full planet is done")
     private String countryCodes = "";
 

@@ -7,7 +7,6 @@ import spark.Request;
 import java.util.List;
 
 import static de.komoot.photon.query.RequestLanguageResolver.ACCEPT_LANGUAGE_HEADER;
-import static de.komoot.photon.query.RequestLanguageResolver.DEFAULT_LANGUAGE;
 import static java.util.Arrays.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -18,9 +17,11 @@ public class RequestLanguageTest {
     private final List<String> supportedLangs = asList("en", "fr", "de");
     private RequestLanguageResolver languageResolver;
 
+    private static final String DEFAULT_LANGUAGE = "en";
+
     @Before
     public void setup() {
-        languageResolver = new RequestLanguageResolver(supportedLangs);
+        languageResolver = new RequestLanguageResolver(supportedLangs, DEFAULT_LANGUAGE);
     }
 
     @Test
@@ -29,8 +30,10 @@ public class RequestLanguageTest {
     }
 
     @Test
-    public void testValidQueryLangs() {
+    public void testValidQueryLangs()
+    {
         supportedLangs.forEach(l -> validateReturnedLanguage(l, null, l));
+        validateReturnedLanguage("default", null, "default");
     }
 
     @Test

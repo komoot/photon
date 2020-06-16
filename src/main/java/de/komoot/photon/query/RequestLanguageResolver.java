@@ -14,9 +14,9 @@ import java.util.Locale;
 @AllArgsConstructor
 public class RequestLanguageResolver {
     static final String ACCEPT_LANGUAGE_HEADER = "Accept-Language";
-    static final String DEFAULT_LANGUAGE = "en";
 
     private final List<String> supportedLanguages;
+    private final String defaultLanguage;
 
     /**
      * Get the language to use for the response to the given request.
@@ -34,7 +34,7 @@ public class RequestLanguageResolver {
         if (StringUtils.isBlank(language)) {
             language = fallbackLanguageFromHeaders(webRequest);
             if (StringUtils.isBlank(language))
-                language = DEFAULT_LANGUAGE;
+                language = defaultLanguage;
         } else {
             checkLanguageSupported(language);
         }
@@ -69,8 +69,8 @@ public class RequestLanguageResolver {
      * @throws BadRequestException The language is not in the list of supported languages.
      */
     private void checkLanguageSupported(String lang) throws BadRequestException {
-        if (!supportedLanguages.contains((lang))) {
-            throw new BadRequestException(400, "language " + lang + " is not supported, supported languages are: " + Joiner.on(", ").join(supportedLanguages));
+        if (!("default".equals(lang) || supportedLanguages.contains((lang)))) {
+            throw new BadRequestException(400, "language " + lang + " is not supported, supported languages are: default, " + Joiner.on(", ").join(supportedLanguages));
         }
     }
 }

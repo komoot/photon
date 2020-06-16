@@ -26,10 +26,10 @@ public class ReverseSearchRequestHandler<R extends ReverseRequest> extends Route
     private final ReverseRequestHandlerFactory requestHandlerFactory;
     private final ConvertToGeoJson geoJsonConverter;
 
-    ReverseSearchRequestHandler(String path, Client esNodeClient, String languages) {
+    ReverseSearchRequestHandler(String path, Client esNodeClient, String languages, String defaultLanguage) {
         super(path);
         List<String> supportedLanguages = Arrays.asList(languages.split(","));
-        this.reverseRequestFactory = new ReverseRequestFactory(supportedLanguages);
+        this.reverseRequestFactory = new ReverseRequestFactory(supportedLanguages, defaultLanguage);
         this.geoJsonConverter = new ConvertToGeoJson();
         this.requestHandlerFactory = new ReverseRequestHandlerFactory(new ReverseElasticsearchSearcher(esNodeClient));
     }

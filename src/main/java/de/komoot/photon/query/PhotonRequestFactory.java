@@ -21,8 +21,9 @@ public class PhotonRequestFactory {
 
     protected static HashSet<String> m_hsRequestQueryParams = new HashSet<>(Arrays.asList("lang", "q", "lon", "lat",
             "limit", "osm_tag", "location_bias_scale", "bbox", "debug"));
-    public PhotonRequestFactory(List<String> supportedLanguages) {
-        this.languageResolver = new RequestLanguageResolver(supportedLanguages);
+
+    public PhotonRequestFactory(List<String> supportedLanguages, String defaultLanguage) {
+        this.languageResolver = new RequestLanguageResolver(supportedLanguages, defaultLanguage);
         this.bboxParamConverter = new BoundingBoxParamConverter();
     }
 
