@@ -195,7 +195,7 @@ public class NominatimConnector {
                     CountryCode.getByCode(rs.getString("country_code")),
                     (Point) DBUtils.extractGeometry(rs, "centroid"),
                     rs.getLong("linked_place_id"),
-                    rs.getInt("rank_search")
+                    rs.getInt("rank_address")
             );
 
             doc.setPostcode(rs.getString("postcode"));
@@ -207,7 +207,7 @@ public class NominatimConnector {
             return result;
         }
     };
-    private final String selectColsPlaceX = "place_id, osm_type, osm_id, class, type, name, housenumber, postcode, address, extratags, ST_Envelope(geometry) AS bbox, parent_place_id, linked_place_id, rank_search, importance, country_code, centroid";
+    private final String selectColsPlaceX = "place_id, osm_type, osm_id, class, type, name, housenumber, postcode, address, extratags, ST_Envelope(geometry) AS bbox, parent_place_id, linked_place_id, rank_address, rank_search, importance, country_code, centroid";
     private final String selectColsOsmline = "place_id, osm_id, parent_place_id, startnumber, endnumber, interpolationtype, postcode, country_code, linegeo";
     private final String selectColsAddress = "p.place_id, p.name, p.class, p.type, p.rank_address";
     private Importer importer;
@@ -282,7 +282,7 @@ public class NominatimConnector {
             }
         };
 
-        boolean isPoi = doc.getRankSearch() > 28;
+        boolean isPoi = doc.getRankAddress() > 28;
         long placeId = (isPoi) ? doc.getParentPlaceId() : doc.getPlaceId();
 
         List<AddressRow> terms = template.query("SELECT " + selectColsAddress + " FROM placex p, place_addressline pa WHERE p.place_id = pa.address_place_id and pa.place_id = ? and pa.cached_rank_address > 4 and pa.address_place_id != ? and pa.isaddress order by rank_address desc,fromarea desc,distance asc,rank_search desc", new Object[]{placeId, placeId}, rowMapper);
