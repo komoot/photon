@@ -154,7 +154,7 @@ public class PhotonDoc {
             Map<String, String> map = nullToEmptyMap(existingField);
             setOrReplace(field, map, addressFieldName);
             return map;
-        } else return null;
+        } else return existingField;
     }
 
     private Map<String, String> nullToEmptyMap(Map<String, String> map) {
