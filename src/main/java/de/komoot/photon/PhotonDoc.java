@@ -133,47 +133,50 @@ public class PhotonDoc {
     public void completeFromAddress() {
         if (address == null) return;
 
-        this.street = extractAddress(this.street, address, "street");
-        this.city = extractAddress(this.city, address, "city");
-        this.district = extractAddress(this.district, address, "suburb");
-        this.locality = extractAddress(this.locality, address, "neighbourhood");
-        this.county = extractAddress(this.county, address, "county");
+        street = extractAddress(street, "street");
+        city = extractAddress(city, "city");
+        district = extractAddress(district, "suburb");
+        locality = extractAddress(locality, "neighbourhood");
+        county = extractAddress(county, "county");
 
         String addressPostCode = address.get("postcode");
-        if (addressPostCode != null && !addressPostCode.equals(this.postcode)) {
+        if (addressPostCode != null && !addressPostCode.equals(postcode)) {
             if (log.isDebugEnabled()) {
-                log.debug("Replacing postcode "+this.postcode+" with "+ addressPostCode+ " for osmId #" + osmId);
+                log.debug("Replacing postcode " + postcode + " with "+ addressPostCode + " for osmId #" + osmId);
             }
-            this.postcode = addressPostCode;
+            postcode = addressPostCode;
         }
     }
 
-    private Map<String, String> extractAddress(Map<String, String> existingField, Map<String, String> completeAddress, String addressFieldName) {
-        String field = completeAddress.get(addressFieldName);
-        if(field != null) {
-            Map<String, String> map = nullToEmptyMap(existingField);
-            setOrReplace(field, map, addressFieldName);
-            return map;
-        } else return existingField;
-    }
 
-    private Map<String, String> nullToEmptyMap(Map<String, String> map) {
-        if (map == null) {
-            return new HashMap<>();
-        } else return map;
-    }
+    /**
+     * Extract an address field from an address tag and replace the appropriate address field in the document.
+     *
+     * @param existingField The current value of the document's address field.
+     * @param addressFieldName The name of the address tag to use (without the 'addr:' prefix).
+     *
+     * @return 'existingField' potentially with the name field replaced. If existingField was null and
+     *         the address field could be found, then a new map with the address as single entry is returned.
+     */
+    private Map<String, String> extractAddress(Map<String, String> existingField, String addressFieldName) {
+        String field = address.get(addressFieldName);
 
-    private void setOrReplace(String name, Map<String, String> namesMap, String field) {
-        String existingName = namesMap.get("name");
-        if (!name.equals(existingName)) {
+        if (field == null) return existingField;
+
+        Map<String, String> map = (existingField == null) ? new HashMap<>() : existingField;
+
+        String existingName = map.get("name");
+        if (!field.equals(existingName)) {
             if (log.isDebugEnabled()) {
-                log.debug("Replacing "+ field +" name '"+existingName+"' with '"+ name+ "' for osmId #" + osmId);
+                log.debug("Replacing " + addressFieldName + " name '" + existingName + "' with '" + field + "' for osmId #" + osmId);
             }
             // we keep the former name in the context as it might be helpful when looking up typos
             if(!Objects.isNull(existingName)) {
                 context.add(ImmutableMap.of("formerName", existingName));
             }
-            namesMap.put("name", name);
+            map.put("name", field);
         }
+
+        return map;
     }
 }
