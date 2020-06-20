@@ -235,20 +235,20 @@ public class NominatimConnector {
      * @param password db username's password
      */
     public NominatimConnector(String host, int port, String database, String username, String password) {
-        BasicDataSource dataSource = buildDataSource(host, port, database, username, password);
+        BasicDataSource dataSource = buildDataSource(host, port, database, username, password, false);
 
         template = new JdbcTemplate(dataSource);
         template.setFetchSize(100000);
     }
 
-    static BasicDataSource buildDataSource(String host, int port, String database, String username, String password) {
+    static BasicDataSource buildDataSource(String host, int port, String database, String username, String password, boolean autocommit) {
         BasicDataSource dataSource = new BasicDataSource();
 
         dataSource.setUrl(String.format("jdbc:postgres_jts://%s:%d/%s", host, port, database));
         dataSource.setUsername(username);
         dataSource.setPassword(password);
         dataSource.setDriverClassName(JtsWrapper.class.getCanonicalName());
-        dataSource.setDefaultAutoCommit(false);
+        dataSource.setDefaultAutoCommit(autocommit);
         return dataSource;
     }
 
