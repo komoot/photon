@@ -184,7 +184,7 @@ public class NominatimUpdater {
      * @param password Nominatim database password
      */
     public NominatimUpdater(String host, int port, String database, String username, String password) {
-        BasicDataSource dataSource = NominatimConnector.buildDataSource(host, port, database, username, password);
+        BasicDataSource dataSource = NominatimConnector.buildDataSource(host, port, database, username, password, true);
 
         exporter = new NominatimConnector(host, port, database, username, password);
         template = new JdbcTemplate(dataSource);
