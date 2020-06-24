@@ -33,7 +33,7 @@ public class PhotonDoc {
     final private double importance;
     final private CountryCode countryCode;
     final private long linkedPlaceId; // 0 if unset
-    final private int rankSearch;
+    final private int rankAddress;
 
     private Map<String, String> street;
     private Map<String, String> locality;
@@ -46,7 +46,7 @@ public class PhotonDoc {
     private String houseNumber;
     private Point centroid;
 
-    public PhotonDoc(long placeId, String osmType, long osmId, String tagKey, String tagValue, Map<String, String> name, String houseNumber, Map<String, String> address, Map<String, String> extratags, Envelope bbox, long parentPlaceId, double importance, CountryCode countryCode, Point centroid, long linkedPlaceId, int rankSearch) {
+    public PhotonDoc(long placeId, String osmType, long osmId, String tagKey, String tagValue, Map<String, String> name, String houseNumber, Map<String, String> address, Map<String, String> extratags, Envelope bbox, long parentPlaceId, double importance, CountryCode countryCode, Point centroid, long linkedPlaceId, int rankAddress) {
         String place = extratags != null ? extratags.get("place") : null;
         if (place != null) {
             // take more specific extra tag information
@@ -69,7 +69,7 @@ public class PhotonDoc {
         this.countryCode = countryCode;
         this.centroid = centroid;
         this.linkedPlaceId = linkedPlaceId;
-        this.rankSearch = rankSearch;
+        this.rankAddress = rankAddress;
     }
 
     public PhotonDoc(PhotonDoc other) {
@@ -89,7 +89,7 @@ public class PhotonDoc {
         this.countryCode = other.countryCode;
         this.centroid = other.centroid;
         this.linkedPlaceId = other.linkedPlaceId;
-        this.rankSearch = other.rankSearch;
+        this.rankAddress = other.rankAddress;
         this.street = other.street;
         this.locality = other.locality;
         this.district = other.district;
@@ -113,6 +113,21 @@ public class PhotonDoc {
     public static PhotonDoc create(long placeId, String osmType, long osmId, Map<String, String> nameMap) {
         return new PhotonDoc(placeId, osmType, osmId, "", "", nameMap,
                 "", null, null, null, 0, 0, null, null, 0, 0);
+    }
+
+    /**
+     * Return the GeocodeJSON place type.
+     *
+     * @return A string representation of the type
+     */
+    public final String getObjectType() {
+        if (rankAddress >= 28) return "house";
+        if (rankAddress >= 26) return "street";
+        if (rankAddress >= 13 && rankAddress <= 16) return "city";
+        if (rankAddress >= 5 && rankAddress <= 12) return "region";
+        if (rankAddress == 4) return "country";
+
+        return "locality";
     }
 
     public boolean isUsefulForIndex() {

@@ -52,6 +52,9 @@ public class ConvertToJson {
                     properties.put(key, getLocalised(source, key, lang));
             }
 
+            // place type
+            properties.put("type", source.get(Constants.OBJECT_TYPE));
+
             // add extent of geometry
             final Map<String, Object> extent = (Map<String, Object>) source.get("extent");
             if (extent != null) {

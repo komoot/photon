@@ -412,6 +412,10 @@
 				"type": "keyword",
 				"index": true
 			},
+			"object_type": {
+				"type": "text",
+				"index": false
+			},
 			"postcode": {
 				"type": "text",
 				"index": false,
