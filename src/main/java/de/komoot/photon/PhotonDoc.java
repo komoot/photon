@@ -153,6 +153,7 @@ public class PhotonDoc {
         district = extractAddress(district, "suburb");
         locality = extractAddress(locality, "neighbourhood");
         county = extractAddress(county, "county");
+        state = extractAddress(state, "state");
 
         String addressPostCode = address.get("postcode");
         if (addressPostCode != null && !addressPostCode.equals(postcode)) {

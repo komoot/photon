@@ -21,6 +21,9 @@ public class AddressRow {
 
     static private final String[] USEFUL_CONTEXT_KEYS = new String[]{"boundary", "landuse", "place"}; // must be in alphabetic order to speed up lookup
 
+    /**
+     * @return whether nominatim thinks this place is a street
+     */
     public boolean isStreet() {
         return 26 <= rankAddress && rankAddress < 28;
     }
@@ -38,16 +41,28 @@ public class AddressRow {
     public boolean isDistrict() {
         return 17 <= rankAddress && rankAddress < 22;
     }
+
+    /**
+     * @return whether nominatim thinks this place is a town or city
+     */
     public boolean isCity() {
-        return 13 <= rankAddress && rankAddress <= 16;
+        return 13 <= rankAddress && rankAddress < 17;
     }
 
     /**
      * @return whether nominatim thinks this place is a county
      */
-    public boolean isCounty() {
-        return 5 <= rankAddress && rankAddress <= 9;
+    public boolean isCounty() { return 10 <= rankAddress && rankAddress < 13; }
+
+    /**
+     * @return whether nominatim thinks this place is a state
+     */
+    public boolean isState() { return 5 <= rankAddress && rankAddress < 10; }
+
+    public boolean isCountry() {
+        return (rankAddress == 4 && "boundary".equals(osmKey) && "administrative".equals(osmValue));
     }
+
 
     public boolean isPostcode() {
         if ("place".equals(osmKey) && "postcode".equals(osmValue)) {
@@ -80,19 +95,6 @@ public class AddressRow {
         }
 
         return false;
-    }
-
-    public boolean isCountry() {
-        if (rankAddress == 4 && "boundary".equals(osmKey) && "administrative".equals(osmValue)) {
-            return true;
-        }
-
-
-        return false;
-    }
-
-    public boolean isState() {
-        return (5 <= rankAddress && rankAddress <= 9);
     }
 
     @Override
