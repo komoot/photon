@@ -45,7 +45,8 @@ wget -O - http://download1.graphhopper.com/public/photon-db-latest.tar.bz2 | bzi
 wget -O - http://download1.graphhopper.com/public/photon-db-latest.tar.bz2 | pbzip2 -cd | tar x
  ```
  
-Now get photon, at least 0.3, from [the releases](https://github.com/komoot/photon/releases) and start it:
+Now get the latest version of photon from
+[the releases](https://github.com/komoot/photon/releases) and start it:
 
 ```bash
 java -jar photon-*.jar
@@ -57,7 +58,7 @@ Check the URL `http://localhost:2322/api?q=berlin` to see if photon is running w
 
 To enable CORS (cross-site requests), use `-cors-any` to allow any origin or `-cors-origin` with a specific origin as the argument. By default, CORS support is disabled.
 
-discover more of photon's feature with its usage `java -jar photon-*.jar -h`.
+Discover more of photon's feature with its usage `java -jar photon-*.jar -h`.
 
 
 ### Customized Search Data
