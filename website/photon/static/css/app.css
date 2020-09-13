@@ -212,6 +212,10 @@ h2 {
     color: #eee;
 }
 
+.leaflet-popup-content {
+    color: #666;
+}
+
 pre {
     background-color: #f5f5f5;
     border: 1px solid #eee;
