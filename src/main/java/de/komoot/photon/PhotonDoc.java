@@ -47,11 +47,16 @@ public class PhotonDoc {
     private Point centroid;
 
     public PhotonDoc(long placeId, String osmType, long osmId, String tagKey, String tagValue, Map<String, String> name, String houseNumber, Map<String, String> address, Map<String, String> extratags, Envelope bbox, long parentPlaceId, double importance, CountryCode countryCode, Point centroid, long linkedPlaceId, int rankAddress) {
-        String place = extratags != null ? extratags.get("place") : null;
-        if (place != null) {
-            // take more specific extra tag information
-            tagKey = "place";
-            tagValue = place;
+        if (extratags != null) {
+            String place = extratags.get("place");
+            if (place == null) {
+                place = extratags.get("linked_place");
+            }
+            if (place != null) {
+                // take more specific extra tag information
+                tagKey = "place";
+                tagValue = place;
+            }
         }
 
         this.placeId = placeId;
