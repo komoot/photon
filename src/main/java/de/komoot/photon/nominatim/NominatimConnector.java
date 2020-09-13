@@ -1,7 +1,6 @@
 package de.komoot.photon.nominatim;
 
 import com.google.common.collect.ImmutableList;
-import com.neovisionaries.i18n.CountryCode;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
@@ -148,7 +147,7 @@ public class NominatimConnector {
                     (Envelope) null,
                     rs.getLong("parent_place_id"),
                     0d, // importance
-                    CountryCode.getByCode(rs.getString("country_code")),
+                    rs.getString("country_code"),
                     (Point) null, // centroid
                     0,
                     30
@@ -192,7 +191,7 @@ public class NominatimConnector {
                     envelope,
                     rs.getLong("parent_place_id"),
                     importance,
-                    CountryCode.getByCode(rs.getString("country_code")),
+                    rs.getString("country_code"),
                     (Point) DBUtils.extractGeometry(rs, "centroid"),
                     rs.getLong("linked_place_id"),
                     rs.getInt("rank_address")
