@@ -4,15 +4,15 @@
     <meta charset="utf-8">
     <title>Photon, search-as-you-type with OpenStreetMap</title>
     <link rel="stylesheet" href="//cdn.jsdelivr.net/leaflet/0.7.3/leaflet.css"/>
-    <link rel="stylesheet" href="/static/leaflet.photon/leaflet.photon.css">
-    <link rel="stylesheet" href="/static/css/app.css">
-    <link rel="icon" href="/static/img/favicon_photon_logo.ico">
+    <link rel="stylesheet" href="static/leaflet.photon/leaflet.photon.css">
+    <link rel="stylesheet" href="static/css/app.css">
+    <link rel="icon" href="static/img/favicon_photon_logo.ico">
 </head>
 <body>
 
 <header>
     <span id="photon">photon</span>
-    <img src="/static/img/photon_logo.png" id="logo"/>
+    <img src="static/img/photon_logo.png" id="logo"/>
 
     <div id="slogan">search as you type with OpenStreetMap</div>
     <!--<div class="col third">-->
@@ -40,7 +40,7 @@
     <div class="row">
         <div class="col third">
             <a href="http://osm.org">
-                <img src="{{ url_for('static', filename='img/osm.svg') }}"/>
+                <img src="static/img/osm.svg"/>
 
                 <p>
                     Made with OpenStreetMap
@@ -50,7 +50,7 @@
         </div>
         <div class="col third">
             <a href="https://github.com/komoot/photon">
-                <img src="{{ url_for('static', filename='img/opensource.svg') }}"/>
+                <img src="static/img/opensource.svg"/>
 
                 <p>
                     Open Source<br>
@@ -61,7 +61,7 @@
         </div>
         <div class="col third">
             <a href="http://www.elasticsearch.org">
-                <img src="{{ url_for('static', filename='img/es.svg') }}"/>
+                <img src="static/img/es.svg"/>
 
                 <p>
                     Powered by ElasticSearch
@@ -156,17 +156,8 @@
     An OpenStreetMap project run by <a href="http://www.komoot.de">komoot</a>
 </footer>
 <script src="//cdn.jsdelivr.net/leaflet/0.7.3/leaflet.js"></script>
-<script src="/static/leaflet.photon/leaflet.photon.js"></script>
-<script type="text/javascript">
-    API_URL = '{{ API_URL }}';
-    TILELAYER = '{{ TILELAYER }}';
-    CENTER = {{ CENTER }};
-    MAXZOOM = {{ MAXZOOM }};
-
-
-
-
-</script>
-<script src="/static/js/app.js"></script>
+<script src="static/leaflet.photon/leaflet.photon.js"></script>
+<script src="config.js"></script>
+<script src="static/js/app.js"></script>
 </body>
 </html>
