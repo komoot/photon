@@ -1,24 +1,26 @@
-website for photon.komoot.de
+## Website for photon.komoot.de
 
-### Installation
+This directory contains the website for photon's home page.
 
-It has been developed with python3.4 (but should work with python2.x). We suggest to use virtualenv for the installation.
+### Configuration
 
-* Get the virtualenv system packages:
-  ```
-  sudo apt-get install python-pip python-virtualenv virtualenvwrapper
-  ```
-* Create a virtualenv:
- ```
- mkvirtualenv -p python3.4 photon
- ```
-* Install dependencies:
- ```
- cd website/photon
- pip install -r ../requirements.txt
- ```
-* Run the server
- ```
- python app.py
- ```
-* Go to http://localhost:5001/ and test it!
+Copy the example configuration into the photon directory:
+
+```
+cp config.js.example photon/config.js
+```
+
+Then adapt `config.js` to your needs.
+
+### Running
+
+The website can be directly opened in your browser or served with any
+webserver that can serve static files.
+
+If you have Python3 installed, you can run:
+
+```
+make serve
+```
+
+Then go to http://localhost:5001/ and test it!

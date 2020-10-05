@@ -1,2 +1,2 @@
 serve:
-	python photon/app.py
+	cd photon; python3 -m http.server 5001

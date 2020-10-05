@@ -6,7 +6,7 @@ dependency-reduced-pom.xml
 *.iml
 *.~*
 
-__pycache__
+website/photon/config.js
 
 nb-configuration.xml
 
