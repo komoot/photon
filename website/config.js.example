@@ -1,4 +1,4 @@
 API_URL = 'http://localhost:5001/api/?';
-TILELAYER = 'https://{s}.tile.hosted.thunderforest.com/komoot-2/{z}/{x}/{y}.png';
+TILELAYER = 'https://{s}.tile.hosted.thunderforest.com/komoot-2/{z}/{x}/{y}{r}.png';
 CENTER = [52.3879, 13.0582];
 MAXZOOM = 18;
