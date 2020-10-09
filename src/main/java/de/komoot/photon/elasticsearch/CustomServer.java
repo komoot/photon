@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.TransportClient;
+import org.elasticsearch.common.Strings;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.TransportAddress;
 import org.elasticsearch.common.xcontent.XContentType;
@@ -13,6 +14,8 @@ import org.elasticsearch.transport.client.PreBuiltTransportClient;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetAddress;
@@ -64,11 +67,20 @@ public class CustomServer {
         deleteIndex();
 
         final Client client = this.getClient();
-        final InputStream mappings = Thread.currentThread().getContextClassLoader()
+        InputStream mappings = Thread.currentThread().getContextClassLoader()
                 .getResourceAsStream("mappings.json");
-        final InputStream index_settings = Thread.currentThread().getContextClassLoader()
+        InputStream index_settings = Thread.currentThread().getContextClassLoader()
                 .getResourceAsStream("index_settings.json");
         final Charset utf8_charset = Charset.forName("utf-8");
+
+        // HACK - sometime we want to experiment with diff mapping and index setting - this makes easy to
+        // experiment (use absolute path for mapping and setting if you want to change without compilation)
+        String mappingsFileAbsolutePath = "";
+        String indexSettingFileAbsolutePath = "";
+        if (!Strings.isEmpty(mappingsFileAbsolutePath) && !Strings.isEmpty(indexSettingFileAbsolutePath)) {
+            mappings = new FileInputStream(new File(mappingsFileAbsolutePath));
+            index_settings = new FileInputStream(new File(indexSettingFileAbsolutePath));
+        }
 
         String mappingsString = IOUtils.toString(mappings, utf8_charset);
         JSONObject mappingsJSON = new JSONObject(mappingsString);

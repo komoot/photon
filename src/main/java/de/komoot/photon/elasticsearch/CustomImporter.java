@@ -8,7 +8,6 @@ import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.client.Requests;
 import org.elasticsearch.client.transport.TransportClient;
-import org.elasticsearch.common.Strings;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 
 import java.io.IOException;
@@ -33,12 +32,6 @@ public class CustomImporter implements de.komoot.photon.Importer {
         try {
             this.bulkRequest.add(this.esClient.prepareIndex(indexName, indexType).
                     setSource(Utils.convert(doc, languages)).setId(doc.getUid()));
-
-            // FIXME - Remove this code (this is a document with problem which is added for debug)
-            if (doc.getPlaceId() == 112500) {
-                System.out.println(Strings.toString(Utils.convert(doc, languages)));
-            }
-
         } catch (IOException e) {
             log.error("could not bulk add document " + doc.getUid(), e);
             return;
