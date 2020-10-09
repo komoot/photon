@@ -26,7 +26,7 @@ public abstract class AbstractPhotonRequestHandler<R extends PhotonRequest> impl
         int limit = photonRequest.getLimit();
         int extLimit = limit > 1 ? (int) Math.round(photonRequest.getLimit() * 1.5) : 1;
         SearchResponse results = elasticsearchSearcher.search(queryBuilder.buildQuery(), extLimit);
-        if (results.getHits().getTotalHits() == 0) {
+        if (results.getHits().getTotalHits().value == 0) {
             results = elasticsearchSearcher.search(queryBuilder.withLenientMatch().buildQuery(), extLimit);
         }
         List<JSONObject> resultJsonObjects = new ConvertToJson(photonRequest.getLanguage()).convert(results);

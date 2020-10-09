@@ -1,9 +1,6 @@
 {
 	"place": {
 		"dynamic": "false",
-		"_all": {
-			"enabled": false
-		},
 		"_source": {
 			"excludes": [
 				"context.*"

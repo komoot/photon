@@ -5,9 +5,15 @@ import com.google.common.collect.ImmutableSet;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Point;
 import org.elasticsearch.common.lucene.search.function.CombineFunction;
-import org.elasticsearch.common.lucene.search.function.FiltersFunctionScoreQuery.ScoreMode;
+import org.elasticsearch.common.lucene.search.function.FunctionScoreQuery;
 import org.elasticsearch.common.unit.Fuzziness;
-import org.elasticsearch.index.query.*;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.GeoBoundingBoxQueryBuilder;
+import org.elasticsearch.index.query.MatchQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.query.TermQueryBuilder;
+import org.elasticsearch.index.query.TermsQueryBuilder;
 import org.elasticsearch.index.query.functionscore.FunctionScoreQueryBuilder;
 import org.elasticsearch.index.query.functionscore.FunctionScoreQueryBuilder.FilterFunctionBuilder;
 import org.elasticsearch.index.query.functionscore.ScoreFunctionBuilders;
@@ -15,7 +21,12 @@ import org.elasticsearch.index.query.functionscore.ScriptScoreFunctionBuilder;
 import org.elasticsearch.script.Script;
 import org.elasticsearch.script.ScriptType;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static com.google.common.collect.Maps.newHashMap;
 
@@ -84,7 +95,7 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder {
         m_alFilterFunction4QueryBuilder.add(new FilterFunctionBuilder(functionBuilder4QueryBuilder));
 
         m_finalQueryWithoutTagFilterBuilder = new FunctionScoreQueryBuilder(m_query4QueryBuilder, m_alFilterFunction4QueryBuilder.toArray(new FilterFunctionBuilder[0]))
-                .boostMode(CombineFunction.MULTIPLY).scoreMode(ScoreMode.MULTIPLY);
+                .boostMode(CombineFunction.MULTIPLY).scoreMode(FunctionScoreQuery.ScoreMode.MULTIPLY);
 
         // @formatter:off
         m_queryBuilderForTopLevelFilter = QueryBuilders.boolQuery()
@@ -126,13 +137,13 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder {
                         .boostMode(CombineFunction.MULTIPLY);
         return this;
     }
-    
-     @Override
+
+    @Override
     public TagFilterQueryBuilder withBoundingBox(Envelope bbox) {
         if (bbox == null) return this;
         bboxQueryBuilder = new GeoBoundingBoxQueryBuilder("coordinate");
         bboxQueryBuilder.setCorners(bbox.getMaxY(), bbox.getMinX(), bbox.getMinY(), bbox.getMaxX());
-        
+
         return this;
     }
 
@@ -298,7 +309,7 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder {
 
 
     /**
-     * When this method is called, all filters are placed inside their {@link OrQueryBuilder OR} or {@link AndQueryBuilder AND} containers and the top level filter
+     * When this method is called, all filters are placed inside their {@link  OR} or {@link  AND} containers and the top level filter
      * builder is built. Subsequent invocations of this method have no additional effect. Note that after this method is called, calling other methods on this class also
      * have no effect.
      *
@@ -318,8 +329,8 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder {
                 tagFilters.must(andQueryBuilderForExcludeTagFiltering);
             m_finalQueryBuilder.filter(tagFilters);
         }
-        
-        if (bboxQueryBuilder != null) 
+
+        if (bboxQueryBuilder != null)
             m_queryBuilderForTopLevelFilter.filter(bboxQueryBuilder);
 
         state = State.FINISHED;

@@ -5,6 +5,7 @@ import org.apache.commons.io.IOUtils;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig;
+import org.elasticsearch.common.Strings;
 import org.elasticsearch.common.bytes.BytesReference;
 import org.elasticsearch.common.xcontent.ToXContent;
 import org.elasticsearch.common.xcontent.json.JsonXContent;
@@ -44,8 +45,12 @@ public class TagFilterQueryBuilderTest {
     }
 
     private JsonNode readJson(ToXContent queryBuilder) throws IOException {
+        // return this.readJson(
+        //     queryBuilder.toXContent(JsonXContent.contentBuilder(), new ToXContent.MapParams(null)).bytes());
+        // FIXME - Above code did not compile for ES 7 - so added the following fix
         return this.readJson(
-                queryBuilder.toXContent(JsonXContent.contentBuilder(), new ToXContent.MapParams(null)).bytes());
+                Strings.toString(queryBuilder.toXContent(JsonXContent.contentBuilder(), new ToXContent.MapParams(null)))
+        );
     }
 
     private JsonNode readJson(BytesReference jsonStringBytes) throws IOException {

@@ -3,19 +3,24 @@ package de.komoot.photon;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
+import de.komoot.photon.elasticsearch.CustomServer;
 import de.komoot.photon.elasticsearch.Server;
 import de.komoot.photon.nominatim.NominatimConnector;
 import de.komoot.photon.nominatim.NominatimUpdater;
 import de.komoot.photon.utils.CorsFilter;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.client.Client;
+import org.elasticsearch.client.transport.TransportClient;
 import spark.Request;
 import spark.Response;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import static spark.Spark.*;
+import static spark.Spark.before;
+import static spark.Spark.get;
+import static spark.Spark.ipAddress;
+import static spark.Spark.port;
 
 
 @Slf4j
@@ -45,6 +50,23 @@ public class App {
         if (args.getJsonDump() != null) {
             startJsonDump(args);
             return;
+        }
+
+        // FIXME - (we use external ES so this if is true - we have CustomServer now)
+        if (true) {
+            CustomServer customServer = new CustomServer(args);
+            customServer.start();
+            if (args.isRecreateIndex()) {
+                customServer.recreateIndex();
+            }
+
+            if (args.isNominatimImport()) {
+                startNominatimImport(args, customServer);
+            } else {
+                startApi(args, customServer.getClient());
+            }
+
+            if (true) return;
         }
 
         boolean shutdownES = false;
@@ -116,6 +138,23 @@ public class App {
         }
     }
 
+    // FIXME - This is added to work with new CustomServer
+    private static void startNominatimImport(CommandLineArgs args, CustomServer customServer) {
+        try {
+            customServer.recreateIndex(); // dump previous data
+        } catch (IOException e) {
+            throw new RuntimeException("cannot setup index, elastic search config files not readable", e);
+        }
+
+        TransportClient client = customServer.getClient();
+        Importer importer = new de.komoot.photon.elasticsearch.CustomImporter(client, args.getLanguages());
+
+        NominatimConnector nominatimConnector = new NominatimConnector(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
+        nominatimConnector.setImporter(importer);
+        nominatimConnector.readEntireDatabase(args.getCountryCodes().split(","));
+
+        log.info("imported data from nominatim to photon with languages: " + args.getLanguages());
+    }
 
     /**
      * take nominatim data to fill elastic search index

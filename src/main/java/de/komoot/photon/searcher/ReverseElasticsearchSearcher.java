@@ -26,7 +26,7 @@ public class ReverseElasticsearchSearcher implements ElasticsearchReverseSearche
                                  Boolean locationDistanceSort) {
         TimeValue timeout = TimeValue.timeValueSeconds(7);
 
-        SearchRequestBuilder builder = client.prepareSearch("photon").setSearchType(SearchType.QUERY_AND_FETCH)
+        SearchRequestBuilder builder = client.prepareSearch("photon").setSearchType(SearchType.QUERY_THEN_FETCH)
                 .setQuery(queryBuilder).setSize(limit).setTimeout(timeout);
 
         if (locationDistanceSort)

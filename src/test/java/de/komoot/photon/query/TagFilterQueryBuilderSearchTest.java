@@ -205,6 +205,6 @@ public class TagFilterQueryBuilderSearchTest extends ESBaseTester {
     }
 
     private SearchResponse search(Client client, QueryBuilder queryBuilder) {
-        return client.prepareSearch("photon").setSearchType(SearchType.QUERY_AND_FETCH).setQuery(queryBuilder).execute().actionGet();
+        return client.prepareSearch("photon").setSearchType(SearchType.QUERY_THEN_FETCH).setQuery(queryBuilder).execute().actionGet();
     }
 }

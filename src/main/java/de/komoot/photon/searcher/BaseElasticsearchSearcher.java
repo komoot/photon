@@ -21,7 +21,7 @@ public class BaseElasticsearchSearcher implements ElasticsearchSearcher {
     public SearchResponse search(QueryBuilder queryBuilder, Integer limit) {
         TimeValue timeout = TimeValue.timeValueSeconds(7);
         return client.prepareSearch("photon").
-                setSearchType(SearchType.QUERY_AND_FETCH).
+                setSearchType(SearchType.QUERY_THEN_FETCH).
                 setQuery(queryBuilder).
                 setSize(limit).
                 setTimeout(timeout).

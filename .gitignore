@@ -15,3 +15,5 @@ nbactions.xml
 .classpath
 .project
 .settings/
+photon.ipr
+photon.iws

@@ -7,7 +7,6 @@ import org.apache.commons.lang3.SystemUtils;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.index.IndexNotFoundException;
 import org.elasticsearch.node.InternalSettingsPreparer;
@@ -56,7 +55,9 @@ public class Server {
 
     protected static class MyNode extends Node {
         public MyNode(Settings preparedSettings, Collection<Class<? extends Plugin>> classpathPlugins) {
-            super(InternalSettingsPreparer.prepareEnvironment(preparedSettings, null), classpathPlugins);
+            // FIXME - Above code did not compile for ES 7 - So commented for now -> NOTE - if we use external ES then this code this not needed
+            // super(InternalSettingsPreparer.prepareEnvironment(preparedSettings, null), classpathPlugins);
+            super(null);
         }
     }
 
@@ -93,9 +94,11 @@ public class Server {
                 if (index >= 0) {
                     int port = Integer.parseInt(tAddr.substring(index + 1));
                     String addrStr = tAddr.substring(0, index);
-                    trClient.addTransportAddress(new InetSocketTransportAddress(new InetSocketAddress(addrStr, port)));
+                    // FIXME - Above code did not compile for ES 7 - So commented for now -> NOTE - if we use external ES then this code this not needed
+                    // trClient.addTransportAddress(new InetSocketTransportAddress(new InetSocketAddress(addrStr, port)));
                 } else {
-                    trClient.addTransportAddress(new InetSocketTransportAddress(new InetSocketAddress(tAddr, 9300)));
+                    // FIXME - Above code did not compile for ES 7 - So commented for now -> NOTE - if we use external ES then this code this not needed
+                    // trClient.addTransportAddress(new InetSocketTransportAddress(new InetSocketAddress(tAddr, 9300)));
                 }
             }
 
@@ -199,6 +202,7 @@ public class Server {
         }
         client.admin().indices().prepareCreate("photon").setSettings(settings.toString(), XContentType.JSON).execute().actionGet();
         ;
+        System.out.println(mappingsJSON.toString());
         client.admin().indices().preparePutMapping("photon").setType("place").setSource(mappingsJSON.toString(), XContentType.JSON).execute().actionGet();
         log.info("mapping created: " + mappingsJSON.toString());
     }
