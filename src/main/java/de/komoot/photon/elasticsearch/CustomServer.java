@@ -80,9 +80,7 @@ public class CustomServer {
         if (shards != null) {
             settings.put("index", new JSONObject("{ \"number_of_shards\":" + shards + " }"));
         }
-        System.out.println(mappingsJSON.toString());
         client.admin().indices().prepareCreate("photon").setSettings(settings.toString(), XContentType.JSON).execute().actionGet();
-        ;
         client.admin().indices().preparePutMapping("photon").setType("place").setSource(mappingsJSON.toString(), XContentType.JSON).execute().actionGet();
         log.info("mapping created: " + mappingsJSON.toString());
     }

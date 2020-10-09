@@ -33,10 +33,12 @@ public class CustomImporter implements de.komoot.photon.Importer {
         try {
             this.bulkRequest.add(this.esClient.prepareIndex(indexName, indexType).
                     setSource(Utils.convert(doc, languages)).setId(doc.getUid()));
+
+            // FIXME - Remove this code (this is a document with problem which is added for debug)
             if (doc.getPlaceId() == 112500) {
                 System.out.println(Strings.toString(Utils.convert(doc, languages)));
-                System.out.println(Utils.convert(doc, languages));
             }
+
         } catch (IOException e) {
             log.error("could not bulk add document " + doc.getUid(), e);
             return;
@@ -52,12 +54,17 @@ public class CustomImporter implements de.komoot.photon.Importer {
 
         BulkResponse bulkResponse = bulkRequest.execute().actionGet();
         if (bulkResponse.hasFailures()) {
-            for(BulkItemResponse r : bulkResponse.getItems()) {
+            log.error("error while bulk import:" + bulkResponse.buildFailureMessage());
+        }
+
+        if (true) {
+            for (BulkItemResponse r : bulkResponse.getItems()) {
                 if (r.isFailed()) {
-                    System.out.println("Got Error -> " + r.getResponse().toString());
+                    log.error("Failure - " + r.getFailure());
+                } else if (false) {
+                    log.error("Success - " + r.getResponse());
                 }
             }
-            log.error("error while bulk import:" + bulkResponse.buildFailureMessage());
         }
         this.bulkRequest = this.esClient.prepareBulk();
     }
