@@ -40,7 +40,7 @@ public class CustomServer {
     public CustomServer start() {
         try {
             Settings.Builder sBuilder = Settings.builder();
-            sBuilder.put("cluster.name", "elasticsearch_brew");
+            sBuilder.put("cluster.name", clusterName);
             // sBuilder.put("transport.type", "netty4").put("http.type", "netty4").put("http.enabled", "true");
             esClient = new PreBuiltTransportClient(sBuilder.build())
                     // elasticsearch_brew

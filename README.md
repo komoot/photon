@@ -51,6 +51,10 @@ Now get the latest version of photon from
 
 ```bash
 java -jar photon-*.jar
+    
+OR 
+
+java -jar target/photon-0.3.4.jar -nominatim-import -host localhost -port 5432 -database nominatim -user nominatim -password pass -languages es,fr,en -cluster elasticsearch_brew
 ```
 
 Use the `-data-dir` option to point to the parent directory of `photon_data` if that directory is not in the default location `./photon_data`. Before you can send requests to photon, ElasticSearch needs to load some data into memory so be patient for a few seconds.
