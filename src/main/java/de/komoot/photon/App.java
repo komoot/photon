@@ -52,6 +52,10 @@ public class App {
         try {
             Client esClient = esServer.getClient();
 
+            log.info("Make sure that the ES cluster is ready, this might take some time.");
+            esClient.admin().cluster().prepareHealth().setWaitForGreenStatus().get();
+            log.info("ES cluster is now ready.");
+
             if (args.isRecreateIndex()) {
                 shutdownES = true;
                 startRecreatingIndex(esServer);
@@ -66,9 +70,6 @@ public class App {
 
             if (args.isNominatimUpdate()) {
                 shutdownES = true;
-                log.info("Ensuring that the cluster is ready, this might take some time.");
-                // inspired by https://stackoverflow.com/a/50316299
-                esClient.admin().cluster().prepareHealth().setWaitForGreenStatus().execute().actionGet();
                 final NominatimUpdater nominatimUpdater = setupNominatimUpdater(args, esClient);
                 nominatimUpdater.update();
                 return;
