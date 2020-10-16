@@ -12,6 +12,7 @@
 					"lowercase",
 					"german_normalization",
 					"asciifolding",
+					"photon_hyphenation_decompounder",
 					"unique"
 				]
 			},
@@ -23,6 +24,7 @@
 				"filter": [
 					"lowercase",
 					"german_normalization",
+					"photon_hyphenation_decompounder",
 					"asciifolding"
 				]
 			},
@@ -34,6 +36,7 @@
 					"word_delimiter",
 					"lowercase",
 					"german_normalization",
+					"photon_hyphenation_decompounder",
 					"asciifolding",
 					"unique"
 				],
@@ -47,6 +50,7 @@
 					"word_delimiter",
 					"lowercase",
 					"german_normalization",
+					"photon_hyphenation_decompounder",
 					"asciifolding",
 					"unique"
 				],
@@ -91,9 +95,14 @@
 				"min": "2",
 				"type": "length"
 			},
-			"preserving_word_delimiter": { 
+			"preserving_word_delimiter": {
 				"type": "word_delimiter",
 				"preserve_original": "true"
+			},
+			"photon_hyphenation_decompounder": {
+				"type" : "photon_hyphenation_decompounder",
+				"hyphenation_patterns_path": "analysis/hyphenation_patterns.xml",
+				"min_word_size": 6
 			}
 		}
 	}
