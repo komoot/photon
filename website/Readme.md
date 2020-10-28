@@ -1,4 +1,4 @@
-## Website for photon.komoot.de
+## Website for photon.komoot.io
 
 This directory contains the website for photon's home page.
 
