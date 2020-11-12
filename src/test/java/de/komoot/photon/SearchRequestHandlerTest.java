@@ -7,7 +7,6 @@ import de.komoot.photon.searcher.PhotonRequestHandlerFactory;
 import de.komoot.photon.searcher.SimplePhotonRequestHandler;
 import de.komoot.photon.utils.ConvertToGeoJson;
 import org.elasticsearch.client.Client;
-import org.hamcrest.core.IsEqual;
 import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Test;
@@ -30,8 +29,7 @@ public class SearchRequestHandlerTest {
         PhotonRequestFactory photonRequestFactory = ReflectionTestUtil.getFieldValue(searchRequestHandler, searchRequestHandler.getClass(), "photonRequestFactory");
         Object languageResolver = ReflectionTestUtil.getFieldValue(photonRequestFactory, photonRequestFactory.getClass(), "languageResolver");
         List<String> supportedLanguages = ReflectionTestUtil.getFieldValue(languageResolver, languageResolver.getClass(), "supportedLanguages");
-        List<String> supportedLanguagesExpected = ImmutableList.of("en", "fr");
-        Assert.assertThat(supportedLanguages, IsEqual.equalTo(supportedLanguagesExpected));
+        Assert.assertEquals(ImmutableList.of("en", "fr"), supportedLanguages);
     }
 
     @Test
@@ -60,6 +58,7 @@ public class SearchRequestHandlerTest {
         String expectedResultString = "{\"test\":\"success\"}";
         Mockito.when(mockConvertToGeoJson.doForward(Mockito.any(ArrayList.class))).thenReturn(new JSONObject(expectedResultString));
         String finalResult = searchRequestHandlerUnderTest.handle(mockWebRequest, Mockito.mock(Response.class));
-        Assert.assertThat(finalResult, IsEqual.equalTo(expectedResultString));
+
+        Assert.assertEquals(expectedResultString, finalResult);
     }
 }
