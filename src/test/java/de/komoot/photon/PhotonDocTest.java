@@ -2,8 +2,6 @@ package de.komoot.photon;
 
 import java.util.HashMap;
 
-import com.neovisionaries.i18n.CountryCode;
-import org.hamcrest.core.IsEqual;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -20,7 +18,7 @@ public class PhotonDocTest {
         doc.setStreet(streetNames);
         
         doc.completeFromAddress();
-        Assert.assertThat(doc.getStreet().get("name"), IsEqual.equalTo("test street"));    
+        Assert.assertEquals("test street", doc.getStreet().get("name"));
     }
 
     @Test
@@ -30,7 +28,7 @@ public class PhotonDocTest {
         PhotonDoc doc = createPhotonDocWithAddress(address);
         
         doc.completeFromAddress();
-        Assert.assertThat(doc.getStreet().get("name"), IsEqual.equalTo("test street"));    
+        Assert.assertEquals("test street", doc.getStreet().get("name"));
     }
 
     @Test
