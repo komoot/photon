@@ -5,7 +5,6 @@ import de.komoot.photon.query.PhotonRequest;
 import de.komoot.photon.query.PhotonRequestFactory;
 import de.komoot.photon.searcher.BaseElasticsearchSearcher;
 import de.komoot.photon.searcher.PhotonRequestHandler;
-import de.komoot.photon.searcher.PhotonRequestHandlerFactory;
 import de.komoot.photon.utils.ConvertToGeoJson;
 import org.elasticsearch.client.Client;
 import org.json.JSONObject;
@@ -21,11 +20,11 @@ import static spark.Spark.halt;
 /**
  * Created by Sachin Dole on 2/12/2015.
  */
-public class SearchRequestHandler<R extends PhotonRequest> extends RouteImpl {
+public class SearchRequestHandler extends RouteImpl {
     private static final String DEBUG_PARAMETER = "debug";
     
     private final PhotonRequestFactory photonRequestFactory;
-    private final PhotonRequestHandlerFactory requestHandlerFactory;
+    private final PhotonRequestHandler requestHandler;
     private final ConvertToGeoJson geoJsonConverter;
 
     SearchRequestHandler(String path, Client esNodeClient, String languages, String defaultLanguage) {
@@ -33,12 +32,12 @@ public class SearchRequestHandler<R extends PhotonRequest> extends RouteImpl {
         List<String> supportedLanguages = Arrays.asList(languages.split(","));
         this.photonRequestFactory = new PhotonRequestFactory(supportedLanguages, defaultLanguage);
         this.geoJsonConverter = new ConvertToGeoJson();
-        this.requestHandlerFactory = new PhotonRequestHandlerFactory(new BaseElasticsearchSearcher(esNodeClient));
+        this.requestHandler = new PhotonRequestHandler(new BaseElasticsearchSearcher(esNodeClient));
     }
 
     @Override
     public String handle(Request request, Response response) {
-        R photonRequest = null;
+        PhotonRequest photonRequest = null;
         try {
             photonRequest = photonRequestFactory.create(request);
         } catch (BadRequestException e) {
@@ -46,12 +45,11 @@ public class SearchRequestHandler<R extends PhotonRequest> extends RouteImpl {
             json.put("message", e.getMessage());
             halt(e.getHttpStatus(), json.toString());
         }
-        PhotonRequestHandler<R> handler = requestHandlerFactory.createHandler(photonRequest);
-        List<JSONObject> results = handler.handle(photonRequest);
+        List<JSONObject> results = requestHandler.handle(photonRequest);
         JSONObject geoJsonResults = geoJsonConverter.convert(results);
         if (request.queryParams(DEBUG_PARAMETER) != null) {
             JSONObject debug = new JSONObject();
-            debug.put("query", new JSONObject(handler.dumpQuery(photonRequest)));
+            debug.put("query", new JSONObject(requestHandler.dumpQuery(photonRequest)));
             geoJsonResults.put(DEBUG_PARAMETER, debug);
             return geoJsonResults.toString(4);
         }

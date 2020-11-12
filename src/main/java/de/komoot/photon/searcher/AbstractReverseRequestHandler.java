@@ -33,7 +33,7 @@ public abstract class AbstractReverseRequestHandler<R extends ReverseRequest> im
 
     /**
      * Given a {@link PhotonRequest photon request}, build a {@link TagFilterQueryBuilder photon specific query builder} that can be used in the {@link
-     * AbstractPhotonRequestHandler#handle handle} method to execute the search.
+     * AbstractReverseRequestHandler#handle handle} method to execute the search.
      */
     abstract TagFilterQueryBuilder buildQuery(R photonRequest);
 }
