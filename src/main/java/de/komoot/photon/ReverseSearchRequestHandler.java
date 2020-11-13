@@ -5,7 +5,6 @@ import de.komoot.photon.query.ReverseRequest;
 import de.komoot.photon.query.ReverseRequestFactory;
 import de.komoot.photon.searcher.ReverseElasticsearchSearcher;
 import de.komoot.photon.searcher.ReverseRequestHandler;
-import de.komoot.photon.searcher.ReverseRequestHandlerFactory;
 import de.komoot.photon.utils.ConvertToGeoJson;
 import org.elasticsearch.client.Client;
 import org.json.JSONObject;
@@ -21,9 +20,9 @@ import static spark.Spark.halt;
 /**
  * @author svantulden
  */
-public class ReverseSearchRequestHandler<R extends ReverseRequest> extends RouteImpl {
+public class ReverseSearchRequestHandler extends RouteImpl {
     private final ReverseRequestFactory reverseRequestFactory;
-    private final ReverseRequestHandlerFactory requestHandlerFactory;
+    private final ReverseRequestHandler requestHandler;
     private final ConvertToGeoJson geoJsonConverter;
 
     ReverseSearchRequestHandler(String path, Client esNodeClient, String languages, String defaultLanguage) {
@@ -31,12 +30,12 @@ public class ReverseSearchRequestHandler<R extends ReverseRequest> extends Route
         List<String> supportedLanguages = Arrays.asList(languages.split(","));
         this.reverseRequestFactory = new ReverseRequestFactory(supportedLanguages, defaultLanguage);
         this.geoJsonConverter = new ConvertToGeoJson();
-        this.requestHandlerFactory = new ReverseRequestHandlerFactory(new ReverseElasticsearchSearcher(esNodeClient));
+        this.requestHandler = new ReverseRequestHandler(new ReverseElasticsearchSearcher(esNodeClient));
     }
 
     @Override
     public String handle(Request request, Response response) {
-        R photonRequest = null;
+        ReverseRequest photonRequest = null;
         try {
             photonRequest = reverseRequestFactory.create(request);
         } catch (BadRequestException e) {
@@ -44,8 +43,7 @@ public class ReverseSearchRequestHandler<R extends ReverseRequest> extends Route
             json.put("message", e.getMessage());
             halt(e.getHttpStatus(), json.toString());
         }
-        ReverseRequestHandler<R> handler = requestHandlerFactory.createHandler(photonRequest);
-        List<JSONObject> results = handler.handle(photonRequest);
+        List<JSONObject> results = requestHandler.handle(photonRequest);
         JSONObject geoJsonResults = geoJsonConverter.convert(results);
         if (request.queryParams("debug") != null)
             return geoJsonResults.toString(4);
