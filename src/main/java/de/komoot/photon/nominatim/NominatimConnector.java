@@ -124,6 +124,7 @@ class NominatimResult {
  */
 @Slf4j
 public class NominatimConnector {
+    private final DBUtils dbutils = new DBUtils();
     private final JdbcTemplate template;
     private Map<String, Map<String, String>> countryNames;
     /**
@@ -132,7 +133,7 @@ public class NominatimConnector {
     private final RowMapper<NominatimResult> osmlineRowMapper = new RowMapper<NominatimResult>() {
         @Override
         public NominatimResult mapRow(ResultSet rs, int rownum) throws SQLException {
-            Geometry geometry = DBUtils.extractGeometry(rs, "linegeo");
+            Geometry geometry = dbutils.extractGeometry(rs, "linegeo");
 
             PhotonDoc doc = new PhotonDoc(
                     rs.getLong("place_id"),
@@ -175,7 +176,7 @@ public class NominatimConnector {
                 importance = 0.75 - rankSearch / 40d;
             }
 
-            Geometry geometry = DBUtils.extractGeometry(rs, "bbox");
+            Geometry geometry = dbutils.extractGeometry(rs, "bbox");
             Envelope envelope = geometry != null ? geometry.getEnvelopeInternal() : null;
 
             PhotonDoc doc = new PhotonDoc(
@@ -184,15 +185,15 @@ public class NominatimConnector {
                     rs.getLong("osm_id"),
                     rs.getString("class"),
                     rs.getString("type"),
-                    DBUtils.getMap(rs, "name"),
+                    dbutils.getMap(rs, "name"),
                     (String) null,
-                    DBUtils.getMap(rs, "address"),
-                    DBUtils.getMap(rs, "extratags"),
+                    dbutils.getMap(rs, "address"),
+                    dbutils.getMap(rs, "extratags"),
                     envelope,
                     rs.getLong("parent_place_id"),
                     importance,
                     rs.getString("country_code"),
-                    (Point) DBUtils.extractGeometry(rs, "centroid"),
+                    (Point) dbutils.extractGeometry(rs, "centroid"),
                     rs.getLong("linked_place_id"),
                     rs.getInt("rank_address")
             );
@@ -217,7 +218,7 @@ public class NominatimConnector {
             template.query("SELECT country_code, name FROM country_name;", new RowCallbackHandler() {
                         @Override
                         public void processRow(ResultSet rs) throws SQLException {
-                            countryNames.put(rs.getString("country_code"), DBUtils.getMap(rs, "name"));
+                            countryNames.put(rs.getString("country_code"), dbutils.getMap(rs, "name"));
                         }
                     }
             );
@@ -273,7 +274,7 @@ public class NominatimConnector {
             public AddressRow mapRow(ResultSet rs, int rowNum) throws SQLException {
                 return new AddressRow(
                         rs.getLong("place_id"),
-                        DBUtils.getMap(rs, "name"),
+                        dbutils.getMap(rs, "name"),
                         rs.getString("class"),
                         rs.getString("type"),
                         rs.getInt("rank_address")
