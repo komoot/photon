@@ -8,7 +8,6 @@ import org.json.JSONObject;
 import org.junit.Assert;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 

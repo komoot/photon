@@ -1,7 +1,6 @@
 package de.komoot.photon.nominatim.testdb;
 
 import com.vividsolutions.jts.io.ParseException;
-import com.vividsolutions.jts.io.WKTReader;
 import de.komoot.photon.Importer;
 import de.komoot.photon.PhotonDoc;
 import lombok.extern.slf4j.Slf4j;

@@ -28,8 +28,6 @@ import java.util.Map;
 
 @Slf4j
 public class NominatimConnectorDBTest {
-    private AutoCloseable closeable;
-
     DBUtils h2dbutils;
 
     private EmbeddedDatabase db;
