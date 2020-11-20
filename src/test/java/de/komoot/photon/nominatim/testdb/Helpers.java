@@ -6,6 +6,11 @@ import org.springframework.lang.Nullable;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * Helper functions used by H2 test database.
+ *
+ * See test-schema.sql for how they are used.
+ */
 public class Helpers {
 
     public static Geometry envelope(Geometry geom) {
