@@ -1,18 +1,17 @@
 package de.komoot.photon.nominatim;
 
-import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKTReader;
+import de.komoot.photon.PhotonDoc;
 import de.komoot.photon.ReflectionTestUtil;
 import de.komoot.photon.nominatim.testdb.CollectingImporter;
 import de.komoot.photon.nominatim.testdb.PlacexTestRow;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.*;
+import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -100,7 +99,7 @@ public class NominatimConnectorDBTest {
 
     @Test
     public void testSimpleNodeImport() throws SQLException, ParseException {
-        PlacexTestRow place = new PlacexTestRow("amenity", "cafe").name("name", "Spot").add(jdbc);
+        PlacexTestRow place = new PlacexTestRow("amenity", "cafe").name("Spot").add(jdbc);
         connector.readEntireDatabase();
 
         Assert.assertEquals(1, importer.size());
@@ -109,9 +108,9 @@ public class NominatimConnectorDBTest {
 
     @Test
     public void testImportForSelectedCountries() throws SQLException, ParseException {
-        PlacexTestRow place = new PlacexTestRow("amenity", "cafe").name("name", "SpotHU").country("hu").add(jdbc);
-        new PlacexTestRow("amenity", "cafe").name("name", "SpotDE").country("de").add(jdbc);
-        new PlacexTestRow("amenity", "cafe").name("name", "SpotUS").country("us").add(jdbc);
+        PlacexTestRow place = new PlacexTestRow("amenity", "cafe").name("SpotHU").country("hu").add(jdbc);
+        new PlacexTestRow("amenity", "cafe").name("SpotDE").country("de").add(jdbc);
+        new PlacexTestRow("amenity", "cafe").name("SpotUS").country("us").add(jdbc);
         connector.readEntireDatabase("uk", "hu", "nl");
 
         Assert.assertEquals(1, importer.size());
@@ -119,13 +118,62 @@ public class NominatimConnectorDBTest {
     }
 
      @Test
-    public void testImportance() throws SQLException, ParseException {
-         PlacexTestRow place1 = new PlacexTestRow("amenity", "cafe").name("name", "Spot").rankSearch(10).add(jdbc);
-         PlacexTestRow place2 = new PlacexTestRow("amenity", "cafe").name("name", "Spot").importance(0.3).add(jdbc);
+    public void testImportance() throws SQLException {
+         PlacexTestRow place1 = new PlacexTestRow("amenity", "cafe").name("Spot").rankSearch(10).add(jdbc);
+         PlacexTestRow place2 = new PlacexTestRow("amenity", "cafe").name("Spot").importance(0.3).add(jdbc);
 
          connector.readEntireDatabase();
 
          Assert.assertEquals(0.5, importer.get(place1.getPlaceId()).getImportance(), 0.00001);
          Assert.assertEquals(0.3, importer.get(place2.getPlaceId()).getImportance(), 0.00001);
      }
+
+     @Test
+    public void testPlaceAddress() throws SQLException, ParseException {
+        PlacexTestRow place = new PlacexTestRow("highway", "residential").name("Burg").rankAddress(26).rankSearch(26).add(jdbc);
+
+        place.addAddresslines(jdbc,
+                new PlacexTestRow("place", "neighbourhood").name("Le Coin").rankAddress(24).add(jdbc),
+                new PlacexTestRow("place", "suburb").name("Crampton").rankAddress(20).add(jdbc),
+                new PlacexTestRow("place", "city").name("Grand Junction").rankAddress(16).add(jdbc),
+                new PlacexTestRow("place", "county").name("Lost County").rankAddress(12).add(jdbc),
+                new PlacexTestRow("place", "state").name("Le Havre").rankAddress(8).add(jdbc));
+
+        connector.readEntireDatabase();
+
+        Assert.assertEquals(6, importer.size());
+        importer.assertContains(place);
+
+        PhotonDoc doc = importer.get(place);
+
+        Assert.assertEquals("Le Coin", doc.getLocality().get("name"));
+        Assert.assertEquals("Crampton", doc.getDistrict().get("name"));
+        Assert.assertEquals("Grand Junction", doc.getCity().get("name"));
+        Assert.assertEquals("Lost County", doc.getCounty().get("name"));
+        Assert.assertEquals("Le Havre", doc.getState().get("name"));
+    }
+
+    @Test
+    public void testPoiAddress() throws SQLException, ParseException {
+        PlacexTestRow parent = new PlacexTestRow("highway", "residential").name("Burg").rankAddress(26).rankSearch(26).add(jdbc);
+
+        parent.addAddresslines(jdbc,
+                new PlacexTestRow("place", "city").name("Grand Junction").rankAddress(16).add(jdbc));
+
+        PlacexTestRow place = new PlacexTestRow("place", "house").name("House").parent(parent).add(jdbc);
+
+        connector.readEntireDatabase();
+
+        Assert.assertEquals(3, importer.size());
+        importer.assertContains(place);
+
+        PhotonDoc doc = importer.get(place);
+
+        Assert.assertEquals("Burg", doc.getStreet().get("name"));
+        Assert.assertNull(doc.getLocality());
+        Assert.assertNull(doc.getDistrict());
+        Assert.assertEquals("Grand Junction", doc.getCity().get("name"));
+        Assert.assertNull(doc.getCounty());
+        Assert.assertNull(doc.getState());
+    }
 }

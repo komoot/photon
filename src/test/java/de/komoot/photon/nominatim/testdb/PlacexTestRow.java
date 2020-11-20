@@ -15,6 +15,7 @@ public class PlacexTestRow {
     private static final WKTReader wkt = new WKTReader();
 
     private Long placeId;
+    private Long parentPlaceId;
     private String osmType = "N";
     private Long osmId;
     private String key;
@@ -32,6 +33,10 @@ public class PlacexTestRow {
         this.value = value;
         osmId = placeId;
         centroid = "POINT (1.0 34.0)";
+    }
+
+    public PlacexTestRow name(String name) {
+        return name("name", name);
     }
 
     public PlacexTestRow name(String key, String name) {
@@ -59,7 +64,17 @@ public class PlacexTestRow {
         return this;
     }
 
-    private static String asJson(Map<String, String> map) {
+    public PlacexTestRow rankAddress(int rank) {
+        this.rankAddress = rank;
+        return this;
+    }
+
+    public  PlacexTestRow parent(PlacexTestRow row) {
+        this.parentPlaceId = row.getPlaceId();
+        return this;
+    }
+
+   private static String asJson(Map<String, String> map) {
         if (map == null) {
             return null;
         }
@@ -70,12 +85,20 @@ public class PlacexTestRow {
     }
 
     public PlacexTestRow add(JdbcTemplate jdbc) {
-        jdbc.update("INSERT INTO placex (place_id, osm_type, osm_id, class, type, rank_search, rank_address,"
+        jdbc.update("INSERT INTO placex (place_id, parent_place_id, osm_type, osm_id, class, type, rank_search, rank_address,"
                                          + " centroid, name, country_code, importance)"
-                   + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ? FORMAT JSON, ?, ?)",
-                placeId, osmType, osmId, key, value, rankSearch, rankAddress, centroid, asJson(names), countryCode,
-                importance);
+                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ? FORMAT JSON, ?, ?)",
+                    placeId, parentPlaceId, osmType, osmId, key, value, rankSearch, rankAddress, centroid,
+                    asJson(names), countryCode, importance);
 
         return this;
+    }
+
+    public void addAddresslines(JdbcTemplate jdbc, PlacexTestRow... rows) {
+        for (PlacexTestRow row : rows) {
+            jdbc.update("INSERT INTO place_addressline (place_id, address_place_id, cached_rank_address, isaddress)"
+                        + "VALUES(?, ?, ?, true)",
+                        placeId, row.getPlaceId(), row.getRankAddress());
+        }
     }
 }

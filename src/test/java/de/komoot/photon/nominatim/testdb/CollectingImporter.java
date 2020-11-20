@@ -30,6 +30,10 @@ public class CollectingImporter implements Importer {
 
     public int size() { return docs.size(); }
 
+    public PhotonDoc get(PlacexTestRow row) {
+        return get(row.getPlaceId());
+    }
+
     public PhotonDoc get(long placeId) {
         for (PhotonDoc doc : docs) {
             if (doc.getPlaceId() == placeId) {
