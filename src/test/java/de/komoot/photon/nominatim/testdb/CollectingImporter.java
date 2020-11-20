@@ -4,11 +4,13 @@ import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKTReader;
 import de.komoot.photon.Importer;
 import de.komoot.photon.PhotonDoc;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 public class CollectingImporter implements Importer {
     private List<PhotonDoc> docs = new ArrayList<>();
     private int finishCalled = 0;
@@ -48,7 +50,8 @@ public class CollectingImporter implements Importer {
     public void assertContains(PlacexTestRow row) throws ParseException {
         PhotonDoc doc = null;
         for (PhotonDoc outdoc : docs) {
-            if (outdoc.getPlaceId() == row.getPlaceId()) {
+            if (outdoc.getPlaceId() == row.getPlaceId()
+                && (row.getHousenumber() == null || row.getHousenumber().equals(outdoc.getHouseNumber()))) {
                 Assert.assertNull("Row is contained multiple times", doc);
                 doc = outdoc;
             }
@@ -56,12 +59,6 @@ public class CollectingImporter implements Importer {
 
         Assert.assertNotNull("Row not found", doc);
 
-        Assert.assertEquals(row.getOsmType(), doc.getOsmType());
-        Assert.assertEquals(row.getOsmId(), (Long) doc.getOsmId());
-        Assert.assertEquals(row.getKey(), doc.getTagKey());
-        Assert.assertEquals(row.getValue(), doc.getTagValue());
-        Assert.assertEquals(row.getRankAddress(), (Integer) doc.getRankAddress());
-        Assert.assertEquals(new WKTReader().read(row.getCentroid()), doc.getCentroid());
-        Assert.assertEquals(row.getNames(), doc.getName());
+        row.assertEquals(doc);
     }
 }

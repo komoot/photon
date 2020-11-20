@@ -5,6 +5,7 @@ import com.vividsolutions.jts.io.WKTReader;
 import de.komoot.photon.PhotonDoc;
 import de.komoot.photon.ReflectionTestUtil;
 import de.komoot.photon.nominatim.testdb.CollectingImporter;
+import de.komoot.photon.nominatim.testdb.OsmlineTestRow;
 import de.komoot.photon.nominatim.testdb.PlacexTestRow;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
@@ -154,7 +155,7 @@ public class NominatimConnectorDBTest {
     }
 
     @Test
-    public void testPoiAddress() throws SQLException, ParseException {
+    public void testPoiAddress() throws ParseException {
         PlacexTestRow parent = new PlacexTestRow("highway", "residential").name("Burg").rankAddress(26).rankSearch(26).add(jdbc);
 
         parent.addAddresslines(jdbc,
@@ -175,5 +176,24 @@ public class NominatimConnectorDBTest {
         Assert.assertEquals("Grand Junction", doc.getCity().get("name"));
         Assert.assertNull(doc.getCounty());
         Assert.assertNull(doc.getState());
+    }
+
+    @Test
+    public void testInterpolationAny() throws SQLException, ParseException {
+        PlacexTestRow street = new PlacexTestRow("highway", "residential").name("La strada").rankAddress(26).rankSearch(26).add(jdbc);
+
+        OsmlineTestRow osmline =
+                new OsmlineTestRow().number(1, 11, "all").parent(street).geom("LINESTRING(0 0, 0 1)").add(jdbc);
+
+        connector.readEntireDatabase();
+
+        Assert.assertEquals(10, importer.size());
+
+        PlacexTestRow expect = new PlacexTestRow("place", "house_number").id(osmline.getPlaceId()).parent(street).osm("W", 23);
+
+        for (int i = 2; i < 11; ++i) {
+            importer.assertContains(expect.housenumber(i).centroid(0, (i - 1)*0.1));
+        }
+
     }
 }
