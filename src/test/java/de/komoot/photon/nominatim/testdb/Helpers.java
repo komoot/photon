@@ -8,7 +8,7 @@ import java.sql.SQLException;
 
 /**
  * Helper functions used by H2 test database.
- *
+ * <p>
  * See test-schema.sql for how they are used.
  */
 public class Helpers {

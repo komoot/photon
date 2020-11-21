@@ -13,9 +13,8 @@ import java.util.Map;
 
 @Getter
 public class PlacexTestRow {
-    private static long place_id_sequence = 10000;
     private static final WKTReader wkt = new WKTReader();
-
+    private static long place_id_sequence = 10000;
     private Long placeId;
     private Long parentPlaceId;
     private String osmType = "N";
@@ -36,6 +35,16 @@ public class PlacexTestRow {
         this.value = value;
         osmId = placeId;
         centroid = "POINT (1.0 34.0)";
+    }
+
+    private static String asJson(Map<String, String> map) {
+        if (map == null) {
+            return null;
+        }
+
+        JSONObject json = new JSONObject(map);
+
+        return json.toString();
     }
 
     public PlacexTestRow id(long pid) {
@@ -60,7 +69,7 @@ public class PlacexTestRow {
     }
 
     public PlacexTestRow centroid(double x, double y) {
-        centroid = "POINT(" + Double.toString(x) + " " + Double.toString(y) + ")";
+        centroid = "POINT(" + x + " " + y + ")";
         return this;
     }
 
@@ -89,27 +98,17 @@ public class PlacexTestRow {
         return this;
     }
 
-    public  PlacexTestRow parent(PlacexTestRow row) {
+    public PlacexTestRow parent(PlacexTestRow row) {
         this.parentPlaceId = row.getPlaceId();
         return this;
     }
 
-   private static String asJson(Map<String, String> map) {
-        if (map == null) {
-            return null;
-        }
-
-        JSONObject json = new JSONObject(map);
-
-        return json.toString();
-    }
-
     public PlacexTestRow add(JdbcTemplate jdbc) {
         jdbc.update("INSERT INTO placex (place_id, parent_place_id, osm_type, osm_id, class, type, rank_search, rank_address,"
-                                         + " centroid, name, country_code, importance, housenumber)"
-                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ? FORMAT JSON, ?, ?, ?)",
-                    placeId, parentPlaceId, osmType, osmId, key, value, rankSearch, rankAddress, centroid,
-                    asJson(names), countryCode, importance, housenumber);
+                        + " centroid, name, country_code, importance, housenumber)"
+                        + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ? FORMAT JSON, ?, ?, ?)",
+                placeId, parentPlaceId, osmType, osmId, key, value, rankSearch, rankAddress, centroid,
+                asJson(names), countryCode, importance, housenumber);
 
         return this;
     }
@@ -117,8 +116,8 @@ public class PlacexTestRow {
     public void addAddresslines(JdbcTemplate jdbc, PlacexTestRow... rows) {
         for (PlacexTestRow row : rows) {
             jdbc.update("INSERT INTO place_addressline (place_id, address_place_id, cached_rank_address, isaddress)"
-                        + "VALUES(?, ?, ?, true)",
-                        placeId, row.getPlaceId(), row.getRankAddress());
+                            + "VALUES(?, ?, ?, true)",
+                    placeId, row.getPlaceId(), row.getRankAddress());
         }
     }
 

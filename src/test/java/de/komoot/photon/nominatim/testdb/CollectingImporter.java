@@ -29,7 +29,9 @@ public class CollectingImporter implements Importer {
         Assert.assertEquals(num, finishCalled);
     }
 
-    public int size() { return docs.size(); }
+    public int size() {
+        return docs.size();
+    }
 
     public PhotonDoc get(PlacexTestRow row) {
         return get(row.getPlaceId());
@@ -50,7 +52,7 @@ public class CollectingImporter implements Importer {
         PhotonDoc doc = null;
         for (PhotonDoc outdoc : docs) {
             if (outdoc.getPlaceId() == row.getPlaceId()
-                && (row.getHousenumber() == null || row.getHousenumber().equals(outdoc.getHouseNumber()))) {
+                    && (row.getHousenumber() == null || row.getHousenumber().equals(outdoc.getHouseNumber()))) {
                 Assert.assertNull("Row is contained multiple times", doc);
                 doc = outdoc;
             }

@@ -45,7 +45,6 @@ public class NominatimConnectorDBTest {
                 .build();
 
 
-
         connector = new NominatimConnector(null, 0, null, null, null);
         importer = new CollectingImporter();
         connector.setImporter(importer);
@@ -86,7 +85,6 @@ public class NominatimConnectorDBTest {
                     }
                 }
 
-
                 return out;
             }
         });
@@ -116,18 +114,18 @@ public class NominatimConnectorDBTest {
         importer.assertContains(place);
     }
 
-     @Test
+    @Test
     public void testImportance() throws SQLException {
-         PlacexTestRow place1 = new PlacexTestRow("amenity", "cafe").name("Spot").rankSearch(10).add(jdbc);
-         PlacexTestRow place2 = new PlacexTestRow("amenity", "cafe").name("Spot").importance(0.3).add(jdbc);
+        PlacexTestRow place1 = new PlacexTestRow("amenity", "cafe").name("Spot").rankSearch(10).add(jdbc);
+        PlacexTestRow place2 = new PlacexTestRow("amenity", "cafe").name("Spot").importance(0.3).add(jdbc);
 
-         connector.readEntireDatabase();
+        connector.readEntireDatabase();
 
-         Assert.assertEquals(0.5, importer.get(place1.getPlaceId()).getImportance(), 0.00001);
-         Assert.assertEquals(0.3, importer.get(place2.getPlaceId()).getImportance(), 0.00001);
-     }
+        Assert.assertEquals(0.5, importer.get(place1.getPlaceId()).getImportance(), 0.00001);
+        Assert.assertEquals(0.3, importer.get(place2.getPlaceId()).getImportance(), 0.00001);
+    }
 
-     @Test
+    @Test
     public void testPlaceAddress() throws SQLException, ParseException {
         PlacexTestRow place = new PlacexTestRow("highway", "residential").name("Burg").rankAddress(26).rankSearch(26).add(jdbc);
 
@@ -190,7 +188,7 @@ public class NominatimConnectorDBTest {
         PlacexTestRow expect = new PlacexTestRow("place", "house_number").id(osmline.getPlaceId()).parent(street).osm("W", 23);
 
         for (int i = 2; i < 11; ++i) {
-            importer.assertContains(expect.housenumber(i).centroid(0, (i - 1)*0.1));
+            importer.assertContains(expect.housenumber(i).centroid(0, (i - 1) * 0.1));
         }
 
     }
