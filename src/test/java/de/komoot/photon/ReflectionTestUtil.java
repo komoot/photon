@@ -29,9 +29,9 @@ public class ReflectionTestUtil {
             path.setAccessible(true);
             path.set(anObject, value);
         } catch (IllegalAccessException e) {
-            throw new RuntimeException("unable to get value of field", e);
+            throw new RuntimeException("unable to get value of field (illegal)", e);
         } catch (NoSuchFieldException e) {
-            throw new RuntimeException("unable to get value of field", e);
+            throw new RuntimeException("unable to get value of field (missing)", e);
         }
     }
 
