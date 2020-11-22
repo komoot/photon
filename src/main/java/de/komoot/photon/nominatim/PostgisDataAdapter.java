@@ -14,7 +14,9 @@ import java.util.Map;
  *
  * @author christoph
  */
-public class DBUtils {
+public class PostgisDataAdapter implements DBDataAdapter {
+
+    @Override
     public Map<String, String> getMap(ResultSet rs, String columnName) throws SQLException {
         Map<String, String> map = (Map<String, String>) rs.getObject(columnName);
         if (map == null) {
@@ -25,12 +27,13 @@ public class DBUtils {
     }
 
     @Nullable
-    public <T extends Geometry> T extractGeometry(ResultSet rs, String columnName) throws SQLException {
+    @Override
+    public Geometry extractGeometry(ResultSet rs, String columnName) throws SQLException {
         JtsGeometry geom = (JtsGeometry) rs.getObject(columnName);
         if (geom == null) {
             //info("no geometry found in column " + columnName);
             return null;
         }
-        return (T) geom.getGeometry();
+        return geom.getGeometry();
     }
 }
