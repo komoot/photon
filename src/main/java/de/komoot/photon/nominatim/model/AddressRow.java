@@ -24,33 +24,7 @@ public class AddressRow {
         return AddressType.fromRank(rankAddress);
     }
 
-    /**
-     * @return whether nominatim thinks this place is a street
-     */
-    public boolean isStreet() {
-        return AddressType.STREET.coversRank(rankAddress);
-    }
-
-    /**
-     * @return whether nominatim thinks this place is a town or city
-     */
-    public boolean isCity() {
-        return AddressType.CITY.coversRank(rankAddress);
-    }
-
-    /**
-     * @return whether nominatim thinks this place is a state
-     */
-    public boolean isState() {
-        return AddressType.STATE.coversRank(rankAddress);
-    }
-
-    public boolean isCountry() {
-        return AddressType.COUNTRY.coversRank(rankAddress);
-    }
-
-
-    public boolean isPostcode() {
+    private boolean isPostcode() {
         if ("place".equals(osmKey) && "postcode".equals(osmValue)) {
             return true;
         }
