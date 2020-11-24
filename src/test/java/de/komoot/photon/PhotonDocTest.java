@@ -2,6 +2,7 @@ package de.komoot.photon;
 
 import java.util.HashMap;
 
+import de.komoot.photon.nominatim.model.AddressType;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -15,10 +16,10 @@ public class PhotonDocTest {
         
         HashMap<String, String> streetNames = new HashMap<>();
         streetNames.put("name", "parent place street");
-        doc.setStreet(streetNames);
+        doc.setAddressPartIfNew(AddressType.STREET, streetNames);
         
         doc.completeFromAddress();
-        Assert.assertEquals("test street", doc.getStreet().get("name"));
+        AssertUtil.assertAddressName("test street", doc, AddressType.STREET);
     }
 
     @Test
@@ -28,7 +29,7 @@ public class PhotonDocTest {
         PhotonDoc doc = createPhotonDocWithAddress(address);
         
         doc.completeFromAddress();
-        Assert.assertEquals("test street", doc.getStreet().get("name"));
+        AssertUtil.assertAddressName("test street", doc, AddressType.STREET);
     }
 
     @Test

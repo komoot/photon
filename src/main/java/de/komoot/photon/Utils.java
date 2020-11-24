@@ -5,6 +5,7 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
 import com.neovisionaries.i18n.CountryCode;
 import com.vividsolutions.jts.geom.Envelope;
+import de.komoot.photon.nominatim.model.AddressType;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
 
@@ -23,12 +24,13 @@ public class Utils {
     private static final Joiner commaJoiner = Joiner.on(", ").skipNulls();
 
     public static XContentBuilder convert(PhotonDoc doc, String[] languages) throws IOException {
+        final AddressType atype = doc.getAddressType();
         XContentBuilder builder = XContentFactory.jsonBuilder().startObject()
                 .field(Constants.OSM_ID, doc.getOsmId())
                 .field(Constants.OSM_TYPE, doc.getOsmType())
                 .field(Constants.OSM_KEY, doc.getTagKey())
                 .field(Constants.OSM_VALUE, doc.getTagValue())
-                .field(Constants.OBJECT_TYPE, doc.getObjectType())
+                .field(Constants.OBJECT_TYPE, atype == null ? "locality" : atype.getName())
                 .field(Constants.IMPORTANCE, doc.getImportance());
 
         if (doc.getCentroid() != null) {
@@ -47,16 +49,12 @@ public class Utils {
         }
 
         writeName(builder, doc.getName(), languages);
-        writeIntlNames(builder, doc.getCity(), "city", languages);
-        writeIntlNames(builder, doc.getCountry(), "country", languages);
+        for (Map.Entry<AddressType, Map<String, String>> entry : doc.getAddressParts().entrySet()) {
+            writeIntlNames(builder, entry.getValue(), entry.getKey().getName(), languages);
+        }
         CountryCode countryCode = doc.getCountryCode();
         if (countryCode != null)
             builder.field(Constants.COUNTRYCODE, countryCode.getAlpha2());
-        writeIntlNames(builder, doc.getState(), "state", languages);
-        writeIntlNames(builder, doc.getStreet(), "street", languages);
-        writeIntlNames(builder, doc.getLocality(), "locality", languages);
-        writeIntlNames(builder, doc.getDistrict(), "district", languages);
-        writeIntlNames(builder, doc.getCounty(), "county", languages);
         writeContext(builder, doc.getContext(), languages);
         writeExtent(builder, doc.getBbox());
 

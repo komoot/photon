@@ -37,6 +37,10 @@ public class PlacexTestRow {
         centroid = "POINT (1.0 34.0)";
     }
 
+    public static PlacexTestRow make_street(String name) {
+        return new PlacexTestRow("highway", "residential").name(name).rankAddress(26).rankSearch(26);
+    }
+
     private static String asJson(Map<String, String> map) {
         if (map == null) {
             return null;

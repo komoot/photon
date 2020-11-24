@@ -13,54 +13,40 @@ import java.util.Map;
  */
 @Data
 public class AddressRow {
-    final private long placeId;
-    final private Map<String, String> name;
-    final private String osmKey;
-    final private String osmValue;
-    final private int rankAddress;
+    private static final String[] USEFUL_CONTEXT_KEYS = new String[]{"boundary", "landuse", "place"}; // must be in alphabetic order to speed up lookup
+    private final long placeId;
+    private final Map<String, String> name;
+    private final String osmKey;
+    private final String osmValue;
+    private final int rankAddress;
 
-    static private final String[] USEFUL_CONTEXT_KEYS = new String[]{"boundary", "landuse", "place"}; // must be in alphabetic order to speed up lookup
+    public AddressType getAddressType() {
+        return AddressType.fromRank(rankAddress);
+    }
 
     /**
      * @return whether nominatim thinks this place is a street
      */
     public boolean isStreet() {
-        return 26 <= rankAddress && rankAddress < 28;
-    }
-
-    /**
-     * @return whether nominatim thinks this place is a locality (=neighbourhood)
-     */
-    public boolean isLocality() {
-        return 22 <= rankAddress && rankAddress < 26;
-    }
-
-    /**
-     * @return whether nominatim thinks this place is a district (=suburb)
-     */
-    public boolean isDistrict() {
-        return 17 <= rankAddress && rankAddress < 22;
+        return AddressType.STREET.coversRank(rankAddress);
     }
 
     /**
      * @return whether nominatim thinks this place is a town or city
      */
     public boolean isCity() {
-        return 13 <= rankAddress && rankAddress < 17;
+        return AddressType.CITY.coversRank(rankAddress);
     }
-
-    /**
-     * @return whether nominatim thinks this place is a county
-     */
-    public boolean isCounty() { return 10 <= rankAddress && rankAddress < 13; }
 
     /**
      * @return whether nominatim thinks this place is a state
      */
-    public boolean isState() { return 5 <= rankAddress && rankAddress < 10; }
+    public boolean isState() {
+        return AddressType.STATE.coversRank(rankAddress);
+    }
 
     public boolean isCountry() {
-        return (rankAddress == 4 && "boundary".equals(osmKey) && "administrative".equals(osmValue));
+        return AddressType.COUNTRY.coversRank(rankAddress);
     }
 
 
@@ -69,32 +55,11 @@ public class AddressRow {
             return true;
         }
 
-        if ("boundary".equals(osmKey) && "postal_code".equals(osmValue)) {
-            return true;
-        }
-
-        return false;
+        return "boundary".equals(osmKey) && "postal_code".equals(osmValue);
     }
 
     public boolean isUsefulForContext() {
-        if (name.isEmpty()) {
-            return false;
-        }
-
-        if (isPostcode()) {
-            return false;
-        }
-
-        if (rankAddress < 4) {
-            // continent, sea, ...
-            return false;
-        }
-
-        if (Arrays.binarySearch(USEFUL_CONTEXT_KEYS, osmKey) >= 0) {
-            return true;
-        }
-
-        return false;
+        return !name.isEmpty() && !isPostcode() && Arrays.binarySearch(USEFUL_CONTEXT_KEYS, osmKey) >= 0;
     }
 
     @Override
