@@ -17,9 +17,6 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
-import java.sql.SQLException;
-import java.util.HashMap;
-
 
 public class NominatimConnectorDBTest {
     private EmbeddedDatabase db;
