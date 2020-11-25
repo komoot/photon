@@ -4,8 +4,8 @@ import com.google.common.collect.ImmutableMap;
 import com.neovisionaries.i18n.CountryCode;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Point;
+import de.komoot.photon.nominatim.model.AddressType;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.*;
@@ -16,7 +16,6 @@ import java.util.*;
  * @author christoph
  */
 @Getter
-@Setter
 @Slf4j
 public class PhotonDoc {
     final private long placeId;
@@ -35,14 +34,8 @@ public class PhotonDoc {
     final private long linkedPlaceId; // 0 if unset
     final private int rankAddress;
 
-    private Map<String, String> street;
-    private Map<String, String> locality;
-    private Map<String, String> district;
-    private Map<String, String> city;
-    private Map<String, String> county; // careful, this is county not count_r_y
-    private Set<Map<String, String>> context = new HashSet<Map<String, String>>();
-    private Map<String, String> country;
-    private Map<String, String> state;
+    private Map<AddressType, Map<String, String>> addressParts = new EnumMap<>(AddressType.class);
+    private Set<Map<String, String>> context = new HashSet<>();
     private String houseNumber;
     private Point centroid;
 
@@ -95,14 +88,8 @@ public class PhotonDoc {
         this.centroid = other.centroid;
         this.linkedPlaceId = other.linkedPlaceId;
         this.rankAddress = other.rankAddress;
-        this.street = other.street;
-        this.locality = other.locality;
-        this.district = other.district;
-        this.city = other.city;
-        this.county= other.county;
+        this.addressParts = other.addressParts;
         this.context = other.context;
-        this.country = other.country;
-        this.state = other.state;
     }
 
     public String getUid() {
@@ -120,19 +107,8 @@ public class PhotonDoc {
                 "", null, null, null, 0, 0, null, null, 0, 0);
     }
 
-    /**
-     * Return the GeocodeJSON place type.
-     *
-     * @return A string representation of the type
-     */
-    public final String getObjectType() {
-        if (rankAddress >= 28) return "house";
-        if (rankAddress >= 26) return "street";
-        if (rankAddress >= 13 && rankAddress <= 16) return "city";
-        if (rankAddress >= 5 && rankAddress <= 12) return "region";
-        if (rankAddress == 4) return "country";
-
-        return "locality";
+    public AddressType getAddressType() {
+        return AddressType.fromRank(rankAddress);
     }
 
     public boolean isUsefulForIndex() {
@@ -153,12 +129,12 @@ public class PhotonDoc {
     public void completeFromAddress() {
         if (address == null) return;
 
-        street = extractAddress(street, "street");
-        city = extractAddress(city, "city");
-        district = extractAddress(district, "suburb");
-        locality = extractAddress(locality, "neighbourhood");
-        county = extractAddress(county, "county");
-        state = extractAddress(state, "state");
+        extractAddress(AddressType.STREET, "street");
+        extractAddress(AddressType.CITY, "city");
+        extractAddress(AddressType.DISTRICT, "suburb");
+        extractAddress(AddressType.LOCALITY, "neighbourhood");
+        extractAddress(AddressType.COUNTY, "county");
+        extractAddress(AddressType.STATE, "state");
 
         String addressPostCode = address.get("postcode");
         if (addressPostCode != null && !addressPostCode.equals(postcode)) {
@@ -173,31 +149,54 @@ public class PhotonDoc {
     /**
      * Extract an address field from an address tag and replace the appropriate address field in the document.
      *
-     * @param existingField The current value of the document's address field.
+     * @param addressType The type of address field to fill.
      * @param addressFieldName The name of the address tag to use (without the 'addr:' prefix).
      *
      * @return 'existingField' potentially with the name field replaced. If existingField was null and
      *         the address field could be found, then a new map with the address as single entry is returned.
      */
-    private Map<String, String> extractAddress(Map<String, String> existingField, String addressFieldName) {
+    private void extractAddress(AddressType addressType, String addressFieldName) {
         String field = address.get(addressFieldName);
 
-        if (field == null) return existingField;
+        if (field != null) {
+            Map<String, String> map = addressParts.computeIfAbsent(addressType, k -> new HashMap<>());
 
-        Map<String, String> map = (existingField == null) ? new HashMap<>() : existingField;
-
-        String existingName = map.get("name");
-        if (!field.equals(existingName)) {
-            if (log.isDebugEnabled()) {
-                log.debug("Replacing " + addressFieldName + " name '" + existingName + "' with '" + field + "' for osmId #" + osmId);
+            String existingName = map.get("name");
+            if (!field.equals(existingName)) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Replacing " + addressFieldName + " name '" + existingName + "' with '" + field + "' for osmId #" + osmId);
+                }
+                // we keep the former name in the context as it might be helpful when looking up typos
+                if (!Objects.isNull(existingName)) {
+                    context.add(ImmutableMap.of("formerName", existingName));
+                }
+                map.put("name", field);
             }
-            // we keep the former name in the context as it might be helpful when looking up typos
-            if(!Objects.isNull(existingName)) {
-                context.add(ImmutableMap.of("formerName", existingName));
-            }
-            map.put("name", field);
         }
+    }
 
-        return map;
+    public void setPostcode(String postcode) {
+        this.postcode = postcode;
+    }
+
+    /**
+     * Set names for the given address part if it is not already set.
+     *
+     * @return True, if the address was inserted.
+     */
+    public boolean setAddressPartIfNew(AddressType addressType, Map<String, String> names) {
+        return addressParts.computeIfAbsent(addressType, k -> names) == names;
+    }
+
+    public void setCountry(Map<String, String> names) {
+        addressParts.put(AddressType.COUNTRY, names);
+    }
+
+    public void setHouseNumber(String houseNumber) {
+        this.houseNumber = houseNumber;
+    }
+
+    public void setCentroid(Point centroid) {
+        this.centroid = centroid;
     }
 }

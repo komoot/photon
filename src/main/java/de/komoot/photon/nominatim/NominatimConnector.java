@@ -9,6 +9,7 @@ import com.vividsolutions.jts.linearref.LengthIndexedLine;
 import de.komoot.photon.Importer;
 import de.komoot.photon.PhotonDoc;
 import de.komoot.photon.nominatim.model.AddressRow;
+import de.komoot.photon.nominatim.model.AddressType;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.postgis.jts.JtsWrapper;
@@ -289,14 +290,25 @@ public class NominatimConnector {
             }
         };
 
-        boolean isPoi = doc.getRankAddress() > 28;
-        long placeId = (isPoi) ? doc.getParentPlaceId() : doc.getPlaceId();
+        AddressType atype = doc.getAddressType();
 
-        List<AddressRow> terms = template.query("SELECT " + selectColsAddress + " FROM placex p, place_addressline pa WHERE p.place_id = pa.address_place_id and pa.place_id = ? and pa.cached_rank_address > 4 and pa.address_place_id != ? and pa.isaddress order by rank_address desc,fromarea desc,distance asc,rank_search desc", new Object[]{placeId, placeId}, rowMapper);
+        if (atype == null || atype == AddressType.COUNTRY) {
+            return Collections.emptyList();
+        }
 
-        if (isPoi) {
+        long placeId = (atype == AddressType.HOUSE) ? doc.getParentPlaceId() : doc.getPlaceId();
+
+        List<AddressRow> terms = template.query("SELECT " + selectColsAddress
+                + " FROM placex p, place_addressline pa"
+                + " WHERE p.place_id = pa.address_place_id and pa.place_id = ?"
+                + " and pa.cached_rank_address > 4 and pa.address_place_id != ? and pa.isaddress"
+                + " ORDER BY rank_address desc, fromarea desc, distance asc, rank_search desc",
+                rowMapper, placeId, placeId);
+
+        if (atype == AddressType.HOUSE) {
             // need to add the term for the parent place ID itself
-            terms.addAll(0, template.query("SELECT " + selectColsAddress + " FROM placex p WHERE p.place_id = ?", new Object[]{placeId}, rowMapper));
+            terms.addAll(0, template.query("SELECT " + selectColsAddress + " FROM placex p WHERE p.place_id = ?",
+                                             rowMapper, placeId));
         }
 
         return terms;
@@ -465,44 +477,15 @@ public class NominatimConnector {
      */
     private void completePlace(PhotonDoc doc) {
         final List<AddressRow> addresses = getAddresses(doc);
+        final AddressType doctype = doc.getAddressType();
         for (AddressRow address : addresses) {
-            if (address.isCity()) {
-                if (doc.getCity() == null) {
-                    doc.setCity(address.getName());
-                } else {
+            AddressType atype = address.getAddressType();
+
+            if (atype != null
+                && (atype == doctype || !doc.setAddressPartIfNew(atype, address.getName()))
+                && address.isUsefulForContext()) {
+                    // no specifically handled item, check if useful for context
                     doc.getContext().add(address.getName());
-                }
-                continue;
-            }
-
-            if (address.isStreet() && doc.getStreet() == null) {
-                doc.setStreet(address.getName());
-                continue;
-            }
-
-            if (address.isLocality() && doc.getLocality() == null) {
-                doc.setLocality(address.getName());
-                continue;
-            }
-
-            if (address.isDistrict() && doc.getDistrict() == null) {
-                doc.setDistrict(address.getName());
-                continue;
-            }
-
-            if (address.isCounty() && doc.getCounty() == null) {
-                doc.setCounty(address.getName());
-                continue;
-            }
-
-            if (address.isState() && doc.getState() == null) {
-                doc.setState(address.getName());
-                continue;
-            }
-
-            // no specifically handled item, check if useful for context
-            if (address.isUsefulForContext()) {
-                doc.getContext().add(address.getName());
             }
         }
         // finally, overwrite gathered information with higher prio
