@@ -11,19 +11,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.postgis.jts.JtsWrapper;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingDeque;
-import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Export nominatim data
@@ -32,8 +27,6 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 @Slf4j
 public class NominatimConnector {
-    private static final PhotonDoc FINAL_DOCUMENT = new PhotonDoc(0, null, 0, null, null, null, null, null, null, null, 0, 0, null, null, 0, 0);
-
     private static final String SELECT_COLS_PLACEX = "SELECT place_id, osm_type, osm_id, class, type, name, housenumber, postcode, address, extratags, ST_Envelope(geometry) AS bbox, parent_place_id, linked_place_id, rank_address, rank_search, importance, country_code, centroid";
     private static final String SELECT_COLS_OSMLINE = "SELECT place_id, osm_id, parent_place_id, startnumber, endnumber, interpolationtype, postcode, country_code, linegeo";
     private static final String SELECT_COLS_ADDRESS = "SELECT p.place_id, p.name, p.class, p.type, p.rank_address";
@@ -159,10 +152,9 @@ public class NominatimConnector {
     private Map<String, String> getCountryNames(String countrycode) {
         if (countryNames == null) {
             countryNames = new HashMap<>();
-            template.query("SELECT country_code, name FROM country_name;", rs -> {
-                        countryNames.put(rs.getString("country_code"), dbutils.getMap(rs, "name"));
-                    }
-            );
+            template.query("SELECT country_code, name FROM country_name", rs -> {
+                countryNames.put(rs.getString("country_code"), dbutils.getMap(rs, "name"));
+            });
         }
 
         return countryNames.get(countrycode);
@@ -175,6 +167,7 @@ public class NominatimConnector {
     public List<PhotonDoc> getByPlaceId(long placeId) {
         NominatimResult result = template.queryForObject(SELECT_COLS_PLACEX + " FROM placex WHERE place_id = ?",
                                                          placeRowMapper, placeId);
+        assert(result != null);
         completePlace(result.getBaseDoc());
         return result.getDocsWithHousenumber();
     }
@@ -183,6 +176,7 @@ public class NominatimConnector {
         NominatimResult result = template.queryForObject(SELECT_COLS_OSMLINE
                                                           + " FROM location_property_osmline WHERE place_id = ?",
                                                           osmlineRowMapper, placeId);
+        assert(result != null);
         completePlace(result.getBaseDoc());
         return result.getDocsWithHousenumber();
     }
@@ -220,30 +214,6 @@ public class NominatimConnector {
         return terms;
     }
 
-    private class ImportThread implements Runnable {
-        private final BlockingQueue<PhotonDoc> documents;
-
-        public ImportThread(BlockingQueue<PhotonDoc> documents) {
-            this.documents = documents;
-        }
-
-        @Override
-        public void run() {
-            while (true) {
-                PhotonDoc doc;
-                try {
-                    doc = documents.take();
-                    if (doc == FINAL_DOCUMENT)
-                        break;
-                    importer.add(doc);
-                } catch (InterruptedException e) {
-                    log.info("interrupted exception ", e);
-                }
-            }
-            importer.finish();
-        }
-    }
-
     static String convertCountryCode(String... countryCodes) {
         String countryCodeStr = "";
         for (String cc : countryCodes) {
@@ -263,10 +233,8 @@ public class NominatimConnector {
      * parses every relevant row in placex, creates a corresponding document and calls the {@link #importer} for every document
      */
     public void readEntireDatabase(String... countryCodes) {
-        final int progressInterval = 50000;
-        final long startMillis = System.currentTimeMillis();
-
-        String andCountryCodeStr = "", whereCountryCodeStr = "";
+        String andCountryCodeStr = "";
+        String whereCountryCodeStr = "";
         String countryCodeStr = convertCountryCode(countryCodes);
         if (!countryCodeStr.isEmpty()) {
             andCountryCodeStr = "AND country_code in (" + countryCodeStr + ")";
@@ -275,85 +243,38 @@ public class NominatimConnector {
 
         log.info("start importing documents from nominatim (" + (countryCodeStr.isEmpty() ? "global" : countryCodeStr) + ")");
 
-        final BlockingQueue<PhotonDoc> documents = new LinkedBlockingDeque<>(20);
-        Thread importThread = new Thread(new ImportThread(documents));
-        importThread.start();
-        final AtomicLong counter = new AtomicLong();
-        template.query(SELECT_COLS_PLACEX +
-                " FROM placex " +
+        ImportThread importThread = new ImportThread(importer);
+
+        template.query(SELECT_COLS_PLACEX + " FROM placex " +
                 " WHERE linked_place_id IS NULL AND centroid IS NOT NULL " + andCountryCodeStr +
-                " ORDER BY geometry_sector; ", new RowCallbackHandler() {
-            @Override
-            public void processRow(ResultSet rs) throws SQLException {
-                // turns a placex row into a photon document that gathers all de-normalised information
+                " ORDER BY geometry_sector; ", rs -> {
+                    // turns a placex row into a photon document that gathers all de-normalised information
+                    NominatimResult docs = placeRowMapper.mapRow(rs, 0);
+                    assert(docs != null);
 
-                NominatimResult docs = placeRowMapper.mapRow(rs, 0);
+                    if (docs.isUsefulForIndex()) {
+                        // finalize document by taking into account the higher level placex rows assigned to this row
+                        completePlace(docs.getBaseDoc());
 
-                if (!docs.isUsefulForIndex()) return; // do not import document
-
-                // finalize document by taking into account the higher level placex rows assigned to this row
-                completePlace(docs.getBaseDoc());
-
-                for (PhotonDoc doc : docs.getDocsWithHousenumber()) {
-                    while (true) {
-                        try {
-                            documents.put(doc);
-                        } catch (InterruptedException e) {
-                            log.warn("Thread interrupted while placing document in queue.");
-                            continue;
-                        }
-                        break;
+                        importThread.addDocument(docs);
                     }
-                    if (counter.incrementAndGet() % progressInterval == 0) {
-                        final double documentsPerSecond = 1000d * counter.longValue() / (System.currentTimeMillis() - startMillis);
-                        log.info(String.format("imported %s documents [%.1f/second]", MessageFormat.format("{0}", counter.longValue()), documentsPerSecond));
-                    }
-                }
-            }
-        });
+                });
 
-        template.query(SELECT_COLS_OSMLINE +
-                " FROM location_property_osmline " +
+        template.query(SELECT_COLS_OSMLINE + " FROM location_property_osmline " +
                 whereCountryCodeStr +
-                " ORDER BY geometry_sector; ", new RowCallbackHandler() {
-            @Override
-            public void processRow(ResultSet rs) throws SQLException {
-                NominatimResult docs = osmlineRowMapper.mapRow(rs, 0);
+                " ORDER BY geometry_sector; ", rs -> {
+                    NominatimResult docs = osmlineRowMapper.mapRow(rs, 0);
+                    assert(docs != null);
 
-                if (!docs.isUsefulForIndex()) return; // do not import document
+                    if (docs.isUsefulForIndex()) {
+                        // finalize document by taking into account the higher level placex rows assigned to this row
+                        completePlace(docs.getBaseDoc());
 
-                // finalize document by taking into account the higher level placex rows assigned to this row
-                completePlace(docs.getBaseDoc());
-
-                for (PhotonDoc doc : docs.getDocsWithHousenumber()) {
-                    while (true) {
-                        try {
-                            documents.put(doc);
-                        } catch (InterruptedException e) {
-                            log.warn("Thread interrupted while placing document in queue.");
-                            continue;
-                        }
-                        break;
+                        importThread.addDocument(docs);
                     }
-                    if (counter.incrementAndGet() % progressInterval == 0) {
-                        final double documentsPerSecond = 1000d * counter.longValue() / (System.currentTimeMillis() - startMillis);
-                        log.info(String.format("imported %s documents [%.1f/second]", MessageFormat.format("{0}", counter.longValue()), documentsPerSecond));
-                    }
-                }
-            }
-        });
+                });
 
-        while (true) {
-            try {
-                documents.put(FINAL_DOCUMENT);
-                importThread.join();
-            } catch (InterruptedException e) {
-                log.warn("Thread interrupted while placing document in queue.");
-                continue;
-            }
-            break;
-        }
-        log.info(String.format("finished import of %s photon documents.", MessageFormat.format("{0}", counter.longValue())));
+        importThread.finish();
     }
 
     /**
