@@ -29,7 +29,7 @@ import java.util.Map;
 public class NominatimConnector {
     private static final String SELECT_COLS_PLACEX = "SELECT place_id, osm_type, osm_id, class, type, name, housenumber, postcode, address, extratags, ST_Envelope(geometry) AS bbox, parent_place_id, linked_place_id, rank_address, rank_search, importance, country_code, centroid";
     private static final String SELECT_COLS_OSMLINE = "SELECT place_id, osm_id, parent_place_id, startnumber, endnumber, interpolationtype, postcode, country_code, linegeo";
-    private static final String SELECT_COLS_ADDRESS = "SELECT p.place_id, p.name, p.class, p.type, p.rank_address";
+    private static final String SELECT_COLS_ADDRESS = "SELECT p.name, p.class, p.type, p.rank_address";
 
     private final DBDataAdapter dbutils;
     private final JdbcTemplate template;
@@ -183,7 +183,6 @@ public class NominatimConnector {
 
     List<AddressRow> getAddresses(PhotonDoc doc) {
         RowMapper<AddressRow> rowMapper = (rs, rowNum) -> new AddressRow(
-                rs.getLong("place_id"),
                 dbutils.getMap(rs, "name"),
                 rs.getString("class"),
                 rs.getString("type"),
