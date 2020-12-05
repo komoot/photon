@@ -38,7 +38,7 @@ class NominatimResult {
             return ImmutableList.of(doc);
         }
 
-        List<PhotonDoc> results = new ArrayList<PhotonDoc>(housenumbers.size());
+        List<PhotonDoc> results = new ArrayList<>(housenumbers.size());
         for (Map.Entry<String, Point> e : housenumbers.entrySet()) {
             PhotonDoc copy = new PhotonDoc(doc);
             copy.setHouseNumber(e.getKey());
@@ -63,7 +63,7 @@ class NominatimResult {
             return;
 
         if (housenumbers == null)
-            housenumbers = new HashMap<String, Point>();
+            housenumbers = new HashMap<>();
 
         String[] parts = str.split(";");
         for (String part : parts) {
@@ -78,7 +78,7 @@ class NominatimResult {
             return;
 
         if (housenumbers == null)
-            housenumbers = new HashMap<String, Point>();
+            housenumbers = new HashMap<>();
 
         LengthIndexedLine line = new LengthIndexedLine(geom);
         double si = line.getStartIndex();
