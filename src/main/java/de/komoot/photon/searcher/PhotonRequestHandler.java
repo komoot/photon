@@ -2,7 +2,6 @@ package de.komoot.photon.searcher;
 
 import de.komoot.photon.query.PhotonQueryBuilder;
 import de.komoot.photon.query.PhotonRequest;
-import de.komoot.photon.query.TagFilterQueryBuilder;
 import de.komoot.photon.utils.ConvertToJson;
 import org.elasticsearch.action.search.SearchResponse;
 import org.json.JSONObject;
@@ -24,7 +23,7 @@ public class PhotonRequestHandler {
     }
 
     public List<JSONObject> handle(PhotonRequest photonRequest) {
-        TagFilterQueryBuilder queryBuilder = buildQuery(photonRequest);
+        PhotonQueryBuilder queryBuilder = buildQuery(photonRequest);
         // for the case of deduplication we need a bit more results, #300
         int limit = photonRequest.getLimit();
         int extLimit = limit > 1 ? (int) Math.round(photonRequest.getLimit() * 1.5) : 1;
@@ -45,7 +44,7 @@ public class PhotonRequestHandler {
         return buildQuery(photonRequest).buildQuery().toString();
     }
 
-   public TagFilterQueryBuilder buildQuery(PhotonRequest photonRequest) {
+   public PhotonQueryBuilder buildQuery(PhotonRequest photonRequest) {
         return PhotonQueryBuilder.
                 builder(photonRequest.getQuery(), photonRequest.getLanguage()).
                 withTags(photonRequest.tags()).

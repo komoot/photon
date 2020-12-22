@@ -32,10 +32,8 @@ import static com.google.common.collect.Maps.newHashMap;
  * </ul>
  * <p/>
  * Created by Sachin Dole on 2/12/2015.
- *
- * @see de.komoot.photon.query.TagFilterQueryBuilder
  */
-public class PhotonQueryBuilder implements TagFilterQueryBuilder {
+public class PhotonQueryBuilder {
     private FunctionScoreQueryBuilder m_finalQueryWithoutTagFilterBuilder;
 
     private BoolQueryBuilder m_queryBuilderForTopLevelFilter;
@@ -102,14 +100,13 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder {
      *
      * @param query    the value for photon query parameter "q"
      * @param language
-     * @return An initialized {@link TagFilterQueryBuilder photon query builder}.
+     * @return An initialized {@link PhotonQueryBuilder photon query builder}.
      */
-    public static TagFilterQueryBuilder builder(String query, String language) {
+    public static PhotonQueryBuilder builder(String query, String language) {
         return new PhotonQueryBuilder(query, language);
     }
 
-    @Override
-    public TagFilterQueryBuilder withLocationBias(Point point, double scale) {
+    public PhotonQueryBuilder withLocationBias(Point point, double scale) {
         if (point == null) return this;
         Map<String, Object> params = newHashMap();
         params.put("lon", point.getX());
@@ -127,8 +124,7 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder {
         return this;
     }
     
-     @Override
-    public TagFilterQueryBuilder withBoundingBox(Envelope bbox) {
+    public PhotonQueryBuilder withBoundingBox(Envelope bbox) {
         if (bbox == null) return this;
         bboxQueryBuilder = new GeoBoundingBoxQueryBuilder("coordinate");
         bboxQueryBuilder.setCorners(bbox.getMaxY(), bbox.getMinX(), bbox.getMinY(), bbox.getMaxX());
@@ -136,8 +132,7 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder {
         return this;
     }
 
-    @Override
-    public TagFilterQueryBuilder withTags(Map<String, Set<String>> tags) {
+    public PhotonQueryBuilder withTags(Map<String, Set<String>> tags) {
         if (!checkTags(tags)) return this;
 
         ensureFiltered();
@@ -155,8 +150,7 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder {
     }
 
 
-    @Override
-    public TagFilterQueryBuilder withKeys(Set<String> keys) {
+    public PhotonQueryBuilder withKeys(Set<String> keys) {
         if (!checkTags(keys)) return this;
 
         ensureFiltered();
@@ -168,8 +162,7 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder {
     }
 
 
-    @Override
-    public TagFilterQueryBuilder withValues(Set<String> values) {
+    public PhotonQueryBuilder withValues(Set<String> values) {
         if (!checkTags(values)) return this;
 
         ensureFiltered();
@@ -181,8 +174,7 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder {
     }
 
 
-    @Override
-    public TagFilterQueryBuilder withTagsNotValues(Map<String, Set<String>> tags) {
+    public PhotonQueryBuilder withTagsNotValues(Map<String, Set<String>> tags) {
         if (!checkTags(tags)) return this;
 
         ensureFiltered();
@@ -202,8 +194,7 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder {
     }
 
 
-    @Override
-    public TagFilterQueryBuilder withoutTags(Map<String, Set<String>> tagsToExclude) {
+    public PhotonQueryBuilder withoutTags(Map<String, Set<String>> tagsToExclude) {
         if (!checkTags(tagsToExclude)) return this;
 
         ensureFiltered();
@@ -225,8 +216,7 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder {
     }
 
 
-    @Override
-    public TagFilterQueryBuilder withoutKeys(Set<String> keysToExclude) {
+    public PhotonQueryBuilder withoutKeys(Set<String> keysToExclude) {
         if (!checkTags(keysToExclude)) return this;
 
         ensureFiltered();
@@ -241,8 +231,7 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder {
     }
 
 
-    @Override
-    public TagFilterQueryBuilder withoutValues(Set<String> valuesToExclude) {
+    public PhotonQueryBuilder withoutValues(Set<String> valuesToExclude) {
         if (!checkTags(valuesToExclude)) return this;
 
         ensureFiltered();
@@ -257,40 +246,34 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder {
     }
 
 
-    @Override
-    public TagFilterQueryBuilder withKeys(String... keys) {
+    public PhotonQueryBuilder withKeys(String... keys) {
         return this.withKeys(ImmutableSet.<String>builder().add(keys).build());
     }
 
 
-    @Override
-    public TagFilterQueryBuilder withValues(String... values) {
+    public PhotonQueryBuilder withValues(String... values) {
         return this.withValues(ImmutableSet.<String>builder().add(values).build());
     }
 
 
-    @Override
-    public TagFilterQueryBuilder withoutKeys(String... keysToExclude) {
+    public PhotonQueryBuilder withoutKeys(String... keysToExclude) {
         return this.withoutKeys(ImmutableSet.<String>builder().add(keysToExclude).build());
     }
 
 
-    @Override
-    public TagFilterQueryBuilder withoutValues(String... valuesToExclude) {
+    public PhotonQueryBuilder withoutValues(String... valuesToExclude) {
         return this.withoutValues(ImmutableSet.<String>builder().add(valuesToExclude).build());
     }
 
 
-    @Override
-    public TagFilterQueryBuilder withStrictMatch() {
+    public PhotonQueryBuilder withStrictMatch() {
         defaultMatchQueryBuilder.minimumShouldMatch("100%");
         languageMatchQueryBuilder.minimumShouldMatch("100%");
         return this;
     }
 
 
-    @Override
-    public TagFilterQueryBuilder withLenientMatch() {
+    public PhotonQueryBuilder withLenientMatch() {
         defaultMatchQueryBuilder.fuzziness(Fuzziness.ONE).minimumShouldMatch("-1");
         languageMatchQueryBuilder.fuzziness(Fuzziness.ONE).minimumShouldMatch("-1");
         return this;
@@ -301,10 +284,7 @@ public class PhotonQueryBuilder implements TagFilterQueryBuilder {
      * When this method is called, all filters are placed inside their {@link OrQueryBuilder OR} or {@link AndQueryBuilder AND} containers and the top level filter
      * builder is built. Subsequent invocations of this method have no additional effect. Note that after this method is called, calling other methods on this class also
      * have no effect.
-     *
-     * @see TagFilterQueryBuilder#buildQuery()
      */
-    @Override
     public QueryBuilder buildQuery() {
         if (state.equals(State.FINISHED)) return m_finalQueryBuilder;
 
