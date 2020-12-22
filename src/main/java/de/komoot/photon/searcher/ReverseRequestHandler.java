@@ -10,9 +10,9 @@ import org.json.JSONObject;
 import java.util.List;
 
 public class ReverseRequestHandler {
-    private final ElasticsearchReverseSearcher elasticsearchSearcher;
+    private final ReverseElasticsearchSearcher elasticsearchSearcher;
 
-    public ReverseRequestHandler(ElasticsearchReverseSearcher elasticsearchSearcher) {
+    public ReverseRequestHandler(ReverseElasticsearchSearcher elasticsearchSearcher) {
         this.elasticsearchSearcher = elasticsearchSearcher;
     }
 

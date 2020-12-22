@@ -14,14 +14,13 @@ import org.elasticsearch.search.sort.SortOrder;
 /**
  * @author svantulden
  */
-public class ReverseElasticsearchSearcher implements ElasticsearchReverseSearcher {
+public class ReverseElasticsearchSearcher {
     private Client client;
 
     public ReverseElasticsearchSearcher(Client client) {
         this.client = client;
     }
 
-    @Override
     public SearchResponse search(QueryBuilder queryBuilder, Integer limit, Point location,
                                  Boolean locationDistanceSort) {
         TimeValue timeout = TimeValue.timeValueSeconds(7);

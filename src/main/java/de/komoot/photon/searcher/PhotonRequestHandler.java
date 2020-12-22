@@ -17,9 +17,9 @@ import java.util.List;
  */
 public class PhotonRequestHandler {
 
-    private final ElasticsearchSearcher elasticsearchSearcher;
+    private final BaseElasticsearchSearcher elasticsearchSearcher;
 
-    public PhotonRequestHandler(ElasticsearchSearcher elasticsearchSearcher) {
+    public PhotonRequestHandler(BaseElasticsearchSearcher elasticsearchSearcher) {
         this.elasticsearchSearcher = elasticsearchSearcher;
     }
 
