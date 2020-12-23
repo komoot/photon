@@ -15,7 +15,7 @@ import java.util.List;
  */
 public class PhotonRequestFactory {
     private final RequestLanguageResolver languageResolver;
-    private final static LocationParamConverter optionalLocationParamConverter = new LocationParamConverter(false);
+    private static final LocationParamConverter optionalLocationParamConverter = new LocationParamConverter(false);
     private final BoundingBoxParamConverter bboxParamConverter;
 
     protected static HashSet<String> m_hsRequestQueryParams = new HashSet<>(Arrays.asList("lang", "q", "lon", "lat",

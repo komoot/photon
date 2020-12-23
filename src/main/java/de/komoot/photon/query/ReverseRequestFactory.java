@@ -12,7 +12,7 @@ import java.util.List;
  */
 public class ReverseRequestFactory {
     private final RequestLanguageResolver languageResolver;
-    private final static LocationParamConverter mandatoryLocationParamConverter = new LocationParamConverter(true);
+    private static final LocationParamConverter mandatoryLocationParamConverter = new LocationParamConverter(true);
 
     protected static HashSet<String> m_hsRequestQueryParams = new HashSet<>(Arrays.asList("lang", "lon", "lat", "radius", "query_string_filter", "distance_sort", "limit"));
 
