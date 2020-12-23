@@ -18,21 +18,21 @@ import java.util.*;
 @Getter
 @Slf4j
 public class PhotonDoc {
-    final private long placeId;
-    final private String osmType;
-    final private long osmId;
-    final private String tagKey;
-    final private String tagValue;
-    final private Map<String, String> name;
+    private final long placeId;
+    private final String osmType;
+    private final long osmId;
+    private final String tagKey;
+    private final String tagValue;
+    private final Map<String, String> name;
     private String postcode;
-    final private Map<String, String> address;
-    final private Map<String, String> extratags;
-    final private Envelope bbox;
-    final private long parentPlaceId; // 0 if unset
-    final private double importance;
-    final private CountryCode countryCode;
-    final private long linkedPlaceId; // 0 if unset
-    final private int rankAddress;
+    private final Map<String, String> address;
+    private final Map<String, String> extratags;
+    private final Envelope bbox;
+    private final long parentPlaceId; // 0 if unset
+    private final double importance;
+    private final CountryCode countryCode;
+    private final long linkedPlaceId; // 0 if unset
+    private final int rankAddress;
 
     private Map<AddressType, Map<String, String>> addressParts = new EnumMap<>(AddressType.class);
     private Set<Map<String, String>> context = new HashSet<>();

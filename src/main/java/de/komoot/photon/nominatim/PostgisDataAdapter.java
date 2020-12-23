@@ -31,7 +31,6 @@ public class PostgisDataAdapter implements DBDataAdapter {
     public Geometry extractGeometry(ResultSet rs, String columnName) throws SQLException {
         JtsGeometry geom = (JtsGeometry) rs.getObject(columnName);
         if (geom == null) {
-            //info("no geometry found in column " + columnName);
             return null;
         }
         return geom.getGeometry();

@@ -7,6 +7,7 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.PrecisionModel;
 import de.komoot.photon.elasticsearch.Importer;
+import de.komoot.photon.elasticsearch.PhotonIndex;
 import de.komoot.photon.elasticsearch.Server;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.admin.indices.refresh.RefreshRequest;
@@ -26,7 +27,6 @@ import java.io.IOException;
 public class ESBaseTester {
 
     public final String clusterName = "photon-test";
-    private final String indexName = "photon";
 
     private Server server;
 
@@ -90,7 +90,7 @@ public class ESBaseTester {
     }
 
     protected void refresh() {
-        getClient().admin().indices().refresh(new RefreshRequest(indexName)).actionGet();
+        getClient().admin().indices().refresh(new RefreshRequest(PhotonIndex.NAME)).actionGet();
     }
 
     /**

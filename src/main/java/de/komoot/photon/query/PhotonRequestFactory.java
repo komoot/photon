@@ -15,10 +15,10 @@ import java.util.List;
  */
 public class PhotonRequestFactory {
     private final RequestLanguageResolver languageResolver;
-    private final static LocationParamConverter optionalLocationParamConverter = new LocationParamConverter(false);
+    private static final LocationParamConverter optionalLocationParamConverter = new LocationParamConverter(false);
     private final BoundingBoxParamConverter bboxParamConverter;
 
-    protected static HashSet<String> m_hsRequestQueryParams = new HashSet<>(Arrays.asList("lang", "q", "lon", "lat",
+    private static final HashSet<String> REQUEST_QUERY_PARAMS = new HashSet<>(Arrays.asList("lang", "q", "lon", "lat",
             "limit", "osm_tag", "location_bias_scale", "bbox", "debug"));
 
     public PhotonRequestFactory(List<String> supportedLanguages, String defaultLanguage) {
@@ -30,8 +30,8 @@ public class PhotonRequestFactory {
 
 
         for (String queryParam : webRequest.queryParams())
-            if (!m_hsRequestQueryParams.contains(queryParam))
-                throw new BadRequestException(400, "unknown query parameter '" + queryParam + "'.  Allowed parameters are: " + m_hsRequestQueryParams);
+            if (!REQUEST_QUERY_PARAMS.contains(queryParam))
+                throw new BadRequestException(400, "unknown query parameter '" + queryParam + "'.  Allowed parameters are: " + REQUEST_QUERY_PARAMS);
 
         String language = languageResolver.resolveRequestedLanguage(webRequest);
 

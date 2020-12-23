@@ -12,7 +12,7 @@ import spark.Request;
  * Created by Holger Bruch on 10/13/2018.
  */
 public class LocationParamConverter {
-    private final static GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
+    private static final GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
     private boolean mandatory;
 
     public LocationParamConverter(boolean mandatory) {
