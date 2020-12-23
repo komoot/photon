@@ -53,7 +53,7 @@ public class App {
             Client esClient = esServer.getClient();
 
             log.info("Make sure that the ES cluster is ready, this might take some time.");
-            esClient.admin().cluster().prepareHealth().setWaitForGreenStatus().get();
+            esClient.admin().cluster().prepareHealth().setWaitForYellowStatus().get();
             log.info("ES cluster is now ready.");
 
             if (args.isRecreateIndex()) {
