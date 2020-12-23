@@ -19,7 +19,7 @@ import de.komoot.photon.ESBaseTester;
 /**
  * Created by Sachin Dole on 2/20/2015.
  */
-public class TagFilterQueryBuilderSearchTest extends ESBaseTester {
+public class PhotonQueryBuilderSearchTest extends ESBaseTester {
 
     /**
      * Find me all places named "berlin" that are tagged "tourism=attraction"
@@ -113,7 +113,7 @@ public class TagFilterQueryBuilderSearchTest extends ESBaseTester {
      * Find me all places named "berlin" that are tagged with the key "tourism" but not tagged with value "information".
      * <p/>
      * Note: This is a different method of achieving the same result as
-     * {@link TagFilterQueryBuilderSearchTest#testKeyTourismButValueNotInformation()}
+     * {@link PhotonQueryBuilderSearchTest#testKeyTourismButValueNotInformation()}
      */
     @Test
     public void testKeyTourismAndValueNotInformation() throws IOException {
@@ -130,7 +130,7 @@ public class TagFilterQueryBuilderSearchTest extends ESBaseTester {
      * Find me all places named "berlin" that are tagged with the key "tourism" but not tagged with value "information".
      * <p/>
      * Note: This is a different method of achieving the same result as
-     * {@link TagFilterQueryBuilderSearchTest#testKeyTourismAndValueNotInformation}.
+     * {@link PhotonQueryBuilderSearchTest#testKeyTourismAndValueNotInformation}.
      */
     @Test
     public void testKeyTourismButValueNotInformation() throws IOException {

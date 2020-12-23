@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 
-public class TagFilterQueryBuilderTest {
+public class PhotonQueryBuilderTest {
 
     @Test
     public void testConstructor() throws IOException {
