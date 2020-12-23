@@ -20,7 +20,7 @@ public class ReverseRequestFactory {
         this.languageResolver = new RequestLanguageResolver(supportedLanguages, defaultLanguage);
     }
 
-    public <R extends ReverseRequest> R create(Request webRequest) throws BadRequestException {
+    public ReverseRequest create(Request webRequest) throws BadRequestException {
         for (String queryParam : webRequest.queryParams()) {
             if (!REQUEST_QUERY_PARAMS.contains(queryParam))
                 throw new BadRequestException(400, "unknown query parameter '" + queryParam + "'.  Allowed parameters are: " + REQUEST_QUERY_PARAMS);
@@ -70,7 +70,6 @@ public class ReverseRequestFactory {
         }
 
         String queryStringFilter = webRequest.queryParams("query_string_filter");
-        ReverseRequest reverseRequest = new ReverseRequest(location, language, radius, queryStringFilter, limit, locationDistanceSort);
-        return (R) reverseRequest;
+        return new ReverseRequest(location, language, radius, queryStringFilter, limit, locationDistanceSort);
     }
 }
