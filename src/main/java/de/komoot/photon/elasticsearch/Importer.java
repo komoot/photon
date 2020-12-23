@@ -6,8 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.client.Client;
-import org.elasticsearch.client.Requests;
-import org.elasticsearch.search.builder.SearchSourceBuilder;
 
 import java.io.IOException;
 
@@ -59,10 +57,5 @@ public class Importer implements de.komoot.photon.Importer {
     public void finish() {
         this.saveDocuments();
         this.documentCount = 0;
-    }
-
-    public long count() {
-        return this.esClient.search(Requests.searchRequest(PhotonIndex.NAME).types(PhotonIndex.TYPE).source(SearchSourceBuilder.searchSource().size(0))).actionGet().getHits()
-                .getTotalHits();
     }
 }

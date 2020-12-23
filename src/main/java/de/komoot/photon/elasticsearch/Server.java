@@ -198,7 +198,7 @@ public class Server {
             settings.put("index", new JSONObject("{ \"number_of_shards\":" + shards + " }"));
         }
         client.admin().indices().prepareCreate(PhotonIndex.NAME).setSettings(settings.toString(), XContentType.JSON).execute().actionGet();
-        ;
+
         client.admin().indices().preparePutMapping(PhotonIndex.NAME).setType(PhotonIndex.TYPE).setSource(mappingsJSON.toString(), XContentType.JSON).execute().actionGet();
         log.info("mapping created: " + mappingsJSON.toString());
     }
