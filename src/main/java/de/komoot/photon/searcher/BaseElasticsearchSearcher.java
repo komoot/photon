@@ -1,5 +1,6 @@
 package de.komoot.photon.searcher;
 
+import de.komoot.photon.elasticsearch.PhotonIndex;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.client.Client;
@@ -19,7 +20,7 @@ public class BaseElasticsearchSearcher {
 
     public SearchResponse search(QueryBuilder queryBuilder, Integer limit) {
         TimeValue timeout = TimeValue.timeValueSeconds(7);
-        return client.prepareSearch("photon").
+        return client.prepareSearch(PhotonIndex.NAME).
                 setSearchType(SearchType.QUERY_AND_FETCH).
                 setQuery(queryBuilder).
                 setSize(limit).

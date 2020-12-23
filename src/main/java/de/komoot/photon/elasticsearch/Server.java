@@ -197,15 +197,15 @@ public class Server {
         if (shards != null) {
             settings.put("index", new JSONObject("{ \"number_of_shards\":" + shards + " }"));
         }
-        client.admin().indices().prepareCreate("photon").setSettings(settings.toString(), XContentType.JSON).execute().actionGet();
+        client.admin().indices().prepareCreate(PhotonIndex.NAME).setSettings(settings.toString(), XContentType.JSON).execute().actionGet();
         ;
-        client.admin().indices().preparePutMapping("photon").setType("place").setSource(mappingsJSON.toString(), XContentType.JSON).execute().actionGet();
+        client.admin().indices().preparePutMapping(PhotonIndex.NAME).setType(PhotonIndex.TYPE).setSource(mappingsJSON.toString(), XContentType.JSON).execute().actionGet();
         log.info("mapping created: " + mappingsJSON.toString());
     }
 
     public void deleteIndex() {
         try {
-            this.getClient().admin().indices().prepareDelete("photon").execute().actionGet();
+            this.getClient().admin().indices().prepareDelete(PhotonIndex.NAME).execute().actionGet();
         } catch (IndexNotFoundException e) {
             // ignore
         }
