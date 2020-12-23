@@ -183,17 +183,17 @@ public class Server {
         final Client client = this.getClient();
         final InputStream mappings = Thread.currentThread().getContextClassLoader()
                 .getResourceAsStream("mappings.json");
-        final InputStream index_settings = Thread.currentThread().getContextClassLoader()
+        final InputStream indexSettings = Thread.currentThread().getContextClassLoader()
                 .getResourceAsStream("index_settings.json");
-        final Charset utf8_charset = Charset.forName("utf-8");
+        final Charset utf8Charset = Charset.forName("utf-8");
 
-        String mappingsString = IOUtils.toString(mappings, utf8_charset);
+        String mappingsString = IOUtils.toString(mappings, utf8Charset);
         JSONObject mappingsJSON = new JSONObject(mappingsString);
 
         // add all langs to the mapping
         mappingsJSON = addLangsToMapping(mappingsJSON);
 
-        JSONObject settings = new JSONObject(IOUtils.toString(index_settings, utf8_charset));
+        JSONObject settings = new JSONObject(IOUtils.toString(indexSettings, utf8Charset));
         if (shards != null) {
             settings.put("index", new JSONObject("{ \"number_of_shards\":" + shards + " }"));
         }

@@ -34,9 +34,9 @@ import static com.google.common.collect.Maps.newHashMap;
  * Created by Sachin Dole on 2/12/2015.
  */
 public class PhotonQueryBuilder {
-    private FunctionScoreQueryBuilder m_finalQueryWithoutTagFilterBuilder;
+    private FunctionScoreQueryBuilder finalQueryWithoutTagFilterBuilder;
 
-    private BoolQueryBuilder m_queryBuilderForTopLevelFilter;
+    private BoolQueryBuilder queryBuilderForTopLevelFilter;
 
     private State state;
 
@@ -50,11 +50,11 @@ public class PhotonQueryBuilder {
 
     private GeoBoundingBoxQueryBuilder bboxQueryBuilder;
 
-    private BoolQueryBuilder m_finalQueryBuilder;
+    private BoolQueryBuilder finalQueryBuilder;
 
-    protected ArrayList<FilterFunctionBuilder> m_alFilterFunction4QueryBuilder = new ArrayList<>(1);
+    protected ArrayList<FilterFunctionBuilder> alFilterFunction4QueryBuilder = new ArrayList<>(1);
 
-    protected QueryBuilder m_query4QueryBuilder;
+    protected QueryBuilder query4QueryBuilder;
 
 
     private PhotonQueryBuilder(String query, String language) {
@@ -65,7 +65,7 @@ public class PhotonQueryBuilder {
                 .analyzer("search_ngram").minimumShouldMatch("100%");
 
         // @formatter:off
-        m_query4QueryBuilder = QueryBuilders.boolQuery()
+        query4QueryBuilder = QueryBuilders.boolQuery()
                 .must(QueryBuilders.boolQuery().should(defaultMatchQueryBuilder).should(languageMatchQueryBuilder)
                         .minimumShouldMatch("1"))
                 .should(QueryBuilders.matchQuery(String.format("name.%s.raw", language), query).boost(200)
@@ -79,13 +79,13 @@ public class PhotonQueryBuilder {
         ScriptScoreFunctionBuilder functionBuilder4QueryBuilder =
                 ScoreFunctionBuilders.scriptFunction(new Script(ScriptType.INLINE, "painless", strCode, new HashMap<String, Object>()));
 
-        m_alFilterFunction4QueryBuilder.add(new FilterFunctionBuilder(functionBuilder4QueryBuilder));
+        alFilterFunction4QueryBuilder.add(new FilterFunctionBuilder(functionBuilder4QueryBuilder));
 
-        m_finalQueryWithoutTagFilterBuilder = new FunctionScoreQueryBuilder(m_query4QueryBuilder, m_alFilterFunction4QueryBuilder.toArray(new FilterFunctionBuilder[0]))
+        finalQueryWithoutTagFilterBuilder = new FunctionScoreQueryBuilder(query4QueryBuilder, alFilterFunction4QueryBuilder.toArray(new FilterFunctionBuilder[0]))
                 .boostMode(CombineFunction.MULTIPLY).scoreMode(ScoreMode.MULTIPLY);
 
         // @formatter:off
-        m_queryBuilderForTopLevelFilter = QueryBuilders.boolQuery()
+        queryBuilderForTopLevelFilter = QueryBuilders.boolQuery()
                 .should(QueryBuilders.boolQuery().mustNot(QueryBuilders.existsQuery("housenumber")))
                 .should(QueryBuilders.matchQuery("housenumber", query).analyzer("standard"))
                 .should(QueryBuilders.existsQuery(String.format("name.%s.raw", language)));
@@ -117,9 +117,9 @@ public class PhotonQueryBuilder {
                 "double score = 0.1 + " + scale + " / (1.0 + dist * 0.001 / 10.0); " +
                 "score";
         ScriptScoreFunctionBuilder builder = ScoreFunctionBuilders.scriptFunction(new Script(ScriptType.INLINE, "painless", strCode, params));
-        m_alFilterFunction4QueryBuilder.add(new FilterFunctionBuilder(builder));
-        m_finalQueryWithoutTagFilterBuilder =
-                new FunctionScoreQueryBuilder(m_query4QueryBuilder, m_alFilterFunction4QueryBuilder.toArray(new FilterFunctionBuilder[0]))
+        alFilterFunction4QueryBuilder.add(new FilterFunctionBuilder(builder));
+        finalQueryWithoutTagFilterBuilder =
+                new FunctionScoreQueryBuilder(query4QueryBuilder, alFilterFunction4QueryBuilder.toArray(new FilterFunctionBuilder[0]))
                         .boostMode(CombineFunction.MULTIPLY);
         return this;
     }
@@ -286,9 +286,9 @@ public class PhotonQueryBuilder {
      * have no effect.
      */
     public QueryBuilder buildQuery() {
-        if (state.equals(State.FINISHED)) return m_finalQueryBuilder;
+        if (state.equals(State.FINISHED)) return finalQueryBuilder;
 
-        m_finalQueryBuilder = QueryBuilders.boolQuery().must(m_finalQueryWithoutTagFilterBuilder).filter(m_queryBuilderForTopLevelFilter);
+        finalQueryBuilder = QueryBuilders.boolQuery().must(finalQueryWithoutTagFilterBuilder).filter(queryBuilderForTopLevelFilter);
 
         if (state.equals(State.FILTERED)) {
             BoolQueryBuilder tagFilters = QueryBuilders.boolQuery();
@@ -296,15 +296,15 @@ public class PhotonQueryBuilder {
                 tagFilters.must(orQueryBuilderForIncludeTagFiltering);
             if (andQueryBuilderForExcludeTagFiltering != null)
                 tagFilters.must(andQueryBuilderForExcludeTagFiltering);
-            m_finalQueryBuilder.filter(tagFilters);
+            finalQueryBuilder.filter(tagFilters);
         }
         
         if (bboxQueryBuilder != null) 
-            m_queryBuilderForTopLevelFilter.filter(bboxQueryBuilder);
+            queryBuilderForTopLevelFilter.filter(bboxQueryBuilder);
 
         state = State.FINISHED;
 
-        return m_finalQueryBuilder;
+        return finalQueryBuilder;
     }
 
 

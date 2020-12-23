@@ -14,7 +14,7 @@ public class ReverseRequestFactory {
     private final RequestLanguageResolver languageResolver;
     private static final LocationParamConverter mandatoryLocationParamConverter = new LocationParamConverter(true);
 
-    protected static HashSet<String> m_hsRequestQueryParams = new HashSet<>(Arrays.asList("lang", "lon", "lat", "radius", "query_string_filter", "distance_sort", "limit"));
+    private static final HashSet<String> REQUEST_QUERY_PARAMS = new HashSet<>(Arrays.asList("lang", "lon", "lat", "radius", "query_string_filter", "distance_sort", "limit"));
 
     public ReverseRequestFactory(List<String> supportedLanguages, String defaultLanguage) {
         this.languageResolver = new RequestLanguageResolver(supportedLanguages, defaultLanguage);
@@ -22,8 +22,8 @@ public class ReverseRequestFactory {
 
     public <R extends ReverseRequest> R create(Request webRequest) throws BadRequestException {
         for (String queryParam : webRequest.queryParams()) {
-            if (!m_hsRequestQueryParams.contains(queryParam))
-                throw new BadRequestException(400, "unknown query parameter '" + queryParam + "'.  Allowed parameters are: " + m_hsRequestQueryParams);
+            if (!REQUEST_QUERY_PARAMS.contains(queryParam))
+                throw new BadRequestException(400, "unknown query parameter '" + queryParam + "'.  Allowed parameters are: " + REQUEST_QUERY_PARAMS);
         }
 
         String language = languageResolver.resolveRequestedLanguage(webRequest);
