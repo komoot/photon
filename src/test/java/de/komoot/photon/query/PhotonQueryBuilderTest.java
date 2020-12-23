@@ -15,11 +15,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 
-public class TagFilterQueryBuilderTest {
+public class PhotonQueryBuilderTest {
 
     @Test
     public void testConstructor() throws IOException {
-        TagFilterQueryBuilder photonQueryBuilder = PhotonQueryBuilder.builder("berlin", "en");
+        PhotonQueryBuilder photonQueryBuilder = PhotonQueryBuilder.builder("berlin", "en");
         InputStream resourceAsStream = this.getClass().getClassLoader()
                 .getResourceAsStream("json_queries/test_base_query.json");
         String expectedJsonString = IOUtils.toString(resourceAsStream, Charset.forName("utf-8"));
@@ -32,7 +32,7 @@ public class TagFilterQueryBuilderTest {
 
     @Test
     public void testFrenchConstructor() throws IOException {
-        TagFilterQueryBuilder photonQueryBuilder = PhotonQueryBuilder.builder("berlin", "fr");
+        PhotonQueryBuilder photonQueryBuilder = PhotonQueryBuilder.builder("berlin", "fr");
         InputStream resourceAsStream = this.getClass().getClassLoader()
                 .getResourceAsStream("json_queries/test_base_query_fr.json");
         String expectedJsonString = IOUtils.toString(resourceAsStream, Charset.forName("utf-8"));
