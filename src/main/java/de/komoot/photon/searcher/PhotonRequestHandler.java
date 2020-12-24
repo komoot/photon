@@ -17,9 +17,11 @@ import java.util.List;
 public class PhotonRequestHandler {
 
     private final BaseElasticsearchSearcher elasticsearchSearcher;
+    private final List<String> supportedLanguages;
 
-    public PhotonRequestHandler(BaseElasticsearchSearcher elasticsearchSearcher) {
+    public PhotonRequestHandler(BaseElasticsearchSearcher elasticsearchSearcher, List<String> supportedLanguages) {
         this.elasticsearchSearcher = elasticsearchSearcher;
+        this.supportedLanguages = supportedLanguages;
     }
 
     public List<JSONObject> handle(PhotonRequest photonRequest) {
@@ -46,7 +48,7 @@ public class PhotonRequestHandler {
 
    public PhotonQueryBuilder buildQuery(PhotonRequest photonRequest) {
         return PhotonQueryBuilder.
-                builder(photonRequest.getQuery(), photonRequest.getLanguage()).
+                builder(photonRequest.getQuery(), photonRequest.getLanguage(), supportedLanguages).
                 withTags(photonRequest.tags()).
                 withKeys(photonRequest.keys()).
                 withValues(photonRequest.values()).

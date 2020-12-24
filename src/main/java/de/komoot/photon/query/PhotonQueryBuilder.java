@@ -44,9 +44,7 @@ public class PhotonQueryBuilder {
 
     private BoolQueryBuilder andQueryBuilderForExcludeTagFiltering = null;
 
-    private MatchQueryBuilder defaultMatchQueryBuilder;
-
-    private MatchQueryBuilder languageMatchQueryBuilder;
+    private MultiMatchQueryBuilder defaultMatchQueryBuilder;
 
     private GeoBoundingBoxQueryBuilder bboxQueryBuilder;
 
@@ -57,17 +55,17 @@ public class PhotonQueryBuilder {
     protected QueryBuilder query4QueryBuilder;
 
 
-    private PhotonQueryBuilder(String query, String language) {
+    private PhotonQueryBuilder(String query, String language, List<String> languages) {
         defaultMatchQueryBuilder =
-                QueryBuilders.matchQuery("collector.default", query).fuzziness(Fuzziness.ZERO).prefixLength(2).analyzer("search_ngram").minimumShouldMatch("100%");
+                QueryBuilders.multiMatchQuery(query).field("collector.default", 1.0f).type(MultiMatchQueryBuilder.Type.CROSS_FIELDS).fuzziness(Fuzziness.ZERO).prefixLength(2).analyzer("search_ngram").minimumShouldMatch("100%");
 
-        languageMatchQueryBuilder = QueryBuilders.matchQuery(String.format("collector.%s.ngrams", language), query).fuzziness(Fuzziness.ZERO).prefixLength(2)
-                .analyzer("search_ngram").minimumShouldMatch("100%");
+        for (String lang : languages) {
+            defaultMatchQueryBuilder.field(String.format("collector.%s.ngrams", lang), lang.equals(language) ? 1.0f : 0.6f);
+        }
 
         // @formatter:off
         query4QueryBuilder = QueryBuilders.boolQuery()
-                .must(QueryBuilders.boolQuery().should(defaultMatchQueryBuilder).should(languageMatchQueryBuilder)
-                        .minimumShouldMatch("1"))
+                .must(defaultMatchQueryBuilder)
                 .should(QueryBuilders.matchQuery(String.format("name.%s.raw", language), query).boost(200)
                         .analyzer("search_raw"))
                 .should(QueryBuilders.matchQuery(String.format("collector.%s.raw", language), query).boost(100)
@@ -102,8 +100,8 @@ public class PhotonQueryBuilder {
      * @param language
      * @return An initialized {@link PhotonQueryBuilder photon query builder}.
      */
-    public static PhotonQueryBuilder builder(String query, String language) {
-        return new PhotonQueryBuilder(query, language);
+    public static PhotonQueryBuilder builder(String query, String language, List<String> languages) {
+        return new PhotonQueryBuilder(query, language, languages);
     }
 
     public PhotonQueryBuilder withLocationBias(Point point, double scale) {
@@ -266,16 +264,8 @@ public class PhotonQueryBuilder {
     }
 
 
-    public PhotonQueryBuilder withStrictMatch() {
-        defaultMatchQueryBuilder.minimumShouldMatch("100%");
-        languageMatchQueryBuilder.minimumShouldMatch("100%");
-        return this;
-    }
-
-
     public PhotonQueryBuilder withLenientMatch() {
         defaultMatchQueryBuilder.fuzziness(Fuzziness.ONE).minimumShouldMatch("-1");
-        languageMatchQueryBuilder.fuzziness(Fuzziness.ONE).minimumShouldMatch("-1");
         return this;
     }
 
