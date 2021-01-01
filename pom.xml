@@ -12,11 +12,7 @@
             <groupId>org.elasticsearch</groupId>
             <artifactId>elasticsearch</artifactId>
             <version>${elasticsearch.version}</version>
-            <exclusions><!-- gives a bad error -->
-                <exclusion>
-                    <groupId>org.elasticsearch</groupId>
-                    <artifactId>jna</artifactId>
-                </exclusion>
+            <exclusions>
                 <exclusion>
                     <groupId>org.apache.logging.log4j</groupId>
                     <artifactId>log4j-api</artifactId>
@@ -49,12 +45,6 @@
                     <artifactId>commons-logging</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
-        <dependency><!-- required by elasticsearch to avoid warning on startup,
-            see https://github.com/elastic/elasticsearch/issues/13245 -->
-            <groupId>org.elasticsearch</groupId>
-            <artifactId>jna</artifactId>
-            <version>4.4.0</version>
         </dependency>
         <dependency>
             <groupId>org.postgresql</groupId>
