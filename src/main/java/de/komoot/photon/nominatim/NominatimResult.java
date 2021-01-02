@@ -41,8 +41,8 @@ class NominatimResult {
         List<PhotonDoc> results = new ArrayList<>(housenumbers.size());
         for (Map.Entry<String, Point> e : housenumbers.entrySet()) {
             PhotonDoc copy = new PhotonDoc(doc);
-            copy.setHouseNumber(e.getKey());
-            copy.setCentroid(e.getValue());
+            copy.houseNumber(e.getKey());
+            copy.centroid(e.getValue());
             results.add(copy);
         }
 

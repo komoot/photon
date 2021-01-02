@@ -1,8 +1,6 @@
 package de.komoot.photon.nominatim;
 
-import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.Point;
 import de.komoot.photon.Importer;
 import de.komoot.photon.PhotonDoc;
 import de.komoot.photon.nominatim.model.AddressRow;
@@ -42,25 +40,14 @@ public class NominatimConnector {
         public NominatimResult mapRow(ResultSet rs, int rownum) throws SQLException {
             Geometry geometry = dbutils.extractGeometry(rs, "linegeo");
 
-            PhotonDoc doc = new PhotonDoc(
-                    rs.getLong("place_id"),
-                    "W",
-                    rs.getLong("osm_id"),
-                    "place",
-                    "house_number",
-                    Collections.emptyMap(), // no name
-                    null,
-                    Collections.emptyMap(), // no address
-                    Collections.emptyMap(), // no extratags
-                    null,
-                    rs.getLong("parent_place_id"),
-                    0d, // importance
-                    rs.getString("country_code"),
-                    null, // centroid
-                    0,
-                    30
-            );
-            doc.setPostcode(rs.getString("postcode"));
+            PhotonDoc doc = new PhotonDoc(rs.getLong("place_id"), "W", rs.getLong("osm_id"),
+                                          "place", "house_number")
+                    .parentPlaceId(rs.getLong("parent_place_id"))
+                    .countryCode(rs.getString("country_code"))
+                    .postcode(rs.getString("postcode"));
+
+            completePlace(doc);
+
             doc.setCountry(getCountryNames(rs.getString("country_code")));
 
             NominatimResult result = new NominatimResult(doc);
@@ -76,37 +63,31 @@ public class NominatimConnector {
     private final RowMapper<NominatimResult> placeRowMapper = new RowMapper<NominatimResult>() {
         @Override
         public NominatimResult mapRow(ResultSet rs, int rowNum) throws SQLException {
+            PhotonDoc doc = new PhotonDoc(rs.getLong("place_id"),
+                                          rs.getString("osm_type"), rs.getLong("osm_id"),
+                                          rs.getString("class"), rs.getString("type"))
+                    .names(dbutils.getMap(rs, "name"))
+                    .address(dbutils.getMap(rs, "address"))
+                    .extraTags(dbutils.getMap(rs, "extratags"))
+                    .bbox(dbutils.extractGeometry(rs, "bbox"))
+                    .parentPlaceId(rs.getLong("parent_place_id"))
+                    .countryCode(rs.getString("country_code"))
+                    .centroid(dbutils.extractGeometry(rs, "centroid"))
+                    .linkedPlaceId(rs.getLong("linked_place_id"))
+                    .rankAddress(rs.getInt("rank_address"))
+                    .postcode(rs.getString("postcode"));
 
-            Double importance = rs.getDouble("importance");
-            if (rs.wasNull()) {
-                // https://github.com/komoot/photon/issues/12
-                int rankSearch = rs.getInt("rank_search");
-                importance = 0.75 - rankSearch / 40d;
+            if (!doc.isUsefulForIndex()) {
+                return null;
             }
 
-            Geometry geometry = dbutils.extractGeometry(rs, "bbox");
-            Envelope envelope = geometry != null ? geometry.getEnvelopeInternal() : null;
+            double importance = rs.getDouble("importance");
+            doc.importance(rs.wasNull() ? (0.75 - rs.getInt("rank_search") / 40d) : importance);
 
-            PhotonDoc doc = new PhotonDoc(
-                    rs.getLong("place_id"),
-                    rs.getString("osm_type"),
-                    rs.getLong("osm_id"),
-                    rs.getString("class"),
-                    rs.getString("type"),
-                    dbutils.getMap(rs, "name"),
-                    null,
-                    dbutils.getMap(rs, "address"),
-                    dbutils.getMap(rs, "extratags"),
-                    envelope,
-                    rs.getLong("parent_place_id"),
-                    importance,
-                    rs.getString("country_code"),
-                    (Point) dbutils.extractGeometry(rs, "centroid"),
-                    rs.getLong("linked_place_id"),
-                    rs.getInt("rank_address")
-            );
+            completePlace(doc);
+            // Add address last, so it takes precedence.
+            doc.address(dbutils.getMap(rs, "address"));
 
-            doc.setPostcode(rs.getString("postcode"));
             doc.setCountry(getCountryNames(rs.getString("country_code")));
 
             NominatimResult result = new NominatimResult(doc);
@@ -249,12 +230,8 @@ public class NominatimConnector {
                 " ORDER BY geometry_sector; ", rs -> {
                     // turns a placex row into a photon document that gathers all de-normalised information
                     NominatimResult docs = placeRowMapper.mapRow(rs, 0);
-                    assert(docs != null);
 
-                    if (docs.isUsefulForIndex()) {
-                        // finalize document by taking into account the higher level placex rows assigned to this row
-                        completePlace(docs.getBaseDoc());
-
+                    if (docs != null) {
                         importThread.addDocument(docs);
                     }
                 });
@@ -263,12 +240,8 @@ public class NominatimConnector {
                 whereCountryCodeStr +
                 " ORDER BY geometry_sector; ", rs -> {
                     NominatimResult docs = osmlineRowMapper.mapRow(rs, 0);
-                    assert(docs != null);
 
-                    if (docs.isUsefulForIndex()) {
-                        // finalize document by taking into account the higher level placex rows assigned to this row
-                        completePlace(docs.getBaseDoc());
-
+                    if (docs != null) {
                         importThread.addDocument(docs);
                     }
                 });
@@ -294,8 +267,5 @@ public class NominatimConnector {
                 doc.getContext().add(address.getName());
             }
         }
-        // finally, overwrite gathered information with higher prio
-        // address info from nominatim which should have precedence
-        doc.completeFromAddress();
     }
 }

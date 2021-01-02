@@ -17,7 +17,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static spark.Spark.*;
 
-import de.komoot.photon.PhotonDoc;
 import de.komoot.photon.elasticsearch.Importer;
 
 /**
@@ -89,7 +88,7 @@ public class ApiIntegrationTest extends ESBaseTester {
         assertEquals(1, features.length());
         JSONObject feature = features.getJSONObject(0);
         JSONObject properties = feature.getJSONObject("properties");
-        assertEquals("way", properties.getString("osm_type"));
+        assertEquals("W", properties.getString("osm_type"));
         assertEquals("place", properties.getString("osm_key"));
         assertEquals("city", properties.getString("osm_value"));
         assertEquals("berlin", properties.getString("name"));
@@ -110,7 +109,7 @@ public class ApiIntegrationTest extends ESBaseTester {
         assertEquals(1, features.length());
         JSONObject feature = features.getJSONObject(0);
         JSONObject properties = feature.getJSONObject("properties");
-        assertEquals("way", properties.getString("osm_type"));
+        assertEquals("W", properties.getString("osm_type"));
         assertEquals("place", properties.getString("osm_key"));
         assertEquals("town", properties.getString("osm_value"));
         assertEquals("berlin", properties.getString("name"));
@@ -130,7 +129,7 @@ public class ApiIntegrationTest extends ESBaseTester {
         assertEquals(1, features.length());
         JSONObject feature = features.getJSONObject(0);
         JSONObject properties = feature.getJSONObject("properties");
-        assertEquals("way", properties.getString("osm_type"));
+        assertEquals("W", properties.getString("osm_type"));
         assertEquals("place", properties.getString("osm_key"));
         assertEquals("city", properties.getString("osm_value"));
         assertEquals("berlin", properties.getString("name"));
