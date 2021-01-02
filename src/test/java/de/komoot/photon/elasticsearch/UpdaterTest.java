@@ -41,7 +41,7 @@ public class UpdaterTest extends ESBaseTester {
 
         names.put("name:en", "Enfoo");
         Updater updater = new Updater(getClient(), "en,de");
-        updater.updateOrCreate(doc);
+        updater.create(doc);
         updater.finish();
         refresh();
 
@@ -68,7 +68,7 @@ public class UpdaterTest extends ESBaseTester {
 
         names.remove("name");
         Updater updater = new Updater(getClient(), "en,de");
-        updater.updateOrCreate(doc);
+        updater.create(doc);
         updater.finish();
         refresh();
 
@@ -76,7 +76,7 @@ public class UpdaterTest extends ESBaseTester {
 
         assertTrue(response.isExists());
         Map<String, String> out_names = (Map<String, String>) response.getSourceAsMap().get("name");
-        //assertFalse(out_names.containsKey("default"));
+        assertFalse(out_names.containsKey("default"));
         assertEquals("Enfoo", out_names.get("en"));
     }
 }

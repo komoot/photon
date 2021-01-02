@@ -69,21 +69,9 @@ public class NominatimUpdater {
                             final List<PhotonDoc> updatedDocs = exporter.getByPlaceId(place.getPlaceId());
                             boolean wasUseful = false;
                             for (PhotonDoc updatedDoc : updatedDocs) {
-                                switch (indexedStatus) {
-                                case CREATE:
-                                    if (updatedDoc.isUsefulForIndex()) {
-                                        updater.create(updatedDoc);
-                                    }
-                                    break;
-                                case UPDATE:
-                                    if (updatedDoc.isUsefulForIndex()) {
-                                        updater.updateOrCreate(updatedDoc);
-                                        wasUseful = true;
-                                    }
-                                    break;
-                                default:
-                                    LOGGER.error(String.format("Unknown index status %d", indexedStatus));
-                                    break;
+                                if (updatedDoc.isUsefulForIndex()) {
+                                    updater.create(updatedDoc);
+                                    wasUseful = true;
                                 }
                             }
                             if (indexedStatus == UPDATE && !wasUseful) {

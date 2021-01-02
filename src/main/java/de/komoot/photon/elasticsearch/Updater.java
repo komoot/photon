@@ -31,28 +31,11 @@ public class Updater implements de.komoot.photon.Updater {
     }
 
     @Override
-    public void updateOrCreate(PhotonDoc updatedDoc) {
-        final boolean exists = this.esClient.get(this.esClient.prepareGet(PhotonIndex.NAME, PhotonIndex.TYPE, String.valueOf(updatedDoc.getPlaceId())).request()).actionGet().isExists();
-        if (exists) {
-            this.update(updatedDoc);
-        } else {
-            this.create(updatedDoc);
-        }
-    }
-
     public void create(PhotonDoc doc) {
         try {
             this.bulkRequest.add(this.esClient.prepareIndex(PhotonIndex.NAME, PhotonIndex.TYPE).setSource(Utils.convert(doc, this.languages)).setId(String.valueOf(doc.getPlaceId())));
         } catch (IOException e) {
             log.error(String.format("creation of new doc [%s] failed", doc), e);
-        }
-    }
-
-    public void update(PhotonDoc doc) {
-        try {
-            this.bulkRequest.add(this.esClient.prepareUpdate(PhotonIndex.NAME, PhotonIndex.TYPE, String.valueOf(doc.getPlaceId())).setDoc(Utils.convert(doc, this.languages)));
-        } catch (IOException e) {
-            log.error(String.format("update of new doc [%s] failed", doc), e);
         }
     }
 
