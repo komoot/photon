@@ -1,6 +1,6 @@
 package de.komoot.photon;
 
-import com.google.common.collect.ImmutableMap;
+import de.komoot.photon.elasticsearch.Importer;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.After;
@@ -16,8 +16,6 @@ import java.util.stream.Collectors;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static spark.Spark.*;
-
-import de.komoot.photon.elasticsearch.Importer;
 
 /**
  * These test connect photon to an already running ES node (setup in ESBaseTester) so that we can directly test the API

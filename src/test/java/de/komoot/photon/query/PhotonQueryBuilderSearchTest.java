@@ -1,15 +1,9 @@
 package de.komoot.photon.query;
 
-import static org.junit.Assert.assertEquals;
-
-import java.io.IOException;
-import java.util.Set;
-
 import com.google.common.collect.ImmutableList;
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.Point;
-import com.vividsolutions.jts.geom.PrecisionModel;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+import de.komoot.photon.ESBaseTester;
 import de.komoot.photon.PhotonDoc;
 import de.komoot.photon.elasticsearch.Importer;
 import org.elasticsearch.action.search.SearchResponse;
@@ -19,10 +13,10 @@ import org.elasticsearch.index.query.QueryBuilder;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
+import java.io.IOException;
+import java.util.Set;
 
-import de.komoot.photon.ESBaseTester;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Created by Sachin Dole on 2/20/2015.

@@ -1,15 +1,12 @@
 package de.komoot.photon.searcher;
 
-import static org.junit.Assert.*;
-
-import java.util.ArrayList;
-import java.util.List;
-
+import de.komoot.photon.Constants;
 import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Test;
 
-import de.komoot.photon.Constants;
+import java.util.ArrayList;
+import java.util.List;
 
 public class StreetDupesRemoverTest {
 
