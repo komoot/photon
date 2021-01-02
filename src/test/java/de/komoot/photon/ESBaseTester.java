@@ -9,6 +9,7 @@ import de.komoot.photon.elasticsearch.PhotonIndex;
 import de.komoot.photon.elasticsearch.Server;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.admin.indices.refresh.RefreshRequest;
+import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.client.Client;
 import org.junit.After;
 
@@ -31,6 +32,10 @@ public class ESBaseTester {
         ImmutableMap<String, String> nameMap = ImmutableMap.of("name", "berlin");
         Point location = FACTORY.createPoint(new Coordinate(lon, lat));
         return new PhotonDoc(id, "W", osmId, key, value).names(nameMap).centroid(location);
+    }
+
+    protected GetResponse getById(int id) {
+        return getClient().prepareGet(PhotonIndex.NAME,PhotonIndex.TYPE, String.valueOf(id)).execute().actionGet();
     }
 
 

@@ -12,12 +12,6 @@ import static org.junit.Assert.*;
 
 public class ImporterTest extends ESBaseTester {
 
-    GetResponse getById(int id) {
-        return getClient().prepareGet(PhotonIndex.NAME,PhotonIndex.TYPE, String.valueOf(id))
-                .execute()
-                .actionGet();
-    }
-
     @After
     public void tearDown() {
         deleteIndex();
