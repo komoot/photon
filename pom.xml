@@ -12,10 +12,10 @@
             <groupId>org.elasticsearch</groupId>
             <artifactId>elasticsearch</artifactId>
             <version>${elasticsearch.version}</version>
-            <exclusions><!-- gives a bad error -->
+            <exclusions>
                 <exclusion>
-                    <groupId>org.elasticsearch</groupId>
-                    <artifactId>jna</artifactId>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-api</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -29,7 +29,11 @@
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>
             <version>${log4j.version}</version>
-
+        </dependency>
+        <dependency><!-- required by elasticsearch -->
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>${log4j.version}</version>
         </dependency>
         <dependency>
             <groupId>org.elasticsearch.client</groupId>
@@ -41,12 +45,6 @@
                     <artifactId>commons-logging</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
-        <dependency><!-- required by elasticsearch to avoid warning on startup,
-            see https://github.com/elastic/elasticsearch/issues/13245 -->
-            <groupId>org.elasticsearch</groupId>
-            <artifactId>jna</artifactId>
-            <version>4.4.0</version>
         </dependency>
         <dependency>
             <groupId>org.postgresql</groupId>
@@ -151,7 +149,6 @@
                 </exclusion>
            </exclusions>
         </dependency>
-
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
@@ -182,7 +179,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>2.2</version>
+                <version>3.2.4</version>
                 <configuration>
                     <createDependencyReducedPom>true</createDependencyReducedPom>
                     <filters>
@@ -233,7 +230,7 @@
                         <artifactItem>
                             <groupId>org.codelibs.elasticsearch.module</groupId>
                             <artifactId>lang-painless</artifactId>
-                            <version>5.5.0</version>
+                            <version>${elasticsearch.version}</version>
                             <type>jar</type>
                             <overWrite>false</overWrite>
                             <outputDirectory>${project.build.directory}/es/modules/lang-painless</outputDirectory>
@@ -318,7 +315,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <maven.compiler.encoding>UTF-8</maven.compiler.encoding>
 
-        <elasticsearch.version>5.5.0</elasticsearch.version>
+        <elasticsearch.version>5.6.16</elasticsearch.version>
         <slf4j.version>1.7.30</slf4j.version>
         <log4j.version>2.8.2</log4j.version>
 
