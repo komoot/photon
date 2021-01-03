@@ -10,9 +10,8 @@ import java.util.*;
 import static org.junit.Assert.*;
 
 public class NominatimResultTest {
-    private final PhotonDoc simpleDoc = new PhotonDoc(10000, "N", 123, "place", "house",
-                                                       new HashMap<>(), null, null, null, null, 0,
-                                            0.0, "de", null, 0, 30);
+    private final PhotonDoc simpleDoc = new PhotonDoc(10000, "N", 123, "place", "house")
+                                                .countryCode("de");
 
     private void assertDocWithHousenumbers(List<String> housenumbers, List<PhotonDoc> docs) {
         assertEquals(housenumbers.size(), docs.size());

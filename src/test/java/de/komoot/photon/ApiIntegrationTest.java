@@ -1,8 +1,10 @@
 package de.komoot.photon;
 
+import de.komoot.photon.elasticsearch.Importer;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.io.BufferedReader;
@@ -21,6 +23,16 @@ import static spark.Spark.*;
 public class ApiIntegrationTest extends ESBaseTester {
     private static final int LISTEN_PORT = 30234;
 
+    @Before
+    public void setUp() throws Exception {
+        setUpES();
+        Importer instance = new Importer(getClient(), "en");
+        instance.add(createDoc(13.38886, 52.51704, 1000, 1000, "place", "city"));
+        instance.add(createDoc(13.39026, 52.54714, 1001, 1001, "place", "town"));
+        instance.finish();
+        refresh();
+    }
+
     @After
     public void shutdown() {
         stop();
@@ -33,7 +45,7 @@ public class ApiIntegrationTest extends ESBaseTester {
      */
     @Test
     public void testNoCors() throws Exception {
-        App.main(new String[]{"-cluster", clusterName, "-listen-port", Integer.toString(LISTEN_PORT), "-transport-addresses", "127.0.0.1"});
+        App.main(new String[]{"-cluster", TEST_CLUSTER_NAME, "-listen-port", Integer.toString(LISTEN_PORT), "-transport-addresses", "127.0.0.1"});
         awaitInitialization();
         HttpURLConnection connection = (HttpURLConnection) new URL("http://127.0.0.1:" + port() + "/api?q=berlin").openConnection();
         assertNull(connection.getHeaderField("Access-Control-Allow-Origin"));
@@ -44,7 +56,7 @@ public class ApiIntegrationTest extends ESBaseTester {
      */
     @Test
     public void testCorsAny() throws Exception {
-        App.main(new String[]{"-cluster", clusterName, "-listen-port", Integer.toString(LISTEN_PORT), "-transport-addresses", "127.0.0.1",
+        App.main(new String[]{"-cluster", TEST_CLUSTER_NAME, "-listen-port", Integer.toString(LISTEN_PORT), "-transport-addresses", "127.0.0.1",
                 "-cors-any"});
         awaitInitialization();
         HttpURLConnection connection = (HttpURLConnection) new URL("http://127.0.0.1:" + port() + "/api?q=berlin").openConnection();
@@ -56,7 +68,7 @@ public class ApiIntegrationTest extends ESBaseTester {
      */
     @Test
     public void testCorsOriginIsSetToSpecificDomain() throws Exception {
-        App.main(new String[]{"-cluster", clusterName, "-listen-port", Integer.toString(LISTEN_PORT), "-transport-addresses", "127.0.0.1",
+        App.main(new String[]{"-cluster", TEST_CLUSTER_NAME, "-listen-port", Integer.toString(LISTEN_PORT), "-transport-addresses", "127.0.0.1",
                 "-cors-origin", "www.poole.ch"});
         awaitInitialization();
         HttpURLConnection connection = (HttpURLConnection) new URL("http://127.0.0.1:" + port() + "/api?q=berlin").openConnection();
@@ -65,7 +77,7 @@ public class ApiIntegrationTest extends ESBaseTester {
 
     @Test
     public void testSearchForBerlin() throws Exception {
-        App.main(new String[]{"-cluster", clusterName, "-listen-port", Integer.toString(LISTEN_PORT), "-transport-addresses", "127.0.0.1"});
+        App.main(new String[]{"-cluster", TEST_CLUSTER_NAME, "-listen-port", Integer.toString(LISTEN_PORT), "-transport-addresses", "127.0.0.1"});
         awaitInitialization();
         HttpURLConnection connection = (HttpURLConnection) new URL("http://127.0.0.1:" + port() + "/api?q=berlin&limit=1").openConnection();
         JSONObject json = new JSONObject(
@@ -74,9 +86,9 @@ public class ApiIntegrationTest extends ESBaseTester {
         assertEquals(1, features.length());
         JSONObject feature = features.getJSONObject(0);
         JSONObject properties = feature.getJSONObject("properties");
-        assertEquals("way", properties.getString("osm_type"));
-        assertEquals("tourism", properties.getString("osm_key"));
-        assertEquals("attraction", properties.getString("osm_value"));
+        assertEquals("W", properties.getString("osm_type"));
+        assertEquals("place", properties.getString("osm_key"));
+        assertEquals("city", properties.getString("osm_value"));
         assertEquals("berlin", properties.getString("name"));
     }
 
@@ -85,7 +97,7 @@ public class ApiIntegrationTest extends ESBaseTester {
      */
     @Test
     public void testApiWithLocationBias() throws Exception {
-        App.main(new String[]{"-cluster", clusterName, "-listen-port", Integer.toString(LISTEN_PORT), "-transport-addresses", "127.0.0.1"});
+        App.main(new String[]{"-cluster", TEST_CLUSTER_NAME, "-listen-port", Integer.toString(LISTEN_PORT), "-transport-addresses", "127.0.0.1"});
         awaitInitialization();
         HttpURLConnection connection = (HttpURLConnection) new URL("http://127.0.0.1:" + port() + "/api?q=berlin&limit=1&lat=52.54714&lon=13.39026")
                 .openConnection();
@@ -95,9 +107,9 @@ public class ApiIntegrationTest extends ESBaseTester {
         assertEquals(1, features.length());
         JSONObject feature = features.getJSONObject(0);
         JSONObject properties = feature.getJSONObject("properties");
-        assertEquals("way", properties.getString("osm_type"));
-        assertEquals("railway", properties.getString("osm_key"));
-        assertEquals("station", properties.getString("osm_value"));
+        assertEquals("W", properties.getString("osm_type"));
+        assertEquals("place", properties.getString("osm_key"));
+        assertEquals("town", properties.getString("osm_value"));
         assertEquals("berlin", properties.getString("name"));
     }
 
@@ -106,7 +118,7 @@ public class ApiIntegrationTest extends ESBaseTester {
      */
     @Test
     public void testApiReverse() throws Exception {
-        App.main(new String[]{"-cluster", clusterName, "-listen-port", Integer.toString(LISTEN_PORT), "-transport-addresses", "127.0.0.1"});
+        App.main(new String[]{"-cluster", TEST_CLUSTER_NAME, "-listen-port", Integer.toString(LISTEN_PORT), "-transport-addresses", "127.0.0.1"});
         awaitInitialization();
         HttpURLConnection connection = (HttpURLConnection) new URL("http://127.0.0.1:" + port() + "/reverse/?lon=13.38886&lat=52.51704").openConnection();
         JSONObject json = new JSONObject(
@@ -115,9 +127,9 @@ public class ApiIntegrationTest extends ESBaseTester {
         assertEquals(1, features.length());
         JSONObject feature = features.getJSONObject(0);
         JSONObject properties = feature.getJSONObject("properties");
-        assertEquals("way", properties.getString("osm_type"));
-        assertEquals("tourism", properties.getString("osm_key"));
-        assertEquals("attraction", properties.getString("osm_value"));
+        assertEquals("W", properties.getString("osm_type"));
+        assertEquals("place", properties.getString("osm_key"));
+        assertEquals("city", properties.getString("osm_value"));
         assertEquals("berlin", properties.getString("name"));
     }
 }

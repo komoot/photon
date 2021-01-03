@@ -11,7 +11,7 @@ import java.util.concurrent.atomic.AtomicLong;
 @Slf4j
 class ImportThread {
     private static final int PROGRESS_INTERVAL = 50000;
-    private static final PhotonDoc FINAL_DOCUMENT = new PhotonDoc(0, null, 0, null, null, null, null, null, null, null, 0, 0, null, null, 0, 0);
+    private static final PhotonDoc FINAL_DOCUMENT = new PhotonDoc(0, null, 0, null, null);
     private final BlockingQueue<PhotonDoc> documents = new LinkedBlockingDeque<>(20);
     private final AtomicLong counter = new AtomicLong();
     private final Importer importer;

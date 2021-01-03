@@ -10,38 +10,38 @@ public class PhotonDocTest {
 
     @Test
     public void testCompleteAddressOverwritesStreet() {
-        HashMap<String, String> address = new HashMap<>();
-        address.put("street", "test street");
-        PhotonDoc doc = createPhotonDocWithAddress(address);
+        PhotonDoc doc = simplePhotonDoc();
         
         HashMap<String, String> streetNames = new HashMap<>();
         streetNames.put("name", "parent place street");
         doc.setAddressPartIfNew(AddressType.STREET, streetNames);
-        
-        doc.completeFromAddress();
+
+        HashMap<String, String> address = new HashMap<>();
+        address.put("street", "test street");
+        doc.address(address);
         AssertUtil.assertAddressName("test street", doc, AddressType.STREET);
     }
 
     @Test
     public void testCompleteAddressCreatesStreetIfNonExistantBefore() {
+        PhotonDoc doc = simplePhotonDoc();
+
         HashMap<String, String> address = new HashMap<>();
         address.put("street", "test street");
-        PhotonDoc doc = createPhotonDocWithAddress(address);
-        
-        doc.completeFromAddress();
+        doc.address(address);
         AssertUtil.assertAddressName("test street", doc, AddressType.STREET);
     }
 
     @Test
     public void testAddCountryCode() {
-        PhotonDoc doc = new PhotonDoc(1, "W", 2, "highway", "residential", null, "4", null, null, null, 0, 30, "de", null, 0, 30);
+        PhotonDoc doc = new PhotonDoc(1, "W", 2, "highway", "residential").countryCode("de");
 
         Assert.assertNotNull(doc.getCountryCode());
         Assert.assertEquals("DE", doc.getCountryCode().getAlpha2());
     }
 
-    private PhotonDoc createPhotonDocWithAddress(HashMap<String, String> address) {
-        return new PhotonDoc(1, "W", 2, "highway", "residential", null, "4", address, null, null, 0, 30, null, null, 0, 30);
+    private PhotonDoc simplePhotonDoc() {
+        return new PhotonDoc(1, "W", 2, "highway", "residential").houseNumber("4");
     }
 
 }

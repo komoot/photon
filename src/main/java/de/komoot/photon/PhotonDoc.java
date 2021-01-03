@@ -3,6 +3,7 @@ package de.komoot.photon;
 import com.google.common.collect.ImmutableMap;
 import com.neovisionaries.i18n.CountryCode;
 import com.vividsolutions.jts.geom.Envelope;
+import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Point;
 import de.komoot.photon.nominatim.model.AddressType;
 import lombok.Getter;
@@ -21,53 +22,30 @@ public class PhotonDoc {
     private final long placeId;
     private final String osmType;
     private final long osmId;
-    private final String tagKey;
-    private final String tagValue;
-    private final Map<String, String> name;
-    private String postcode;
-    private final Map<String, String> address;
-    private final Map<String, String> extratags;
-    private final Envelope bbox;
-    private final long parentPlaceId; // 0 if unset
-    private final double importance;
-    private final CountryCode countryCode;
-    private final long linkedPlaceId; // 0 if unset
-    private final int rankAddress;
+    private String tagKey;
+    private String tagValue;
+
+    private Map<String, String> name = Collections.emptyMap();
+    private String postcode = null;
+    private Map<String, String> extratags = Collections.emptyMap();
+    private Envelope bbox = null;
+    private long parentPlaceId = 0; // 0 if unset
+    private double importance = 0;
+    private CountryCode countryCode = null;
+    private long linkedPlaceId = 0; // 0 if unset
+    private int rankAddress = 30;
 
     private Map<AddressType, Map<String, String>> addressParts = new EnumMap<>(AddressType.class);
     private Set<Map<String, String>> context = new HashSet<>();
-    private String houseNumber;
-    private Point centroid;
+    private String houseNumber = null;
+    private Point centroid = null;
 
-    public PhotonDoc(long placeId, String osmType, long osmId, String tagKey, String tagValue, Map<String, String> name, String houseNumber, Map<String, String> address, Map<String, String> extratags, Envelope bbox, long parentPlaceId, double importance, String countryCode, Point centroid, long linkedPlaceId, int rankAddress) {
-        if (extratags != null) {
-            String place = extratags.get("place");
-            if (place == null) {
-                place = extratags.get("linked_place");
-            }
-            if (place != null) {
-                // take more specific extra tag information
-                tagKey = "place";
-                tagValue = place;
-            }
-        }
-
+    public PhotonDoc(long placeId, String osmType, long osmId, String tagKey, String tagValue) {
         this.placeId = placeId;
         this.osmType = osmType;
         this.osmId = osmId;
         this.tagKey = tagKey;
         this.tagValue = tagValue;
-        this.name = name;
-        this.houseNumber = houseNumber;
-        this.address = address;
-        this.extratags = extratags;
-        this.bbox = bbox;
-        this.parentPlaceId = parentPlaceId;
-        this.importance = importance;
-        this.countryCode = CountryCode.getByCode(countryCode, false);
-        this.centroid = centroid;
-        this.linkedPlaceId = linkedPlaceId;
-        this.rankAddress = rankAddress;
     }
 
     public PhotonDoc(PhotonDoc other) {
@@ -79,7 +57,6 @@ public class PhotonDoc {
         this.name = other.name;
         this.houseNumber = other.houseNumber;
         this.postcode = other.postcode;
-        this.address = other.address;
         this.extratags = other.extratags;
         this.bbox = other.bbox;
         this.parentPlaceId = other.parentPlaceId;
@@ -92,20 +69,105 @@ public class PhotonDoc {
         this.context = other.context;
     }
 
+    public PhotonDoc names(Map<String, String> names) {
+        this.name = names;
+        return this;
+    }
+
+    public PhotonDoc houseNumber(String houseNumber) {
+        this.houseNumber = (houseNumber == null || houseNumber.isEmpty()) ? null : houseNumber;
+        return this;
+    }
+
+    public PhotonDoc bbox(Geometry geom) {
+        if (geom != null) {
+            this.bbox = geom.getEnvelopeInternal();
+        }
+        return this;
+    }
+
+    public PhotonDoc centroid(Geometry centroid) {
+        this.centroid = (Point) centroid;
+        return this;
+    }
+
+    public PhotonDoc countryCode(String countryCode) {
+        this.countryCode = CountryCode.getByCode(countryCode, false);
+        return this;
+    }
+
+
+    public PhotonDoc address(Map<String, String> address) {
+        if (address != null) {
+            extractAddress(address, AddressType.STREET, "street");
+            extractAddress(address, AddressType.CITY, "city");
+            extractAddress(address, AddressType.DISTRICT, "suburb");
+            extractAddress(address, AddressType.LOCALITY, "neighbourhood");
+            extractAddress(address, AddressType.COUNTY, "county");
+            extractAddress(address, AddressType.STATE, "state");
+
+            String addressPostCode = address.get("postcode");
+            if (addressPostCode != null && !addressPostCode.equals(postcode)) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Replacing postcode " + postcode + " with " + addressPostCode + " for osmId #" + osmId);
+                }
+                postcode = addressPostCode;
+            }
+        }
+        return this;
+    }
+
+    public PhotonDoc extraTags(Map<String, String> extratags) {
+        this.extratags = extratags;
+
+        if (extratags != null) {
+            String place = extratags.get("place");
+            if (place == null) {
+                place = extratags.get("linked_place");
+            }
+            if (place != null) {
+                // take more specific extra tag information
+                tagKey = "place";
+                tagValue = place;
+            }
+        }
+
+        return this;
+    }
+
+    public PhotonDoc parentPlaceId(long parentPlaceId) {
+        this.parentPlaceId = parentPlaceId;
+        return this;
+    }
+
+    public PhotonDoc importance(Double importance) {
+        this.importance = importance;
+
+        return this;
+    }
+
+    public PhotonDoc linkedPlaceId(long linkedPlaceId) {
+        this.linkedPlaceId = linkedPlaceId;
+        return this;
+    }
+
+    public PhotonDoc rankAddress(int rank) {
+        this.rankAddress = rank;
+        return this;
+    }
+
+    public PhotonDoc postcode(String postcode) {
+        this.postcode = postcode;
+        return this;
+    }
+
     public String getUid() {
-        if (houseNumber == null || houseNumber.isEmpty())
+        if (houseNumber == null)
             return String.valueOf(placeId);
         else
             return String.valueOf(placeId) + "." + houseNumber;
     }
 
-    /**
-     * Used for testing - really all variables required (final)?
-     */
-    public static PhotonDoc create(long placeId, String osmType, long osmId, Map<String, String> nameMap) {
-        return new PhotonDoc(placeId, osmType, osmId, "", "", nameMap,
-                "", null, null, null, 0, 0, null, null, 0, 0);
-    }
 
     public AddressType getAddressType() {
         return AddressType.fromRank(rankAddress);
@@ -124,29 +186,6 @@ public class PhotonDoc {
     }
     
     /**
-     * Complete doc from nominatim address information.
-     */
-    public void completeFromAddress() {
-        if (address == null) return;
-
-        extractAddress(AddressType.STREET, "street");
-        extractAddress(AddressType.CITY, "city");
-        extractAddress(AddressType.DISTRICT, "suburb");
-        extractAddress(AddressType.LOCALITY, "neighbourhood");
-        extractAddress(AddressType.COUNTY, "county");
-        extractAddress(AddressType.STATE, "state");
-
-        String addressPostCode = address.get("postcode");
-        if (addressPostCode != null && !addressPostCode.equals(postcode)) {
-            if (log.isDebugEnabled()) {
-                log.debug("Replacing postcode " + postcode + " with "+ addressPostCode + " for osmId #" + osmId);
-            }
-            postcode = addressPostCode;
-        }
-    }
-
-
-    /**
      * Extract an address field from an address tag and replace the appropriate address field in the document.
      *
      * @param addressType The type of address field to fill.
@@ -155,7 +194,7 @@ public class PhotonDoc {
      * @return 'existingField' potentially with the name field replaced. If existingField was null and
      *         the address field could be found, then a new map with the address as single entry is returned.
      */
-    private void extractAddress(AddressType addressType, String addressFieldName) {
+    private void extractAddress(Map<String, String> address, AddressType addressType, String addressFieldName) {
         String field = address.get(addressFieldName);
 
         if (field != null) {
@@ -175,10 +214,6 @@ public class PhotonDoc {
         }
     }
 
-    public void setPostcode(String postcode) {
-        this.postcode = postcode;
-    }
-
     /**
      * Set names for the given address part if it is not already set.
      *
@@ -192,11 +227,4 @@ public class PhotonDoc {
         addressParts.put(AddressType.COUNTRY, names);
     }
 
-    public void setHouseNumber(String houseNumber) {
-        this.houseNumber = houseNumber;
-    }
-
-    public void setCentroid(Point centroid) {
-        this.centroid = centroid;
-    }
 }
