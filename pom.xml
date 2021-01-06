@@ -23,7 +23,6 @@
             <groupId>org.elasticsearch.plugin</groupId>
             <artifactId>transport-netty4-client</artifactId>
             <version>${elasticsearch.version}</version>
-
         </dependency>
         <dependency><!-- required by elasticsearch -->
             <groupId>org.apache.logging.log4j</groupId>
@@ -49,7 +48,7 @@
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>42.2.12</version>
+            <version>42.2.11</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -104,10 +103,12 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.locationtech.jts/jts -->
         <dependency>
-            <groupId>com.vividsolutions</groupId>
+            <groupId>org.locationtech.jts</groupId>
             <artifactId>jts</artifactId>
-            <version>1.13</version>
+            <version>1.16.1</version>
+            <type>pom</type>
         </dependency>
         <dependency>
             <groupId>com.sparkjava</groupId>
@@ -122,7 +123,7 @@
         <dependency>
             <groupId>net.postgis</groupId>
             <artifactId>postgis-jdbc-jtsparser</artifactId>
-            <version>2.2.1</version>
+            <version>2.5.0</version>
         </dependency>
         <dependency>
             <groupId>com.h2database</groupId>
