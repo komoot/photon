@@ -1,7 +1,7 @@
 package de.komoot.photon.query;
 
-import com.vividsolutions.jts.geom.Envelope;
-import com.vividsolutions.jts.geom.Point;
+import org.locationtech.jts.geom.Envelope;
+import org.locationtech.jts.geom.Point;
 
 import java.io.Serializable;
 import java.util.HashMap;

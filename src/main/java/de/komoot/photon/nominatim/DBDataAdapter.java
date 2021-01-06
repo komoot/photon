@@ -1,6 +1,6 @@
 package de.komoot.photon.nominatim;
 
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 
 import javax.annotation.Nullable;
 import java.sql.ResultSet;
