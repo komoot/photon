@@ -184,9 +184,7 @@ public class PhotonQueryBuilder {
             Set<String> valuesToInclude = tags.get(tagKey);
             TermQueryBuilder keyQuery = QueryBuilders.termQuery("osm_key", tagKey);
             TermsQueryBuilder valueQuery = QueryBuilders.termsQuery("osm_value", valuesToInclude.toArray(new String[valuesToInclude.size()]));
-
             BoolQueryBuilder includeAndQuery = QueryBuilders.boolQuery().must(keyQuery).mustNot(valueQuery);
-
             termQueries.add(includeAndQuery);
         }
         this.appendIncludeTermQueries(termQueries);
