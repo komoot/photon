@@ -4,8 +4,8 @@ import java.net.URL;
 import java.util.Set;
 import com.google.common.collect.ImmutableSet;
 
-public class JarHell {
-    private JarHell() {}
+public class JarHellNo {
+    private JarHellNo() {}
     public static void checkJarHell() throws Exception {}
 //    public static void checkJarHell(URL urls[]) throws Exception {}
     public static void checkJarHell(Set<URL> urls) throws Exception {}
