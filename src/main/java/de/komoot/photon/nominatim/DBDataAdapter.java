@@ -15,7 +15,6 @@ public interface DBDataAdapter {
      * Create a hash map from the given column data.
      */
     Map<String, String> getMap(ResultSet rs, String columnName) throws SQLException;
-
     /**
      * Create a JTS geometry from the given column data.
      */
