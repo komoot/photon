@@ -44,33 +44,49 @@ public class PhotonQueryBuilder {
 
     private BoolQueryBuilder andQueryBuilderForExcludeTagFiltering = null;
 
-    private MultiMatchQueryBuilder defaultMatchQueryBuilder;
-
     private GeoBoundingBoxQueryBuilder bboxQueryBuilder;
 
     private BoolQueryBuilder finalQueryBuilder;
 
     protected ArrayList<FilterFunctionBuilder> alFilterFunction4QueryBuilder = new ArrayList<>(1);
 
-    protected QueryBuilder query4QueryBuilder;
+    protected BoolQueryBuilder query4QueryBuilder;
 
 
-    private PhotonQueryBuilder(String query, String language, List<String> languages) {
-        defaultMatchQueryBuilder =
-                QueryBuilders.multiMatchQuery(query).field("collector.default", 1.0f).type(MultiMatchQueryBuilder.Type.CROSS_FIELDS).fuzziness(Fuzziness.ZERO).prefixLength(2).analyzer("search_ngram").minimumShouldMatch("100%");
+    private PhotonQueryBuilder(String query, String language, List<String> languages, boolean lenient) {
+        query4QueryBuilder = QueryBuilders.boolQuery();
 
-        for (String lang : languages) {
-            defaultMatchQueryBuilder.field(String.format("collector.%s.ngrams", lang), lang.equals(language) ? 1.0f : 0.6f);
+        if (lenient) {
+            BoolQueryBuilder builder = QueryBuilders.boolQuery()
+                    .should(QueryBuilders.matchQuery("collector.default", query)
+                                .fuzziness(Fuzziness.ONE)
+                                .prefixLength(2)
+                                .analyzer("search_ngram")
+                                .minimumShouldMatch("-1"))
+                    .should(QueryBuilders.matchQuery(String.format("collector.%s.ngrams", language), query)
+                                .fuzziness(Fuzziness.ONE)
+                                .prefixLength(2)
+                                .analyzer("search_ngram")
+                                .minimumShouldMatch("-1"))
+                    .minimumShouldMatch("1");
+
+            query4QueryBuilder.must(builder);
+        } else {
+            MultiMatchQueryBuilder builder =
+                    QueryBuilders.multiMatchQuery(query).field("collector.default", 1.0f).type(MultiMatchQueryBuilder.Type.CROSS_FIELDS).prefixLength(2).analyzer("search_ngram").minimumShouldMatch("100%");
+
+            for (String lang : languages) {
+                builder.field(String.format("collector.%s.ngrams", lang), lang.equals(language) ? 1.0f : 0.6f);
+            }
+
+            query4QueryBuilder.must(builder);
         }
 
-        // @formatter:off
-        query4QueryBuilder = QueryBuilders.boolQuery()
-                .must(defaultMatchQueryBuilder)
+        query4QueryBuilder
                 .should(QueryBuilders.matchQuery(String.format("name.%s.raw", language), query).boost(200)
                         .analyzer("search_raw"))
                 .should(QueryBuilders.matchQuery(String.format("collector.%s.raw", language), query).boost(100)
                         .analyzer("search_raw"));
-        // @formatter:on
 
         // this is former general-score, now inline
         String strCode = "double score = 1 + doc['importance'].value * 100; score";
@@ -100,8 +116,8 @@ public class PhotonQueryBuilder {
      * @param language
      * @return An initialized {@link PhotonQueryBuilder photon query builder}.
      */
-    public static PhotonQueryBuilder builder(String query, String language, List<String> languages) {
-        return new PhotonQueryBuilder(query, language, languages);
+    public static PhotonQueryBuilder builder(String query, String language, List<String> languages, boolean lenient) {
+        return new PhotonQueryBuilder(query, language, languages, lenient);
     }
 
     public PhotonQueryBuilder withLocationBias(Point point, double scale) {
@@ -261,12 +277,6 @@ public class PhotonQueryBuilder {
 
     public PhotonQueryBuilder withoutValues(String... valuesToExclude) {
         return this.withoutValues(ImmutableSet.<String>builder().add(valuesToExclude).build());
-    }
-
-
-    public PhotonQueryBuilder withLenientMatch() {
-        defaultMatchQueryBuilder.fuzziness(Fuzziness.ONE).minimumShouldMatch("-1");
-        return this;
     }
 
 

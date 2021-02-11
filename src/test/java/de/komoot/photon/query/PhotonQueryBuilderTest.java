@@ -20,7 +20,7 @@ public class PhotonQueryBuilderTest {
 
     @Test
     public void testConstructor() throws IOException {
-        PhotonQueryBuilder photonQueryBuilder = PhotonQueryBuilder.builder("berlin", "en", Arrays.asList("en"));
+        PhotonQueryBuilder photonQueryBuilder = PhotonQueryBuilder.builder("berlin", "en", Arrays.asList("en"), true);
         InputStream resourceAsStream = this.getClass().getClassLoader()
                 .getResourceAsStream("json_queries/test_base_query.json");
         String expectedJsonString = IOUtils.toString(resourceAsStream, Charset.forName("utf-8"));
@@ -33,7 +33,7 @@ public class PhotonQueryBuilderTest {
 
     @Test
     public void testFrenchConstructor() throws IOException {
-        PhotonQueryBuilder photonQueryBuilder = PhotonQueryBuilder.builder("berlin", "fr", Arrays.asList("en", "fr"));
+        PhotonQueryBuilder photonQueryBuilder = PhotonQueryBuilder.builder("berlin", "fr", Arrays.asList("en", "fr"), true);
         InputStream resourceAsStream = this.getClass().getClassLoader()
                 .getResourceAsStream("json_queries/test_base_query_fr.json");
         String expectedJsonString = IOUtils.toString(resourceAsStream, Charset.forName("utf-8"));
