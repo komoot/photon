@@ -1,6 +1,6 @@
 package de.komoot.photon.query;
 
-import org.locationtech.jts.geom.Point;
+import com.vividsolutions.jts.geom.Point;
 
 import java.io.Serializable;
 

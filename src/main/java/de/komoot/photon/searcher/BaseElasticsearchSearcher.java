@@ -21,7 +21,7 @@ public class BaseElasticsearchSearcher {
     public SearchResponse search(QueryBuilder queryBuilder, Integer limit) {
         TimeValue timeout = TimeValue.timeValueSeconds(7);
         return client.prepareSearch(PhotonIndex.NAME).
-                setSearchType(SearchType.QUERY_THEN_FETCH).
+                setSearchType(SearchType.QUERY_AND_FETCH).
                 setQuery(queryBuilder).
                 setSize(limit).
                 setTimeout(timeout).

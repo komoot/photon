@@ -2,9 +2,9 @@ package de.komoot.photon;
 
 import com.google.common.collect.ImmutableMap;
 import com.neovisionaries.i18n.CountryCode;
-import org.locationtech.jts.geom.Envelope;
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.Point;
+import com.vividsolutions.jts.geom.Envelope;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.Point;
 import de.komoot.photon.nominatim.model.AddressType;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;

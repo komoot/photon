@@ -1,6 +1,6 @@
 package de.komoot.photon.nominatim;
 
-import org.locationtech.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.Geometry;
 
 import javax.annotation.Nullable;
 import java.sql.ResultSet;
@@ -15,6 +15,7 @@ public interface DBDataAdapter {
      * Create a hash map from the given column data.
      */
     Map<String, String> getMap(ResultSet rs, String columnName) throws SQLException;
+
     /**
      * Create a JTS geometry from the given column data.
      */
