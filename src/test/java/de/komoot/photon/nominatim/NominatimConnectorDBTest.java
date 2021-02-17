@@ -1,6 +1,6 @@
 package de.komoot.photon.nominatim;
 
-import org.locationtech.jts.io.ParseException;
+import com.vividsolutions.jts.io.ParseException;
 import de.komoot.photon.AssertUtil;
 import de.komoot.photon.PhotonDoc;
 import de.komoot.photon.ReflectionTestUtil;

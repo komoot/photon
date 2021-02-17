@@ -32,3 +32,95 @@ jobs:
       - name: Compile project, run tests
         run: |
           mvn --no-transfer-progress test
+
+
+  import:
+    runs-on: ubuntu-20.04
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup Java 11
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+
+      - name: Fetch cached Maven dependencies
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2
+          key: maven-deps
+
+      - name: Compile project
+        run: |
+          mvn --no-transfer-progress package -Dmaven.test.skip=true
+
+      - uses: actions/checkout@v2
+        with:
+          repository: osm-search/Nominatim
+          submodules: true
+          path: Nominatim
+
+      - name: Get Date
+        id: get-date
+        run: |
+            echo "::set-output name=date::$(/bin/date -u "+%Y%W")"
+        shell: bash
+
+      - uses: actions/cache@v2
+        with:
+            path: |
+               Nominatim/data/country_grid.sql.gz
+               monaco-latest.osm.pbf
+            key: nominatim-test-data-${{ steps.get-date.outputs.date }}
+
+      - name: Setup database
+        run: |
+            echo 'fsync = off' | sudo tee /etc/postgresql/13/main/conf.d/local.conf
+            echo 'synchronous_commit = off' | sudo tee -a /etc/postgresql/13/main/conf.d/local.conf
+            echo 'full_page_writes = off' | sudo tee -a /etc/postgresql/13/main/conf.d/local.conf
+            echo 'shared_buffers = 512MB' | sudo tee -a /etc/postgresql/13/main/conf.d/local.conf
+            sudo systemctl start postgresql
+            sudo -u postgres createuser -S www-data
+            sudo -u postgres createuser -s runner
+            psql -d postgres -c "ALTER USER runner PASSWORD 'foobar'"
+            psql --version
+            psql -d postgres -c "SELECT version()"
+        shell: bash
+
+      - name: Install prerequisits
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq libboost-system-dev libboost-filesystem-dev libexpat1-dev zlib1g-dev libbz2-dev libpq-dev libproj-dev python3-psycopg2 python3-pyosmium python3-dotenv postgresql-server-dev-13 postgresql-13-postgis-3
+        shell: bash
+
+      - name: Download dependencies
+        run: |
+            if [ ! -f Nominatim/data/country_osm_grid.sql.gz ]; then
+                wget --no-verbose -O Nominatim/data/country_osm_grid.sql.gz https://www.nominatim.org/data/country_grid.sql.gz
+            fi
+        shell: bash
+
+      - name: Build Nominatim
+        run: mkdir build && cd build && cmake ../Nominatim && make -j2 && sudo make install
+        shell: bash
+
+      - name: Prepare import environment
+        run: |
+            if [ ! -f monaco-latest.osm.pbf ]; then
+                wget --no-verbose https://download.geofabrik.de/europe/monaco-latest.osm.pbf
+            fi
+            mkdir data-env
+            cd data-env
+        shell: bash
+
+      - name: Import Nominatim
+        run: |
+          nominatim import --osm-file ../monaco-latest.osm.pbf --reverse-only
+          nominatim admin --check-database
+        shell: bash
+        working-directory: data-env
+
+      - name: Import Photon
+        run: |
+            java -jar target/photon-*.jar -nominatim-import -database nominatim -user runner -password foobar

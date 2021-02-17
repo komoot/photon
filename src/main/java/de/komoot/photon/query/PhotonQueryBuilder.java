@@ -2,8 +2,8 @@ package de.komoot.photon.query;
 
 
 import com.google.common.collect.ImmutableSet;
-import org.locationtech.jts.geom.Envelope;
-import org.locationtech.jts.geom.Point;
+import com.vividsolutions.jts.geom.Envelope;
+import com.vividsolutions.jts.geom.Point;
 import org.elasticsearch.common.lucene.search.function.CombineFunction;
 import org.elasticsearch.common.lucene.search.function.FiltersFunctionScoreQuery.ScoreMode;
 import org.elasticsearch.common.unit.Fuzziness;
@@ -184,7 +184,9 @@ public class PhotonQueryBuilder {
             Set<String> valuesToInclude = tags.get(tagKey);
             TermQueryBuilder keyQuery = QueryBuilders.termQuery("osm_key", tagKey);
             TermsQueryBuilder valueQuery = QueryBuilders.termsQuery("osm_value", valuesToInclude.toArray(new String[valuesToInclude.size()]));
+
             BoolQueryBuilder includeAndQuery = QueryBuilders.boolQuery().must(keyQuery).mustNot(valueQuery);
+
             termQueries.add(includeAndQuery);
         }
         this.appendIncludeTermQueries(termQueries);
@@ -279,7 +281,7 @@ public class PhotonQueryBuilder {
 
 
     /**
-     * When this method is called, all filters are placed inside their {@link QueryBuilder OR} or {@link QueryBuilder AND} containers and the top level filter
+     * When this method is called, all filters are placed inside their {@link OrQueryBuilder OR} or {@link AndQueryBuilder AND} containers and the top level filter
      * builder is built. Subsequent invocations of this method have no additional effect. Note that after this method is called, calling other methods on this class also
      * have no effect.
      */

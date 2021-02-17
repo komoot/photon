@@ -1,6 +1,6 @@
 package de.komoot.photon.query;
 
-import org.locationtech.jts.geom.Envelope;
+import com.vividsolutions.jts.geom.Envelope;
 
 import spark.Request;
 

@@ -1,7 +1,7 @@
 package de.komoot.photon.nominatim;
 
 import com.google.common.collect.Maps;
-import org.locationtech.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.Geometry;
 import org.postgis.jts.JtsGeometry;
 
 import javax.annotation.Nullable;

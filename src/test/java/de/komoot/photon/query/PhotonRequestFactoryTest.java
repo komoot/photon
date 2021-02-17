@@ -3,7 +3,7 @@ package de.komoot.photon.query;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import org.locationtech.jts.geom.Envelope;
+import com.vividsolutions.jts.geom.Envelope;
 
 import org.junit.Assert;
 import org.junit.Test;

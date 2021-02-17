@@ -1,10 +1,10 @@
 package de.komoot.photon;
 
 import com.google.common.collect.ImmutableMap;
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.Point;
-import org.locationtech.jts.geom.PrecisionModel;
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.Point;
+import com.vividsolutions.jts.geom.PrecisionModel;
 import de.komoot.photon.elasticsearch.PhotonIndex;
 import de.komoot.photon.elasticsearch.Server;
 import lombok.extern.slf4j.Slf4j;
