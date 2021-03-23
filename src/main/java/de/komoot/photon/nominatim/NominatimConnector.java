@@ -244,7 +244,7 @@ public class NominatimConnector {
 
         template.query(SELECT_COLS_PLACEX + " FROM placex " +
                 " WHERE linked_place_id IS NULL AND centroid IS NOT NULL " + andCountryCodeStr +
-                " ORDER BY parent_place_id, geometry_sector; ", rs -> {
+                " ORDER BY geometry_sector, parent_place_id; ", rs -> {
                     // turns a placex row into a photon document that gathers all de-normalised information
                     NominatimResult docs = placeRowMapper.mapRow(rs, 0);
 
@@ -255,7 +255,7 @@ public class NominatimConnector {
 
         template.query(SELECT_COLS_OSMLINE + " FROM location_property_osmline " +
                 whereCountryCodeStr +
-                " ORDER BY parent_place_id, geometry_sector; ", rs -> {
+                " ORDER BY geometry_sector, parent_place_id; ", rs -> {
                     NominatimResult docs = osmlineRowMapper.mapRow(rs, 0);
 
                     if (docs != null) {
