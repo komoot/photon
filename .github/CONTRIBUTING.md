@@ -27,3 +27,14 @@ it should be simple to match:
  * Unix line endings (should be handled via git)
 
 And in case we didn't emphasize it enough: we love tests!
+
+## Installation
+
+photon requires java, at least version 8.
+
+In order to develop with an IDE, you need to install [lombok](https://projectlombok.org/). For example, for eclipse:
+
+1. Download [lombok.jar](https://projectlombok.org/download)
+2. Execute `java -jar lombok.jar` to start lombok installer
+3. Specify eclipse location path and click "Install/Update"
+4. Check that `-javaagent` has been added to the ini file of eclipse specifying the path of `lombok.jar`.
