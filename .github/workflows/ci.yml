@@ -91,7 +91,7 @@ jobs:
       - name: Install prerequisits
         run: |
           sudo apt-get update -qq
-          sudo apt-get install -y -qq libboost-system-dev libboost-filesystem-dev libexpat1-dev zlib1g-dev libbz2-dev libpq-dev libproj-dev python3-psycopg2 python3-pyosmium python3-dotenv python3-psutil python3-jinja2 postgresql-server-dev-13 postgresql-13-postgis-3
+          sudo apt-get install -y -qq libboost-system-dev libboost-filesystem-dev libexpat1-dev zlib1g-dev libbz2-dev libpq-dev libproj-dev python3-psycopg2 python3-pyosmium python3-dotenv python3-psutil python3-jinja2 python3-icu postgresql-server-dev-13 postgresql-13-postgis-3
         shell: bash
 
       - name: Download dependencies
