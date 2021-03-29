@@ -266,7 +266,9 @@ public class Server {
         JSONObject keyObject = properties.optJSONObject(key);
         JSONObject keyProperties = keyObject == null ? null : keyObject.optJSONObject("properties");
         if (keyProperties != null) {
-            keyProperties.put(lang, collectorObject);
+            if (!keyProperties.has(lang)) {
+                keyProperties.put(lang, collectorObject);
+            }
             keyObject.put("properties", keyProperties);
             return properties.put(key, keyObject);
         }
