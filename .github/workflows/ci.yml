@@ -71,7 +71,6 @@ jobs:
         with:
             path: |
                Nominatim/data/country_grid.sql.gz
-               monaco-latest.osm.pbf
             key: nominatim-test-data-${{ steps.get-date.outputs.date }}
 
       - name: Setup database
@@ -107,8 +106,11 @@ jobs:
 
       - name: Prepare import environment
         run: |
-            if [ ! -f monaco-latest.osm.pbf ]; then
-                wget --no-verbose https://download.geofabrik.de/europe/monaco-latest.osm.pbf
+            # get the first day of the previous month to make sure that there really are updates to apply
+            # Geofabrik stores snapshot from the first of the month for up to 3 month
+            two_months_ago=`date --date="1 months ago" +%y%m01`
+            if [ ! -f monaco.osm.pbf ]; then
+                wget --no-verbose https://download.geofabrik.de/europe/monaco-${two_months_ago}.osm.pbf -O monaco.osm.pbf
             fi
             mkdir data-env
             cd data-env
@@ -116,7 +118,7 @@ jobs:
 
       - name: Import Nominatim
         run: |
-          nominatim import --osm-file ../monaco-latest.osm.pbf --reverse-only
+          nominatim import --osm-file ../monaco.osm.pbf --reverse-only
           nominatim admin --check-database
         shell: bash
         working-directory: data-env
@@ -124,3 +126,14 @@ jobs:
       - name: Import Photon
         run: |
             java -jar target/photon-*.jar -nominatim-import -database nominatim -user runner -password foobar
+
+      - name: Update Nominatim
+        run: |
+          nominatim replication --init
+          nominatim replication --no-index --once
+        shell: bash
+        working-directory: data-env
+
+      - name: Update Photon
+        run: |
+          java -jar target/photon-*.jar -nominatim-update -database nominatim -user runner -password foobar
