@@ -1,4 +1,4 @@
-name: "Continuous Integration"
+name: CI
 
 on:
   push:
@@ -35,6 +35,7 @@ jobs:
 
 
   import:
+    name: Import OSM data from Nominatim into Photon
     runs-on: ubuntu-20.04
 
     steps:
