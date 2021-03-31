@@ -108,10 +108,10 @@ jobs:
       - name: Prepare import environment
         run: |
             # get the first day of the previous month to make sure that there really are updates to apply
-            # Geofabrik stores snapshot from the first of the month for up to 3 month
-            two_months_ago=`date --date="1 months ago" +%y%m01`
+            # (Geofabrik stores a snapshot from the first of the month for up to 3 months)
+            first_of_previous_month=`date --date="1 months ago" +%y%m01`
             if [ ! -f monaco.osm.pbf ]; then
-                wget --no-verbose https://download.geofabrik.de/europe/monaco-${two_months_ago}.osm.pbf -O monaco.osm.pbf
+                wget --no-verbose https://download.geofabrik.de/europe/monaco-${first_of_previous_month}.osm.pbf -O monaco.osm.pbf
             fi
             mkdir data-env
             cd data-env
