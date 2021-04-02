@@ -181,4 +181,49 @@ public class NominatimConnectorDBTest {
         AssertUtil.assertNoAddress(doc, AddressType.CITY);
         Assert.assertTrue(doc.getContext().contains(munip.getNames()));
     }
+
+    /**
+     * Unnamed objects are imported when they have a housenumber.
+     */
+    @Test
+    public void testUnnamedObjectWithHousenumber() {
+        PlacexTestRow parent = PlacexTestRow.make_street("Main St").add(jdbc);
+        PlacexTestRow place = new PlacexTestRow("building", "yes").housenumber(123).parent(parent).add(jdbc);
+
+        connector.readEntireDatabase();
+
+        Assert.assertEquals(2, importer.size());
+
+        importer.get(place);
+    }
+
+    /**
+     * Unnamed objects are ignored when they do not have a housenumber.
+     */
+    @Test
+    public void testUnnamedObjectWithOutHousenumber() {
+        PlacexTestRow parent = PlacexTestRow.make_street("Main St").add(jdbc);
+        PlacexTestRow place = new PlacexTestRow("building", "yes").parent(parent).add(jdbc);
+
+        connector.readEntireDatabase();
+
+        Assert.assertEquals(1, importer.size());
+
+        importer.get(parent);
+    }
+
+    /**
+     * Interpolation lines in placex are ignored.
+     */
+    @Test
+    public void testInterpolationLines() {
+        PlacexTestRow parent = PlacexTestRow.make_street("Main St").add(jdbc);
+        PlacexTestRow place = new PlacexTestRow("place", "houses").name("something").parent(parent).add(jdbc);
+
+        connector.readEntireDatabase();
+
+        Assert.assertEquals(1, importer.size());
+
+        importer.get(parent);
+    }
 }
