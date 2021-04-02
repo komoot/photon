@@ -176,13 +176,9 @@ public class PhotonDoc {
     public boolean isUsefulForIndex() {
         if ("place".equals(tagKey) && "houses".equals(tagValue)) return false;
 
-        if (houseNumber != null) return true;
-
-        if (name.isEmpty()) return false;
-
         if (linkedPlaceId > 0) return false;
 
-        return true;
+        return houseNumber != null || !name.isEmpty();
     }
     
     /**

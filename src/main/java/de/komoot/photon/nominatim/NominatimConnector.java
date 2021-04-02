@@ -77,10 +77,6 @@ public class NominatimConnector {
                     .rankAddress(rs.getInt("rank_address"))
                     .postcode(rs.getString("postcode"));
 
-            if (!doc.isUsefulForIndex()) {
-                return null;
-            }
-
             double importance = rs.getDouble("importance");
             doc.importance(rs.wasNull() ? (0.75 - rs.getInt("rank_search") / 40d) : importance);
 
@@ -230,8 +226,9 @@ public class NominatimConnector {
                 " ORDER BY geometry_sector; ", rs -> {
                     // turns a placex row into a photon document that gathers all de-normalised information
                     NominatimResult docs = placeRowMapper.mapRow(rs, 0);
+                    assert(docs != null);
 
-                    if (docs != null) {
+                    if (docs.isUsefulForIndex()) {
                         importThread.addDocument(docs);
                     }
                 });
@@ -240,8 +237,9 @@ public class NominatimConnector {
                 whereCountryCodeStr +
                 " ORDER BY geometry_sector; ", rs -> {
                     NominatimResult docs = osmlineRowMapper.mapRow(rs, 0);
+                    assert(docs != null);
 
-                    if (docs != null) {
+                    if (docs.isUsefulForIndex()) {
                         importThread.addDocument(docs);
                     }
                 });
