@@ -73,6 +73,16 @@ class NominatimResult {
         }
     }
 
+    public void addHousenumbersFromAddress(Map<String, String> address) {
+        if (address == null) {
+            return;
+        }
+
+        addHousenumbersFromString(address.get("housenumber"));
+        addHousenumbersFromString(address.get("streetnumber"));
+        addHousenumbersFromString(address.get("conscriptionnumber"));
+    }
+
     public void addHouseNumbersFromInterpolation(long first, long last, String interpoltype, Geometry geom) {
         if (last <= first || (last - first) > 1000)
             return;

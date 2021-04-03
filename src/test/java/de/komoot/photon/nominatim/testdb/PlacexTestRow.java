@@ -22,11 +22,11 @@ public class PlacexTestRow {
     private String key;
     private String value;
     private Map<String, String> names = new HashMap<>();
+    private Map<String, String> address = new HashMap<>();
     private Integer rankAddress = 30;
     private Integer rankSearch = 30;
     private String centroid;
     private String countryCode = "us";
-    private String housenumber = null;
     private Double importance = null;
 
     public PlacexTestRow(String key, String value) {
@@ -77,8 +77,13 @@ public class PlacexTestRow {
         return this;
     }
 
-    public PlacexTestRow housenumber(int nr) {
-        housenumber = Integer.toString(nr);
+    public PlacexTestRow housenumber(int value) {
+        addr("housenumber", Integer.toString(value));
+        return this;
+    }
+
+    public PlacexTestRow addr(String type, String value) {
+        address.put(type, value);
         return this;
     }
 
@@ -109,10 +114,10 @@ public class PlacexTestRow {
 
     public PlacexTestRow add(JdbcTemplate jdbc) {
         jdbc.update("INSERT INTO placex (place_id, parent_place_id, osm_type, osm_id, class, type, rank_search, rank_address,"
-                        + " centroid, name, country_code, importance, housenumber)"
-                        + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ? FORMAT JSON, ?, ?, ?)",
+                        + " centroid, name, country_code, importance, address)"
+                        + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ? FORMAT JSON, ?, ?, ? FORMAT JSON)",
                 placeId, parentPlaceId, osmType, osmId, key, value, rankSearch, rankAddress, centroid,
-                asJson(names), countryCode, importance, housenumber);
+                asJson(names), countryCode, importance, asJson(address));
 
         return this;
     }

@@ -51,8 +51,7 @@ public class CollectingImporter implements Importer {
     public void assertContains(PlacexTestRow row) throws ParseException {
         PhotonDoc doc = null;
         for (PhotonDoc outdoc : docs) {
-            if (outdoc.getPlaceId() == row.getPlaceId()
-                    && (row.getHousenumber() == null || row.getHousenumber().equals(outdoc.getHouseNumber()))) {
+            if (outdoc.getPlaceId() == row.getPlaceId()) {
                 Assert.assertNull("Row is contained multiple times", doc);
                 doc = outdoc;
             }
@@ -62,4 +61,18 @@ public class CollectingImporter implements Importer {
 
         row.assertEquals(doc);
     }
-}
+
+    public void assertContains(PlacexTestRow row, int housenumber) throws ParseException {
+        String hnrstr = Integer.toString(housenumber);
+        PhotonDoc doc = null;
+        for (PhotonDoc outdoc : docs) {
+            if (outdoc.getPlaceId() == row.getPlaceId() && hnrstr.equals(outdoc.getHouseNumber())) {
+                Assert.assertNull("Row is contained multiple times", doc);
+                doc = outdoc;
+            }
+        }
+
+        Assert.assertNotNull("Row not found", doc);
+
+        row.assertEquals(doc);
+    }}
