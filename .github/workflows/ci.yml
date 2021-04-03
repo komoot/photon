@@ -1,4 +1,4 @@
-name: "Continuous Integration"
+name: CI
 
 on:
   push:
@@ -35,6 +35,7 @@ jobs:
 
 
   import:
+    name: Import OSM data from Nominatim into Photon
     runs-on: ubuntu-20.04
 
     steps:
@@ -107,7 +108,7 @@ jobs:
 
       - name: Prepare import environment
         run: |
-            if [ ! -f monaco-latest.osm.pbf ]; then
+            if [ ! -f monaco.osm.pbf ]; then
                 wget --no-verbose https://download.geofabrik.de/europe/monaco-latest.osm.pbf
             fi
             mkdir data-env
@@ -124,3 +125,16 @@ jobs:
       - name: Import Photon
         run: |
             java -jar target/photon-*.jar -nominatim-import -database nominatim -user runner -password foobar
+
+      - name: Update Nominatim
+        run: |
+          nominatim replication --init
+          nominatim replication --no-index --once
+        shell: bash
+        working-directory: data-env
+        env:
+          NOMINATIM_REPLICATION_MAX_DIFF: 10
+
+      - name: Update Photon
+        run: |
+          java -jar target/photon-*.jar -nominatim-update -database nominatim -user runner -password foobar
