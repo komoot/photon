@@ -158,6 +158,9 @@ public class NominatimConnector {
         return result.getDocsWithHousenumber();
     }
 
+    private long parentPlaceId = -1;
+    private List<AddressRow> parentTerms = null;
+
     List<AddressRow> getAddresses(PhotonDoc doc) {
         RowMapper<AddressRow> rowMapper = (rs, rowNum) -> new AddressRow(
                 dbutils.getMap(rs, "name"),
@@ -172,19 +175,33 @@ public class NominatimConnector {
             return Collections.emptyList();
         }
 
-        long placeId = (atype == AddressType.HOUSE) ? doc.getParentPlaceId() : doc.getPlaceId();
-
-        List<AddressRow> terms = template.query(SELECT_COLS_ADDRESS
-                        + " FROM placex p, place_addressline pa"
-                        + " WHERE p.place_id = pa.address_place_id and pa.place_id = ?"
-                        + " and pa.cached_rank_address > 4 and pa.address_place_id != ? and pa.isaddress"
-                        + " ORDER BY rank_address desc, fromarea desc, distance asc, rank_search desc",
-                rowMapper, placeId, placeId);
+        List<AddressRow> terms = null;
 
         if (atype == AddressType.HOUSE) {
-            // need to add the term for the parent place ID itself
-            terms.addAll(0, template.query(SELECT_COLS_ADDRESS + " FROM placex p WHERE p.place_id = ?",
-                    rowMapper, placeId));
+            long placeId = doc.getParentPlaceId();
+            if (placeId != parentPlaceId) {
+                parentTerms = template.query(SELECT_COLS_ADDRESS
+                                + " FROM placex p, place_addressline pa"
+                                + " WHERE p.place_id = pa.address_place_id and pa.place_id = ?"
+                                + " and pa.cached_rank_address > 4 and pa.address_place_id != ? and pa.isaddress"
+                                + " ORDER BY rank_address desc, fromarea desc, distance asc, rank_search desc",
+                        rowMapper, placeId, placeId);
+
+                // need to add the term for the parent place ID itself
+                parentTerms.addAll(0, template.query(SELECT_COLS_ADDRESS + " FROM placex p WHERE p.place_id = ?",
+                        rowMapper, placeId));
+                parentPlaceId = placeId;
+            }
+            terms = parentTerms;
+
+        } else {
+            long placeId = doc.getPlaceId();
+            terms = template.query(SELECT_COLS_ADDRESS
+                            + " FROM placex p, place_addressline pa"
+                            + " WHERE p.place_id = pa.address_place_id and pa.place_id = ?"
+                            + " and pa.cached_rank_address > 4 and pa.address_place_id != ? and pa.isaddress"
+                            + " ORDER BY rank_address desc, fromarea desc, distance asc, rank_search desc",
+                    rowMapper, placeId, placeId);
         }
 
         return terms;
@@ -223,7 +240,7 @@ public class NominatimConnector {
 
         template.query(SELECT_COLS_PLACEX + " FROM placex " +
                 " WHERE linked_place_id IS NULL AND centroid IS NOT NULL " + andCountryCodeStr +
-                " ORDER BY geometry_sector; ", rs -> {
+                " ORDER BY geometry_sector, parent_place_id; ", rs -> {
                     // turns a placex row into a photon document that gathers all de-normalised information
                     NominatimResult docs = placeRowMapper.mapRow(rs, 0);
                     assert(docs != null);
@@ -235,7 +252,7 @@ public class NominatimConnector {
 
         template.query(SELECT_COLS_OSMLINE + " FROM location_property_osmline " +
                 whereCountryCodeStr +
-                " ORDER BY geometry_sector; ", rs -> {
+                " ORDER BY geometry_sector, parent_place_id; ", rs -> {
                     NominatimResult docs = osmlineRowMapper.mapRow(rs, 0);
                     assert(docs != null);
 
