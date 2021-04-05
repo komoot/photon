@@ -25,7 +25,7 @@ import java.util.Map;
  */
 @Slf4j
 public class NominatimConnector {
-    private static final String SELECT_COLS_PLACEX = "SELECT place_id, osm_type, osm_id, class, type, name, housenumber, postcode, address, extratags, ST_Envelope(geometry) AS bbox, parent_place_id, linked_place_id, rank_address, rank_search, importance, country_code, centroid";
+    private static final String SELECT_COLS_PLACEX = "SELECT place_id, osm_type, osm_id, class, type, name, postcode, address, extratags, ST_Envelope(geometry) AS bbox, parent_place_id, linked_place_id, rank_address, rank_search, importance, country_code, centroid";
     private static final String SELECT_COLS_OSMLINE = "SELECT place_id, osm_id, parent_place_id, startnumber, endnumber, interpolationtype, postcode, country_code, linegeo";
     private static final String SELECT_COLS_ADDRESS = "SELECT p.name, p.class, p.type, p.rank_address";
 
@@ -63,11 +63,11 @@ public class NominatimConnector {
     private final RowMapper<NominatimResult> placeRowMapper = new RowMapper<NominatimResult>() {
         @Override
         public NominatimResult mapRow(ResultSet rs, int rowNum) throws SQLException {
+            Map<String, String> address = dbutils.getMap(rs, "address");
             PhotonDoc doc = new PhotonDoc(rs.getLong("place_id"),
                                           rs.getString("osm_type"), rs.getLong("osm_id"),
                                           rs.getString("class"), rs.getString("type"))
                     .names(dbutils.getMap(rs, "name"))
-                    .address(dbutils.getMap(rs, "address"))
                     .extraTags(dbutils.getMap(rs, "extratags"))
                     .bbox(dbutils.extractGeometry(rs, "bbox"))
                     .parentPlaceId(rs.getLong("parent_place_id"))
@@ -82,12 +82,12 @@ public class NominatimConnector {
 
             completePlace(doc);
             // Add address last, so it takes precedence.
-            doc.address(dbutils.getMap(rs, "address"));
+            doc.address(address);
 
             doc.setCountry(getCountryNames(rs.getString("country_code")));
 
             NominatimResult result = new NominatimResult(doc);
-            result.addHousenumbersFromString(rs.getString("housenumber"));
+            result.addHousenumbersFromAddress(address);
 
             return result;
         }

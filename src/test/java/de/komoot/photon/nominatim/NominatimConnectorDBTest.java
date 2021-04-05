@@ -135,7 +135,7 @@ public class NominatimConnectorDBTest {
         PlacexTestRow expect = new PlacexTestRow("place", "house_number").id(osmline.getPlaceId()).parent(street).osm("W", 23);
 
         for (int i = 2; i < 11; ++i) {
-            importer.assertContains(expect.housenumber(i).centroid(0, (i - 1) * 0.1));
+            importer.assertContains(expect.centroid(0, (i - 1) * 0.1), i);
         }
     }
 
@@ -188,15 +188,51 @@ public class NominatimConnectorDBTest {
     @Test
     public void testUnnamedObjectWithHousenumber() {
         PlacexTestRow parent = PlacexTestRow.make_street("Main St").add(jdbc);
-        PlacexTestRow place = new PlacexTestRow("building", "yes").housenumber(123).parent(parent).add(jdbc);
+        PlacexTestRow place = new PlacexTestRow("building", "yes").addr("housenumber", "123").parent(parent).add(jdbc);
 
         connector.readEntireDatabase();
 
         Assert.assertEquals(2, importer.size());
 
-        importer.get(place);
+        PhotonDoc doc = importer.get(place);
+        Assert.assertEquals(doc.getHouseNumber(), "123");
     }
 
+    /**
+     * Semicolon-separated housenumber lists result in multiple iport objects.
+     */
+    @Test
+    public void testObjectWithHousenumberList() throws ParseException {
+        PlacexTestRow parent = PlacexTestRow.make_street("Main St").add(jdbc);
+        PlacexTestRow place = new PlacexTestRow("building", "yes").addr("housenumber", "1;2;3").parent(parent).add(jdbc);
+
+        connector.readEntireDatabase();
+
+        Assert.assertEquals(4, importer.size());
+
+        importer.assertContains(place, 1);
+        importer.assertContains(place, 2);
+        importer.assertContains(place, 3);
+    }
+
+    /**
+     * streetnumbers and conscription numbers are recognised.
+     */
+    @Test
+    public void testObjectWithconscriptionNumber() throws ParseException {
+        PlacexTestRow parent = PlacexTestRow.make_street("Main St").add(jdbc);
+        PlacexTestRow place = new PlacexTestRow("building", "yes")
+                .addr("streetnumber", "34")
+                .addr("conscriptionnumber", "99521")
+                .parent(parent).add(jdbc);
+
+        connector.readEntireDatabase();
+
+        Assert.assertEquals(3, importer.size());
+
+        importer.assertContains(place, 34);
+        importer.assertContains(place, 99521);
+    }
     /**
      * Unnamed objects are ignored when they do not have a housenumber.
      */
