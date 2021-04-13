@@ -23,8 +23,8 @@ public class CommandLineArgs {
     @Parameter(names = "-nominatim-update", description = "fetch updates from nominatim database into photon and exit (this updates the index only without offering an API)")
     private boolean nominatimUpdate = false;
 
-    @Parameter(names = "-languages", description = "languages nominatim importer should import and use at run-time, comma separated (default is 'en,fr,de,it')")
-    private String languages = "en,fr,de,it";
+    @Parameter(names = "-languages", description = "languages nominatim importer should import and use at run-time, comma separated (default is 'en,fr,de,it,ja')")
+    private String languages = "en,fr,de,it,ja";
 
     @Parameter(names = "-default-language", description = "language to return results in when no explicit language is choosen by the user")
     private String defaultLanguage = "default";

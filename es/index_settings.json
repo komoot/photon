@@ -1,6 +1,48 @@
 {
 	"analysis": {
 		"analyzer": {
+			"ja_index_raw": {
+				"type": "custom",
+				"char_filter": [
+					"ja_normalize",
+					"kuromoji_iteration_mark"
+				],
+				"tokenizer": "ja_kuromoji_tokenizer",
+				"filter": [
+					"kuromoji_baseform",
+					"kuromoji_part_of_speech",
+					"cjk_width",
+					"ja_stop",
+					"kuromoji_number",
+					"kuromoji_stemmer",
+					"lowercase",
+					"ja_hiragana_2_katakana"
+				]
+			},
+			"ja_index_ngram": {
+				"type": "custom",
+				"char_filter": [
+					"ja_normalize",
+					"kuromoji_iteration_mark"
+				],
+				"tokenizer": "ja_ngram_tokenizer",
+				"filter": [
+					"lowercase",
+					"ja_hiragana_2_katakana"
+				]
+			},
+			"ja_search_ngram": {
+				"type": "custom",
+				"char_filter": [
+					"ja_normalize",
+					"kuromoji_iteration_mark"
+				],
+				"tokenizer": "ja_ngram_tokenizer",
+				"filter": [
+					"lowercase",
+					"ja_hiragana_2_katakana"
+				]
+			},
 			"index_ngram": {
 				"char_filter": [
 					"punctuationgreedy",
@@ -59,8 +101,9 @@
 				],
 				"filter": [
 					"lowercase",
-					"preserving_word_delimiter"],
-				"tokenizer": "standard" 
+					"preserving_word_delimiter"
+				],
+				"tokenizer": "standard"
 			}
 		},
 		"tokenizer": {
@@ -68,6 +111,22 @@
 				"type": "edge_ngram",
 				"min_gram": 1,
 				"max_gram": 100,
+				"token_chars": [
+					"letter",
+					"digit"
+				]
+			},
+			"ja_kuromoji_tokenizer": {
+				"mode": "search",
+				"type": "kuromoji_tokenizer",
+				"discard_compound_token": true,
+				"user_dictionary_rules": [
+				]
+			},
+			"ja_ngram_tokenizer": {
+				"type": "ngram",
+				"min_gram": 2,
+				"max_gram": 3,
 				"token_chars": [
 					"letter",
 					"digit"
@@ -84,6 +143,11 @@
 				"type": "pattern_replace",
 				"pattern": "(\\d+)\\s(?=\\p{L}\\b)",
 				"replacement": "$1"
+			},
+			"ja_normalize": {
+				"type": "icu_normalizer",
+				"name": "nfkc_cf",
+				"mode": "compose"
 			}
 		},
 		"filter": {
@@ -91,9 +155,13 @@
 				"min": "2",
 				"type": "length"
 			},
-			"preserving_word_delimiter": { 
+			"preserving_word_delimiter": {
 				"type": "word_delimiter",
 				"preserve_original": "true"
+			},
+			"ja_hiragana_2_katakana": {
+				"type": "icu_transform",
+				"id": "Hiragana-Katakana"
 			}
 		}
 	}

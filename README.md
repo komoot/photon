@@ -66,6 +66,8 @@ Discover more of photon's feature with its usage `java -jar photon-*.jar -h`.
 photon uses [maven](https://maven.apache.org/) for building. To build the package from source make sure you have a JDK and maven installed. Then run:
 
 ```
+mvn install:install-file -Dfile=$(pwd)/es/modules/analysis-icu/analysis-icu-5.6.16.jar -DgroupId=org.elasticsearch.plugin -DartifactId=analysis-icu -Dversion=5.6.16 -Dpackaging=jar
+mvn install:install-file -Dfile=$(pwd)/es/modules/analysis-kuromoji/analysis-kuromoji-5.6.16.jar -DgroupId=org.elasticsearch.plugin -DartifactId=analysis-kuromoji -Dversion=5.6.16 -Dpackaging=jar
 mvn package
 ```
 

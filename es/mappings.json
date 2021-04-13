@@ -46,6 +46,13 @@
 						"copy_to": [
 							"collector.it"
 						]
+					},
+					"ja": {
+						"type": "text",
+						"index": false,
+						"copy_to": [
+							"collector.ja"
+						]
 					}
 				}
 			},
@@ -71,11 +78,15 @@
 					},
 					"default": {
 						"type": "text",
-						"analyzer": "index_ngram",
 						"fields": {
+							"ngrams": {
+								"type": "text",
+								"analyzer": "ja_index_ngram",
+								"search_analyzer": "ja_search_ngram"
+							},
 							"raw": {
 								"type": "text",
-								"analyzer": "index_raw"
+								"analyzer": "ja_index_raw"
 							}
 						}
 					},
@@ -132,6 +143,24 @@
 						"copy_to": [
 							"collector.it"
 						]
+					},
+					"ja": {
+						"type": "text",
+						"index": false,
+						"fields": {
+							"ngrams": {
+								"type": "text",
+								"analyzer": "ja_index_ngram",
+								"search_analyzer": "ja_search_ngram"
+							},
+							"raw": {
+								"type": "text",
+								"analyzer": "ja_index_raw"
+							}
+						},
+						"copy_to": [
+							"collector.ja"
+						]
 					}
 				}
 			},
@@ -170,6 +199,13 @@
 						"index": false,
 						"copy_to": [
 							"collector.it"
+						]
+					},
+					"ja": {
+						"type": "text",
+						"index": false,
+						"copy_to": [
+							"collector.ja"
 						]
 					}
 				}
@@ -212,6 +248,13 @@
 						"index": false,
 						"copy_to": [
 							"collector.it"
+						]
+					},
+					"ja": {
+						"type": "text",
+						"index": false,
+						"copy_to": [
+							"collector.ja"
 						]
 					}
 				}
@@ -273,7 +316,8 @@
 							"name.en",
 							"name.de",
 							"name.fr",
-							"name.it"
+							"name.it",
+							"name.ja"
 						]
 					},
 					"en": {
@@ -341,6 +385,24 @@
 						},
 						"copy_to": [
 							"collector.it"
+						]
+					},
+					"ja": {
+						"type": "text",
+						"index": false,
+						"fields": {
+							"ngrams": {
+								"type": "text",
+								"analyzer": "ja_index_ngram",
+								"search_analyzer": "ja_search_ngram"
+							},
+							"raw": {
+								"type": "text",
+								"analyzer": "ja_index_raw"
+							}
+						},
+						"copy_to": [
+							"collector.ja"
 						]
 					},
 					"loc": {
@@ -459,6 +521,13 @@
 						"copy_to": [
 							"collector.it"
 						]
+					},
+					"ja": {
+						"type": "text",
+						"index": false,
+						"copy_to": [
+							"collector.ja"
+						]
 					}
 				}
 			},
@@ -497,6 +566,13 @@
 						"index": false,
 						"copy_to": [
 							"collector.it"
+						]
+					},
+					"ja": {
+						"type": "text",
+						"index": false,
+						"copy_to": [
+							"collector.ja"
 						]
 					}
 				}
@@ -537,10 +613,17 @@
 						"copy_to": [
 							"collector.it"
 						]
+					},
+					"ja": {
+						"type": "text",
+						"index": false,
+						"copy_to": [
+							"collector.ja"
+						]
 					}
 				}
 			},
-	  		"locality": {
+			"locality": {
 				"properties": {
 					"de": {
 						"type": "text",
@@ -575,6 +658,13 @@
 						"index": false,
 						"copy_to": [
 							"collector.it"
+						]
+					},
+					"ja": {
+						"type": "text",
+						"index": false,
+						"copy_to": [
+							"collector.ja"
 						]
 					}
 				}
@@ -614,6 +704,13 @@
 						"index": false,
 						"copy_to": [
 							"collector.it"
+						]
+					},
+					"ja": {
+						"type": "text",
+						"index": false,
+						"copy_to": [
+							"collector.ja"
 						]
 					}
 				}
