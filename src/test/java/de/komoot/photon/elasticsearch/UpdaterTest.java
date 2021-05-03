@@ -28,13 +28,13 @@ public class UpdaterTest extends ESBaseTester {
         PhotonDoc doc = new PhotonDoc(1234, "N", 1000, "place", "city").names(names);
 
         setUpES();
-        Importer instance = new Importer(getClient(), "en");
+        Importer instance = new Importer(getClient(), "en", "");
         instance.add(doc);
         instance.finish();
         refresh();
 
         names.put("name:en", "Enfoo");
-        Updater updater = new Updater(getClient(), "en,de");
+        Updater updater = new Updater(getClient(), "en,de", "");
         updater.create(doc);
         updater.finish();
         refresh();
@@ -55,13 +55,13 @@ public class UpdaterTest extends ESBaseTester {
         PhotonDoc doc = new PhotonDoc(1234, "N", 1000, "place", "city").names(names);
 
         setUpES();
-        Importer instance = new Importer(getClient(), "en");
+        Importer instance = new Importer(getClient(), "en", "");
         instance.add(doc);
         instance.finish();
         refresh();
 
         names.remove("name");
-        Updater updater = new Updater(getClient(), "en,de");
+        Updater updater = new Updater(getClient(), "en,de", "");
         updater.create(doc);
         updater.finish();
         refresh();

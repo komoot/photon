@@ -15,17 +15,19 @@ import java.io.PrintWriter;
 public class JsonDumper implements Importer {
     private PrintWriter writer = null;
     private final String[] languages;
+    private final String[] extraTags;
 
-    public JsonDumper(String filename, String languages) throws FileNotFoundException {
+    public JsonDumper(String filename, String languages, String extraTags) throws FileNotFoundException {
         this.writer = new PrintWriter(filename);
         this.languages = languages.split(",");
+        this.extraTags = extraTags.split(",");
     }
 
     @Override
     public void add(PhotonDoc doc) {
         try {
             writer.println("{\"index\": {}}");
-            writer.println(Utils.convert(doc, this.languages).string());
+            writer.println(Utils.convert(doc, languages, extraTags).string());
         } catch (IOException e) {
             log.error("error writing json file", e);
         }

@@ -21,7 +21,7 @@ public class ImporterTest extends ESBaseTester {
     @Test
     public void addSimpleDoc() throws IOException {
         setUpES();
-        Importer instance = new Importer(getClient(), "en");
+        Importer instance = new Importer(getClient(), "en", "");
         instance.add(new PhotonDoc(1234, "N", 1000, "place", "city"));
         instance.finish();
         refresh();

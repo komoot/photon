@@ -23,7 +23,7 @@ import java.util.Set;
 public class Utils {
     private static final Joiner commaJoiner = Joiner.on(", ").skipNulls();
 
-    public static XContentBuilder convert(PhotonDoc doc, String[] languages) throws IOException {
+    public static XContentBuilder convert(PhotonDoc doc, String[] languages, String[] extraTags) throws IOException {
         final AddressType atype = doc.getAddressType();
         XContentBuilder builder = XContentFactory.jsonBuilder().startObject()
                 .field(Constants.OSM_ID, doc.getOsmId())
@@ -56,12 +56,32 @@ public class Utils {
         if (countryCode != null)
             builder.field(Constants.COUNTRYCODE, countryCode.getAlpha2());
         writeContext(builder, doc.getContext(), languages);
+        writeExtraTags(builder, doc.getExtratags(), extraTags);
         writeExtent(builder, doc.getBbox());
 
         builder.endObject();
 
 
         return builder;
+    }
+
+    private static void writeExtraTags(XContentBuilder builder, Map<String, String> docTags, String[] extraTags) throws IOException {
+        boolean foundTag = false;
+
+        for (String tag: extraTags) {
+            String value = docTags.get(tag);
+            if (value != null) {
+                if (!foundTag) {
+                    builder.startObject("extra");
+                    foundTag = true;
+                }
+                builder.field(tag, value);
+            }
+        }
+
+        if (foundTag) {
+            builder.endObject();
+        }
     }
 
     private static void writeExtent(XContentBuilder builder, Envelope bbox) throws IOException {
