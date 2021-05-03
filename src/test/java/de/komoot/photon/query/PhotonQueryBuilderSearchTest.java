@@ -19,10 +19,6 @@ import org.elasticsearch.index.query.QueryBuilder;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.IOException;
-import java.util.Set;
-
-import static org.junit.Assert.assertEquals;
 
 /**
  * Created by Sachin Dole on 2/20/2015.
