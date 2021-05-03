@@ -64,6 +64,11 @@ public class ConvertToJson {
                 properties.put("extent", new JSONArray(Lists.newArrayList(nw.get(0), nw.get(1), se.get(0), se.get(1))));
             }
 
+            final Map<String, String> extraTags = (Map<String, String>) source.get("extra");
+            if (extraTags != null) {
+                properties.put("extra", extraTags);
+            }
+
             feature.put(Constants.PROPERTIES, properties);
 
             list.add(feature);

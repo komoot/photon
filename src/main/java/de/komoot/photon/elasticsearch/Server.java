@@ -63,7 +63,9 @@ public class Server {
 
     public Server(CommandLineArgs args) {
         this(args.getCluster(), args.getDataDirectory(), args.getLanguages(), args.getTransportAddresses());
-        this.extraTags = args.getExtraTags().split(",");
+        if (args.getExtraTags().length() > 0) {
+            this.extraTags = args.getExtraTags().split(",");
+        }
     }
 
     public Server(String clusterName, String mainDirectory, String languages, String transportAddresses) {
