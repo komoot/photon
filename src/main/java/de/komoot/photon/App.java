@@ -107,7 +107,7 @@ public class App {
     private static void startJsonDump(CommandLineArgs args) {
         try {
             final String filename = args.getJsonDump();
-            final JsonDumper jsonDumper = new JsonDumper(filename, args.getLanguages());
+            final JsonDumper jsonDumper = new JsonDumper(filename, args.getLanguages(), args.getExtraTags());
             NominatimConnector nominatimConnector = new NominatimConnector(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
             nominatimConnector.setImporter(jsonDumper);
             nominatimConnector.readEntireDatabase(args.getCountryCodes().split(","));
@@ -133,7 +133,7 @@ public class App {
         }
 
         log.info("starting import from nominatim to photon with languages: " + args.getLanguages());
-        de.komoot.photon.elasticsearch.Importer importer = new de.komoot.photon.elasticsearch.Importer(esNodeClient, args.getLanguages());
+        de.komoot.photon.elasticsearch.Importer importer = new de.komoot.photon.elasticsearch.Importer(esNodeClient, args.getLanguages(), args.getExtraTags());
         NominatimConnector nominatimConnector = new NominatimConnector(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
         nominatimConnector.setImporter(importer);
         nominatimConnector.readEntireDatabase(args.getCountryCodes().split(","));
@@ -149,7 +149,7 @@ public class App {
      */
     private static NominatimUpdater setupNominatimUpdater(CommandLineArgs args, Client esNodeClient) {
         NominatimUpdater nominatimUpdater = new NominatimUpdater(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
-        Updater updater = new de.komoot.photon.elasticsearch.Updater(esNodeClient, args.getLanguages());
+        Updater updater = new de.komoot.photon.elasticsearch.Updater(esNodeClient, args.getLanguages(), args.getExtraTags());
         nominatimUpdater.setUpdater(updater);
         return nominatimUpdater;
     }

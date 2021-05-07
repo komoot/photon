@@ -7,6 +7,7 @@ import org.junit.After;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,13 +29,13 @@ public class UpdaterTest extends ESBaseTester {
         PhotonDoc doc = new PhotonDoc(1234, "N", 1000, "place", "city").names(names);
 
         setUpES();
-        Importer instance = new Importer(getClient(), "en");
+        Importer instance = new Importer(getClient(), "en", "");
         instance.add(doc);
         instance.finish();
         refresh();
 
         names.put("name:en", "Enfoo");
-        Updater updater = new Updater(getClient(), "en,de");
+        Updater updater = new Updater(getClient(), "en,de", "");
         updater.create(doc);
         updater.finish();
         refresh();
@@ -55,13 +56,13 @@ public class UpdaterTest extends ESBaseTester {
         PhotonDoc doc = new PhotonDoc(1234, "N", 1000, "place", "city").names(names);
 
         setUpES();
-        Importer instance = new Importer(getClient(), "en");
+        Importer instance = new Importer(getClient(), "en", "");
         instance.add(doc);
         instance.finish();
         refresh();
 
         names.remove("name");
-        Updater updater = new Updater(getClient(), "en,de");
+        Updater updater = new Updater(getClient(), "en,de", "");
         updater.create(doc);
         updater.finish();
         refresh();
@@ -72,5 +73,37 @@ public class UpdaterTest extends ESBaseTester {
         Map<String, String> out_names = (Map<String, String>) response.getSourceAsMap().get("name");
         assertFalse(out_names.containsKey("default"));
         assertEquals("Enfoo", out_names.get("en"));
+    }
+
+    @Test
+    public void addExtraTagsToDoc() throws IOException {
+        Map<String, String> names = new HashMap<>();
+        names.put("name", "Foo");
+        PhotonDoc doc = new PhotonDoc(1234, "N", 1000, "place", "city").names(names);
+
+        setUpES();
+        Importer instance = new Importer(getClient(), "en", "website");
+        instance.add(doc);
+        instance.finish();
+        refresh();
+
+        GetResponse response = getById(1234);
+        assertTrue(response.isExists());
+
+        assertNull(response.getSource().get("extra"));
+
+        doc.extraTags(Collections.singletonMap("website", "http://site.foo"));
+        Updater updater = new Updater(getClient(), "en,de", "website");
+        updater.create(doc);
+        updater.finish();
+        refresh();
+
+        response = getById(1234);
+        assertTrue(response.isExists());
+
+        Map<String, String> extra = (Map<String, String>) response.getSource().get("extra");
+
+        assertNotNull(extra);
+        assertEquals(Collections.singletonMap("website", "http://site.foo"), extra);
     }
 }
