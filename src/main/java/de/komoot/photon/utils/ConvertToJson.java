@@ -27,13 +27,17 @@ public class ConvertToJson {
         this.lang = lang;
     }
 
-    public List<JSONObject> convert(SearchResponse searchResponse) {
+    public List<JSONObject> convert(SearchResponse searchResponse, boolean debugMode) {
         SearchHit[] hits = searchResponse.getHits().getHits();
         final List<JSONObject> list = Lists.newArrayListWithExpectedSize(hits.length);
         for (SearchHit hit : hits) {
             final Map<String, Object> source = hit.getSource();
 
             final JSONObject feature = new JSONObject();
+            if (debugMode) {
+                feature.put("score", hit.getScore());
+                feature.put("importance", source.get("importance"));
+            }
             feature.put(Constants.TYPE, Constants.FEATURE);
             feature.put(Constants.GEOMETRY, getPoint(source));
 

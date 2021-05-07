@@ -19,7 +19,7 @@ public class ReverseRequestHandler {
         ReverseQueryBuilder queryBuilder = buildQuery(photonRequest);
         SearchResponse results = elasticsearchSearcher.search(queryBuilder.buildQuery(), photonRequest.getLimit(), photonRequest.getLocation(),
                 photonRequest.getLocationDistanceSort());
-        List<JSONObject> resultJsonObjects = new ConvertToJson(photonRequest.getLanguage()).convert(results);
+        List<JSONObject> resultJsonObjects = new ConvertToJson(photonRequest.getLanguage()).convert(results, false);
         if (resultJsonObjects.size() > photonRequest.getLimit()) {
             resultJsonObjects = resultJsonObjects.subList(0, photonRequest.getLimit());
         }

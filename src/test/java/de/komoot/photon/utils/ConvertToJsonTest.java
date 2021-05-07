@@ -46,7 +46,7 @@ public class ConvertToJsonTest extends ESBaseTester {
 
         SearchResponse response = databaseFromDoc(new PhotonDoc(1234, "N", 1000, "place", "city").extraTags(extratags));
 
-        List<JSONObject> json = new ConvertToJson("de").convert(response);
+        List<JSONObject> json = new ConvertToJson("de").convert(response, false);
 
         JSONObject extra = json.get(0).getJSONObject("properties").getJSONObject("extra");
 
@@ -60,7 +60,7 @@ public class ConvertToJsonTest extends ESBaseTester {
     public void testConvertWithoutExtraTags() throws IOException {
         SearchResponse response = databaseFromDoc(new PhotonDoc(1234, "N", 1000, "place", "city"));
 
-        List<JSONObject> json = new ConvertToJson("de").convert(response);
+        List<JSONObject> json = new ConvertToJson("de").convert(response, false);
 
         assertNull(json.get(0).getJSONObject("properties").optJSONObject("extra"));
     }

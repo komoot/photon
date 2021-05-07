@@ -21,8 +21,6 @@ import static spark.Spark.halt;
  * Created by Sachin Dole on 2/12/2015.
  */
 public class SearchRequestHandler extends RouteImpl {
-    private static final String DEBUG_PARAMETER = "debug";
-    
     private final PhotonRequestFactory photonRequestFactory;
     private final PhotonRequestHandler requestHandler;
     private final ConvertToGeoJson geoJsonConverter;
@@ -47,10 +45,10 @@ public class SearchRequestHandler extends RouteImpl {
         }
         List<JSONObject> results = requestHandler.handle(photonRequest);
         JSONObject geoJsonResults = geoJsonConverter.convert(results);
-        if (request.queryParams(DEBUG_PARAMETER) != null) {
+        if (photonRequest.getDebug()) {
             JSONObject debug = new JSONObject();
             debug.put("query", new JSONObject(requestHandler.dumpQuery(photonRequest)));
-            geoJsonResults.put(DEBUG_PARAMETER, debug);
+            geoJsonResults.put("debug", debug);
             return geoJsonResults.toString(4);
         }
 

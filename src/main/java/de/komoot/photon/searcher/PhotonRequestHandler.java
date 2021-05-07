@@ -36,7 +36,7 @@ public class PhotonRequestHandler {
             lastLenient = true;
             results = elasticsearchSearcher.search(buildQuery(photonRequest, true).buildQuery(), extLimit);
         }
-        List<JSONObject> resultJsonObjects = new ConvertToJson(photonRequest.getLanguage()).convert(results);
+        List<JSONObject> resultJsonObjects = new ConvertToJson(photonRequest.getLanguage()).convert(results, photonRequest.getDebug());
         StreetDupesRemover streetDupesRemover = new StreetDupesRemover(photonRequest.getLanguage());
         resultJsonObjects = streetDupesRemover.execute(resultJsonObjects);
         if (resultJsonObjects.size() > limit) {
