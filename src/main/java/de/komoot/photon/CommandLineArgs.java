@@ -32,6 +32,9 @@ public class CommandLineArgs {
     @Parameter(names = "-country-codes", description = "country codes filter that nominatim importer should import, comma separated. If empty full planet is done")
     private String countryCodes = "";
 
+    @Parameter(names = "-extra-tags", description = "additional tags to save for each place")
+    private String extraTags = "";
+
     @Parameter(names = "-json", description = "import nominatim database and dump it to a json like files in (useful for developing)")
     private String jsonDump = null;
 

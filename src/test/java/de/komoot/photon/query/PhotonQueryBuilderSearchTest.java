@@ -19,10 +19,6 @@ import org.elasticsearch.index.query.QueryBuilder;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.IOException;
-import java.util.Set;
-
-import static org.junit.Assert.assertEquals;
 
 /**
  * Created by Sachin Dole on 2/20/2015.
@@ -34,7 +30,7 @@ public class PhotonQueryBuilderSearchTest extends ESBaseTester {
         setUpES();
         ImmutableList<String> tags = ImmutableList.of("tourism", "attraction", "tourism", "hotel", "tourism", "museum", "tourism", "information", "amenity",
                 "parking", "amenity", "restaurant", "amenity", "information", "food", "information", "railway", "station");
-        Importer instance = new Importer(getClient(), "en");
+        Importer instance = new Importer(getClient(), "en", "");
         double lon = 13.38886;
         double lat = 52.51704;
         for (int i = 0; i < tags.size(); i++) {

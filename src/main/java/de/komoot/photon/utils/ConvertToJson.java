@@ -27,13 +27,17 @@ public class ConvertToJson {
         this.lang = lang;
     }
 
-    public List<JSONObject> convert(SearchResponse searchResponse) {
+    public List<JSONObject> convert(SearchResponse searchResponse, boolean debugMode) {
         SearchHit[] hits = searchResponse.getHits().getHits();
         final List<JSONObject> list = Lists.newArrayListWithExpectedSize(hits.length);
         for (SearchHit hit : hits) {
             final Map<String, Object> source = hit.getSource();
 
             final JSONObject feature = new JSONObject();
+            if (debugMode) {
+                feature.put("score", hit.getScore());
+                feature.put("importance", source.get("importance"));
+            }
             feature.put(Constants.TYPE, Constants.FEATURE);
             feature.put(Constants.GEOMETRY, getPoint(source));
 
@@ -62,6 +66,11 @@ public class ConvertToJson {
                 final List<Double> nw = coords.get(0);
                 final List<Double> se = coords.get(1);
                 properties.put("extent", new JSONArray(Lists.newArrayList(nw.get(0), nw.get(1), se.get(0), se.get(1))));
+            }
+
+            final Map<String, String> extraTags = (Map<String, String>) source.get("extra");
+            if (extraTags != null) {
+                properties.put("extra", extraTags);
             }
 
             feature.put(Constants.PROPERTIES, properties);

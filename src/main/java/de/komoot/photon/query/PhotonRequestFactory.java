@@ -57,7 +57,9 @@ public class PhotonRequestFactory {
                 throw new BadRequestException(400, "invalid parameter 'location_bias_scale' must be a number");
             }
 
-        PhotonRequest request = new PhotonRequest(query, limit, bbox, locationForBias, scale, language);
+        boolean debug = webRequest.queryParams("debug") != null;
+
+        PhotonRequest request = new PhotonRequest(query, limit, bbox, locationForBias, scale, language, debug);
 
         QueryParamsMap tagFiltersQueryMap = webRequest.queryMap("osm_tag");
         if (new CheckIfFilteredRequest().execute(tagFiltersQueryMap)) {

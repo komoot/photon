@@ -21,18 +21,20 @@ public class Importer implements de.komoot.photon.Importer {
     private final Client esClient;
     private BulkRequestBuilder bulkRequest;
     private final String[] languages;
+    private final String[] extraTags;
 
-    public Importer(Client esClient, String languages) {
+    public Importer(Client esClient, String languages, String extraTags) {
         this.esClient = esClient;
         this.bulkRequest = esClient.prepareBulk();
         this.languages = languages.split(",");
+        this.extraTags = extraTags.split(",");
     }
 
     @Override
     public void add(PhotonDoc doc) {
         try {
             this.bulkRequest.add(this.esClient.prepareIndex(PhotonIndex.NAME, PhotonIndex.TYPE).
-                    setSource(Utils.convert(doc, languages)).setId(doc.getUid()));
+                    setSource(Utils.convert(doc, languages, extraTags)).setId(doc.getUid()));
         } catch (IOException e) {
             log.error("could not bulk add document " + doc.getUid(), e);
             return;
