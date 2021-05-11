@@ -11,7 +11,7 @@ import java.util.Set;
 public class PhotonRequestTest {
 
     private PhotonRequest simpleRequest() {
-        return new PhotonRequest("foo", 1, null, null, 1.6, "de");
+        return new PhotonRequest("foo", 1, null, null, 1.6, "de", false);
     }
 
     @Test
