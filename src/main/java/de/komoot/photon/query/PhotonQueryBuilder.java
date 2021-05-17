@@ -112,16 +112,26 @@ public class PhotonQueryBuilder {
         return new PhotonQueryBuilder(query, language, languages, lenient);
     }
 
-    public PhotonQueryBuilder withLocationBias(Point point, double scale) {
-        if (point == null) return this;
+    public PhotonQueryBuilder withLocationBias(Point point, double scale, int zoom) {
+        if (point == null || zoom < 4) return this;
+
+        if (zoom > 18) {
+            zoom = 18;
+        }
+        double radius = (1 << (18 - zoom)) * 0.25;
+
+        if (scale <= 0.0) {
+            scale = 0.0000001;
+        }
+
         Map<String, Object> params = newHashMap();
         params.put("lon", point.getX());
         params.put("lat", point.getY());
 
         finalQueryWithoutTagFilterBuilder =
                 QueryBuilders.functionScoreQuery(finalQueryWithoutTagFilterBuilder, new FilterFunctionBuilder[] {
-                     new FilterFunctionBuilder(ScoreFunctionBuilders.exponentialDecayFunction("coordinate", params, scale + "km", scale / 10 + "km", 0.8)),
-                     new FilterFunctionBuilder(ScoreFunctionBuilders.linearDecayFunction("importance", "1.0", "0.2"))
+                     new FilterFunctionBuilder(ScoreFunctionBuilders.exponentialDecayFunction("coordinate", params, radius + "km", radius / 10 + "km", 0.8)),
+                     new FilterFunctionBuilder(ScoreFunctionBuilders.linearDecayFunction("importance", "1.0", scale))
                 }).boostMode(CombineFunction.MULTIPLY).scoreMode(ScoreMode.MAX);
         return this;
     }

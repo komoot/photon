@@ -27,8 +27,8 @@ public class ApiIntegrationTest extends ESBaseTester {
     public void setUp() throws Exception {
         setUpES();
         Importer instance = makeImporter();
-        instance.add(createDoc(13.38886, 52.51704, 1000, 1000, "place", "city"));
-        instance.add(createDoc(13.39026, 52.54714, 1001, 1001, "place", "town"));
+        instance.add(createDoc(13.38886, 52.51704, 1000, 1000, "place", "city").importance(0.6));
+        instance.add(createDoc(13.39026, 52.54714, 1001, 1001, "place", "town").importance(0.3));
         instance.finish();
         refresh();
     }
@@ -109,6 +109,27 @@ public class ApiIntegrationTest extends ESBaseTester {
         assertEquals("W", properties.getString("osm_type"));
         assertEquals("place", properties.getString("osm_key"));
         assertEquals("town", properties.getString("osm_value"));
+        assertEquals("berlin", properties.getString("name"));
+    }
+
+    /**
+     * Search with large location bias
+     */
+    @Test
+    public void testApiWithLargerLocationBias() throws Exception {
+        App.main(new String[]{"-cluster", TEST_CLUSTER_NAME, "-listen-port", Integer.toString(LISTEN_PORT), "-transport-addresses", "127.0.0.1"});
+        awaitInitialization();
+        HttpURLConnection connection = (HttpURLConnection) new URL("http://127.0.0.1:" + port() + "/api?q=berlin&limit=1&lat=52.54714&lon=13.39026&zoom=12&location_bias_scale=0.6")
+                .openConnection();
+        JSONObject json = new JSONObject(
+                new BufferedReader(new InputStreamReader(connection.getInputStream())).lines().collect(Collectors.joining("\n")));
+        JSONArray features = json.getJSONArray("features");
+        assertEquals(1, features.length());
+        JSONObject feature = features.getJSONObject(0);
+        JSONObject properties = feature.getJSONObject("properties");
+        assertEquals("W", properties.getString("osm_type"));
+        assertEquals("place", properties.getString("osm_key"));
+        assertEquals("city", properties.getString("osm_value"));
         assertEquals("berlin", properties.getString("name"));
     }
 
