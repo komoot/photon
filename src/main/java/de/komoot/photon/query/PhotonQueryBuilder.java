@@ -11,9 +11,6 @@ import org.elasticsearch.index.query.*;
 import org.elasticsearch.index.query.functionscore.FunctionScoreQueryBuilder;
 import org.elasticsearch.index.query.functionscore.FunctionScoreQueryBuilder.FilterFunctionBuilder;
 import org.elasticsearch.index.query.functionscore.ScoreFunctionBuilders;
-import org.elasticsearch.index.query.functionscore.ScriptScoreFunctionBuilder;
-import org.elasticsearch.script.Script;
-import org.elasticsearch.script.ScriptType;
 
 import java.util.*;
 
@@ -50,11 +47,9 @@ public class PhotonQueryBuilder {
 
     protected ArrayList<FilterFunctionBuilder> alFilterFunction4QueryBuilder = new ArrayList<>(1);
 
-    protected BoolQueryBuilder query4QueryBuilder;
-
 
     private PhotonQueryBuilder(String query, String language, List<String> languages, boolean lenient) {
-        query4QueryBuilder = QueryBuilders.boolQuery();
+        BoolQueryBuilder query4QueryBuilder = QueryBuilders.boolQuery();
 
         if (lenient) {
             BoolQueryBuilder builder = QueryBuilders.boolQuery()
@@ -88,15 +83,12 @@ public class PhotonQueryBuilder {
                 .should(QueryBuilders.matchQuery(String.format("collector.%s.raw", language), query).boost(100)
                         .analyzer("search_raw"));
 
-        // this is former general-score, now inline
-        String strCode = "double score = 1 + doc['importance'].value * 100; score";
-        ScriptScoreFunctionBuilder functionBuilder4QueryBuilder =
-                ScoreFunctionBuilders.scriptFunction(new Script(ScriptType.INLINE, "painless", strCode, new HashMap<String, Object>()));
 
-        alFilterFunction4QueryBuilder.add(new FilterFunctionBuilder(functionBuilder4QueryBuilder));
-
-        finalQueryWithoutTagFilterBuilder = new FunctionScoreQueryBuilder(query4QueryBuilder, alFilterFunction4QueryBuilder.toArray(new FilterFunctionBuilder[0]))
-                .boostMode(CombineFunction.MULTIPLY).scoreMode(ScoreMode.MULTIPLY);
+        // Weigh the resulting score by importance. Use a linear scale function that ensures that the weight
+        // never drops to 0 and cancels out the ES score.
+        finalQueryWithoutTagFilterBuilder = QueryBuilders.functionScoreQuery(query4QueryBuilder, new FilterFunctionBuilder[] {
+            new FilterFunctionBuilder(ScoreFunctionBuilders.linearDecayFunction("importance", "1.0", "0.6"))
+        });
 
         // @formatter:off
         queryBuilderForTopLevelFilter = QueryBuilders.boolQuery()
@@ -126,15 +118,11 @@ public class PhotonQueryBuilder {
         params.put("lon", point.getX());
         params.put("lat", point.getY());
 
-        scale = Math.abs(scale);
-        String strCode = "double dist = doc['coordinate'].planeDistance(params.lat, params.lon); " +
-                "double score = 0.1 + " + scale + " / (1.0 + dist * 0.001 / 10.0); " +
-                "score";
-        ScriptScoreFunctionBuilder builder = ScoreFunctionBuilders.scriptFunction(new Script(ScriptType.INLINE, "painless", strCode, params));
-        alFilterFunction4QueryBuilder.add(new FilterFunctionBuilder(builder));
         finalQueryWithoutTagFilterBuilder =
-                new FunctionScoreQueryBuilder(query4QueryBuilder, alFilterFunction4QueryBuilder.toArray(new FilterFunctionBuilder[0]))
-                        .boostMode(CombineFunction.MULTIPLY);
+                QueryBuilders.functionScoreQuery(finalQueryWithoutTagFilterBuilder, new FilterFunctionBuilder[] {
+                     new FilterFunctionBuilder(ScoreFunctionBuilders.exponentialDecayFunction("coordinate", params, scale + "km", scale / 10 + "km", 0.8)),
+                     new FilterFunctionBuilder(ScoreFunctionBuilders.linearDecayFunction("importance", "1.0", "0.2"))
+                }).boostMode(CombineFunction.MULTIPLY).scoreMode(ScoreMode.MAX);
         return this;
     }
     
