@@ -11,6 +11,7 @@ import org.elasticsearch.index.query.*;
 import org.elasticsearch.index.query.functionscore.FunctionScoreQueryBuilder;
 import org.elasticsearch.index.query.functionscore.FunctionScoreQueryBuilder.FilterFunctionBuilder;
 import org.elasticsearch.index.query.functionscore.ScoreFunctionBuilders;
+import org.elasticsearch.index.query.functionscore.WeightBuilder;
 
 import java.util.*;
 
@@ -51,21 +52,21 @@ public class PhotonQueryBuilder {
     private PhotonQueryBuilder(String query, String language, List<String> languages, boolean lenient) {
         BoolQueryBuilder query4QueryBuilder = QueryBuilders.boolQuery();
 
+        // 1. All terms of the quey must be contained in the place record somehow. Be more lenient on second try.
+        QueryBuilder collectorQuery;
         if (lenient) {
-            BoolQueryBuilder builder = QueryBuilders.boolQuery()
+            collectorQuery = QueryBuilders.boolQuery()
                     .should(QueryBuilders.matchQuery("collector.default", query)
-                                .fuzziness(Fuzziness.ONE)
-                                .prefixLength(2)
-                                .analyzer("search_ngram")
-                                .minimumShouldMatch("-1"))
+                            .fuzziness(Fuzziness.ONE)
+                            .prefixLength(2)
+                            .analyzer("search_ngram")
+                            .minimumShouldMatch("-1"))
                     .should(QueryBuilders.matchQuery(String.format("collector.%s.ngrams", language), query)
-                                .fuzziness(Fuzziness.ONE)
-                                .prefixLength(2)
-                                .analyzer("search_ngram")
-                                .minimumShouldMatch("-1"))
+                            .fuzziness(Fuzziness.ONE)
+                            .prefixLength(2)
+                            .analyzer("search_ngram")
+                            .minimumShouldMatch("-1"))
                     .minimumShouldMatch("1");
-
-            query4QueryBuilder.must(builder);
         } else {
             MultiMatchQueryBuilder builder =
                     QueryBuilders.multiMatchQuery(query).field("collector.default", 1.0f).type(MultiMatchQueryBuilder.Type.CROSS_FIELDS).prefixLength(2).analyzer("search_ngram").minimumShouldMatch("100%");
@@ -74,28 +75,70 @@ public class PhotonQueryBuilder {
                 builder.field(String.format("collector.%s.ngrams", lang), lang.equals(language) ? 1.0f : 0.6f);
             }
 
-            query4QueryBuilder.must(builder);
+            collectorQuery = builder;
         }
 
+        query4QueryBuilder.must(collectorQuery);
+
+        // 2. Prefer records that have the full names in. For address records with housenumbers this is the main
+        //    filter creterion because they have no name. Therefore boost the score in this case.
+        MultiMatchQueryBuilder hnrQuery = QueryBuilders.multiMatchQuery(query)
+                .field("collector.default.raw", 1.0f)
+                .type(MultiMatchQueryBuilder.Type.CROSS_FIELDS)
+                .analyzer("search_raw");
+
+        for (String lang : languages) {
+            hnrQuery.field(String.format("collector.%s.raw", lang), lang.equals(language) ? 1.0f : 0.6f);
+        }
+
+        query4QueryBuilder.should(QueryBuilders.functionScoreQuery(hnrQuery.boost(0.3f), new FilterFunctionBuilder[]{
+                new FilterFunctionBuilder(QueryBuilders.matchQuery("housenumber", query).analyzer("standard"), new WeightBuilder().setWeight(10f))
+        }));
+
+        // 3. Either the name or housenumber must be in the query terms.
+        //    Be more lenient on second pass. And do not expect housenumbers in single term queries.
+
+        // XXX There is no ngram index on the the default index. Use primary language for now.
+        String primaryLang = "default".equals(language) ? languages.get(0) : language;
+        if (query.indexOf(',') < 0 && query.indexOf(' ') < 0) {
+            query4QueryBuilder.must(QueryBuilders.matchQuery(String.format("name.%s.ngrams", primaryLang), query)
+                    .analyzer("search_ngram")
+                    .boost(2f)
+            );
+        } else {
+            BoolQueryBuilder nameQueryBuilder = QueryBuilders.boolQuery();
+
+            nameQueryBuilder.should(QueryBuilders.matchQuery(String.format("name.%s.ngrams", primaryLang), query)
+                    .analyzer("search_ngram")
+            );
+
+            // 2b) If there is no name, then there must be a housenumber.
+            nameQueryBuilder.should(QueryBuilders.matchQuery("housenumber", query).analyzer("standard"));
+            nameQueryBuilder.minimumShouldMatch("1");
+
+            if (lenient) {
+                query4QueryBuilder.should(nameQueryBuilder);
+            } else {
+                query4QueryBuilder.must(nameQueryBuilder);
+            }
+        }
+
+        // 4. Rerank results for having the full name in the default language.
         query4QueryBuilder
-                .should(QueryBuilders.matchQuery(String.format("name.%s.raw", language), query).boost(200)
-                        .analyzer("search_raw"))
-                .should(QueryBuilders.matchQuery(String.format("collector.%s.raw", language), query).boost(100)
-                        .analyzer("search_raw"));
+                .should(QueryBuilders.matchQuery(String.format("name.%s.raw", language), query).analyzer("search_raw"));
 
 
         // Weigh the resulting score by importance. Use a linear scale function that ensures that the weight
         // never drops to 0 and cancels out the ES score.
-        finalQueryWithoutTagFilterBuilder = QueryBuilders.functionScoreQuery(query4QueryBuilder, new FilterFunctionBuilder[] {
-            new FilterFunctionBuilder(ScoreFunctionBuilders.linearDecayFunction("importance", "1.0", "0.6"))
+        finalQueryWithoutTagFilterBuilder = QueryBuilders.functionScoreQuery(query4QueryBuilder, new FilterFunctionBuilder[]{
+                new FilterFunctionBuilder(ScoreFunctionBuilders.linearDecayFunction("importance", "1.0", "0.6"))
         });
 
-        // @formatter:off
+        // Filter for later: records that have a housenumber and no name must only appear when the housenumber matches.
         queryBuilderForTopLevelFilter = QueryBuilders.boolQuery()
                 .should(QueryBuilders.boolQuery().mustNot(QueryBuilders.existsQuery("housenumber")))
                 .should(QueryBuilders.matchQuery("housenumber", query).analyzer("standard"))
                 .should(QueryBuilders.existsQuery(String.format("name.%s.raw", language)));
-        // @formatter:on
 
         state = State.PLAIN;
     }
