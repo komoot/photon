@@ -28,7 +28,7 @@
 											},
 											{
 												"match": {
-													"collector.en.ngrams": {
+													"collector.ja.ngrams": {
 														"query": "berlin",
 														"operator": "OR",
 														"analyzer": "search_ngram",
@@ -37,6 +37,38 @@
 														"max_expansions": 50,
 														"minimum_should_match": "-1",
 														"fuzzy_transpositions": true,
+														"lenient": false,
+														"zero_terms_query": "NONE",
+														"boost": 1.0
+													}
+												}
+											},
+											{
+												"match": {
+													"collector.default.raw_ja": {
+														"query": "berlin",
+														"operator": "OR",
+														"fuzziness": "1",
+														"prefix_length": 2,
+														"max_expansions": 50,
+														"minimum_should_match": "-1",
+														"fuzzy_transpositions": false,
+														"lenient": false,
+														"zero_terms_query": "NONE",
+														"boost": 1.0
+													}
+												}
+											},
+											{
+												"match": {
+													"collector.ja.raw": {
+														"query": "berlin",
+														"operator": "OR",
+														"fuzziness": "1",
+														"prefix_length": 2,
+														"max_expansions": 50,
+														"minimum_should_match": "-1",
+														"fuzzy_transpositions": false,
 														"lenient": false,
 														"zero_terms_query": "NONE",
 														"boost": 1.0
@@ -58,12 +90,13 @@
 											"multi_match": {
 												"query": "berlin",
 												"fields": [
-													"collector.default.raw^1.0",
-													"collector.en.raw^1.0"
+													"collector.default.raw_ja^1.0",
+													"collector.en.raw^0.6",
+													"collector.ja.raw^1.0"
 												],
 												"type": "cross_fields",
 												"operator": "OR",
-												"analyzer": "search_raw",
+												"analyzer": "ja_search_raw",
 												"slop": 0,
 												"prefix_length": 0,
 												"max_expansions": 50,
@@ -99,7 +132,7 @@
 								},
 								{
 									"match": {
-										"name.en.raw": {
+										"name.ja.raw": {
 											"query": "berlin",
 											"operator": "OR",
 											"prefix_length": 0,
@@ -175,7 +208,7 @@
 						},
 						{
 							"exists": {
-								"field": "name.en.raw",
+								"field": "name.ja.raw",
 								"boost": 1.0
 							}
 						}

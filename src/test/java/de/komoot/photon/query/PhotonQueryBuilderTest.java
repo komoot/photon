@@ -44,6 +44,19 @@ public class PhotonQueryBuilderTest {
         Assert.assertEquals(expectedJson, actualJson);
     }
 
+    @Test
+    public void testJapaneseConstructor() throws IOException {
+        PhotonQueryBuilder photonQueryBuilder = PhotonQueryBuilder.builder("berlin", "ja", Arrays.asList("en", "ja"), true);
+        InputStream resourceAsStream = this.getClass().getClassLoader()
+                .getResourceAsStream("json_queries/test_base_query_ja.json");
+        String expectedJsonString = IOUtils.toString(resourceAsStream, Charset.forName("utf-8"));
+
+        String actualJsonString = new QueryToJson().convert(photonQueryBuilder.buildQuery());
+        JsonNode actualJson = this.readJson(actualJsonString);
+        JsonNode expectedJson = this.readJson(expectedJsonString);
+        Assert.assertEquals(expectedJson, actualJson);
+    }
+
     private JsonNode readJson(ToXContent queryBuilder) throws IOException {
         return this.readJson(
                 queryBuilder.toXContent(JsonXContent.contentBuilder(), new ToXContent.MapParams(null)).bytes());

@@ -69,7 +69,8 @@
 							},
 							"raw": {
 								"type": "text",
-								"analyzer": "index_raw"
+								"analyzer": "index_raw",
+								"search_analyzer": "search_raw"
 							}
 						},
 						"copy_to": [
@@ -78,15 +79,17 @@
 					},
 					"default": {
 						"type": "text",
+						"analyzer": "index_ngram",
 						"fields": {
-							"ngrams": {
-								"type": "text",
-								"analyzer": "ja_index_ngram",
-								"search_analyzer": "ja_search_ngram"
-							},
 							"raw": {
 								"type": "text",
-								"analyzer": "ja_index_raw"
+								"analyzer": "index_raw",
+								"search_analyzer": "search_raw"
+							},
+							"raw_ja": {
+								"type": "text",
+								"analyzer": "ja_index_raw",
+								"search_analyzer": "ja_search_raw"
 							}
 						}
 					},
@@ -101,7 +104,8 @@
 							},
 							"raw": {
 								"type": "text",
-								"analyzer": "index_raw"
+								"analyzer": "index_raw",
+								"search_analyzer": "search_raw"
 							}
 						},
 						"copy_to": [
@@ -119,7 +123,8 @@
 							},
 							"raw": {
 								"type": "text",
-								"analyzer": "index_raw"
+								"analyzer": "index_raw",
+								"search_analyzer": "search_raw"
 							}
 						},
 						"copy_to": [
@@ -137,7 +142,8 @@
 							},
 							"raw": {
 								"type": "text",
-								"analyzer": "index_raw"
+								"analyzer": "index_raw",
+								"search_analyzer": "search_raw"
 							}
 						},
 						"copy_to": [
@@ -150,12 +156,13 @@
 						"fields": {
 							"ngrams": {
 								"type": "text",
-								"analyzer": "ja_index_ngram",
-								"search_analyzer": "ja_search_ngram"
+								"analyzer": "index_ngram",
+								"search_analyzer": "search_ngram"
 							},
 							"raw": {
 								"type": "text",
-								"analyzer": "ja_index_raw"
+								"analyzer": "ja_index_raw",
+								"search_analyzer": "ja_search_raw"
 							}
 						},
 						"copy_to": [
@@ -283,7 +290,8 @@
 						"fields": {
 							"raw": {
 								"type": "text",
-								"analyzer": "index_raw"
+								"analyzer": "index_raw",
+								"search_analyzer": "search_raw"
 							}
 						},
 						"copy_to": [
@@ -301,7 +309,8 @@
 							},
 							"raw": {
 								"type": "text",
-								"analyzer": "index_raw"
+								"analyzer": "index_raw",
+								"search_analyzer": "search_raw"
 							}
 						},
 						"copy_to": [
@@ -331,7 +340,8 @@
 							},
 							"raw": {
 								"type": "text",
-								"analyzer": "index_raw"
+								"analyzer": "index_raw",
+								"search_analyzer": "search_raw"
 							}
 						},
 						"copy_to": [
@@ -349,7 +359,8 @@
 							},
 							"raw": {
 								"type": "text",
-								"analyzer": "index_raw"
+								"analyzer": "index_raw",
+								"search_analyzer": "search_raw"
 							}
 						},
 						"copy_to": [
@@ -362,7 +373,8 @@
 						"fields": {
 							"raw": {
 								"type": "text",
-								"analyzer": "index_raw"
+								"analyzer": "index_raw",
+								"search_analyzer": "search_raw"
 							}
 						},
 						"copy_to": [
@@ -380,7 +392,8 @@
 							},
 							"raw": {
 								"type": "text",
-								"analyzer": "index_raw"
+								"analyzer": "index_raw",
+								"search_analyzer": "search_raw"
 							}
 						},
 						"copy_to": [
@@ -393,12 +406,13 @@
 						"fields": {
 							"ngrams": {
 								"type": "text",
-								"analyzer": "ja_index_ngram",
-								"search_analyzer": "ja_search_ngram"
+								"analyzer": "index_ngram",
+								"search_analyzer": "search_ngram"
 							},
 							"raw": {
 								"type": "text",
-								"analyzer": "ja_index_raw"
+								"analyzer": "ja_index_raw",
+								"search_analyzer": "ja_search_raw"
 							}
 						},
 						"copy_to": [
@@ -411,7 +425,8 @@
 						"fields": {
 							"raw": {
 								"type": "text",
-								"analyzer": "index_raw"
+								"analyzer": "index_raw",
+								"search_analyzer": "search_raw"
 							}
 						},
 						"copy_to": [
@@ -424,7 +439,8 @@
 						"fields": {
 							"raw": {
 								"type": "text",
-								"analyzer": "index_raw"
+								"analyzer": "index_raw",
+								"search_analyzer": "search_raw"
 							}
 						},
 						"copy_to": [
@@ -437,7 +453,8 @@
 						"fields": {
 							"raw": {
 								"type": "text",
-								"analyzer": "index_raw"
+								"analyzer": "index_raw",
+								"search_analyzer": "search_raw"
 							}
 						},
 						"copy_to": [
@@ -450,7 +467,8 @@
 						"fields": {
 							"raw": {
 								"type": "text",
-								"analyzer": "index_raw"
+								"analyzer": "index_raw",
+								"search_analyzer": "search_raw"
 							}
 						},
 						"copy_to": [

@@ -4,49 +4,54 @@
 			"ja_index_raw": {
 				"type": "custom",
 				"char_filter": [
+					"punctuationgreedy",
 					"ja_normalize",
 					"kuromoji_iteration_mark"
 				],
 				"tokenizer": "ja_kuromoji_tokenizer",
 				"filter": [
+					"word_delimiter",
+					"lowercase",
+					"german_normalization",
+					"asciifolding",
+					"unique",
+					"kuromoji_baseform",
+					"kuromoji_part_of_speech",
+					"cjk_width",
+					"ja_stop",
+					"kuromoji_number",
+					"kuromoji_stemmer"
+				]
+			},
+			"ja_search_raw": {
+				"type": "custom",
+				"char_filter": [
+					"punctuationgreedy",
+					"ja_normalize",
+					"kuromoji_iteration_mark"
+				],
+				"tokenizer": "ja_kuromoji_tokenizer",
+				"filter": [
+					"word_delimiter",
+					"lowercase",
+					"german_normalization",
+					"asciifolding",
+					"unique",
 					"kuromoji_baseform",
 					"kuromoji_part_of_speech",
 					"cjk_width",
 					"ja_stop",
 					"kuromoji_number",
 					"kuromoji_stemmer",
-					"lowercase",
-					"ja_hiragana_2_katakana"
-				]
-			},
-			"ja_index_ngram": {
-				"type": "custom",
-				"char_filter": [
-					"ja_normalize",
-					"kuromoji_iteration_mark"
-				],
-				"tokenizer": "ja_ngram_tokenizer",
-				"filter": [
-					"lowercase",
-					"ja_hiragana_2_katakana"
-				]
-			},
-			"ja_search_ngram": {
-				"type": "custom",
-				"char_filter": [
-					"ja_normalize",
-					"kuromoji_iteration_mark"
-				],
-				"tokenizer": "ja_ngram_tokenizer",
-				"filter": [
-					"lowercase",
 					"ja_hiragana_2_katakana"
 				]
 			},
 			"index_ngram": {
 				"char_filter": [
 					"punctuationgreedy",
-					"remove_ws_hnr_suffix"
+					"remove_ws_hnr_suffix",
+					"ja_normalize",
+					"kuromoji_iteration_mark"
 				],
 				"tokenizer": "edge_ngram",
 				"filter": [
@@ -59,7 +64,9 @@
 			},
 			"search_ngram": {
 				"char_filter": [
-					"punctuationgreedy"
+					"punctuationgreedy",
+					"ja_normalize",
+					"kuromoji_iteration_mark"
 				],
 				"tokenizer": "standard",
 				"filter": [
