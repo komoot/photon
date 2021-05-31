@@ -47,15 +47,18 @@ public class ESBaseTester {
         shutdownES();
     }
 
+    public void setUpES() throws IOException {
+        setUpES("en");
+    }
     /**
      * Setup the ES server
      *
      * @throws IOException
      */
-    public void setUpES() throws IOException {
+    public void setUpES(String... languages) throws IOException {
         server = new Server(new File("./target/es_photon_test").getAbsolutePath()).setMaxShards(1).start(TEST_CLUSTER_NAME, "");
         deleteIndex(); // just in case of an abnormal abort previously
-        server.recreateIndex(new String[]{"en"});
+        server.recreateIndex(languages);
         refresh();
     }
 
@@ -65,6 +68,10 @@ public class ESBaseTester {
 
     protected Importer makeImporterWithExtra(String extraTags) {
         return new Importer(getClient(), new String[]{"en"}, extraTags);
+    }
+
+    protected Importer makeImporterWithLanguages(String... languages) {
+        return new Importer(getClient(), languages, "");
     }
 
     protected Updater makeUpdater() {

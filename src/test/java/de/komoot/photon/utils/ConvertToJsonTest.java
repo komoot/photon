@@ -4,7 +4,6 @@ import de.komoot.photon.ESBaseTester;
 import de.komoot.photon.PhotonDoc;
 import de.komoot.photon.elasticsearch.DatabaseProperties;
 import de.komoot.photon.elasticsearch.Importer;
-import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.index.query.QueryBuilders;
