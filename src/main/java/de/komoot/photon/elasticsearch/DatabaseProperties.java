@@ -5,7 +5,6 @@ import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
-import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.*;
@@ -63,23 +62,23 @@ public class DatabaseProperties {
      *
      * @param languageList Comma-separated list of two-letter language codes.
      */
-    public void restrictLanguges(String languageList) {
+    public void restrictLanguages(String[] languageList) {
         if (languages == null) {
             // Special case for versions that did not yet have a language list set
             // in the database: Use the given list as is.
-            languages = languageList.split(",");
+            languages = languageList;
         } else {
             Set<String> currentLanguageSet = new HashSet<>(Arrays.asList(languages));
             List<String> newLanguageList = new ArrayList<>();
 
-            for (String lang : languageList.split(",")) {
+            for (String lang : languageList) {
                 if (currentLanguageSet.contains(lang)) {
                     newLanguageList.add(lang);
                 }
             }
 
             if (newLanguageList.isEmpty()) {
-                throw new RuntimeException("Language list '" + languageList +
+                throw new RuntimeException("Language list '" + languageList.toString() +
                         "not compatible with languages in database(" + languages.toString() + ")");
             }
 

@@ -24,7 +24,7 @@ public class CommandLineArgs {
     private boolean nominatimUpdate = false;
 
     @Parameter(names = "-languages", description = "languages nominatim importer should import and use at run-time, comma separated (default is 'en,fr,de,it')")
-    private String languages = "en,fr,de,it";
+    private String languages = "";
 
     @Parameter(names = "-default-language", description = "language to return results in when no explicit language is choosen by the user")
     private String defaultLanguage = "default";

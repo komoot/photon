@@ -4,6 +4,7 @@ import de.komoot.photon.ESBaseTester;
 import de.komoot.photon.PhotonDoc;
 import org.elasticsearch.action.get.GetResponse;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -15,6 +16,11 @@ import static org.junit.Assert.*;
 
 public class ImporterTest extends ESBaseTester {
 
+    @Before
+    public void setUp() throws IOException {
+        setUpES();
+    }
+
     @After
     public void tearDown() {
         deleteIndex();
@@ -22,9 +28,9 @@ public class ImporterTest extends ESBaseTester {
     }
 
     @Test
-    public void testAddSimpleDoc() throws IOException {
-        setUpES();
-        Importer instance = new Importer(getClient(), "en", "");
+    public void testAddSimpleDoc() {
+        Importer instance = makeImporterWithExtra("");
+
         instance.add(new PhotonDoc(1234, "N", 1000, "place", "city")
                 .extraTags(Collections.singletonMap("maxspeed", "100")));
         instance.finish();
@@ -45,9 +51,8 @@ public class ImporterTest extends ESBaseTester {
     }
 
     @Test
-    public void testSelectedExtraTagsCanBeIncluded() throws IOException {
-        setUpES();
-        Importer instance = new Importer(getClient(), "en", "maxspeed,website");
+    public void testSelectedExtraTagsCanBeIncluded() {
+        Importer instance = makeImporterWithExtra("maxspeed,website");
 
         Map<String, String> extratags = new HashMap<>();
         extratags.put("website", "foo");

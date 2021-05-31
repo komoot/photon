@@ -105,15 +105,16 @@ public class App {
      * @param esNodeClient
      */
     private static void startNominatimImport(CommandLineArgs args, Server esServer, Client esNodeClient) {
+        String[] languages = args.getLanguages().isEmpty() ? new String[]{"en", "de", "fr", "it"}: args.getLanguages().split(",");
         DatabaseProperties dbProperties;
         try {
-            dbProperties = esServer.recreateIndex(args.getLanguages().split(",")); // clear out previous data
+            dbProperties = esServer.recreateIndex(languages); // clear out previous data
         } catch (IOException e) {
             throw new RuntimeException("cannot setup index, elastic search config files not readable", e);
         }
 
         log.info("starting import from nominatim to photon with languages: " + args.getLanguages());
-        de.komoot.photon.elasticsearch.Importer importer = new de.komoot.photon.elasticsearch.Importer(esNodeClient, args.getLanguages(), args.getExtraTags());
+        de.komoot.photon.elasticsearch.Importer importer = new de.komoot.photon.elasticsearch.Importer(esNodeClient, dbProperties.getLanguages(), args.getExtraTags());
         NominatimConnector nominatimConnector = new NominatimConnector(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
         nominatimConnector.setImporter(importer);
         nominatimConnector.readEntireDatabase(args.getCountryCodes().split(","));
@@ -133,7 +134,7 @@ public class App {
         dbProperties.loadFromDatabase(esNodeClient);
 
         NominatimUpdater nominatimUpdater = new NominatimUpdater(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
-        Updater updater = new de.komoot.photon.elasticsearch.Updater(esNodeClient, args.getLanguages(), args.getExtraTags());
+        Updater updater = new de.komoot.photon.elasticsearch.Updater(esNodeClient, dbProperties.getLanguages(), args.getExtraTags());
         nominatimUpdater.setUpdater(updater);
         return nominatimUpdater;
     }
@@ -148,6 +149,9 @@ public class App {
         // Get database properties and ensure that the version is compatible.
         DatabaseProperties dbProperties = new DatabaseProperties();
         dbProperties.loadFromDatabase(esNodeClient);
+        if (!args.getLanguages().isEmpty()) {
+            dbProperties.restrictLanguages(args.getLanguages().split(","));
+        }
 
         port(args.getListenPort());
         ipAddress(args.getListenIp());
@@ -162,10 +166,10 @@ public class App {
         }
 
         // setup search API
-        get("api", new SearchRequestHandler("api", esNodeClient, args.getLanguages(), args.getDefaultLanguage()));
-        get("api/", new SearchRequestHandler("api/", esNodeClient, args.getLanguages(), args.getDefaultLanguage()));
-        get("reverse", new ReverseSearchRequestHandler("reverse", esNodeClient, args.getLanguages(), args.getDefaultLanguage()));
-        get("reverse/", new ReverseSearchRequestHandler("reverse/", esNodeClient, args.getLanguages(), args.getDefaultLanguage()));
+        get("api", new SearchRequestHandler("api", esNodeClient, dbProperties.getLanguages(), args.getDefaultLanguage()));
+        get("api/", new SearchRequestHandler("api/", esNodeClient, dbProperties.getLanguages(), args.getDefaultLanguage()));
+        get("reverse", new ReverseSearchRequestHandler("reverse", esNodeClient, dbProperties.getLanguages(), args.getDefaultLanguage()));
+        get("reverse/", new ReverseSearchRequestHandler("reverse/", esNodeClient, dbProperties.getLanguages(), args.getDefaultLanguage()));
 
         // setup update API
         final NominatimUpdater nominatimUpdater = setupNominatimUpdater(args, esNodeClient);

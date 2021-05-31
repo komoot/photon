@@ -18,7 +18,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Slf4j
 public class ConvertToJsonTest extends ESBaseTester {
 
     @After
@@ -29,7 +28,7 @@ public class ConvertToJsonTest extends ESBaseTester {
 
     private SearchResponse databaseFromDoc(PhotonDoc doc) throws IOException {
         setUpES();
-        Importer instance = new Importer(getClient(), "en", "maxspeed,website");
+        Importer instance = makeImporterWithExtra("maxspeed,website");
         instance.add(doc);
         instance.finish();
         refresh();
@@ -50,7 +49,6 @@ public class ConvertToJsonTest extends ESBaseTester {
 
         SearchResponse response = databaseFromDoc(new PhotonDoc(1234, "N", 1000, "place", "city").extraTags(extratags));
 
-        log.warn(response.toString());
         List<JSONObject> json = new ConvertToJson("de").convert(response, false);
 
         JSONObject extra = json.get(0).getJSONObject("properties").getJSONObject("extra");
