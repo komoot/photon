@@ -56,12 +56,6 @@ public class App {
             esClient.admin().cluster().prepareHealth().setWaitForYellowStatus().get();
             log.info("ES cluster is now ready.");
 
-            if (args.isRecreateIndex()) {
-                shutdownES = true;
-                startRecreatingIndex(esServer, args);
-                return;
-            }
-
             if (args.isNominatimImport()) {
                 shutdownES = true;
                 startNominatimImport(args, esServer, esClient);
@@ -80,22 +74,6 @@ public class App {
         } finally {
             if (shutdownES) esServer.shutdown();
         }
-    }
-
-
-    /**
-     * dump elastic search index and create a new and empty one
-     *
-     * @param esServer
-     */
-    private static void startRecreatingIndex(Server esServer, CommandLineArgs args) {
-        try {
-            esServer.recreateIndex(args.getLanguages().split(","));
-        } catch (IOException e) {
-            throw new RuntimeException("cannot setup index, elastic search config files not readable", e);
-        }
-
-        log.info("deleted photon index and created an empty new one.");
     }
 
 

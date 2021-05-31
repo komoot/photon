@@ -38,9 +38,6 @@ public class CommandLineArgs {
     @Parameter(names = "-json", description = "import nominatim database and dump it to a json like files in (useful for developing)")
     private String jsonDump = null;
 
-    @Parameter(names = "-recreate-index", description = "delete index and all documents, creates a new and empty photon index")
-    private boolean recreateIndex = false;
-
     @Parameter(names = "-host", description = "postgres host (default 127.0.0.1)")
     private String host = "127.0.0.1";
 
