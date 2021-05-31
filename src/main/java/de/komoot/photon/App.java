@@ -63,6 +63,11 @@ public class App {
                 return;
             }
 
+            // Working on an existing installation.
+            // Update the index settings in case there are any changes.
+            esServer.updateIndexSettings();
+            esClient.admin().cluster().prepareHealth().setWaitForYellowStatus().get();
+
             if (args.isNominatimUpdate()) {
                 shutdownES = true;
                 final NominatimUpdater nominatimUpdater = setupNominatimUpdater(args, esClient);

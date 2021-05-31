@@ -179,11 +179,7 @@ public class Server {
         // add all langs to the mapping
         addLangsToMapping(mappingsJSON, languages);
 
-        JSONObject settings = new JSONObject(IOUtils.toString(indexSettings, utf8Charset));
-        if (shards != null) {
-            settings.put("index", new JSONObject("{ \"number_of_shards\":" + shards + " }"));
-        }
-        client.admin().indices().prepareCreate(PhotonIndex.NAME).setSettings(settings.toString(), XContentType.JSON).execute().actionGet();
+        loadIndexSettings().createIndex(client, PhotonIndex.NAME);
 
         client.admin().indices().preparePutMapping(PhotonIndex.NAME).setType(PhotonIndex.TYPE).setSource(mappingsJSON.toString(), XContentType.JSON).execute().actionGet();
         log.info("mapping created: " + mappingsJSON.toString());
@@ -192,6 +188,18 @@ public class Server {
         dbProperties.saveToDatabase(client);
 
         return dbProperties;
+    }
+
+    public void updateIndexSettings() {
+        // Load the settings from the database to make sure it is at the right
+        // version. If the version is wrong, we should not be messing with the
+        // index.
+        new DatabaseProperties().loadFromDatabase(getClient());
+        loadIndexSettings().updateIndex(getClient(), PhotonIndex.NAME);
+    }
+
+    private IndexSettings loadIndexSettings() {
+        return new IndexSettings().setShards(shards);
     }
 
     public void deleteIndex() {
