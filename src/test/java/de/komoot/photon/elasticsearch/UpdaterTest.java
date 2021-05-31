@@ -15,13 +15,6 @@ import static org.junit.Assert.*;
 
 public class UpdaterTest extends ESBaseTester {
 
-    @After
-    public void tearDown() {
-        deleteIndex();
-        shutdownES();
-    }
-
-
     @Test
     public void addNameToDoc() throws IOException {
         Map<String, String> names = new HashMap<>();

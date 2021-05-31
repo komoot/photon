@@ -21,12 +21,6 @@ public class ImporterTest extends ESBaseTester {
         setUpES();
     }
 
-    @After
-    public void tearDown() {
-        deleteIndex();
-        shutdownES();
-    }
-
     @Test
     public void testAddSimpleDoc() {
         Importer instance = makeImporterWithExtra("");

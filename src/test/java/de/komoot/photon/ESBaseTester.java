@@ -43,6 +43,7 @@ public class ESBaseTester {
 
     @After
     public void tearDown() {
+        deleteIndex();
         shutdownES();
     }
 

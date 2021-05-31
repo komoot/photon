@@ -20,12 +20,6 @@ import java.util.Map;
 
 public class ConvertToJsonTest extends ESBaseTester {
 
-    @After
-    public void tearDown() {
-        deleteIndex();
-        shutdownES();
-    }
-
     private SearchResponse databaseFromDoc(PhotonDoc doc) throws IOException {
         setUpES();
         Importer instance = makeImporterWithExtra("maxspeed,website");

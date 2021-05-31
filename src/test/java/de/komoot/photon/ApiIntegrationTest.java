@@ -37,7 +37,6 @@ public class ApiIntegrationTest extends ESBaseTester {
     public void shutdown() {
         stop();
         awaitStop();
-        deleteIndex();
     }
 
     /**
