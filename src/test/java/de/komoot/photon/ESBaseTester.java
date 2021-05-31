@@ -50,9 +50,9 @@ public class ESBaseTester {
      * @throws IOException
      */
     public void setUpES() throws IOException {
-        server = new Server(TEST_CLUSTER_NAME, new File("./target/es_photon_test").getAbsolutePath(), "en", "").setMaxShards(1).start();
+        server = new Server(new File("./target/es_photon_test").getAbsolutePath()).setMaxShards(1).start(TEST_CLUSTER_NAME, "");
         deleteIndex(); // just in case of an abnormal abort previously
-        server.recreateIndex();
+        server.recreateIndex(new String[]{"en"});
         refresh();
     }
 

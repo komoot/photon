@@ -48,7 +48,7 @@ public class App {
         }
 
         boolean shutdownES = false;
-        final Server esServer = new Server(args).start();
+        final Server esServer = new Server(args.getDataDirectory()).start(args.getCluster(), args.getTransportAddresses());
         try {
             Client esClient = esServer.getClient();
 
@@ -58,7 +58,7 @@ public class App {
 
             if (args.isRecreateIndex()) {
                 shutdownES = true;
-                startRecreatingIndex(esServer);
+                startRecreatingIndex(esServer, args);
                 return;
             }
 
@@ -88,9 +88,9 @@ public class App {
      *
      * @param esServer
      */
-    private static void startRecreatingIndex(Server esServer) {
+    private static void startRecreatingIndex(Server esServer, CommandLineArgs args) {
         try {
-            esServer.recreateIndex();
+            esServer.recreateIndex(args.getLanguages().split(","));
         } catch (IOException e) {
             throw new RuntimeException("cannot setup index, elastic search config files not readable", e);
         }
@@ -127,7 +127,7 @@ public class App {
      */
     private static void startNominatimImport(CommandLineArgs args, Server esServer, Client esNodeClient) {
         try {
-            esServer.recreateIndex(); // dump previous data
+            esServer.recreateIndex(args.getLanguages().split(",")); // dump previous data
         } catch (IOException e) {
             throw new RuntimeException("cannot setup index, elastic search config files not readable", e);
         }
