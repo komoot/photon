@@ -3,6 +3,7 @@ package de.komoot.photon;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
+import de.komoot.photon.elasticsearch.DatabaseProperties;
 import de.komoot.photon.elasticsearch.Server;
 import de.komoot.photon.nominatim.NominatimConnector;
 import de.komoot.photon.nominatim.NominatimUpdater;
@@ -104,8 +105,9 @@ public class App {
      * @param esNodeClient
      */
     private static void startNominatimImport(CommandLineArgs args, Server esServer, Client esNodeClient) {
+        DatabaseProperties dbProperties;
         try {
-            esServer.recreateIndex(args.getLanguages().split(",")); // dump previous data
+            dbProperties = esServer.recreateIndex(args.getLanguages().split(",")); // clear out previous data
         } catch (IOException e) {
             throw new RuntimeException("cannot setup index, elastic search config files not readable", e);
         }
@@ -126,6 +128,10 @@ public class App {
      * @param esNodeClient
      */
     private static NominatimUpdater setupNominatimUpdater(CommandLineArgs args, Client esNodeClient) {
+        // Get database properties and ensure that the version is compatible.
+        DatabaseProperties dbProperties = new DatabaseProperties();
+        dbProperties.loadFromDatabase(esNodeClient);
+
         NominatimUpdater nominatimUpdater = new NominatimUpdater(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
         Updater updater = new de.komoot.photon.elasticsearch.Updater(esNodeClient, args.getLanguages(), args.getExtraTags());
         nominatimUpdater.setUpdater(updater);
@@ -139,6 +145,10 @@ public class App {
      * @param esNodeClient
      */
     private static void startApi(CommandLineArgs args, Client esNodeClient) {
+        // Get database properties and ensure that the version is compatible.
+        DatabaseProperties dbProperties = new DatabaseProperties();
+        dbProperties.loadFromDatabase(esNodeClient);
+
         port(args.getListenPort());
         ipAddress(args.getListenIp());
 

@@ -2,7 +2,9 @@ package de.komoot.photon.utils;
 
 import de.komoot.photon.ESBaseTester;
 import de.komoot.photon.PhotonDoc;
+import de.komoot.photon.elasticsearch.DatabaseProperties;
 import de.komoot.photon.elasticsearch.Importer;
+import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -16,6 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 public class ConvertToJsonTest extends ESBaseTester {
 
     @After
@@ -33,7 +36,8 @@ public class ConvertToJsonTest extends ESBaseTester {
 
         return getClient().prepareSearch("photon")
                 .setSearchType(SearchType.QUERY_THEN_FETCH)
-                .setQuery(QueryBuilders.matchAllQuery())
+                .setQuery(QueryBuilders.boolQuery().must(QueryBuilders.matchAllQuery())
+                        .filter(QueryBuilders.boolQuery().mustNot(QueryBuilders.idsQuery().addIds(DatabaseProperties.PROPERTY_DOCUMENT_ID))))
                 .execute()
                 .actionGet();
     }
@@ -46,6 +50,7 @@ public class ConvertToJsonTest extends ESBaseTester {
 
         SearchResponse response = databaseFromDoc(new PhotonDoc(1234, "N", 1000, "place", "city").extraTags(extratags));
 
+        log.warn(response.toString());
         List<JSONObject> json = new ConvertToJson("de").convert(response, false);
 
         JSONObject extra = json.get(0).getJSONObject("properties").getJSONObject("extra");

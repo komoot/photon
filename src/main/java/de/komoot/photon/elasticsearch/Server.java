@@ -163,7 +163,7 @@ public class Server {
 
     }
 
-    public void recreateIndex(String[] languages) throws IOException {
+    public DatabaseProperties recreateIndex(String[] languages) throws IOException {
         deleteIndex();
 
         final Client client = this.getClient();
@@ -187,6 +187,11 @@ public class Server {
 
         client.admin().indices().preparePutMapping(PhotonIndex.NAME).setType(PhotonIndex.TYPE).setSource(mappingsJSON.toString(), XContentType.JSON).execute().actionGet();
         log.info("mapping created: " + mappingsJSON.toString());
+
+        DatabaseProperties dbProperties = new DatabaseProperties().setLanguages(languages);
+        dbProperties.saveToDatabase(client);
+
+        return dbProperties;
     }
 
     public void deleteIndex() {
