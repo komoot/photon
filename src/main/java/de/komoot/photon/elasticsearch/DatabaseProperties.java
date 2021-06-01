@@ -40,6 +40,10 @@ public class DatabaseProperties {
      * @return
      */
     public String[] getLanguages() {
+        if (languages == null) {
+            return new String[]{"en", "de", "fr", "it"};
+        }
+
         return languages;
     }
 

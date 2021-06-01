@@ -105,10 +105,9 @@ public class App {
      * @param esNodeClient
      */
     private static void startNominatimImport(CommandLineArgs args, Server esServer, Client esNodeClient) {
-        String[] languages = args.getLanguages().isEmpty() ? new String[]{"en", "de", "fr", "it"}: args.getLanguages().split(",");
         DatabaseProperties dbProperties;
         try {
-            dbProperties = esServer.recreateIndex(languages); // clear out previous data
+            dbProperties = esServer.recreateIndex(args.getLanguagesOrDefault()); // clear out previous data
         } catch (IOException e) {
             throw new RuntimeException("cannot setup index, elastic search config files not readable", e);
         }

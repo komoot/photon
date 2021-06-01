@@ -70,5 +70,9 @@ public class CommandLineArgs {
 
     @Parameter(names = "-h", description = "show help / usage")
     private boolean usage = false;
+
+    public String[] getLanguagesOrDefault() {
+        return getLanguages().isEmpty() ? new String[]{"en", "de", "fr", "it"}: getLanguages().split(",");
+    }
 }
 
