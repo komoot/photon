@@ -25,9 +25,9 @@ public class SearchRequestHandler extends RouteImpl {
     private final PhotonRequestHandler requestHandler;
     private final ConvertToGeoJson geoJsonConverter;
 
-    SearchRequestHandler(String path, Client esNodeClient, String languages, String defaultLanguage) {
+    SearchRequestHandler(String path, Client esNodeClient, String[] languages, String defaultLanguage) {
         super(path);
-        List<String> supportedLanguages = Arrays.asList(languages.split(","));
+        List<String> supportedLanguages = Arrays.asList(languages);
         this.photonRequestFactory = new PhotonRequestFactory(supportedLanguages, defaultLanguage);
         this.geoJsonConverter = new ConvertToGeoJson();
         this.requestHandler = new PhotonRequestHandler(new BaseElasticsearchSearcher(esNodeClient), supportedLanguages);

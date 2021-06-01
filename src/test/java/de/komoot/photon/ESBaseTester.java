@@ -5,8 +5,10 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.PrecisionModel;
+import de.komoot.photon.elasticsearch.Importer;
 import de.komoot.photon.elasticsearch.PhotonIndex;
 import de.komoot.photon.elasticsearch.Server;
+import de.komoot.photon.elasticsearch.Updater;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.admin.indices.refresh.RefreshRequest;
 import org.elasticsearch.action.get.GetResponse;
@@ -41,6 +43,7 @@ public class ESBaseTester {
 
     @After
     public void tearDown() {
+        deleteIndex();
         shutdownES();
     }
 
@@ -50,10 +53,26 @@ public class ESBaseTester {
      * @throws IOException
      */
     public void setUpES() throws IOException {
-        server = new Server(TEST_CLUSTER_NAME, new File("./target/es_photon_test").getAbsolutePath(), "en", "").setMaxShards(1).start();
+        server = new Server(new File("./target/es_photon_test").getAbsolutePath()).setMaxShards(1).start(TEST_CLUSTER_NAME, "");
         deleteIndex(); // just in case of an abnormal abort previously
-        server.recreateIndex();
+        server.recreateIndex(new String[]{"en"});
         refresh();
+    }
+
+    protected Importer makeImporter() {
+        return new Importer(getClient(), new String[]{"en"}, "");
+    }
+
+    protected Importer makeImporterWithExtra(String extraTags) {
+        return new Importer(getClient(), new String[]{"en"}, extraTags);
+    }
+
+    protected Updater makeUpdater() {
+        return new Updater(getClient(), new String[]{"en"}, "");
+    }
+
+    protected Updater makeUpdaterWithExtra(String extraTags) {
+        return new Updater(getClient(), new String[]{"en"}, extraTags);
     }
 
     protected Client getClient() {
