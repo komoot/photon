@@ -186,7 +186,14 @@ public class Server {
         dbProperties.loadFromDatabase(getClient());
 
         loadIndexSettings().updateIndex(getClient(), PhotonIndex.NAME);
-        new IndexMapping().addLanguages(dbProperties.getLanguages()).putMapping(getClient(), PhotonIndex.NAME, PhotonIndex.TYPE);
+
+        // Sanity check: legacy databases don't save the languages, so there is no way to update
+        //               the mappings consistently.
+        if (dbProperties.getLanguages() != null) {
+            new IndexMapping()
+                    .addLanguages(dbProperties.getLanguages())
+                    .putMapping(getClient(), PhotonIndex.NAME, PhotonIndex.TYPE);
+        }
     }
 
     private IndexSettings loadIndexSettings() {
