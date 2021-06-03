@@ -26,7 +26,7 @@ public class ApiIntegrationTest extends ESBaseTester {
     @Before
     public void setUp() throws Exception {
         setUpES();
-        Importer instance = new Importer(getClient(), "en", "");
+        Importer instance = makeImporter();
         instance.add(createDoc(13.38886, 52.51704, 1000, 1000, "place", "city"));
         instance.add(createDoc(13.39026, 52.54714, 1001, 1001, "place", "town"));
         instance.finish();
@@ -37,7 +37,6 @@ public class ApiIntegrationTest extends ESBaseTester {
     public void shutdown() {
         stop();
         awaitStop();
-        deleteIndex();
     }
 
     /**

@@ -25,9 +25,9 @@ public class ReverseSearchRequestHandler extends RouteImpl {
     private final ReverseRequestHandler requestHandler;
     private final ConvertToGeoJson geoJsonConverter;
 
-    ReverseSearchRequestHandler(String path, Client esNodeClient, String languages, String defaultLanguage) {
+    ReverseSearchRequestHandler(String path, Client esNodeClient, String[] languages, String defaultLanguage) {
         super(path);
-        List<String> supportedLanguages = Arrays.asList(languages.split(","));
+        List<String> supportedLanguages = Arrays.asList(languages);
         this.reverseRequestFactory = new ReverseRequestFactory(supportedLanguages, defaultLanguage);
         this.geoJsonConverter = new ConvertToGeoJson();
         this.requestHandler = new ReverseRequestHandler(new ReverseElasticsearchSearcher(esNodeClient));

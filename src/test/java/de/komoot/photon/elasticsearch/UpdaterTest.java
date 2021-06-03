@@ -15,13 +15,6 @@ import static org.junit.Assert.*;
 
 public class UpdaterTest extends ESBaseTester {
 
-    @After
-    public void tearDown() {
-        deleteIndex();
-        shutdownES();
-    }
-
-
     @Test
     public void addNameToDoc() throws IOException {
         Map<String, String> names = new HashMap<>();
@@ -29,13 +22,13 @@ public class UpdaterTest extends ESBaseTester {
         PhotonDoc doc = new PhotonDoc(1234, "N", 1000, "place", "city").names(names);
 
         setUpES();
-        Importer instance = new Importer(getClient(), "en", "");
+        Importer instance = makeImporter();
         instance.add(doc);
         instance.finish();
         refresh();
 
         names.put("name:en", "Enfoo");
-        Updater updater = new Updater(getClient(), "en,de", "");
+        Updater updater = makeUpdater();
         updater.create(doc);
         updater.finish();
         refresh();
@@ -56,13 +49,13 @@ public class UpdaterTest extends ESBaseTester {
         PhotonDoc doc = new PhotonDoc(1234, "N", 1000, "place", "city").names(names);
 
         setUpES();
-        Importer instance = new Importer(getClient(), "en", "");
+        Importer instance = makeImporter();
         instance.add(doc);
         instance.finish();
         refresh();
 
         names.remove("name");
-        Updater updater = new Updater(getClient(), "en,de", "");
+        Updater updater = makeUpdater();
         updater.create(doc);
         updater.finish();
         refresh();
@@ -82,7 +75,7 @@ public class UpdaterTest extends ESBaseTester {
         PhotonDoc doc = new PhotonDoc(1234, "N", 1000, "place", "city").names(names);
 
         setUpES();
-        Importer instance = new Importer(getClient(), "en", "website");
+        Importer instance = makeImporterWithExtra("website");
         instance.add(doc);
         instance.finish();
         refresh();
@@ -93,7 +86,7 @@ public class UpdaterTest extends ESBaseTester {
         assertNull(response.getSource().get("extra"));
 
         doc.extraTags(Collections.singletonMap("website", "http://site.foo"));
-        Updater updater = new Updater(getClient(), "en,de", "website");
+        Updater updater = makeUpdaterWithExtra("website");
         updater.create(doc);
         updater.finish();
         refresh();
