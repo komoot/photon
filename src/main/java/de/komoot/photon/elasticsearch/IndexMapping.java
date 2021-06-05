@@ -40,7 +40,7 @@ public class IndexMapping {
         // define collector json strings
         String copyToCollectorString = "{\"type\":\"text\",\"index\":false,\"copy_to\":[\"collector.{lang}\"]}";
         String nameToCollectorString = "{\"type\":\"text\",\"index\":false,\"fields\":{\"ngrams\":{\"type\":\"text\",\"analyzer\":\"index_ngram\"},\"raw\":{\"type\":\"text\",\"analyzer\":\"index_raw\"}},\"copy_to\":[\"collector.{lang}\"]}";
-        String collectorString = "{\"type\":\"text\",\"index\":false,\"fields\":{\"ngrams\":{\"type\":\"text\",\"analyzer\":\"index_ngram\"},\"raw\":{\"type\":\"text\",\"analyzer\":\"index_raw\"}},\"copy_to\":[\"collector.{lang}\"]}}},\"street\":{\"type\":\"object\",\"properties\":{\"default\":{\"text\":false,\"type\":\"text\",\"copy_to\":[\"collector.default\"]}";
+        String collectorString = "{\"type\":\"text\",\"index\":false,\"fields\":{\"ngrams\":{\"type\":\"text\",\"analyzer\":\"index_ngram\"},\"raw\":{\"type\":\"text\",\"analyzer\":\"index_raw\"}},\"copy_to\":[\"collector.{lang}\"]}";
 
         JSONObject placeObject = mappings.optJSONObject("place");
         JSONObject propertiesObject = placeObject == null ? null : placeObject.optJSONObject("properties");
@@ -73,11 +73,6 @@ public class IndexMapping {
                 JSONObject defaultObject = nameProperties.optJSONObject("default");
                 JSONArray copyToArray = defaultObject.optJSONArray("copy_to");
                 copyToArray.put("name." + lang);
-
-                defaultObject.put("copy_to", copyToArray);
-                nameProperties.put("default", defaultObject);
-                name.put("properties", nameProperties);
-                propertiesObject.put("name", name);
             }
 
             // add language specific collector
@@ -90,12 +85,8 @@ public class IndexMapping {
     private void addToCollector(String key, JSONObject properties, JSONObject collectorObject, String lang) {
         JSONObject keyObject = properties.optJSONObject(key);
         JSONObject keyProperties = keyObject == null ? null : keyObject.optJSONObject("properties");
-        if (keyProperties != null) {
-            if (!keyProperties.has(lang)) {
-                keyProperties.put(lang, collectorObject);
-            }
-            keyObject.put("properties", keyProperties);
-            properties.put(key, keyObject);
+        if (keyProperties != null && !keyProperties.has(lang)) {
+            keyProperties.put(lang, collectorObject);
         }
     }
 }
