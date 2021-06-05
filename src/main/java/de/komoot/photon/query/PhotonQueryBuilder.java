@@ -95,13 +95,14 @@ public class PhotonQueryBuilder {
         }));
 
         // 3. Either the name or housenumber must be in the query terms.
+        String defLang = "default".equals(language) ? languages.get(0) : language;
         MultiMatchQueryBuilder nameNgramQuery = QueryBuilders.multiMatchQuery(query)
                 .type(MultiMatchQueryBuilder.Type.BEST_FIELDS)
                 .fuzziness(lenient ? Fuzziness.ONE : Fuzziness.ZERO)
                 .analyzer("search_ngram");
 
         for (String lang: languages) {
-            nameNgramQuery.field(String.format("name.%s.ngrams", lang), lang.equals(language) ? 1.0f : 0.4f);
+            nameNgramQuery.field(String.format("name.%s.ngrams", lang), lang.equals(defLang) ? 1.0f : 0.4f);
         }
 
         if (query.indexOf(',') < 0 && query.indexOf(' ') < 0) {
