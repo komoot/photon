@@ -26,7 +26,7 @@ public class DatabaseProperties {
      * changes in an incompatible way. If it is alredy at the next released
      * version, increase the dev version.
      */
-    private static final String DATABASE_VERSION = "0.3.4-0";
+    private static final String DATABASE_VERSION = "0.3.6-0";
     public static final String PROPERTY_DOCUMENT_ID = "DATABASE_PROPERTIES";
 
     private static final String BASE_FIELD = "document_properties";

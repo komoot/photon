@@ -61,6 +61,12 @@
 					"lowercase",
 					"preserving_word_delimiter"],
 				"tokenizer": "standard" 
+			},
+			"search_classification": {
+				"filter": [
+					"lowercase"
+				],
+				"tokenizer": "whitespace"
 			}
 		},
 		"tokenizer": {
