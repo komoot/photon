@@ -84,8 +84,7 @@ public class PhotonQueryBuilder {
         //    filter creterion because they have no name. Therefore boost the score in this case.
         MultiMatchQueryBuilder hnrQuery = QueryBuilders.multiMatchQuery(query)
                 .field("collector.default.raw", 1.0f)
-                .type(MultiMatchQueryBuilder.Type.BEST_FIELDS)
-                .analyzer("search_raw");
+                .type(MultiMatchQueryBuilder.Type.BEST_FIELDS);
 
         for (String lang : languages) {
             hnrQuery.field(String.format("collector.%s.raw", lang), lang.equals(language) ? 1.0f : 0.6f);
@@ -116,7 +115,7 @@ public class PhotonQueryBuilder {
 
         // 4. Rerank results for having the full name in the default language.
         query4QueryBuilder
-                .should(QueryBuilders.matchQuery(String.format("name.%s.raw", language), query).analyzer("search_raw"));
+                .should(QueryBuilders.matchQuery(String.format("name.%s.raw", language), query));
 
 
         // Weigh the resulting score by importance. Use a linear scale function that ensures that the weight
