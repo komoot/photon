@@ -178,14 +178,14 @@ public class Server {
         return dbProperties;
     }
 
-    public void updateIndexSettings() {
+    public void updateIndexSettings(String synonymFile) throws IOException {
         // Load the settings from the database to make sure it is at the right
         // version. If the version is wrong, we should not be messing with the
         // index.
         DatabaseProperties dbProperties = new DatabaseProperties();
         dbProperties.loadFromDatabase(getClient());
 
-        loadIndexSettings().updateIndex(getClient(), PhotonIndex.NAME);
+        loadIndexSettings().setSynonyms(synonymFile).updateIndex(getClient(), PhotonIndex.NAME);
 
         // Sanity check: legacy databases don't save the languages, so there is no way to update
         //               the mappings consistently.
