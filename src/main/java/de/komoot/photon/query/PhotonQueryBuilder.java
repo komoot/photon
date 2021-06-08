@@ -57,8 +57,9 @@ public class PhotonQueryBuilder {
     private PhotonQueryBuilder(String query, String language, List<String> languages, boolean lenient) {
         query4QueryBuilder = QueryBuilders.boolQuery();
 
-        String[] multibyteLanguages = { "ja" };
+        String[] cjkLanguages = { "ja" };
 
+        // 1. All terms of the quey must be contained in the place record somehow. Be more lenient on second try.
         QueryBuilder collectorQuery;
         if (lenient) {
             BoolQueryBuilder builder = QueryBuilders.boolQuery()
@@ -71,9 +72,10 @@ public class PhotonQueryBuilder {
                             .fuzziness(Fuzziness.ONE)
                             .prefixLength(2)
                             .analyzer("search_ngram")
-                            .minimumShouldMatch("-1"));
+                            .minimumShouldMatch("-1"))
+                    .minimumShouldMatch("1");
 
-            if (Arrays.asList(multibyteLanguages).contains(language)) {
+            if (Arrays.asList(cjkLanguages).contains(language)) {
                 builder = builder
                         .should(QueryBuilders.matchQuery(String.format("collector.default.raw_%s", language), query)
                                 .fuzziness(Fuzziness.ONE)
@@ -91,7 +93,6 @@ public class PhotonQueryBuilder {
 
             collectorQuery = builder;
         } else {
-
             MultiMatchQueryBuilder builderDefault =
                     QueryBuilders.multiMatchQuery(query).field("collector.default", 1.0f).type(MultiMatchQueryBuilder.Type.CROSS_FIELDS).prefixLength(2).analyzer("search_ngram").minimumShouldMatch("100%");
 
@@ -99,15 +100,15 @@ public class PhotonQueryBuilder {
                 builderDefault.field(String.format("collector.%s.ngrams", lang), lang.equals(language) ? 1.0f : 0.6f);
             }
 
-            BoolQueryBuilder builder = QueryBuilders.boolQuery()
-                    .should(builderDefault);
+            BoolQueryBuilder builder = QueryBuilders.boolQuery().should(builderDefault);
 
-            if (Arrays.asList(multibyteLanguages).contains(language)) {
+            if (Arrays.asList(cjkLanguages).contains(language)) {
                 MultiMatchQueryBuilder builderJapaneseField =
                         QueryBuilders.multiMatchQuery(query)
                                 .field(String.format("collector.default.raw_%s",language), 1.0f)
                                 .type(MultiMatchQueryBuilder.Type.PHRASE)
                                 .prefixLength(2)
+                                .operator(Operator.AND)
                                 .analyzer(String.format("%s_search_raw", language))
                                 .minimumShouldMatch("100%");
 
@@ -124,9 +125,8 @@ public class PhotonQueryBuilder {
         // 2. Prefer records that have the full names in. For address records with housenumbers this is the main
         //    filter creterion because they have no name. Therefore boost the score in this case.
         MultiMatchQueryBuilder hnrQuery = QueryBuilders.multiMatchQuery(query)
-                .field(Arrays.asList(multibyteLanguages).contains(language) ? String.format("collector.default.raw_%s", language): "collector.default.raw", 1.0f)
-                .type(MultiMatchQueryBuilder.Type.CROSS_FIELDS)
-                .analyzer(Arrays.asList(multibyteLanguages).contains(language) ? String.format("%s_search_raw", language): "search_raw");
+                .field(Arrays.asList(cjkLanguages).contains(language) ? String.format("collector.default.raw_%s", language): "collector.default.raw", 1.0f)
+                .type(MultiMatchQueryBuilder.Type.BEST_FIELDS);
 
         for (String lang : languages) {
             hnrQuery.field(String.format("collector.%s.raw", lang), lang.equals(language) ? 1.0f : 0.6f);
@@ -136,26 +136,42 @@ public class PhotonQueryBuilder {
                 new FilterFunctionBuilder(QueryBuilders.matchQuery("housenumber", query).analyzer("standard"), new WeightBuilder().setWeight(10f))
         }));
 
+        // 3. Either the name or housenumber must be in the query terms.
+        String defLang = "default".equals(language) ? languages.get(0) : language;
+        MultiMatchQueryBuilder nameNgramQuery = QueryBuilders.multiMatchQuery(query)
+                .type(MultiMatchQueryBuilder.Type.BEST_FIELDS)
+                .fuzziness(lenient ? Fuzziness.ONE : Fuzziness.ZERO)
+                .analyzer("search_ngram");
+
+        for (String lang: languages) {
+            nameNgramQuery.field(String.format("name.%s.ngrams", lang), lang.equals(defLang) ? 1.0f : 0.4f);
+        }
+
+        if (query.indexOf(',') < 0 && query.indexOf(' ') < 0) {
+            query4QueryBuilder.must(nameNgramQuery.boost(2f));
+        } else {
+            query4QueryBuilder.must(QueryBuilders.boolQuery()
+                    .should(nameNgramQuery)
+                    .should(QueryBuilders.matchQuery("housenumber", query).analyzer("standard"))
+                    .minimumShouldMatch("1"));
+        }
+
         // 4. Rerank results for having the full name in the default language.
         query4QueryBuilder
                 .should(QueryBuilders.matchQuery(String.format("name.%s.raw", language), query));
 
-        // this is former general-score, now inline
-        String strCode = "double score = 1 + doc['importance'].value * 100; score";
-        ScriptScoreFunctionBuilder functionBuilder4QueryBuilder =
-                ScoreFunctionBuilders.scriptFunction(new Script(ScriptType.INLINE, "painless", strCode, new HashMap<String, Object>()));
 
-        alFilterFunction4QueryBuilder.add(new FilterFunctionBuilder(functionBuilder4QueryBuilder));
+        // Weigh the resulting score by importance. Use a linear scale function that ensures that the weight
+        // never drops to 0 and cancels out the ES score.
+        finalQueryWithoutTagFilterBuilder = QueryBuilders.functionScoreQuery(query4QueryBuilder, new FilterFunctionBuilder[]{
+                new FilterFunctionBuilder(ScoreFunctionBuilders.linearDecayFunction("importance", "1.0", "0.6"))
+        });
 
-        finalQueryWithoutTagFilterBuilder = new FunctionScoreQueryBuilder(query4QueryBuilder, alFilterFunction4QueryBuilder.toArray(new FilterFunctionBuilder[0]))
-                .boostMode(CombineFunction.MULTIPLY).scoreMode(ScoreMode.MULTIPLY);
-
-        // @formatter:off
+        // Filter for later: records that have a housenumber and no name must only appear when the housenumber matches.
         queryBuilderForTopLevelFilter = QueryBuilders.boolQuery()
                 .should(QueryBuilders.boolQuery().mustNot(QueryBuilders.existsQuery("housenumber")))
                 .should(QueryBuilders.matchQuery("housenumber", query).analyzer("standard"))
                 .should(QueryBuilders.existsQuery(String.format("name.%s.raw", language)));
-        // @formatter:on
 
         state = State.PLAIN;
     }

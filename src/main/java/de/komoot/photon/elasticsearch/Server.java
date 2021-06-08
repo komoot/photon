@@ -189,31 +189,37 @@ public class Server {
         deleteIndex();
 
         final Client client = this.getClient();
-        final InputStream mappings = Thread.currentThread().getContextClassLoader()
-                .getResourceAsStream("mappings.json");
-        final InputStream indexSettings = Thread.currentThread().getContextClassLoader()
-                .getResourceAsStream("index_settings.json");
-        final Charset utf8Charset = Charset.forName("utf-8");
 
-        String mappingsString = IOUtils.toString(mappings, utf8Charset);
-        JSONObject mappingsJSON = new JSONObject(mappingsString);
+        loadIndexSettings().createIndex(client, PhotonIndex.NAME);
 
-        // add all langs to the mapping
-        addLangsToMapping(mappingsJSON, languages);
-
-        JSONObject settings = new JSONObject(IOUtils.toString(indexSettings, utf8Charset));
-        if (shards != null) {
-            settings.put("index", new JSONObject("{ \"number_of_shards\":" + shards + " }"));
-        }
-        client.admin().indices().prepareCreate(PhotonIndex.NAME).setSettings(settings.toString(), XContentType.JSON).execute().actionGet();
-
-        client.admin().indices().preparePutMapping(PhotonIndex.NAME).setType(PhotonIndex.TYPE).setSource(mappingsJSON.toString(), XContentType.JSON).execute().actionGet();
-        log.info("mapping created: " + mappingsJSON.toString());
+        new IndexMapping().addLanguages(languages).putMapping(client, PhotonIndex.NAME, PhotonIndex.TYPE);
 
         DatabaseProperties dbProperties = new DatabaseProperties().setLanguages(languages);
         dbProperties.saveToDatabase(client);
 
         return dbProperties;
+    }
+
+    public void updateIndexSettings() {
+        // Load the settings from the database to make sure it is at the right
+        // version. If the version is wrong, we should not be messing with the
+        // index.
+        DatabaseProperties dbProperties = new DatabaseProperties();
+        dbProperties.loadFromDatabase(getClient());
+
+        loadIndexSettings().updateIndex(getClient(), PhotonIndex.NAME);
+
+        // Sanity check: legacy databases don't save the languages, so there is no way to update
+        //               the mappings consistently.
+        if (dbProperties.getLanguages() != null) {
+            new IndexMapping()
+                    .addLanguages(dbProperties.getLanguages())
+                    .putMapping(getClient(), PhotonIndex.NAME, PhotonIndex.TYPE);
+        }
+    }
+
+    private IndexSettings loadIndexSettings() {
+        return new IndexSettings().setShards(shards);
     }
 
     public void deleteIndex() {
@@ -224,70 +230,6 @@ public class Server {
         }
     }
 
-    private void addLangsToMapping(JSONObject mappingsObject, String[] languages) {
-        // define collector json strings
-        String copyToCollectorString = "{\"type\":\"text\",\"index\":false,\"copy_to\":[\"collector.{lang}\"]}";
-        String nameToCollectorString = "{\"type\":\"text\",\"index\":false,\"fields\":{\"ngrams\":{\"type\":\"text\",\"analyzer\":\"index_ngram\"},\"raw\":{\"type\":\"text\",\"analyzer\":\"index_raw\"}},\"copy_to\":[\"collector.{lang}\"]}";
-        String collectorString = "{\"type\":\"text\",\"index\":false,\"fields\":{\"ngrams\":{\"type\":\"text\",\"analyzer\":\"index_ngram\"},\"raw\":{\"type\":\"text\",\"analyzer\":\"index_raw\"}},\"copy_to\":[\"collector.{lang}\"]}}},\"street\":{\"type\":\"object\",\"properties\":{\"default\":{\"text\":false,\"type\":\"text\",\"copy_to\":[\"collector.default\"]}";
-
-        JSONObject placeObject = mappingsObject.optJSONObject("place");
-        JSONObject propertiesObject = placeObject == null ? null : placeObject.optJSONObject("properties");
-
-        if (propertiesObject == null) {
-            log.error("cannot add languages to mapping.json, please double-check the mappings.json or the language values supplied");
-            return;
-        }
-
-        for (String lang : languages) {
-            // create lang-specific json objects
-            JSONObject copyToCollectorObject = new JSONObject(copyToCollectorString.replace("{lang}", lang));
-            JSONObject nameToCollectorObject = new JSONObject(nameToCollectorString.replace("{lang}", lang));
-            JSONObject collectorObject = new JSONObject(collectorString.replace("{lang}", lang));
-
-            // add language specific tags to the collector
-            propertiesObject = addToCollector("city", propertiesObject, copyToCollectorObject, lang);
-            propertiesObject = addToCollector("context", propertiesObject, copyToCollectorObject, lang);
-            propertiesObject = addToCollector("country", propertiesObject, copyToCollectorObject, lang);
-            propertiesObject = addToCollector("state", propertiesObject, copyToCollectorObject, lang);
-            propertiesObject = addToCollector("street", propertiesObject, copyToCollectorObject, lang);
-            propertiesObject = addToCollector("district", propertiesObject, copyToCollectorObject, lang);
-            propertiesObject = addToCollector("locality", propertiesObject, copyToCollectorObject, lang);
-            propertiesObject = addToCollector("name", propertiesObject, nameToCollectorObject, lang);
-
-            // add language specific collector to default for name
-            JSONObject name = propertiesObject.optJSONObject("name");
-            JSONObject nameProperties = name == null ? null : name.optJSONObject("properties");
-            if (nameProperties != null) {
-                JSONObject defaultObject = nameProperties.optJSONObject("default");
-                JSONArray copyToArray = defaultObject.optJSONArray("copy_to");
-                copyToArray.put("name." + lang);
-
-                defaultObject.put("copy_to", copyToArray);
-                nameProperties.put("default", defaultObject);
-                name.put("properties", nameProperties);
-                propertiesObject.put("name", name);
-            }
-
-            // add language specific collector
-            propertiesObject = addToCollector("collector", propertiesObject, collectorObject, lang);
-        }
-
-        placeObject.put("properties", propertiesObject);
-        mappingsObject.put("place", placeObject);
-    }
-
-    private JSONObject addToCollector(String key, JSONObject properties, JSONObject collectorObject, String lang) {
-        JSONObject keyObject = properties.optJSONObject(key);
-        JSONObject keyProperties = keyObject == null ? null : keyObject.optJSONObject("properties");
-        if (keyProperties != null) {
-            if (!keyProperties.has(lang)) {
-                keyProperties.put(lang, collectorObject);
-            }
-            keyObject.put("properties", keyProperties);
-            return properties.put(key, keyObject);
-        }
-        return properties;
-    }
 
     /**
      * Set the maximum number of shards for the embedded node

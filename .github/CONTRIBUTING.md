@@ -27,3 +27,21 @@ it should be simple to match:
  * Unix line endings (should be handled via git)
 
 And in case we didn't emphasize it enough: we love tests!
+
+## Changes to mapping and index settings
+
+It is possible to change the mapping layout or index settings any time as
+long as they are compatible with the current layout. Photon reapplies the
+mapping and index settings on startup to make sure it conforms to the latest
+code.
+
+**Warning:** the kind of modifications that can be done on an existing
+index are limited. Always test if your modifications are compatible by importing
+a database with the version before your changes and then running Photon with
+the version with your changes applied.
+
+If the mappings or the settings are changed in an incompatible way that
+requires a reimport, then you must increase the database version in
+`src/main/java/de/komoot/photon/elasticsearch/DatabaseProperties.java`.
+For major/minor/patch always use the version of the next release. If the
+version number already points to the next release, increase the dev-version.

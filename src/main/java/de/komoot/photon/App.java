@@ -63,6 +63,11 @@ public class App {
                 return;
             }
 
+            // Working on an existing installation.
+            // Update the index settings in case there are any changes.
+            esServer.updateIndexSettings();
+            esClient.admin().cluster().prepareHealth().setWaitForYellowStatus().get();
+
             if (args.isNominatimUpdate()) {
                 shutdownES = true;
                 final NominatimUpdater nominatimUpdater = setupNominatimUpdater(args, esClient);
@@ -112,13 +117,13 @@ public class App {
             throw new RuntimeException("cannot setup index, elastic search config files not readable", e);
         }
 
-        log.info("starting import from nominatim to photon with languages: " + args.getLanguages());
+        log.info("starting import from nominatim to photon with languages: " + String.join(",", dbProperties.getLanguages()));
         de.komoot.photon.elasticsearch.Importer importer = new de.komoot.photon.elasticsearch.Importer(esNodeClient, dbProperties.getLanguages(), args.getExtraTags());
         NominatimConnector nominatimConnector = new NominatimConnector(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
         nominatimConnector.setImporter(importer);
         nominatimConnector.readEntireDatabase(args.getCountryCodes().split(","));
 
-        log.info("imported data from nominatim to photon with languages: " + args.getLanguages());
+        log.info("imported data from nominatim to photon with languages: " + String.join(",", dbProperties.getLanguages()));
     }
 
     /**
