@@ -72,7 +72,7 @@ public class IndexSettings {
             if (line.indexOf(' ') >= 0) {
                 throw new RuntimeException("Synonym list must not contain any spaces or multi word terms.");
             }
-            synonyms.put(line);
+            synonyms.put(line.toLowerCase());
         }
 
         JSONObject filters = (JSONObject) settings.optQuery("/analysis/filter");
