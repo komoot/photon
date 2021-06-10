@@ -8,19 +8,22 @@
 					"ja_normalize",
 					"kuromoji_iteration_mark"
 				],
-				"tokenizer": "ja_kuromoji_tokenizer",
+				"tokenizer": "ja_sudachi_tokenizer",
 				"filter": [
 					"word_delimiter",
 					"lowercase",
 					"german_normalization",
 					"asciifolding",
 					"unique",
-					"kuromoji_baseform",
-					"kuromoji_part_of_speech",
+					"sudachi_baseform",
+					"sudachi_normalizedform",
+					"sudachi_part_of_speech",
 					"cjk_width",
-					"ja_stop",
+					"sudachi_ja_stop",
 					"kuromoji_number",
-					"kuromoji_stemmer"
+					"kuromoji_stemmer",
+					"ja_hiragana_2_katakana",
+					"ja_search"
 				]
 			},
 			"ja_search_raw": {
@@ -30,20 +33,22 @@
 					"ja_normalize",
 					"kuromoji_iteration_mark"
 				],
-				"tokenizer": "ja_kuromoji_tokenizer",
+				"tokenizer": "ja_sudachi_tokenizer",
 				"filter": [
 					"word_delimiter",
 					"lowercase",
 					"german_normalization",
 					"asciifolding",
 					"unique",
-					"kuromoji_baseform",
-					"kuromoji_part_of_speech",
+					"sudachi_baseform",
+					"sudachi_normalizedform",
+					"sudachi_part_of_speech",
 					"cjk_width",
-					"ja_stop",
+					"sudachi_ja_stop",
 					"kuromoji_number",
 					"kuromoji_stemmer",
-					"ja_hiragana_2_katakana"
+					"ja_hiragana_2_katakana",
+					"ja_search"
 				]
 			},
 			"index_ngram": {
@@ -59,7 +64,8 @@
 					"lowercase",
 					"german_normalization",
 					"asciifolding",
-					"unique"
+					"unique",
+					"ja_romaji_readingform"
 				]
 			},
 			"search_ngram": {
@@ -72,7 +78,8 @@
 				"filter": [
 					"lowercase",
 					"german_normalization",
-					"asciifolding"
+					"asciifolding",
+					"ja_romaji_readingform"
 				]
 			},
 			"index_raw": {
@@ -84,7 +91,8 @@
 					"lowercase",
 					"german_normalization",
 					"asciifolding",
-					"unique"
+					"unique",
+					"ja_romaji_readingform"
 				],
 				"tokenizer": "standard"
 			},
@@ -97,7 +105,8 @@
 					"lowercase",
 					"german_normalization",
 					"asciifolding",
-					"unique"
+					"unique",
+					"ja_romaji_readingform"
 				],
 				"tokenizer": "standard"
 			},
@@ -123,12 +132,12 @@
 					"digit"
 				]
 			},
-			"ja_kuromoji_tokenizer": {
-				"mode": "search",
-				"type": "kuromoji_tokenizer",
-				"discard_compound_token": true,
-				"user_dictionary_rules": [
-				]
+			"ja_sudachi_tokenizer": {
+				"split_mode": "C",
+				"type": "sudachi_tokenizer",
+				"discard_punctuation": true,
+				"resources_path": "sudachi",
+				"settings_path": "sudachi/sudachi.json"
 			},
 			"ja_ngram_tokenizer": {
 				"type": "ngram",
@@ -165,6 +174,18 @@
 			"preserving_word_delimiter": {
 				"type": "word_delimiter",
 				"preserve_original": "true"
+			},
+			"ja_search" : {
+				"type" : "sudachi_split",
+				"mode" : "search"
+			},
+			"ja_romaji_readingform" : {
+				"type" : "sudachi_readingform",
+				"use_romaji" : true
+			},
+			"ja_katakana_readingform" : {
+				"type" : "sudachi_readingform",
+				"use_romaji" : false
 			},
 			"ja_hiragana_2_katakana": {
 				"type": "icu_transform",

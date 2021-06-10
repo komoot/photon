@@ -47,7 +47,7 @@
 												"match": {
 													"collector.default.raw_ja": {
 														"query": "berlin",
-														"operator": "OR",
+														"operator": "AND",
 														"fuzziness": "1",
 														"prefix_length": 2,
 														"max_expansions": 50,
@@ -63,7 +63,7 @@
 												"match": {
 													"collector.ja.raw": {
 														"query": "berlin",
-														"operator": "OR",
+														"operator": "AND",
 														"fuzziness": "1",
 														"prefix_length": 2,
 														"max_expansions": 50,

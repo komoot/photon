@@ -282,6 +282,42 @@
                             <destFileName>lucene-analyzers-kuromoji.jar</destFileName>
                         </artifactItem>
                         <artifactItem>
+                            <groupId>com.worksap.nlp.elasticsearch.sudachi.plugin</groupId>
+                            <artifactId>analysis-sudachi</artifactId>
+                            <version>2.1.0</version>
+                            <type>jar</type>
+                            <overWrite>false</overWrite>
+                            <outputDirectory>${project.build.directory}/es/modules/analysis-sudachi</outputDirectory>
+                            <destFileName>analysis-sudachi.jar</destFileName>
+                        </artifactItem>
+                        <artifactItem>
+                            <groupId>org.glassfish</groupId>
+                            <artifactId>javax.json</artifactId>
+                            <version>1.1.4</version>
+                            <type>jar</type>
+                            <overWrite>false</overWrite>
+                            <outputDirectory>${project.build.directory}/es/modules/analysis-sudachi</outputDirectory>
+                            <destFileName>javax.json.jar</destFileName>
+                        </artifactItem>
+                        <artifactItem>
+                            <groupId>com.worksap.nlp</groupId>
+                            <artifactId>jdartsclone</artifactId>
+                            <version>1.2.0</version>
+                            <type>jar</type>
+                            <overWrite>false</overWrite>
+                            <outputDirectory>${project.build.directory}/es/modules/analysis-sudachi</outputDirectory>
+                            <destFileName>jdartsclone.jar</destFileName>
+                        </artifactItem>
+                        <artifactItem>
+                            <groupId>com.worksap.nlp</groupId>
+                            <artifactId>sudachi</artifactId>
+                            <version>0.5.2</version>
+                            <type>jar</type>
+                            <overWrite>false</overWrite>
+                            <outputDirectory>${project.build.directory}/es/modules/analysis-sudachi</outputDirectory>
+                            <destFileName>sudachi.jar</destFileName>
+                        </artifactItem>
+                        <artifactItem>
                             <groupId>org.ow2.asm</groupId>
                             <artifactId>asm-debug-all</artifactId>
                             <version>5.1</version>
