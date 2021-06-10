@@ -138,15 +138,6 @@
 				"discard_punctuation": true,
 				"resources_path": "sudachi",
 				"settings_path": "sudachi/sudachi.json"
-			},
-			"ja_ngram_tokenizer": {
-				"type": "ngram",
-				"min_gram": 2,
-				"max_gram": 3,
-				"token_chars": [
-					"letter",
-					"digit"
-				]
 			}
 		},
 		"char_filter": {
@@ -182,10 +173,6 @@
 			"ja_romaji_readingform" : {
 				"type" : "sudachi_readingform",
 				"use_romaji" : true
-			},
-			"ja_katakana_readingform" : {
-				"type" : "sudachi_readingform",
-				"use_romaji" : false
 			},
 			"ja_hiragana_2_katakana": {
 				"type": "icu_transform",
