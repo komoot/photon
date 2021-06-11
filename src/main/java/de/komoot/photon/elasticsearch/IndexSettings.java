@@ -95,6 +95,9 @@ public class IndexSettings {
                 JSONArray jsonTerms = descr.getJSONArray("terms");
                 for (int j = 0; j < jsonTerms.length(); j++) {
                     String term = jsonTerms.getString(j).toLowerCase().trim();
+                    if (term.indexOf(' ') >= 0) {
+                        throw new RuntimeException("Syntax error in synonym file: only single word classification terms allowed.");
+                    }
 
                     if (term.length() > 1) {
                         collector.computeIfAbsent(term, k -> new HashSet<>()).add(classString);
