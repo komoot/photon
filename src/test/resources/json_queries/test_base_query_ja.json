@@ -152,10 +152,10 @@
 									"match": {
 										"name.ja.raw": {
 											"query": "berlin",
-											"operator": "OR",
+											"operator": "AND",
 											"prefix_length": 0,
 											"max_expansions": 50,
-											"fuzzy_transpositions": true,
+											"fuzzy_transpositions": false,
 											"lenient": false,
 											"zero_terms_query": "NONE",
 											"boost": 1.0

@@ -110,6 +110,7 @@ public class PhotonQueryBuilder {
                                 .field(String.format("collector.default.raw_%s",language), 1.0f)
                                 .type(MultiMatchQueryBuilder.Type.PHRASE)
                                 .prefixLength(2)
+                                .slop(1)
                                 .operator(Operator.AND)
                                 .analyzer(String.format("%s_search_raw", language))
                                 .minimumShouldMatch("100%");
@@ -160,7 +161,9 @@ public class PhotonQueryBuilder {
 
         // 4. Rerank results for having the full name in the default language.
         query4QueryBuilder
-                .should(QueryBuilders.matchQuery(String.format("name.%s.raw", language), query));
+                .should(QueryBuilders.matchQuery(String.format("name.%s.raw", language), query)
+                        .operator(Arrays.asList(cjkLanguages).contains(language) ? Operator.AND : Operator.OR)
+                        .fuzzyTranspositions(!Arrays.asList(cjkLanguages).contains(language)));
 
 
         // Weigh the resulting score by importance. Use a linear scale function that ensures that the weight
