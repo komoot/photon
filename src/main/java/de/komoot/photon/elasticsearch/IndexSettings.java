@@ -10,8 +10,7 @@ import org.json.JSONTokener;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Encapsulates the ES index settings for the photon index. Adds functions to
@@ -85,7 +84,8 @@ public class IndexSettings {
             return this;
         }
 
-        JSONArray synonyms = new JSONArray();
+        // Collect for each term in the list the possible classification expansions.
+        Map<String, Set<String>> collector = new HashMap<>();
         for (int i = 0; i < terms.length(); i++) {
             JSONObject descr = terms.getJSONObject(i);
 
@@ -93,16 +93,20 @@ public class IndexSettings {
 
             if (classString != null) {
                 JSONArray jsonTerms = descr.getJSONArray("terms");
-                List<String> termList = new ArrayList<>();
                 for (int j = 0; j < jsonTerms.length(); j++) {
-                    String term = jsonTerms.getString(j).toLowerCase();
+                    String term = jsonTerms.getString(j).toLowerCase().trim();
+
                     if (term.length() > 1) {
-                        // Each term expands either to itself or the classification term.
-                        synonyms.put(term + " => " + term + "," + classString);
+                        collector.computeIfAbsent(term, k -> new HashSet<>()).add(classString);
                     }
                 }
             }
         }
+
+        // Create the final list of synonyms. A term can expand to any classificator or not at all.
+        JSONArray synonyms = new JSONArray();
+        collector.forEach((term, classificators) ->
+            synonyms.put(term + " => " + term + "," + String.join(",", classificators)));
 
         insertSynonymFilter("classification_synonyms", synonyms);
 

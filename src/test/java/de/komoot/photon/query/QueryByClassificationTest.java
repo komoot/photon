@@ -117,4 +117,38 @@ public class QueryByClassificationTest extends ESBaseTester {
         assertTrue(result.getHits().getTotalHits() > 0);
         assertEquals(Integer.toString(testDocId), result.getHits().getHits()[0].getId());
     }
+
+    @Test
+    public void testSameSynonymForDifferentTags() {
+        Importer instance = makeImporter();
+        instance.add(createDoc("railway", "halt", "Newtown"));
+        instance.add(createDoc("railway", "station", "King's Cross"));
+        instance.finish();
+        refresh();
+
+        JSONArray terms = new JSONArray()
+                .put(new JSONObject()
+                        .put("key", "railway")
+                        .put("value", "station")
+                        .put("terms", new JSONArray().put("Station"))
+                ).put(new JSONObject()
+                        .put("key", "railway")
+                        .put("value", "halt")
+                        .put("terms", new JSONArray().put("Station").put("Stop"))
+                );
+        new IndexSettings().setClassificationTerms(terms).updateIndex(getClient(), PhotonIndex.NAME);
+        getClient().admin().cluster().prepareHealth().setWaitForYellowStatus().get();
+
+        SearchResponse result = search("Station newtown");
+        assertTrue(result.getHits().getTotalHits() > 0);
+        assertEquals(Integer.toString(testDocId - 1), result.getHits().getHits()[0].getId());
+
+        result = search("newtown stop");
+        assertTrue(result.getHits().getTotalHits() > 0);
+        assertEquals(Integer.toString(testDocId - 1), result.getHits().getHits()[0].getId());
+
+        result = search("king's cross Station");
+        assertTrue(result.getHits().getTotalHits() > 0);
+        assertEquals(Integer.toString(testDocId), result.getHits().getHits()[0].getId());
+    }
 }
