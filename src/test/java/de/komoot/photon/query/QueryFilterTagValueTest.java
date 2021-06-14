@@ -16,7 +16,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 
-public class PhotonQueryBuilderSearchTest extends ESBaseTester {
+public class QueryFilterTagValueTest extends ESBaseTester {
     private static final String[] TAGS = new String[]{"tourism", "attraction", "tourism", "hotel", "tourism", "museum", "tourism", "information", "amenity",
             "parking", "amenity", "restaurant", "amenity", "information", "food", "information", "railway", "station"};
 
@@ -138,7 +138,7 @@ public class PhotonQueryBuilderSearchTest extends ESBaseTester {
      * Find me all places named "berlin" that are tagged with the key "tourism" but not tagged with value "information".
      * <p/>
      * Note: This is a different method of achieving the same result as
-     * {@link PhotonQueryBuilderSearchTest#testKeyTourismButValueNotInformation()}
+     * {@link QueryFilterTagValueTest#testKeyTourismButValueNotInformation()}
      */
     @Test
     public void testKeyTourismAndValueNotInformation() {
@@ -156,7 +156,7 @@ public class PhotonQueryBuilderSearchTest extends ESBaseTester {
      * Find me all places named "berlin" that are tagged with the key "tourism" but not tagged with value "information".
      * <p/>
      * Note: This is a different method of achieving the same result as
-     * {@link PhotonQueryBuilderSearchTest#testKeyTourismAndValueNotInformation}.
+     * {@link QueryFilterTagValueTest#testKeyTourismAndValueNotInformation}.
      */
     @Test
     public void testKeyTourismButValueNotInformation() {
