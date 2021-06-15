@@ -134,10 +134,18 @@ http://localhost:2322/api?q=berlin
 http://localhost:2322/api?q=berlin&lon=10&lat=52
 ```
 
-Increase this bias (range is 0.1 to 10, default is 1.6)
+There are two optional parameters to influence the location bias. 'zoom'
+describes the radius around the center to focus on. This is a number that
+should correspond roughly to the map zoom parameter of a corresponding map.
+The default is `zoom=16`.
+
+The `location_bias_scale` describes how much the prominence of a result should
+still be taken into account. Sensible values go from 0.0 (ignore prominence
+almost completely) to 1.0 (prominence has approximately the same influence).
+The default is 0.2.
 
 ```
-http://localhost:2322/api?q=berlin&lon=10&lat=52&location_bias_scale=2
+http://localhost:2322/api?q=berlin&lon=10&lat=52&zoom=12&location_bias_scale=0.1
 ```
 
 #### Reverse geocode a coordinate

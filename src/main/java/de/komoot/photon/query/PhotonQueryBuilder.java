@@ -11,10 +11,7 @@ import org.elasticsearch.index.query.*;
 import org.elasticsearch.index.query.functionscore.FunctionScoreQueryBuilder;
 import org.elasticsearch.index.query.functionscore.FunctionScoreQueryBuilder.FilterFunctionBuilder;
 import org.elasticsearch.index.query.functionscore.ScoreFunctionBuilders;
-import org.elasticsearch.index.query.functionscore.ScriptScoreFunctionBuilder;
 import org.elasticsearch.index.query.functionscore.WeightBuilder;
-import org.elasticsearch.script.Script;
-import org.elasticsearch.script.ScriptType;
 
 import java.util.*;
 
@@ -35,6 +32,8 @@ import static com.google.common.collect.Maps.newHashMap;
  * Created by Sachin Dole on 2/12/2015.
  */
 public class PhotonQueryBuilder {
+    private static final String[] ALT_NAMES = new String[]{"alt", "int", "loc", "old", "reg", "housename"};
+
     private FunctionScoreQueryBuilder finalQueryWithoutTagFilterBuilder;
 
     private BoolQueryBuilder queryBuilderForTopLevelFilter;
@@ -51,11 +50,9 @@ public class PhotonQueryBuilder {
 
     protected ArrayList<FilterFunctionBuilder> alFilterFunction4QueryBuilder = new ArrayList<>(1);
 
-    protected BoolQueryBuilder query4QueryBuilder;
-
 
     private PhotonQueryBuilder(String query, String language, List<String> languages, boolean lenient) {
-        query4QueryBuilder = QueryBuilders.boolQuery();
+        BoolQueryBuilder query4QueryBuilder = QueryBuilders.boolQuery();
 
         String[] cjkLanguages = { "ja" };
 
@@ -150,13 +147,17 @@ public class PhotonQueryBuilder {
             nameNgramQuery.field(String.format("name.%s.ngrams", lang), lang.equals(defLang) ? 1.0f : 0.4f);
         }
 
+        for (String alt: ALT_NAMES) {
+            nameNgramQuery.field(String.format("name.%s.raw", alt), 0.4f);
+        }
+
         if (query.indexOf(',') < 0 && query.indexOf(' ') < 0) {
             query4QueryBuilder.must(nameNgramQuery.boost(2f));
         } else {
             query4QueryBuilder.must(QueryBuilders.boolQuery()
-                    .should(nameNgramQuery)
-                    .should(QueryBuilders.matchQuery("housenumber", query).analyzer("standard"))
-                    .minimumShouldMatch("1"));
+                                        .should(nameNgramQuery)
+                                        .should(QueryBuilders.matchQuery("housenumber", query).analyzer("standard"))
+                                        .minimumShouldMatch("1"));
         }
 
         // 4. Rerank results for having the full name in the default language.
@@ -193,21 +194,27 @@ public class PhotonQueryBuilder {
         return new PhotonQueryBuilder(query, language, languages, lenient);
     }
 
-    public PhotonQueryBuilder withLocationBias(Point point, double scale) {
-        if (point == null) return this;
+    public PhotonQueryBuilder withLocationBias(Point point, double scale, int zoom) {
+        if (point == null || zoom < 4) return this;
+
+        if (zoom > 18) {
+            zoom = 18;
+        }
+        double radius = (1 << (18 - zoom)) * 0.25;
+
+        if (scale <= 0.0) {
+            scale = 0.0000001;
+        }
+
         Map<String, Object> params = newHashMap();
         params.put("lon", point.getX());
         params.put("lat", point.getY());
 
-        scale = Math.abs(scale);
-        String strCode = "double dist = doc['coordinate'].planeDistance(params.lat, params.lon); " +
-                "double score = 0.1 + " + scale + " / (1.0 + dist * 0.001 / 10.0); " +
-                "score";
-        ScriptScoreFunctionBuilder builder = ScoreFunctionBuilders.scriptFunction(new Script(ScriptType.INLINE, "painless", strCode, params));
-        alFilterFunction4QueryBuilder.add(new FilterFunctionBuilder(builder));
         finalQueryWithoutTagFilterBuilder =
-                new FunctionScoreQueryBuilder(query4QueryBuilder, alFilterFunction4QueryBuilder.toArray(new FilterFunctionBuilder[0]))
-                        .boostMode(CombineFunction.MULTIPLY);
+                QueryBuilders.functionScoreQuery(finalQueryWithoutTagFilterBuilder, new FilterFunctionBuilder[] {
+                     new FilterFunctionBuilder(ScoreFunctionBuilders.exponentialDecayFunction("coordinate", params, radius + "km", radius / 10 + "km", 0.8)),
+                     new FilterFunctionBuilder(ScoreFunctionBuilders.linearDecayFunction("importance", "1.0", scale))
+                }).boostMode(CombineFunction.MULTIPLY).scoreMode(ScoreMode.MAX);
         return this;
     }
     

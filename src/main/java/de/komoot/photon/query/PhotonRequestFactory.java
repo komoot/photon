@@ -19,7 +19,7 @@ public class PhotonRequestFactory {
     private final BoundingBoxParamConverter bboxParamConverter;
 
     private static final HashSet<String> REQUEST_QUERY_PARAMS = new HashSet<>(Arrays.asList("lang", "q", "lon", "lat",
-            "limit", "osm_tag", "location_bias_scale", "bbox", "debug"));
+            "limit", "osm_tag", "location_bias_scale", "bbox", "debug", "zoom"));
 
     public PhotonRequestFactory(List<String> supportedLanguages, String defaultLanguage) {
         this.languageResolver = new RequestLanguageResolver(supportedLanguages, defaultLanguage);
@@ -47,8 +47,7 @@ public class PhotonRequestFactory {
         Point locationForBias = optionalLocationParamConverter.apply(webRequest);
         Envelope bbox = bboxParamConverter.apply(webRequest);
 
-        // don't use too high default value, see #306
-        double scale = 1.6;
+        double scale = 0.2;
         String scaleStr = webRequest.queryParams("location_bias_scale");
         if (scaleStr != null && !scaleStr.isEmpty())
             try {
@@ -57,9 +56,19 @@ public class PhotonRequestFactory {
                 throw new BadRequestException(400, "invalid parameter 'location_bias_scale' must be a number");
             }
 
+        int zoom = 16;
+        String zoomStr = webRequest.queryParams("zoom");
+        if (zoomStr != null && !zoomStr.isEmpty()) {
+            try {
+                zoom = Integer.parseInt(zoomStr);
+            } catch (NumberFormatException e) {
+                throw new BadRequestException(400, "Invalid parameter 'zoom'. Must be a number.");
+            }
+        }
+
         boolean debug = webRequest.queryParams("debug") != null;
 
-        PhotonRequest request = new PhotonRequest(query, limit, bbox, locationForBias, scale, language, debug);
+        PhotonRequest request = new PhotonRequest(query, limit, bbox, locationForBias, scale, zoom, language, debug);
 
         QueryParamsMap tagFiltersQueryMap = webRequest.queryMap("osm_tag");
         if (new CheckIfFilteredRequest().execute(tagFiltersQueryMap)) {

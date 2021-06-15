@@ -86,8 +86,14 @@
 									"multi_match": {
 										"query": "berlin",
 										"fields": [
+											"name.alt.raw^0.4",
 											"name.en.ngrams^0.4",
-											"name.ja.ngrams^1.0"
+											"name.housename.raw^0.4",
+											"name.int.raw^0.4",
+											"name.ja.ngrams^1.0",
+											"name.loc.raw^0.4",
+											"name.old.raw^0.4",
+											"name.reg.raw^0.4"
 										],
 										"type": "best_fields",
 										"operator": "OR",
