@@ -1,6 +1,23 @@
 {
 	"analysis": {
 		"analyzer": {
+			"ja_index_ngram": {
+				"char_filter": [
+					"punctuationgreedy",
+					"remove_ws_hnr_suffix",
+					"ja_normalize",
+					"kuromoji_iteration_mark"
+				],
+				"tokenizer": "ja_edge_ngram",
+				"filter": [
+					"preserving_word_delimiter",
+					"lowercase",
+					"german_normalization",
+					"asciifolding",
+					"unique",
+					"ja_romaji_readingform"
+				]
+			},
 			"ja_index_raw": {
 				"type": "custom",
 				"char_filter": [
@@ -23,6 +40,7 @@
 					"kuromoji_number",
 					"kuromoji_stemmer",
 					"ja_hiragana_2_katakana",
+					"sudachi_synonym",
 					"ja_search"
 				]
 			},
@@ -48,6 +66,7 @@
 					"kuromoji_number",
 					"kuromoji_stemmer",
 					"ja_hiragana_2_katakana",
+					"sudachi_synonym",
 					"ja_search"
 				]
 			},
@@ -132,6 +151,15 @@
 					"digit"
 				]
 			},
+			"ja_edge_ngram": {
+				"type": "edge_ngram",
+				"min_gram": 2,
+				"max_gram": 100,
+				"token_chars": [
+					"letter",
+					"digit"
+				]
+			},
 			"ja_sudachi_tokenizer": {
 				"split_mode": "C",
 				"type": "sudachi_tokenizer",
@@ -177,6 +205,10 @@
 			"ja_hiragana_2_katakana": {
 				"type": "icu_transform",
 				"id": "Hiragana-Katakana"
+			},
+			"sudachi_synonym": {
+				"type": "synonym_graph",
+				"synonyms_path": "sudachi/synonyms.txt"
 			}
 		}
 	}

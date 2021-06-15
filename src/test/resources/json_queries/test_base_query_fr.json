@@ -11,7 +11,7 @@
 										"should": [
 											{
 												"match": {
-													"collector.default": {
+													"collector.default.ngrams": {
 														"query": "berlin",
 														"operator": "OR",
 														"analyzer": "search_ngram",

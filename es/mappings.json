@@ -25,8 +25,15 @@
 				"properties": {
 					"default": {
 						"type": "text",
-						"analyzer": "index_ngram",
 						"fields": {
+							"ngrams": {
+								"type": "text",
+								"analyzer": "index_ngram"
+							},
+							"ngrams_ja": {
+								"type": "text",
+								"analyzer": "ja_index_ngram"
+							},
 							"raw": {
 								"type": "text",
 								"analyzer": "index_raw"
@@ -44,7 +51,7 @@
 						"fields": {
 							"ngrams": {
 								"type": "text",
-								"analyzer": "index_ngram"
+								"analyzer": "ja_index_ngram"
 							},
 							"raw": {
 								"type": "text",
@@ -132,7 +139,7 @@
 						"fields": {
 							"ngrams": {
 								"type": "text",
-								"analyzer": "index_ngram"
+								"analyzer": "ja_index_ngram"
 							},
 							"raw": {
 								"type": "text",

@@ -63,7 +63,7 @@ public class PhotonQueryBuilder {
         QueryBuilder collectorQuery;
         if (lenient) {
             BoolQueryBuilder builder = QueryBuilders.boolQuery()
-                    .should(QueryBuilders.matchQuery("collector.default", query)
+                    .should(QueryBuilders.matchQuery(Arrays.asList(cjkLanguages).contains(language) ? String.format("collector.default.ngrams_%s", language): "collector.default.ngrams", query)
                             .fuzziness(Fuzziness.ONE)
                             .prefixLength(2)
                             .analyzer("search_ngram")
@@ -96,7 +96,7 @@ public class PhotonQueryBuilder {
             collectorQuery = builder;
         } else {
             MultiMatchQueryBuilder builderDefault =
-                    QueryBuilders.multiMatchQuery(query).field("collector.default", 1.0f).type(MultiMatchQueryBuilder.Type.CROSS_FIELDS).prefixLength(2).analyzer("search_ngram").minimumShouldMatch("100%");
+                    QueryBuilders.multiMatchQuery(query).field(Arrays.asList(cjkLanguages).contains(language) ? String.format("collector.default.ngrams_%s", language): "collector.default.ngrams", 1.0f).type(MultiMatchQueryBuilder.Type.CROSS_FIELDS).prefixLength(2).analyzer("search_ngram").minimumShouldMatch("100%");
 
             for (String lang : languages) {
                 builderDefault.field(String.format("collector.%s.ngrams", lang), lang.equals(language) ? 1.0f : 0.6f);

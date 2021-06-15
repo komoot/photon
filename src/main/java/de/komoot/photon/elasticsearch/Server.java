@@ -199,6 +199,8 @@ public class Server {
                 new File(sudachiDirectory, "system_full.dic").toPath(), StandardCopyOption.REPLACE_EXISTING);
         Files.copy(loader.getResourceAsStream("modules/analysis-sudachi/sudachi.json"),
                 new File(sudachiDirectory, "sudachi.json").toPath(), StandardCopyOption.REPLACE_EXISTING);
+        Files.copy(loader.getResourceAsStream("modules/analysis-sudachi/synonyms.txt"),
+                new File(sudachiDirectory, "synonyms.txt").toPath(), StandardCopyOption.REPLACE_EXISTING);
     }
 
     public DatabaseProperties recreateIndex(String[] languages) throws IOException {
