@@ -59,7 +59,7 @@ public class PhotonRequestHandler {
                 withoutKeys(photonRequest.notKeys()).
                 withoutValues(photonRequest.notValues()).
                 withTagsNotValues(photonRequest.tagNotValues()).
-                withLocationBias(photonRequest.getLocationForBias(), photonRequest.getScaleForBias()).
+                withLocationBias(photonRequest.getLocationForBias(), photonRequest.getScaleForBias(), photonRequest.getZoomForBias()).
                 withBoundingBox(photonRequest.getBbox());
     }
 }
