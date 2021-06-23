@@ -60,12 +60,12 @@ public class PhotonQueryBuilder {
         QueryBuilder collectorQuery;
         if (lenient) {
             collectorQuery = QueryBuilders.boolQuery()
-                    .should(QueryBuilders.matchQuery(Arrays.asList(cjkLanguages).contains(language) ? String.format("collector.default.ngrams_%s", language): "collector.default.ngrams", query)
+                    .should(QueryBuilders.matchQuery(Arrays.asList(cjkLanguages).contains(language) ? String.format("collector.default.raw_%s", language) : "collector.default", query)
                             .fuzziness(Fuzziness.ONE)
                             .prefixLength(2)
                             .analyzer("search_ngram")
                             .minimumShouldMatch("-1"))
-                    .should(QueryBuilders.matchQuery(String.format("collector.%s.ngrams", language), query)
+                    .should(QueryBuilders.matchQuery(Arrays.asList(cjkLanguages).contains(language) ? String.format("collector.%s.raw", language) : String.format("collector.%s.ngrams", language), query)
                             .fuzziness(Fuzziness.ONE)
                             .prefixLength(2)
                             .analyzer("search_ngram")
@@ -73,10 +73,10 @@ public class PhotonQueryBuilder {
                     .minimumShouldMatch("1");
         } else {
             MultiMatchQueryBuilder builder =
-                    QueryBuilders.multiMatchQuery(query).field(Arrays.asList(cjkLanguages).contains(language) ? String.format("collector.default.ngrams_%s", language): "collector.default.ngrams", 1.0f).type(MultiMatchQueryBuilder.Type.CROSS_FIELDS).prefixLength(2).analyzer("search_ngram").minimumShouldMatch("100%");
+                    QueryBuilders.multiMatchQuery(query).field(Arrays.asList(cjkLanguages).contains(language) ? String.format("collector.default.raw_%s", language) : "collector.default", 1.0f).type(MultiMatchQueryBuilder.Type.CROSS_FIELDS).prefixLength(2).analyzer("search_ngram").minimumShouldMatch("100%");
 
             for (String lang : languages) {
-                builder.field(String.format("collector.%s.ngrams", lang), lang.equals(language) ? 1.0f : 0.6f);
+                builder.field(Arrays.asList(cjkLanguages).contains(lang) ? String.format("collector.%s.raw", language) : String.format("collector.%s.ngrams", lang), lang.equals(language) ? 1.0f : 0.6f);
             }
 
             collectorQuery = builder;
