@@ -112,6 +112,7 @@ public class IndexSettings {
             synonyms.put(term + " => " + term + "," + String.join(",", classificators)));
 
         insertSynonymFilter("classification_synonyms", synonyms);
+        insertJsonArrayAfter("/analysis/analyzer/search_classification", "filter", "lowercase", "classification_synonyms");
 
         return this;
     }
