@@ -56,7 +56,7 @@ public class PhotonRequestFactory {
                 throw new BadRequestException(400, "invalid parameter 'location_bias_scale' must be a number");
             }
 
-        int zoom = 16;
+        int zoom = 14;
         String zoomStr = webRequest.queryParams("zoom");
         if (zoomStr != null && !zoomStr.isEmpty()) {
             try {
