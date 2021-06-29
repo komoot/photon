@@ -87,32 +87,29 @@ public class PhotonQueryBuilder {
                     QueryBuilders.multiMatchQuery(query)
                             .field(String.format("collector.default.raw_%s",language), 1.0f)
                             .type(MultiMatchQueryBuilder.Type.PHRASE)
-                            .prefixLength(2)
-                            .slop(1);
+                            .prefixLength(2);
 
             for (String lang : languages) {
                 builderPhrase.field(String.format("collector.%s.raw", lang), lang.equals(language) ? 1.0f : 0.6f);
             }
 
-            if (lenient) {
-                collectorQuery = QueryBuilders.boolQuery()
-                        .should(collectorQuery)
-                        .should(builderPhrase)
-                        .should(QueryBuilders.matchQuery(String.format("collector.default.raw_%s", language), query)
-                                .fuzziness(Fuzziness.ONE)
-                                .prefixLength(2)
-                                .operator(Operator.AND)
-                                .minimumShouldMatch("-1"))
-                        .should(QueryBuilders.matchQuery(String.format("collector.%s.raw", language), query)
-                                .fuzziness(Fuzziness.ONE)
-                                .prefixLength(2)
-                                .operator(Operator.AND)
-                                .minimumShouldMatch("-1"));
-            } else {
-                collectorQuery = QueryBuilders.boolQuery()
-                        .should(collectorQuery)
-                        .should(builderPhrase);
-            }
+            collectorQuery = QueryBuilders.boolQuery()
+                    .should(collectorQuery)
+                    .should(builderPhrase)
+                    .should(QueryBuilders.boolQuery()
+                            .should(QueryBuilders.matchQuery(String.format("collector.default.raw_%s", language), query)
+                                    .fuzziness(Fuzziness.ONE)
+                                    .prefixLength(2)
+                                    .operator(Operator.AND)
+                                    .fuzzyTranspositions(false)
+                                    .minimumShouldMatch("-1"))
+                            .should(QueryBuilders.matchQuery(String.format("collector.%s.raw", language), query)
+                                    .fuzziness(Fuzziness.ONE)
+                                    .prefixLength(2)
+                                    .operator(Operator.AND)
+                                    .fuzzyTranspositions(false)
+                                    .minimumShouldMatch("-1"))
+                    );
         }
 
         query4QueryBuilder.must(collectorQuery);
@@ -157,8 +154,9 @@ public class PhotonQueryBuilder {
 
         // 4. Rerank results for having the full name in the default language.
         query4QueryBuilder
-                .should(QueryBuilders.matchQuery(String.format("name.%s.raw", language), query));
-
+                .should(Arrays.asList(cjkLanguages).contains(language) ?
+                        QueryBuilders.matchPhraseQuery(String.format("name.%s.raw", language), query) :
+                        QueryBuilders.matchQuery(String.format("name.%s.raw", language), query));
 
         // Weigh the resulting score by importance. Use a linear scale function that ensures that the weight
         // never drops to 0 and cancels out the ES score.
