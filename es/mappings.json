@@ -46,6 +46,16 @@
 					}
 				}
 			},
+			"extra": {
+				"properties": {
+					"wikidata": {
+						"type": "text"
+					},
+					"wikipedia": {
+						"type": "text"
+					}
+				}
+			},
 			"coordinate": {
 				"type": "geo_point"
 			},
@@ -228,7 +238,7 @@
 					}
 				}
 			},
-	  		"locality": {
+			"locality": {
 				"properties": {
 					"default": {
 						"type": "text",
