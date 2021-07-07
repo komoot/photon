@@ -29,20 +29,6 @@ public class ReverseQueryBuilder {
         return !(keys == null || keys.isEmpty());
     }
 
-    public PhotonQueryBuilder withExtraKeys(Set<String> keys) {
-        if (!checkTags(keys)) return this;
-
-        ensureFiltered();
-
-        List<ExistsQueryBuilder> termQueries = new ArrayList<ExistsQueryBuilder>(keys.size());    
-        for (String key : keys) {
-            termQueries.add(QueryBuilders.existsQuery("extra." + key));
-        }
-        this.appendIncludeTermQueries(termQueries);
-
-        return this;
-    }
-
     public static ReverseQueryBuilder builder(Point location, Double radius, String queryStringFilter, Set<String> extraKeys) {
         return new ReverseQueryBuilder(location, radius, queryStringFilter, extraKeys);
     }
