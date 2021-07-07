@@ -213,6 +213,20 @@ public class PhotonQueryBuilder {
         return this;
     }
 
+    public PhotonQueryBuilder withExtraKeys(Set<String> keys) {
+        if (!checkTags(keys)) return this;
+
+        ensureFiltered();
+
+        List<ExistsQueryBuilder> termQueries = new ArrayList<ExistsQueryBuilder>(keys.size());    
+        for (String key : keys) {
+            termQueries.add(QueryBuilders.existsQuery("extra." + key));
+        }
+        this.appendIncludeTermQueries(termQueries);
+
+        return this;
+    }
+
 
     public PhotonQueryBuilder withValues(Set<String> values) {
         if (!checkTags(values)) return this;
