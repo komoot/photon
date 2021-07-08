@@ -87,10 +87,8 @@ public class PhotonQueryBuilder {
             for (String lang : languages) {
                 builder.field(Arrays.asList(cjkLanguages).contains(lang) ? String.format("collector.%s.raw", language) : String.format("collector.%s.ngrams", lang), lang.equals(language) ? 1.0f : 0.6f);
             }
-
             collectorQuery = builder;
         }
-
         query4QueryBuilder.must(collectorQuery);
 
         // 2. Prefer records that have the full names in. For address records with housenumbers this is the main
@@ -134,8 +132,9 @@ public class PhotonQueryBuilder {
         // 4. Rerank results for having the full name in the default language.
         if (Arrays.asList(cjkLanguages).contains(language)) {
             query4QueryBuilder
+                    .should(QueryBuilders.matchPhraseQuery(String.format("name.%s.raw", language), query))
                     .should(QueryBuilders.boolQuery()
-                            .should(QueryBuilders.matchQuery(String.format("name.%s.raw", language), query))
+                            .should(QueryBuilders.matchQuery(String.format("name.%s.raw", language), query).fuzziness(Fuzziness.ZERO).fuzzyTranspositions(false).minimumShouldMatch("100%"))
                             .should(QueryBuilders.matchPhrasePrefixQuery(String.format("name.%s.raw", language), query)));
         } else {
             query4QueryBuilder
