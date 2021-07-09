@@ -135,7 +135,7 @@ public class PhotonQueryBuilder {
                     .should(QueryBuilders.matchPhraseQuery(String.format("name.%s.raw", language), query))
                     .should(QueryBuilders.boolQuery()
                             .should(QueryBuilders.matchQuery(String.format("name.%s.raw", language), query).fuzziness(Fuzziness.ZERO).fuzzyTranspositions(false).minimumShouldMatch("100%"))
-                            .should(QueryBuilders.matchPhrasePrefixQuery(String.format("name.%s.raw", language), query)));
+                            .should(QueryBuilders.matchPhraseQuery(String.format("name.%s.raw", language), query)));
         } else {
             query4QueryBuilder
                     .should(QueryBuilders.matchQuery(String.format("name.%s.raw", language), query));
