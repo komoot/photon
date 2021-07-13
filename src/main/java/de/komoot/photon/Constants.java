@@ -31,4 +31,5 @@ public class Constants {
     public static final String OSM_KEY = "osm_key";
     public static final String OSM_VALUE = "osm_value";
     public static final String OBJECT_TYPE = "object_type";
+    public static final String CLASSIFICATION = "classification";
 }

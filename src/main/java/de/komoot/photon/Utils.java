@@ -33,6 +33,11 @@ public class Utils {
                 .field(Constants.OBJECT_TYPE, atype == null ? "locality" : atype.getName())
                 .field(Constants.IMPORTANCE, doc.getImportance());
 
+        String classification = buildClassificationString(doc.getTagKey(), doc.getTagValue());
+        if (classification != null) {
+            builder.field(Constants.CLASSIFICATION, classification);
+        }
+
         if (doc.getCentroid() != null) {
             builder.startObject("coordinate")
                     .field("lat", doc.getCentroid().getY())
@@ -199,5 +204,27 @@ public class Utils {
             }
         }
         return sb.toString();
+    }
+
+    public static String buildClassificationString(String key, String value) {
+        if ("place".equals(key) || "building".equals(key)) {
+            return null;
+        }
+
+        if ("highway".equals(key)
+            && ("unclassified".equals(value) || "residential".equals(value))) {
+            return null;
+        }
+
+        for (char c : value.toCharArray()) {
+            if (!(c == '_'
+                  || ((c >= 'a') && (c <= 'z'))
+                  || ((c >= 'A') && (c <= 'Z'))
+                  || ((c >= '0') && (c <= '9')))) {
+                return null;
+            }
+        }
+
+        return "tpfld" + value.replaceAll("_", "").toLowerCase() + "clsfld" + key.replaceAll("_", "").toLowerCase();
     }
 }

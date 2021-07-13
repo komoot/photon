@@ -117,6 +117,7 @@ public class PhotonQueryBuilder {
             query4QueryBuilder.must(QueryBuilders.boolQuery()
                                         .should(nameNgramQuery)
                                         .should(QueryBuilders.matchQuery("housenumber", query).analyzer("standard"))
+                                        .should(QueryBuilders.matchQuery("classification", query).boost(0.1f))
                                         .minimumShouldMatch("1"));
         }
 
@@ -128,8 +129,9 @@ public class PhotonQueryBuilder {
         // Weigh the resulting score by importance. Use a linear scale function that ensures that the weight
         // never drops to 0 and cancels out the ES score.
         finalQueryWithoutTagFilterBuilder = QueryBuilders.functionScoreQuery(query4QueryBuilder, new FilterFunctionBuilder[]{
-                new FilterFunctionBuilder(ScoreFunctionBuilders.linearDecayFunction("importance", "1.0", "0.6"))
-        });
+                new FilterFunctionBuilder(ScoreFunctionBuilders.linearDecayFunction("importance", "1.0", "0.6")),
+                new FilterFunctionBuilder(QueryBuilders.matchQuery("classification", query), ScoreFunctionBuilders.weightFactorFunction(0.1f))
+        }).scoreMode(ScoreMode.SUM);
 
         // Filter for later: records that have a housenumber and no name must only appear when the housenumber matches.
         queryBuilderForTopLevelFilter = QueryBuilders.boolQuery()

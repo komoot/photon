@@ -35,6 +35,9 @@ public class CommandLineArgs {
     @Parameter(names = "-extra-tags", description = "additional tags to save for each place")
     private String extraTags = "";
 
+    @Parameter(names = "-synonym-file", description = "file with synonym and classification terms")
+    private String synonymFile = null;
+
     @Parameter(names = "-json", description = "import nominatim database and dump it to a json like files in (useful for developing)")
     private String jsonDump = null;
 
