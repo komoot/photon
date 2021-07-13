@@ -62,23 +62,26 @@ public class PhotonQueryBuilder {
             collectorQuery = QueryBuilders.boolQuery()
                     .should(QueryBuilders.matchQuery(Arrays.asList(cjkLanguages).contains(language) ? String.format("collector.default.raw_%s", language) : "collector.default", query)
                             .fuzziness(Fuzziness.ONE)
-                            .prefixLength(2)
+                            .fuzzyRewrite(Arrays.asList(cjkLanguages).contains(language) ? "top_terms_boost_3" : "constant_score")
+                            .prefixLength(Arrays.asList(cjkLanguages).contains(language) ? 0 : 2)
                             .operator(Arrays.asList(cjkLanguages).contains(language) ? Operator.AND : Operator.OR)
                             .analyzer(Arrays.asList(cjkLanguages).contains(language) ? String.format("%s_search_raw", language) : "search_ngram")
-                            .minimumShouldMatch("-1"))
+                            .minimumShouldMatch(Arrays.asList(cjkLanguages).contains(language) ? "3<-1" : "-1"))
                     .should(QueryBuilders.matchQuery(Arrays.asList(cjkLanguages).contains(language) ? String.format("collector.%s.raw", language) : String.format("collector.%s.ngrams", language), query)
                             .fuzziness(Fuzziness.ONE)
-                            .prefixLength(2)
+                            .fuzzyRewrite(Arrays.asList(cjkLanguages).contains(language) ? "top_terms_boost_3" : "constant_score")
+                            .prefixLength(Arrays.asList(cjkLanguages).contains(language) ? 0 : 2)
                             .operator(Arrays.asList(cjkLanguages).contains(language) ? Operator.AND : Operator.OR)
                             .analyzer(Arrays.asList(cjkLanguages).contains(language) ? String.format("%s_search_raw", language) : "search_ngram")
-                            .minimumShouldMatch("-1"))
+                            .minimumShouldMatch(Arrays.asList(cjkLanguages).contains(language) ? "3<-1" : "-1"))
                     .minimumShouldMatch("1");
         } else {
             MultiMatchQueryBuilder builder =
                     QueryBuilders.multiMatchQuery(query)
                             .field(Arrays.asList(cjkLanguages).contains(language) ? String.format("collector.default.raw_%s", language) : "collector.default", 1.0f)
                             .type(Arrays.asList(cjkLanguages).contains(language) ? MultiMatchQueryBuilder.Type.BEST_FIELDS : MultiMatchQueryBuilder.Type.CROSS_FIELDS)
-                            .prefixLength(2)
+                            .fuzzyRewrite(Arrays.asList(cjkLanguages).contains(language) ? "top_terms_boost_3" : "constant_score")
+                            .prefixLength(Arrays.asList(cjkLanguages).contains(language) ? 0 : 2)
                             .operator(Arrays.asList(cjkLanguages).contains(language) ? Operator.AND : Operator.OR)
                             .minimumShouldMatch("100%");
             if (!Arrays.asList(cjkLanguages).contains(language)) {
@@ -105,28 +108,30 @@ public class PhotonQueryBuilder {
                 new FilterFunctionBuilder(QueryBuilders.matchQuery("housenumber", query).analyzer("standard"), new WeightBuilder().setWeight(10f))
         }));
 
-        // 3. Either the name or housenumber must be in the query terms.
-        String defLang = "default".equals(language) ? languages.get(0) : language;
-        MultiMatchQueryBuilder nameNgramQuery = QueryBuilders.multiMatchQuery(query)
-                .type(MultiMatchQueryBuilder.Type.BEST_FIELDS)
-                .fuzziness(lenient ? Fuzziness.ONE : Fuzziness.ZERO)
-                .analyzer("search_ngram");
+        if (!Arrays.asList(cjkLanguages).contains(language)) {
+            // 3. Either the name or housenumber must be in the query terms.
+            String defLang = "default".equals(language) ? languages.get(0) : language;
+            MultiMatchQueryBuilder nameNgramQuery = QueryBuilders.multiMatchQuery(query)
+                    .type(MultiMatchQueryBuilder.Type.BEST_FIELDS)
+                    .fuzziness(lenient ? Fuzziness.ONE : Fuzziness.ZERO)
+                    .analyzer("search_ngram");
 
-        for (String lang: languages) {
-            nameNgramQuery.field(String.format("name.%s.ngrams", lang), lang.equals(defLang) ? 1.0f : 0.4f);
-        }
+            for (String lang: languages) {
+                nameNgramQuery.field(String.format("name.%s.ngrams", lang), lang.equals(defLang) ? 1.0f : 0.4f);
+            }
 
-        for (String alt: ALT_NAMES) {
-            nameNgramQuery.field(String.format("name.%s.raw", alt), 0.4f);
-        }
+            for (String alt: ALT_NAMES) {
+                nameNgramQuery.field(String.format("name.%s.raw", alt), 0.4f);
+            }
 
-        if (query.indexOf(',') < 0 && query.indexOf(' ') < 0) {
-            query4QueryBuilder.must(nameNgramQuery.boost(2f));
-        } else {
-            query4QueryBuilder.must(QueryBuilders.boolQuery()
-                                        .should(nameNgramQuery)
-                                        .should(QueryBuilders.matchQuery("housenumber", query).analyzer("standard"))
-                                        .minimumShouldMatch("1"));
+            if (query.indexOf(',') < 0 && query.indexOf(' ') < 0) {
+                query4QueryBuilder.must(nameNgramQuery.boost(2f));
+            } else {
+                query4QueryBuilder.must(QueryBuilders.boolQuery()
+                        .should(nameNgramQuery)
+                        .should(QueryBuilders.matchQuery("housenumber", query).analyzer("standard"))
+                        .minimumShouldMatch("1"));
+            }
         }
 
         // 4. Rerank results for having the full name in the default language.
@@ -134,8 +139,8 @@ public class PhotonQueryBuilder {
             query4QueryBuilder
                     .should(QueryBuilders.matchPhraseQuery(String.format("name.%s.raw", language), query))
                     .should(QueryBuilders.boolQuery()
-                            .should(QueryBuilders.matchQuery(String.format("name.%s.raw", language), query).fuzziness(Fuzziness.ZERO).fuzzyTranspositions(false).minimumShouldMatch("100%"))
-                            .should(QueryBuilders.matchPhraseQuery(String.format("name.%s.raw", language), query)));
+                            .must(QueryBuilders.matchQuery(String.format("name.%s.raw", language), query).operator(Operator.AND).fuzziness(Fuzziness.ZERO).fuzzyTranspositions(false).fuzzyRewrite("top_terms_boost_3").minimumShouldMatch("100%"))
+                            .should(QueryBuilders.matchPhrasePrefixQuery(String.format("name.%s.ngrams", language), query)));
         } else {
             query4QueryBuilder
                     .should(QueryBuilders.matchQuery(String.format("name.%s.raw", language), query));
