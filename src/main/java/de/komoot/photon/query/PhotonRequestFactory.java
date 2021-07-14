@@ -19,7 +19,7 @@ public class PhotonRequestFactory {
     private final BoundingBoxParamConverter bboxParamConverter;
 
     private static final HashSet<String> REQUEST_QUERY_PARAMS = new HashSet<>(Arrays.asList("lang", "q", "lon", "lat",
-            "limit", "osm_tag", "location_bias_scale", "bbox", "debug", "zoom"));
+            "limit", "osm_tag", "location_bias_scale", "bbox", "debug", "zoom", "extra_key"));
 
     public PhotonRequestFactory(List<String> supportedLanguages, String defaultLanguage) {
         this.languageResolver = new RequestLanguageResolver(supportedLanguages, defaultLanguage);
@@ -68,7 +68,10 @@ public class PhotonRequestFactory {
 
         boolean debug = webRequest.queryParams("debug") != null;
 
-        PhotonRequest request = new PhotonRequest(query, limit, bbox, locationForBias, scale, zoom, language, debug);
+        QueryParamsMap extraKeyQueryMap = webRequest.queryMap("extra_key");
+        String[] extraKeyValues = (extraKeyQueryMap.hasValue()) ? extraKeyQueryMap.values() : new String[0];
+
+        PhotonRequest request = new PhotonRequest(query, limit, bbox, locationForBias, scale, zoom, language, debug, extraKeyValues);
 
         QueryParamsMap tagFiltersQueryMap = webRequest.queryMap("osm_tag");
         if (new CheckIfFilteredRequest().execute(tagFiltersQueryMap)) {

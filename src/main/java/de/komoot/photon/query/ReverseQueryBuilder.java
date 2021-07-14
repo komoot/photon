@@ -6,6 +6,8 @@ import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 
+import java.util.*;
+
 /**
  * @author svantulden
  */
@@ -14,14 +16,21 @@ public class ReverseQueryBuilder {
     private Point location;
     private String queryStringFilter;
 
-    private ReverseQueryBuilder(Point location, Double radius, String queryStringFilter) {
+    private Set<String> extraKeys;
+
+    private ReverseQueryBuilder(Point location, Double radius, String queryStringFilter, Set<String> extraKeys) {
         this.location = location;
         this.radius = radius;
         this.queryStringFilter = queryStringFilter;
+        this.extraKeys = extraKeys;
     }
 
-    public static ReverseQueryBuilder builder(Point location, Double radius, String queryStringFilter) {
-        return new ReverseQueryBuilder(location, radius, queryStringFilter);
+    private Boolean checkTags(Set<String> keys) {
+        return !(keys == null || keys.isEmpty());
+    }
+
+    public static ReverseQueryBuilder builder(Point location, Double radius, String queryStringFilter, Set<String> extraKeys) {
+        return new ReverseQueryBuilder(location, radius, queryStringFilter, extraKeys);
     }
 
     public QueryBuilder buildQuery() {
@@ -34,6 +43,16 @@ public class ReverseQueryBuilder {
             finalQuery = QueryBuilders.boolQuery().must(QueryBuilders.queryStringQuery(queryStringFilter)).filter(fb);
         else
             finalQuery = QueryBuilders.boolQuery().must(QueryBuilders.matchAllQuery()).filter(fb);
+
+        if (checkTags(extraKeys) != null) {
+            BoolQueryBuilder orQueryExtraTagFiltering = QueryBuilders.boolQuery();
+
+            for (String key : extraKeys) {
+                orQueryExtraTagFiltering.should(QueryBuilders.existsQuery("extra." + key));
+            }
+
+            finalQuery.filter(QueryBuilders.boolQuery().must(orQueryExtraTagFiltering));
+        }
 
         return finalQuery;
     }

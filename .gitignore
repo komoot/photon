@@ -15,3 +15,10 @@ nbactions.xml
 .classpath
 .project
 .settings/
+.factorypath
+
+##############################
+## Visual Studio Code
+##############################
+.vscode/
+.code-workspace

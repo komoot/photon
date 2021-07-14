@@ -1,6 +1,7 @@
 package de.komoot.photon.query;
 
 import com.vividsolutions.jts.geom.Point;
+import spark.QueryParamsMap;
 import spark.Request;
 
 import java.util.Arrays;
@@ -14,7 +15,7 @@ public class ReverseRequestFactory {
     private final RequestLanguageResolver languageResolver;
     private static final LocationParamConverter mandatoryLocationParamConverter = new LocationParamConverter(true);
 
-    private static final HashSet<String> REQUEST_QUERY_PARAMS = new HashSet<>(Arrays.asList("lang", "lon", "lat", "radius", "query_string_filter", "distance_sort", "limit"));
+    private static final HashSet<String> REQUEST_QUERY_PARAMS = new HashSet<>(Arrays.asList("lang", "lon", "lat", "radius", "query_string_filter", "distance_sort", "limit", "extra_key"));
 
     public ReverseRequestFactory(List<String> supportedLanguages, String defaultLanguage) {
         this.languageResolver = new RequestLanguageResolver(supportedLanguages, defaultLanguage);
@@ -70,6 +71,10 @@ public class ReverseRequestFactory {
         }
 
         String queryStringFilter = webRequest.queryParams("query_string_filter");
-        return new ReverseRequest(location, language, radius, queryStringFilter, limit, locationDistanceSort);
+
+        QueryParamsMap extraKeyQueryMap = webRequest.queryMap("extra_key");
+        String[] extraKeyValues = (extraKeyQueryMap.hasValue()) ? extraKeyQueryMap.values() : new String[0];
+
+        return new ReverseRequest(location, language, radius, queryStringFilter, limit, locationDistanceSort, extraKeyValues);
     }
 }
