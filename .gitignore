@@ -15,3 +15,5 @@ nbactions.xml
 .classpath
 .project
 .settings/
+
+system_*.dic

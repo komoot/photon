@@ -1,10 +1,64 @@
 {
 	"analysis": {
 		"analyzer": {
+			"ja_index_raw": {
+				"type": "custom",
+				"char_filter": [
+					"punctuationgreedy",
+					"ja_normalize",
+					"kuromoji_iteration_mark"
+				],
+				"tokenizer": "ja_sudachi_tokenizer",
+				"filter": [
+					"word_delimiter",
+					"lowercase",
+					"german_normalization",
+					"asciifolding",
+					"unique",
+					"sudachi_baseform",
+					"sudachi_normalizedform",
+					"sudachi_part_of_speech",
+					"cjk_width",
+					"sudachi_ja_stop",
+					"kuromoji_number",
+					"kuromoji_stemmer",
+					"ja_hiragana_2_katakana",
+					"sudachi_synonym",
+					"ja_search"
+				]
+			},
+			"ja_search_raw": {
+				"type": "custom",
+				"char_filter": [
+					"punctuationgreedy",
+					"ja_normalize",
+					"kuromoji_iteration_mark"
+				],
+				"tokenizer": "ja_sudachi_tokenizer",
+				"filter": [
+					"word_delimiter",
+					"lowercase",
+					"german_normalization",
+					"asciifolding",
+					"unique",
+					"sudachi_baseform",
+					"sudachi_normalizedform",
+					"sudachi_part_of_speech",
+					"cjk_width",
+					"sudachi_ja_stop",
+					"kuromoji_number",
+					"kuromoji_stemmer",
+					"ja_hiragana_2_katakana",
+					"sudachi_synonym",
+					"ja_search"
+				]
+			},
 			"index_ngram": {
 				"char_filter": [
 					"punctuationgreedy",
-					"remove_ws_hnr_suffix"
+					"remove_ws_hnr_suffix",
+					"ja_normalize",
+					"kuromoji_iteration_mark"
 				],
 				"tokenizer": "edge_ngram",
 				"filter": [
@@ -12,18 +66,22 @@
 					"lowercase",
 					"german_normalization",
 					"asciifolding",
-					"unique"
+					"unique",
+					"ja_romaji_readingform"
 				]
 			},
 			"search_ngram": {
 				"char_filter": [
-					"punctuationgreedy"
+					"punctuationgreedy",
+					"ja_normalize",
+					"kuromoji_iteration_mark"
 				],
 				"tokenizer": "standard",
 				"filter": [
 					"lowercase",
 					"german_normalization",
-					"asciifolding"
+					"asciifolding",
+					"ja_romaji_readingform"
 				]
 			},
 			"index_raw": {
@@ -35,7 +93,8 @@
 					"lowercase",
 					"german_normalization",
 					"asciifolding",
-					"unique"
+					"unique",
+					"ja_romaji_readingform"
 				],
 				"tokenizer": "standard"
 			},
@@ -48,7 +107,8 @@
 					"lowercase",
 					"german_normalization",
 					"asciifolding",
-					"unique"
+					"unique",
+					"ja_romaji_readingform"
 				],
 				"tokenizer": "standard"
 			},
@@ -59,8 +119,9 @@
 				],
 				"filter": [
 					"lowercase",
-					"preserving_word_delimiter"],
-				"tokenizer": "standard" 
+					"preserving_word_delimiter"
+				],
+				"tokenizer": "standard"
 			}
 		},
 		"tokenizer": {
@@ -72,6 +133,13 @@
 					"letter",
 					"digit"
 				]
+			},
+			"ja_sudachi_tokenizer": {
+				"split_mode": "C",
+				"type": "sudachi_tokenizer",
+				"discard_punctuation": true,
+				"resources_path": "sudachi",
+				"settings_path": "sudachi/sudachi.json"
 			}
 		},
 		"char_filter": {
@@ -84,6 +152,11 @@
 				"type": "pattern_replace",
 				"pattern": "(\\d+)\\s(?=\\p{L}\\b)",
 				"replacement": "$1"
+			},
+			"ja_normalize": {
+				"type": "icu_normalizer",
+				"name": "nfkc_cf",
+				"mode": "compose"
 			}
 		},
 		"filter": {
@@ -91,9 +164,25 @@
 				"min": "2",
 				"type": "length"
 			},
-			"preserving_word_delimiter": { 
+			"preserving_word_delimiter": {
 				"type": "word_delimiter",
 				"preserve_original": "true"
+			},
+			"ja_search" : {
+				"type" : "sudachi_split",
+				"mode" : "search"
+			},
+			"ja_romaji_readingform" : {
+				"type" : "sudachi_readingform",
+				"use_romaji" : true
+			},
+			"ja_hiragana_2_katakana": {
+				"type": "icu_transform",
+				"id": "Hiragana-Katakana"
+			},
+			"sudachi_synonym": {
+				"type": "synonym_graph",
+				"synonyms_path": "sudachi/synonyms.txt"
 			}
 		}
 	}

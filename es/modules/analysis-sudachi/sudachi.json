@@ -1,0 +1,32 @@
+{
+  "systemDict" : "system_full.dic",
+  "inputTextPlugin" : [
+    { "class" : "com.worksap.nlp.sudachi.DefaultInputTextPlugin" },
+    { "class" : "com.worksap.nlp.sudachi.ProlongedSoundMarkInputTextPlugin",
+      "prolongedSoundMarks": ["ー", "-", "⁓", "〜", "〰"],
+      "replacementSymbol": "ー"},
+    { "class": "com.worksap.nlp.sudachi.IgnoreYomiganaPlugin",
+      "leftBrackets": ["(", "（"],
+      "rightBrackets": [")", "）"],
+      "maxYomiganaLength": 4}
+  ],
+  "oovProviderPlugin" : [
+    { "class" : "com.worksap.nlp.sudachi.MeCabOovProviderPlugin" },
+    { "class" : "com.worksap.nlp.sudachi.SimpleOovProviderPlugin",
+      "oovPOS" : [ "補助記号", "一般", "*", "*", "*", "*" ],
+      "leftId" : 5968,
+      "rightId" : 5968,
+      "cost" : 3857 }
+  ],
+  "pathRewritePlugin" : [
+    { "class" : "com.worksap.nlp.sudachi.JoinNumericPlugin",
+      "joinKanjiNumeric" : true },
+    { "class" : "com.worksap.nlp.sudachi.JoinKatakanaOovPlugin",
+      "oovPOS" : [ "名詞", "普通名詞", "一般", "*", "*", "*" ],
+      "minLength" : 3
+    }
+  ],
+  "formatterPlugin" : [
+    { "class" : "com.worksap.nlp.sudachi.SimpleMorphemeFormatter" }
+  ]
+}

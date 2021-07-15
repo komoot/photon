@@ -237,6 +237,87 @@
                             <destFileName>lang-painless.jar</destFileName>
                         </artifactItem>
                         <artifactItem>
+                            <groupId>org.elasticsearch.plugin</groupId>
+                            <artifactId>analysis-icu</artifactId>
+                            <version>${elasticsearch.version}</version>
+                            <type>jar</type>
+                            <overWrite>false</overWrite>
+                            <outputDirectory>${project.build.directory}/es/modules/analysis-icu</outputDirectory>
+                            <destFileName>analysis-icu.jar</destFileName>
+                        </artifactItem>
+                        <artifactItem>
+                            <groupId>com.ibm.icu</groupId>
+                            <artifactId>icu4j</artifactId>
+                            <version>54.1</version>
+                            <type>jar</type>
+                            <overWrite>false</overWrite>
+                            <outputDirectory>${project.build.directory}/es/modules/analysis-icu</outputDirectory>
+                            <destFileName>icu4j.jar</destFileName>
+                        </artifactItem>
+                        <artifactItem>
+                            <groupId>org.apache.lucene</groupId>
+                            <artifactId>lucene-analyzers-icu</artifactId>
+                            <version>6.6.1</version>
+                            <type>jar</type>
+                            <overWrite>false</overWrite>
+                            <outputDirectory>${project.build.directory}/es/modules/analysis-icu</outputDirectory>
+                            <destFileName>lucene-analyzers-icu.jar</destFileName>
+                        </artifactItem>
+                        <artifactItem>
+                            <groupId>org.elasticsearch.plugin</groupId>
+                            <artifactId>analysis-kuromoji</artifactId>
+                            <version>${elasticsearch.version}</version>
+                            <type>jar</type>
+                            <overWrite>false</overWrite>
+                            <outputDirectory>${project.build.directory}/es/modules/analysis-kuromoji</outputDirectory>
+                            <destFileName>analysis-kuromoji.jar</destFileName>
+                        </artifactItem>
+                        <artifactItem>
+                            <groupId>org.apache.lucene</groupId>
+                            <artifactId>lucene-analyzers-kuromoji</artifactId>
+                            <version>6.6.1</version>
+                            <type>jar</type>
+                            <overWrite>false</overWrite>
+                            <outputDirectory>${project.build.directory}/es/modules/analysis-kuromoji</outputDirectory>
+                            <destFileName>lucene-analyzers-kuromoji.jar</destFileName>
+                        </artifactItem>
+                        <artifactItem>
+                            <groupId>com.worksap.nlp.elasticsearch.sudachi.plugin</groupId>
+                            <artifactId>analysis-sudachi</artifactId>
+                            <version>2.1.0</version>
+                            <type>jar</type>
+                            <overWrite>false</overWrite>
+                            <outputDirectory>${project.build.directory}/es/modules/analysis-sudachi</outputDirectory>
+                            <destFileName>analysis-sudachi.jar</destFileName>
+                        </artifactItem>
+                        <artifactItem>
+                            <groupId>org.glassfish</groupId>
+                            <artifactId>javax.json</artifactId>
+                            <version>1.1.4</version>
+                            <type>jar</type>
+                            <overWrite>false</overWrite>
+                            <outputDirectory>${project.build.directory}/es/modules/analysis-sudachi</outputDirectory>
+                            <destFileName>javax.json.jar</destFileName>
+                        </artifactItem>
+                        <artifactItem>
+                            <groupId>com.worksap.nlp</groupId>
+                            <artifactId>jdartsclone</artifactId>
+                            <version>1.2.0</version>
+                            <type>jar</type>
+                            <overWrite>false</overWrite>
+                            <outputDirectory>${project.build.directory}/es/modules/analysis-sudachi</outputDirectory>
+                            <destFileName>jdartsclone.jar</destFileName>
+                        </artifactItem>
+                        <artifactItem>
+                            <groupId>com.worksap.nlp</groupId>
+                            <artifactId>sudachi</artifactId>
+                            <version>0.5.2</version>
+                            <type>jar</type>
+                            <overWrite>false</overWrite>
+                            <outputDirectory>${project.build.directory}/es/modules/analysis-sudachi</outputDirectory>
+                            <destFileName>sudachi.jar</destFileName>
+                        </artifactItem>
+                        <artifactItem>
                             <groupId>org.ow2.asm</groupId>
                             <artifactId>asm-debug-all</artifactId>
                             <version>5.1</version>
@@ -277,6 +358,8 @@
                 <configuration>
                     <excludes>
                         <exclude>modules/lang-painless/*</exclude>
+                        <exclude>modules/analysis-icu/*</exclude>
+                        <exclude>modules/analysis-kuromoji/*</exclude>
                     </excludes>
                 </configuration>
                 <executions>
