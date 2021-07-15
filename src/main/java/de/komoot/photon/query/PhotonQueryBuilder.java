@@ -88,7 +88,7 @@ public class PhotonQueryBuilder {
                 builder.analyzer("search_ngram");
             }
             for (String lang : languages) {
-                builder.field(Arrays.asList(cjkLanguages).contains(lang) ? String.format("collector.%s.raw", language) : String.format("collector.%s.ngrams", lang), lang.equals(language) ? 1.0f : 0.6f);
+                builder.field(Arrays.asList(cjkLanguages).contains(lang) ? String.format("collector.%s.raw", lang) : String.format("collector.%s.ngrams", lang), lang.equals(language) ? 1.0f : 0.6f);
             }
             collectorQuery = builder;
         }
