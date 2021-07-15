@@ -137,10 +137,12 @@ public class PhotonQueryBuilder {
         // 4. Rerank results for having the full name in the default language.
         if (Arrays.asList(cjkLanguages).contains(language)) {
             query4QueryBuilder
-                    .should(QueryBuilders.matchPhraseQuery(String.format("name.%s.raw", language), query))
+                    .should(QueryBuilders.prefixQuery(String.format("name.%s.ngrams", language), query).boost(0.6f))
+                    .should(QueryBuilders.matchPhraseQuery(String.format("name.%s.raw", language), query).boost(1f))
                     .should(QueryBuilders.boolQuery()
                             .must(QueryBuilders.matchQuery(String.format("name.%s.raw", language), query).operator(Operator.AND).fuzziness(Fuzziness.ZERO).fuzzyTranspositions(false).fuzzyRewrite("top_terms_boost_3").minimumShouldMatch("100%"))
-                            .should(QueryBuilders.matchPhrasePrefixQuery(String.format("name.%s.ngrams", language), query)));
+                            .should(QueryBuilders.matchPhraseQuery(String.format("name.%s.ngrams", language), query))
+                    .boost(1f));
         } else {
             query4QueryBuilder
                     .should(QueryBuilders.matchQuery(String.format("name.%s.raw", language), query));
