@@ -7,6 +7,7 @@ import org.elasticsearch.action.search.SearchResponse;
 import org.json.JSONObject;
 
 import java.util.List;
+import java.util.Arrays;
 
 /**
  * Given a {@link PhotonRequest photon request}, execute the search, process it (for example, de-duplicate) and respond with results formatted in a list of {@link JSONObject json
@@ -52,6 +53,7 @@ public class PhotonRequestHandler {
    public PhotonQueryBuilder buildQuery(PhotonRequest photonRequest, boolean lenient) {
         return PhotonQueryBuilder.
                 builder(photonRequest.getQuery(), photonRequest.getLanguage(), supportedLanguages, lenient).
+		builder(photonRequest.getQuery(), photonRequest.getLanguage(), photonRequest.getSearchLanguages() != null ? Arrays.asList(photonRequest.getSearchLanguages()) : supportedLanguages, lenient).				
                 withTags(photonRequest.tags()).
                 withKeys(photonRequest.keys()).
                 withValues(photonRequest.values()).
