@@ -207,6 +207,35 @@ public class PhotonRequestFactoryTest {
     }
     
     @Test
+    public void testWithSearchLanguages() throws Exception {
+        Request mockRequest = Mockito.mock(Request.class);
+        Mockito.when(mockRequest.queryParams("q")).thenReturn("berlin");
+        Mockito.when(mockRequest.queryParams("search_languages")).thenReturn("en,es,pt");
+        PhotonRequestFactory photonRequestFactory = new PhotonRequestFactory(ImmutableList.of("en"), "en");
+        QueryParamsMap mockQueryParamsMap = Mockito.mock(QueryParamsMap.class);
+        Mockito.when(mockRequest.queryMap("osm_tag")).thenReturn(mockQueryParamsMap);
+        photonRequest = photonRequestFactory.create(mockRequest);
+        Assert.assertEquals("berlin", photonRequest.getQuery());
+        Assert.assertArrayEquals(new String[]{"en", "es", "pt"}, photonRequest.getSearchLanguages());
+        Mockito.verify(mockRequest, Mockito.times(1)).queryParams("q");
+        Mockito.verify(mockRequest, Mockito.times(1)).queryParams("search_languages");
+    }
+    
+    @Test
+    public void testWithoutSearchLanguages() throws Exception {
+        Request mockRequest = Mockito.mock(Request.class);
+        Mockito.when(mockRequest.queryParams("q")).thenReturn("berlin");
+        Mockito.when(mockRequest.queryParams("search_languages")).thenReturn(null);
+        PhotonRequestFactory photonRequestFactory = new PhotonRequestFactory(ImmutableList.of("en"), "en");
+        QueryParamsMap mockQueryParamsMap = Mockito.mock(QueryParamsMap.class);
+        Mockito.when(mockRequest.queryMap("osm_tag")).thenReturn(mockQueryParamsMap);
+        photonRequest = photonRequestFactory.create(mockRequest);
+        Assert.assertEquals("berlin", photonRequest.getQuery());
+        Assert.assertNull(photonRequest.getSearchLanguages());
+        Mockito.verify(mockRequest, Mockito.times(1)).queryParams("q");
+    }
+    
+    @Test
     public void testWithBboxFilter() throws Exception {
         Request mockRequest = Mockito.mock(Request.class);
         Mockito.when(mockRequest.queryParams("q")).thenReturn("hanover");
