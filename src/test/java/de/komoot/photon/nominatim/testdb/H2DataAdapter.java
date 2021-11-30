@@ -42,4 +42,21 @@ public class H2DataAdapter implements DBDataAdapter {
 
         return null;
     }
+
+    @Override
+    public String addressSQL(boolean hasAddressTags, boolean hasCentroid) {
+        String sql = "SELECT p.name, p.class, p.type, p.rank_address"
+                     + " FROM placex p, place_addressline pa"
+                     + " WHERE p.place_id = pa.address_place_id and pa.place_id = ?"
+                     + " and pa.cached_rank_address > 4 and pa.address_place_id != ? and pa.isaddress";
+
+        if (hasAddressTags) {
+            sql += "and ? is not null"; //dummy query, not used
+        }
+        if (hasCentroid) {
+            sql += "and ? is not null"; //dummy query, not used
+        }
+
+        return sql + " ORDER BY rank_address desc, fromarea desc, distance asc, rank_search desc";
+    }
 }

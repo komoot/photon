@@ -35,4 +35,28 @@ public class PostgisDataAdapter implements DBDataAdapter {
         }
         return geom.getGeometry();
     }
+
+    @Override
+    public String addressSQL(boolean hasAddressTags, boolean hasCentroid) {
+        String sql = "SELECT DISTINCT ON (rank_address) * FROM ("
+                     + "SELECT p.name, p.class, p.type, p.rank_address"
+                     + " FROM placex p, place_addressline pa"
+                     + " WHERE p.place_id = pa.address_place_id"
+                     + "    AND pa.place_id IN (?, ?)"
+                     + "    AND pa.address_place_id != ?"
+                     + "    AND p.linked_place_id is null"
+                     + " ORDER BY p.rank_address desc,"
+                     + "          (CASE ";
+        if (hasAddressTags) {
+            sql += "                    WHEN coalesce(avals(p.name) && ?::text[], False) THEN 2";
+        }
+        sql +=   "                      WHEN pa.isaddress THEN 0";
+        if (hasCentroid) {
+            sql += "                    WHEN pa.fromarea and ST_Contains(p.geometry, ST_SetSrid(?::geometry, 4326)) THEN 1";
+        }
+        sql +=   "                ELSE -1 END) desc,"
+               + "          pa.fromarea desc, pa.distance asc, p.rank_search desc) adr";
+
+        return sql;
+    }
 }

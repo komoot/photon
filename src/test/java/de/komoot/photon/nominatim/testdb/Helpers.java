@@ -5,6 +5,7 @@ import org.springframework.lang.Nullable;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Map;
 
 /**
  * Helper functions used by H2 test database.
@@ -18,6 +19,19 @@ public class Helpers {
             return null;
 
         return geom.getEnvelope();
+    }
+
+    public static Geometry set_srid(Geometry geom, int srid) {
+        if (geom == null)
+            return null;
+
+        geom.setSRID(srid);
+
+        return geom;
+    }
+
+    public static String[] avals(Map<String, String> input) {
+        return input.values().toArray(new String[0]);
     }
 
     @Nullable
