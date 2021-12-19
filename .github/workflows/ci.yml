@@ -31,6 +31,12 @@ jobs:
 
       - name: Compile project, run tests
         run: |
+          curl "http://sudachi.s3-website-ap-northeast-1.amazonaws.com/sudachidict/sudachi-dictionary-20210608-full.zip" -o "dictionary.zip"
+          unzip dictionary.zip -d $(pwd)/es/modules/analysis-sudachi && rm dictionary.zip
+          mv $(pwd)/es/modules/analysis-sudachi/sudachi-dictionary-20210608/system_full.dic $(pwd)/es/modules/analysis-sudachi/. && rm -rf $(pwd)/es/modules/analysis-sudachi/sudachi-dictionary-20210608
+          mvn install:install-file -Dfile=$(pwd)/es/modules/analysis-icu/analysis-icu-5.6.16.jar -DgroupId=org.elasticsearch.plugin -DartifactId=analysis-icu -Dversion=5.6.16 -Dpackaging=jar
+          mvn install:install-file -Dfile=$(pwd)/es/modules/analysis-kuromoji/analysis-kuromoji-5.6.16.jar -DgroupId=org.elasticsearch.plugin -DartifactId=analysis-kuromoji -Dversion=5.6.16 -Dpackaging=jar
+          mvn install:install-file -Dfile=$(pwd)/es/modules/analysis-sudachi/analysis-sudachi-2.1.0.jar -DgroupId=com.worksap.nlp.elasticsearch.sudachi.plugin -DartifactId=analysis-sudachi -Dversion=2.1.0 -Dpackaging=jar
           mvn --no-transfer-progress test
 
 
@@ -54,6 +60,12 @@ jobs:
 
       - name: Compile project
         run: |
+          curl "http://sudachi.s3-website-ap-northeast-1.amazonaws.com/sudachidict/sudachi-dictionary-20210608-full.zip" -o "dictionary.zip"
+          unzip dictionary.zip -d $(pwd)/es/modules/analysis-sudachi && rm dictionary.zip
+          mv $(pwd)/es/modules/analysis-sudachi/sudachi-dictionary-20210608/system_full.dic $(pwd)/es/modules/analysis-sudachi/. && rm -rf $(pwd)/es/modules/analysis-sudachi/sudachi-dictionary-20210608
+          mvn install:install-file -Dfile=$(pwd)/es/modules/analysis-icu/analysis-icu-5.6.16.jar -DgroupId=org.elasticsearch.plugin -DartifactId=analysis-icu -Dversion=5.6.16 -Dpackaging=jar
+          mvn install:install-file -Dfile=$(pwd)/es/modules/analysis-kuromoji/analysis-kuromoji-5.6.16.jar -DgroupId=org.elasticsearch.plugin -DartifactId=analysis-kuromoji -Dversion=5.6.16 -Dpackaging=jar
+          mvn install:install-file -Dfile=$(pwd)/es/modules/analysis-sudachi/analysis-sudachi-2.1.0.jar -DgroupId=com.worksap.nlp.elasticsearch.sudachi.plugin -DartifactId=analysis-sudachi -Dversion=2.1.0 -Dpackaging=jar
           mvn --no-transfer-progress package -Dmaven.test.skip=true
 
       - uses: actions/checkout@v2

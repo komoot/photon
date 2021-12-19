@@ -63,6 +63,18 @@ Discover more of photon's feature with its usage `java -jar photon-*.jar -h`.
 
 ### Building
 
+Before building a package, some Elasticsearch plugins require to be installed manually.
+- [analysis-icu](https://www.elastic.co/guide/en/elasticsearch/plugins/current/analysis-icu.html)
+- [analysis-kuromoji](https://www.elastic.co/guide/en/elasticsearch/plugins/current/analysis-kuromoji.html)
+- [analysis-sudachi](https://github.com/WorksApplications/elasticsearch-sudachi): The latest Japanese language dictionary can be found [here](http://sudachi.s3-website-ap-northeast-1.amazonaws.com/sudachidict).
+
+```
+mvn install:install-file -Dfile=$(pwd)/es/modules/analysis-icu/analysis-icu-5.6.16.jar -DgroupId=org.elasticsearch.plugin -DartifactId=analysis-icu -Dversion=5.6.16 -Dpackaging=jar
+mvn install:install-file -Dfile=$(pwd)/es/modules/analysis-kuromoji/analysis-kuromoji-5.6.16.jar -DgroupId=org.elasticsearch.plugin -DartifactId=analysis-kuromoji -Dversion=5.6.16 -Dpackaging=jar
+mvn install:install-file -Dfile=$(pwd)/es/modules/analysis-sudachi/analysis-sudachi-2.1.0.jar -DgroupId=com.worksap.nlp.elasticsearch.sudachi.plugin -DartifactId=analysis-sudachi -Dversion=2.1.0 -Dpackaging=jar
+curl "http://sudachi.s3-website-ap-northeast-1.amazonaws.com/sudachidict/sudachi-dictionary-20210608-full.zip" -o "dictionary.zip" && unzip dictionary.zip -d $(pwd)/es/modules/analysis-sudachi && mv $(pwd)/es/modules/analysis-sudachi/sudachi-dictionary-20210608/system_full.dic $(pwd)/es/modules/analysis-sudachi/. && rm dictionary.zip && rm -rf $(pwd)/es/modules/analysis-sudachi/sudachi-dictionary-20210608
+```
+
 photon uses [maven](https://maven.apache.org/) for building. To build the package from source make sure you have a JDK and maven installed. Then run:
 
 ```

@@ -41,7 +41,7 @@ public class DatabaseProperties {
      */
     public String[] getLanguages() {
         if (languages == null) {
-            return new String[]{"en", "de", "fr", "it"};
+            return new String[]{"en", "de", "fr", "it", "ja"};
         }
 
         return languages;
