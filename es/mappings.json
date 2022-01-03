@@ -76,6 +76,15 @@
 			"importance": {
 				"type": "float"
 			},
+			"classification": {
+				"type": "text",
+				"index": "true",
+				"analyzer": "keyword",
+				"search_analyzer": "search_classification",
+				"copy_to": [
+					"collector.default"
+				]
+			},
 			"name": {
 				"properties": {
 					"alt": {
