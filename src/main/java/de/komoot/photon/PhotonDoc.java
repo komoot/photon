@@ -216,7 +216,8 @@ public class PhotonDoc {
      * @return True, if the address was inserted.
      */
     public boolean setAddressPartIfNew(AddressType addressType, Map<String, String> names) {
-        return addressParts.computeIfAbsent(addressType, k -> names) == names;
+        Map<String, String> value = addressParts.computeIfAbsent(addressType, k -> names);
+        return value != null && value.equals(names);
     }
 
     public void setCountry(Map<String, String> names) {
