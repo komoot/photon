@@ -1,6 +1,7 @@
 package de.komoot.photon.nominatim;
 
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.Point;
 import de.komoot.photon.Importer;
 import de.komoot.photon.PhotonDoc;
 import de.komoot.photon.nominatim.model.AddressRow;
@@ -13,10 +14,7 @@ import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Export nominatim data
@@ -26,7 +24,7 @@ import java.util.Map;
 @Slf4j
 public class NominatimConnector {
     private static final String SELECT_COLS_PLACEX = "SELECT place_id, osm_type, osm_id, class, type, name, postcode, address, extratags, ST_Envelope(geometry) AS bbox, parent_place_id, linked_place_id, rank_address, rank_search, importance, country_code, centroid";
-    private static final String SELECT_COLS_OSMLINE = "SELECT place_id, osm_id, parent_place_id, startnumber, endnumber, interpolationtype, postcode, country_code, linegeo";
+    private static final String SELECT_COLS_OSMLINE = "SELECT place_id, osm_id, parent_place_id, startnumber, endnumber, interpolationtype, postcode, country_code, address, linegeo";
     private static final String SELECT_COLS_ADDRESS = "SELECT p.name, p.class, p.type, p.rank_address";
 
     private final DBDataAdapter dbutils;
@@ -39,6 +37,7 @@ public class NominatimConnector {
         @Override
         public NominatimResult mapRow(ResultSet rs, int rownum) throws SQLException {
             Geometry geometry = dbutils.extractGeometry(rs, "linegeo");
+            Map<String, String> address = dbutils.getMap(rs, "address");
 
             PhotonDoc doc = new PhotonDoc(rs.getLong("place_id"), "W", rs.getLong("osm_id"),
                                           "place", "house_number")
@@ -46,7 +45,7 @@ public class NominatimConnector {
                     .countryCode(rs.getString("country_code"))
                     .postcode(rs.getString("postcode"));
 
-            completePlace(doc);
+            completePlace(doc, address);
 
             doc.setCountry(getCountryNames(rs.getString("country_code")));
 
@@ -80,7 +79,7 @@ public class NominatimConnector {
             double importance = rs.getDouble("importance");
             doc.importance(rs.wasNull() ? (0.75 - rs.getInt("rank_search") / 40d) : importance);
 
-            completePlace(doc);
+            completePlace(doc, address);
             // Add address last, so it takes precedence.
             doc.address(address);
 
@@ -145,7 +144,6 @@ public class NominatimConnector {
         NominatimResult result = template.queryForObject(SELECT_COLS_PLACEX + " FROM placex WHERE place_id = ?",
                                                          placeRowMapper, placeId);
         assert(result != null);
-        completePlace(result.getBaseDoc());
         return result.getDocsWithHousenumber();
     }
 
@@ -154,14 +152,10 @@ public class NominatimConnector {
                                                           + " FROM location_property_osmline WHERE place_id = ?",
                                                           osmlineRowMapper, placeId);
         assert(result != null);
-        completePlace(result.getBaseDoc());
         return result.getDocsWithHousenumber();
     }
 
-    private long parentPlaceId = -1;
-    private List<AddressRow> parentTerms = null;
-
-    List<AddressRow> getAddresses(PhotonDoc doc) {
+    List<AddressRow> getAddresses(PhotonDoc doc, Map<String, String> addressTags) {
         RowMapper<AddressRow> rowMapper = (rs, rowNum) -> new AddressRow(
                 dbutils.getMap(rs, "name"),
                 rs.getString("class"),
@@ -175,28 +169,9 @@ public class NominatimConnector {
             return Collections.emptyList();
         }
 
-        List<AddressRow> terms = null;
-
-        if (atype == AddressType.HOUSE) {
-            long placeId = doc.getParentPlaceId();
-            if (placeId != parentPlaceId) {
-                parentTerms = template.query(SELECT_COLS_ADDRESS
-                                + " FROM placex p, place_addressline pa"
-                                + " WHERE p.place_id = pa.address_place_id and pa.place_id = ?"
-                                + " and pa.cached_rank_address > 4 and pa.address_place_id != ? and pa.isaddress"
-                                + " ORDER BY rank_address desc, fromarea desc, distance asc, rank_search desc",
-                        rowMapper, placeId, placeId);
-
-                // need to add the term for the parent place ID itself
-                parentTerms.addAll(0, template.query(SELECT_COLS_ADDRESS + " FROM placex p WHERE p.place_id = ?",
-                        rowMapper, placeId));
-                parentPlaceId = placeId;
-            }
-            terms = parentTerms;
-
-        } else {
+        if (atype != AddressType.HOUSE) {
             long placeId = doc.getPlaceId();
-            terms = template.query(SELECT_COLS_ADDRESS
+            return template.query(SELECT_COLS_ADDRESS
                             + " FROM placex p, place_addressline pa"
                             + " WHERE p.place_id = pa.address_place_id and pa.place_id = ?"
                             + " and pa.cached_rank_address > 4 and pa.address_place_id != ? and pa.isaddress"
@@ -204,7 +179,24 @@ public class NominatimConnector {
                     rowMapper, placeId, placeId);
         }
 
-        return terms;
+        // Corresponds to Nominatim's address computation code in lib-sql/functions/address_lookup.sql
+        // This corrects for switching boundaries.
+        long placeId = doc.getPlaceId();
+        Point centroid = doc.getCentroid();
+        List<Object> args = new ArrayList<Object>();
+
+        args.add(placeId);
+        args.add(doc.getParentPlaceId());
+        args.add(placeId);
+        if (addressTags != null) {
+            args.add(addressTags.values().toArray(new String[0]));
+        }
+        if (centroid != null) {
+            args.add(centroid.toText());
+        }
+
+        return template.query(dbutils.addressSQL(addressTags != null, centroid != null),
+                              args.toArray(), rowMapper);
     }
 
     static String convertCountryCode(String... countryCodes) {
@@ -269,8 +261,8 @@ public class NominatimConnector {
      *
      * @param doc
      */
-    private void completePlace(PhotonDoc doc) {
-        final List<AddressRow> addresses = getAddresses(doc);
+    private void completePlace(PhotonDoc doc, Map<String, String> addressTags) {
+        final List<AddressRow> addresses = getAddresses(doc, addressTags);
         final AddressType doctype = doc.getAddressType();
         for (AddressRow address : addresses) {
             AddressType atype = address.getAddressType();

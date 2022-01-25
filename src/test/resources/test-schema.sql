@@ -53,6 +53,8 @@ CREATE TABLE location_property_osmline (
 
 
 CREATE ALIAS ST_Envelope FOR "de.komoot.photon.nominatim.testdb.Helpers.envelope";
+CREATE ALIAS ST_SetSRID FOR "de.komoot.photon.nominatim.testdb.Helpers.set_srid";
+CREATE ALIAS avals FOR "de.komoot.photon.nominatim.testdb.Helpers.avals";
 
 CREATE TABLE country_name (
     country_code character varying(2),

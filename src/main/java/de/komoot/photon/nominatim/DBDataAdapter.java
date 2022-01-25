@@ -21,4 +21,9 @@ public interface DBDataAdapter {
      */
     @Nullable
     Geometry extractGeometry(ResultSet rs, String columnName) throws SQLException;
+
+    /**
+     * Return the SQL for computing the address terms of a place.
+     */
+    String addressSQL(boolean hasAddressTags, boolean hasCentroid);
 }
