@@ -71,6 +71,9 @@ public class CommandLineArgs {
     @Parameter(names = "-cors-origin", description = "enable cross-site resource sharing for the specified origin (default CORS not supported)")
     private String corsOrigin = null;
 
+    @Parameter(names = "-enable-update-api", description = "Enable the additional endpoint /nominatim-update, which allows to trigger updates from a nominatim database")
+    private boolean enableUpdateApi = false;
+
     @Parameter(names = "-h", description = "show help / usage")
     private boolean usage = false;
 
