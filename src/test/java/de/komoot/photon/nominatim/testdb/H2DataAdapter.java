@@ -5,6 +5,7 @@ import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKTReader;
 import de.komoot.photon.nominatim.DBDataAdapter;
 import org.json.JSONObject;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.annotation.Nullable;
 import java.sql.ResultSet;
@@ -41,5 +42,10 @@ public class H2DataAdapter implements DBDataAdapter {
         }
 
         return null;
+    }
+
+    @Override
+    public boolean hasColumn(JdbcTemplate template, String table, String column) {
+        return false;
     }
 }

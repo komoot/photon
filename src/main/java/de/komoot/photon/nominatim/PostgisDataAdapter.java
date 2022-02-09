@@ -3,6 +3,8 @@ package de.komoot.photon.nominatim;
 import com.google.common.collect.Maps;
 import com.vividsolutions.jts.geom.Geometry;
 import org.postgis.jts.JtsGeometry;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 
 import javax.annotation.Nullable;
 import java.sql.ResultSet;
@@ -34,5 +36,16 @@ public class PostgisDataAdapter implements DBDataAdapter {
             return null;
         }
         return geom.getGeometry();
+    }
+
+    @Override
+    public boolean hasColumn(JdbcTemplate template, String table, String column) {
+        return template.query("SELECT count(*) FROM information_schema.columns WHERE table_name = ? and column_name = ?",
+                new RowMapper<Boolean>() {
+                    @Override
+                    public Boolean mapRow(ResultSet resultSet, int i) throws SQLException {
+                        return resultSet.getInt(1) > 0;
+                    }
+                }, table, column).get(0);
     }
 }

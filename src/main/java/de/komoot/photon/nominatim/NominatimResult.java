@@ -83,6 +83,18 @@ class NominatimResult {
         addHousenumbersFromString(address.get("conscriptionnumber"));
     }
 
+    /**
+     * Add old-style interpolated housenumbers.
+     *
+     * Old-style interpolation include the start and end point of the interpolation which is normally also
+     * an OSM house number object. They also feature only an interpolation type (odd, even, all) which may
+     * require some correction of the start value.
+     *
+     * @param first First number in the interpolation.
+     * @param last Last number in the interpolation.
+     * @param interpoltype Kind of interpolation (odd, even or all).
+     * @param geom Geometry of the interpolation line.
+     */
     public void addHouseNumbersFromInterpolation(long first, long last, String interpoltype, Geometry geom) {
         if (last <= first || (last - first) > 1000)
             return;
@@ -110,6 +122,35 @@ class NominatimResult {
 
         GeometryFactory fac = geom.getFactory();
         for (; first + num < last; num += step) {
+            housenumbers.put(String.valueOf(num + first), fac.createPoint(line.extractPoint(si + lstep * num)));
+        }
+    }
+
+    /**
+     * Add new-style interpolated house numbers.
+     *
+     * New-style interpolations only have a step with and first and last are included in the numbers that
+     * need interpolation.
+     *
+     * @param first First number of the interpolation.
+     * @param last Last number of the interpolation.
+     * @param step Gap to leave between each interpolated housenumber.
+     * @param geom Geometry of the interpolation line.
+     */
+    public void addHouseNumbersFromInterpolation(long first, long last, long step, Geometry geom) {
+         if (last <= first || (last - first) > 1000)
+            return;
+
+        if (housenumbers == null)
+            housenumbers = new HashMap<>();
+
+        LengthIndexedLine line = new LengthIndexedLine(geom);
+        double si = line.getStartIndex();
+        double ei = line.getEndIndex();
+        double lstep = (ei - si) / (double) (last - first);
+
+        GeometryFactory fac = geom.getFactory();
+        for (long num = 1; first + num <= last; num += step) {
             housenumbers.put(String.valueOf(num + first), fac.createPoint(line.extractPoint(si + lstep * num)));
         }
     }

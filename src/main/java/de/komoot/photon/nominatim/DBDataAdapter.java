@@ -1,6 +1,7 @@
 package de.komoot.photon.nominatim;
 
 import com.vividsolutions.jts.geom.Geometry;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.annotation.Nullable;
 import java.sql.ResultSet;
@@ -21,4 +22,9 @@ public interface DBDataAdapter {
      */
     @Nullable
     Geometry extractGeometry(ResultSet rs, String columnName) throws SQLException;
+
+    /**
+     * Check if a table has the given column.
+     */
+    boolean hasColumn(JdbcTemplate template, String table, String column);
 }
