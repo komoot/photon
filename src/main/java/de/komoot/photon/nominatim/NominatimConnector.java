@@ -257,11 +257,9 @@ public class NominatimConnector {
      */
     public void readEntireDatabase(String... countryCodes) {
         String andCountryCodeStr = "";
-        String whereCountryCodeStr = "";
         String countryCodeStr = convertCountryCode(countryCodes);
         if (!countryCodeStr.isEmpty()) {
             andCountryCodeStr = "AND country_code in (" + countryCodeStr + ")";
-            whereCountryCodeStr = "WHERE country_code in (" + countryCodeStr + ")";
         }
 
         log.info("start importing documents from nominatim (" + (countryCodeStr.isEmpty() ? "global" : countryCodeStr) + ")");
@@ -281,7 +279,8 @@ public class NominatimConnector {
                 });
 
         template.query(selectOsmlineSql + " FROM location_property_osmline " +
-                whereCountryCodeStr +
+                "WHERE startnumber is not null " +
+                andCountryCodeStr +
                 " ORDER BY geometry_sector, parent_place_id; ", rs -> {
                     NominatimResult docs = osmlineRowMapper.mapRow(rs, 0);
                     assert(docs != null);
