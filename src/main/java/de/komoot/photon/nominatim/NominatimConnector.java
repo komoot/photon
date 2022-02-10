@@ -26,37 +26,20 @@ import java.util.Map;
 @Slf4j
 public class NominatimConnector {
     private static final String SELECT_COLS_PLACEX = "SELECT place_id, osm_type, osm_id, class, type, name, postcode, address, extratags, ST_Envelope(geometry) AS bbox, parent_place_id, linked_place_id, rank_address, rank_search, importance, country_code, centroid";
-    private static final String SELECT_COLS_OSMLINE = "SELECT place_id, osm_id, parent_place_id, startnumber, endnumber, interpolationtype, postcode, country_code, linegeo";
     private static final String SELECT_COLS_ADDRESS = "SELECT p.name, p.class, p.type, p.rank_address";
 
     private final DBDataAdapter dbutils;
     private final JdbcTemplate template;
     private Map<String, Map<String, String>> countryNames;
+
     /**
-     * Maps a row from location_property_osmline (address interpolation lines) to a photon doc.
+     * Maps a row from location_property_osmline (address interpolation lines)
+     * with old-style intepolation (using interpolationtype) to a photon doc.
      */
-    private final RowMapper<NominatimResult> osmlineRowMapper = new RowMapper<NominatimResult>() {
-        @Override
-        public NominatimResult mapRow(ResultSet rs, int rownum) throws SQLException {
-            Geometry geometry = dbutils.extractGeometry(rs, "linegeo");
+    private final RowMapper<NominatimResult> osmlineRowMapper;
+    private final String selectOsmlineSql;
 
-            PhotonDoc doc = new PhotonDoc(rs.getLong("place_id"), "W", rs.getLong("osm_id"),
-                                          "place", "house_number")
-                    .parentPlaceId(rs.getLong("parent_place_id"))
-                    .countryCode(rs.getString("country_code"))
-                    .postcode(rs.getString("postcode"));
 
-            completePlace(doc);
-
-            doc.setCountry(getCountryNames(rs.getString("country_code")));
-
-            NominatimResult result = new NominatimResult(doc);
-            result.addHouseNumbersFromInterpolation(rs.getLong("startnumber"), rs.getLong("endnumber"),
-                    rs.getString("interpolationtype"), geometry);
-
-            return result;
-        }
-    };
     /**
      * maps a placex row in nominatim to a photon doc, some attributes are still missing and can be derived by connected address items.
      */
@@ -112,6 +95,53 @@ public class NominatimConnector {
         template.setFetchSize(100000);
 
         dbutils = dataAdapter;
+
+        // Setup handling of interpolation table. It has changed its format. Need to find out which one to use.
+        if (dbutils.hasColumn(template, "location_property_osmline", "step")) {
+            // new-style interpolations
+            selectOsmlineSql = "SELECT place_id, osm_id, parent_place_id, startnumber, endnumber, step, postcode, country_code, linegeo";
+            osmlineRowMapper = (rs, rownum) -> {
+                Geometry geometry = dbutils.extractGeometry(rs, "linegeo");
+
+                PhotonDoc doc = new PhotonDoc(rs.getLong("place_id"), "W", rs.getLong("osm_id"),
+                        "place", "house_number")
+                        .parentPlaceId(rs.getLong("parent_place_id"))
+                        .countryCode(rs.getString("country_code"))
+                        .postcode(rs.getString("postcode"));
+
+                completePlace(doc);
+
+                doc.setCountry(getCountryNames(rs.getString("country_code")));
+
+                NominatimResult result = new NominatimResult(doc);
+                result.addHouseNumbersFromInterpolation(rs.getLong("startnumber"), rs.getLong("endnumber"),
+                        rs.getLong("step"), geometry);
+
+                return result;
+            };
+        } else {
+            // old-style interpolations
+            selectOsmlineSql = "SELECT place_id, osm_id, parent_place_id, startnumber, endnumber, interpolationtype, postcode, country_code, linegeo";
+            osmlineRowMapper = (rs, rownum) -> {
+                Geometry geometry = dbutils.extractGeometry(rs, "linegeo");
+
+                PhotonDoc doc = new PhotonDoc(rs.getLong("place_id"), "W", rs.getLong("osm_id"),
+                        "place", "house_number")
+                        .parentPlaceId(rs.getLong("parent_place_id"))
+                        .countryCode(rs.getString("country_code"))
+                        .postcode(rs.getString("postcode"));
+
+                completePlace(doc);
+
+                doc.setCountry(getCountryNames(rs.getString("country_code")));
+
+                NominatimResult result = new NominatimResult(doc);
+                result.addHouseNumbersFromInterpolation(rs.getLong("startnumber"), rs.getLong("endnumber"),
+                        rs.getString("interpolationtype"), geometry);
+
+                return result;
+            };
+        }
     }
 
 
@@ -150,7 +180,7 @@ public class NominatimConnector {
     }
 
     public List<PhotonDoc> getInterpolationsByPlaceId(long placeId) {
-        NominatimResult result = template.queryForObject(SELECT_COLS_OSMLINE
+        NominatimResult result = template.queryForObject(selectOsmlineSql
                                                           + " FROM location_property_osmline WHERE place_id = ?",
                                                           osmlineRowMapper, placeId);
         assert(result != null);
@@ -227,11 +257,9 @@ public class NominatimConnector {
      */
     public void readEntireDatabase(String... countryCodes) {
         String andCountryCodeStr = "";
-        String whereCountryCodeStr = "";
         String countryCodeStr = convertCountryCode(countryCodes);
         if (!countryCodeStr.isEmpty()) {
             andCountryCodeStr = "AND country_code in (" + countryCodeStr + ")";
-            whereCountryCodeStr = "WHERE country_code in (" + countryCodeStr + ")";
         }
 
         log.info("start importing documents from nominatim (" + (countryCodeStr.isEmpty() ? "global" : countryCodeStr) + ")");
@@ -250,8 +278,9 @@ public class NominatimConnector {
                     }
                 });
 
-        template.query(SELECT_COLS_OSMLINE + " FROM location_property_osmline " +
-                whereCountryCodeStr +
+        template.query(selectOsmlineSql + " FROM location_property_osmline " +
+                "WHERE startnumber is not null " +
+                andCountryCodeStr +
                 " ORDER BY geometry_sector, parent_place_id; ", rs -> {
                     NominatimResult docs = osmlineRowMapper.mapRow(rs, 0);
                     assert(docs != null);

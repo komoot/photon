@@ -175,11 +175,13 @@ public class App {
         get("reverse", new ReverseSearchRequestHandler("reverse", esNodeClient, dbProperties.getLanguages(), args.getDefaultLanguage()));
         get("reverse/", new ReverseSearchRequestHandler("reverse/", esNodeClient, dbProperties.getLanguages(), args.getDefaultLanguage()));
 
-        // setup update API
-        final NominatimUpdater nominatimUpdater = setupNominatimUpdater(args, esNodeClient);
-        get("/nominatim-update", (Request request, Response response) -> {
-            new Thread(() -> nominatimUpdater.update()).start();
-            return "nominatim update started (more information in console output) ...";
-        });
+        if (args.isEnableUpdateApi()) {
+            // setup update API
+            final NominatimUpdater nominatimUpdater = setupNominatimUpdater(args, esNodeClient);
+            get("/nominatim-update", (Request request, Response response) -> {
+                new Thread(() -> nominatimUpdater.update()).start();
+                return "nominatim update started (more information in console output) ...";
+            });
+        }
     }
 }
