@@ -175,7 +175,6 @@ public class NominatimConnector {
         NominatimResult result = template.queryForObject(SELECT_COLS_PLACEX + " FROM placex WHERE place_id = ?",
                                                          placeRowMapper, placeId);
         assert(result != null);
-        completePlace(result.getBaseDoc());
         return result.getDocsWithHousenumber();
     }
 
@@ -184,7 +183,6 @@ public class NominatimConnector {
                                                           + " FROM location_property_osmline WHERE place_id = ?",
                                                           osmlineRowMapper, placeId);
         assert(result != null);
-        completePlace(result.getBaseDoc());
         return result.getDocsWithHousenumber();
     }
 
