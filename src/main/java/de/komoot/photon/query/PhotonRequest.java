@@ -17,6 +17,8 @@ public class PhotonRequest implements Serializable {
     private Integer limit;
     private Point locationForBias;
     private String language;
+    private String[] searchLanguages;
+	
     private final double scale;
     private final int zoom;
     private Envelope bbox;
@@ -30,14 +32,14 @@ public class PhotonRequest implements Serializable {
     private Map<String, Set<String>> excludeTags;
     private Map<String, Set<String>> excludeTagValues;
 
-
-    public PhotonRequest(String query, int limit, Envelope bbox, Point locationForBias, double scale, int zoom, String language, boolean debug) {
+    public PhotonRequest(String query, int limit, Envelope bbox, Point locationForBias, double scale, int zoom, String language, String[] searchLanguages, boolean debug) {
         this.query = query;
         this.limit = limit;
         this.locationForBias = locationForBias;
         this.scale = scale;
         this.zoom = zoom;
         this.language = language;
+        this.searchLanguages = searchLanguages;
         this.bbox = bbox;
         this.debug = debug;
     }
@@ -68,6 +70,10 @@ public class PhotonRequest implements Serializable {
 
     public String getLanguage() {
         return language;
+    }
+
+    public String[] getSearchLanguages() {
+        return searchLanguages;
     }
 
     public boolean getDebug() { return debug; }
