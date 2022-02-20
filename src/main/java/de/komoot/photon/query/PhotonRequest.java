@@ -4,6 +4,7 @@ import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Point;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -29,9 +30,10 @@ public class PhotonRequest implements Serializable {
     private Map<String, Set<String>> includeTags;
     private Map<String, Set<String>> excludeTags;
     private Map<String, Set<String>> excludeTagValues;
+    private Set<String> includeExtraKeys;
 
 
-    public PhotonRequest(String query, int limit, Envelope bbox, Point locationForBias, double scale, int zoom, String language, boolean debug) {
+    public PhotonRequest(String query, int limit, Envelope bbox, Point locationForBias, double scale, int zoom, String language, boolean debug, String[] extraKeys) {
         this.query = query;
         this.limit = limit;
         this.locationForBias = locationForBias;
@@ -40,6 +42,7 @@ public class PhotonRequest implements Serializable {
         this.language = language;
         this.bbox = bbox;
         this.debug = debug;
+        this.includeExtraKeys = new HashSet<String>(Arrays.asList(extraKeys));
     }
 
     public String getQuery() {
@@ -99,6 +102,10 @@ public class PhotonRequest implements Serializable {
     public Map<String, Set<String>> tagNotValues() {
         return excludeTagValues;
 
+    }
+
+    public Set<String> extraKeys() {
+        return includeExtraKeys;
     }
 
     private void addExcludeValues(String value) {

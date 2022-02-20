@@ -27,6 +27,6 @@ public class ReverseRequestHandler {
     }
 
     public ReverseQueryBuilder buildQuery(ReverseRequest photonRequest) {
-        return ReverseQueryBuilder.builder(photonRequest.getLocation(), photonRequest.getRadius(), photonRequest.getQueryStringFilter());
+        return ReverseQueryBuilder.builder(photonRequest.getLocation(), photonRequest.getRadius(), photonRequest.getQueryStringFilter(), photonRequest.extraKeys());
     }
 }
