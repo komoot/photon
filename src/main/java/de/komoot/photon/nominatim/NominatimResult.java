@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 /**
  * A Nominatim result consisting of the basic PhotonDoc for the object
@@ -19,6 +20,9 @@ import java.util.Map;
 class NominatimResult {
     private PhotonDoc doc;
     private Map<String, Point> housenumbers;
+
+    private final Pattern HOUSENUMBER_CHECK = Pattern.compile("(\\A|.*,)[^\\d,]{3,}(,.*|\\Z)");
+    private final Pattern HOUSENUMBER_SPLIT = Pattern.compile("\\s*[;,]\\s*");
 
     public NominatimResult(PhotonDoc baseobj) {
         doc = baseobj;
@@ -62,13 +66,19 @@ class NominatimResult {
         if (str == null || str.isEmpty())
             return;
 
+        // sanity check, if a housenumber has parts without any numbers
+        // then it likely shouldn't be a housenumber.
+        if (HOUSENUMBER_CHECK.matcher(str).find()) {
+            return;
+        }
+
         if (housenumbers == null)
             housenumbers = new HashMap<>();
 
-        String[] parts = str.split(";");
+        String[] parts = HOUSENUMBER_SPLIT.split(str);
         for (String part : parts) {
             String h = part.trim();
-            if (!h.isEmpty())
+            if (h.length() <= 20 && !h.isEmpty())
                 housenumbers.put(h, doc.getCentroid());
         }
     }
