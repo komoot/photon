@@ -35,6 +35,11 @@ public class NominatimResultTest {
         assertEquals(housenumbers, outnumbers);
     }
 
+    private void assertNoHousenumber(List<PhotonDoc> docs) {
+        assertEquals(1, docs.size());
+        assertNull(docs.get(0).getHouseNumber());
+    }
+
     private void assertSimpleOnly(List<PhotonDoc> docs) {
         assertEquals(1, docs.size());
         assertSame(simpleDoc, docs.get(0));
@@ -69,6 +74,30 @@ public class NominatimResultTest {
 
         res.addHousenumbersFromString("4;");
         assertDocWithHousenumbers(Arrays.asList("34", "50b", "4"), res.getDocsWithHousenumber());
+    }
+
+    @Test
+    public void testLongHousenumber() {
+        NominatimResult res = new NominatimResult(simpleDoc);
+
+        res.addHousenumbersFromString("987987誰も住んでいないスーパーマーケット誰も住んでいないスーパーマーケット誰も住んでいないスーパーマーケット誰も住んでいないスーパーマーケット誰も住んでいないスーパーマーケット誰も住んでいないスーパーマーケット誰も住んでいないスーパーマーケット誰も住んでいないスーパーマーケット誰も住んでいないスーパーマー");
+        assertNoHousenumber(res.getDocsWithHousenumber());
+    }
+
+    @Test
+    public void testHousenumberWithNoNumber() {
+        NominatimResult res = new NominatimResult(simpleDoc);
+
+        res.addHousenumbersFromString("something bad");
+        assertNoHousenumber(res.getDocsWithHousenumber());
+    }
+
+    @Test
+    public void testHousenumberWithNoNumberInPart() {
+        NominatimResult res = new NominatimResult(simpleDoc);
+
+        res.addHousenumbersFromString("14, portsmith");
+        assertNoHousenumber(res.getDocsWithHousenumber());
     }
 
     @Test
