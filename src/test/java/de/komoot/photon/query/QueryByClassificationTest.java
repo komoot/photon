@@ -10,19 +10,19 @@ import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.Collections;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 public class QueryByClassificationTest extends ESBaseTester {
     private int testDocId = 10000;
 
-    @Before
+    @BeforeEach
     public void setup() throws IOException {
         setUpES();
     }

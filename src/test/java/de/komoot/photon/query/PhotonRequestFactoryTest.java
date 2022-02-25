@@ -5,8 +5,8 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.vividsolutions.jts.geom.Envelope;
 
-import org.junit.Assert;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import spark.QueryParamsMap;
 import spark.Request;
@@ -29,10 +29,10 @@ public class PhotonRequestFactoryTest {
         Mockito.when(mockRequest.queryMap("osm_tag")).thenReturn(mockQueryParamsMap);
         PhotonRequestFactory photonRequestFactory = new PhotonRequestFactory(ImmutableList.of("en"), "en");
         photonRequest = photonRequestFactory.create(mockRequest);
-        Assert.assertEquals("berlin", photonRequest.getQuery());
-        Assert.assertEquals(-87, photonRequest.getLocationForBias().getX(), 0);
-        Assert.assertEquals(41, photonRequest.getLocationForBias().getY(), 0);
-        Assert.assertEquals(new Integer(5), photonRequest.getLimit());
+        assertEquals("berlin", photonRequest.getQuery());
+        assertEquals(-87, photonRequest.getLocationForBias().getX(), 0);
+        assertEquals(41, photonRequest.getLocationForBias().getY(), 0);
+        assertEquals(new Integer(5), photonRequest.getLimit());
         Mockito.verify(mockRequest, Mockito.times(1)).queryParams("q");
         Mockito.verify(mockRequest, Mockito.times(1)).queryParams("lon");
         Mockito.verify(mockRequest, Mockito.times(1)).queryParams("lat");
@@ -48,8 +48,8 @@ public class PhotonRequestFactoryTest {
         QueryParamsMap mockQueryParamsMap = Mockito.mock(QueryParamsMap.class);
         Mockito.when(mockRequest.queryMap("osm_tag")).thenReturn(mockQueryParamsMap);
         photonRequest = photonRequestFactory.create(mockRequest);
-        Assert.assertEquals("berlin", photonRequest.getQuery());
-        Assert.assertNull(photonRequest.getLocationForBias());
+        assertEquals("berlin", photonRequest.getQuery());
+        assertNull(photonRequest.getLocationForBias());
         Mockito.verify(mockRequest, Mockito.times(1)).queryParams("q");
         Mockito.verify(mockRequest, Mockito.times(1)).queryParams("lon");
         Mockito.verify(mockRequest, Mockito.times(1)).queryParams("lat");
@@ -67,9 +67,9 @@ public class PhotonRequestFactoryTest {
         try {
             PhotonRequestFactory photonRequestFactory = new PhotonRequestFactory(ImmutableList.of("en"), "en");
             photonRequest = photonRequestFactory.create(mockRequest);
-            Assert.fail();
+            fail();
         } catch (BadRequestException e) {
-            Assert.assertEquals("invalid search term 'lat' and/or 'lon', try instead lat=51.5&lon=8.0", e.getMessage());
+            assertEquals("invalid search term 'lat' and/or 'lon', try instead lat=51.5&lon=8.0", e.getMessage());
         }
         
         Mockito.verify(mockRequest, Mockito.times(1)).queryParams("q");
@@ -86,8 +86,8 @@ public class PhotonRequestFactoryTest {
         QueryParamsMap mockQueryParamsMap = Mockito.mock(QueryParamsMap.class);
         Mockito.when(mockRequest.queryMap("osm_tag")).thenReturn(mockQueryParamsMap);
         photonRequest = photonRequestFactory.create(mockRequest);
-        Assert.assertEquals("berlin", photonRequest.getQuery());
-        Assert.assertEquals(new Integer(15), photonRequest.getLimit());
+        assertEquals("berlin", photonRequest.getQuery());
+        assertEquals(new Integer(15), photonRequest.getLimit());
         Mockito.verify(mockRequest, Mockito.times(1)).queryParams("q");
         Mockito.verify(mockRequest, Mockito.times(1)).queryParams("limit");
     }
@@ -99,9 +99,9 @@ public class PhotonRequestFactoryTest {
         try {
             PhotonRequestFactory photonRequestFactory = new PhotonRequestFactory(ImmutableList.of("en"), "en");
             photonRequest = photonRequestFactory.create(mockRequest);
-            Assert.fail();
+            fail();
         } catch (BadRequestException e) {
-            Assert.assertEquals("missing search term 'q': /?q=berlin", e.getMessage());
+            assertEquals("missing search term 'q': /?q=berlin", e.getMessage());
         }
         Mockito.verify(mockRequest, Mockito.times(1)).queryParams("q");
     }
@@ -116,11 +116,11 @@ public class PhotonRequestFactoryTest {
         PhotonRequestFactory photonRequestFactory = new PhotonRequestFactory(ImmutableList.of("en"), "en");
         Mockito.when(mockOsmTagQueryParm.hasValue()).thenReturn(true);
         PhotonRequest filteredPhotonRequest = photonRequestFactory.create(mockRequest);
-        Assert.assertEquals("berlin", filteredPhotonRequest.getQuery());
+        assertEquals("berlin", filteredPhotonRequest.getQuery());
         Mockito.verify(mockRequest, Mockito.times(1)).queryParams("q");
         Mockito.verify(mockRequest, Mockito.times(1)).queryMap("osm_tag");
         Mockito.verify(mockOsmTagQueryParm, Mockito.times(2)).values();
-        Assert.assertEquals(ImmutableSet.of("aTag"), filteredPhotonRequest.keys());
+        assertEquals(ImmutableSet.of("aTag"), filteredPhotonRequest.keys());
     }
 
     @Test
@@ -133,10 +133,10 @@ public class PhotonRequestFactoryTest {
         PhotonRequestFactory photonRequestFactory = new PhotonRequestFactory(ImmutableList.of("en"), "en");
         Mockito.when(mockOsmTagQueryParm.hasValue()).thenReturn(true);
         PhotonRequest filteredPhotonRequest = photonRequestFactory.create(mockRequest);
-        Assert.assertEquals("berlin", filteredPhotonRequest.getQuery());
+        assertEquals("berlin", filteredPhotonRequest.getQuery());
         Mockito.verify(mockRequest, Mockito.times(1)).queryMap("osm_tag");
         Mockito.verify(mockOsmTagQueryParm, Mockito.times(2)).values();
-        Assert.assertEquals(ImmutableMap.of("aTag", ImmutableSet.of("aValue")), filteredPhotonRequest.tags());
+        assertEquals(ImmutableMap.of("aTag", ImmutableSet.of("aValue")), filteredPhotonRequest.tags());
     }
 
     @Test
@@ -149,11 +149,11 @@ public class PhotonRequestFactoryTest {
         Mockito.when(mockOsmTagQueryParm.hasValue()).thenReturn(true);
         PhotonRequestFactory photonRequestFactory = new PhotonRequestFactory(ImmutableList.of("en"), "en");
         PhotonRequest filteredPhotonRequest = photonRequestFactory.create(mockRequest);
-        Assert.assertEquals("berlin", filteredPhotonRequest.getQuery());
+        assertEquals("berlin", filteredPhotonRequest.getQuery());
         Mockito.verify(mockRequest, Mockito.times(1)).queryParams("q");
         Mockito.verify(mockRequest, Mockito.times(1)).queryMap("osm_tag");
         Mockito.verify(mockOsmTagQueryParm, Mockito.times(2)).values();
-        Assert.assertEquals(ImmutableSet.of("aValue"), filteredPhotonRequest.values());
+        assertEquals(ImmutableSet.of("aValue"), filteredPhotonRequest.values());
     }
 
     @Test
@@ -166,11 +166,11 @@ public class PhotonRequestFactoryTest {
         PhotonRequestFactory photonRequestFactory = new PhotonRequestFactory(ImmutableList.of("en"), "en");
         Mockito.when(mockOsmTagQueryParm.hasValue()).thenReturn(true);
         PhotonRequest filteredPhotonRequest = photonRequestFactory.create(mockRequest);
-        Assert.assertEquals("berlin", filteredPhotonRequest.getQuery());
+        assertEquals("berlin", filteredPhotonRequest.getQuery());
         Mockito.verify(mockRequest, Mockito.times(1)).queryParams("q");
         Mockito.verify(mockRequest, Mockito.times(1)).queryMap("osm_tag");
         Mockito.verify(mockOsmTagQueryParm, Mockito.times(2)).values();
-        Assert.assertEquals(ImmutableSet.of("aTag"), filteredPhotonRequest.notKeys());
+        assertEquals(ImmutableSet.of("aTag"), filteredPhotonRequest.notKeys());
     }
 
     @Test
@@ -183,10 +183,10 @@ public class PhotonRequestFactoryTest {
         PhotonRequestFactory photonRequestFactory = new PhotonRequestFactory(ImmutableList.of("en"), "en");
         Mockito.when(mockOsmTagQueryParm.hasValue()).thenReturn(true);
         PhotonRequest filteredPhotonRequest = photonRequestFactory.create(mockRequest);
-        Assert.assertEquals("berlin", filteredPhotonRequest.getQuery());
+        assertEquals("berlin", filteredPhotonRequest.getQuery());
         Mockito.verify(mockRequest, Mockito.times(1)).queryMap("osm_tag");
         Mockito.verify(mockOsmTagQueryParm, Mockito.times(2)).values();
-        Assert.assertEquals(ImmutableMap.of("aTag", ImmutableSet.of("aValue")), filteredPhotonRequest.notTags());
+        assertEquals(ImmutableMap.of("aTag", ImmutableSet.of("aValue")), filteredPhotonRequest.notTags());
     }
 
     @Test
@@ -199,11 +199,11 @@ public class PhotonRequestFactoryTest {
         PhotonRequestFactory photonRequestFactory = new PhotonRequestFactory(ImmutableList.of("en"), "en");
         Mockito.when(mockOsmTagQueryParm.hasValue()).thenReturn(true);
         PhotonRequest filteredPhotonRequest = photonRequestFactory.create(mockRequest);
-        Assert.assertEquals("berlin", filteredPhotonRequest.getQuery());
+        assertEquals("berlin", filteredPhotonRequest.getQuery());
         Mockito.verify(mockRequest, Mockito.times(1)).queryParams("q");
         Mockito.verify(mockRequest, Mockito.times(1)).queryMap("osm_tag");
         Mockito.verify(mockOsmTagQueryParm, Mockito.times(2)).values();
-        Assert.assertEquals(ImmutableSet.of("aValue"), filteredPhotonRequest.notValues());
+        assertEquals(ImmutableSet.of("aValue"), filteredPhotonRequest.notValues());
     }
     
     @Test
@@ -218,7 +218,7 @@ public class PhotonRequestFactoryTest {
         PhotonRequest photonRequest = photonRequestFactory.create(mockRequest); 
         
         Mockito.verify(mockRequest, Mockito.times(1)).queryParams("bbox");
-        Assert.assertEquals(new Envelope(9.6, 9.8, 52.3, 52.4), photonRequest.getBbox());
+        assertEquals(new Envelope(9.6, 9.8, 52.3, 52.4), photonRequest.getBbox());
     }
 
     @Test
@@ -232,9 +232,9 @@ public class PhotonRequestFactoryTest {
         try {
             PhotonRequestFactory photonRequestFactory = new PhotonRequestFactory(ImmutableList.of("en"), "en");
             photonRequestFactory.create(mockRequest);
-            Assert.fail();
+            fail();
         } catch (BadRequestException e) {
-            Assert.assertEquals(BoundingBoxParamConverter.INVALID_BBOX_ERROR_MESSAGE, e.getMessage());
+            assertEquals(BoundingBoxParamConverter.INVALID_BBOX_ERROR_MESSAGE, e.getMessage());
         }
         Mockito.verify(mockRequest, Mockito.times(1)).queryParams("bbox");
     }
@@ -270,9 +270,9 @@ public class PhotonRequestFactoryTest {
         try {
             PhotonRequestFactory photonRequestFactory = new PhotonRequestFactory(ImmutableList.of("en"), "en");
             photonRequestFactory.create(mockRequest);
-            Assert.fail();
+            fail();
         } catch (BadRequestException e) {
-            Assert.assertEquals(BoundingBoxParamConverter.INVALID_BBOX_BOUNDS_MESSAGE, e.getMessage());
+            assertEquals(BoundingBoxParamConverter.INVALID_BBOX_BOUNDS_MESSAGE, e.getMessage());
         }
         Mockito.verify(mockRequest, Mockito.times(1)).queryParams("bbox");
     }

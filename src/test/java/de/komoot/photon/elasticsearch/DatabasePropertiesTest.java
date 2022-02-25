@@ -1,11 +1,11 @@
 package de.komoot.photon.elasticsearch;
 
 import de.komoot.photon.ESBaseTester;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Tests for the database-global property store.

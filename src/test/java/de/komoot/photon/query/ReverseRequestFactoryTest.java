@@ -6,10 +6,11 @@
 package de.komoot.photon.query;
 
 import com.google.common.collect.ImmutableList;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import spark.Request;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author svantulden
@@ -30,8 +31,8 @@ public class ReverseRequestFactoryTest {
         requestWithLongitudeLatitude(mockRequest, -87d, 41d);
         ReverseRequestFactory reverseRequestFactory = new ReverseRequestFactory(ImmutableList.of("en"), "en");
         reverseRequest = reverseRequestFactory.create(mockRequest);
-        Assert.assertEquals(-87, reverseRequest.getLocation().getX(), 0);
-        Assert.assertEquals(41, reverseRequest.getLocation().getY(), 0);
+        assertEquals(-87, reverseRequest.getLocation().getX(), 0);
+        assertEquals(41, reverseRequest.getLocation().getY(), 0);
         Mockito.verify(mockRequest, Mockito.times(1)).queryParams("lon");
         Mockito.verify(mockRequest, Mockito.times(1)).queryParams("lat");
     }
@@ -40,9 +41,9 @@ public class ReverseRequestFactoryTest {
         try {
             ReverseRequestFactory reverseRequestFactory = new ReverseRequestFactory(ImmutableList.of("en"), "en");
             reverseRequest = reverseRequestFactory.create(mockRequest);
-            Assert.fail();
+            fail();
         } catch (BadRequestException e) {
-            Assert.assertEquals(expectedMessage, e.getMessage());
+            assertEquals(expectedMessage, e.getMessage());
         }
     }
 
@@ -133,7 +134,7 @@ public class ReverseRequestFactoryTest {
         Mockito.when(mockRequest.queryParams("radius")).thenReturn("5.1");
         ReverseRequestFactory reverseRequestFactory = new ReverseRequestFactory(ImmutableList.of("en"), "en");
         reverseRequest = reverseRequestFactory.create(mockRequest);
-        Assert.assertEquals(reverseRequest.getRadius(), 5.1d, 0);
+        assertEquals(reverseRequest.getRadius(), 5.1d, 0);
         Mockito.verify(mockRequest, Mockito.times(1)).queryParams("radius");
     }
 
@@ -159,7 +160,7 @@ public class ReverseRequestFactoryTest {
         Mockito.when(mockRequest.queryParams("limit")).thenReturn("51");
         ReverseRequestFactory reverseRequestFactory = new ReverseRequestFactory(ImmutableList.of("en"), "en");
         reverseRequest = reverseRequestFactory.create(mockRequest);
-        Assert.assertEquals(reverseRequest.getLimit().longValue(), 50);
+        assertEquals(reverseRequest.getLimit().longValue(), 50);
         Mockito.verify(mockRequest, Mockito.times(1)).queryParams("limit");
     }
     
@@ -170,6 +171,6 @@ public class ReverseRequestFactoryTest {
         ReverseRequestFactory reverseRequestFactory = new ReverseRequestFactory(ImmutableList.of("en"), "en");
         reverseRequest = reverseRequestFactory.create(mockRequest);
         Mockito.verify(mockRequest, Mockito.times(1)).queryParamOrDefault("distance_sort", "true");
-        Assert.assertEquals(true, reverseRequest.getLocationDistanceSort());
+        assertEquals(true, reverseRequest.getLocationDistanceSort());
     }
 }

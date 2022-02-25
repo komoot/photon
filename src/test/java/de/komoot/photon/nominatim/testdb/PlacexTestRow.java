@@ -5,11 +5,12 @@ import com.vividsolutions.jts.io.WKTReader;
 import de.komoot.photon.PhotonDoc;
 import lombok.Getter;
 import org.json.JSONObject;
-import org.junit.Assert;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import org.junit.jupiter.api.Assertions;
 
 @Getter
 public class PlacexTestRow {
@@ -131,12 +132,12 @@ public class PlacexTestRow {
     }
 
     public void assertEquals(PhotonDoc doc) throws ParseException {
-        Assert.assertEquals(osmType, doc.getOsmType());
-        Assert.assertEquals(osmId, (Long) doc.getOsmId());
-        Assert.assertEquals(key, doc.getTagKey());
-        Assert.assertEquals(value, doc.getTagValue());
-        Assert.assertEquals(rankAddress, (Integer) doc.getRankAddress());
-        Assert.assertEquals(new WKTReader().read(centroid), doc.getCentroid());
-        Assert.assertEquals(names, doc.getName());
+        Assertions.assertEquals(osmType, doc.getOsmType());
+        Assertions.assertEquals(osmId, (Long) doc.getOsmId());
+        Assertions.assertEquals(key, doc.getTagKey());
+        Assertions.assertEquals(value, doc.getTagValue());
+        Assertions.assertEquals(rankAddress, (Integer) doc.getRankAddress());
+        Assertions.assertEquals(new WKTReader().read(centroid), doc.getCentroid());
+        Assertions.assertEquals(names, doc.getName());
     }
 }

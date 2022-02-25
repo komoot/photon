@@ -1,7 +1,7 @@
 package de.komoot.photon.query;
 
-import org.junit.Assert;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -20,9 +20,9 @@ public class PhotonRequestTest {
         request.setUpTagFilters(new String[]{"key:value", "12!:34"});
 
         Map<String, Set<String>> tags = request.tags();
-        Assert.assertEquals(2, tags.size());
-        Assert.assertEquals(new HashSet<>(Arrays.asList("value")), tags.get("key"));
-        Assert.assertEquals(new HashSet<>(Arrays.asList("34")), tags.get("12!"));
+        assertEquals(2, tags.size());
+        assertEquals(new HashSet<>(Arrays.asList("value")), tags.get("key"));
+        assertEquals(new HashSet<>(Arrays.asList("34")), tags.get("12!"));
     }
 
     @Test
@@ -31,8 +31,8 @@ public class PhotonRequestTest {
         request.setUpTagFilters(new String[]{"!foo:234", "!foo:!abc"});
 
         Map<String, Set<String>> tags = request.notTags();
-        Assert.assertEquals(1, tags.size());
-        Assert.assertEquals(new HashSet<>(Arrays.asList("234", "abc")), tags.get("foo"));
+        assertEquals(1, tags.size());
+        assertEquals(new HashSet<>(Arrays.asList("234", "abc")), tags.get("foo"));
     }
 
     @Test
@@ -40,7 +40,7 @@ public class PhotonRequestTest {
         PhotonRequest request = simpleRequest();
         request.setUpTagFilters(new String[]{"highway", "path"});
 
-        Assert.assertEquals(new HashSet<>(Arrays.asList("highway", "path")), request.keys());
+        assertEquals(new HashSet<>(Arrays.asList("highway", "path")), request.keys());
     }
 
     @Test
@@ -48,7 +48,7 @@ public class PhotonRequestTest {
         PhotonRequest request = simpleRequest();
         request.setUpTagFilters(new String[]{"!amenity", "!place"});
 
-        Assert.assertEquals(new HashSet<>(Arrays.asList("amenity", "place")), request.notKeys());
+        assertEquals(new HashSet<>(Arrays.asList("amenity", "place")), request.notKeys());
     }
 
 
@@ -57,7 +57,7 @@ public class PhotonRequestTest {
         PhotonRequest request = simpleRequest();
         request.setUpTagFilters(new String[]{":hotel", ":restaurant"});
 
-        Assert.assertEquals(new HashSet<>(Arrays.asList("hotel", "restaurant")), request.values());
+        assertEquals(new HashSet<>(Arrays.asList("hotel", "restaurant")), request.values());
     }
 
     @Test
@@ -65,7 +65,7 @@ public class PhotonRequestTest {
         PhotonRequest request = simpleRequest();
         request.setUpTagFilters(new String[]{":!123", ":!1234"});
 
-        Assert.assertEquals(new HashSet<>(Arrays.asList("123", "1234")), request.notValues());
+        assertEquals(new HashSet<>(Arrays.asList("123", "1234")), request.notValues());
     }
 
     @Test
@@ -74,7 +74,7 @@ public class PhotonRequestTest {
         request.setUpTagFilters(new String[]{"foo:!bar"});
 
         Map<String, Set<String>> tags = request.tagNotValues();
-        Assert.assertEquals(1, tags.size());
-        Assert.assertEquals(new HashSet<>(Arrays.asList("bar")), tags.get("foo"));
+        assertEquals(1, tags.size());
+        assertEquals(new HashSet<>(Arrays.asList("bar")), tags.get("foo"));
     }
 }

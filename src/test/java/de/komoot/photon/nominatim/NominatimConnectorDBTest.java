@@ -9,9 +9,9 @@ import de.komoot.photon.nominatim.testdb.CollectingImporter;
 import de.komoot.photon.nominatim.testdb.H2DataAdapter;
 import de.komoot.photon.nominatim.testdb.OsmlineTestRow;
 import de.komoot.photon.nominatim.testdb.PlacexTestRow;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
@@ -24,7 +24,7 @@ public class NominatimConnectorDBTest {
     private CollectingImporter importer;
     private JdbcTemplate jdbc;
 
-    @Before
+    @BeforeEach
     public void setup() {
         db = new EmbeddedDatabaseBuilder()
                 .setType(EmbeddedDatabaseType.H2)
@@ -46,7 +46,7 @@ public class NominatimConnectorDBTest {
         PlacexTestRow place = new PlacexTestRow("amenity", "cafe").name("Spot").add(jdbc);
         connector.readEntireDatabase();
 
-        Assert.assertEquals(1, importer.size());
+        assertEquals(1, importer.size());
         importer.assertContains(place);
     }
 
@@ -57,7 +57,7 @@ public class NominatimConnectorDBTest {
         new PlacexTestRow("amenity", "cafe").name("SpotUS").country("us").add(jdbc);
         connector.readEntireDatabase("uk", "hu", "nl");
 
-        Assert.assertEquals(1, importer.size());
+        assertEquals(1, importer.size());
         importer.assertContains(place);
     }
 
@@ -68,8 +68,8 @@ public class NominatimConnectorDBTest {
 
         connector.readEntireDatabase();
 
-        Assert.assertEquals(0.5, importer.get(place1.getPlaceId()).getImportance(), 0.00001);
-        Assert.assertEquals(0.3, importer.get(place2.getPlaceId()).getImportance(), 0.00001);
+        assertEquals(0.5, importer.get(place1.getPlaceId()).getImportance(), 0.00001);
+        assertEquals(0.3, importer.get(place2.getPlaceId()).getImportance(), 0.00001);
     }
 
     @Test
@@ -85,7 +85,7 @@ public class NominatimConnectorDBTest {
 
         connector.readEntireDatabase();
 
-        Assert.assertEquals(6, importer.size());
+        assertEquals(6, importer.size());
         importer.assertContains(place);
 
         PhotonDoc doc = importer.get(place);
@@ -108,7 +108,7 @@ public class NominatimConnectorDBTest {
 
         connector.readEntireDatabase();
 
-        Assert.assertEquals(3, importer.size());
+        assertEquals(3, importer.size());
         importer.assertContains(place);
 
         PhotonDoc doc = importer.get(place);
@@ -130,7 +130,7 @@ public class NominatimConnectorDBTest {
 
         connector.readEntireDatabase();
 
-        Assert.assertEquals(10, importer.size());
+        assertEquals(10, importer.size());
 
         PlacexTestRow expect = new PlacexTestRow("place", "house_number").id(osmline.getPlaceId()).parent(street).osm("W", 23);
 
@@ -154,12 +154,12 @@ public class NominatimConnectorDBTest {
 
         connector.readEntireDatabase();
 
-        Assert.assertEquals(3, importer.size());
+        assertEquals(3, importer.size());
 
         PhotonDoc doc = importer.get(place);
 
         AssertUtil.assertAddressName("Dorf", doc, AddressType.CITY);
-        Assert.assertTrue(doc.getContext().contains(munip.getNames()));
+        assertTrue(doc.getContext().contains(munip.getNames()));
     }
 
     /**
@@ -174,12 +174,12 @@ public class NominatimConnectorDBTest {
 
         connector.readEntireDatabase();
 
-        Assert.assertEquals(2, importer.size());
+        assertEquals(2, importer.size());
 
         PhotonDoc doc = importer.get(village);
 
         AssertUtil.assertNoAddress(doc, AddressType.CITY);
-        Assert.assertTrue(doc.getContext().contains(munip.getNames()));
+        assertTrue(doc.getContext().contains(munip.getNames()));
     }
 
     /**
@@ -192,10 +192,10 @@ public class NominatimConnectorDBTest {
 
         connector.readEntireDatabase();
 
-        Assert.assertEquals(2, importer.size());
+        assertEquals(2, importer.size());
 
         PhotonDoc doc = importer.get(place);
-        Assert.assertEquals(doc.getHouseNumber(), "123");
+        assertEquals(doc.getHouseNumber(), "123");
     }
 
     /**
@@ -208,7 +208,7 @@ public class NominatimConnectorDBTest {
 
         connector.readEntireDatabase();
 
-        Assert.assertEquals(4, importer.size());
+        assertEquals(4, importer.size());
 
         importer.assertContains(place, 1);
         importer.assertContains(place, 2);
@@ -228,7 +228,7 @@ public class NominatimConnectorDBTest {
 
         connector.readEntireDatabase();
 
-        Assert.assertEquals(3, importer.size());
+        assertEquals(3, importer.size());
 
         importer.assertContains(place, 34);
         importer.assertContains(place, 99521);
@@ -243,7 +243,7 @@ public class NominatimConnectorDBTest {
 
         connector.readEntireDatabase();
 
-        Assert.assertEquals(1, importer.size());
+        assertEquals(1, importer.size());
 
         importer.get(parent);
     }
@@ -258,7 +258,7 @@ public class NominatimConnectorDBTest {
 
         connector.readEntireDatabase();
 
-        Assert.assertEquals(1, importer.size());
+        assertEquals(1, importer.size());
 
         importer.get(parent);
     }

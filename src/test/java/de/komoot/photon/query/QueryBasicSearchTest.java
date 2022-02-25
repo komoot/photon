@@ -7,15 +7,15 @@ import de.komoot.photon.PhotonDoc;
 import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.SearchHits;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Tests that the {@link PhotonQueryBuilder} produces query which can find all
@@ -24,7 +24,7 @@ import static org.junit.Assert.*;
 public class QueryBasicSearchTest extends ESBaseTester {
     private int testDocId = 10000;
 
-    @Before
+    @BeforeEach
     public void setup() throws IOException {
         setUpES();
     }

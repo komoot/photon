@@ -3,9 +3,9 @@ package de.komoot.photon;
 import de.komoot.photon.elasticsearch.Importer;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -13,8 +13,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static spark.Spark.*;
 
 /**
@@ -23,7 +22,7 @@ import static spark.Spark.*;
 public class ApiIntegrationTest extends ESBaseTester {
     private static final int LISTEN_PORT = 30234;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         setUpES();
         Importer instance = makeImporter();
@@ -33,7 +32,7 @@ public class ApiIntegrationTest extends ESBaseTester {
         refresh();
     }
 
-    @After
+    @AfterEach
     public void shutdown() {
         stop();
         awaitStop();
