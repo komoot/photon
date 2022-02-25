@@ -3,7 +3,6 @@ package de.komoot.photon.query;
 import de.komoot.photon.ESBaseTester;
 import de.komoot.photon.PhotonDoc;
 import de.komoot.photon.elasticsearch.Importer;
-import static org.junit.Assert.assertEquals;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -12,15 +11,17 @@ import de.komoot.photon.elasticsearch.PhotonIndex;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.index.query.QueryBuilder;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 
 public class QueryFilterTagValueTest extends ESBaseTester {
     private static final String[] TAGS = new String[]{"tourism", "attraction", "tourism", "hotel", "tourism", "museum", "tourism", "information", "amenity",
             "parking", "amenity", "restaurant", "amenity", "information", "food", "information", "railway", "station"};
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         setUpES();
         Importer instance = makeImporter();

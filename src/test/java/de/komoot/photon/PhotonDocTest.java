@@ -3,8 +3,9 @@ package de.komoot.photon;
 import java.util.HashMap;
 
 import de.komoot.photon.nominatim.model.AddressType;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class PhotonDocTest {
 
@@ -36,8 +37,8 @@ public class PhotonDocTest {
     public void testAddCountryCode() {
         PhotonDoc doc = new PhotonDoc(1, "W", 2, "highway", "residential").countryCode("de");
 
-        Assert.assertNotNull(doc.getCountryCode());
-        Assert.assertEquals("DE", doc.getCountryCode().getAlpha2());
+        assertNotNull(doc.getCountryCode());
+        assertEquals("DE", doc.getCountryCode().getAlpha2());
     }
 
     private PhotonDoc simplePhotonDoc() {

@@ -2,11 +2,12 @@ package de.komoot.photon.searcher;
 
 import de.komoot.photon.Constants;
 import org.json.JSONObject;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class StreetDupesRemoverTest {
 
@@ -18,7 +19,7 @@ public class StreetDupesRemoverTest {
         allResults.add(createDummyResult("99999", "Main Street", "highway", "Unclassified"));
 
         List<JSONObject> dedupedResults = streetDupesRemover.execute(allResults);
-        Assert.assertEquals(1, dedupedResults.size());
+        assertEquals(1, dedupedResults.size());
     }
 
     @Test
@@ -29,7 +30,7 @@ public class StreetDupesRemoverTest {
         allResults.add(createDummyResult("99999", "Main Street", "highway", "Unclassified"));
 
         List<JSONObject> dedupedResults = streetDupesRemover.execute(allResults);
-        Assert.assertEquals(2, dedupedResults.size());
+        assertEquals(2, dedupedResults.size());
     }
     
     private JSONObject createDummyResult(String postCode, String name, String osmKey,

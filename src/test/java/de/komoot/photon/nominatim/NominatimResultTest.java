@@ -3,11 +3,11 @@ package de.komoot.photon.nominatim;
 import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKTReader;
 import de.komoot.photon.PhotonDoc;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.*;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class NominatimResultTest {
     private final PhotonDoc simpleDoc = new PhotonDoc(10000, "N", 123, "place", "house")

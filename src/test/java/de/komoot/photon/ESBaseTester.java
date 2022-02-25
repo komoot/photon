@@ -13,7 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.admin.indices.refresh.RefreshRequest;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.client.Client;
-import org.junit.After;
+import org.junit.jupiter.api.AfterEach;
 
 import java.io.File;
 import java.io.IOException;
@@ -41,7 +41,7 @@ public class ESBaseTester {
     }
 
 
-    @After
+    @AfterEach
     public void tearDown() {
         deleteIndex();
         shutdownES();

@@ -3,15 +3,14 @@ package de.komoot.photon.elasticsearch;
 import de.komoot.photon.ESBaseTester;
 import de.komoot.photon.PhotonDoc;
 import org.elasticsearch.action.get.GetResponse;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class UpdaterTest extends ESBaseTester {
 

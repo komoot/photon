@@ -1,15 +1,14 @@
 package de.komoot.photon.query;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import spark.Request;
 
 import java.util.List;
 
 import static de.komoot.photon.query.RequestLanguageResolver.ACCEPT_LANGUAGE_HEADER;
 import static java.util.Arrays.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 public class RequestLanguageTest {
@@ -19,7 +18,7 @@ public class RequestLanguageTest {
 
     private static final String DEFAULT_LANGUAGE = "en";
 
-    @Before
+    @BeforeEach
     public void setup() {
         languageResolver = new RequestLanguageResolver(supportedLangs, DEFAULT_LANGUAGE);
     }

@@ -4,10 +4,11 @@ import com.vividsolutions.jts.io.ParseException;
 import de.komoot.photon.Importer;
 import de.komoot.photon.PhotonDoc;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.Assert;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
 public class CollectingImporter implements Importer {
@@ -26,7 +27,7 @@ public class CollectingImporter implements Importer {
     }
 
     public void assertFinishCalled(int num) {
-        Assert.assertEquals(num, finishCalled);
+        assertEquals(num, finishCalled);
     }
 
     public int size() {
@@ -44,7 +45,7 @@ public class CollectingImporter implements Importer {
             }
         }
 
-        Assert.fail("No document found with that place_id.");
+        fail("No document found with that place_id.");
         return null;
     }
 
@@ -52,12 +53,12 @@ public class CollectingImporter implements Importer {
         PhotonDoc doc = null;
         for (PhotonDoc outdoc : docs) {
             if (outdoc.getPlaceId() == row.getPlaceId()) {
-                Assert.assertNull("Row is contained multiple times", doc);
+                assertNull(doc, "Row is contained multiple times");
                 doc = outdoc;
             }
         }
 
-        Assert.assertNotNull("Row not found", doc);
+        assertNotNull(doc, "Row not found");
 
         row.assertEquals(doc);
     }
@@ -67,12 +68,12 @@ public class CollectingImporter implements Importer {
         PhotonDoc doc = null;
         for (PhotonDoc outdoc : docs) {
             if (outdoc.getPlaceId() == row.getPlaceId() && hnrstr.equals(outdoc.getHouseNumber())) {
-                Assert.assertNull("Row is contained multiple times", doc);
+                assertNull(doc, "Row is contained multiple times");
                 doc = outdoc;
             }
         }
 
-        Assert.assertNotNull("Row not found", doc);
+        assertNotNull(doc, "Row not found");
 
         row.assertEquals(doc);
     }}
