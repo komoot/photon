@@ -1,7 +1,6 @@
 package de.komoot.photon;
 
 import com.google.common.collect.ImmutableMap;
-import com.neovisionaries.i18n.CountryCode;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Point;
@@ -31,7 +30,7 @@ public class PhotonDoc {
     private Envelope bbox = null;
     private long parentPlaceId = 0; // 0 if unset
     private double importance = 0;
-    private CountryCode countryCode = null;
+    private String countryCode = null;
     private long linkedPlaceId = 0; // 0 if unset
     private int rankAddress = 30;
 
@@ -92,7 +91,7 @@ public class PhotonDoc {
     }
 
     public PhotonDoc countryCode(String countryCode) {
-        this.countryCode = CountryCode.getByCode(countryCode, false);
+        this.countryCode = countryCode.toUpperCase();
         return this;
     }
 

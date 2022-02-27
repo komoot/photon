@@ -38,7 +38,7 @@ public class PhotonDocTest {
         PhotonDoc doc = new PhotonDoc(1, "W", 2, "highway", "residential").countryCode("de");
 
         assertNotNull(doc.getCountryCode());
-        assertEquals("DE", doc.getCountryCode().getAlpha2());
+        assertEquals("DE", doc.getCountryCode());
     }
 
     private PhotonDoc simplePhotonDoc() {
