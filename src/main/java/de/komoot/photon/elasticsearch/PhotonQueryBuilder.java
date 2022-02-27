@@ -1,4 +1,4 @@
-package de.komoot.photon.query;
+package de.komoot.photon.elasticsearch;
 
 
 import com.google.common.collect.ImmutableSet;
@@ -19,13 +19,13 @@ import static com.google.common.collect.Maps.newHashMap;
 
 
 /**
- * There are four {@link de.komoot.photon.query.PhotonQueryBuilder.State states} that this query builder goes through before a query can be executed on elastic search. Of
+ * There are four {@link PhotonQueryBuilder.State states} that this query builder goes through before a query can be executed on elastic search. Of
  * these, three are of importance.
  * <ul>
- * <li>{@link de.komoot.photon.query.PhotonQueryBuilder.State#PLAIN PLAIN} The query builder is being used to build a query without any tag filters.</li>
- * <li>{@link de.komoot.photon.query.PhotonQueryBuilder.State#FILTERED FILTERED} The query builder is being used to build a query that has tag filters and can no longer
+ * <li>{@link PhotonQueryBuilder.State#PLAIN PLAIN} The query builder is being used to build a query without any tag filters.</li>
+ * <li>{@link PhotonQueryBuilder.State#FILTERED FILTERED} The query builder is being used to build a query that has tag filters and can no longer
  * be used to build a PLAIN filter.</li>
- * <li>{@link de.komoot.photon.query.PhotonQueryBuilder.State#FINISHED FINISHED} The query builder has been built and the query has been placed inside a
+ * <li>{@link PhotonQueryBuilder.State#FINISHED FINISHED} The query builder has been built and the query has been placed inside a
  * {@link QueryBuilder filtered query}. Further calls to any methods will have no effect on this query builder.</li>
  * </ul>
  * <p/>
@@ -51,7 +51,7 @@ public class PhotonQueryBuilder {
     protected ArrayList<FilterFunctionBuilder> alFilterFunction4QueryBuilder = new ArrayList<>(1);
 
 
-    private PhotonQueryBuilder(String query, String language, List<String> languages, boolean lenient) {
+    private PhotonQueryBuilder(String query, String language, String[] languages, boolean lenient) {
         BoolQueryBuilder query4QueryBuilder = QueryBuilders.boolQuery();
 
         // 1. All terms of the quey must be contained in the place record somehow. Be more lenient on second try.
@@ -97,7 +97,7 @@ public class PhotonQueryBuilder {
         }));
 
         // 3. Either the name or housenumber must be in the query terms.
-        String defLang = "default".equals(language) ? languages.get(0) : language;
+        String defLang = "default".equals(language) ? languages[0] : language;
         MultiMatchQueryBuilder nameNgramQuery = QueryBuilders.multiMatchQuery(query)
                 .type(MultiMatchQueryBuilder.Type.BEST_FIELDS)
                 .fuzziness(lenient ? Fuzziness.ONE : Fuzziness.ZERO)
@@ -150,7 +150,7 @@ public class PhotonQueryBuilder {
      * @param language
      * @return An initialized {@link PhotonQueryBuilder photon query builder}.
      */
-    public static PhotonQueryBuilder builder(String query, String language, List<String> languages, boolean lenient) {
+    public static PhotonQueryBuilder builder(String query, String language, String[] languages, boolean lenient) {
         return new PhotonQueryBuilder(query, language, languages, lenient);
     }
 

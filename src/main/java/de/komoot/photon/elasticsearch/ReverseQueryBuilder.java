@@ -1,4 +1,4 @@
-package de.komoot.photon.query;
+package de.komoot.photon.elasticsearch;
 
 import com.vividsolutions.jts.geom.Point;
 import org.elasticsearch.common.unit.DistanceUnit;

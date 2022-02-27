@@ -3,8 +3,6 @@ package de.komoot.photon.elasticsearch;
 import de.komoot.photon.DatabaseProperties;
 import de.komoot.photon.Importer;
 import de.komoot.photon.Updater;
-import de.komoot.photon.searcher.BaseElasticsearchSearcher;
-import de.komoot.photon.searcher.ReverseElasticsearchSearcher;
 import de.komoot.photon.searcher.ReverseHandler;
 import de.komoot.photon.searcher.SearchHandler;
 import lombok.extern.slf4j.Slf4j;
@@ -300,11 +298,11 @@ public class Server {
         return new de.komoot.photon.elasticsearch.Updater(esClient, languages, extraTags);
     }
 
-    public SearchHandler createSearchHandler() {
-        return new BaseElasticsearchSearcher(esClient);
+    public SearchHandler createSearchHandler(String[] languages) {
+        return new ElasticsearchSearchHandler(esClient, languages);
     }
 
     public ReverseHandler createReverseHandler() {
-        return new ReverseElasticsearchSearcher(esClient);
+        return new ElasticsearchReverseHandler(esClient);
     }
 }

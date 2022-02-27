@@ -1,6 +1,5 @@
 package de.komoot.photon;
 
-
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
 import de.komoot.photon.elasticsearch.Server;
@@ -8,7 +7,6 @@ import de.komoot.photon.nominatim.NominatimConnector;
 import de.komoot.photon.nominatim.NominatimUpdater;
 import de.komoot.photon.utils.CorsFilter;
 import lombok.extern.slf4j.Slf4j;
-import org.elasticsearch.client.Client;
 import spark.Request;
 import spark.Response;
 
@@ -163,8 +161,9 @@ public class App {
         }
 
         // setup search API
-        get("api", new SearchRequestHandler("api", server.createSearchHandler(), dbProperties.getLanguages(), args.getDefaultLanguage()));
-        get("api/", new SearchRequestHandler("api/", server.createSearchHandler(), dbProperties.getLanguages(), args.getDefaultLanguage()));
+        String[] langs = dbProperties.getLanguages();
+        get("api", new SearchRequestHandler("api", server.createSearchHandler(langs), langs, args.getDefaultLanguage()));
+        get("api/", new SearchRequestHandler("api/", server.createSearchHandler(langs), langs, args.getDefaultLanguage()));
         get("reverse", new ReverseSearchRequestHandler("reverse", server.createReverseHandler(), dbProperties.getLanguages(), args.getDefaultLanguage()));
         get("reverse/", new ReverseSearchRequestHandler("reverse/", server.createReverseHandler(), dbProperties.getLanguages(), args.getDefaultLanguage()));
 

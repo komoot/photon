@@ -1,8 +1,13 @@
 package de.komoot.photon.searcher;
 
-import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.index.query.QueryBuilder;
+import de.komoot.photon.query.PhotonRequest;
+import org.json.JSONObject;
+
+import java.util.List;
 
 public interface SearchHandler {
-    SearchResponse search(QueryBuilder queryBuilder, Integer limit);
+
+    List<JSONObject> search(PhotonRequest photonRequest);
+
+    String dumpQuery(PhotonRequest photonRequest);
 }

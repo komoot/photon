@@ -1,9 +1,9 @@
 package de.komoot.photon.query;
 
-import com.google.common.collect.ImmutableMap;
 import de.komoot.photon.ESBaseTester;
 import de.komoot.photon.Importer;
 import de.komoot.photon.PhotonDoc;
+import de.komoot.photon.elasticsearch.PhotonQueryBuilder;
 import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.SearchHits;

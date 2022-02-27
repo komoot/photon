@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import de.komoot.photon.*;
 import de.komoot.photon.elasticsearch.IndexSettings;
 import de.komoot.photon.elasticsearch.PhotonIndex;
+import de.komoot.photon.elasticsearch.PhotonQueryBuilder;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;

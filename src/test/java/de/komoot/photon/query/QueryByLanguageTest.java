@@ -3,13 +3,13 @@ package de.komoot.photon.query;
 import de.komoot.photon.ESBaseTester;
 import de.komoot.photon.PhotonDoc;
 import de.komoot.photon.Importer;
+import de.komoot.photon.elasticsearch.PhotonQueryBuilder;
 import de.komoot.photon.nominatim.model.AddressType;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.EmptySource;
 import org.junit.jupiter.params.provider.EnumSource;
 
 import static org.junit.jupiter.api.Assertions.*;

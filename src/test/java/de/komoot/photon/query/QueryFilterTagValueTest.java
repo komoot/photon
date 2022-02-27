@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.Collections;
 
 import de.komoot.photon.elasticsearch.PhotonIndex;
+import de.komoot.photon.elasticsearch.PhotonQueryBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.index.query.QueryBuilder;
