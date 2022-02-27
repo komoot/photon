@@ -1,26 +1,27 @@
 package de.komoot.photon.query;
 
-import com.google.common.collect.ImmutableMap;
 import de.komoot.photon.*;
-import de.komoot.photon.elasticsearch.IndexSettings;
-import de.komoot.photon.elasticsearch.PhotonIndex;
-import de.komoot.photon.elasticsearch.PhotonQueryBuilder;
+import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.get.GetResponse;
-import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.action.search.SearchType;
-import org.elasticsearch.index.query.QueryBuilder;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
+import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Collections;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-
+@Slf4j
 public class QueryByClassificationTest extends ESBaseTester {
+    @TempDir
+    static Path sharedTempDir;
+
     private int testDocId = 10000;
 
     @BeforeEach
@@ -29,19 +30,44 @@ public class QueryByClassificationTest extends ESBaseTester {
     }
 
     private PhotonDoc createDoc(String key, String value, String name) {
-       ImmutableMap<String, String> nameMap = ImmutableMap.of("name", name);
-
         ++testDocId;
-        return new PhotonDoc(testDocId, "W", testDocId, key, value).names(nameMap);
+        return new PhotonDoc(testDocId, "W", testDocId, key, value).names(Collections.singletonMap("name", name));
     }
 
-    private SearchResponse search(String query) {
-        QueryBuilder builder = PhotonQueryBuilder.builder(query, "en", Collections.singletonList("en"), false).buildQuery();
-        return getClient().prepareSearch("photon")
-                .setSearchType(SearchType.QUERY_THEN_FETCH)
-                .setQuery(builder)
-                .execute()
-                .actionGet();
+    private List<JSONObject> search(String query) {
+        return getServer().createSearchHandler(new String[]{"en"}).search(new PhotonRequest(query));
+    }
+
+    private void updateClassification(String key, String value, String... terms) {
+        JSONArray jsonTerms = new JSONArray();
+        for (String term : terms) {
+            jsonTerms.put(term);
+        }
+
+        JSONObject json = new JSONObject()
+                .put("classification_terms", new JSONArray()
+                        .put(new JSONObject()
+                                .put("key", key)
+                                .put("value", value)
+                                .put("terms", terms)
+                        ));
+
+        Path synonymPath = sharedTempDir.resolve("synonym.json");
+        try {
+            FileWriter fw = new FileWriter(synonymPath.toFile());
+            fw.write(json.toString(3));
+            fw.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        try {
+            getServer().setMaxShards(null);
+            getServer().updateIndexSettings(synonymPath.toString());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        getServer().waitForReady();
     }
 
     @Test
@@ -59,10 +85,10 @@ public class QueryByClassificationTest extends ESBaseTester {
         String classification = (String) response.getSource().get(Constants.CLASSIFICATION);
         assertEquals(classification, class_term);
 
-        SearchResponse result = search(class_term + " curli");
+        List<JSONObject> result = search(class_term + " curli");
 
-        assertTrue(result.getHits().getTotalHits() > 0);
-        assertEquals(Integer.toString(testDocId), result.getHits().getHits()[0].getId());
+        assertTrue(result.size() > 0);
+        assertEquals(testDocId, result.get(0).getJSONObject("properties").getInt("osm_id"));
     }
 
     @Test
@@ -72,23 +98,16 @@ public class QueryByClassificationTest extends ESBaseTester {
         instance.finish();
         refresh();
 
-        JSONArray terms = new JSONArray()
-                .put(new JSONObject()
-                        .put("key", "amenity")
-                        .put("value", "restaurant")
-                        .put("terms", new JSONArray().put("pub").put("kneipe"))
-                );
-        new IndexSettings().setClassificationTerms(terms).updateIndex(getClient(), PhotonIndex.NAME);
-        getClient().admin().cluster().prepareHealth().setWaitForYellowStatus().get();
+        updateClassification("amenity", "restaurant", "pub", "kneipe");
 
-        SearchResponse result = search("pub curli");
-        assertTrue(result.getHits().getTotalHits() > 0);
-        assertEquals(Integer.toString(testDocId), result.getHits().getHits()[0].getId());
+        List<JSONObject> result = search("pub curli");
+        assertTrue(result.size() > 0);
+        assertEquals(testDocId, result.get(0).getJSONObject("properties").getInt("osm_id"));
 
 
         result = search("curliflower kneipe");
-        assertTrue(result.getHits().getTotalHits() > 0);
-        assertEquals(Integer.toString(testDocId), result.getHits().getHits()[0].getId());
+        assertTrue(result.size() > 0);
+        assertEquals(testDocId, result.get(0).getJSONObject("properties").getInt("osm_id"));
     }
 
 
@@ -100,23 +119,16 @@ public class QueryByClassificationTest extends ESBaseTester {
         instance.finish();
         refresh();
 
-        JSONArray terms = new JSONArray()
-                .put(new JSONObject()
-                        .put("key", "aeroway")
-                        .put("value", "terminal")
-                        .put("terms", new JSONArray().put("airport"))
-                );
-        new IndexSettings().setClassificationTerms(terms).updateIndex(getClient(), PhotonIndex.NAME);
-        getClient().admin().cluster().prepareHealth().setWaitForYellowStatus().get();
+        updateClassification("aeroway", "terminal", "airport");
 
-        SearchResponse result = search("airport");
-        assertTrue(result.getHits().getTotalHits() > 0);
-        assertEquals(Integer.toString(testDocId - 1), result.getHits().getHits()[0].getId());
+        List<JSONObject> result = search("airport");
+        assertTrue(result.size() > 0);
+        assertEquals(testDocId - 1, result.get(0).getJSONObject("properties").getInt("osm_id"));
 
 
         result = search("airport houston");
-        assertTrue(result.getHits().getTotalHits() > 0);
-        assertEquals(Integer.toString(testDocId), result.getHits().getHits()[0].getId());
+        assertTrue(result.size() > 0);
+        assertEquals(testDocId, result.get(0).getJSONObject("properties").getInt("osm_id"));
     }
 
     @Test
@@ -127,29 +139,44 @@ public class QueryByClassificationTest extends ESBaseTester {
         instance.finish();
         refresh();
 
-        JSONArray terms = new JSONArray()
-                .put(new JSONObject()
-                        .put("key", "railway")
-                        .put("value", "station")
-                        .put("terms", new JSONArray().put("Station"))
-                ).put(new JSONObject()
-                        .put("key", "railway")
-                        .put("value", "halt")
-                        .put("terms", new JSONArray().put("Station").put("Stop"))
-                );
-        new IndexSettings().setClassificationTerms(terms).updateIndex(getClient(), PhotonIndex.NAME);
-        getClient().admin().cluster().prepareHealth().setWaitForYellowStatus().get();
+        JSONObject json = new JSONObject()
+                .put("classification_terms", new JSONArray()
+                        .put(new JSONObject()
+                                .put("key", "railway")
+                                .put("value", "station")
+                                .put("terms", new JSONArray().put("Station"))
+                        ).put(new JSONObject()
+                                .put("key", "railway")
+                                .put("value", "halt")
+                                .put("terms", new JSONArray().put("Station").put("Stop"))
+                        ));
+        Path synonymPath = sharedTempDir.resolve("synonym.json");
+        try {
+            FileWriter fw = new FileWriter(synonymPath.toFile());
+            fw.write(json.toString(3));
+            fw.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        try {
+            getServer().setMaxShards(null);
+            getServer().updateIndexSettings(synonymPath.toString());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
-        SearchResponse result = search("Station newtown");
-        assertTrue(result.getHits().getTotalHits() > 0);
-        assertEquals(Integer.toString(testDocId - 1), result.getHits().getHits()[0].getId());
+        getServer().waitForReady();
+
+        List<JSONObject> result = search("Station newtown");
+        assertTrue(result.size() > 0);
+        assertEquals(testDocId - 1, result.get(0).getJSONObject("properties").getInt("osm_id"));
 
         result = search("newtown stop");
-        assertTrue(result.getHits().getTotalHits() > 0);
-        assertEquals(Integer.toString(testDocId - 1), result.getHits().getHits()[0].getId());
+        assertTrue(result.size() > 0);
+        assertEquals(testDocId - 1, result.get(0).getJSONObject("properties").getInt("osm_id"));
 
         result = search("king's cross Station");
-        assertTrue(result.getHits().getTotalHits() > 0);
-        assertEquals(Integer.toString(testDocId), result.getHits().getHits()[0].getId());
+        assertTrue(result.size() > 0);
+        assertEquals(testDocId, result.get(0).getJSONObject("properties").getInt("osm_id"));
     }
 }

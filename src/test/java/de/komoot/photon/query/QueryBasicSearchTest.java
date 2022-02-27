@@ -3,23 +3,21 @@ package de.komoot.photon.query;
 import de.komoot.photon.ESBaseTester;
 import de.komoot.photon.Importer;
 import de.komoot.photon.PhotonDoc;
-import de.komoot.photon.elasticsearch.PhotonQueryBuilder;
-import org.elasticsearch.action.search.SearchType;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.search.SearchHits;
+import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Tests that the {@link PhotonQueryBuilder} produces query which can find all
- * expected results at all. These tests do not check relevance.
+ * Tests that the database backend produces queries which can find all
+ * expected results. These tests do not check relevance.
  */
 public class QueryBasicSearchTest extends ESBaseTester {
     private int testDocId = 10000;
@@ -40,25 +38,10 @@ public class QueryBasicSearchTest extends ESBaseTester {
         return new PhotonDoc(testDocId, "N", testDocId, "place", "city").names(nameMap);
     }
 
-    private SearchHits search(String query) {
-        QueryBuilder builder = PhotonQueryBuilder.builder(query, "en", Collections.singletonList("en"), false).buildQuery();
-        return getClient().prepareSearch("photon")
-                .setSearchType(SearchType.QUERY_THEN_FETCH)
-                .setQuery(builder)
-                .execute()
-                .actionGet()
-                .getHits();
+    private List<JSONObject> search(String query) {
+        return getServer().createSearchHandler(new String[]{"en"}).search(new PhotonRequest(query, 10, null, null, 0.2, 14, "en", false));
     }
 
-    private SearchHits searchLenient(String query) {
-        QueryBuilder builder = PhotonQueryBuilder.builder(query, "en", Collections.singletonList("en"), true).buildQuery();
-        return getClient().prepareSearch("photon")
-                .setSearchType(SearchType.QUERY_THEN_FETCH)
-                .setQuery(builder)
-                .execute()
-                .actionGet()
-                .getHits();
-    }
 
     @Test
     public void testSearchByDefaultName() {
@@ -67,20 +50,16 @@ public class QueryBasicSearchTest extends ESBaseTester {
         instance.finish();
         refresh();
 
-        assertEquals(1, search("muffle flu").getTotalHits());
-        assertEquals(1, search("flu").getTotalHits());
-        assertEquals(1, search("muffle").getTotalHits());
-        assertEquals(0, search("mufle flu").getTotalHits());
-
-        assertEquals(1, searchLenient("mufle flu").getTotalHits());
-        assertEquals(1, searchLenient("muffle flu 9").getTotalHits());
-        assertEquals(0, searchLenient("huffle fluff").getTotalHits());
+        assertEquals(1, search("muffle flu").size());
+        assertEquals(1, search("flu").size());
+        assertEquals(1, search("muffle").size());
+        assertEquals(1, search("mufle flu").size());
+        assertEquals(1, search("muffle flu 9").size());
+        assertEquals(0, search("huffle fluff").size());
     }
 
     @Test
     public void testSearchByAlternativeNames() {
-        final String[] alt_names = new String[]{"alt", "int", "loc", "old", "reg", "housename"};
-
         Importer instance = makeImporter();
         instance.add(createDoc("name", "original", "alt_name", "alt", "old_name", "older", "int_name", "int",
                                "loc_name", "local", "reg_name", "regional", "addr:housename", "house",
@@ -88,14 +67,14 @@ public class QueryBasicSearchTest extends ESBaseTester {
         instance.finish();
         refresh();
 
-        assertEquals(1, search("original").getTotalHits());
-        assertEquals(1, search("alt").getTotalHits());
-        assertEquals(1, search("older").getTotalHits());
-        assertEquals(1, search("int").getTotalHits());
-        assertEquals(1, search("local").getTotalHits());
-        assertEquals(1, search("regional").getTotalHits());
-        assertEquals(1, search("house").getTotalHits());
-        assertEquals(0, search("other").getTotalHits());
+        assertEquals(1, search("original").size());
+        assertEquals(1, search("alt").size());
+        assertEquals(1, search("older").size());
+        assertEquals(1, search("int").size());
+        assertEquals(1, search("local").size());
+        assertEquals(1, search("regional").size());
+        assertEquals(1, search("house").size());
+        assertEquals(0, search("other").size());
     }
 
     @Test
@@ -113,13 +92,12 @@ public class QueryBasicSearchTest extends ESBaseTester {
         instance.finish();
         refresh();
 
-        assertEquals(1, search("castillo").getTotalHits());
-        assertEquals(1, search("castillo callino").getTotalHits());
-        assertEquals(1, search("castillo quartier madrid").getTotalHits());
-        assertEquals(1, search("castillo block montagna estado").getTotalHits());
+        assertEquals(1, search("castillo").size());
+        assertEquals(1, search("castillo callino").size());
+        assertEquals(1, search("castillo quartier madrid").size());
+        assertEquals(1, search("castillo block montagna estado").size());
 
-        assertEquals(0, search("castillo state").getTotalHits());
-        //assertEquals(0, search("block montagna estado").getTotalHits());
+        assertEquals(0, search("castillo state thing").size());
     }
 
     @Test
@@ -129,11 +107,10 @@ public class QueryBasicSearchTest extends ESBaseTester {
         instance.finish();
         refresh();
 
-        assertEquals(1, search("hauptstrasse 5").getTotalHits());
-        assertEquals(1, search("edeka, hauptstrasse").getTotalHits());
-        assertEquals(1, search("edeka, hauptstrasse 5").getTotalHits());
-        assertEquals(1, search("edeka, hauptstr 5").getTotalHits());
-        //assertEquals(0, search("hauptstrasse").getTotalHits());
+        assertEquals(1, search("hauptstrasse 5").size());
+        assertEquals(1, search("edeka, hauptstrasse 5").size());
+        assertEquals(1, search("edeka, hauptstr 5").size());
+        assertEquals(1, search("edeka, hauptstrasse").size());
     }
 
     @Test
@@ -143,7 +120,7 @@ public class QueryBasicSearchTest extends ESBaseTester {
         instance.finish();
         refresh();
 
-        assertEquals(1, search("hauptstrasse 5").getTotalHits());
-        assertEquals(0, search("hauptstrasse").getTotalHits());
+        assertEquals(1, search("hauptstrasse 5").size());
+        assertEquals(0, search("hauptstrasse").size());
     }
 }

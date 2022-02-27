@@ -227,7 +227,7 @@ public class Server {
      * @param shards the maximum number of shards
      * @return this Server instance for chaining
      */
-    public Server setMaxShards(int shards) {
+    public Server setMaxShards(Integer shards) {
         this.shards = shards;
         return this;
     }

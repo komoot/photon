@@ -4,25 +4,20 @@ import de.komoot.photon.ESBaseTester;
 import de.komoot.photon.PhotonDoc;
 import de.komoot.photon.Importer;
 
-import java.util.Arrays;
-import java.util.Collections;
+import java.util.List;
 
-import de.komoot.photon.elasticsearch.PhotonIndex;
-import de.komoot.photon.elasticsearch.PhotonQueryBuilder;
-import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.action.search.SearchType;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.json.JSONObject;
+import org.junit.jupiter.api.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class QueryFilterTagValueTest extends ESBaseTester {
-    private static final String[] TAGS = new String[]{"tourism", "attraction", "tourism", "hotel", "tourism", "museum", "tourism", "information", "amenity",
-            "parking", "amenity", "restaurant", "amenity", "information", "food", "information", "railway", "station"};
+    private static final String[] TAGS = new String[]{"tourism", "attraction", "tourism", "hotel", "tourism", "museum",
+                                                      "tourism", "information", "amenity", "parking", "amenity", "restaurant",
+                                                      "amenity", "information", "food", "information", "railway", "station"};
 
-    @BeforeEach
+    @BeforeAll
     public void setUp() throws Exception {
         setUpES();
         Importer instance = makeImporter();
@@ -44,12 +39,22 @@ public class QueryFilterTagValueTest extends ESBaseTester {
         refresh();
     }
 
-    private PhotonQueryBuilder baseQueryBerlin() {
-        return PhotonQueryBuilder.builder("berlin", "en", Arrays.asList("en"), true);
+    @AfterAll
+    @Override
+    public void tearDown() {
+        deleteIndex();
+        shutdownES();
     }
 
-    private SearchResponse search(QueryBuilder queryBuilder) {
-        return getClient().prepareSearch(PhotonIndex.NAME).setSearchType(SearchType.QUERY_THEN_FETCH).setQuery(queryBuilder).execute().actionGet();
+    private PhotonRequest queryBerlinWithTags(String... params) {
+        PhotonRequest request = new PhotonRequest("berlin", 100, null, null, 0.2, 14, "en", false);
+        request.setUpTagFilters(params);
+
+        return request;
+    }
+
+    private List<JSONObject> search(PhotonRequest request) {
+        return getServer().createSearchHandler(new String[]{"en"}).search(request);
     }
 
     /**
@@ -57,13 +62,9 @@ public class QueryFilterTagValueTest extends ESBaseTester {
      */
     @Test
     public void testFilterWithTagTourismAttraction() {
-        QueryBuilder queryBuilder = baseQueryBerlin()
-                .withTags(Collections.singletonMap("tourism", Collections.singleton("attraction")))
-                .buildQuery();
+        List<JSONObject> searchResponse = search(queryBerlinWithTags("tourism:attraction"));
 
-        SearchResponse searchResponse = search(queryBuilder);
-
-        assertEquals(2l, searchResponse.getHits().getTotalHits());
+        assertEquals(2l, searchResponse.size());
     }
 
     /**
@@ -71,13 +72,9 @@ public class QueryFilterTagValueTest extends ESBaseTester {
      */
     @Test
     public void testValueAttraction() {
-        QueryBuilder queryBuilder = baseQueryBerlin()
-                .withValues("attraction")
-                .buildQuery();
+        List<JSONObject> searchResponse = search(queryBerlinWithTags(":attraction"));
 
-        SearchResponse searchResponse = search(queryBuilder);
-
-        assertEquals(2l, searchResponse.getHits().getTotalHits());
+        assertEquals(2l, searchResponse.size());
     }
 
     /**
@@ -85,13 +82,9 @@ public class QueryFilterTagValueTest extends ESBaseTester {
      */
     @Test
     public void testKeyTourism() {
-        QueryBuilder queryBuilder = baseQueryBerlin()
-                .withKeys("tourism")
-                .buildQuery();
+        List<JSONObject> searchResponse = search(queryBerlinWithTags("tourism"));
 
-        SearchResponse searchResponse = search(queryBuilder);
-
-        assertEquals(8l, searchResponse.getHits().getTotalHits());
+        assertEquals(8l, searchResponse.size());
     }
 
     /**
@@ -99,13 +92,9 @@ public class QueryFilterTagValueTest extends ESBaseTester {
      */
     @Test
     public void testFilterWithoutTagTourismAttraction() {
-        QueryBuilder queryBuilder = baseQueryBerlin()
-                .withoutTags(Collections.singletonMap("tourism", Collections.singleton("attraction")))
-                .buildQuery();
+        List<JSONObject> searchResponse = search(queryBerlinWithTags("!tourism:attraction"));
 
-        SearchResponse searchResponse = search(queryBuilder);
-
-        assertEquals(16l, searchResponse.getHits().getTotalHits());
+        assertEquals(16l, searchResponse.size());
     }
 
     /**
@@ -113,13 +102,19 @@ public class QueryFilterTagValueTest extends ESBaseTester {
      */
     @Test
     public void testValueNotInformation() {
-        QueryBuilder queryBuilder = baseQueryBerlin()
-                .withoutValues("information")
-                .buildQuery();
+        List<JSONObject> searchResponse = search(queryBerlinWithTags("!:information"));
 
-        SearchResponse searchResponse = search(queryBuilder);
+        assertEquals(12l, searchResponse.size());
+    }
 
-        assertEquals(12l, searchResponse.getHits().getTotalHits());
+    /**
+     * Find me all places named "berlin" that do not have the value "information" in their TAGS - no matter what key
+     */
+    @Test
+    public void testValueNotInformationAlt() {
+        List<JSONObject> searchResponse = search(queryBerlinWithTags(":!information"));
+
+        assertEquals(12l, searchResponse.size());
     }
 
     /**
@@ -127,48 +122,19 @@ public class QueryFilterTagValueTest extends ESBaseTester {
      */
     @Test
     public void testKeyNotTourism() {
-        QueryBuilder queryBuilder = baseQueryBerlin()
-                .withoutKeys("tourism")
-                .buildQuery();
+        List<JSONObject> searchResponse = search(queryBerlinWithTags("!tourism"));
 
-        SearchResponse searchResponse = search(queryBuilder);
-
-        assertEquals(10l, searchResponse.getHits().getTotalHits());
+        assertEquals(10l, searchResponse.size());
     }
 
     /**
      * Find me all places named "berlin" that are tagged with the key "tourism" but not tagged with value "information".
-     * <p/>
-     * Note: This is a different method of achieving the same result as
-     * {@link QueryFilterTagValueTest#testKeyTourismButValueNotInformation()}
      */
     @Test
     public void testKeyTourismAndValueNotInformation() {
-        QueryBuilder queryBuilder = baseQueryBerlin()
-                .withKeys("tourism")
-                .withoutValues("information")
-                .buildQuery();
+        List<JSONObject> searchResponse = search(queryBerlinWithTags("tourism:!information"));
 
-        SearchResponse searchResponse = search(queryBuilder);
-
-        assertEquals(6l, searchResponse.getHits().getTotalHits());
-    }
-
-    /**
-     * Find me all places named "berlin" that are tagged with the key "tourism" but not tagged with value "information".
-     * <p/>
-     * Note: This is a different method of achieving the same result as
-     * {@link QueryFilterTagValueTest#testKeyTourismAndValueNotInformation}.
-     */
-    @Test
-    public void testKeyTourismButValueNotInformation() {
-        QueryBuilder queryBuilder = baseQueryBerlin()
-                .withTagsNotValues(Collections.singletonMap("tourism", Collections.singleton("information")))
-                .buildQuery();
-
-        SearchResponse searchResponse = search(queryBuilder);
-
-        assertEquals(6l, searchResponse.getHits().getTotalHits());
+        assertEquals(6l, searchResponse.size());
     }
 
     /**
@@ -176,13 +142,9 @@ public class QueryFilterTagValueTest extends ESBaseTester {
      */
     @Test
     public void testKeyNotTourismAndKeyNotAmenity() {
-        QueryBuilder queryBuilder = baseQueryBerlin()
-                .withoutKeys("tourism", "amenity")
-                .buildQuery();
+        List<JSONObject> searchResponse = search(queryBerlinWithTags("!tourism", "!amenity"));
 
-        SearchResponse searchResponse = search(queryBuilder);
-
-        assertEquals(4l, searchResponse.getHits().getTotalHits());
+        assertEquals(4l, searchResponse.size());
     }
 
     /**
@@ -192,14 +154,9 @@ public class QueryFilterTagValueTest extends ESBaseTester {
      */
     @Test
     public void testKeyTourismAndKeyNotAmenity() {
-        QueryBuilder queryBuilder = baseQueryBerlin()
-                .withKeys("tourism")
-                .withoutKeys("amenity")
-                .buildQuery();
+        List<JSONObject> searchResponse = search(queryBerlinWithTags("tourism", "!amenity"));
 
-        SearchResponse searchResponse = search(queryBuilder);
-
-        assertEquals(8l, searchResponse.getHits().getTotalHits());
+        assertEquals(8l, searchResponse.size());
     }
 
     /**
@@ -207,14 +164,9 @@ public class QueryFilterTagValueTest extends ESBaseTester {
      */
     @Test
     public void testValueInformationButKeyNotAmenity() {
-        QueryBuilder queryBuilder = baseQueryBerlin()
-                .withValues("information")
-                .withoutKeys("amenity")
-                .buildQuery();
+        List<JSONObject> searchResponse = search(queryBerlinWithTags(":information", "!amenity"));
 
-        SearchResponse searchResponse = search(queryBuilder);
-
-        assertEquals(4l, searchResponse.getHits().getTotalHits());
+        assertEquals(4l, searchResponse.size());
     }
 
     /**
@@ -222,12 +174,8 @@ public class QueryFilterTagValueTest extends ESBaseTester {
      */
     @Test
     public void testTagNotTourismAttraction() {
-        QueryBuilder queryBuilder = baseQueryBerlin()
-                .withoutTags(Collections.singletonMap("tourism", Collections.singleton("attraction")))
-                .buildQuery();
+        List<JSONObject> searchResponse = search(queryBerlinWithTags("!tourism:attraction"));
 
-        SearchResponse searchResponse = search(queryBuilder);
-
-        assertEquals(16l, searchResponse.getHits().getTotalHits());
+        assertEquals(16l, searchResponse.size());
     }
 }
