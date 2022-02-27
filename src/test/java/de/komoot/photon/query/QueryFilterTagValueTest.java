@@ -2,7 +2,7 @@ package de.komoot.photon.query;
 
 import de.komoot.photon.ESBaseTester;
 import de.komoot.photon.PhotonDoc;
-import de.komoot.photon.elasticsearch.Importer;
+import de.komoot.photon.Importer;
 
 import java.util.Arrays;
 import java.util.Collections;

@@ -2,8 +2,8 @@ package de.komoot.photon.utils;
 
 import de.komoot.photon.ESBaseTester;
 import de.komoot.photon.PhotonDoc;
-import de.komoot.photon.elasticsearch.DatabaseProperties;
-import de.komoot.photon.elasticsearch.Importer;
+import de.komoot.photon.Importer;
+import de.komoot.photon.elasticsearch.Server;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -29,7 +29,7 @@ public class ConvertToJsonTest extends ESBaseTester {
         return getClient().prepareSearch("photon")
                 .setSearchType(SearchType.QUERY_THEN_FETCH)
                 .setQuery(QueryBuilders.boolQuery().must(QueryBuilders.matchAllQuery())
-                        .filter(QueryBuilders.boolQuery().mustNot(QueryBuilders.idsQuery().addIds(DatabaseProperties.PROPERTY_DOCUMENT_ID))))
+                        .filter(QueryBuilders.boolQuery().mustNot(QueryBuilders.idsQuery().addIds(Server.PROPERTY_DOCUMENT_ID))))
                 .execute()
                 .actionGet();
     }
