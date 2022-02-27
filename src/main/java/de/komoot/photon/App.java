@@ -112,7 +112,7 @@ public class App {
     private static void startNominatimImport(CommandLineArgs args, Server esServer, Client esNodeClient) {
         DatabaseProperties dbProperties;
         try {
-            dbProperties = esServer.recreateIndex(args.getLanguagesOrDefault()); // clear out previous data
+            dbProperties = esServer.recreateIndex(args.getLanguages()); // clear out previous data
         } catch (IOException e) {
             throw new RuntimeException("cannot setup index, elastic search config files not readable", e);
         }
@@ -153,8 +153,8 @@ public class App {
         // Get database properties and ensure that the version is compatible.
         DatabaseProperties dbProperties = new DatabaseProperties();
         dbProperties.loadFromDatabase(esNodeClient);
-        if (!args.getLanguages().isEmpty()) {
-            dbProperties.restrictLanguages(args.getLanguages().split(","));
+        if (args.getLanguages().length > 0) {
+            dbProperties.restrictLanguages(args.getLanguages());
         }
 
         port(args.getListenPort());
