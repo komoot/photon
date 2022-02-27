@@ -9,10 +9,10 @@ import org.json.JSONObject;
 import java.util.List;
 
 public class ReverseRequestHandler {
-    private final ReverseElasticsearchSearcher elasticsearchSearcher;
+    private final ReverseHandler elasticsearchSearcher;
 
-    public ReverseRequestHandler(ReverseElasticsearchSearcher elasticsearchSearcher) {
-        this.elasticsearchSearcher = elasticsearchSearcher;
+    public ReverseRequestHandler(ReverseHandler dbHandler) {
+        this.elasticsearchSearcher = dbHandler;
     }
 
     public List<JSONObject> handle(ReverseRequest photonRequest) {

@@ -15,18 +15,19 @@ import org.elasticsearch.search.sort.SortOrder;
 /**
  * @author svantulden
  */
-public class ReverseElasticsearchSearcher {
+public class ReverseElasticsearchSearcher implements ReverseHandler {
     private Client client;
 
     public ReverseElasticsearchSearcher(Client client) {
         this.client = client;
     }
 
+    @Override
     public SearchResponse search(QueryBuilder queryBuilder, Integer limit, Point location,
                                  Boolean locationDistanceSort) {
         TimeValue timeout = TimeValue.timeValueSeconds(7);
 
-        SearchRequestBuilder builder = client.prepareSearch(PhotonIndex.NAME).setSearchType(SearchType.QUERY_AND_FETCH)
+        SearchRequestBuilder builder = client.prepareSearch(PhotonIndex.NAME).setSearchType(SearchType.QUERY_THEN_FETCH)
                 .setQuery(queryBuilder).setSize(limit).setTimeout(timeout);
 
         if (locationDistanceSort)

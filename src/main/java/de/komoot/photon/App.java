@@ -163,10 +163,10 @@ public class App {
         }
 
         // setup search API
-        get("api", new SearchRequestHandler("api", esNodeClient, dbProperties.getLanguages(), args.getDefaultLanguage()));
-        get("api/", new SearchRequestHandler("api/", esNodeClient, dbProperties.getLanguages(), args.getDefaultLanguage()));
-        get("reverse", new ReverseSearchRequestHandler("reverse", esNodeClient, dbProperties.getLanguages(), args.getDefaultLanguage()));
-        get("reverse/", new ReverseSearchRequestHandler("reverse/", esNodeClient, dbProperties.getLanguages(), args.getDefaultLanguage()));
+        get("api", new SearchRequestHandler("api", server.createSearchHandler(), dbProperties.getLanguages(), args.getDefaultLanguage()));
+        get("api/", new SearchRequestHandler("api/", server.createSearchHandler(), dbProperties.getLanguages(), args.getDefaultLanguage()));
+        get("reverse", new ReverseSearchRequestHandler("reverse", server.createReverseHandler(), dbProperties.getLanguages(), args.getDefaultLanguage()));
+        get("reverse/", new ReverseSearchRequestHandler("reverse/", server.createReverseHandler(), dbProperties.getLanguages(), args.getDefaultLanguage()));
 
         if (args.isEnableUpdateApi()) {
             // setup update API

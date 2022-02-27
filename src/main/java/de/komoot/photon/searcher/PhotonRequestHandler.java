@@ -16,12 +16,12 @@ import java.util.List;
  */
 public class PhotonRequestHandler {
 
-    private final BaseElasticsearchSearcher elasticsearchSearcher;
+    private final SearchHandler elasticsearchSearcher;
     private final List<String> supportedLanguages;
     private boolean lastLenient = false;
 
-    public PhotonRequestHandler(BaseElasticsearchSearcher elasticsearchSearcher, List<String> supportedLanguages) {
-        this.elasticsearchSearcher = elasticsearchSearcher;
+    public PhotonRequestHandler(SearchHandler dbHandler, List<String> supportedLanguages) {
+        this.elasticsearchSearcher = dbHandler;
         this.supportedLanguages = supportedLanguages;
     }
 

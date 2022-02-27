@@ -10,7 +10,7 @@ import org.elasticsearch.index.query.QueryBuilder;
 /**
  * Created by Sachin Dole on 2/12/2015.
  */
-public class BaseElasticsearchSearcher {
+public class BaseElasticsearchSearcher implements SearchHandler {
 
     private Client client;
 
@@ -18,10 +18,11 @@ public class BaseElasticsearchSearcher {
         this.client = client;
     }
 
+    @Override
     public SearchResponse search(QueryBuilder queryBuilder, Integer limit) {
         TimeValue timeout = TimeValue.timeValueSeconds(7);
         return client.prepareSearch(PhotonIndex.NAME).
-                setSearchType(SearchType.QUERY_AND_FETCH).
+                setSearchType(SearchType.QUERY_THEN_FETCH).
                 setQuery(queryBuilder).
                 setSize(limit).
                 setTimeout(timeout).

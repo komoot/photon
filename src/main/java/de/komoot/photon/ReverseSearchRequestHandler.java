@@ -4,6 +4,7 @@ import de.komoot.photon.query.BadRequestException;
 import de.komoot.photon.query.ReverseRequest;
 import de.komoot.photon.query.ReverseRequestFactory;
 import de.komoot.photon.searcher.ReverseElasticsearchSearcher;
+import de.komoot.photon.searcher.ReverseHandler;
 import de.komoot.photon.searcher.ReverseRequestHandler;
 import de.komoot.photon.utils.ConvertToGeoJson;
 import org.elasticsearch.client.Client;
@@ -25,12 +26,12 @@ public class ReverseSearchRequestHandler extends RouteImpl {
     private final ReverseRequestHandler requestHandler;
     private final ConvertToGeoJson geoJsonConverter;
 
-    ReverseSearchRequestHandler(String path, Client esNodeClient, String[] languages, String defaultLanguage) {
+    ReverseSearchRequestHandler(String path, ReverseHandler dbHandler, String[] languages, String defaultLanguage) {
         super(path);
         List<String> supportedLanguages = Arrays.asList(languages);
         this.reverseRequestFactory = new ReverseRequestFactory(supportedLanguages, defaultLanguage);
         this.geoJsonConverter = new ConvertToGeoJson();
-        this.requestHandler = new ReverseRequestHandler(new ReverseElasticsearchSearcher(esNodeClient));
+        this.requestHandler = new ReverseRequestHandler(dbHandler);
     }
 
     @Override
