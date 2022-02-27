@@ -45,7 +45,7 @@ public class ImporterTest extends ESBaseTester {
 
     @Test
     public void testSelectedExtraTagsCanBeIncluded() {
-        Importer instance = makeImporterWithExtra("maxspeed,website");
+        Importer instance = makeImporterWithExtra("maxspeed", "website");
 
         Map<String, String> extratags = new HashMap<>();
         extratags.put("website", "foo");

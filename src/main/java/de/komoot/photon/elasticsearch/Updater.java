@@ -21,11 +21,11 @@ public class Updater implements de.komoot.photon.Updater {
     private final String[] languages;
     private final String[] extraTags;
 
-    public Updater(Client esClient, String[] languages, String extraTags) {
+    public Updater(Client esClient, String[] languages, String[] extraTags) {
         this.esClient = esClient;
         this.bulkRequest = esClient.prepareBulk();
         this.languages = languages;
-        this.extraTags = extraTags.split(",");
+        this.extraTags = extraTags;
     }
 
     public void finish() {

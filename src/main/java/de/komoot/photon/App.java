@@ -23,30 +23,7 @@ import static spark.Spark.*;
 public class App {
 
     public static void main(String[] rawArgs) throws Exception {
-        // parse command line arguments
-        CommandLineArgs args = new CommandLineArgs();
-        final JCommander jCommander = new JCommander(args);
-        try {
-            jCommander.parse(rawArgs);
-            if (args.isCorsAnyOrigin() && args.getCorsOrigin() != null) { // these are mutually exclusive
-                throw new ParameterException("Use only one cors configuration type");
-            }
-        } catch (ParameterException e) {
-            log.warn("could not start photon: " + e.getMessage());
-            jCommander.usage();
-            return;
-        }
-
-        // show help
-        if (args.isUsage()) {
-            jCommander.usage();
-            return;
-        }
-
-        if (args.getJsonDump() != null) {
-            startJsonDump(args);
-            return;
-        }
+        CommandLineArgs args = parseCommandLine(rawArgs);
 
         boolean shutdownES = false;
         final Server esServer = new Server(args.getDataDirectory()).start(args.getCluster(), args.getTransportAddresses());
@@ -83,6 +60,32 @@ public class App {
     }
 
 
+    private static CommandLineArgs parseCommandLine(String[] rawArgs) {
+        CommandLineArgs args = new CommandLineArgs();
+        final JCommander jCommander = new JCommander(args);
+        try {
+            jCommander.parse(rawArgs);
+
+            // Cors arguments are mutually exclusive.
+            if (args.isCorsAnyOrigin() && args.getCorsOrigin() != null) {
+                throw new ParameterException("Use only one cors configuration type");
+            }
+        } catch (ParameterException e) {
+            log.warn("could not start photon: " + e.getMessage());
+            jCommander.usage();
+            System.exit(1);
+        }
+
+        // show help
+        if (args.isUsage()) {
+            jCommander.usage();
+            System.exit(1);
+        }
+
+        return args;
+    }
+
+
     /**
      * take nominatim data and dump it to json
      *
@@ -94,7 +97,7 @@ public class App {
             final JsonDumper jsonDumper = new JsonDumper(filename, args.getLanguages(), args.getExtraTags());
             NominatimConnector nominatimConnector = new NominatimConnector(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
             nominatimConnector.setImporter(jsonDumper);
-            nominatimConnector.readEntireDatabase(args.getCountryCodes().split(","));
+            nominatimConnector.readEntireDatabase(args.getCountryCodes());
             log.info("json dump was created: " + filename);
         } catch (FileNotFoundException e) {
             log.error("cannot create dump", e);
@@ -112,7 +115,7 @@ public class App {
     private static void startNominatimImport(CommandLineArgs args, Server esServer, Client esNodeClient) {
         DatabaseProperties dbProperties;
         try {
-            dbProperties = esServer.recreateIndex(args.getLanguagesOrDefault()); // clear out previous data
+            dbProperties = esServer.recreateIndex(args.getLanguages()); // clear out previous data
         } catch (IOException e) {
             throw new RuntimeException("cannot setup index, elastic search config files not readable", e);
         }
@@ -121,7 +124,7 @@ public class App {
         de.komoot.photon.elasticsearch.Importer importer = new de.komoot.photon.elasticsearch.Importer(esNodeClient, dbProperties.getLanguages(), args.getExtraTags());
         NominatimConnector nominatimConnector = new NominatimConnector(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
         nominatimConnector.setImporter(importer);
-        nominatimConnector.readEntireDatabase(args.getCountryCodes().split(","));
+        nominatimConnector.readEntireDatabase(args.getCountryCodes());
 
         log.info("imported data from nominatim to photon with languages: " + String.join(",", dbProperties.getLanguages()));
     }
@@ -153,8 +156,8 @@ public class App {
         // Get database properties and ensure that the version is compatible.
         DatabaseProperties dbProperties = new DatabaseProperties();
         dbProperties.loadFromDatabase(esNodeClient);
-        if (!args.getLanguages().isEmpty()) {
-            dbProperties.restrictLanguages(args.getLanguages().split(","));
+        if (args.getLanguages().length > 0) {
+            dbProperties.restrictLanguages(args.getLanguages());
         }
 
         port(args.getListenPort());

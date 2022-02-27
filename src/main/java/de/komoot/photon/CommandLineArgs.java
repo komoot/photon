@@ -5,17 +5,20 @@ package de.komoot.photon;
  */
 
 import com.beust.jcommander.Parameter;
+import de.komoot.photon.utils.StringArrayConverter;
 import lombok.Data;
 
 import java.io.File;
 
+
 @Data
 public class CommandLineArgs {
+
     @Parameter(names = "-cluster", description = "name of elasticsearch cluster to put the server into (default is 'photon')")
     private String cluster = "photon";
 
-    @Parameter(names = "-transport-addresses", description = "the comma separated addresses of external elasticsearch nodes where the client can connect to (default is an empty string which forces an internal node to start)")
-    private String transportAddresses = "";
+    @Parameter(names = "-transport-addresses", description = "the comma separated addresses of external elasticsearch nodes where the client can connect to (default is an empty string which forces an internal node to start)", converter = StringArrayConverter.class)
+    private String[] transportAddresses = new String[]{};
 
     @Parameter(names = "-nominatim-import", description = "import nominatim database into photon (this will delete previous index)")
     private boolean nominatimImport = false;
@@ -23,17 +26,17 @@ public class CommandLineArgs {
     @Parameter(names = "-nominatim-update", description = "fetch updates from nominatim database into photon and exit (this updates the index only without offering an API)")
     private boolean nominatimUpdate = false;
 
-    @Parameter(names = "-languages", description = "languages nominatim importer should import and use at run-time, comma separated (default is 'en,fr,de,it')")
-    private String languages = "";
+    @Parameter(names = "-languages", description = "languages nominatim importer should import and use at run-time, comma separated (default is 'en,fr,de,it')", converter = StringArrayConverter.class)
+    private String[] languages = new String[]{"en", "de", "fr", "it"};
 
     @Parameter(names = "-default-language", description = "language to return results in when no explicit language is choosen by the user")
     private String defaultLanguage = "default";
 
-    @Parameter(names = "-country-codes", description = "country codes filter that nominatim importer should import, comma separated. If empty full planet is done")
-    private String countryCodes = "";
+    @Parameter(names = "-country-codes", description = "country codes filter that nominatim importer should import, comma separated. If empty full planet is done", converter = StringArrayConverter.class)
+    private String[] countryCodes = new String[]{};
 
-    @Parameter(names = "-extra-tags", description = "additional tags to save for each place")
-    private String extraTags = "";
+    @Parameter(names = "-extra-tags", description = "comma-separated list of additional tags to save for each place", converter = StringArrayConverter.class)
+    private String[] extraTags = new String[]{};
 
     @Parameter(names = "-synonym-file", description = "file with synonym and classification terms")
     private String synonymFile = null;
@@ -76,9 +79,5 @@ public class CommandLineArgs {
 
     @Parameter(names = "-h", description = "show help / usage")
     private boolean usage = false;
-
-    public String[] getLanguagesOrDefault() {
-        return getLanguages().isEmpty() ? new String[]{"en", "de", "fr", "it"}: getLanguages().split(",");
-    }
 }
 

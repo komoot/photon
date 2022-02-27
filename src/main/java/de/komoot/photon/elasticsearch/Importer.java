@@ -23,11 +23,11 @@ public class Importer implements de.komoot.photon.Importer {
     private final String[] languages;
     private final String[] extraTags;
 
-    public Importer(Client esClient, String[] languages, String extraTags) {
+    public Importer(Client esClient, String[] languages, String[] extraTags) {
         this.esClient = esClient;
         this.bulkRequest = esClient.prepareBulk();
         this.languages = languages;
-        this.extraTags = extraTags.split(",");
+        this.extraTags = extraTags;
     }
 
     @Override

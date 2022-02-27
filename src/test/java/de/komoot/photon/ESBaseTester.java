@@ -56,29 +56,29 @@ public class ESBaseTester {
      * @throws IOException
      */
     public void setUpES(String... languages) throws IOException {
-        server = new Server(new File("./target/es_photon_test").getAbsolutePath()).setMaxShards(1).start(TEST_CLUSTER_NAME, "");
+        server = new Server(new File("./target/es_photon_test").getAbsolutePath()).setMaxShards(1).start(TEST_CLUSTER_NAME, new String[]{});
         deleteIndex(); // just in case of an abnormal abort previously
         server.recreateIndex(languages);
         refresh();
     }
 
     protected Importer makeImporter() {
-        return new Importer(getClient(), new String[]{"en"}, "");
+        return new Importer(getClient(), new String[]{"en"}, new String[]{});
     }
 
-    protected Importer makeImporterWithExtra(String extraTags) {
+    protected Importer makeImporterWithExtra(String... extraTags) {
         return new Importer(getClient(), new String[]{"en"}, extraTags);
     }
 
     protected Importer makeImporterWithLanguages(String... languages) {
-        return new Importer(getClient(), languages, "");
+        return new Importer(getClient(), languages, new String[]{});
     }
 
     protected Updater makeUpdater() {
-        return new Updater(getClient(), new String[]{"en"}, "");
+        return new Updater(getClient(), new String[]{"en"}, new String[]{});
     }
 
-    protected Updater makeUpdaterWithExtra(String extraTags) {
+    protected Updater makeUpdaterWithExtra(String... extraTags) {
         return new Updater(getClient(), new String[]{"en"}, extraTags);
     }
 
