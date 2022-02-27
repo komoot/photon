@@ -3,10 +3,14 @@ package de.komoot.photon.query;
 import de.komoot.photon.ESBaseTester;
 import de.komoot.photon.PhotonDoc;
 import de.komoot.photon.elasticsearch.Importer;
+import de.komoot.photon.nominatim.model.AddressType;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EmptySource;
+import org.junit.jupiter.params.provider.EnumSource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -77,5 +81,27 @@ public class QueryByLanguageTest extends ESBaseTester {
         assertEquals(1, search("einfach", "de").getHits().getTotalHits());
         assertEquals(1, search("ancient", "de").getHits().getTotalHits());
 
+    }
+
+    @ParameterizedTest
+    @EnumSource(names = {"STREET", "LOCALITY", "DISTRICT", "CITY", "COUNTRY", "STATE"})
+    public void queryAddressPartsLanguages(AddressType addressType) throws IOException {
+        Importer instance = setup("en", "de");
+
+        Map<String, String> address_names = new HashMap<>();
+        address_names.put("name", "original");
+        address_names.put("name:de", "Deutsch");
+
+        PhotonDoc doc = new PhotonDoc(45, "N", 3, "place", "house")
+                .names(Collections.singletonMap("name", "here"));
+
+        doc.setAddressPartIfNew(addressType, address_names);
+
+        instance.add(doc);
+        instance.finish();
+        refresh();
+
+        assertEquals(1, search("here, original", "de").getHits().getTotalHits());
+        assertEquals(1, search("here, Deutsch", "de").getHits().getTotalHits());
     }
 }

@@ -59,6 +59,7 @@ public class IndexMapping {
             // add language specific tags to the collector
             addToCollector("city", propertiesObject, copyToCollectorObject, lang);
             addToCollector("context", propertiesObject, copyToCollectorObject, lang);
+            addToCollector("county", propertiesObject, copyToCollectorObject, lang);
             addToCollector("country", propertiesObject, copyToCollectorObject, lang);
             addToCollector("state", propertiesObject, copyToCollectorObject, lang);
             addToCollector("street", propertiesObject, copyToCollectorObject, lang);
