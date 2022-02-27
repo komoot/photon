@@ -4,22 +4,15 @@ package de.komoot.photon;
  * Command Line Arguments parsed by {@link com.beust.jcommander.JCommander} and used to start photon.
  */
 
-import com.beust.jcommander.IStringConverter;
 import com.beust.jcommander.Parameter;
+import de.komoot.photon.utils.StringArrayConverter;
 import lombok.Data;
 
 import java.io.File;
 
 
-
 @Data
 public class CommandLineArgs {
-    public class StringArrayConverter implements IStringConverter<String[]> {
-        @Override
-        public String[] convert(String value) {
-            return value == null ? new String[]{} : value.split(",");
-        }
-    }
 
     @Parameter(names = "-cluster", description = "name of elasticsearch cluster to put the server into (default is 'photon')")
     private String cluster = "photon";

@@ -13,14 +13,14 @@ import java.io.PrintWriter;
  */
 @Slf4j
 public class JsonDumper implements Importer {
-    private PrintWriter writer = null;
+    private PrintWriter writer;
     private final String[] languages;
     private final String[] extraTags;
 
-    public JsonDumper(String filename, String languages, String extraTags) throws FileNotFoundException {
+    public JsonDumper(String filename, String[] languages, String[] extraTags) throws FileNotFoundException {
         this.writer = new PrintWriter(filename);
-        this.languages = languages.split(",");
-        this.extraTags = extraTags.split(",");
+        this.languages = languages;
+        this.extraTags = extraTags;
     }
 
     @Override

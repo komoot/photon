@@ -21,7 +21,7 @@ public class ConvertToJsonTest extends ESBaseTester {
 
     private SearchResponse databaseFromDoc(PhotonDoc doc) throws IOException {
         setUpES();
-        Importer instance = makeImporterWithExtra("maxspeed,website");
+        Importer instance = makeImporterWithExtra("maxspeed","website");
         instance.add(doc);
         instance.finish();
         refresh();

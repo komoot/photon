@@ -59,16 +59,15 @@ public class Server {
         }
     }
 
-    public Server start(String clusterName, String transportAddresses) {
+    public Server start(String clusterName, String[] transportAddresses) {
         Settings.Builder sBuilder = Settings.builder();
         sBuilder.put("path.home", this.esDirectory.toString());
         sBuilder.put("network.host", "127.0.0.1"); // http://stackoverflow.com/a/15509589/1245622
         sBuilder.put("cluster.name", clusterName);
 
-        if (transportAddresses != null && !transportAddresses.isEmpty()) {
+        if (transportAddresses.length > 0) {
             TransportClient trClient = new PreBuiltTransportClient(sBuilder.build());
-            List<String> addresses = Arrays.asList(transportAddresses.split(","));
-            for (String tAddr : addresses) {
+            for (String tAddr : transportAddresses) {
                 int index = tAddr.indexOf(":");
                 if (index >= 0) {
                     int port = Integer.parseInt(tAddr.substring(index + 1));
@@ -81,7 +80,7 @@ public class Server {
 
             esClient = trClient;
 
-            log.info("started elastic search client connected to " + addresses);
+            log.info("Started elastic search client connected to " + transportAddresses);
 
         } else {
 
