@@ -25,6 +25,11 @@ public class App {
     public static void main(String[] rawArgs) throws Exception {
         CommandLineArgs args = parseCommandLine(rawArgs);
 
+        if (args.getJsonDump() != null) {
+            startJsonDump(args);
+            return;
+        }
+
         boolean shutdownES = false;
         final Server esServer = new Server(args.getDataDirectory()).start(args.getCluster(), args.getTransportAddresses());
         try {
