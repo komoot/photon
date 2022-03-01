@@ -3,7 +3,7 @@ package de.komoot.photon;
 import de.komoot.photon.query.BadRequestException;
 import de.komoot.photon.query.PhotonRequest;
 import de.komoot.photon.query.PhotonRequestFactory;
-import de.komoot.photon.searcher.SearchHandler;
+import de.komoot.photon.searcher.*;
 import de.komoot.photon.utils.ConvertToGeoJson;
 import org.json.JSONObject;
 import spark.Request;
@@ -21,13 +21,11 @@ import static spark.Spark.halt;
 public class SearchRequestHandler extends RouteImpl {
     private final PhotonRequestFactory photonRequestFactory;
     private final SearchHandler requestHandler;
-    private final ConvertToGeoJson geoJsonConverter;
 
     SearchRequestHandler(String path, SearchHandler dbHandler, String[] languages, String defaultLanguage) {
         super(path);
         List<String> supportedLanguages = Arrays.asList(languages);
         this.photonRequestFactory = new PhotonRequestFactory(supportedLanguages, defaultLanguage);
-        this.geoJsonConverter = new ConvertToGeoJson();
         this.requestHandler = dbHandler;
     }
 
@@ -41,15 +39,22 @@ public class SearchRequestHandler extends RouteImpl {
             json.put("message", e.getMessage());
             halt(e.getHttpStatus(), json.toString());
         }
-        List<JSONObject> results = requestHandler.search(photonRequest);
-        JSONObject geoJsonResults = geoJsonConverter.convert(results);
-        if (photonRequest.getDebug()) {
-            JSONObject debug = new JSONObject();
-            debug.put("query", new JSONObject(requestHandler.dumpQuery(photonRequest)));
-            geoJsonResults.put("debug", debug);
-            return geoJsonResults.toString(4);
+
+        List<PhotonResult> results = requestHandler.search(photonRequest);
+
+        // Futher filtering
+        results = new StreetDupesRemover(photonRequest.getLanguage()).execute(results);
+
+        // Restrict to the requested limit.
+        if (results.size() > photonRequest.getLimit()) {
+            results = results.subList(0, photonRequest.getLimit());
         }
 
-        return geoJsonResults.toString();
+        String debugInfo = null;
+        if (photonRequest.getDebug()) {
+            debugInfo = requestHandler.dumpQuery(photonRequest);
+        }
+
+        return new GeocodeJsonFormatter(photonRequest.getDebug(), photonRequest.getLanguage()).convert(results, debugInfo);
     }
 }
