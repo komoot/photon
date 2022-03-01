@@ -109,7 +109,7 @@ jobs:
 
       - name: Prepare import environment
         run: |
-            if [ ! -f monaco.osm.pbf ]; then
+            if [ ! -f monaco-latest.osm.pbf ]; then
                 wget --no-verbose https://download.geofabrik.de/europe/monaco-latest.osm.pbf
             fi
             mkdir data-env
