@@ -3,15 +3,12 @@ package de.komoot.photon.elasticsearch;
 import de.komoot.photon.query.PhotonRequest;
 import de.komoot.photon.searcher.PhotonResult;
 import de.komoot.photon.searcher.SearchHandler;
-import de.komoot.photon.searcher.StreetDupesRemover;
-import de.komoot.photon.utils.ConvertToJson;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.SearchHit;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;

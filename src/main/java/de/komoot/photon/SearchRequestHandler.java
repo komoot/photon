@@ -4,7 +4,6 @@ import de.komoot.photon.query.BadRequestException;
 import de.komoot.photon.query.PhotonRequest;
 import de.komoot.photon.query.PhotonRequestFactory;
 import de.komoot.photon.searcher.*;
-import de.komoot.photon.utils.ConvertToGeoJson;
 import org.json.JSONObject;
 import spark.Request;
 import spark.Response;

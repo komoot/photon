@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface ReverseHandler {
 
-    List<JSONObject> reverse(ReverseRequest photonRequest);
+    List<PhotonResult> reverse(ReverseRequest photonRequest);
 }
