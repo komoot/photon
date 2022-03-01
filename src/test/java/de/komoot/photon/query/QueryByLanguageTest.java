@@ -2,14 +2,12 @@ package de.komoot.photon.query;
 
 import de.komoot.photon.ESBaseTester;
 import de.komoot.photon.PhotonDoc;
-import de.komoot.photon.elasticsearch.Importer;
+import de.komoot.photon.Importer;
 import de.komoot.photon.nominatim.model.AddressType;
-import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.action.search.SearchType;
-import org.elasticsearch.index.query.QueryBuilder;
+import lombok.extern.slf4j.Slf4j;
+import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.EmptySource;
 import org.junit.jupiter.params.provider.EnumSource;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -21,12 +19,13 @@ import java.util.*;
 /**
  * Tests for queries in different languages.
  */
+@Slf4j
 public class QueryByLanguageTest extends ESBaseTester {
     private int testDocId = 10001;
-    private List<String> languageList;
+    private String[] languageList;
 
     private Importer setup(String... languages) throws IOException {
-        languageList = Arrays.asList(languages);
+        languageList = languages;
         setUpES(languages);
         return makeImporterWithLanguages(languages);
     }
@@ -42,13 +41,8 @@ public class QueryByLanguageTest extends ESBaseTester {
         return new PhotonDoc(testDocId, "W", testDocId, "place", "city").names(nameMap);
     }
 
-    private SearchResponse search(String query, String lang) {
-        QueryBuilder builder = PhotonQueryBuilder.builder(query, lang, languageList, false).buildQuery();
-        return getClient().prepareSearch("photon")
-                .setSearchType(SearchType.QUERY_THEN_FETCH)
-                .setQuery(builder)
-                .execute()
-                .actionGet();
+    private List<JSONObject> search(String query, String lang) {
+        return getServer().createSearchHandler(languageList).search(new PhotonRequest(query, 10, null, null, 0.2, 14, lang, true));
     }
 
     @Test
@@ -60,12 +54,12 @@ public class QueryByLanguageTest extends ESBaseTester {
         instance.finish();
         refresh();
 
-        assertEquals(1, search("original", "en").getHits().getTotalHits());
-        assertEquals(1, search("finish", "en").getHits().getTotalHits());
-        assertEquals(0, search("russian", "en").getHits().getTotalHits());
+        assertEquals(1, search("original", "en").size());
+        assertEquals(1, search("finish", "en").size());
+        assertEquals(0, search("russian", "en").size());
 
-        float enScore = search("finish", "en").getHits().getHits()[0].getScore();
-        float fiScore = search("finish", "fi").getHits().getHits()[0].getScore();
+        float enScore = search("finish", "en").get(0).getFloat("score");
+        float fiScore = search("finish", "fi").get(0).getFloat("score");
 
         assertTrue(fiScore > enScore);
     }
@@ -77,9 +71,9 @@ public class QueryByLanguageTest extends ESBaseTester {
         instance.finish();
         refresh();
 
-        assertEquals(1, search("simple", "de").getHits().getTotalHits());
-        assertEquals(1, search("einfach", "de").getHits().getTotalHits());
-        assertEquals(1, search("ancient", "de").getHits().getTotalHits());
+        assertEquals(1, search("simple", "de").size());
+        assertEquals(1, search("einfach", "de").size());
+        assertEquals(1, search("ancient", "de").size());
 
     }
 
@@ -101,7 +95,7 @@ public class QueryByLanguageTest extends ESBaseTester {
         instance.finish();
         refresh();
 
-        assertEquals(1, search("here, original", "de").getHits().getTotalHits());
-        assertEquals(1, search("here, Deutsch", "de").getHits().getTotalHits());
+        assertEquals(1, search("here, original", "de").size());
+        assertEquals(1, search("here, Deutsch", "de").size());
     }
 }

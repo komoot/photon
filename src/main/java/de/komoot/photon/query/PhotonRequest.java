@@ -42,6 +42,10 @@ public class PhotonRequest implements Serializable {
         this.debug = debug;
     }
 
+    public PhotonRequest(String query) {
+        this(query, 10, null, null, 0.2, 14, "default", false);
+    }
+
     public String getQuery() {
         return query;
     }

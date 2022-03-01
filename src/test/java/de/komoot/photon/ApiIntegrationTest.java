@@ -1,6 +1,5 @@
 package de.komoot.photon;
 
-import de.komoot.photon.elasticsearch.Importer;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;

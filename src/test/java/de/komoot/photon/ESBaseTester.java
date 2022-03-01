@@ -5,14 +5,9 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.PrecisionModel;
-import de.komoot.photon.elasticsearch.Importer;
-import de.komoot.photon.elasticsearch.PhotonIndex;
 import de.komoot.photon.elasticsearch.Server;
-import de.komoot.photon.elasticsearch.Updater;
 import lombok.extern.slf4j.Slf4j;
-import org.elasticsearch.action.admin.indices.refresh.RefreshRequest;
 import org.elasticsearch.action.get.GetResponse;
-import org.elasticsearch.client.Client;
 import org.junit.jupiter.api.AfterEach;
 
 import java.io.File;
@@ -37,7 +32,7 @@ public class ESBaseTester {
     }
 
     protected GetResponse getById(int id) {
-        return getClient().prepareGet(PhotonIndex.NAME,PhotonIndex.TYPE, String.valueOf(id)).execute().actionGet();
+        return server.getById(id);
     }
 
 
@@ -63,35 +58,35 @@ public class ESBaseTester {
     }
 
     protected Importer makeImporter() {
-        return new Importer(getClient(), new String[]{"en"}, new String[]{});
+        return server.createImporter(new String[]{"en"}, new String[]{});
     }
 
     protected Importer makeImporterWithExtra(String... extraTags) {
-        return new Importer(getClient(), new String[]{"en"}, extraTags);
+        return server.createImporter(new String[]{"en"}, extraTags);
     }
 
     protected Importer makeImporterWithLanguages(String... languages) {
-        return new Importer(getClient(), languages, new String[]{});
+        return server.createImporter(languages, new String[]{});
     }
 
     protected Updater makeUpdater() {
-        return new Updater(getClient(), new String[]{"en"}, new String[]{});
+        return server.createUpdater(new String[]{"en"}, new String[]{});
     }
 
     protected Updater makeUpdaterWithExtra(String... extraTags) {
-        return new Updater(getClient(), new String[]{"en"}, extraTags);
+        return server.createUpdater(new String[]{"en"}, extraTags);
     }
 
-    protected Client getClient() {
+    protected Server getServer() {
         if (server == null) {
             throw new RuntimeException("call setUpES before using getClient");
         }
 
-        return server.getClient();
+        return server;
     }
 
     protected void refresh() {
-        getClient().admin().indices().refresh(new RefreshRequest(PhotonIndex.NAME)).actionGet();
+        server.refresh();
     }
 
     /**

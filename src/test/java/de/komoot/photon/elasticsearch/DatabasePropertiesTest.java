@@ -1,5 +1,6 @@
 package de.komoot.photon.elasticsearch;
 
+import de.komoot.photon.DatabaseProperties;
 import de.komoot.photon.ESBaseTester;
 import org.junit.jupiter.api.Test;
 
@@ -51,19 +52,4 @@ public class DatabasePropertiesTest extends ESBaseTester {
         assertArrayEquals(new String[]{"de", "en"}, prop.getLanguages());
     }
 
-    @Test
-    public void testSaveAndLoadFromDatabase() throws IOException {
-        setUpES();
-
-        DatabaseProperties prop = new DatabaseProperties();
-        prop.setLanguages(new String[]{"en", "de", "fr"});
-        prop.saveToDatabase(getClient());
-
-        prop = new DatabaseProperties();
-        prop.loadFromDatabase(getClient());
-
-        assertArrayEquals(new String[]{"en", "de", "fr"}, prop.getLanguages());
-
-
-    }
 }

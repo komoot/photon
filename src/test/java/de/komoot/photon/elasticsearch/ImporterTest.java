@@ -2,6 +2,7 @@ package de.komoot.photon.elasticsearch;
 
 import de.komoot.photon.ESBaseTester;
 import de.komoot.photon.PhotonDoc;
+import de.komoot.photon.Importer;
 import org.elasticsearch.action.get.GetResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

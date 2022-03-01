@@ -2,36 +2,33 @@ package de.komoot.photon.utils;
 
 import de.komoot.photon.ESBaseTester;
 import de.komoot.photon.PhotonDoc;
-import de.komoot.photon.elasticsearch.DatabaseProperties;
-import de.komoot.photon.elasticsearch.Importer;
-import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.action.search.SearchType;
-import org.elasticsearch.index.query.QueryBuilders;
+import de.komoot.photon.Importer;
+import de.komoot.photon.query.PhotonRequest;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class ConvertToJsonTest extends ESBaseTester {
 
-    private SearchResponse databaseFromDoc(PhotonDoc doc) throws IOException {
+    private List<JSONObject> databaseFromDoc(PhotonDoc doc) throws IOException {
+        final String name = "abcde";
+        doc.names(Collections.singletonMap("name", name));
+
         setUpES();
         Importer instance = makeImporterWithExtra("maxspeed","website");
         instance.add(doc);
         instance.finish();
         refresh();
 
-        return getClient().prepareSearch("photon")
-                .setSearchType(SearchType.QUERY_THEN_FETCH)
-                .setQuery(QueryBuilders.boolQuery().must(QueryBuilders.matchAllQuery())
-                        .filter(QueryBuilders.boolQuery().mustNot(QueryBuilders.idsQuery().addIds(DatabaseProperties.PROPERTY_DOCUMENT_ID))))
-                .execute()
-                .actionGet();
+        // Indirectly calls converttojson
+        return getServer().createSearchHandler(new String[]{"en", "de", "fr"}).search(new PhotonRequest(name));
     }
 
     @Test
@@ -40,9 +37,7 @@ public class ConvertToJsonTest extends ESBaseTester {
         extratags.put("website", "foo");
         extratags.put("maxspeed", "100 mph");
 
-        SearchResponse response = databaseFromDoc(new PhotonDoc(1234, "N", 1000, "place", "city").extraTags(extratags));
-
-        List<JSONObject> json = new ConvertToJson("de").convert(response, false);
+        List<JSONObject> json = databaseFromDoc(new PhotonDoc(1234, "N", 1000, "place", "city").extraTags(extratags));
 
         JSONObject extra = json.get(0).getJSONObject("properties").getJSONObject("extra");
 
@@ -54,9 +49,7 @@ public class ConvertToJsonTest extends ESBaseTester {
 
     @Test
     public void testConvertWithoutExtraTags() throws IOException {
-        SearchResponse response = databaseFromDoc(new PhotonDoc(1234, "N", 1000, "place", "city"));
-
-        List<JSONObject> json = new ConvertToJson("de").convert(response, false);
+        List<JSONObject> json = databaseFromDoc(new PhotonDoc(1234, "N", 1000, "place", "city"));
 
         assertNull(json.get(0).getJSONObject("properties").optJSONObject("extra"));
     }
