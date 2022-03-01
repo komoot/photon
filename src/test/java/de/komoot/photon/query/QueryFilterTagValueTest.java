@@ -6,6 +6,7 @@ import de.komoot.photon.Importer;
 
 import java.util.List;
 
+import de.komoot.photon.searcher.PhotonResult;
 import org.json.JSONObject;
 import org.junit.jupiter.api.*;
 
@@ -53,7 +54,7 @@ public class QueryFilterTagValueTest extends ESBaseTester {
         return request;
     }
 
-    private List<JSONObject> search(PhotonRequest request) {
+    private List<PhotonResult> search(PhotonRequest request) {
         return getServer().createSearchHandler(new String[]{"en"}).search(request);
     }
 
@@ -62,7 +63,7 @@ public class QueryFilterTagValueTest extends ESBaseTester {
      */
     @Test
     public void testFilterWithTagTourismAttraction() {
-        List<JSONObject> searchResponse = search(queryBerlinWithTags("tourism:attraction"));
+        List<PhotonResult> searchResponse = search(queryBerlinWithTags("tourism:attraction"));
 
         assertEquals(2l, searchResponse.size());
     }
@@ -72,7 +73,7 @@ public class QueryFilterTagValueTest extends ESBaseTester {
      */
     @Test
     public void testValueAttraction() {
-        List<JSONObject> searchResponse = search(queryBerlinWithTags(":attraction"));
+        List<PhotonResult> searchResponse = search(queryBerlinWithTags(":attraction"));
 
         assertEquals(2l, searchResponse.size());
     }
@@ -82,7 +83,7 @@ public class QueryFilterTagValueTest extends ESBaseTester {
      */
     @Test
     public void testKeyTourism() {
-        List<JSONObject> searchResponse = search(queryBerlinWithTags("tourism"));
+        List<PhotonResult> searchResponse = search(queryBerlinWithTags("tourism"));
 
         assertEquals(8l, searchResponse.size());
     }
@@ -92,7 +93,7 @@ public class QueryFilterTagValueTest extends ESBaseTester {
      */
     @Test
     public void testFilterWithoutTagTourismAttraction() {
-        List<JSONObject> searchResponse = search(queryBerlinWithTags("!tourism:attraction"));
+        List<PhotonResult> searchResponse = search(queryBerlinWithTags("!tourism:attraction"));
 
         assertEquals(16l, searchResponse.size());
     }
@@ -102,7 +103,7 @@ public class QueryFilterTagValueTest extends ESBaseTester {
      */
     @Test
     public void testValueNotInformation() {
-        List<JSONObject> searchResponse = search(queryBerlinWithTags("!:information"));
+        List<PhotonResult> searchResponse = search(queryBerlinWithTags("!:information"));
 
         assertEquals(12l, searchResponse.size());
     }
@@ -112,7 +113,7 @@ public class QueryFilterTagValueTest extends ESBaseTester {
      */
     @Test
     public void testValueNotInformationAlt() {
-        List<JSONObject> searchResponse = search(queryBerlinWithTags(":!information"));
+        List<PhotonResult> searchResponse = search(queryBerlinWithTags(":!information"));
 
         assertEquals(12l, searchResponse.size());
     }
@@ -122,7 +123,7 @@ public class QueryFilterTagValueTest extends ESBaseTester {
      */
     @Test
     public void testKeyNotTourism() {
-        List<JSONObject> searchResponse = search(queryBerlinWithTags("!tourism"));
+        List<PhotonResult> searchResponse = search(queryBerlinWithTags("!tourism"));
 
         assertEquals(10l, searchResponse.size());
     }
@@ -132,7 +133,7 @@ public class QueryFilterTagValueTest extends ESBaseTester {
      */
     @Test
     public void testKeyTourismAndValueNotInformation() {
-        List<JSONObject> searchResponse = search(queryBerlinWithTags("tourism:!information"));
+        List<PhotonResult> searchResponse = search(queryBerlinWithTags("tourism:!information"));
 
         assertEquals(6l, searchResponse.size());
     }
@@ -142,7 +143,7 @@ public class QueryFilterTagValueTest extends ESBaseTester {
      */
     @Test
     public void testKeyNotTourismAndKeyNotAmenity() {
-        List<JSONObject> searchResponse = search(queryBerlinWithTags("!tourism", "!amenity"));
+        List<PhotonResult> searchResponse = search(queryBerlinWithTags("!tourism", "!amenity"));
 
         assertEquals(4l, searchResponse.size());
     }
@@ -154,7 +155,7 @@ public class QueryFilterTagValueTest extends ESBaseTester {
      */
     @Test
     public void testKeyTourismAndKeyNotAmenity() {
-        List<JSONObject> searchResponse = search(queryBerlinWithTags("tourism", "!amenity"));
+        List<PhotonResult> searchResponse = search(queryBerlinWithTags("tourism", "!amenity"));
 
         assertEquals(8l, searchResponse.size());
     }
@@ -164,7 +165,7 @@ public class QueryFilterTagValueTest extends ESBaseTester {
      */
     @Test
     public void testValueInformationButKeyNotAmenity() {
-        List<JSONObject> searchResponse = search(queryBerlinWithTags(":information", "!amenity"));
+        List<PhotonResult> searchResponse = search(queryBerlinWithTags(":information", "!amenity"));
 
         assertEquals(4l, searchResponse.size());
     }
@@ -174,7 +175,7 @@ public class QueryFilterTagValueTest extends ESBaseTester {
      */
     @Test
     public void testTagNotTourismAttraction() {
-        List<JSONObject> searchResponse = search(queryBerlinWithTags("!tourism:attraction"));
+        List<PhotonResult> searchResponse = search(queryBerlinWithTags("!tourism:attraction"));
 
         assertEquals(16l, searchResponse.size());
     }

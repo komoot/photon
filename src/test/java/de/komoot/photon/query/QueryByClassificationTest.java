@@ -1,6 +1,7 @@
 package de.komoot.photon.query;
 
 import de.komoot.photon.*;
+import de.komoot.photon.searcher.PhotonResult;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.get.GetResponse;
 import org.json.JSONArray;
@@ -34,7 +35,7 @@ public class QueryByClassificationTest extends ESBaseTester {
         return new PhotonDoc(testDocId, "W", testDocId, key, value).names(Collections.singletonMap("name", name));
     }
 
-    private List<JSONObject> search(String query) {
+    private List<PhotonResult> search(String query) {
         return getServer().createSearchHandler(new String[]{"en"}).search(new PhotonRequest(query));
     }
 
@@ -85,10 +86,10 @@ public class QueryByClassificationTest extends ESBaseTester {
         String classification = (String) response.getSource().get(Constants.CLASSIFICATION);
         assertEquals(classification, class_term);
 
-        List<JSONObject> result = search(class_term + " curli");
+        List<PhotonResult> result = search(class_term + " curli");
 
         assertTrue(result.size() > 0);
-        assertEquals(testDocId, result.get(0).getJSONObject("properties").getInt("osm_id"));
+        assertEquals(testDocId, result.get(0).get("osm_id"));
     }
 
     @Test
@@ -100,14 +101,14 @@ public class QueryByClassificationTest extends ESBaseTester {
 
         updateClassification("amenity", "restaurant", "pub", "kneipe");
 
-        List<JSONObject> result = search("pub curli");
+        List<PhotonResult> result = search("pub curli");
         assertTrue(result.size() > 0);
-        assertEquals(testDocId, result.get(0).getJSONObject("properties").getInt("osm_id"));
+        assertEquals(testDocId, result.get(0).get("osm_id"));
 
 
         result = search("curliflower kneipe");
         assertTrue(result.size() > 0);
-        assertEquals(testDocId, result.get(0).getJSONObject("properties").getInt("osm_id"));
+        assertEquals(testDocId, result.get(0).get("osm_id"));
     }
 
 
@@ -121,14 +122,14 @@ public class QueryByClassificationTest extends ESBaseTester {
 
         updateClassification("aeroway", "terminal", "airport");
 
-        List<JSONObject> result = search("airport");
+        List<PhotonResult> result = search("airport");
         assertTrue(result.size() > 0);
-        assertEquals(testDocId - 1, result.get(0).getJSONObject("properties").getInt("osm_id"));
+        assertEquals(testDocId - 1, result.get(0).get("osm_id"));
 
 
         result = search("airport houston");
         assertTrue(result.size() > 0);
-        assertEquals(testDocId, result.get(0).getJSONObject("properties").getInt("osm_id"));
+        assertEquals(testDocId, result.get(0).get("osm_id"));
     }
 
     @Test
@@ -167,16 +168,16 @@ public class QueryByClassificationTest extends ESBaseTester {
 
         getServer().waitForReady();
 
-        List<JSONObject> result = search("Station newtown");
+        List<PhotonResult> result = search("Station newtown");
         assertTrue(result.size() > 0);
-        assertEquals(testDocId - 1, result.get(0).getJSONObject("properties").getInt("osm_id"));
+        assertEquals(testDocId - 1, result.get(0).get("osm_id"));
 
         result = search("newtown stop");
         assertTrue(result.size() > 0);
-        assertEquals(testDocId - 1, result.get(0).getJSONObject("properties").getInt("osm_id"));
+        assertEquals(testDocId - 1, result.get(0).get("osm_id"));
 
         result = search("king's cross Station");
         assertTrue(result.size() > 0);
-        assertEquals(testDocId, result.get(0).getJSONObject("properties").getInt("osm_id"));
+        assertEquals(testDocId, result.get(0).get("osm_id"));
     }
 }

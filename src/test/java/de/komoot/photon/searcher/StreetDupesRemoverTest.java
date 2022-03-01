@@ -14,30 +14,32 @@ public class StreetDupesRemoverTest {
     @Test
     public void testDeduplicatesStreets() {
         StreetDupesRemover streetDupesRemover = new StreetDupesRemover("en");
-        List<JSONObject> allResults = new ArrayList<>();
+        List<PhotonResult> allResults = new ArrayList<>();
         allResults.add(createDummyResult("99999", "Main Street", "highway", "Unclassified"));
         allResults.add(createDummyResult("99999", "Main Street", "highway", "Unclassified"));
 
-        List<JSONObject> dedupedResults = streetDupesRemover.execute(allResults);
+        List<PhotonResult> dedupedResults = streetDupesRemover.execute(allResults);
         assertEquals(1, dedupedResults.size());
     }
 
     @Test
     public void testStreetAndBusStopNotDeduplicated() {
         StreetDupesRemover streetDupesRemover = new StreetDupesRemover("en");
-        List<JSONObject> allResults = new ArrayList<>();
+        List<PhotonResult> allResults = new ArrayList<>();
         allResults.add(createDummyResult("99999", "Main Street", "highway", "bus_stop"));
         allResults.add(createDummyResult("99999", "Main Street", "highway", "Unclassified"));
 
-        List<JSONObject> dedupedResults = streetDupesRemover.execute(allResults);
+        List<PhotonResult> dedupedResults = streetDupesRemover.execute(allResults);
         assertEquals(2, dedupedResults.size());
     }
     
-    private JSONObject createDummyResult(String postCode, String name, String osmKey,
+    private PhotonResult createDummyResult(String postCode, String name, String osmKey,
                     String osmValue) {
-        return new JSONObject().put(Constants.PROPERTIES, new JSONObject()
-                        .put(Constants.POSTCODE, postCode).put(Constants.NAME, name)
-                        .put(Constants.OSM_KEY, osmKey).put(Constants.OSM_VALUE, osmValue));
+        return new MockPhotonResult()
+                .put(Constants.POSTCODE, postCode)
+                .putLocalized(Constants.NAME, "en", name)
+                .put(Constants.OSM_KEY, osmKey)
+                .put(Constants.OSM_VALUE, osmValue);
     }
 
 }
