@@ -264,31 +264,34 @@ public class NominatimConnector {
 
         ImportThread importThread = new ImportThread(importer);
 
-        template.query(SELECT_COLS_PLACEX + " FROM placex " +
-                " WHERE linked_place_id IS NULL AND centroid IS NOT NULL " + andCountryCodeStr +
-                " ORDER BY geometry_sector, parent_place_id; ", rs -> {
-                    // turns a placex row into a photon document that gathers all de-normalised information
-                    NominatimResult docs = placeRowMapper.mapRow(rs, 0);
-                    assert(docs != null);
+        try {
+            template.query(SELECT_COLS_PLACEX + " FROM placex " +
+                    " WHERE linked_place_id IS NULL AND centroid IS NOT NULL " + andCountryCodeStr +
+                    " ORDER BY geometry_sector, parent_place_id; ", rs -> {
+                // turns a placex row into a photon document that gathers all de-normalised information
+                NominatimResult docs = placeRowMapper.mapRow(rs, 0);
+                assert (docs != null);
 
-                    if (docs.isUsefulForIndex()) {
-                        importThread.addDocument(docs);
-                    }
-                });
+                if (docs.isUsefulForIndex()) {
+                    importThread.addDocument(docs);
+                }
+            });
 
-        template.query(selectOsmlineSql + " FROM location_property_osmline " +
-                "WHERE startnumber is not null " +
-                andCountryCodeStr +
-                " ORDER BY geometry_sector, parent_place_id; ", rs -> {
-                    NominatimResult docs = osmlineRowMapper.mapRow(rs, 0);
-                    assert(docs != null);
+            template.query(selectOsmlineSql + " FROM location_property_osmline " +
+                    "WHERE startnumber is not null " +
+                    andCountryCodeStr +
+                    " ORDER BY geometry_sector, parent_place_id; ", rs -> {
+                NominatimResult docs = osmlineRowMapper.mapRow(rs, 0);
+                assert (docs != null);
 
-                    if (docs.isUsefulForIndex()) {
-                        importThread.addDocument(docs);
-                    }
-                });
+                if (docs.isUsefulForIndex()) {
+                    importThread.addDocument(docs);
+                }
+            });
 
-        importThread.finish();
+        } finally {
+            importThread.finish();
+        }
     }
 
     /**
