@@ -1,6 +1,5 @@
 package de.komoot.photon.query;
 
-import com.google.common.base.Joiner;
 import lombok.AllArgsConstructor;
 import spark.Request;
 import spark.utils.StringUtils;
@@ -70,7 +69,7 @@ public class RequestLanguageResolver {
      */
     private void checkLanguageSupported(String lang) throws BadRequestException {
         if (!("default".equals(lang) || supportedLanguages.contains((lang)))) {
-            throw new BadRequestException(400, "language " + lang + " is not supported, supported languages are: default, " + Joiner.on(", ").join(supportedLanguages));
+            throw new BadRequestException(400, "language " + lang + " is not supported, supported languages are: default, " + String.join(", ", supportedLanguages));
         }
     }
 }

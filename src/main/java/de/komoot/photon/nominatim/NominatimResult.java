@@ -1,16 +1,12 @@
 package de.komoot.photon.nominatim;
 
-import com.google.common.collect.ImmutableList;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.linearref.LengthIndexedLine;
 import de.komoot.photon.PhotonDoc;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Pattern;
 
 /**
@@ -39,7 +35,7 @@ class NominatimResult {
 
     List<PhotonDoc> getDocsWithHousenumber() {
         if (housenumbers == null || housenumbers.isEmpty()) {
-            return ImmutableList.of(doc);
+            return Collections.singletonList(doc);
         }
 
         List<PhotonDoc> results = new ArrayList<>(housenumbers.size());

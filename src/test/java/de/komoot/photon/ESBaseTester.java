@@ -1,6 +1,5 @@
 package de.komoot.photon;
 
-import com.google.common.collect.ImmutableMap;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
@@ -12,6 +11,7 @@ import org.junit.jupiter.api.AfterEach;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
 
 /**
  * Start an ES server with some test data that then can be queried in tests that extend this class
@@ -26,9 +26,8 @@ public class ESBaseTester {
     private Server server;
 
     protected PhotonDoc createDoc(double lon, double lat, int id, int osmId, String key, String value) {
-        ImmutableMap<String, String> nameMap = ImmutableMap.of("name", "berlin");
         Point location = FACTORY.createPoint(new Coordinate(lon, lat));
-        return new PhotonDoc(id, "W", osmId, key, value).names(nameMap).centroid(location);
+        return new PhotonDoc(id, "W", osmId, key, value).names(Collections.singletonMap("name", "berlin")).centroid(location);
     }
 
     protected GetResponse getById(int id) {

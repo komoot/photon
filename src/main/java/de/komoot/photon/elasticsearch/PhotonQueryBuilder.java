@@ -1,7 +1,6 @@
 package de.komoot.photon.elasticsearch;
 
 
-import com.google.common.collect.ImmutableSet;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Point;
 import org.elasticsearch.common.lucene.search.function.CombineFunction;
@@ -14,8 +13,6 @@ import org.elasticsearch.index.query.functionscore.ScoreFunctionBuilders;
 import org.elasticsearch.index.query.functionscore.WeightBuilder;
 
 import java.util.*;
-
-import static com.google.common.collect.Maps.newHashMap;
 
 
 /**
@@ -166,7 +163,7 @@ public class PhotonQueryBuilder {
             scale = 0.0000001;
         }
 
-        Map<String, Object> params = newHashMap();
+        Map<String, Object> params = new HashMap<>();
         params.put("lon", point.getX());
         params.put("lat", point.getY());
 
@@ -300,30 +297,10 @@ public class PhotonQueryBuilder {
     }
 
 
-    public PhotonQueryBuilder withKeys(String... keys) {
-        return this.withKeys(ImmutableSet.<String>builder().add(keys).build());
-    }
-
-
-    public PhotonQueryBuilder withValues(String... values) {
-        return this.withValues(ImmutableSet.<String>builder().add(values).build());
-    }
-
-
-    public PhotonQueryBuilder withoutKeys(String... keysToExclude) {
-        return this.withoutKeys(ImmutableSet.<String>builder().add(keysToExclude).build());
-    }
-
-
-    public PhotonQueryBuilder withoutValues(String... valuesToExclude) {
-        return this.withoutValues(ImmutableSet.<String>builder().add(valuesToExclude).build());
-    }
-
-
     /**
-     * When this method is called, all filters are placed inside their {@link OrQueryBuilder OR} or {@link AndQueryBuilder AND} containers and the top level filter
-     * builder is built. Subsequent invocations of this method have no additional effect. Note that after this method is called, calling other methods on this class also
-     * have no effect.
+     * When this method is called, all filters are placed inside their containers and the top level filter
+     * builder is built. Subsequent invocations of this method have no additional effect. Note that after this method
+     * is called, calling other methods on this class also have no effect.
      */
     public QueryBuilder buildQuery() {
         if (state.equals(State.FINISHED)) return finalQueryBuilder;

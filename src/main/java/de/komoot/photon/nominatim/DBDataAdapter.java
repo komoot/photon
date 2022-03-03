@@ -3,7 +3,6 @@ package de.komoot.photon.nominatim;
 import com.vividsolutions.jts.geom.Geometry;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import javax.annotation.Nullable;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Map;
@@ -20,7 +19,6 @@ public interface DBDataAdapter {
     /**
      * Create a JTS geometry from the given column data.
      */
-    @Nullable
     Geometry extractGeometry(ResultSet rs, String columnName) throws SQLException;
 
     /**

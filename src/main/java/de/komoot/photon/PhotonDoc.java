@@ -1,6 +1,5 @@
 package de.komoot.photon;
 
-import com.google.common.collect.ImmutableMap;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Point;
@@ -202,7 +201,7 @@ public class PhotonDoc {
                 }
                 // we keep the former name in the context as it might be helpful when looking up typos
                 if (!Objects.isNull(existingName)) {
-                    context.add(ImmutableMap.of("formerName", existingName));
+                    context.add(Collections.singletonMap("formerName", existingName));
                 }
                 map.put("name", field);
             }
