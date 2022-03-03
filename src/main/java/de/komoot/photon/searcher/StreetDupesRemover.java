@@ -1,20 +1,14 @@
 package de.komoot.photon.searcher;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import de.komoot.photon.Constants;
 import de.komoot.photon.Utils;
-import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
 /**
- * This is copy over from the method
- * <pre>private List<JSONObject> removeStreetDuplicates(List<JSONObject> results, String lang)</pre>
- * in class {@link de.komoot.photon.App}
- * <p/>
- * Created by Sachin Dole on 2/20/2015.
+ * Filter out duplicate streets from the list.
  */
 public class StreetDupesRemover {
     private final String language;
@@ -23,26 +17,30 @@ public class StreetDupesRemover {
         this.language = language;
     }
 
-    public List<JSONObject> execute(List<JSONObject>... allResults) {
-        List<JSONObject> results = allResults[0];
-        List<JSONObject> filteredItems = Lists.newArrayListWithCapacity(results.size());
-        final HashSet<String> keys = Sets.newHashSet();
-        for (JSONObject result : results) {
-            final JSONObject properties = result.getJSONObject(Constants.PROPERTIES);
-            if (properties.has(Constants.OSM_KEY) && "highway".equals(properties.getString(Constants.OSM_KEY))) {
+    public List<PhotonResult> execute(List<PhotonResult> results) {
+        final List<PhotonResult> filteredItems = new ArrayList<>(results.size());
+        final HashSet<String> keys = new HashSet<>();
+
+        for (PhotonResult result : results) {
+            if ("highway".equals(result.get(Constants.OSM_KEY))) {
                 // result is a street
-                if (properties.has(Constants.POSTCODE) && properties.has(Constants.NAME)) {
+                final String postcode = (String) result.get(Constants.POSTCODE);
+                final String name = result.getLocalised(Constants.NAME, language);
+
+                if (postcode != null && name != null) {
                     // street has a postcode and name
-                    String postcode = properties.getString(Constants.POSTCODE);
-                    String name = properties.getString(Constants.NAME);
-                    // OSM_VALUE is part of key to avoid deduplication of e.g. bus_stops and streets with same name 
-                    String key = (properties.has(Constants.OSM_VALUE) ? properties.getString(Constants.OSM_VALUE) : "") + ":";
+
+                    // OSM_VALUE is part of key to avoid deduplication of e.g. bus_stops and streets with same name
+                    String key = (String) result.get(Constants.OSM_VALUE);
+                    if (key == null) {
+                        key = "";
+                    }
 
                     if (language.equals("nl")) {
-                        String onlyDigitsPostcode = Utils.stripNonDigits(postcode);
-                        key += onlyDigitsPostcode + ":" + name;
+                        final String onlyDigitsPostcode = Utils.stripNonDigits(postcode);
+                        key += ":" + onlyDigitsPostcode + ":" + name;
                     } else {
-                        key += postcode + ":" + name;
+                        key += ":" + postcode + ":" + name;
                     }
 
                     if (keys.contains(key)) {
@@ -54,6 +52,7 @@ public class StreetDupesRemover {
             }
             filteredItems.add(result);
         }
+
         return filteredItems;
     }
 }

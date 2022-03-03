@@ -3,8 +3,9 @@ package de.komoot.photon;
 import de.komoot.photon.query.BadRequestException;
 import de.komoot.photon.query.ReverseRequest;
 import de.komoot.photon.query.ReverseRequestFactory;
+import de.komoot.photon.searcher.GeocodeJsonFormatter;
+import de.komoot.photon.searcher.PhotonResult;
 import de.komoot.photon.searcher.ReverseHandler;
-import de.komoot.photon.utils.ConvertToGeoJson;
 import org.json.JSONObject;
 import spark.Request;
 import spark.Response;
@@ -21,13 +22,11 @@ import static spark.Spark.halt;
 public class ReverseSearchRequestHandler extends RouteImpl {
     private final ReverseRequestFactory reverseRequestFactory;
     private final ReverseHandler requestHandler;
-    private final ConvertToGeoJson geoJsonConverter;
 
     ReverseSearchRequestHandler(String path, ReverseHandler dbHandler, String[] languages, String defaultLanguage) {
         super(path);
         List<String> supportedLanguages = Arrays.asList(languages);
         this.reverseRequestFactory = new ReverseRequestFactory(supportedLanguages, defaultLanguage);
-        this.geoJsonConverter = new ConvertToGeoJson();
         this.requestHandler = dbHandler;
     }
 
@@ -41,11 +40,14 @@ public class ReverseSearchRequestHandler extends RouteImpl {
             json.put("message", e.getMessage());
             halt(e.getHttpStatus(), json.toString());
         }
-        List<JSONObject> results = requestHandler.reverse(photonRequest);
-        JSONObject geoJsonResults = geoJsonConverter.convert(results);
-        if (request.queryParams("debug") != null)
-            return geoJsonResults.toString(4);
 
-        return geoJsonResults.toString();
+        List<PhotonResult> results = requestHandler.reverse(photonRequest);
+
+        // Restrict to the requested limit.
+        if (results.size() > photonRequest.getLimit()) {
+            results = results.subList(0, photonRequest.getLimit());
+        }
+
+        return new GeocodeJsonFormatter(false, photonRequest.getLanguage()).convert(results, null);
     }
 }

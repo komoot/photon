@@ -1,16 +1,16 @@
 package de.komoot.photon.elasticsearch;
 
 import de.komoot.photon.query.PhotonRequest;
+import de.komoot.photon.searcher.PhotonResult;
 import de.komoot.photon.searcher.SearchHandler;
-import de.komoot.photon.searcher.StreetDupesRemover;
-import de.komoot.photon.utils.ConvertToJson;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.index.query.QueryBuilder;
-import org.json.JSONObject;
+import org.elasticsearch.search.SearchHit;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -27,24 +27,25 @@ public class ElasticsearchSearchHandler implements SearchHandler {
     }
 
     @Override
-    public List<JSONObject> search(PhotonRequest photonRequest) {
-        lastLenient = false;
+    public List<PhotonResult> search(PhotonRequest photonRequest) {
         PhotonQueryBuilder queryBuilder = buildQuery(photonRequest, false);
+
         // for the case of deduplication we need a bit more results, #300
         int limit = photonRequest.getLimit();
         int extLimit = limit > 1 ? (int) Math.round(photonRequest.getLimit() * 1.5) : 1;
+
         SearchResponse results = sendQuery(queryBuilder.buildQuery(), extLimit);
+
         if (results.getHits().getTotalHits() == 0) {
-            lastLenient = true;
             results = sendQuery(buildQuery(photonRequest, true).buildQuery(), extLimit);
         }
-        List<JSONObject> resultJsonObjects = new ConvertToJson(photonRequest.getLanguage()).convert(results, photonRequest.getDebug());
-        StreetDupesRemover streetDupesRemover = new StreetDupesRemover(photonRequest.getLanguage());
-        resultJsonObjects = streetDupesRemover.execute(resultJsonObjects);
-        if (resultJsonObjects.size() > limit) {
-            resultJsonObjects = resultJsonObjects.subList(0, limit);
+
+        List<PhotonResult> ret = new ArrayList<>((int) results.getHits().getTotalHits());
+        for (SearchHit hit : results.getHits()) {
+            ret.add(new ElasticResult(hit));
         }
-        return resultJsonObjects;
+
+        return ret;
     }
 
     public String dumpQuery(PhotonRequest photonRequest) {
@@ -52,6 +53,7 @@ public class ElasticsearchSearchHandler implements SearchHandler {
     }
 
    public PhotonQueryBuilder buildQuery(PhotonRequest photonRequest, boolean lenient) {
+       lastLenient = lenient;
         return PhotonQueryBuilder.
                 builder(photonRequest.getQuery(), photonRequest.getLanguage(), supportedLanguages, lenient).
                 withTags(photonRequest.tags()).

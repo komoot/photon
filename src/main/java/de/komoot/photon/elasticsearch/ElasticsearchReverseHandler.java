@@ -2,8 +2,8 @@ package de.komoot.photon.elasticsearch;
 
 import com.vividsolutions.jts.geom.Point;
 import de.komoot.photon.query.ReverseRequest;
+import de.komoot.photon.searcher.PhotonResult;
 import de.komoot.photon.searcher.ReverseHandler;
-import de.komoot.photon.utils.ConvertToJson;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
@@ -11,14 +11,15 @@ import org.elasticsearch.client.Client;
 import org.elasticsearch.common.geo.GeoPoint;
 import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
-import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author svantulden
+ * Execute a reverse lookup on a Elasticsearch database.
  */
 public class ElasticsearchReverseHandler implements ReverseHandler {
     private Client client;
@@ -28,15 +29,17 @@ public class ElasticsearchReverseHandler implements ReverseHandler {
     }
 
     @Override
-    public List<JSONObject> reverse(ReverseRequest photonRequest) {
+    public List<PhotonResult> reverse(ReverseRequest photonRequest) {
         ReverseQueryBuilder queryBuilder = buildQuery(photonRequest);
         SearchResponse results = search(queryBuilder.buildQuery(), photonRequest.getLimit(), photonRequest.getLocation(),
                 photonRequest.getLocationDistanceSort());
-        List<JSONObject> resultJsonObjects = new ConvertToJson(photonRequest.getLanguage()).convert(results, false);
-        if (resultJsonObjects.size() > photonRequest.getLimit()) {
-            resultJsonObjects = resultJsonObjects.subList(0, photonRequest.getLimit());
+
+        List<PhotonResult> ret = new ArrayList<>((int) results.getHits().getTotalHits());
+        for (SearchHit hit : results.getHits()) {
+            ret.add(new ElasticResult(hit));
         }
-        return resultJsonObjects;
+
+        return ret;
     }
 
 

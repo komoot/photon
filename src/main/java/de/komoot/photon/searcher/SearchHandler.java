@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface SearchHandler {
 
-    List<JSONObject> search(PhotonRequest photonRequest);
+    List<PhotonResult> search(PhotonRequest photonRequest);
 
     String dumpQuery(PhotonRequest photonRequest);
 }

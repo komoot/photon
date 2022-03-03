@@ -3,7 +3,7 @@ package de.komoot.photon.query;
 import de.komoot.photon.ESBaseTester;
 import de.komoot.photon.Importer;
 import de.komoot.photon.PhotonDoc;
-import org.json.JSONObject;
+import de.komoot.photon.searcher.PhotonResult;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -38,7 +38,7 @@ public class QueryBasicSearchTest extends ESBaseTester {
         return new PhotonDoc(testDocId, "N", testDocId, "place", "city").names(nameMap);
     }
 
-    private List<JSONObject> search(String query) {
+    private List<PhotonResult> search(String query) {
         return getServer().createSearchHandler(new String[]{"en"}).search(new PhotonRequest(query, 10, null, null, 0.2, 14, "en", false));
     }
 

@@ -4,8 +4,8 @@ import de.komoot.photon.ESBaseTester;
 import de.komoot.photon.PhotonDoc;
 import de.komoot.photon.Importer;
 import de.komoot.photon.nominatim.model.AddressType;
+import de.komoot.photon.searcher.PhotonResult;
 import lombok.extern.slf4j.Slf4j;
-import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -41,7 +41,7 @@ public class QueryByLanguageTest extends ESBaseTester {
         return new PhotonDoc(testDocId, "W", testDocId, "place", "city").names(nameMap);
     }
 
-    private List<JSONObject> search(String query, String lang) {
+    private List<PhotonResult> search(String query, String lang) {
         return getServer().createSearchHandler(languageList).search(new PhotonRequest(query, 10, null, null, 0.2, 14, lang, true));
     }
 
@@ -58,8 +58,8 @@ public class QueryByLanguageTest extends ESBaseTester {
         assertEquals(1, search("finish", "en").size());
         assertEquals(0, search("russian", "en").size());
 
-        float enScore = search("finish", "en").get(0).getFloat("score");
-        float fiScore = search("finish", "fi").get(0).getFloat("score");
+        double enScore = search("finish", "en").get(0).getScore();
+        double fiScore = search("finish", "fi").get(0).getScore();
 
         assertTrue(fiScore > enScore);
     }
