@@ -7,6 +7,7 @@ import de.komoot.photon.Importer;
 import java.util.List;
 
 import de.komoot.photon.searcher.PhotonResult;
+import de.komoot.photon.searcher.TagFilter;
 import org.json.JSONObject;
 import org.junit.jupiter.api.*;
 
@@ -47,9 +48,11 @@ public class QueryFilterTagValueTest extends ESBaseTester {
         shutdownES();
     }
 
-    private PhotonRequest queryBerlinWithTags(String... params) {
-        PhotonRequest request = new PhotonRequest("berlin", 100, null, null, 0.2, 14, "en", false);
-        request.setUpTagFilters(params);
+    private PhotonRequest queryBerlinWithTags(String... params) throws BadRequestException {
+        PhotonRequest request = new PhotonRequest("berlin", "en");
+        for (String param : params) {
+            request.addOsmTagFilter(TagFilter.buildOsmTagFilter(param));
+        }
 
         return request;
     }
@@ -62,7 +65,7 @@ public class QueryFilterTagValueTest extends ESBaseTester {
      * Find me all places named "berlin" that are tagged "tourism=attraction"
      */
     @Test
-    public void testFilterWithTagTourismAttraction() {
+    public void testFilterWithTagTourismAttraction() throws BadRequestException {
         List<PhotonResult> searchResponse = search(queryBerlinWithTags("tourism:attraction"));
 
         assertEquals(2l, searchResponse.size());
@@ -72,7 +75,7 @@ public class QueryFilterTagValueTest extends ESBaseTester {
      * Find me all places named "berlin" that are tagged with a value of "attraction".
      */
     @Test
-    public void testValueAttraction() {
+    public void testValueAttraction() throws BadRequestException {
         List<PhotonResult> searchResponse = search(queryBerlinWithTags(":attraction"));
 
         assertEquals(2l, searchResponse.size());
@@ -82,7 +85,7 @@ public class QueryFilterTagValueTest extends ESBaseTester {
      * Find me all places named "berlin" that are tagged with key "tourism".
      */
     @Test
-    public void testKeyTourism() {
+    public void testKeyTourism() throws BadRequestException {
         List<PhotonResult> searchResponse = search(queryBerlinWithTags("tourism"));
 
         assertEquals(8l, searchResponse.size());
@@ -92,7 +95,7 @@ public class QueryFilterTagValueTest extends ESBaseTester {
      * Find me all places named "berlin" that are NOT tagged "tourism=attraction"
      */
     @Test
-    public void testFilterWithoutTagTourismAttraction() {
+    public void testFilterWithoutTagTourismAttraction() throws BadRequestException {
         List<PhotonResult> searchResponse = search(queryBerlinWithTags("!tourism:attraction"));
 
         assertEquals(16l, searchResponse.size());
@@ -102,7 +105,7 @@ public class QueryFilterTagValueTest extends ESBaseTester {
      * Find me all places named "berlin" that do not have the value "information" in their TAGS - no matter what key
      */
     @Test
-    public void testValueNotInformation() {
+    public void testValueNotInformation() throws BadRequestException {
         List<PhotonResult> searchResponse = search(queryBerlinWithTags("!:information"));
 
         assertEquals(12l, searchResponse.size());
@@ -112,7 +115,7 @@ public class QueryFilterTagValueTest extends ESBaseTester {
      * Find me all places named "berlin" that do not have the value "information" in their TAGS - no matter what key
      */
     @Test
-    public void testValueNotInformationAlt() {
+    public void testValueNotInformationAlt() throws BadRequestException {
         List<PhotonResult> searchResponse = search(queryBerlinWithTags(":!information"));
 
         assertEquals(12l, searchResponse.size());
@@ -122,7 +125,7 @@ public class QueryFilterTagValueTest extends ESBaseTester {
      * Find me all places named "berlin" that do not have the key "tourism" in their TAGS
      */
     @Test
-    public void testKeyNotTourism() {
+    public void testKeyNotTourism() throws BadRequestException {
         List<PhotonResult> searchResponse = search(queryBerlinWithTags("!tourism"));
 
         assertEquals(10l, searchResponse.size());
@@ -132,7 +135,7 @@ public class QueryFilterTagValueTest extends ESBaseTester {
      * Find me all places named "berlin" that are tagged with the key "tourism" but not tagged with value "information".
      */
     @Test
-    public void testKeyTourismAndValueNotInformation() {
+    public void testKeyTourismAndValueNotInformation() throws BadRequestException {
         List<PhotonResult> searchResponse = search(queryBerlinWithTags("tourism:!information"));
 
         assertEquals(6l, searchResponse.size());
@@ -142,7 +145,7 @@ public class QueryFilterTagValueTest extends ESBaseTester {
      * Find me all places named "berlin" that are tagged without the keys "tourism" and "amenity".
      */
     @Test
-    public void testKeyNotTourismAndKeyNotAmenity() {
+    public void testKeyNotTourismAndKeyNotAmenity() throws BadRequestException {
         List<PhotonResult> searchResponse = search(queryBerlinWithTags("!tourism", "!amenity"));
 
         assertEquals(4l, searchResponse.size());
@@ -154,7 +157,7 @@ public class QueryFilterTagValueTest extends ESBaseTester {
      * on "amenity"
      */
     @Test
-    public void testKeyTourismAndKeyNotAmenity() {
+    public void testKeyTourismAndKeyNotAmenity() throws BadRequestException {
         List<PhotonResult> searchResponse = search(queryBerlinWithTags("tourism", "!amenity"));
 
         assertEquals(8l, searchResponse.size());
@@ -164,7 +167,7 @@ public class QueryFilterTagValueTest extends ESBaseTester {
      * Find me all places named "berlin" that have value "information" but not key "amenity"
      */
     @Test
-    public void testValueInformationButKeyNotAmenity() {
+    public void testValueInformationButKeyNotAmenity() throws BadRequestException {
         List<PhotonResult> searchResponse = search(queryBerlinWithTags(":information", "!amenity"));
 
         assertEquals(4l, searchResponse.size());
@@ -174,7 +177,7 @@ public class QueryFilterTagValueTest extends ESBaseTester {
      * Find me all places named "berlin" that do not have the tag tourism=attraction
      */
     @Test
-    public void testTagNotTourismAttraction() {
+    public void testTagNotTourismAttraction() throws BadRequestException {
         List<PhotonResult> searchResponse = search(queryBerlinWithTags("!tourism:attraction"));
 
         assertEquals(16l, searchResponse.size());

@@ -36,7 +36,7 @@ public class QueryByClassificationTest extends ESBaseTester {
     }
 
     private List<PhotonResult> search(String query) {
-        return getServer().createSearchHandler(new String[]{"en"}).search(new PhotonRequest(query));
+        return getServer().createSearchHandler(new String[]{"en"}).search(new PhotonRequest(query, "en"));
     }
 
     private void updateClassification(String key, String value, String... terms) {

@@ -1,7 +1,6 @@
 package de.komoot.photon.query;
 
-import com.vividsolutions.jts.geom.Envelope;
-import com.vividsolutions.jts.geom.Point;
+import de.komoot.photon.searcher.TagFilter;
 import spark.QueryParamsMap;
 import spark.Request;
 
@@ -11,7 +10,6 @@ import java.util.List;
 
 /**
  * A factory that creates a {@link PhotonRequest} from a {@link Request web request}
- * Created by Sachin Dole on 2/12/2015.
  */
 public class PhotonRequestFactory {
     private final RequestLanguageResolver languageResolver;
@@ -27,56 +25,64 @@ public class PhotonRequestFactory {
     }
 
     public PhotonRequest create(Request webRequest) throws BadRequestException {
-
-
         for (String queryParam : webRequest.queryParams())
             if (!REQUEST_QUERY_PARAMS.contains(queryParam))
                 throw new BadRequestException(400, "unknown query parameter '" + queryParam + "'.  Allowed parameters are: " + REQUEST_QUERY_PARAMS);
 
-        String language = languageResolver.resolveRequestedLanguage(webRequest);
-
         String query = webRequest.queryParams("q");
-        if (query == null) throw new BadRequestException(400, "missing search term 'q': /?q=berlin");
-        int limit;
-        try {
-            limit = Integer.valueOf(webRequest.queryParams("limit"));
-        } catch (NumberFormatException e) {
-            limit = 15;
+        if (query == null) {
+            throw new BadRequestException(400, "missing search term 'q': /?q=berlin");
         }
 
-        Point locationForBias = optionalLocationParamConverter.apply(webRequest);
-        Envelope bbox = bboxParamConverter.apply(webRequest);
+        PhotonRequest request = new PhotonRequest(query, languageResolver.resolveRequestedLanguage(webRequest));
 
-        double scale = 0.2;
-        String scaleStr = webRequest.queryParams("location_bias_scale");
-        if (scaleStr != null && !scaleStr.isEmpty())
-            try {
-                scale = Double.parseDouble(scaleStr);
-            } catch (Exception nfe) {
-                throw new BadRequestException(400, "invalid parameter 'location_bias_scale' must be a number");
-            }
+        request.setLimit(parseInt(webRequest, "limit"));
+        request.setLocationForBias(optionalLocationParamConverter.apply(webRequest));
+        request.setBbox(bboxParamConverter.apply(webRequest));
+        request.setScale(parseDouble(webRequest, "location_bias_scale"));
+        request.setZoom(parseInt(webRequest, "zoom"));
 
-        int zoom = 14;
-        String zoomStr = webRequest.queryParams("zoom");
-        if (zoomStr != null && !zoomStr.isEmpty()) {
-            try {
-                zoom = Integer.parseInt(zoomStr);
-            } catch (NumberFormatException e) {
-                throw new BadRequestException(400, "Invalid parameter 'zoom'. Must be a number.");
-            }
+        if (webRequest.queryParams("debug") != null) {
+            request.enableDebug();
         }
-
-        boolean debug = webRequest.queryParams("debug") != null;
-
-        PhotonRequest request = new PhotonRequest(query, limit, bbox, locationForBias, scale, zoom, language, debug);
 
         QueryParamsMap tagFiltersQueryMap = webRequest.queryMap("osm_tag");
-        if (new CheckIfFilteredRequest().execute(tagFiltersQueryMap)) {
-            request.setUpTagFilters(tagFiltersQueryMap.values());
+        if (tagFiltersQueryMap.hasValue()) {
+            for (String filter : tagFiltersQueryMap.values()) {
+                request.addOsmTagFilter(TagFilter.buildOsmTagFilter(filter));
+            }
         }
-
 
         return request;
     }
 
+    private Integer parseInt(Request webRequest, String param) throws BadRequestException {
+        Integer intVal = null;
+        String value = webRequest.queryParams(param);
+
+        if (value != null && !value.isEmpty()) {
+            try {
+                intVal = Integer.valueOf(value);
+            } catch (NumberFormatException e) {
+                throw new BadRequestException(400, String.format("Invalid parameter '%s': must be a number", param));
+            }
+        }
+
+        return intVal;
+    }
+
+    private Double parseDouble(Request webRequest, String param) throws BadRequestException {
+        Double intVal = null;
+        String value = webRequest.queryParams(param);
+
+        if (value != null && value.isEmpty()) {
+            try {
+                intVal = Double.valueOf(value);
+            } catch (NumberFormatException e) {
+                throw new BadRequestException(400, String.format("Invalid parameter '%s': must be a number", param));
+            }
+        }
+
+        return intVal;
+    }
 }

@@ -2,55 +2,36 @@ package de.komoot.photon.query;
 
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Point;
+import de.komoot.photon.searcher.TagFilter;
 
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Collection of query parameters for a search request.
  */
-public class PhotonRequest implements Serializable {
-    private String query;
-    private Integer limit;
-    private Point locationForBias;
-    private String language;
-    private final double scale;
-    private final int zoom;
-    private Envelope bbox;
-    private boolean debug;
+public class PhotonRequest {
+    private final String query;
+    private final String language;
+    private int limit = 15;
+    private Point locationForBias = null;
+    private double scale = 0.2;
+    private int zoom = 14;
+    private Envelope bbox = null;
+    private boolean debug = false;
 
-    private Set<String> excludeKeys;
-    private Set<String> includeKeys;
-    private Set<String> excludeValues;
-    private Set<String> includeValues;
-    private Map<String, Set<String>> includeTags;
-    private Map<String, Set<String>> excludeTags;
-    private Map<String, Set<String>> excludeTagValues;
+    private final List<TagFilter> osmTagFilters = new ArrayList<>(1);
 
 
-    public PhotonRequest(String query, int limit, Envelope bbox, Point locationForBias, double scale, int zoom, String language, boolean debug) {
+    public PhotonRequest(String query, String language) {
         this.query = query;
-        this.limit = limit;
-        this.locationForBias = locationForBias;
-        this.scale = scale;
-        this.zoom = zoom;
         this.language = language;
-        this.bbox = bbox;
-        this.debug = debug;
-    }
-
-    public PhotonRequest(String query) {
-        this(query, 10, null, null, 0.2, 14, "default", false);
     }
 
     public String getQuery() {
         return query;
     }
 
-    public Integer getLimit() {
+    public int getLimit() {
         return limit;
     }
     
@@ -76,136 +57,52 @@ public class PhotonRequest implements Serializable {
 
     public boolean getDebug() { return debug; }
 
-    public Set<String> keys() {
-        return includeKeys;
+    public List<TagFilter> getOsmTagFilters() {
+        return osmTagFilters;
     }
 
-    public Set<String> values() {
-        return includeValues;
+    PhotonRequest addOsmTagFilter(TagFilter filter) {
+        osmTagFilters.add(filter);
+        return this;
     }
 
-    public Map<String, Set<String>> tags() {
-        return includeTags;
-    }
-
-    public Set<String> notValues() {
-        return excludeValues;
-    }
-
-    public Map<String, Set<String>> notTags() {
-        return excludeTags;
-    }
-
-    public Set<String> notKeys() {
-        return excludeKeys;
-    }
-
-    public Map<String, Set<String>> tagNotValues() {
-        return excludeTagValues;
-
-    }
-
-    private void addExcludeValues(String value) {
-        if (excludeValues == null) {
-            excludeValues = new HashSet<>(3);
+    PhotonRequest setLimit(Integer limit) {
+        if (limit != null) {
+            this.limit = Integer.max(Integer.min(limit, 50), 1);
         }
-        excludeValues.add(value);
+        return this;
     }
 
-    private void addIncludeValues(String value) {
-        if (includeValues == null) {
-            includeValues = new HashSet<>(3);
+    PhotonRequest setLocationForBias(Point locationForBias) {
+        if (locationForBias != null) {
+            this.locationForBias = locationForBias;
         }
-        includeValues.add(value);
+        return this;
     }
 
-    private void addExcludeKeys(String value) {
-        if (excludeKeys == null) {
-            excludeKeys = new HashSet<>(3);
+    PhotonRequest setScale(Double scale) {
+        if (scale != null) {
+            this.scale = Double.max(Double.min(scale, 1.0), 0.0);
         }
-        excludeKeys.add(value);
+        return this;
     }
 
-    private void addIncludeKeys(String value) {
-        if (includeKeys == null) {
-            includeKeys = new HashSet<>(3);
+    PhotonRequest setZoom(Integer zoom) {
+        if (zoom != null) {
+            this.zoom = Integer.max(Integer.min(zoom, 18), 0);
         }
-        includeKeys.add(value);
+        return this;
     }
 
-    private void addExcludeTags(String key, String value) {
-        if (excludeTags == null) {
-            excludeTags = new HashMap<>(3);
+    PhotonRequest setBbox(Envelope bbox) {
+        if (bbox != null) {
+            this.bbox = bbox;
         }
-
-        excludeTags.computeIfAbsent(key, k -> new HashSet<>()).add(value);
+        return this;
     }
 
-    private void addExcludeTagValues(String key, String value) {
-        if (excludeTagValues == null) {
-            excludeTagValues = new HashMap<>(3);
-        }
-
-        excludeTagValues.computeIfAbsent(key, k -> new HashSet<>()).add(value);
-    }
-
-    private void addIncludeTags(String key, String value) {
-        if (includeTags == null) {
-            includeTags = new HashMap<>(3);
-        }
-
-        includeTags.computeIfAbsent(key, k -> new HashSet<>()).add(value);
-    }
-
-   public void setUpTagFilters(String[] tagFilters) {
-        for (String tagFilter : tagFilters) {
-            if (tagFilter.contains(":")) {
-                //might be tag and value OR just value.
-                if (tagFilter.startsWith("!")) {
-                    //exclude
-                    String keyValueCandidate = tagFilter.substring(1);
-                    if (keyValueCandidate.startsWith(":")) {
-                        //just value
-                        addExcludeValues(keyValueCandidate.substring(1));
-                    } else {
-                        //key and value
-                        String[] keyAndValue = keyValueCandidate.split(":");
-                        String excludeKey = keyAndValue[0];
-                        String value = keyAndValue[1].startsWith("!") ? keyAndValue[1].substring(1) : keyAndValue[1];
-                        addExcludeTags(excludeKey, value);
-                    }
-                } else {
-                    //include key, not sure about value
-                    if (tagFilter.startsWith(":")) {
-                        //just value
-
-                        String valueCandidate = tagFilter.substring(1);
-                        if (valueCandidate.startsWith("!")) {
-                            addExcludeValues(valueCandidate.substring(1));
-                        } else {
-                            addIncludeValues(valueCandidate);
-                        }
-                    } else {
-                        //key and value
-                        String[] keyAndValue = tagFilter.split(":");
-
-                        String key = keyAndValue[0];
-                        String value = keyAndValue[1];
-                        if (value.startsWith("!")) {
-                            addExcludeTagValues(key, value.substring(1));
-                        } else {
-                            addIncludeTags(key, value);
-                        }
-                    }
-                }
-            } else {
-                //only tag
-                if (tagFilter.startsWith("!")) {
-                    addExcludeKeys(tagFilter.substring(1));
-                } else {
-                    addIncludeKeys(tagFilter);
-                }
-            }
-        }
+    PhotonRequest enableDebug() {
+        this.debug = true;
+        return this;
     }
 }

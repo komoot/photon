@@ -56,13 +56,7 @@ public class ElasticsearchSearchHandler implements SearchHandler {
        lastLenient = lenient;
         return PhotonQueryBuilder.
                 builder(photonRequest.getQuery(), photonRequest.getLanguage(), supportedLanguages, lenient).
-                withTags(photonRequest.tags()).
-                withKeys(photonRequest.keys()).
-                withValues(photonRequest.values()).
-                withoutTags(photonRequest.notTags()).
-                withoutKeys(photonRequest.notKeys()).
-                withoutValues(photonRequest.notValues()).
-                withTagsNotValues(photonRequest.tagNotValues()).
+                withOsmTagFilters(photonRequest.getOsmTagFilters()).
                 withLocationBias(photonRequest.getLocationForBias(), photonRequest.getScaleForBias(), photonRequest.getZoomForBias()).
                 withBoundingBox(photonRequest.getBbox());
     }

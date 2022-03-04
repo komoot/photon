@@ -3,6 +3,9 @@ package de.komoot.photon.query;
 import com.vividsolutions.jts.geom.Envelope;
 
 import static org.junit.jupiter.api.Assertions.*;
+
+import de.komoot.photon.searcher.TagFilter;
+import de.komoot.photon.searcher.TagFilterKind;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import spark.QueryParamsMap;
@@ -33,7 +36,7 @@ public class PhotonRequestFactoryTest {
         assertEquals("berlin", photonRequest.getQuery());
         assertEquals(-87, photonRequest.getLocationForBias().getX(), 0);
         assertEquals(41, photonRequest.getLocationForBias().getY(), 0);
-        assertEquals(new Integer(5), photonRequest.getLimit());
+        assertEquals(5, photonRequest.getLimit());
         Mockito.verify(mockRequest, Mockito.times(1)).queryParams("q");
         Mockito.verify(mockRequest, Mockito.times(1)).queryParams("lon");
         Mockito.verify(mockRequest, Mockito.times(1)).queryParams("lat");
@@ -120,11 +123,9 @@ public class PhotonRequestFactoryTest {
         assertEquals("berlin", filteredPhotonRequest.getQuery());
         Mockito.verify(mockRequest, Mockito.times(1)).queryParams("q");
         Mockito.verify(mockRequest, Mockito.times(1)).queryMap("osm_tag");
-        Mockito.verify(mockOsmTagQueryParm, Mockito.times(2)).values();
+        Mockito.verify(mockOsmTagQueryParm, Mockito.times(1)).values();
 
-        Set<String> expectedValue = new HashSet<>();
-        expectedValue.add("aTag");
-        assertEquals(expectedValue, filteredPhotonRequest.keys());
+        assertEquals(Collections.singletonList(new TagFilter(TagFilterKind.INCLUDE, "aTag", null)), filteredPhotonRequest.getOsmTagFilters());
     }
 
     @Test
@@ -139,11 +140,9 @@ public class PhotonRequestFactoryTest {
         PhotonRequest filteredPhotonRequest = photonRequestFactory.create(mockRequest);
         assertEquals("berlin", filteredPhotonRequest.getQuery());
         Mockito.verify(mockRequest, Mockito.times(1)).queryMap("osm_tag");
-        Mockito.verify(mockOsmTagQueryParm, Mockito.times(2)).values();
+        Mockito.verify(mockOsmTagQueryParm, Mockito.times(1)).values();
 
-        Set<String> expectedValue = new HashSet<>();
-        expectedValue.add("aValue");
-        assertEquals(Collections.singletonMap("aTag", expectedValue), filteredPhotonRequest.tags());
+        assertEquals(Collections.singletonList(new TagFilter(TagFilterKind.INCLUDE, "aTag", "aValue")), filteredPhotonRequest.getOsmTagFilters());
     }
 
     @Test
@@ -159,11 +158,9 @@ public class PhotonRequestFactoryTest {
         assertEquals("berlin", filteredPhotonRequest.getQuery());
         Mockito.verify(mockRequest, Mockito.times(1)).queryParams("q");
         Mockito.verify(mockRequest, Mockito.times(1)).queryMap("osm_tag");
-        Mockito.verify(mockOsmTagQueryParm, Mockito.times(2)).values();
+        Mockito.verify(mockOsmTagQueryParm, Mockito.times(1)).values();
 
-        Set<String> expectedValue = new HashSet<>();
-        expectedValue.add("aValue");
-        assertEquals(expectedValue, filteredPhotonRequest.values());
+        assertEquals(Collections.singletonList(new TagFilter(TagFilterKind.INCLUDE, null, "aValue")), filteredPhotonRequest.getOsmTagFilters());
     }
 
     @Test
@@ -179,11 +176,9 @@ public class PhotonRequestFactoryTest {
         assertEquals("berlin", filteredPhotonRequest.getQuery());
         Mockito.verify(mockRequest, Mockito.times(1)).queryParams("q");
         Mockito.verify(mockRequest, Mockito.times(1)).queryMap("osm_tag");
-        Mockito.verify(mockOsmTagQueryParm, Mockito.times(2)).values();
+        Mockito.verify(mockOsmTagQueryParm, Mockito.times(1)).values();
 
-        Set<String> expectedValue = new HashSet<>();
-        expectedValue.add("aTag");
-        assertEquals(expectedValue, filteredPhotonRequest.notKeys());
+        assertEquals(Collections.singletonList(new TagFilter(TagFilterKind.EXCLUDE, "aTag", null)), filteredPhotonRequest.getOsmTagFilters());
     }
 
     @Test
@@ -198,11 +193,9 @@ public class PhotonRequestFactoryTest {
         PhotonRequest filteredPhotonRequest = photonRequestFactory.create(mockRequest);
         assertEquals("berlin", filteredPhotonRequest.getQuery());
         Mockito.verify(mockRequest, Mockito.times(1)).queryMap("osm_tag");
-        Mockito.verify(mockOsmTagQueryParm, Mockito.times(2)).values();
+        Mockito.verify(mockOsmTagQueryParm, Mockito.times(1)).values();
 
-        Set<String> expectedValue = new HashSet<>();
-        expectedValue.add("aValue");
-        assertEquals(Collections.singletonMap("aTag", expectedValue), filteredPhotonRequest.notTags());
+        assertEquals(Collections.singletonList(new TagFilter(TagFilterKind.EXCLUDE, "aTag", "aValue")), filteredPhotonRequest.getOsmTagFilters());
     }
 
     @Test
@@ -218,11 +211,9 @@ public class PhotonRequestFactoryTest {
         assertEquals("berlin", filteredPhotonRequest.getQuery());
         Mockito.verify(mockRequest, Mockito.times(1)).queryParams("q");
         Mockito.verify(mockRequest, Mockito.times(1)).queryMap("osm_tag");
-        Mockito.verify(mockOsmTagQueryParm, Mockito.times(2)).values();
+        Mockito.verify(mockOsmTagQueryParm, Mockito.times(1)).values();
 
-        Set<String> expectedValue = new HashSet<>();
-        expectedValue.add("aValue");
-        assertEquals(expectedValue, filteredPhotonRequest.notValues());
+        assertEquals(Collections.singletonList(new TagFilter(TagFilterKind.EXCLUDE, null, "aValue")), filteredPhotonRequest.getOsmTagFilters());
     }
     
     @Test
