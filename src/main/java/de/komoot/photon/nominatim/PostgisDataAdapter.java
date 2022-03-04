@@ -1,14 +1,13 @@
 package de.komoot.photon.nominatim;
 
-import com.google.common.collect.Maps;
 import com.vividsolutions.jts.geom.Geometry;
 import org.postgis.jts.JtsGeometry;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 
-import javax.annotation.Nullable;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -22,13 +21,12 @@ public class PostgisDataAdapter implements DBDataAdapter {
     public Map<String, String> getMap(ResultSet rs, String columnName) throws SQLException {
         Map<String, String> map = (Map<String, String>) rs.getObject(columnName);
         if (map == null) {
-            return Maps.newHashMap();
+            return new HashMap<>();
         }
 
         return map;
     }
 
-    @Nullable
     @Override
     public Geometry extractGeometry(ResultSet rs, String columnName) throws SQLException {
         JtsGeometry geom = (JtsGeometry) rs.getObject(columnName);
