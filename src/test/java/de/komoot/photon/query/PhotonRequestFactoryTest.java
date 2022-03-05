@@ -3,296 +3,159 @@ package de.komoot.photon.query;
 import com.vividsolutions.jts.geom.Envelope;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
+
+import de.komoot.photon.searcher.TagFilter;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mockito;
 import spark.QueryParamsMap;
 import spark.Request;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Stream;
 
 /**
- * Created by Sachin Dole on 2/12/2015.
+ * Tests for correct parsing of the query parameters into a PhotonRequest.
  */
 public class PhotonRequestFactoryTest {
 
-    private PhotonRequest photonRequest;
+    private PhotonRequest create(String... queryParams) throws BadRequestException {
+        Request mockRequest = Mockito.mock(Request.class);
+
+        Set<String> keys = new HashSet<>();
+        for (int pos = 0; pos < queryParams.length; pos += 2) {
+            Mockito.when(mockRequest.queryParams(queryParams[pos])).thenReturn(queryParams[pos + 1]);
+            keys.add(queryParams[pos]);
+        }
+
+        Mockito.when(mockRequest.queryParams()).thenReturn(keys);
+
+        QueryParamsMap mockQueryParamsMap = Mockito.mock(QueryParamsMap.class);
+        Mockito.when(mockRequest.queryMap("osm_tag")).thenReturn(mockQueryParamsMap);
+
+        PhotonRequestFactory factory = new PhotonRequestFactory(Collections.singletonList("en"), "en");
+        return factory.create(mockRequest);
+    }
+
+    private PhotonRequest createOsmFilters(String... filterParams) throws BadRequestException {
+        Request mockRequest = Mockito.mock(Request.class);
+        Mockito.when(mockRequest.queryParams("q")).thenReturn("new york");
+
+        QueryParamsMap mockQueryParamsMap = Mockito.mock(QueryParamsMap.class);
+        Mockito.when(mockQueryParamsMap.hasValue()).thenReturn(true);
+        Mockito.when(mockQueryParamsMap.values()).thenReturn(filterParams);
+        Mockito.when(mockRequest.queryMap("osm_tag")).thenReturn(mockQueryParamsMap);
+
+        PhotonRequestFactory factory = new PhotonRequestFactory(Collections.singletonList("en"), "en");
+        return factory.create(mockRequest);
+    }
 
     @Test
     public void testWithLocationBiasAndLimit() throws Exception {
-        Request mockRequest = Mockito.mock(Request.class);
-        Mockito.when(mockRequest.queryParams("q")).thenReturn("berlin");
-        Mockito.when(mockRequest.queryParams("lon")).thenReturn("-87");
-        Mockito.when(mockRequest.queryParams("lat")).thenReturn("41");
-        Mockito.when(mockRequest.queryParams("limit")).thenReturn("5");
-        QueryParamsMap mockQueryParamsMap = Mockito.mock(QueryParamsMap.class);
-        Mockito.when(mockRequest.queryMap("osm_tag")).thenReturn(mockQueryParamsMap);
-        PhotonRequestFactory photonRequestFactory = new PhotonRequestFactory(Collections.singletonList("en"), "en");
-        photonRequest = photonRequestFactory.create(mockRequest);
-        assertEquals("berlin", photonRequest.getQuery());
-        assertEquals(-87, photonRequest.getLocationForBias().getX(), 0);
-        assertEquals(41, photonRequest.getLocationForBias().getY(), 0);
-        assertEquals(new Integer(5), photonRequest.getLimit());
-        Mockito.verify(mockRequest, Mockito.times(1)).queryParams("q");
-        Mockito.verify(mockRequest, Mockito.times(1)).queryParams("lon");
-        Mockito.verify(mockRequest, Mockito.times(1)).queryParams("lat");
+        PhotonRequest photonRequest = create("q", "berlin", "lon", "-87", "lat", "41", "limit", "5");
+
+        assertAll("request",
+                () -> assertEquals("berlin", photonRequest.getQuery()),
+                () -> assertEquals(-87, photonRequest.getLocationForBias().getX(), 0),
+                () -> assertEquals(41, photonRequest.getLocationForBias().getY(), 0),
+                () -> assertEquals(5, photonRequest.getLimit())
+        );
+    }
+
+    @Test
+    public void testWithEmptyLimit() throws Exception {
+        PhotonRequest photonRequest = create("q", "berlin", "limit", "");
+
+        assertEquals(15, photonRequest.getLimit());
     }
 
     @Test
     public void testWithoutLocationBias() throws Exception {
-        Request mockRequest = Mockito.mock(Request.class);
-        Mockito.when(mockRequest.queryParams("q")).thenReturn("berlin");
-        Mockito.when(mockRequest.queryParams("lon")).thenReturn(null);
-        Mockito.when(mockRequest.queryParams("lat")).thenReturn(null);
-        PhotonRequestFactory photonRequestFactory = new PhotonRequestFactory(Collections.singletonList("en"), "en");
-        QueryParamsMap mockQueryParamsMap = Mockito.mock(QueryParamsMap.class);
-        Mockito.when(mockRequest.queryMap("osm_tag")).thenReturn(mockQueryParamsMap);
-        photonRequest = photonRequestFactory.create(mockRequest);
-        assertEquals("berlin", photonRequest.getQuery());
-        assertNull(photonRequest.getLocationForBias());
-        Mockito.verify(mockRequest, Mockito.times(1)).queryParams("q");
-        Mockito.verify(mockRequest, Mockito.times(1)).queryParams("lon");
-        Mockito.verify(mockRequest, Mockito.times(1)).queryParams("lat");
+        PhotonRequest photonRequest = create("q", "berlin");
+
+        assertAll("request",
+                () -> assertEquals("berlin", photonRequest.getQuery()),
+                () -> assertNull(photonRequest.getLocationForBias())
+        );
     }
 
     @Test
-    public void testWithBadBias() throws Exception {
-        Request mockRequest = Mockito.mock(Request.class);
-        Mockito.when(mockRequest.queryParams("q")).thenReturn("berlin");
-        Mockito.when(mockRequest.queryParams("lon")).thenReturn("bad");
-        Mockito.when(mockRequest.queryParams("lat")).thenReturn("bad");
-        QueryParamsMap mockQueryParamsMap = Mockito.mock(QueryParamsMap.class);
-        Mockito.when(mockRequest.queryMap("osm_tag")).thenReturn(mockQueryParamsMap);
-        
-        try {
-            PhotonRequestFactory photonRequestFactory = new PhotonRequestFactory(Collections.singletonList("en"), "en");
-            photonRequest = photonRequestFactory.create(mockRequest);
-            fail();
-        } catch (BadRequestException e) {
-            assertEquals("invalid search term 'lat' and/or 'lon', try instead lat=51.5&lon=8.0", e.getMessage());
-        }
-        
-        Mockito.verify(mockRequest, Mockito.times(1)).queryParams("q");
-        Mockito.verify(mockRequest, Mockito.times(1)).queryParams("lon");
-        Mockito.verify(mockRequest, Mockito.times(1)).queryParams("lat");
+    public void testInfiniteScale() throws Exception {
+        PhotonRequest photonRequest = create("q", "berlin", "location_bias_scale", "Infinity");
+
+        assertEquals(1.0, photonRequest.getScaleForBias());
     }
 
     @Test
-    public void testWithBadLimit() throws Exception {
-        Request mockRequest = Mockito.mock(Request.class);
-        Mockito.when(mockRequest.queryParams("q")).thenReturn("berlin");
-        Mockito.when(mockRequest.queryParams("limit")).thenReturn(null);
-        PhotonRequestFactory photonRequestFactory = new PhotonRequestFactory(Collections.singletonList("en"), "en");
-        QueryParamsMap mockQueryParamsMap = Mockito.mock(QueryParamsMap.class);
-        Mockito.when(mockRequest.queryMap("osm_tag")).thenReturn(mockQueryParamsMap);
-        photonRequest = photonRequestFactory.create(mockRequest);
-        assertEquals("berlin", photonRequest.getQuery());
-        assertEquals(new Integer(15), photonRequest.getLimit());
-        Mockito.verify(mockRequest, Mockito.times(1)).queryParams("q");
-        Mockito.verify(mockRequest, Mockito.times(1)).queryParams("limit");
+    public void testEmptyScale() throws Exception {
+        PhotonRequest photonRequest = create("q", "berlin", "location_bias_scale", "");
+
+        assertEquals(0.2, photonRequest.getScaleForBias());
     }
 
     @Test
-    public void testWithBadQuery() throws Exception {
-        Request mockRequest = Mockito.mock(Request.class);
-        Mockito.when(mockRequest.queryParams("q")).thenReturn(null);
-        try {
-            PhotonRequestFactory photonRequestFactory = new PhotonRequestFactory(Collections.singletonList("en"), "en");
-            photonRequest = photonRequestFactory.create(mockRequest);
-            fail();
-        } catch (BadRequestException e) {
-            assertEquals("missing search term 'q': /?q=berlin", e.getMessage());
-        }
-        Mockito.verify(mockRequest, Mockito.times(1)).queryParams("q");
+    public void testWithDebug() throws Exception {
+        PhotonRequest photonRequest = create("q", "berlin", "debug", "1");
+
+        assertEquals(true, photonRequest.getDebug());
+    }
+
+    @ParameterizedTest
+    @MethodSource("badParamsProvider")
+    public void testBadParameters(List<String> queryParams, String expectedMessageFragment) {
+        BadRequestException exception = assertThrows(BadRequestException.class,
+                () -> create(queryParams.toArray(new String[0])));
+        assertTrue(exception.getMessage().contains(expectedMessageFragment),
+                   String.format("Error message doesn not contain '%s': %s", expectedMessageFragment, exception.getMessage()));
+    }
+
+    static Stream<Arguments> badParamsProvider() {
+        return Stream.of(
+                arguments(Arrays.asList("q", "nowhere", "extra", "data"), "'extra'"), // unknown parameter
+                arguments(Arrays.asList("q", "berlin", "limit", "x"), "'limit'"), // limit that is not a number
+                arguments(Arrays.asList("q", "berlin", "location_bias_scale", "-e"), "'location_bias_scale'"), // score that is not a number
+                arguments(Arrays.asList("q", "berlin", "location_bias_scale", "NaN"), "'location_bias_scale'"), // score with NaN
+                arguments(Arrays.asList("q", "berlin", "lon", "3", "lat", "bad"), "'lat'"), // bad latitude parameter
+                arguments(Arrays.asList("q", "berlin", "lon", "bad", "lat", "45"), "'lon'"), // bad longitude parameter
+                arguments(Arrays.asList("lat", "45", "lon", "45"), "'q'"),  // missing query parameter
+                arguments(Arrays.asList("q", "hanover", "bbox", "9.6,52.3,9.8"), "'bbox'"), // bbox, wrong number of inputs
+                arguments(Arrays.asList("q", "hanover", "bbox", "9.6,52.3,NaN,9.8"), "'bbox'"), // bbox, bad parameter (NaN)
+                arguments(Arrays.asList("q", "hanover", "bbox", "9.6,52.3,-Infinity,9.8"), "'bbox'"), // bbox, bad parameter (Inf)
+                arguments(Arrays.asList("q", "hanover", "bbox", "9.6,52.3,r34,9.8"), "'bbox'"), // bbox, bad parameter (garbage)
+                arguments(Arrays.asList("q", "hanover", "bbox", "9.6,-92,9.8,14"), "'bbox'"), // bbox, min lat 90
+                arguments(Arrays.asList("q", "hanover", "bbox", "9.6,14,9.8,91"), "'bbox'"), // bbox, max lat 90
+                arguments(Arrays.asList("q", "hanover", "bbox", "-181, 9, 4, 12"), "'bbox'"), // bbox, min lon 180
+                arguments(Arrays.asList("q", "hanover", "bbox", "12, 9, 181, 12"), "'bbox'") // bbox, max lon 180
+        );
     }
 
     @Test
-    public void testWithIncludeKeyFilter() throws Exception {
-        Request mockRequest = Mockito.mock(Request.class);
-        Mockito.when(mockRequest.queryParams("q")).thenReturn("berlin");
-        QueryParamsMap mockOsmTagQueryParm = Mockito.mock(QueryParamsMap.class);
-        Mockito.when(mockOsmTagQueryParm.values()).thenReturn(new String[]{"aTag"});
-        Mockito.when(mockRequest.queryMap("osm_tag")).thenReturn(mockOsmTagQueryParm);
-        PhotonRequestFactory photonRequestFactory = new PhotonRequestFactory(Collections.singletonList("en"), "en");
-        Mockito.when(mockOsmTagQueryParm.hasValue()).thenReturn(true);
-        PhotonRequest filteredPhotonRequest = photonRequestFactory.create(mockRequest);
-        assertEquals("berlin", filteredPhotonRequest.getQuery());
-        Mockito.verify(mockRequest, Mockito.times(1)).queryParams("q");
-        Mockito.verify(mockRequest, Mockito.times(1)).queryMap("osm_tag");
-        Mockito.verify(mockOsmTagQueryParm, Mockito.times(2)).values();
+    public void testTagFilters() throws Exception {
+        PhotonRequest photonRequest = createOsmFilters("foo", ":!bar");
 
-        Set<String> expectedValue = new HashSet<>();
-        expectedValue.add("aTag");
-        assertEquals(expectedValue, filteredPhotonRequest.keys());
+        List<TagFilter> result = photonRequest.getOsmTagFilters();
+
+        assertEquals(2, result.size());
+
+        assertAll("filterlist",
+                () -> assertNotNull(result.get(0)),
+                () -> assertNotNull(result.get(1))
+        );
     }
 
     @Test
-    public void testWithIncludeTagFilter() throws Exception {
-        Request mockRequest = Mockito.mock(Request.class);
-        Mockito.when(mockRequest.queryParams("q")).thenReturn("berlin");
-        QueryParamsMap mockOsmTagQueryParm = Mockito.mock(QueryParamsMap.class);
-        Mockito.when(mockOsmTagQueryParm.values()).thenReturn(new String[]{"aTag:aValue"});
-        Mockito.when(mockRequest.queryMap("osm_tag")).thenReturn(mockOsmTagQueryParm);
-        PhotonRequestFactory photonRequestFactory = new PhotonRequestFactory(Collections.singletonList("en"), "en");
-        Mockito.when(mockOsmTagQueryParm.hasValue()).thenReturn(true);
-        PhotonRequest filteredPhotonRequest = photonRequestFactory.create(mockRequest);
-        assertEquals("berlin", filteredPhotonRequest.getQuery());
-        Mockito.verify(mockRequest, Mockito.times(1)).queryMap("osm_tag");
-        Mockito.verify(mockOsmTagQueryParm, Mockito.times(2)).values();
-
-        Set<String> expectedValue = new HashSet<>();
-        expectedValue.add("aValue");
-        assertEquals(Collections.singletonMap("aTag", expectedValue), filteredPhotonRequest.tags());
+    public void testBadTagFilters() {
+        BadRequestException exception = assertThrows(BadRequestException.class,
+                () -> createOsmFilters("good", "bad:bad:bad"));
     }
 
-    @Test
-    public void testWithIncludeValueFilter() throws Exception {
-        Request mockRequest = Mockito.mock(Request.class);
-        Mockito.when(mockRequest.queryParams("q")).thenReturn("berlin");
-        QueryParamsMap mockOsmTagQueryParm = Mockito.mock(QueryParamsMap.class);
-        Mockito.when(mockOsmTagQueryParm.values()).thenReturn(new String[]{":aValue"});
-        Mockito.when(mockRequest.queryMap("osm_tag")).thenReturn(mockOsmTagQueryParm);
-        Mockito.when(mockOsmTagQueryParm.hasValue()).thenReturn(true);
-        PhotonRequestFactory photonRequestFactory = new PhotonRequestFactory(Collections.singletonList("en"), "en");
-        PhotonRequest filteredPhotonRequest = photonRequestFactory.create(mockRequest);
-        assertEquals("berlin", filteredPhotonRequest.getQuery());
-        Mockito.verify(mockRequest, Mockito.times(1)).queryParams("q");
-        Mockito.verify(mockRequest, Mockito.times(1)).queryMap("osm_tag");
-        Mockito.verify(mockOsmTagQueryParm, Mockito.times(2)).values();
-
-        Set<String> expectedValue = new HashSet<>();
-        expectedValue.add("aValue");
-        assertEquals(expectedValue, filteredPhotonRequest.values());
-    }
-
-    @Test
-    public void testWithExcludeKeyFilter() throws Exception {
-        Request mockRequest = Mockito.mock(Request.class);
-        Mockito.when(mockRequest.queryParams("q")).thenReturn("berlin");
-        QueryParamsMap mockOsmTagQueryParm = Mockito.mock(QueryParamsMap.class);
-        Mockito.when(mockOsmTagQueryParm.values()).thenReturn(new String[]{"!aTag"});
-        Mockito.when(mockRequest.queryMap("osm_tag")).thenReturn(mockOsmTagQueryParm);
-        PhotonRequestFactory photonRequestFactory = new PhotonRequestFactory(Collections.singletonList("en"), "en");
-        Mockito.when(mockOsmTagQueryParm.hasValue()).thenReturn(true);
-        PhotonRequest filteredPhotonRequest = photonRequestFactory.create(mockRequest);
-        assertEquals("berlin", filteredPhotonRequest.getQuery());
-        Mockito.verify(mockRequest, Mockito.times(1)).queryParams("q");
-        Mockito.verify(mockRequest, Mockito.times(1)).queryMap("osm_tag");
-        Mockito.verify(mockOsmTagQueryParm, Mockito.times(2)).values();
-
-        Set<String> expectedValue = new HashSet<>();
-        expectedValue.add("aTag");
-        assertEquals(expectedValue, filteredPhotonRequest.notKeys());
-    }
-
-    @Test
-    public void testWithExcludeTagFilter() throws Exception {
-        Request mockRequest = Mockito.mock(Request.class);
-        Mockito.when(mockRequest.queryParams("q")).thenReturn("berlin");
-        QueryParamsMap mockOsmTagQueryParm = Mockito.mock(QueryParamsMap.class);
-        Mockito.when(mockOsmTagQueryParm.values()).thenReturn(new String[]{"!aTag:aValue"});
-        Mockito.when(mockRequest.queryMap("osm_tag")).thenReturn(mockOsmTagQueryParm);
-        PhotonRequestFactory photonRequestFactory = new PhotonRequestFactory(Collections.singletonList("en"), "en");
-        Mockito.when(mockOsmTagQueryParm.hasValue()).thenReturn(true);
-        PhotonRequest filteredPhotonRequest = photonRequestFactory.create(mockRequest);
-        assertEquals("berlin", filteredPhotonRequest.getQuery());
-        Mockito.verify(mockRequest, Mockito.times(1)).queryMap("osm_tag");
-        Mockito.verify(mockOsmTagQueryParm, Mockito.times(2)).values();
-
-        Set<String> expectedValue = new HashSet<>();
-        expectedValue.add("aValue");
-        assertEquals(Collections.singletonMap("aTag", expectedValue), filteredPhotonRequest.notTags());
-    }
-
-    @Test
-    public void testWithExcludeValueFilter() throws Exception {
-        Request mockRequest = Mockito.mock(Request.class);
-        Mockito.when(mockRequest.queryParams("q")).thenReturn("berlin");
-        QueryParamsMap mockOsmTagQueryParm = Mockito.mock(QueryParamsMap.class);
-        Mockito.when(mockOsmTagQueryParm.values()).thenReturn(new String[]{"!:aValue"});
-        Mockito.when(mockRequest.queryMap("osm_tag")).thenReturn(mockOsmTagQueryParm);
-        PhotonRequestFactory photonRequestFactory = new PhotonRequestFactory(Collections.singletonList("en"), "en");
-        Mockito.when(mockOsmTagQueryParm.hasValue()).thenReturn(true);
-        PhotonRequest filteredPhotonRequest = photonRequestFactory.create(mockRequest);
-        assertEquals("berlin", filteredPhotonRequest.getQuery());
-        Mockito.verify(mockRequest, Mockito.times(1)).queryParams("q");
-        Mockito.verify(mockRequest, Mockito.times(1)).queryMap("osm_tag");
-        Mockito.verify(mockOsmTagQueryParm, Mockito.times(2)).values();
-
-        Set<String> expectedValue = new HashSet<>();
-        expectedValue.add("aValue");
-        assertEquals(expectedValue, filteredPhotonRequest.notValues());
-    }
-    
     @Test
     public void testWithBboxFilter() throws Exception {
-        Request mockRequest = Mockito.mock(Request.class);
-        Mockito.when(mockRequest.queryParams("q")).thenReturn("hanover");
-        QueryParamsMap mockQueryParamsMap = Mockito.mock(QueryParamsMap.class);
-        Mockito.when(mockRequest.queryMap("osm_tag")).thenReturn(mockQueryParamsMap);
-        Mockito.when(mockRequest.queryParams("bbox")).thenReturn("9.6,52.3,9.8,52.4");
-        
-        PhotonRequestFactory photonRequestFactory = new PhotonRequestFactory(Collections.singletonList("en"), "en");
-        PhotonRequest photonRequest = photonRequestFactory.create(mockRequest); 
-        
-        Mockito.verify(mockRequest, Mockito.times(1)).queryParams("bbox");
+        PhotonRequest photonRequest = create("q", "hanover", "bbox", "9.6,52.3,9.8,52.4");
+
         assertEquals(new Envelope(9.6, 9.8, 52.3, 52.4), photonRequest.getBbox());
-    }
-
-    @Test
-    public void testWithBboxFilterWrongNumberOfInputs() throws Exception {
-        Request mockRequest = Mockito.mock(Request.class);
-        Mockito.when(mockRequest.queryParams("q")).thenReturn("hanover");
-        QueryParamsMap mockQueryParamsMap = Mockito.mock(QueryParamsMap.class);
-        Mockito.when(mockRequest.queryMap("osm_tag")).thenReturn(mockQueryParamsMap);
-        Mockito.when(mockRequest.queryParams("bbox")).thenReturn("9.6,52.3,9.8");
-
-        try {
-            PhotonRequestFactory photonRequestFactory = new PhotonRequestFactory(Collections.singletonList("en"), "en");
-            photonRequestFactory.create(mockRequest);
-            fail();
-        } catch (BadRequestException e) {
-            assertEquals(BoundingBoxParamConverter.INVALID_BBOX_ERROR_MESSAGE, e.getMessage());
-        }
-        Mockito.verify(mockRequest, Mockito.times(1)).queryParams("bbox");
-    }
-    
-    @Test
-    public void testWithBadBboxFilterMinLat90() throws Exception {
-        testBoundingBoxResponse(9.6,-92,9.8,14);
-    }
-
-    @Test
-    public void testWithBadBboxFilterMaxLat90() throws Exception {
-        testBoundingBoxResponse(9.6,14,9.8,91);
-    }
-
-    @Test
-    public void testWithBadBboxFilterMinLon180() throws Exception {
-        testBoundingBoxResponse(-181, 9, 4, 12);
-    }
-
-    @Test
-    public void testWithBadBboxFilterMaxLon180() throws Exception {
-        testBoundingBoxResponse(12, 9, 181, 12);
-    }
-
-
-    public void testBoundingBoxResponse(double minLon, double minLat, double maxLon, double maxLat) {
-        Request mockRequest = Mockito.mock(Request.class);
-        Mockito.when(mockRequest.queryParams("q")).thenReturn("hanover");
-        QueryParamsMap mockQueryParamsMap = Mockito.mock(QueryParamsMap.class);
-        Mockito.when(mockRequest.queryMap("osm_tag")).thenReturn(mockQueryParamsMap);
-        Mockito.when(mockRequest.queryParams("bbox")).thenReturn(minLon + "," + minLat + "," + maxLon + "," + maxLat);
-
-        try {
-            PhotonRequestFactory photonRequestFactory = new PhotonRequestFactory(Collections.singletonList("en"), "en");
-            photonRequestFactory.create(mockRequest);
-            fail();
-        } catch (BadRequestException e) {
-            assertEquals(BoundingBoxParamConverter.INVALID_BBOX_BOUNDS_MESSAGE, e.getMessage());
-        }
-        Mockito.verify(mockRequest, Mockito.times(1)).queryParams("bbox");
     }
 }

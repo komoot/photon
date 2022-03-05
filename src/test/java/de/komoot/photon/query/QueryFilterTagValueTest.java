@@ -5,18 +5,29 @@ import de.komoot.photon.PhotonDoc;
 import de.komoot.photon.Importer;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 import de.komoot.photon.searcher.PhotonResult;
-import org.json.JSONObject;
+import de.komoot.photon.searcher.TagFilter;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class QueryFilterTagValueTest extends ESBaseTester {
-    private static final String[] TAGS = new String[]{"tourism", "attraction", "tourism", "hotel", "tourism", "museum",
-                                                      "tourism", "information", "amenity", "parking", "amenity", "restaurant",
-                                                      "amenity", "information", "food", "information", "railway", "station"};
+    private static final String[] TAGS = new String[]{"tourism", "attraction",
+                                                      "tourism", "hotel",
+                                                      "tourism", "museum",
+                                                      "tourism", "information",
+                                                      "amenity", "parking",
+                                                      "amenity", "restaurant",
+                                                      "amenity", "information",
+                                                      "food", "information",
+                                                      "railway", "station"};
 
     @BeforeAll
     public void setUp() throws Exception {
@@ -47,136 +58,53 @@ public class QueryFilterTagValueTest extends ESBaseTester {
         shutdownES();
     }
 
-    private PhotonRequest queryBerlinWithTags(String... params) {
-        PhotonRequest request = new PhotonRequest("berlin", 100, null, null, 0.2, 14, "en", false);
-        request.setUpTagFilters(params);
+    private List<PhotonResult> searchWithTags(String[] params) {
+        PhotonRequest request = new PhotonRequest("berlin", "en").setLimit(50);
+        for (String param : params) {
+            request.addOsmTagFilter(TagFilter.buildOsmTagFilter(param));
+        }
 
-        return request;
-    }
-
-    private List<PhotonResult> search(PhotonRequest request) {
         return getServer().createSearchHandler(new String[]{"en"}).search(request);
     }
 
-    /**
-     * Find me all places named "berlin" that are tagged "tourism=attraction"
-     */
-    @Test
-    public void testFilterWithTagTourismAttraction() {
-        List<PhotonResult> searchResponse = search(queryBerlinWithTags("tourism:attraction"));
 
-        assertEquals(2l, searchResponse.size());
+    @ParameterizedTest
+    @MethodSource("simpleTagFilterProvider")
+    public void testSingleTagFilter(String filter, int expectedResults) {
+        assertEquals(expectedResults, searchWithTags(new String[]{filter}).size());
     }
 
-    /**
-     * Find me all places named "berlin" that are tagged with a value of "attraction".
-     */
-    @Test
-    public void testValueAttraction() {
-        List<PhotonResult> searchResponse = search(queryBerlinWithTags(":attraction"));
-
-        assertEquals(2l, searchResponse.size());
+    static Stream<Arguments> simpleTagFilterProvider() {
+        return Stream.of(
+                arguments("tourism:attraction", 2),
+                arguments(":attraction", 2),
+                arguments(":information", 6),
+                arguments("tourism", 8),
+                arguments("!tourism:attraction", 16),
+                arguments(":!information", 12),
+                arguments("!tourism", 10),
+                arguments("tourism:!information", 6)
+        );
     }
 
-    /**
-     * Find me all places named "berlin" that are tagged with key "tourism".
-     */
-    @Test
-    public void testKeyTourism() {
-        List<PhotonResult> searchResponse = search(queryBerlinWithTags("tourism"));
 
-        assertEquals(8l, searchResponse.size());
+    @ParameterizedTest
+    @MethodSource("combinedTagFilterProvider")
+    public void testCombinedTagFilter(String[] filters, int expectedResults) {
+        assertEquals(expectedResults, searchWithTags(filters).size());
     }
 
-    /**
-     * Find me all places named "berlin" that are NOT tagged "tourism=attraction"
-     */
-    @Test
-    public void testFilterWithoutTagTourismAttraction() {
-        List<PhotonResult> searchResponse = search(queryBerlinWithTags("!tourism:attraction"));
-
-        assertEquals(16l, searchResponse.size());
-    }
-
-    /**
-     * Find me all places named "berlin" that do not have the value "information" in their TAGS - no matter what key
-     */
-    @Test
-    public void testValueNotInformation() {
-        List<PhotonResult> searchResponse = search(queryBerlinWithTags("!:information"));
-
-        assertEquals(12l, searchResponse.size());
-    }
-
-    /**
-     * Find me all places named "berlin" that do not have the value "information" in their TAGS - no matter what key
-     */
-    @Test
-    public void testValueNotInformationAlt() {
-        List<PhotonResult> searchResponse = search(queryBerlinWithTags(":!information"));
-
-        assertEquals(12l, searchResponse.size());
-    }
-
-    /**
-     * Find me all places named "berlin" that do not have the key "tourism" in their TAGS
-     */
-    @Test
-    public void testKeyNotTourism() {
-        List<PhotonResult> searchResponse = search(queryBerlinWithTags("!tourism"));
-
-        assertEquals(10l, searchResponse.size());
-    }
-
-    /**
-     * Find me all places named "berlin" that are tagged with the key "tourism" but not tagged with value "information".
-     */
-    @Test
-    public void testKeyTourismAndValueNotInformation() {
-        List<PhotonResult> searchResponse = search(queryBerlinWithTags("tourism:!information"));
-
-        assertEquals(6l, searchResponse.size());
-    }
-
-    /**
-     * Find me all places named "berlin" that are tagged without the keys "tourism" and "amenity".
-     */
-    @Test
-    public void testKeyNotTourismAndKeyNotAmenity() {
-        List<PhotonResult> searchResponse = search(queryBerlinWithTags("!tourism", "!amenity"));
-
-        assertEquals(4l, searchResponse.size());
-    }
-
-    /**
-     * Find me all places named "berlin" that are tagged with the key "tourism" but not "amenity". This test works, but,
-     * the use case does not make sense because by searching for key "tourism", this test already excludes places keyed
-     * on "amenity"
-     */
-    @Test
-    public void testKeyTourismAndKeyNotAmenity() {
-        List<PhotonResult> searchResponse = search(queryBerlinWithTags("tourism", "!amenity"));
-
-        assertEquals(8l, searchResponse.size());
-    }
-
-    /**
-     * Find me all places named "berlin" that have value "information" but not key "amenity"
-     */
-    @Test
-    public void testValueInformationButKeyNotAmenity() {
-        List<PhotonResult> searchResponse = search(queryBerlinWithTags(":information", "!amenity"));
-
-        assertEquals(4l, searchResponse.size());
-    }
-
-    /**
-     * Find me all places named "berlin" that do not have the tag tourism=attraction
-     */
-    @Test
-    public void testTagNotTourismAttraction() {
-        List<PhotonResult> searchResponse = search(queryBerlinWithTags("!tourism:attraction"));
-
-        assertEquals(16l, searchResponse.size());
+    static Stream<Arguments> combinedTagFilterProvider() {
+        return Stream.of(
+                arguments(new String[]{"food", "amenity"}, 8),
+                arguments(new String[]{":parking", ":museum"}, 4),
+                arguments(new String[]{"food", ":information"}, 6),
+                arguments(new String[]{"!tourism", "!amenity"}, 4),
+                arguments(new String[]{"tourism", "!amenity"}, 8),
+                arguments(new String[]{":information", "!amenity"}, 4),
+                arguments(new String[]{"tourism:!information", "food"}, 8),
+                arguments(new String[]{"tourism:!information", "tourism:!hotel"}, 8),
+                arguments(new String[]{"tourism", "!:information", "food"}, 6)
+        );
     }
 }

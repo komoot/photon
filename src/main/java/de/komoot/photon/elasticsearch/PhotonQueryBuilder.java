@@ -3,6 +3,8 @@ package de.komoot.photon.elasticsearch;
 
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Point;
+import de.komoot.photon.searcher.TagFilter;
+import de.komoot.photon.searcher.TagFilterKind;
 import org.elasticsearch.common.lucene.search.function.CombineFunction;
 import org.elasticsearch.common.lucene.search.function.FiltersFunctionScoreQuery.ScoreMode;
 import org.elasticsearch.common.unit.Fuzziness;
@@ -183,118 +185,40 @@ public class PhotonQueryBuilder {
         return this;
     }
 
-    public PhotonQueryBuilder withTags(Map<String, Set<String>> tags) {
-        if (!checkTags(tags)) return this;
-
-        ensureFiltered();
-
-        List<BoolQueryBuilder> termQueries = new ArrayList<BoolQueryBuilder>(tags.size());
-        for (String tagKey : tags.keySet()) {
-            Set<String> valuesToInclude = tags.get(tagKey);
-            TermQueryBuilder keyQuery = QueryBuilders.termQuery("osm_key", tagKey);
-            TermsQueryBuilder valueQuery = QueryBuilders.termsQuery("osm_value", valuesToInclude.toArray(new String[valuesToInclude.size()]));
-            BoolQueryBuilder includeAndQuery = QueryBuilders.boolQuery().must(keyQuery).must(valueQuery);
-            termQueries.add(includeAndQuery);
+    public PhotonQueryBuilder withOsmTagFilters(List<TagFilter> filters) {
+        for (TagFilter filter : filters) {
+            addOsmTagFilter(filter);
         }
-        this.appendIncludeTermQueries(termQueries);
         return this;
     }
 
+    public PhotonQueryBuilder addOsmTagFilter(TagFilter filter) {
+        state = State.FILTERED;
 
-    public PhotonQueryBuilder withKeys(Set<String> keys) {
-        if (!checkTags(keys)) return this;
-
-        ensureFiltered();
-
-        List<TermsQueryBuilder> termQueries = new ArrayList<TermsQueryBuilder>(keys.size());
-        termQueries.add(QueryBuilders.termsQuery("osm_key", keys.toArray()));
-        this.appendIncludeTermQueries(termQueries);
-        return this;
-    }
-
-
-    public PhotonQueryBuilder withValues(Set<String> values) {
-        if (!checkTags(values)) return this;
-
-        ensureFiltered();
-
-        List<TermsQueryBuilder> termQueries = new ArrayList<TermsQueryBuilder>(values.size());
-        termQueries.add(QueryBuilders.termsQuery("osm_value", values.toArray(new String[values.size()])));
-        this.appendIncludeTermQueries(termQueries);
-        return this;
-    }
-
-
-    public PhotonQueryBuilder withTagsNotValues(Map<String, Set<String>> tags) {
-        if (!checkTags(tags)) return this;
-
-        ensureFiltered();
-
-        List<BoolQueryBuilder> termQueries = new ArrayList<BoolQueryBuilder>(tags.size());
-        for (String tagKey : tags.keySet()) {
-            Set<String> valuesToInclude = tags.get(tagKey);
-            TermQueryBuilder keyQuery = QueryBuilders.termQuery("osm_key", tagKey);
-            TermsQueryBuilder valueQuery = QueryBuilders.termsQuery("osm_value", valuesToInclude.toArray(new String[valuesToInclude.size()]));
-
-            BoolQueryBuilder includeAndQuery = QueryBuilders.boolQuery().must(keyQuery).mustNot(valueQuery);
-
-            termQueries.add(includeAndQuery);
+        if (filter.getKind() == TagFilterKind.EXCLUDE_VALUE) {
+            appendIncludeTermQuery(QueryBuilders.boolQuery()
+                    .must(QueryBuilders.termQuery("osm_key", filter.getKey()))
+                    .mustNot(QueryBuilders.termQuery("osm_value", filter.getValue())));
+        } else {
+            QueryBuilder builder;
+            if (filter.isKeyOnly()) {
+                builder = QueryBuilders.termQuery("osm_key", filter.getKey());
+            } else if (filter.isValueOnly()) {
+                builder = QueryBuilders.termQuery("osm_value", filter.getValue());
+            } else {
+                builder = QueryBuilders.boolQuery()
+                        .must(QueryBuilders.termQuery("osm_key", filter.getKey()))
+                        .must(QueryBuilders.termQuery("osm_value", filter.getValue()));
+            }
+            if (filter.getKind() == TagFilterKind.INCLUDE) {
+                appendIncludeTermQuery(builder);
+            } else {
+                appendExcludeTermQuery(builder);
+            }
         }
-        this.appendIncludeTermQueries(termQueries);
         return this;
     }
 
-
-    public PhotonQueryBuilder withoutTags(Map<String, Set<String>> tagsToExclude) {
-        if (!checkTags(tagsToExclude)) return this;
-
-        ensureFiltered();
-
-        List<QueryBuilder> termQueries = new ArrayList<>(tagsToExclude.size());
-        for (String tagKey : tagsToExclude.keySet()) {
-            Set<String> valuesToExclude = tagsToExclude.get(tagKey);
-            TermQueryBuilder keyQuery = QueryBuilders.termQuery("osm_key", tagKey);
-            TermsQueryBuilder valueQuery = QueryBuilders.termsQuery("osm_value", valuesToExclude.toArray(new String[valuesToExclude.size()]));
-
-            BoolQueryBuilder withoutTagsQuery = QueryBuilders.boolQuery().mustNot(QueryBuilders.boolQuery().must(keyQuery).must(valueQuery));
-
-            termQueries.add(withoutTagsQuery);
-        }
-
-        this.appendExcludeTermQueries(termQueries);
-
-        return this;
-    }
-
-
-    public PhotonQueryBuilder withoutKeys(Set<String> keysToExclude) {
-        if (!checkTags(keysToExclude)) return this;
-
-        ensureFiltered();
-
-        BoolQueryBuilder boolQuery = QueryBuilders.boolQuery().mustNot(QueryBuilders.termsQuery("osm_key", keysToExclude.toArray()));
-
-        LinkedList<QueryBuilder> lList = new LinkedList<>();
-        lList.add(boolQuery);
-        this.appendExcludeTermQueries(lList);
-
-        return this;
-    }
-
-
-    public PhotonQueryBuilder withoutValues(Set<String> valuesToExclude) {
-        if (!checkTags(valuesToExclude)) return this;
-
-        ensureFiltered();
-
-        BoolQueryBuilder boolQuery = QueryBuilders.boolQuery().mustNot(QueryBuilders.termsQuery("osm_value", valuesToExclude.toArray()));
-
-        LinkedList<QueryBuilder> lList = new LinkedList<>();
-        lList.add(boolQuery);
-        this.appendExcludeTermQueries(lList);
-
-        return this;
-    }
 
 
     /**
@@ -312,7 +236,7 @@ public class PhotonQueryBuilder {
             if (orQueryBuilderForIncludeTagFiltering != null)
                 tagFilters.must(orQueryBuilderForIncludeTagFiltering);
             if (andQueryBuilderForExcludeTagFiltering != null)
-                tagFilters.must(andQueryBuilderForExcludeTagFiltering);
+                tagFilters.mustNot(andQueryBuilderForExcludeTagFiltering);
             finalQueryBuilder.filter(tagFilters);
         }
         
@@ -325,38 +249,21 @@ public class PhotonQueryBuilder {
     }
 
 
-    private Boolean checkTags(Set<String> keys) {
-        return !(keys == null || keys.isEmpty());
-    }
-
-
-    private Boolean checkTags(Map<String, Set<String>> tags) {
-        return !(tags == null || tags.isEmpty());
-    }
-
-
-    private void appendIncludeTermQueries(List<? extends QueryBuilder> termQueries) {
+    private void appendIncludeTermQuery(QueryBuilder termQuery) {
 
         if (orQueryBuilderForIncludeTagFiltering == null)
             orQueryBuilderForIncludeTagFiltering = QueryBuilders.boolQuery();
 
-        for (QueryBuilder eachTagFilter : termQueries)
-            orQueryBuilderForIncludeTagFiltering.should(eachTagFilter);
+        orQueryBuilderForIncludeTagFiltering.should(termQuery);
     }
 
 
-    private void appendExcludeTermQueries(List<QueryBuilder> termQueries) {
+    private void appendExcludeTermQuery(QueryBuilder termQuery) {
 
         if (andQueryBuilderForExcludeTagFiltering == null)
             andQueryBuilderForExcludeTagFiltering = QueryBuilders.boolQuery();
 
-        for (QueryBuilder eachTagFilter : termQueries)
-            andQueryBuilderForExcludeTagFiltering.must(eachTagFilter);
-    }
-
-
-    private void ensureFiltered() {
-        state = State.FILTERED;
+        andQueryBuilderForExcludeTagFiltering.should(termQuery);
     }
 
 
