@@ -1,15 +1,7 @@
 package de.komoot.photon.searcher;
 
-import de.komoot.photon.query.BadRequestException;
-import lombok.extern.slf4j.Slf4j;
-
 import java.util.Objects;
 
-/**
- * A single filter instruction for OSM keys and values.
- *
- */
-@Slf4j
 public class TagFilter {
     private final TagFilterKind kind;
     private final String key;
@@ -41,7 +33,14 @@ public class TagFilter {
         return key == null;
     }
 
-    public static TagFilter buildOsmTagFilter(String filter) throws BadRequestException {
+    /**
+     * Create a new tag filter from a osm-tag filter description.
+     *
+     * @param filter  Tag filter description.
+     *
+     * @return The appropriate tag filter object or null if the filter string has an invalid format.
+     */
+    public static TagFilter buildOsmTagFilter(String filter) {
         TagFilterKind kind = null;
         String key = null;
         String value = null;
@@ -52,11 +51,11 @@ public class TagFilter {
             boolean excludeKey = parts[0].startsWith("!");
             boolean excludeValue = parts[1].startsWith("!");
 
-            key = excludeKey ? parts[0].substring(1) : parts[0];
+            key = (excludeKey ? parts[0].substring(1) : parts[0]).trim();
             if (key.isEmpty()) {
                 key = null;
             }
-            value = excludeValue ? parts[1].substring(1) : parts[1];
+            value = (excludeValue ? parts[1].substring(1) : parts[1]).trim();
 
             if (!value.isEmpty()) {
                 if (key != null && !excludeKey && excludeValue) {
@@ -65,7 +64,7 @@ public class TagFilter {
                     kind = excludeKey || excludeValue ? TagFilterKind.EXCLUDE : TagFilterKind.INCLUDE;
                 }
             }
-        } else if (parts.length == 1) {
+        } else if (parts.length == 1 && parts[0].equals(filter)) {
             boolean exclude = filter.startsWith("!");
 
             key = exclude ? filter.substring(1) : filter;
@@ -75,11 +74,7 @@ public class TagFilter {
             }
         }
 
-        if (kind == null) {
-            throw new BadRequestException(400, String.format("Invalid filter expression osm_tag=%s.", filter));
-        }
-
-        return new TagFilter(kind, key, value);
+        return (kind == null) ? null : new TagFilter(kind, key, value);
     }
 
     @Override

@@ -49,6 +49,10 @@ public class PhotonRequestFactory {
         QueryParamsMap tagFiltersQueryMap = webRequest.queryMap("osm_tag");
         if (tagFiltersQueryMap.hasValue()) {
             for (String filter : tagFiltersQueryMap.values()) {
+                TagFilter tagFilter = TagFilter.buildOsmTagFilter(filter);
+                if (tagFilter == null) {
+                    throw new BadRequestException(400, String.format("Invalid parameter '%s': bad syntax for tag filter."));
+                }
                 request.addOsmTagFilter(TagFilter.buildOsmTagFilter(filter));
             }
         }
