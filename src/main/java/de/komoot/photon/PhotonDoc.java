@@ -90,7 +90,9 @@ public class PhotonDoc {
     }
 
     public PhotonDoc countryCode(String countryCode) {
-        this.countryCode = countryCode.toUpperCase();
+        if (countryCode != null) {
+            this.countryCode = countryCode.toUpperCase();
+        }
         return this;
     }
 

@@ -262,4 +262,18 @@ public class NominatimConnectorDBTest {
 
         importer.get(parent);
     }
+
+    /**
+     * Places without a country can be imported.
+     */
+    @Test
+    public void testNoCountry() {
+        PlacexTestRow place = new PlacexTestRow("building", "yes").name("Building").country(null).add(jdbc);
+
+        connector.readEntireDatabase();
+
+        assertEquals(1, importer.size());
+
+        assertNull(importer.get(place).getCountryCode());
+    }
 }
