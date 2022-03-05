@@ -3,10 +3,12 @@ package de.komoot.photon.query;
 import com.vividsolutions.jts.geom.Envelope;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 import de.komoot.photon.searcher.TagFilter;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mockito;
 import spark.QueryParamsMap;
@@ -103,28 +105,30 @@ public class PhotonRequestFactoryTest {
 
     @ParameterizedTest
     @MethodSource("badParamsProvider")
-    public void testBadParameters(List<String> queryParams) {
+    public void testBadParameters(List<String> queryParams, String expectedMessageFragment) {
         BadRequestException exception = assertThrows(BadRequestException.class,
                 () -> create(queryParams.toArray(new String[0])));
+        assertTrue(exception.getMessage().contains(expectedMessageFragment),
+                   String.format("Error message doesn not contain '%s': %s", expectedMessageFragment, exception.getMessage()));
     }
 
-    static Stream<List<String>> badParamsProvider() {
+    static Stream<Arguments> badParamsProvider() {
         return Stream.of(
-                Arrays.asList("q", "nowhere", "extra", "data"), // unknown parameter
-                Arrays.asList("q", "berlin", "limit", "x"), // limit that is not a number
-                Arrays.asList("q", "berlin", "location_bias_scale", "-e"), // score that is not a number
-                Arrays.asList("q", "berlin", "location_bias_scale", "NaN"), // score with NaN
-                Arrays.asList("q", "berlin", "lon", "3", "lat", "bad"), // bad latitude parameter
-                Arrays.asList("q", "berlin", "lon", "bad", "lat", "45"), // bad longitude parameter
-                Arrays.asList("lat", "45", "lon", "45"),  // missing query parameter
-                Arrays.asList("q", "hanover", "bbox", "9.6,52.3,9.8") , // bbox, wrong number of inputs
-                Arrays.asList("q", "hanover", "bbox", "9.6,52.3,NaN,9.8") , // bbox, bad parameter (NaN)
-                Arrays.asList("q", "hanover", "bbox", "9.6,52.3,-Infinity,9.8") , // bbox, bad parameter (Inf)
-                Arrays.asList("q", "hanover", "bbox", "9.6,52.3,r34,9.8") , // bbox, bad parameter (garbage)
-                Arrays.asList("q", "hanover", "bbox", "9.6,-92,9.8,14"), // bbox, min lat 90
-                Arrays.asList("q", "hanover", "bbox", "9.6,14,9.8,91"), // bbox, max lat 90
-                Arrays.asList("q", "hanover", "bbox", "-181, 9, 4, 12"), // bbox, min lon 180
-                Arrays.asList("q", "hanover", "bbox", "12, 9, 181, 12") // bbox, max lon 180
+                arguments(Arrays.asList("q", "nowhere", "extra", "data"), "'extra'"), // unknown parameter
+                arguments(Arrays.asList("q", "berlin", "limit", "x"), "'limit'"), // limit that is not a number
+                arguments(Arrays.asList("q", "berlin", "location_bias_scale", "-e"), "'location_bias_scale'"), // score that is not a number
+                arguments(Arrays.asList("q", "berlin", "location_bias_scale", "NaN"), "'location_bias_scale'"), // score with NaN
+                arguments(Arrays.asList("q", "berlin", "lon", "3", "lat", "bad"), "'lat'"), // bad latitude parameter
+                arguments(Arrays.asList("q", "berlin", "lon", "bad", "lat", "45"), "'lon'"), // bad longitude parameter
+                arguments(Arrays.asList("lat", "45", "lon", "45"), "'q'"),  // missing query parameter
+                arguments(Arrays.asList("q", "hanover", "bbox", "9.6,52.3,9.8"), "'bbox'"), // bbox, wrong number of inputs
+                arguments(Arrays.asList("q", "hanover", "bbox", "9.6,52.3,NaN,9.8"), "'bbox'"), // bbox, bad parameter (NaN)
+                arguments(Arrays.asList("q", "hanover", "bbox", "9.6,52.3,-Infinity,9.8"), "'bbox'"), // bbox, bad parameter (Inf)
+                arguments(Arrays.asList("q", "hanover", "bbox", "9.6,52.3,r34,9.8"), "'bbox'"), // bbox, bad parameter (garbage)
+                arguments(Arrays.asList("q", "hanover", "bbox", "9.6,-92,9.8,14"), "'bbox'"), // bbox, min lat 90
+                arguments(Arrays.asList("q", "hanover", "bbox", "9.6,14,9.8,91"), "'bbox'"), // bbox, max lat 90
+                arguments(Arrays.asList("q", "hanover", "bbox", "-181, 9, 4, 12"), "'bbox'"), // bbox, min lon 180
+                arguments(Arrays.asList("q", "hanover", "bbox", "12, 9, 181, 12"), "'bbox'") // bbox, max lon 180
         );
     }
 
