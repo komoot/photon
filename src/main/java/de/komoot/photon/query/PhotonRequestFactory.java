@@ -51,7 +51,7 @@ public class PhotonRequestFactory {
             for (String filter : tagFiltersQueryMap.values()) {
                 TagFilter tagFilter = TagFilter.buildOsmTagFilter(filter);
                 if (tagFilter == null) {
-                    throw new BadRequestException(400, String.format("Invalid parameter '%s': bad syntax for tag filter."));
+                    throw new BadRequestException(400, String.format("Invalid parameter 'osm_tag=%s': bad syntax for tag filter.", filter));
                 }
                 request.addOsmTagFilter(TagFilter.buildOsmTagFilter(filter));
             }
@@ -76,17 +76,21 @@ public class PhotonRequestFactory {
     }
 
     private Double parseDouble(Request webRequest, String param) throws BadRequestException {
-        Double intVal = null;
+        Double outVal = null;
         String value = webRequest.queryParams(param);
 
-        if (value != null && value.isEmpty()) {
+        if (value != null && !value.isEmpty()) {
             try {
-                intVal = Double.valueOf(value);
+                outVal = Double.valueOf(value);
             } catch (NumberFormatException e) {
                 throw new BadRequestException(400, String.format("Invalid parameter '%s': must be a number", param));
             }
+
+            if (outVal.isNaN()) {
+                throw new BadRequestException(400, String.format("Invalid parameter '%s': NaN is not allowed", param));
+            }
         }
 
-        return intVal;
+        return outVal;
     }
 }

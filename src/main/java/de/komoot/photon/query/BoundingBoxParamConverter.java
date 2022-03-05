@@ -18,27 +18,30 @@ public class BoundingBoxParamConverter {
         if (bboxParam == null) {
             return null;
         }
-        Envelope bbox = null;
+
+        String[] bboxCoords = bboxParam.split(",");
+        if (bboxCoords.length != 4) {
+            throw new BadRequestException(400, INVALID_BBOX_ERROR_MESSAGE);
+        }
+
+        return new Envelope(parseDouble(bboxCoords[0], 180),
+                parseDouble(bboxCoords[2], 180),
+                parseDouble(bboxCoords[1], 90),
+                parseDouble(bboxCoords[3], 90));
+    }
+
+    private double parseDouble(String coord, double limit) throws BadRequestException {
+        double result;
         try {
-            String[] bboxCoords = bboxParam.split(",");
-            if (bboxCoords.length != 4) {
-                throw new BadRequestException(400, INVALID_BBOX_ERROR_MESSAGE);
-            }
-            Double minLon = Double.valueOf(bboxCoords[0]);
-            Double minLat = Double.valueOf(bboxCoords[1]);
-            Double maxLon = Double.valueOf(bboxCoords[2]);
-            Double maxLat = Double.valueOf(bboxCoords[3]);
-            if (minLon > 180.0 || minLon < -180.00 || maxLon > 180.0 || maxLon < -180.00) {
-                throw new BadRequestException(400, INVALID_BBOX_BOUNDS_MESSAGE);
-            }
-            if (minLat > 90.0 || minLat < -90.00 || maxLat > 90.0 || maxLat < -90.00) {
-                throw new BadRequestException(400, INVALID_BBOX_BOUNDS_MESSAGE);
-            }
-            bbox = new Envelope(minLon, maxLon, minLat, maxLat);
+            result = Double.parseDouble(coord);
         } catch (NumberFormatException nfe) {
             throw new BadRequestException(400, INVALID_BBOX_ERROR_MESSAGE);
         }
 
-        return bbox;
+        if (Double.isNaN(result) || result < -limit || result > limit) {
+            throw new BadRequestException(400, INVALID_BBOX_BOUNDS_MESSAGE);
+        }
+
+        return result;
     }
 }
