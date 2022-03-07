@@ -12,22 +12,20 @@ import java.util.Map;
 public class ElasticResult implements PhotonResult {
     private static final String[] NAME_PRECEDENCE = {"default", "housename", "int", "loc", "reg", "alt", "old"};
 
-    private final Map<String, Object> source;
-    private final double score;
+    private final SearchHit result;
 
-    ElasticResult(Map<String, Object> source, double score) {
-        this.score = score;
-        this.source = source;
+    ElasticResult(SearchHit result) {
+        this.result = result;
     }
 
     @Override
     public Object get(String key) {
-        return source.get(key);
+        return result.getSource().get(key);
     }
 
     @Override
     public String getLocalised(String key, String language) {
-        final Map<String, String> map = (Map<String, String>) source.get(key);
+        final Map<String, String> map = (Map<String, String>) result.getSource().get(key);
         if (map == null) return null;
 
         if (map.get(language) != null) {
@@ -47,16 +45,16 @@ public class ElasticResult implements PhotonResult {
 
     @Override
     public Map<String, String> getMap(String key) {
-        return (Map<String, String>) source.get(key);
+        return (Map<String, String>) result.getSource().get(key);
     }
 
     @Override
     public double[] getCoordinates() {
-        final Map<String, Double> coordinate = (Map<String, Double>) source.get("coordinate");
+        final Map<String, Double> coordinate = (Map<String, Double>) result.getSource().get("coordinate");
         if (coordinate == null) {
             log.error(String.format("invalid data [id=%s, type=%s], coordinate is missing!",
-                    source.get(Constants.OSM_ID),
-                    source.get(Constants.OSM_VALUE)));
+                    result.getSource().get(Constants.OSM_ID),
+                    result.getSource().get(Constants.OSM_VALUE)));
             return new double[]{Double.NaN, Double.NaN};
         }
 
@@ -65,7 +63,7 @@ public class ElasticResult implements PhotonResult {
 
     @Override
     public double[] getExtent() {
-        final Map<String, Object> extent = (Map<String, Object>) source.get("extent");
+        final Map<String, Object> extent = (Map<String, Object>) result.getSource().get("extent");
         if (extent == null) {
             return null;
         }
@@ -79,6 +77,6 @@ public class ElasticResult implements PhotonResult {
 
     @Override
     public double getScore() {
-        return score;
+        return result.getScore();
     }
 }

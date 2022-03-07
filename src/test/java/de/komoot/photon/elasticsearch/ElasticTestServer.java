@@ -17,7 +17,7 @@ public class ElasticTestServer extends Server {
     public PhotonResult getById(int id) {
         GetResponse response =  esClient.prepareGet(PhotonIndex.NAME,PhotonIndex.TYPE, String.valueOf(id)).execute().actionGet();
 
-        return response.isExists() ? new ElasticResult(response.getSource(), 1.0) : null;
+        return response.isExists() ? new ElasticGetIdResult(response) : null;
     }
 
     public void refresh() {
