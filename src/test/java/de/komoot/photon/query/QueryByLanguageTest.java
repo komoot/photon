@@ -26,7 +26,7 @@ public class QueryByLanguageTest extends ESBaseTester {
 
     private Importer setup(String... languages) throws IOException {
         languageList = languages;
-        setUpES(languages);
+        setUpES(dataDirectory, languages);
         return makeImporterWithLanguages(languages);
     }
 

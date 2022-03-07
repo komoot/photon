@@ -4,12 +4,14 @@ import de.komoot.photon.ESBaseTester;
 import de.komoot.photon.PhotonDoc;
 import de.komoot.photon.Importer;
 
+import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Stream;
 
 import de.komoot.photon.searcher.PhotonResult;
 import de.komoot.photon.searcher.TagFilter;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -19,6 +21,9 @@ import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class QueryFilterTagValueTest extends ESBaseTester {
+    @TempDir
+    private static Path instanceTestDirectory;
+
     private static final String[] TAGS = new String[]{"tourism", "attraction",
                                                       "tourism", "hotel",
                                                       "tourism", "museum",
@@ -31,7 +36,7 @@ public class QueryFilterTagValueTest extends ESBaseTester {
 
     @BeforeAll
     public void setUp() throws Exception {
-        setUpES();
+        setUpES(instanceTestDirectory, "en", "de", "fr");
         Importer instance = makeImporter();
         double lon = 13.38886;
         double lat = 52.51704;
@@ -54,8 +59,7 @@ public class QueryFilterTagValueTest extends ESBaseTester {
     @AfterAll
     @Override
     public void tearDown() {
-        deleteIndex();
-        shutdownES();
+        super.tearDown();
     }
 
     private List<PhotonResult> searchWithTags(String[] params) {

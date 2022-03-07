@@ -8,9 +8,11 @@ import de.komoot.photon.elasticsearch.Server;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.get.GetResponse;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.io.TempDir;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Collections;
 
 /**
@@ -20,6 +22,9 @@ import java.util.Collections;
  */
 @Slf4j
 public class ESBaseTester {
+    @TempDir
+    protected Path dataDirectory;
+
     public static final String TEST_CLUSTER_NAME = "photon-test";
     private static GeometryFactory FACTORY = new GeometryFactory(new PrecisionModel(), 4326);
 
@@ -37,21 +42,19 @@ public class ESBaseTester {
 
     @AfterEach
     public void tearDown() {
-        deleteIndex();
         shutdownES();
     }
 
     public void setUpES() throws IOException {
-        setUpES("en");
+        setUpES(dataDirectory, "en");
     }
     /**
      * Setup the ES server
      *
      * @throws IOException
      */
-    public void setUpES(String... languages) throws IOException {
-        server = new Server(new File("./target/es_photon_test").getAbsolutePath()).setMaxShards(1).start(TEST_CLUSTER_NAME, new String[]{});
-        deleteIndex(); // just in case of an abnormal abort previously
+    public void setUpES(Path test_directory, String... languages) throws IOException {
+        server = new Server(test_directory.toString()).setMaxShards(1).start(TEST_CLUSTER_NAME, new String[]{});
         server.recreateIndex(languages);
         refresh();
     }
@@ -94,10 +97,5 @@ public class ESBaseTester {
     public void shutdownES() {
         if (server != null)
             server.shutdown();
-    }
-
-    public void deleteIndex() {
-        if (server != null)
-            server.deleteIndex();
     }
 }
