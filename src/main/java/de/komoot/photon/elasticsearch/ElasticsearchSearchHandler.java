@@ -42,7 +42,7 @@ public class ElasticsearchSearchHandler implements SearchHandler {
 
         List<PhotonResult> ret = new ArrayList<>((int) results.getHits().getTotalHits());
         for (SearchHit hit : results.getHits()) {
-            ret.add(new ElasticResult(hit));
+            ret.add(new ElasticResult(hit.getSource(), hit.getScore()));
         }
 
         return ret;

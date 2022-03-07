@@ -3,6 +3,7 @@ package de.komoot.photon.elasticsearch;
 import de.komoot.photon.ESBaseTester;
 import de.komoot.photon.PhotonDoc;
 import de.komoot.photon.Importer;
+import de.komoot.photon.searcher.PhotonResult;
 import org.elasticsearch.action.get.GetResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,18 +31,16 @@ public class ImporterTest extends ESBaseTester {
         instance.finish();
         refresh();
 
-        GetResponse response = getById(1234);
+        PhotonResult response = getById(1234);
 
-        assertTrue(response.isExists());
+        assertNotNull(response);
 
-        Map<String, Object> source = response.getSource();
+        assertEquals("N", response.get("osm_type"));
+        assertEquals(1000, response.get("osm_id"));
+        assertEquals("place", response.get("osm_key"));
+        assertEquals("city", response.get("osm_value"));
 
-        assertEquals("N", source.get("osm_type"));
-        assertEquals(1000, source.get("osm_id"));
-        assertEquals("place", source.get("osm_key"));
-        assertEquals("city", source.get("osm_value"));
-
-        assertNull(source.get("extra"));
+        assertNull(response.get("extra"));
     }
 
     @Test
@@ -59,10 +58,10 @@ public class ImporterTest extends ESBaseTester {
         instance.finish();
         refresh();
 
-        GetResponse response = getById(1234);
-        assertTrue(response.isExists());
+        PhotonResult response = getById(1234);
+        assertNotNull(response);
 
-        Map<String, String> extra = (Map<String, String>) response.getSource().get("extra");
+        Map<String, String> extra = response.getMap("extra");
         assertNotNull(extra);
 
         assertEquals(2, extra.size());
@@ -70,8 +69,8 @@ public class ImporterTest extends ESBaseTester {
         assertEquals("foo", extra.get("website"));
 
         response = getById(1235);
-        assertTrue(response.isExists());
+        assertNotNull(response);
 
-        assertNull(response.getSource().get("extra"));
+        assertNull(response.get("extra"));
     }
 }

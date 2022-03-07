@@ -3,6 +3,7 @@ package de.komoot.photon.elasticsearch;
 import de.komoot.photon.DatabaseProperties;
 import de.komoot.photon.Importer;
 import de.komoot.photon.Updater;
+import de.komoot.photon.searcher.PhotonResult;
 import de.komoot.photon.searcher.ReverseHandler;
 import de.komoot.photon.searcher.SearchHandler;
 import lombok.extern.slf4j.Slf4j;
@@ -23,8 +24,7 @@ import org.elasticsearch.plugins.Plugin;
 import org.elasticsearch.transport.Netty4Plugin;
 import org.elasticsearch.transport.client.PreBuiltTransportClient;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -282,8 +282,10 @@ public class Server {
         dbProperties.setLanguages(langString == null ? null : langString.split(","));
     }
 
-    public GetResponse getById(int id) {
-        return esClient.prepareGet(PhotonIndex.NAME,PhotonIndex.TYPE, String.valueOf(id)).execute().actionGet();
+    public PhotonResult getById(int id) {
+        GetResponse response =  esClient.prepareGet(PhotonIndex.NAME,PhotonIndex.TYPE, String.valueOf(id)).execute().actionGet();
+
+        return response.isExists() ? new ElasticResult(response.getSource(), 1.0) : null;
     }
 
     public void refresh() {

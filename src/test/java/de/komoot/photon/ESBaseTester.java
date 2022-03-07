@@ -5,6 +5,7 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.PrecisionModel;
 import de.komoot.photon.elasticsearch.Server;
+import de.komoot.photon.searcher.PhotonResult;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.get.GetResponse;
 import org.junit.jupiter.api.AfterEach;
@@ -35,7 +36,7 @@ public class ESBaseTester {
         return new PhotonDoc(id, "W", osmId, key, value).names(Collections.singletonMap("name", "berlin")).centroid(location);
     }
 
-    protected GetResponse getById(int id) {
+    protected PhotonResult getById(int id) {
         return server.getById(id);
     }
 
