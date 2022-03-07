@@ -19,6 +19,7 @@ import java.util.*;
  */
 public class IndexSettings {
     private final JSONObject settings;
+    private Integer numShards = null;
 
     /**
      * Create a new settings object and initialize it with the index settings
@@ -39,9 +40,7 @@ public class IndexSettings {
      * @return Return this object for chaining.
      */
     public IndexSettings setShards(Integer numShards) {
-        if (numShards != null) {
-            settings.put("index", new JSONObject().put("number_of_shards", numShards));
-        }
+        this.numShards = numShards;
 
         return this;
     }
@@ -139,10 +138,18 @@ public class IndexSettings {
      * @param indexName Name of the new index
      */
     public void createIndex(Client client, String indexName) {
+        if (numShards != null) {
+            settings.put("index", new JSONObject().put("number_of_shards", numShards));
+        }
+
         client.admin().indices().prepareCreate(indexName)
                 .setSettings(settings.toString(), XContentType.JSON)
                 .execute()
                 .actionGet();
+
+        if (numShards != null) {
+            settings.remove("index");
+        }
     }
 
     /**
