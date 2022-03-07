@@ -3,7 +3,6 @@ package de.komoot.photon.query;
 import de.komoot.photon.*;
 import de.komoot.photon.searcher.PhotonResult;
 import lombok.extern.slf4j.Slf4j;
-import org.elasticsearch.action.get.GetResponse;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
@@ -62,7 +61,6 @@ public class QueryByClassificationTest extends ESBaseTester {
             throw new RuntimeException(e);
         }
         try {
-            getServer().setMaxShards(null);
             getServer().updateIndexSettings(synonymPath.toString());
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -160,7 +158,6 @@ public class QueryByClassificationTest extends ESBaseTester {
             throw new RuntimeException(e);
         }
         try {
-            getServer().setMaxShards(null);
             getServer().updateIndexSettings(synonymPath.toString());
         } catch (IOException e) {
             throw new RuntimeException(e);

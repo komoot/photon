@@ -1,13 +1,8 @@
 package de.komoot.photon.query;
 
 import de.komoot.photon.ESBaseTester;
-import de.komoot.photon.PhotonDoc;
 import de.komoot.photon.Importer;
-
-import java.nio.file.Path;
-import java.util.List;
-import java.util.stream.Stream;
-
+import de.komoot.photon.PhotonDoc;
 import de.komoot.photon.searcher.PhotonResult;
 import de.komoot.photon.searcher.TagFilter;
 import org.junit.jupiter.api.*;
@@ -15,6 +10,10 @@ import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+
+import java.nio.file.Path;
+import java.util.List;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.params.provider.Arguments.arguments;

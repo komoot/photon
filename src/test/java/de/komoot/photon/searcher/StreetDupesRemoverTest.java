@@ -1,7 +1,6 @@
 package de.komoot.photon.searcher;
 
 import de.komoot.photon.Constants;
-import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;

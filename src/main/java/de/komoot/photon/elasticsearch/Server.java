@@ -3,12 +3,10 @@ package de.komoot.photon.elasticsearch;
 import de.komoot.photon.DatabaseProperties;
 import de.komoot.photon.Importer;
 import de.komoot.photon.Updater;
-import de.komoot.photon.searcher.PhotonResult;
 import de.komoot.photon.searcher.ReverseHandler;
 import de.komoot.photon.searcher.SearchHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.SystemUtils;
-import org.elasticsearch.action.admin.indices.refresh.RefreshRequest;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.TransportClient;
@@ -57,11 +55,9 @@ public class Server {
 
     private Node esNode;
 
-    private Client esClient;
+    protected Client esClient;
 
     private File esDirectory;
-
-    private Integer shards = null;
 
     protected static class MyNode extends Node {
         public MyNode(Settings preparedSettings, Collection<Class<? extends Plugin>> classpathPlugins) {
@@ -207,8 +203,8 @@ public class Server {
         }
     }
 
-    private IndexSettings loadIndexSettings() {
-        return new IndexSettings().setShards(shards);
+    protected IndexSettings loadIndexSettings() {
+        return new IndexSettings();
     }
 
     public void deleteIndex() {
@@ -220,20 +216,7 @@ public class Server {
     }
 
 
-    /**
-     * Set the maximum number of shards for the embedded node
-     * This typically only makes sense for testing
-     *
-     * @param shards the maximum number of shards
-     * @return this Server instance for chaining
-     */
-    public Server setMaxShards(Integer shards) {
-        this.shards = shards;
-        return this;
-    }
-
-
-       /**
+   /**
      * Save the global properties to the database.
      *
      * The function saved properties available as members and the database version
@@ -280,16 +263,6 @@ public class Server {
 
         String langString = properties.get(FIELD_LANGUAGES);
         dbProperties.setLanguages(langString == null ? null : langString.split(","));
-    }
-
-    public PhotonResult getById(int id) {
-        GetResponse response =  esClient.prepareGet(PhotonIndex.NAME,PhotonIndex.TYPE, String.valueOf(id)).execute().actionGet();
-
-        return response.isExists() ? new ElasticResult(response.getSource(), 1.0) : null;
-    }
-
-    public void refresh() {
-        esClient.admin().indices().refresh(new RefreshRequest(PhotonIndex.NAME)).actionGet();
     }
 
     public Importer createImporter(String[] languages, String[] extraTags) {

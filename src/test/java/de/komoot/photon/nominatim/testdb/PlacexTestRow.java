@@ -5,12 +5,11 @@ import com.vividsolutions.jts.io.WKTReader;
 import de.komoot.photon.PhotonDoc;
 import lombok.Getter;
 import org.json.JSONObject;
+import org.junit.jupiter.api.Assertions;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import org.junit.jupiter.api.Assertions;
 
 @Getter
 public class PlacexTestRow {
