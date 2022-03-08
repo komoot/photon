@@ -1,10 +1,10 @@
 package de.komoot.photon.elasticsearch;
 
 import de.komoot.photon.ESBaseTester;
-import de.komoot.photon.PhotonDoc;
 import de.komoot.photon.Importer;
+import de.komoot.photon.PhotonDoc;
 import de.komoot.photon.Updater;
-import org.elasticsearch.action.get.GetResponse;
+import de.komoot.photon.searcher.PhotonResult;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -34,10 +34,10 @@ public class UpdaterTest extends ESBaseTester {
         updater.finish();
         refresh();
 
-        GetResponse response = getById(1234);
+        PhotonResult response = getById(1234);
+        assertNotNull(response);
 
-        assertTrue(response.isExists());
-        Map<String, String> out_names = (Map<String, String>) response.getSourceAsMap().get("name");
+        Map<String, String> out_names = response.getMap("name");
         assertEquals("Foo", out_names.get("default"));
         assertEquals("Enfoo", out_names.get("en"));
     }
@@ -61,10 +61,10 @@ public class UpdaterTest extends ESBaseTester {
         updater.finish();
         refresh();
 
-        GetResponse response = getById(1234);
+        PhotonResult response = getById(1234);
+        assertNotNull(response);
 
-        assertTrue(response.isExists());
-        Map<String, String> out_names = (Map<String, String>) response.getSourceAsMap().get("name");
+        Map<String, String> out_names = response.getMap("name");
         assertFalse(out_names.containsKey("default"));
         assertEquals("Enfoo", out_names.get("en"));
     }
@@ -81,10 +81,10 @@ public class UpdaterTest extends ESBaseTester {
         instance.finish();
         refresh();
 
-        GetResponse response = getById(1234);
-        assertTrue(response.isExists());
+        PhotonResult response = getById(1234);
+        assertNotNull(response);
 
-        assertNull(response.getSource().get("extra"));
+        assertNull(response.get("extra"));
 
         doc.extraTags(Collections.singletonMap("website", "http://site.foo"));
         Updater updater = makeUpdaterWithExtra("website");
@@ -93,9 +93,9 @@ public class UpdaterTest extends ESBaseTester {
         refresh();
 
         response = getById(1234);
-        assertTrue(response.isExists());
+        assertNotNull(response);
 
-        Map<String, String> extra = (Map<String, String>) response.getSource().get("extra");
+        Map<String, String> extra = response.getMap("extra");
 
         assertNotNull(extra);
         assertEquals(Collections.singletonMap("website", "http://site.foo"), extra);

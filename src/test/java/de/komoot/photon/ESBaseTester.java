@@ -4,13 +4,14 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.PrecisionModel;
-import de.komoot.photon.elasticsearch.Server;
+import de.komoot.photon.elasticsearch.ElasticTestServer;
+import de.komoot.photon.searcher.PhotonResult;
 import lombok.extern.slf4j.Slf4j;
-import org.elasticsearch.action.get.GetResponse;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.io.TempDir;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Collections;
 
 /**
@@ -20,38 +21,40 @@ import java.util.Collections;
  */
 @Slf4j
 public class ESBaseTester {
-    public static final String TEST_CLUSTER_NAME = "photon-test";
-    private static GeometryFactory FACTORY = new GeometryFactory(new PrecisionModel(), 4326);
+    @TempDir
+    protected Path dataDirectory;
 
-    private Server server;
+    public static final String TEST_CLUSTER_NAME = "photon-test";
+    protected static GeometryFactory FACTORY = new GeometryFactory(new PrecisionModel(), 4326);
+
+    private ElasticTestServer server;
 
     protected PhotonDoc createDoc(double lon, double lat, int id, int osmId, String key, String value) {
         Point location = FACTORY.createPoint(new Coordinate(lon, lat));
         return new PhotonDoc(id, "W", osmId, key, value).names(Collections.singletonMap("name", "berlin")).centroid(location);
     }
 
-    protected GetResponse getById(int id) {
+    protected PhotonResult getById(int id) {
         return server.getById(id);
     }
 
 
     @AfterEach
     public void tearDown() {
-        deleteIndex();
         shutdownES();
     }
 
     public void setUpES() throws IOException {
-        setUpES("en");
+        setUpES(dataDirectory, "en");
     }
     /**
      * Setup the ES server
      *
      * @throws IOException
      */
-    public void setUpES(String... languages) throws IOException {
-        server = new Server(new File("./target/es_photon_test").getAbsolutePath()).setMaxShards(1).start(TEST_CLUSTER_NAME, new String[]{});
-        deleteIndex(); // just in case of an abnormal abort previously
+    public void setUpES(Path test_directory, String... languages) throws IOException {
+        server = new ElasticTestServer(test_directory.toString());
+        server.start(TEST_CLUSTER_NAME, new String[]{});
         server.recreateIndex(languages);
         refresh();
     }
@@ -76,7 +79,7 @@ public class ESBaseTester {
         return server.createUpdater(new String[]{"en"}, extraTags);
     }
 
-    protected Server getServer() {
+    protected ElasticTestServer getServer() {
         if (server == null) {
             throw new RuntimeException("call setUpES before using getClient");
         }
@@ -94,10 +97,5 @@ public class ESBaseTester {
     public void shutdownES() {
         if (server != null)
             server.shutdown();
-    }
-
-    public void deleteIndex() {
-        if (server != null)
-            server.deleteIndex();
     }
 }

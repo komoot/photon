@@ -1,10 +1,6 @@
 package de.komoot.photon.query;
 
 import com.vividsolutions.jts.geom.Envelope;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.params.provider.Arguments.arguments;
-
 import de.komoot.photon.searcher.TagFilter;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -16,6 +12,9 @@ import spark.Request;
 
 import java.util.*;
 import java.util.stream.Stream;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 /**
  * Tests for correct parsing of the query parameters into a PhotonRequest.

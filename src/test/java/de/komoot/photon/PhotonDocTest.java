@@ -1,9 +1,9 @@
 package de.komoot.photon;
 
-import java.util.HashMap;
-
 import de.komoot.photon.nominatim.model.AddressType;
 import org.junit.jupiter.api.Test;
+
+import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.*;
 

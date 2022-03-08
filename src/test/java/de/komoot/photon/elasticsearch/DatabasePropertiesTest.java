@@ -4,8 +4,6 @@ import de.komoot.photon.DatabaseProperties;
 import de.komoot.photon.ESBaseTester;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
