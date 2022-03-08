@@ -30,10 +30,10 @@ public class GeocodeJsonFormatter implements ResultFormatter {
             final double[] coordinates = result.getCoordinates();
 
             features.put(new JSONObject()
-                        .put("type", "feature")
+                        .put("type", "Feature")
                         .put("properties", getResultProperties(result))
                         .put("geometry", new JSONObject()
-                                .put("type", "feature")
+                                .put("type", "Point")
                                 .put("coordinates", coordinates)));
         }
 
