@@ -207,7 +207,7 @@ public class Server {
         return new IndexSettings();
     }
 
-    public void deleteIndex() {
+    private void deleteIndex() {
         try {
             esClient.admin().indices().prepareDelete(PhotonIndex.NAME).execute().actionGet();
         } catch (IndexNotFoundException e) {

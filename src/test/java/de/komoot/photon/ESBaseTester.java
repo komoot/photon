@@ -25,7 +25,7 @@ public class ESBaseTester {
     protected Path dataDirectory;
 
     public static final String TEST_CLUSTER_NAME = "photon-test";
-    private static GeometryFactory FACTORY = new GeometryFactory(new PrecisionModel(), 4326);
+    protected static GeometryFactory FACTORY = new GeometryFactory(new PrecisionModel(), 4326);
 
     private ElasticTestServer server;
 
