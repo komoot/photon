@@ -1,11 +1,14 @@
 package de.komoot.photon.query;
 
+import com.vividsolutions.jts.geom.Coordinate;
 import de.komoot.photon.ESBaseTester;
 import de.komoot.photon.Importer;
 import de.komoot.photon.PhotonDoc;
 import de.komoot.photon.searcher.PhotonResult;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -39,6 +42,9 @@ public class QueryRelevanceTest extends ESBaseTester {
         return getServer().createSearchHandler(new String[]{"en"}).search(new PhotonRequest(query, "en"));
     }
 
+    private List<PhotonResult> search(PhotonRequest request) {
+        return getServer().createSearchHandler(new String[]{"en"}).search(request);
+    }
 
     @Test
     public void testRelevanceByImportance() {
@@ -82,5 +88,40 @@ public class QueryRelevanceTest extends ESBaseTester {
         assertEquals(1001, results.get(0).get("osm_id"));
     }
 
+    @ParameterizedTest
+    @ValueSource(strings = {"Ham", "Hamm", "Hamburg"})
+    void testLocationPreferenceForEqualImportance(String placeName) {
+        Importer instance = makeImporter();
+        instance.add(createDoc("place", "hamlet", 1000, "name", "Ham")
+                .centroid(FACTORY.createPoint(new Coordinate(10, 10))));
+        instance.add(createDoc("place", "hamlet", 1001, "name", placeName)
+                .centroid(FACTORY.createPoint(new Coordinate(-10, -10))));
+        instance.finish();
+        refresh();
 
+        List<PhotonResult> results = search(new PhotonRequest("ham", "en")
+                .setLocationForBias(FACTORY.createPoint(new Coordinate(-9.9, -10))));
+
+        assertEquals(2, results.size());
+        assertEquals(1001, results.get(0).get("osm_id"));
+    }
+
+    @Test
+    void testLocationPreferenceForHigherImportance() {
+        Importer instance = makeImporter();
+        instance.add(createDoc("place", "hamlet", 1000, "name", "Ham")
+                        .importance(0.8)
+                .centroid(FACTORY.createPoint(new Coordinate(10, 10))));
+        instance.add(createDoc("place", "hamlet", 1001, "name", "Ham")
+                        .importance(0.01)
+                .centroid(FACTORY.createPoint(new Coordinate(-10, -10))));
+        instance.finish();
+        refresh();
+
+        List<PhotonResult> results = search(new PhotonRequest("ham", "en")
+                .setLocationForBias(FACTORY.createPoint(new Coordinate(-9.9, -10))));
+
+        assertEquals(2, results.size());
+        assertEquals(1000, results.get(0).get("osm_id"));
+    }
 }
