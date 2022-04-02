@@ -1,5 +1,6 @@
 package de.komoot.photon.query;
 
+import de.komoot.photon.nominatim.model.AddressType;
 import de.komoot.photon.searcher.TagFilter;
 import spark.QueryParamsMap;
 import spark.Request;
@@ -17,7 +18,7 @@ public class PhotonRequestFactory {
     private final BoundingBoxParamConverter bboxParamConverter;
 
     private static final HashSet<String> REQUEST_QUERY_PARAMS = new HashSet<>(Arrays.asList("lang", "q", "lon", "lat",
-            "limit", "osm_tag", "location_bias_scale", "bbox", "debug", "zoom"));
+            "limit", "osm_tag", "location_bias_scale", "bbox", "debug", "zoom", "object_type"));
 
     public PhotonRequestFactory(List<String> supportedLanguages, String defaultLanguage) {
         this.languageResolver = new RequestLanguageResolver(supportedLanguages, defaultLanguage);
@@ -54,6 +55,20 @@ public class PhotonRequestFactory {
                     throw new BadRequestException(400, String.format("Invalid parameter 'osm_tag=%s': bad syntax for tag filter.", filter));
                 }
                 request.addOsmTagFilter(TagFilter.buildOsmTagFilter(filter));
+            }
+        }
+
+        QueryParamsMap objectTypeFiltersQueryMap = webRequest.queryMap("object_type");
+        if (objectTypeFiltersQueryMap.hasValue()) {
+            List<String> availableObjectTypes = AddressType.getNames();
+            for (String objectTypeFilter : objectTypeFiltersQueryMap.values()) {
+                if (!availableObjectTypes.contains(objectTypeFilter)) {
+                    throw new BadRequestException(
+                        400,
+                        String.format("Invalid object_type '%s'. Allowed types are: %s", objectTypeFilter, String.join(",", availableObjectTypes))
+                    );
+                }
+                request.addObjectTypeFilter(objectTypeFilter);
             }
         }
 

@@ -34,6 +34,7 @@ public class PhotonRequestFactoryTest {
 
         QueryParamsMap mockQueryParamsMap = Mockito.mock(QueryParamsMap.class);
         Mockito.when(mockRequest.queryMap("osm_tag")).thenReturn(mockQueryParamsMap);
+        Mockito.when(mockRequest.queryMap("object_type")).thenReturn(mockQueryParamsMap);
 
         PhotonRequestFactory factory = new PhotonRequestFactory(Collections.singletonList("en"), "en");
         return factory.create(mockRequest);
@@ -47,6 +48,25 @@ public class PhotonRequestFactoryTest {
         Mockito.when(mockQueryParamsMap.hasValue()).thenReturn(true);
         Mockito.when(mockQueryParamsMap.values()).thenReturn(filterParams);
         Mockito.when(mockRequest.queryMap("osm_tag")).thenReturn(mockQueryParamsMap);
+
+        QueryParamsMap mockEmptyQueryParamsMap = Mockito.mock(QueryParamsMap.class);
+        Mockito.when(mockRequest.queryMap("object_type")).thenReturn(mockEmptyQueryParamsMap);
+
+        PhotonRequestFactory factory = new PhotonRequestFactory(Collections.singletonList("en"), "en");
+        return factory.create(mockRequest);
+    }
+
+    private PhotonRequest createObjectTypeFilters(String... filterParams) throws BadRequestException {
+        Request mockRequest = Mockito.mock(Request.class);
+        Mockito.when(mockRequest.queryParams("q")).thenReturn("new york");
+
+        QueryParamsMap mockQueryParamsMap = Mockito.mock(QueryParamsMap.class);
+        Mockito.when(mockQueryParamsMap.hasValue()).thenReturn(true);
+        Mockito.when(mockQueryParamsMap.values()).thenReturn(filterParams);
+        Mockito.when(mockRequest.queryMap("object_type")).thenReturn(mockQueryParamsMap);
+
+        QueryParamsMap mockEmptyQueryParamsMap = Mockito.mock(QueryParamsMap.class);
+        Mockito.when(mockRequest.queryMap("osm_tag")).thenReturn(mockEmptyQueryParamsMap);
 
         PhotonRequestFactory factory = new PhotonRequestFactory(Collections.singletonList("en"), "en");
         return factory.create(mockRequest);
@@ -156,5 +176,32 @@ public class PhotonRequestFactoryTest {
         PhotonRequest photonRequest = create("q", "hanover", "bbox", "9.6,52.3,9.8,52.4");
 
         assertEquals(new Envelope(9.6, 9.8, 52.3, 52.4), photonRequest.getBbox());
+    }
+
+    @Test
+    public void testWithObjectTypeFilters() throws Exception {
+        PhotonRequest photonRequest = createObjectTypeFilters("city", "locality");
+
+        assertEquals(new HashSet<>(Arrays.asList("city", "locality")), photonRequest.getObjectTypeFilters());
+    }
+
+    @Test
+    public void testWithDuplicatedObjectTypeFilters() throws Exception {
+        PhotonRequest photonRequest = createObjectTypeFilters("city", "locality", "city");
+
+        assertEquals(new HashSet<>(Arrays.asList("city", "locality")), photonRequest.getObjectTypeFilters());
+    }
+
+    @Test
+    public void testWithBadObjectTypeFilters() throws Exception {
+        BadRequestException exception = assertThrows(BadRequestException.class,
+                () -> createObjectTypeFilters("city", "bad"));
+
+        String expectedMessageFragment = "object_type";
+
+        assertTrue(exception.getMessage().contains(expectedMessageFragment),
+                String.format("Error message doesn not contain '%s': %s", expectedMessageFragment, exception.getMessage()));
+
+
     }
 }

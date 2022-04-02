@@ -45,6 +45,8 @@ public class PhotonQueryBuilder {
 
     private GeoBoundingBoxQueryBuilder bboxQueryBuilder;
 
+    private TermsQueryBuilder objectTypeQueryBuilder;
+
     private BoolQueryBuilder finalQueryBuilder;
 
     protected ArrayList<FilterFunctionBuilder> alFilterFunction4QueryBuilder = new ArrayList<>(1);
@@ -219,6 +221,14 @@ public class PhotonQueryBuilder {
         return this;
     }
 
+    public PhotonQueryBuilder withObjectTypeFilters(Set<String> filters) {
+        if (filters.size() > 0) {
+            objectTypeQueryBuilder = new TermsQueryBuilder("object_type", filters);
+        }
+
+        return this;
+    }
+
 
 
     /**
@@ -242,6 +252,9 @@ public class PhotonQueryBuilder {
         
         if (bboxQueryBuilder != null) 
             queryBuilderForTopLevelFilter.filter(bboxQueryBuilder);
+
+        if (objectTypeQueryBuilder != null)
+            queryBuilderForTopLevelFilter.filter(objectTypeQueryBuilder);
 
         state = State.FINISHED;
 

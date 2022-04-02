@@ -194,8 +194,8 @@
 				"index": true
 			},
 			"object_type": {
-				"type": "text",
-				"index": false
+				"type": "keyword",
+				"index": true
 			},
 			"postcode": {
 				"type": "text",

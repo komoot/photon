@@ -20,6 +20,7 @@ public class PhotonRequest {
     private boolean debug = false;
 
     private final List<TagFilter> osmTagFilters = new ArrayList<>(1);
+    private final Set<String> objectTypeFilters = new HashSet<>(1);
 
 
     public PhotonRequest(String query, String language) {
@@ -61,8 +62,17 @@ public class PhotonRequest {
         return osmTagFilters;
     }
 
+    public Set<String> getObjectTypeFilters() {
+        return objectTypeFilters;
+    }
+
     PhotonRequest addOsmTagFilter(TagFilter filter) {
         osmTagFilters.add(filter);
+        return this;
+    }
+
+    PhotonRequest addObjectTypeFilter(String filter) {
+        objectTypeFilters.add(filter);
         return this;
     }
 
