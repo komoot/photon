@@ -1,6 +1,5 @@
 package de.komoot.photon.query;
 
-import de.komoot.photon.nominatim.model.AddressType;
 import de.komoot.photon.searcher.TagFilter;
 import spark.QueryParamsMap;
 import spark.Request;
@@ -16,6 +15,7 @@ public class PhotonRequestFactory {
     private final RequestLanguageResolver languageResolver;
     private static final LocationParamConverter optionalLocationParamConverter = new LocationParamConverter(false);
     private final BoundingBoxParamConverter bboxParamConverter;
+    private final ObjectTypeParamValidator objectTypeParamValidator;
 
     private static final HashSet<String> REQUEST_QUERY_PARAMS = new HashSet<>(Arrays.asList("lang", "q", "lon", "lat",
             "limit", "osm_tag", "location_bias_scale", "bbox", "debug", "zoom", "object_type"));
@@ -23,6 +23,7 @@ public class PhotonRequestFactory {
     public PhotonRequestFactory(List<String> supportedLanguages, String defaultLanguage) {
         this.languageResolver = new RequestLanguageResolver(supportedLanguages, defaultLanguage);
         this.bboxParamConverter = new BoundingBoxParamConverter();
+        this.objectTypeParamValidator = new ObjectTypeParamValidator();
     }
 
     public PhotonRequest create(Request webRequest) throws BadRequestException {
@@ -60,16 +61,7 @@ public class PhotonRequestFactory {
 
         QueryParamsMap objectTypeFiltersQueryMap = webRequest.queryMap("object_type");
         if (objectTypeFiltersQueryMap.hasValue()) {
-            List<String> availableObjectTypes = AddressType.getNames();
-            for (String objectTypeFilter : objectTypeFiltersQueryMap.values()) {
-                if (!availableObjectTypes.contains(objectTypeFilter)) {
-                    throw new BadRequestException(
-                        400,
-                        String.format("Invalid object_type '%s'. Allowed types are: %s", objectTypeFilter, String.join(",", availableObjectTypes))
-                    );
-                }
-                request.addObjectTypeFilter(objectTypeFilter);
-            }
+            request.setObjectTypeFilter(objectTypeParamValidator.validate(objectTypeFiltersQueryMap.values()));
         }
 
         return request;

@@ -3,6 +3,7 @@ package de.komoot.photon.query;
 import com.vividsolutions.jts.geom.Point;
 
 import java.io.Serializable;
+import java.util.Set;
 
 /**
  * @author svantulden
@@ -14,14 +15,17 @@ public class ReverseRequest implements Serializable {
     private Integer limit;
     private String queryStringFilter;
     private Boolean locationDistanceSort = true;
+    private Set<String> objectTypeFilters;
 
-    public ReverseRequest(Point location, String language, Double radius, String queryStringFilter, Integer limit, Boolean locationDistanceSort) {
+    public ReverseRequest(Point location, String language, Double radius, String queryStringFilter,
+                          Integer limit, Boolean locationDistanceSort, Set<String> objectTypeFilter) {
         this.location = location;
         this.language = language;
         this.radius = radius;
         this.limit = limit;
         this.queryStringFilter = queryStringFilter;
         this.locationDistanceSort = locationDistanceSort;
+        this.objectTypeFilters = objectTypeFilter;
     }
 
     public Point getLocation() {
@@ -46,5 +50,9 @@ public class ReverseRequest implements Serializable {
 
     public Boolean getLocationDistanceSort() {
         return locationDistanceSort;
+    }
+
+    public Set<String> getObjectTypeFilters() {
+        return objectTypeFilters;
     }
 }

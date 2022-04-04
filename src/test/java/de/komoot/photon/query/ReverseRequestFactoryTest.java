@@ -7,9 +7,12 @@ package de.komoot.photon.query;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import spark.QueryParamsMap;
 import spark.Request;
 
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -26,10 +29,23 @@ public class ReverseRequestFactoryTest {
         Mockito.when(mockRequest.queryParamOrDefault("distance_sort", "true")).thenReturn("true");
     }
 
+    public void requestWithNoObjectTypes(Request mockRequest) {
+        QueryParamsMap mockEmptyQueryParamsMap = Mockito.mock(QueryParamsMap.class);
+        Mockito.when(mockRequest.queryMap("object_type")).thenReturn(mockEmptyQueryParamsMap);
+    }
+
+    public void requestWithObjectTypes(Request mockRequest, String... objectTypes) {
+        QueryParamsMap mockQueryParamsMap = Mockito.mock(QueryParamsMap.class);
+        Mockito.when(mockQueryParamsMap.hasValue()).thenReturn(true);
+        Mockito.when(mockQueryParamsMap.values()).thenReturn(objectTypes);
+        Mockito.when(mockRequest.queryMap("object_type")).thenReturn(mockQueryParamsMap);
+    }
+
     @Test
     public void testWithLocation() throws Exception {
         Request mockRequest = Mockito.mock(Request.class);
         requestWithLongitudeLatitude(mockRequest, -87d, 41d);
+        requestWithNoObjectTypes(mockRequest);
         ReverseRequestFactory reverseRequestFactory = new ReverseRequestFactory(Collections.singletonList("en"), "en");
         reverseRequest = reverseRequestFactory.create(mockRequest);
         assertEquals(-87, reverseRequest.getLocation().getX(), 0);
@@ -132,6 +148,7 @@ public class ReverseRequestFactoryTest {
     public void testHighRadius() throws Exception {
         Request mockRequest = Mockito.mock(Request.class);
         requestWithLongitudeLatitude(mockRequest, -87d, 41d);
+        requestWithNoObjectTypes(mockRequest);
         Mockito.when(mockRequest.queryParams("radius")).thenReturn("5.1");
         ReverseRequestFactory reverseRequestFactory = new ReverseRequestFactory(Collections.singletonList("en"), "en");
         reverseRequest = reverseRequestFactory.create(mockRequest);
@@ -158,6 +175,7 @@ public class ReverseRequestFactoryTest {
     public void testHighLimit() throws Exception {
         Request mockRequest = Mockito.mock(Request.class);
         requestWithLongitudeLatitude(mockRequest, -87d, 41d);
+        requestWithNoObjectTypes(mockRequest);
         Mockito.when(mockRequest.queryParams("limit")).thenReturn("51");
         ReverseRequestFactory reverseRequestFactory = new ReverseRequestFactory(Collections.singletonList("en"), "en");
         reverseRequest = reverseRequestFactory.create(mockRequest);
@@ -169,9 +187,39 @@ public class ReverseRequestFactoryTest {
     public void testDistanceSortDefault() throws Exception {
         Request mockRequest = Mockito.mock(Request.class);
         requestWithLongitudeLatitude(mockRequest, -87d, 41d);
+        requestWithNoObjectTypes(mockRequest);
         ReverseRequestFactory reverseRequestFactory = new ReverseRequestFactory(Collections.singletonList("en"), "en");
         reverseRequest = reverseRequestFactory.create(mockRequest);
         Mockito.verify(mockRequest, Mockito.times(1)).queryParamOrDefault("distance_sort", "true");
         assertEquals(true, reverseRequest.getLocationDistanceSort());
+    }
+
+    @Test
+    public void testWithObjectTypeFilters() throws Exception {
+        Request mockRequest = Mockito.mock(Request.class);
+        requestWithLongitudeLatitude(mockRequest, -87d, 41d);
+        requestWithObjectTypes(mockRequest, "city", "locality");
+        ReverseRequestFactory reverseRequestFactory = new ReverseRequestFactory(Collections.singletonList("en"), "en");
+        reverseRequest = reverseRequestFactory.create(mockRequest);
+        assertEquals(new HashSet<>(Arrays.asList("city", "locality")), reverseRequest.getObjectTypeFilters());
+    }
+
+    @Test
+    public void testWithDuplicatedObjectTypeFilters() throws Exception {
+        Request mockRequest = Mockito.mock(Request.class);
+        requestWithLongitudeLatitude(mockRequest, -87d, 41d);
+        requestWithObjectTypes(mockRequest, "city", "locality", "city");
+        ReverseRequestFactory reverseRequestFactory = new ReverseRequestFactory(Collections.singletonList("en"), "en");
+        reverseRequest = reverseRequestFactory.create(mockRequest);
+        assertEquals(new HashSet<>(Arrays.asList("city", "locality")), reverseRequest.getObjectTypeFilters());
+    }
+
+    @Test
+    public void testWithBadObjectTypeFilters() {
+        Request mockRequest = Mockito.mock(Request.class);
+        requestWithLongitudeLatitude(mockRequest, -87d, 41d);
+        requestWithObjectTypes(mockRequest, "city", "bad");
+
+        assertBadRequest(mockRequest, "Invalid object_type 'bad'. Allowed types are: house,street,locality,district,city,county,state,country");
     }
 }

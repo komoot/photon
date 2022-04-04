@@ -15,6 +15,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.HashSet;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -45,7 +46,7 @@ public class QueryReverseTest extends ESBaseTester {
 
     private List<PhotonResult> reverse(double lon, double lat, double radius, int limit) {
         Point pt = FACTORY.createPoint(new Coordinate(lon, lat));
-        return getServer().createReverseHandler().reverse(new ReverseRequest(pt, "en", radius, "", limit, true));
+        return getServer().createReverseHandler().reverse(new ReverseRequest(pt, "en", radius, "", limit, true, new HashSet<>()));
     }
 
     @Test

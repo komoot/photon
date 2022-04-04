@@ -1,11 +1,13 @@
 package de.komoot.photon.query;
 
 import com.vividsolutions.jts.geom.Point;
+import spark.QueryParamsMap;
 import spark.Request;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author svantulden
@@ -13,11 +15,14 @@ import java.util.List;
 public class ReverseRequestFactory {
     private final RequestLanguageResolver languageResolver;
     private static final LocationParamConverter mandatoryLocationParamConverter = new LocationParamConverter(true);
+    private final ObjectTypeParamValidator objectTypeParamValidator;
 
-    private static final HashSet<String> REQUEST_QUERY_PARAMS = new HashSet<>(Arrays.asList("lang", "lon", "lat", "radius", "query_string_filter", "distance_sort", "limit"));
+    private static final HashSet<String> REQUEST_QUERY_PARAMS = new HashSet<>(Arrays.asList("lang", "lon", "lat", "radius",
+            "query_string_filter", "distance_sort", "limit", "object_type"));
 
     public ReverseRequestFactory(List<String> supportedLanguages, String defaultLanguage) {
         this.languageResolver = new RequestLanguageResolver(supportedLanguages, defaultLanguage);
+        this.objectTypeParamValidator = new ObjectTypeParamValidator();
     }
 
     public ReverseRequest create(Request webRequest) throws BadRequestException {
@@ -69,7 +74,13 @@ public class ReverseRequestFactory {
             }
         }
 
+        Set<String> objectTypeFilter = new HashSet<>();
+        QueryParamsMap objectTypeFiltersQueryMap = webRequest.queryMap("object_type");
+        if (objectTypeFiltersQueryMap.hasValue()) {
+            objectTypeFilter = objectTypeParamValidator.validate(objectTypeFiltersQueryMap.values());
+        }
+
         String queryStringFilter = webRequest.queryParams("query_string_filter");
-        return new ReverseRequest(location, language, radius, queryStringFilter, limit, locationDistanceSort);
+        return new ReverseRequest(location, language, radius, queryStringFilter, limit, locationDistanceSort, objectTypeFilter);
     }
 }
