@@ -46,7 +46,10 @@ public class QueryReverseTest extends ESBaseTester {
 
     private List<PhotonResult> reverse(double lon, double lat, double radius, int limit) {
         Point pt = FACTORY.createPoint(new Coordinate(lon, lat));
-        return getServer().createReverseHandler().reverse(new ReverseRequest(pt, "en", radius, "", limit, true, new HashSet<>()));
+
+        return getServer().createReverseHandler().reverse(
+            new ReverseRequest(pt, "en", radius, "", limit, true, new HashSet<>(), false)
+        );
     }
 
     @Test

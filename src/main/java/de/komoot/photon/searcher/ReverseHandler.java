@@ -8,4 +8,6 @@ import java.util.List;
 public interface ReverseHandler {
 
     List<PhotonResult> reverse(ReverseRequest photonRequest);
+
+    String dumpQuery(ReverseRequest photonRequest);
 }

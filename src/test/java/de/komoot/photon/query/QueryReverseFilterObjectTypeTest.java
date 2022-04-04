@@ -53,7 +53,7 @@ public class QueryReverseFilterObjectTypeTest extends ESBaseTester {
         Point pt = FACTORY.createPoint(new Coordinate(10, 10));
 
         Set<String> typeSet = Arrays.stream(types).collect(Collectors.toSet());
-        ReverseRequest request = new ReverseRequest(pt, "en", 1.0, "", 10, true, typeSet);
+        ReverseRequest request = new ReverseRequest(pt, "en", 1.0, "", 10, true, typeSet, false);
 
         return getServer().createReverseHandler().reverse(request);
     }

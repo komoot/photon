@@ -18,7 +18,7 @@ public class ReverseRequestFactory {
     private final ObjectTypeParamValidator objectTypeParamValidator;
 
     private static final HashSet<String> REQUEST_QUERY_PARAMS = new HashSet<>(Arrays.asList("lang", "lon", "lat", "radius",
-            "query_string_filter", "distance_sort", "limit", "object_type"));
+            "query_string_filter", "distance_sort", "limit", "object_type", "debug"));
 
     public ReverseRequestFactory(List<String> supportedLanguages, String defaultLanguage) {
         this.languageResolver = new RequestLanguageResolver(supportedLanguages, defaultLanguage);
@@ -74,6 +74,8 @@ public class ReverseRequestFactory {
             }
         }
 
+        boolean enableDebug = webRequest.queryParams("debug") != null;
+
         Set<String> objectTypeFilter = new HashSet<>();
         QueryParamsMap objectTypeFiltersQueryMap = webRequest.queryMap("object_type");
         if (objectTypeFiltersQueryMap.hasValue()) {
@@ -81,6 +83,6 @@ public class ReverseRequestFactory {
         }
 
         String queryStringFilter = webRequest.queryParams("query_string_filter");
-        return new ReverseRequest(location, language, radius, queryStringFilter, limit, locationDistanceSort, objectTypeFilter);
+        return new ReverseRequest(location, language, radius, queryStringFilter, limit, locationDistanceSort, objectTypeFilter, enableDebug);
     }
 }

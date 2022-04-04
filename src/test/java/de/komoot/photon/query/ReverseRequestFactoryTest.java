@@ -210,4 +210,15 @@ public class ReverseRequestFactoryTest {
 
         assertBadRequest(mockRequest, "Invalid object_type 'bad'. Allowed types are: house,street,locality,district,city,county,state,country");
     }
+
+    @Test
+    public void testWithDebug() throws Exception {
+        Request mockRequest = createRequestWithLongitudeLatitude(-87d, 41d);
+        Mockito.when(mockRequest.queryParams("debug")).thenReturn("1");
+
+        ReverseRequestFactory reverseRequestFactory = new ReverseRequestFactory(Collections.singletonList("en"), "en");
+        reverseRequest = reverseRequestFactory.create(mockRequest);
+
+        assertTrue(reverseRequest.getDebug());
+    }
 }

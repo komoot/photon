@@ -16,9 +16,10 @@ public class ReverseRequest implements Serializable {
     private String queryStringFilter;
     private Boolean locationDistanceSort = true;
     private Set<String> objectTypeFilters;
+    private boolean debug;
 
-    public ReverseRequest(Point location, String language, Double radius, String queryStringFilter,
-                          Integer limit, Boolean locationDistanceSort, Set<String> objectTypeFilter) {
+    public ReverseRequest(Point location, String language, Double radius, String queryStringFilter, Integer limit,
+                          Boolean locationDistanceSort, Set<String> objectTypeFilter, boolean debug) {
         this.location = location;
         this.language = language;
         this.radius = radius;
@@ -26,6 +27,7 @@ public class ReverseRequest implements Serializable {
         this.queryStringFilter = queryStringFilter;
         this.locationDistanceSort = locationDistanceSort;
         this.objectTypeFilters = objectTypeFilter;
+        this.debug = debug;
     }
 
     public Point getLocation() {
@@ -54,5 +56,9 @@ public class ReverseRequest implements Serializable {
 
     public Set<String> getObjectTypeFilters() {
         return objectTypeFilters;
+    }
+
+    public boolean getDebug() {
+        return debug;
     }
 }
