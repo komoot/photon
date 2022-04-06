@@ -93,7 +93,7 @@ jobs:
         run: |
           sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
           sudo apt-get update -qq
-          sudo apt-get install -y -qq libboost-system-dev libboost-filesystem-dev libexpat1-dev zlib1g-dev libbz2-dev libpq-dev libproj-dev python3-psycopg2 python3-pyosmium python3-dotenv python3-psutil python3-jinja2 python3-icu postgresql-server-dev-14 postgresql-14-postgis-3
+          sudo apt-get install -y -qq libboost-system-dev libboost-filesystem-dev libexpat1-dev zlib1g-dev libbz2-dev libpq-dev libproj-dev python3-psycopg2 python3-pyosmium python3-dotenv python3-psutil python3-jinja2 python3-icu python3-datrie postgresql-14-postgis-3
         shell: bash
 
       - name: Download dependencies
@@ -104,7 +104,7 @@ jobs:
         shell: bash
 
       - name: Build Nominatim
-        run: mkdir build && cd build && cmake ../Nominatim && make -j2 && sudo make install
+        run: mkdir build && cd build && cmake -DBUILD_MODULE=off ../Nominatim && make -j2 && sudo make install
         shell: bash
 
       - name: Prepare import environment
@@ -113,11 +113,11 @@ jobs:
                 wget --no-verbose https://download.geofabrik.de/europe/monaco-latest.osm.pbf
             fi
             mkdir data-env
-            cd data-env
         shell: bash
 
       - name: Import Nominatim
         run: |
+          export NOMINATIM_TOKENIZER=icu
           nominatim import --osm-file ../monaco-latest.osm.pbf --reverse-only
           nominatim admin --check-database
         shell: bash
