@@ -31,16 +31,16 @@ public class ReverseRequestFactoryTest {
         Mockito.when(mockRequest.queryParamOrDefault("distance_sort", "true")).thenReturn("true");
 
         QueryParamsMap mockEmptyQueryParamsMap = Mockito.mock(QueryParamsMap.class);
-        Mockito.when(mockRequest.queryMap("object_type")).thenReturn(mockEmptyQueryParamsMap);
+        Mockito.when(mockRequest.queryMap("layer")).thenReturn(mockEmptyQueryParamsMap);
 
         return mockRequest;
     }
 
-    public void requestWithObjectTypes(Request mockRequest, String... objectTypes) {
+    public void requestWithLayers(Request mockRequest, String... layers) {
         QueryParamsMap mockQueryParamsMap = Mockito.mock(QueryParamsMap.class);
         Mockito.when(mockQueryParamsMap.hasValue()).thenReturn(true);
-        Mockito.when(mockQueryParamsMap.values()).thenReturn(objectTypes);
-        Mockito.when(mockRequest.queryMap("object_type")).thenReturn(mockQueryParamsMap);
+        Mockito.when(mockQueryParamsMap.values()).thenReturn(layers);
+        Mockito.when(mockRequest.queryMap("layer")).thenReturn(mockQueryParamsMap);
     }
 
     @Test
@@ -186,29 +186,29 @@ public class ReverseRequestFactoryTest {
     }
 
     @Test
-    public void testWithObjectTypeFilters() throws Exception {
+    public void testWithLayersFilters() throws Exception {
         Request mockRequest = createRequestWithLongitudeLatitude(-87d, 41d);
-        requestWithObjectTypes(mockRequest, "city", "locality");
+        requestWithLayers(mockRequest, "city", "locality");
         ReverseRequestFactory reverseRequestFactory = new ReverseRequestFactory(Collections.singletonList("en"), "en");
         reverseRequest = reverseRequestFactory.create(mockRequest);
-        assertEquals(new HashSet<>(Arrays.asList("city", "locality")), reverseRequest.getObjectTypeFilters());
+        assertEquals(new HashSet<>(Arrays.asList("city", "locality")), reverseRequest.getLayerFilters());
     }
 
     @Test
-    public void testWithDuplicatedObjectTypeFilters() throws Exception {
+    public void testWithDuplicatedLayerFilters() throws Exception {
         Request mockRequest = createRequestWithLongitudeLatitude(-87d, 41d);
-        requestWithObjectTypes(mockRequest, "city", "locality", "city");
+        requestWithLayers(mockRequest, "city", "locality", "city");
         ReverseRequestFactory reverseRequestFactory = new ReverseRequestFactory(Collections.singletonList("en"), "en");
         reverseRequest = reverseRequestFactory.create(mockRequest);
-        assertEquals(new HashSet<>(Arrays.asList("city", "locality")), reverseRequest.getObjectTypeFilters());
+        assertEquals(new HashSet<>(Arrays.asList("city", "locality")), reverseRequest.getLayerFilters());
     }
 
     @Test
-    public void testWithBadObjectTypeFilters() {
+    public void testWithBadLayerFilters() {
         Request mockRequest = createRequestWithLongitudeLatitude(-87d, 41d);
-        requestWithObjectTypes(mockRequest, "city", "bad");
+        requestWithLayers(mockRequest, "city", "bad");
 
-        assertBadRequest(mockRequest, "Invalid object_type 'bad'. Allowed types are: house,street,locality,district,city,county,state,country");
+        assertBadRequest(mockRequest, "Invalid layer 'bad'. Allowed layers are: house,street,locality,district,city,county,state,country");
     }
 
     @Test

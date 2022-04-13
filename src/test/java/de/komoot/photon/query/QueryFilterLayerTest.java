@@ -1,7 +1,5 @@
 package de.komoot.photon.query;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Point;
 import de.komoot.photon.ESBaseTester;
 import de.komoot.photon.Importer;
 import de.komoot.photon.PhotonDoc;
@@ -12,25 +10,22 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.io.TempDir;
 
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Arrays;
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class QueryReverseFilterObjectTypeTest extends ESBaseTester {
+public class QueryFilterLayerTest extends ESBaseTester {
     @TempDir
     private static Path instanceTestDirectory;
 
     @BeforeAll
-    public void setup() throws IOException {
-        setUpES(instanceTestDirectory, "en");
-
+    public void setUp() throws Exception {
+        setUpES(instanceTestDirectory, "en", "de", "fr");
         Importer instance = makeImporter();
 
         int id = 0;
@@ -45,27 +40,24 @@ public class QueryReverseFilterObjectTypeTest extends ESBaseTester {
     }
 
     private PhotonDoc createDoc(int id, int rank) {
-        Point location = FACTORY.createPoint(new Coordinate(10, 10));
-        return new PhotonDoc(id, "W", id, "place", "value").centroid(location).rankAddress(rank);
-    }
-
-    private List<PhotonResult> reverse(String... types) {
-        Point pt = FACTORY.createPoint(new Coordinate(10, 10));
-
-        Set<String> typeSet = Arrays.stream(types).collect(Collectors.toSet());
-        ReverseRequest request = new ReverseRequest(pt, "en", 1.0, "", 10, true, typeSet, false);
-
-        return getServer().createReverseHandler().reverse(request);
+        return new PhotonDoc(id, "W", id, "place", "value").names(Collections.singletonMap("name", "berlin")).rankAddress(rank);
     }
 
     @Test
-    public void testSingleType() {
-        assertEquals(2, reverse("city").size());
+    public void testSingleLayer() {
+        assertEquals(2, searchWithLayers("city").size());
     }
 
     @Test
-    public void testMultipleTypes() {
-        assertEquals(3, reverse("city", "locality").size());
+    public void testMultipleLayers() {
+        assertEquals(3, searchWithLayers("city", "locality").size());
+    }
+
+    private List<PhotonResult> searchWithLayers(String... layers) {
+        PhotonRequest request = new PhotonRequest("berlin", "en").setLimit(50);
+        request.setLayerFilter(Arrays.stream(layers).collect(Collectors.toSet()));
+
+        return getServer().createSearchHandler(new String[]{"en"}).search(request);
     }
 
     @AfterAll

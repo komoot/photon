@@ -16,17 +16,17 @@ public class ReverseQueryBuilder {
     private Double radius;
     private Point location;
     private String queryStringFilter;
-    private Set<String> objectTypeFilter;
+    private Set<String> layerFilter;
 
-    private ReverseQueryBuilder(Point location, Double radius, String queryStringFilter, Set<String> objectTypeFilter) {
+    private ReverseQueryBuilder(Point location, Double radius, String queryStringFilter, Set<String> layerFilter) {
         this.location = location;
         this.radius = radius;
         this.queryStringFilter = queryStringFilter;
-        this.objectTypeFilter = objectTypeFilter;
+        this.layerFilter = layerFilter;
     }
 
-    public static ReverseQueryBuilder builder(Point location, Double radius, String queryStringFilter, Set<String> objectTypeFilter) {
-        return new ReverseQueryBuilder(location, radius, queryStringFilter, objectTypeFilter);
+    public static ReverseQueryBuilder builder(Point location, Double radius, String queryStringFilter, Set<String> layerFilter) {
+        return new ReverseQueryBuilder(location, radius, queryStringFilter, layerFilter);
     }
 
     public QueryBuilder buildQuery() {
@@ -38,8 +38,8 @@ public class ReverseQueryBuilder {
         if (queryStringFilter != null && queryStringFilter.trim().length() > 0)
             finalQuery.must(QueryBuilders.queryStringQuery(queryStringFilter));
 
-        if (objectTypeFilter.size() > 0) {
-            finalQuery.must(new TermsQueryBuilder("object_type", objectTypeFilter));
+        if (layerFilter.size() > 0) {
+            finalQuery.must(new TermsQueryBuilder("layer", layerFilter));
         }
 
         if (finalQuery.must().size() == 0) {

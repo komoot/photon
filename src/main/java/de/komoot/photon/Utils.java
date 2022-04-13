@@ -21,7 +21,7 @@ public class Utils {
                 .field(Constants.OSM_TYPE, doc.getOsmType())
                 .field(Constants.OSM_KEY, doc.getTagKey())
                 .field(Constants.OSM_VALUE, doc.getTagValue())
-                .field(Constants.OBJECT_TYPE, atype == null ? "locality" : atype.getName())
+                .field(Constants.LAYER, atype == null ? "locality" : atype.getName())
                 .field(Constants.IMPORTANCE, doc.getImportance());
 
         String classification = buildClassificationString(doc.getTagKey(), doc.getTagValue());

@@ -180,9 +180,9 @@ Or, just by they key
 http://localhost:2322/api?q=berlin&osm_tag=tourism
 ```
 
-#### Filter results by object type
+#### Filter results by layer
 
-List of available types:
+List of available layers:
 
 - house
 - street
@@ -194,7 +194,7 @@ List of available types:
 - country
 
 ```
-http://localhost:2322/api?q=berlin&object_type=city&object_type=locality
+http://localhost:2322/api?q=berlin&layer=city&layer=locality
 ```
 
 Example above will return both cities and localities.

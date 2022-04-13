@@ -34,7 +34,7 @@ public class PhotonRequestFactoryTest {
 
         QueryParamsMap mockEmptyQueryParamsMap = Mockito.mock(QueryParamsMap.class);
         Mockito.when(mockRequest.queryMap("osm_tag")).thenReturn(mockEmptyQueryParamsMap);
-        Mockito.when(mockRequest.queryMap("object_type")).thenReturn(mockEmptyQueryParamsMap);
+        Mockito.when(mockRequest.queryMap("layer")).thenReturn(mockEmptyQueryParamsMap);
 
         return mockRequest;
     }
@@ -48,11 +48,11 @@ public class PhotonRequestFactoryTest {
         Mockito.when(mockRequest.queryMap("osm_tag")).thenReturn(mockQueryParamsMap);
     }
 
-    public void requestWithObjectTypes(Request mockRequest, String... objectTypes) {
+    public void requestWithLayers(Request mockRequest, String... layers) {
         QueryParamsMap mockQueryParamsMap = Mockito.mock(QueryParamsMap.class);
         Mockito.when(mockQueryParamsMap.hasValue()).thenReturn(true);
-        Mockito.when(mockQueryParamsMap.values()).thenReturn(objectTypes);
-        Mockito.when(mockRequest.queryMap("object_type")).thenReturn(mockQueryParamsMap);
+        Mockito.when(mockQueryParamsMap.values()).thenReturn(layers);
+        Mockito.when(mockRequest.queryMap("layer")).thenReturn(mockQueryParamsMap);
     }
 
     private PhotonRequest createPhotonRequest(Request mockRequest) throws BadRequestException {
@@ -181,32 +181,32 @@ public class PhotonRequestFactoryTest {
     }
 
     @Test
-    public void testWithObjectTypeFilters() throws Exception {
+    public void testWithLayerFilters() throws Exception {
         Request mockRequest = createRequestWithQueryParams("q", "new york");
-        requestWithObjectTypes(mockRequest, "city", "locality");
+        requestWithLayers(mockRequest, "city", "locality");
         PhotonRequest photonRequest = createPhotonRequest(mockRequest);
 
-        assertEquals(new HashSet<>(Arrays.asList("city", "locality")), photonRequest.getObjectTypeFilters());
+        assertEquals(new HashSet<>(Arrays.asList("city", "locality")), photonRequest.getLayerFilters());
     }
 
     @Test
-    public void testWithDuplicatedObjectTypeFilters() throws Exception {
+    public void testWithDuplicatedLayerFilters() throws Exception {
         Request mockRequest = createRequestWithQueryParams("q", "new york");
-        requestWithObjectTypes(mockRequest, "city", "locality", "city");
+        requestWithLayers(mockRequest, "city", "locality", "city");
         PhotonRequest photonRequest = createPhotonRequest(mockRequest);
 
-        assertEquals(new HashSet<>(Arrays.asList("city", "locality")), photonRequest.getObjectTypeFilters());
+        assertEquals(new HashSet<>(Arrays.asList("city", "locality")), photonRequest.getLayerFilters());
     }
 
     @Test
-    public void testWithBadObjectTypeFilters() throws Exception {
+    public void testWithBadLayerFilters() throws Exception {
         Request mockRequest = createRequestWithQueryParams("q", "new york");
-        requestWithObjectTypes(mockRequest, "city", "bad");
+        requestWithLayers(mockRequest, "city", "bad");
 
         BadRequestException exception = assertThrows(BadRequestException.class,
                 () -> createPhotonRequest(mockRequest));
 
-        String expectedMessageFragment = "object_type";
+        String expectedMessageFragment = "layer";
 
         assertTrue(exception.getMessage().contains(expectedMessageFragment),
                 String.format("Error message doesn not contain '%s': %s", expectedMessageFragment, exception.getMessage()));

@@ -193,7 +193,7 @@
 				"type": "keyword",
 				"index": true
 			},
-			"object_type": {
+			"layer": {
 				"type": "keyword",
 				"index": true
 			},

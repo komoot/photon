@@ -15,14 +15,14 @@ import java.util.Set;
 public class ReverseRequestFactory {
     private final RequestLanguageResolver languageResolver;
     private static final LocationParamConverter mandatoryLocationParamConverter = new LocationParamConverter(true);
-    private final ObjectTypeParamValidator objectTypeParamValidator;
+    private final LayerParamValidator layerParamValidator;
 
     private static final HashSet<String> REQUEST_QUERY_PARAMS = new HashSet<>(Arrays.asList("lang", "lon", "lat", "radius",
-            "query_string_filter", "distance_sort", "limit", "object_type", "debug"));
+            "query_string_filter", "distance_sort", "limit", "layer", "debug"));
 
     public ReverseRequestFactory(List<String> supportedLanguages, String defaultLanguage) {
         this.languageResolver = new RequestLanguageResolver(supportedLanguages, defaultLanguage);
-        this.objectTypeParamValidator = new ObjectTypeParamValidator();
+        this.layerParamValidator = new LayerParamValidator();
     }
 
     public ReverseRequest create(Request webRequest) throws BadRequestException {
@@ -76,13 +76,13 @@ public class ReverseRequestFactory {
 
         boolean enableDebug = webRequest.queryParams("debug") != null;
 
-        Set<String> objectTypeFilter = new HashSet<>();
-        QueryParamsMap objectTypeFiltersQueryMap = webRequest.queryMap("object_type");
-        if (objectTypeFiltersQueryMap.hasValue()) {
-            objectTypeFilter = objectTypeParamValidator.validate(objectTypeFiltersQueryMap.values());
+        Set<String> layerFilter = new HashSet<>();
+        QueryParamsMap layerFiltersQueryMap = webRequest.queryMap("layer");
+        if (layerFiltersQueryMap.hasValue()) {
+            layerFilter = layerParamValidator.validate(layerFiltersQueryMap.values());
         }
 
         String queryStringFilter = webRequest.queryParams("query_string_filter");
-        return new ReverseRequest(location, language, radius, queryStringFilter, limit, locationDistanceSort, objectTypeFilter, enableDebug);
+        return new ReverseRequest(location, language, radius, queryStringFilter, limit, locationDistanceSort, layerFilter, enableDebug);
     }
 }

@@ -1,7 +1,6 @@
 package de.komoot.photon.elasticsearch;
 
 import com.vividsolutions.jts.geom.Point;
-import de.komoot.photon.query.PhotonRequest;
 import de.komoot.photon.query.ReverseRequest;
 import de.komoot.photon.searcher.PhotonResult;
 import de.komoot.photon.searcher.ReverseHandler;
@@ -64,7 +63,7 @@ public class ElasticsearchReverseHandler implements ReverseHandler {
 
     private ReverseQueryBuilder buildQuery(ReverseRequest photonRequest) {
         return ReverseQueryBuilder.builder(photonRequest.getLocation(), photonRequest.getRadius(),
-                photonRequest.getQueryStringFilter(), photonRequest.getObjectTypeFilters());
+                photonRequest.getQueryStringFilter(), photonRequest.getLayerFilters());
     }
 
 }
