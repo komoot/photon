@@ -106,12 +106,12 @@
         <dependency>
             <groupId>net.postgis</groupId>
             <artifactId>postgis-jdbc</artifactId>
-            <version>2.5.0</version>
+            <version>2021.1.0</version>
         </dependency>
         <dependency>
             <groupId>net.postgis</groupId>
             <artifactId>postgis-jdbc-jtsparser</artifactId>
-            <version>2.2.1</version>
+            <version>2.5.1</version>
         </dependency>
         <dependency>
             <groupId>com.h2database</groupId>
@@ -129,7 +129,7 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
-            <version>3.6.0</version>
+            <version>4.4.0</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
@@ -141,7 +141,7 @@
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
-            <version>20211205</version>
+            <version>20220320</version>
         </dependency>
     </dependencies>
 
