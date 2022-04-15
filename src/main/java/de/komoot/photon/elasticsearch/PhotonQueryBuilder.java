@@ -1,8 +1,8 @@
 package de.komoot.photon.elasticsearch;
 
 
-import com.vividsolutions.jts.geom.Envelope;
-import com.vividsolutions.jts.geom.Point;
+import org.locationtech.jts.geom.Envelope;
+import org.locationtech.jts.geom.Point;
 import de.komoot.photon.searcher.TagFilter;
 import de.komoot.photon.searcher.TagFilterKind;
 import org.elasticsearch.common.lucene.search.function.CombineFunction;

@@ -1,6 +1,6 @@
 package de.komoot.photon.nominatim;
 
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.sql.ResultSet;

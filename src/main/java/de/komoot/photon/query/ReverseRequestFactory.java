@@ -1,6 +1,6 @@
 package de.komoot.photon.query;
 
-import com.vividsolutions.jts.geom.Point;
+import org.locationtech.jts.geom.Point;
 import spark.Request;
 
 import java.util.Arrays;

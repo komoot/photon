@@ -1,6 +1,6 @@
 package de.komoot.photon.query;
 
-import com.vividsolutions.jts.geom.Envelope;
+import org.locationtech.jts.geom.Envelope;
 import de.komoot.photon.searcher.TagFilter;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
