@@ -31,7 +31,12 @@ public class H2DataAdapter implements DBDataAdapter {
 
     @Override
     public Geometry extractGeometry(ResultSet rs, String columnName) throws SQLException {
-        return (Point)rs.getObject(columnName);
+        Object data = rs.getObject(columnName);
+
+        if (data instanceof Geometry) {
+            return (Geometry) rs.getObject(columnName);
+        }
+        return null;
     }
 
     @Override
