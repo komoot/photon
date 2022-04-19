@@ -29,11 +29,12 @@ public class PostgisDataAdapter implements DBDataAdapter {
 
     @Override
     public Geometry extractGeometry(ResultSet rs, String columnName) throws SQLException {
-        JtsGeometry geom = (JtsGeometry) rs.getObject(columnName);
-        if (geom == null) {
-            return null;
+        Object data = rs.getObject(columnName);
+
+        if (data instanceof Geometry) {
+            return (Geometry) rs.getObject(columnName);
         }
-        return geom.getGeometry();
+        return null;
     }
 
     @Override
