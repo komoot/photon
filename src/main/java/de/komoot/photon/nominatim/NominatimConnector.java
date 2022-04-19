@@ -1,5 +1,6 @@
 package de.komoot.photon.nominatim;
 
+import net.postgis.jdbc.jts.JtsWrapper;
 import org.locationtech.jts.geom.Geometry;
 import de.komoot.photon.Importer;
 import de.komoot.photon.PhotonDoc;
@@ -7,7 +8,6 @@ import de.komoot.photon.nominatim.model.AddressRow;
 import de.komoot.photon.nominatim.model.AddressType;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.dbcp2.BasicDataSource;
-import org.postgis.jts.JtsWrapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 

@@ -5,7 +5,7 @@
 
     <groupId>de.komoot.photon</groupId>
     <artifactId>photon</artifactId>
-    <version>0.3.5</version>
+    <version>0.3.6-SNAPSHOT</version>
 
     <dependencies>
         <dependency>
@@ -110,8 +110,13 @@
         </dependency>
         <dependency>
             <groupId>net.postgis</groupId>
-            <artifactId>postgis-jdbc-jtsparser</artifactId>
-            <version>2.5.1</version>
+            <artifactId>postgis-geometry</artifactId>
+            <version>2021.1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>net.postgis</groupId>
+            <artifactId>postgis-jdbc-jts</artifactId>
+            <version>2021.1.0</version>
         </dependency>
         <dependency>
             <groupId>com.h2database</groupId>

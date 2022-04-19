@@ -34,7 +34,7 @@ public class H2DataAdapter implements DBDataAdapter {
         Object data = rs.getObject(columnName);
 
         if (data instanceof Geometry) {
-            return (Geometry) rs.getObject(columnName);
+            return (Geometry) data;
         }
         return null;
     }
