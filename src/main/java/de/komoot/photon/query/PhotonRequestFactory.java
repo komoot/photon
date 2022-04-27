@@ -15,13 +15,15 @@ public class PhotonRequestFactory {
     private final RequestLanguageResolver languageResolver;
     private static final LocationParamConverter optionalLocationParamConverter = new LocationParamConverter(false);
     private final BoundingBoxParamConverter bboxParamConverter;
+    private final LayerParamValidator layerParamValidator;
 
     private static final HashSet<String> REQUEST_QUERY_PARAMS = new HashSet<>(Arrays.asList("lang", "q", "lon", "lat",
-            "limit", "osm_tag", "location_bias_scale", "bbox", "debug", "zoom"));
+            "limit", "osm_tag", "location_bias_scale", "bbox", "debug", "zoom", "layer"));
 
     public PhotonRequestFactory(List<String> supportedLanguages, String defaultLanguage) {
         this.languageResolver = new RequestLanguageResolver(supportedLanguages, defaultLanguage);
         this.bboxParamConverter = new BoundingBoxParamConverter();
+        this.layerParamValidator = new LayerParamValidator();
     }
 
     public PhotonRequest create(Request webRequest) throws BadRequestException {
@@ -55,6 +57,11 @@ public class PhotonRequestFactory {
                 }
                 request.addOsmTagFilter(TagFilter.buildOsmTagFilter(filter));
             }
+        }
+
+        QueryParamsMap layerFiltersQueryMap = webRequest.queryMap("layer");
+        if (layerFiltersQueryMap.hasValue()) {
+            request.setLayerFilter(layerParamValidator.validate(layerFiltersQueryMap.values()));
         }
 
         return request;

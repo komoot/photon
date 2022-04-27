@@ -180,6 +180,26 @@ Or, just by they key
 http://localhost:2322/api?q=berlin&osm_tag=tourism
 ```
 
+#### Filter results by layer
+
+List of available layers:
+
+- house
+- street
+- locality
+- district
+- city
+- county
+- state
+- country
+
+```
+http://localhost:2322/api?q=berlin&layer=city&layer=locality
+```
+
+Example above will return both cities and localities.
+
+
 #### Results as GeoJSON
 ```json
 {

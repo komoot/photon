@@ -42,6 +42,10 @@ public class ElasticsearchReverseHandler implements ReverseHandler {
         return ret;
     }
 
+    public String dumpQuery(ReverseRequest photonRequest) {
+        return buildQuery(photonRequest).buildQuery().toString();
+    }
+
 
     private SearchResponse search(QueryBuilder queryBuilder, Integer limit, Point location,
                                  Boolean locationDistanceSort) {
@@ -58,7 +62,8 @@ public class ElasticsearchReverseHandler implements ReverseHandler {
     }
 
     private ReverseQueryBuilder buildQuery(ReverseRequest photonRequest) {
-        return ReverseQueryBuilder.builder(photonRequest.getLocation(), photonRequest.getRadius(), photonRequest.getQueryStringFilter());
+        return ReverseQueryBuilder.builder(photonRequest.getLocation(), photonRequest.getRadius(),
+                photonRequest.getQueryStringFilter(), photonRequest.getLayerFilters());
     }
 
 }

@@ -57,6 +57,7 @@ public class ElasticsearchSearchHandler implements SearchHandler {
         return PhotonQueryBuilder.
                 builder(photonRequest.getQuery(), photonRequest.getLanguage(), supportedLanguages, lenient).
                 withOsmTagFilters(photonRequest.getOsmTagFilters()).
+                withLayerFilters(photonRequest.getLayerFilters()).
                 withLocationBias(photonRequest.getLocationForBias(), photonRequest.getScaleForBias(), photonRequest.getZoomForBias()).
                 withBoundingBox(photonRequest.getBbox());
     }

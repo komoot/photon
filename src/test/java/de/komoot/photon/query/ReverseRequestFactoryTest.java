@@ -7,9 +7,12 @@ package de.komoot.photon.query;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import spark.QueryParamsMap;
 import spark.Request;
 
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -20,16 +23,29 @@ public class ReverseRequestFactoryTest {
 
     private ReverseRequest reverseRequest;
 
-    public void requestWithLongitudeLatitude(Request mockRequest, Double longitude, Double latitude) {
+    public Request createRequestWithLongitudeLatitude(Double longitude, Double latitude) {
+        Request mockRequest = Mockito.mock(Request.class);
+
         Mockito.when(mockRequest.queryParams("lon")).thenReturn(longitude.toString());
         Mockito.when(mockRequest.queryParams("lat")).thenReturn(latitude.toString());
         Mockito.when(mockRequest.queryParamOrDefault("distance_sort", "true")).thenReturn("true");
+
+        QueryParamsMap mockEmptyQueryParamsMap = Mockito.mock(QueryParamsMap.class);
+        Mockito.when(mockRequest.queryMap("layer")).thenReturn(mockEmptyQueryParamsMap);
+
+        return mockRequest;
+    }
+
+    public void requestWithLayers(Request mockRequest, String... layers) {
+        QueryParamsMap mockQueryParamsMap = Mockito.mock(QueryParamsMap.class);
+        Mockito.when(mockQueryParamsMap.hasValue()).thenReturn(true);
+        Mockito.when(mockQueryParamsMap.values()).thenReturn(layers);
+        Mockito.when(mockRequest.queryMap("layer")).thenReturn(mockQueryParamsMap);
     }
 
     @Test
     public void testWithLocation() throws Exception {
-        Request mockRequest = Mockito.mock(Request.class);
-        requestWithLongitudeLatitude(mockRequest, -87d, 41d);
+        Request mockRequest = createRequestWithLongitudeLatitude(-87d, 41d);
         ReverseRequestFactory reverseRequestFactory = new ReverseRequestFactory(Collections.singletonList("en"), "en");
         reverseRequest = reverseRequestFactory.create(mockRequest);
         assertEquals(-87, reverseRequest.getLocation().getX(), 0);
@@ -60,8 +76,7 @@ public class ReverseRequestFactoryTest {
 
 
     public void testWithHighLowLongitude(Boolean high) throws Exception {
-        Request mockRequest = Mockito.mock(Request.class);
-        requestWithLongitudeLatitude(mockRequest, (high) ? 180.01 : -180.01, 0.0);
+        Request mockRequest = createRequestWithLongitudeLatitude((high) ? 180.01 : -180.01, 0.0);
         assertBadRequest(mockRequest, "invalid search term 'lon', expected number >= -180.0 and <= 180.0");
         Mockito.verify(mockRequest, Mockito.times(1)).queryParams("lon");
         Mockito.verify(mockRequest, Mockito.times(1)).queryParams("lat");
@@ -78,8 +93,7 @@ public class ReverseRequestFactoryTest {
     }
 
     public void testWithHighLowLatitude(Boolean high) throws Exception {
-        Request mockRequest = Mockito.mock(Request.class);
-        requestWithLongitudeLatitude(mockRequest, 0.0, (high) ? 90.01 : -90.01);
+        Request mockRequest = createRequestWithLongitudeLatitude(0.0, (high) ? 90.01 : -90.01);
         assertBadRequest(mockRequest, "invalid search term 'lat', expected number >= -90.0 and <= 90.0");
         Mockito.verify(mockRequest, Mockito.times(1)).queryParams("lon");
         Mockito.verify(mockRequest, Mockito.times(1)).queryParams("lat");
@@ -106,8 +120,7 @@ public class ReverseRequestFactoryTest {
     }
 
     public void testWithBadParam(String paramName, String paramValue, String expectedMessage) throws Exception {
-        Request mockRequest = Mockito.mock(Request.class);
-        requestWithLongitudeLatitude(mockRequest, -87d, 41d);
+        Request mockRequest = createRequestWithLongitudeLatitude(-87d, 41d);
         Mockito.when(mockRequest.queryParams(paramName)).thenReturn(paramValue);
         assertBadRequest(mockRequest, expectedMessage);
         Mockito.verify(mockRequest, Mockito.times(1)).queryParams(paramName);
@@ -130,8 +143,7 @@ public class ReverseRequestFactoryTest {
 
     @Test
     public void testHighRadius() throws Exception {
-        Request mockRequest = Mockito.mock(Request.class);
-        requestWithLongitudeLatitude(mockRequest, -87d, 41d);
+        Request mockRequest = createRequestWithLongitudeLatitude(-87d, 41d);
         Mockito.when(mockRequest.queryParams("radius")).thenReturn("5.1");
         ReverseRequestFactory reverseRequestFactory = new ReverseRequestFactory(Collections.singletonList("en"), "en");
         reverseRequest = reverseRequestFactory.create(mockRequest);
@@ -156,8 +168,7 @@ public class ReverseRequestFactoryTest {
 
     @Test
     public void testHighLimit() throws Exception {
-        Request mockRequest = Mockito.mock(Request.class);
-        requestWithLongitudeLatitude(mockRequest, -87d, 41d);
+        Request mockRequest = createRequestWithLongitudeLatitude(-87d, 41d);
         Mockito.when(mockRequest.queryParams("limit")).thenReturn("51");
         ReverseRequestFactory reverseRequestFactory = new ReverseRequestFactory(Collections.singletonList("en"), "en");
         reverseRequest = reverseRequestFactory.create(mockRequest);
@@ -167,11 +178,47 @@ public class ReverseRequestFactoryTest {
     
     @Test
     public void testDistanceSortDefault() throws Exception {
-        Request mockRequest = Mockito.mock(Request.class);
-        requestWithLongitudeLatitude(mockRequest, -87d, 41d);
+        Request mockRequest = createRequestWithLongitudeLatitude(-87d, 41d);
         ReverseRequestFactory reverseRequestFactory = new ReverseRequestFactory(Collections.singletonList("en"), "en");
         reverseRequest = reverseRequestFactory.create(mockRequest);
         Mockito.verify(mockRequest, Mockito.times(1)).queryParamOrDefault("distance_sort", "true");
         assertEquals(true, reverseRequest.getLocationDistanceSort());
+    }
+
+    @Test
+    public void testWithLayersFilters() throws Exception {
+        Request mockRequest = createRequestWithLongitudeLatitude(-87d, 41d);
+        requestWithLayers(mockRequest, "city", "locality");
+        ReverseRequestFactory reverseRequestFactory = new ReverseRequestFactory(Collections.singletonList("en"), "en");
+        reverseRequest = reverseRequestFactory.create(mockRequest);
+        assertEquals(new HashSet<>(Arrays.asList("city", "locality")), reverseRequest.getLayerFilters());
+    }
+
+    @Test
+    public void testWithDuplicatedLayerFilters() throws Exception {
+        Request mockRequest = createRequestWithLongitudeLatitude(-87d, 41d);
+        requestWithLayers(mockRequest, "city", "locality", "city");
+        ReverseRequestFactory reverseRequestFactory = new ReverseRequestFactory(Collections.singletonList("en"), "en");
+        reverseRequest = reverseRequestFactory.create(mockRequest);
+        assertEquals(new HashSet<>(Arrays.asList("city", "locality")), reverseRequest.getLayerFilters());
+    }
+
+    @Test
+    public void testWithBadLayerFilters() {
+        Request mockRequest = createRequestWithLongitudeLatitude(-87d, 41d);
+        requestWithLayers(mockRequest, "city", "bad");
+
+        assertBadRequest(mockRequest, "Invalid layer 'bad'. Allowed layers are: house,street,locality,district,city,county,state,country");
+    }
+
+    @Test
+    public void testWithDebug() throws Exception {
+        Request mockRequest = createRequestWithLongitudeLatitude(-87d, 41d);
+        Mockito.when(mockRequest.queryParams("debug")).thenReturn("1");
+
+        ReverseRequestFactory reverseRequestFactory = new ReverseRequestFactory(Collections.singletonList("en"), "en");
+        reverseRequest = reverseRequestFactory.create(mockRequest);
+
+        assertTrue(reverseRequest.getDebug());
     }
 }
