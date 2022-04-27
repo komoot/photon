@@ -39,7 +39,7 @@ public class ReverseQueryBuilder {
             finalQuery.must(QueryBuilders.queryStringQuery(queryStringFilter));
 
         if (layerFilter.size() > 0) {
-            finalQuery.must(new TermsQueryBuilder("layer", layerFilter));
+            finalQuery.must(new TermsQueryBuilder("type", layerFilter));
         }
 
         if (finalQuery.must().size() == 0) {

@@ -223,7 +223,7 @@ public class PhotonQueryBuilder {
 
     public PhotonQueryBuilder withLayerFilters(Set<String> filters) {
         if (filters.size() > 0) {
-            layerQueryBuilder = new TermsQueryBuilder("layer", filters);
+            layerQueryBuilder = new TermsQueryBuilder("type", filters);
         }
 
         return this;
