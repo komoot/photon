@@ -13,11 +13,11 @@ import java.util.stream.Collectors;
 public enum AddressType {
     HOUSE("house", 29, 30),
     STREET("street", 26, 28),
-    LOCALITY("locality", 22, 26),
-    DISTRICT("district", 17, 22),
-    CITY("city", 13, 17),
-    COUNTY("county", 10, 13),
-    STATE("state", 5, 10),
+    LOCALITY("locality", 22, 25),
+    DISTRICT("district", 17, 21),
+    CITY("city", 13, 16),
+    COUNTY("county", 10, 12),
+    STATE("state", 5, 9),
     COUNTRY("country", 4, 4);
 
     private final String name;
