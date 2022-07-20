@@ -49,7 +49,7 @@
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>42.3.3</version>
+            <version>42.4.0</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -74,13 +74,13 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.22</version>
+            <version>1.18.24</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-jdbc</artifactId>
-            <version>5.2.6.RELEASE</version>
+            <version>5.3.22</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -101,7 +101,7 @@
         <dependency>
             <groupId>com.sparkjava</groupId>
             <artifactId>spark-core</artifactId>
-            <version>2.9.3</version>
+            <version>2.9.4</version>
         </dependency>
         <dependency>
             <groupId>net.postgis</groupId>
@@ -116,7 +116,7 @@
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
-            <version>2.1.210</version>
+            <version>2.1.214</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -129,7 +129,7 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
-            <version>3.6.0</version>
+            <version>4.6.1</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
@@ -141,7 +141,7 @@
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
-            <version>20211205</version>
+            <version>20220320</version>
         </dependency>
     </dependencies>
 
@@ -247,12 +247,12 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
-                <version>2.6</version>
+                <version>3.2.0</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.1</version>
+                <version>3.10.1</version>
                 <configuration>
                     <encoding>UTF-8</encoding>
                 </configuration>
@@ -260,7 +260,7 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.3</version>
+                <version>0.8.8</version>
                 <configuration>
                     <excludes>
                         <exclude>modules/lang-painless/*</exclude>
@@ -311,8 +311,8 @@
         <maven.compiler.encoding>UTF-8</maven.compiler.encoding>
 
         <elasticsearch.version>5.6.16</elasticsearch.version>
-        <slf4j.version>1.7.30</slf4j.version>
-        <log4j.version>2.8.2</log4j.version>
+        <slf4j.version>1.7.36</slf4j.version>
+        <log4j.version>2.18.0</log4j.version>
 
         <additionalparam>-Xdoclint:none</additionalparam>
     </properties>
