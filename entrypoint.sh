@@ -16,6 +16,7 @@ if [ -f "/photon/photon_data/photon-db-latest.tar.xz" ]; then
         rm -rf /photon/photon_data/elasticsearch
         rm -rf /photon/photon_data/file-hash.md5
     fi
+    md5sum /photon/photon_data/photon-db-latest.tar.xz > /photon/photon_data/file-hash.md5
   else
     echo "Couldn't find photon-db-latest.tar.xz"
     echo "Please add it to the photon_data volume."
