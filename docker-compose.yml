@@ -6,7 +6,7 @@ services:
       dockerfile: Dockerfile
     image: openrouteservice/photon-geocoder:latest
     volumes:
-      - data:/photon/photon_data
+      - ./photon_data:/photon/photon_data
     ports:
       - "2322:2322"
 
