@@ -3,3 +3,4 @@ website
 .github
 Dockerfile
 docker-compose.yml
+photon_data
