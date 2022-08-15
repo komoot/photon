@@ -10,13 +10,14 @@ if [ -f "/photon/photon_data/photon-db-latest.tar.xz" ]; then
         echo "Current photon db out of date. Starting fresh."
         rm -rf /photon/photon_data/elasticsearch
         rm -rf /photon/photon_data/file-hash.md5
+      else
+        echo "Current photon db up-to-date. Nothing to do."
       fi
     else
         echo "No extracted photon db. Starting fresh."
         rm -rf /photon/photon_data/elasticsearch
         rm -rf /photon/photon_data/file-hash.md5
     fi
-    md5sum /photon/photon_data/photon-db-latest.tar.xz > /photon/photon_data/file-hash.md5
   else
     echo "Couldn't find photon-db-latest.tar.xz"
     echo "Please add it to the photon_data volume."
@@ -28,6 +29,8 @@ if [ ! -d "/photon/photon_data/elasticsearch" ]; then
   echo "Search index not found"
   echo "Extract search index. This may take a while."
   (pv --force "/photon/photon_data/photon-db-latest.tar.xz" | tar xp -J --strip-components=1 -C /photon/photon_data/) 2>&1 | stdbuf -o0 tr '\r' '\n'
+  echo "Generate photon database up-to-date hashes."
+  md5sum /photon/photon_data/photon-db-latest.tar.xz > /photon/photon_data/file-hash.md5
 fi
 
 # Start photon if elastic index exists
