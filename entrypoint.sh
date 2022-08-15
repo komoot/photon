@@ -6,7 +6,7 @@ if [ -f "/photon/photon_data/photon-db-latest.tar.xz" ]; then
     echo "Found photon-db-latest.tar.xz."
     if [ -f "/photon/photon_data/file-hash.md5" ]; then
       echo "Checking validity."
-      if ! md5sum -c file-hash.md5; then
+      if ! md5sum -c /photon/photon_data/file-hash.md5; then
         echo "Current photon db out of date. Starting fresh."
         rm -rf /photon/photon_data/elasticsearch
         rm -rf /photon/photon_data/file-hash.md5
