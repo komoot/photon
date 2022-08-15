@@ -1,0 +1,15 @@
+version: '2'
+services:
+  photon:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: openrouteservice/photon-geocoder:latest
+    volumes:
+      - data:/photon/photon_data
+    ports:
+      - "2322:2322"
+
+volumes:
+  data:
+    driver: local

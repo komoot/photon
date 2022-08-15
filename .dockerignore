@@ -1,0 +1,5 @@
+website
+.idea
+.github
+Dockerfile
+docker-compose.yml
