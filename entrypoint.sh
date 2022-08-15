@@ -9,7 +9,7 @@ if [ ! -d "/photon/photon_data/elasticsearch" ]; then
     echo "Please add it to the photon_data volume."
   fi
   echo "Extract search index. This may take a while."
-  pv /photon/photon_data/photon-db-latest.tar.xz | tar -xvf --strip-components=1 -C /photon/photon_data/
+  pv /photon/photon_data/photon-db-latest.tar.xz | tar -xvf - --strip-components=1 -C /photon/photon_data/
 
 fi
 
