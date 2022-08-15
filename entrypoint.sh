@@ -4,8 +4,8 @@
 # Check if index is up to date, if not start from scratch.
 if [ -f "/photon/photon_data/photon-db-latest.tar.xz" ]; then
     echo "Found photon-db-latest.tar.xz."
-    if [ -f "/photon/photon_data/file-hash.md5" ]; then
-      echo "Checking validity."
+    if [ -f "/photon/photon_data/file-hash.md5" ] && [ -d "/photon/photon_data/elasticsearch" ]; then
+      echo "Checking photon validity."
       if ! md5sum -c /photon/photon_data/file-hash.md5; then
         echo "Current photon db out of date. Starting fresh."
         rm -rf /photon/photon_data/elasticsearch
@@ -14,7 +14,7 @@ if [ -f "/photon/photon_data/photon-db-latest.tar.xz" ]; then
         echo "Current photon db up-to-date. Nothing to do."
       fi
     else
-        echo "No extracted photon db. Starting fresh."
+        echo "No valid photon db. Starting fresh."
         rm -rf /photon/photon_data/elasticsearch
         rm -rf /photon/photon_data/file-hash.md5
     fi
