@@ -17,7 +17,7 @@ RUN ls -sahlS target/photon-*.jar
 FROM openjdk:17-jdk-alpine3.14 as photon
 
 RUN apk -U upgrade --update && \
-    	apk --no-cache add sudo bzip2 bash && \
+    	apk --no-cache add sudo xz bash && \
         rm -rf /var/cache/apk/*
 
 RUN	adduser -D -s /bin/bash -h /photon photon && \

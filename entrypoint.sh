@@ -1,11 +1,15 @@
 #!/bin/bash
 # Inspired by https://github.com/thomasnordquist/photon-docker
 
-
 # Extract elasticsearch index
 if [ ! -d "/photon/photon_data/elasticsearch" ]; then
-    echo "Extract search index"
-    bzip2 -cd photon-db-latest.tar.bz2 | tar x -C photon_data/
+  echo
+  if [ ! -f "/photon/photon_data/photon-db-latest.tar.xz" ]; then
+    echo "Couldn't find photon-db-latest.tar.xz."
+    echo "Please add it to the photon_data volume."
+  fi
+  echo "Extract search index"
+  tar xf photon-db-latest.tar.xz
 fi
 
 # Start photon if elastic index exists
