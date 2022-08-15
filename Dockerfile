@@ -26,7 +26,7 @@ RUN	adduser -D -s /bin/bash -h /photon photon && \
 USER photon:photon
 WORKDIR /photon
 
-COPY --from=photon-builder /photon/target/photon-*.jar /photon/
+COPY --from=photon-builder /photon/target/photon-*.jar /photon/photon.jar
 RUN sudo chown -R "$USER":root /photon
 
 # Inspired by https://github.com/thomasnordquist/photon-docker
