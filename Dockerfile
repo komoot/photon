@@ -32,9 +32,6 @@ RUN sudo chown -R "$USER":root /photon
 # Inspired by https://github.com/thomasnordquist/photon-docker
 COPY --chown=photon:photon entrypoint.sh /photon/entrypoint.sh
 
-VOLUME /photon/photon_data
-EXPOSE 2322
-
 RUN chmod +x /photon/entrypoint.sh
 
 ENTRYPOINT /photon/entrypoint.sh
