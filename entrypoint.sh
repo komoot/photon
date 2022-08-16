@@ -28,7 +28,7 @@ fi
 if [ ! -d "/photon/photon_data/elasticsearch" ]; then
   echo "Search index not found"
   echo "Extract search index. This may take a while."
-  (pv --force "/photon/photon_data/photon-db-latest.tar.xz" | tar xp -J --strip-components=1 -C /photon/photon_data/) 2>&1 | stdbuf -o0 tr '\r' '\n'
+  (pv --force "/photon/photon_data/photon-db-latest.tar.xz" | tar xp -J -C /photon/photon_data/) 2>&1 | stdbuf -o0 tr '\r' '\n'
   echo "Generate photon database up-to-date hashes."
   md5sum /photon/photon_data/photon-db-latest.tar.xz > /photon/photon_data/file-hash.md5
 fi
