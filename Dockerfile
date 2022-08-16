@@ -16,9 +16,9 @@ RUN ls -sahlS target/photon-*.jar
 
 FROM openjdk:17-jdk-alpine3.14 as photon
 
-RUN apk add libgdiplus --repository=http://dl-cdn.alpinelinux.org/alpine/edge/testing/ && \
-    apk -U upgrade --update && \
-    apk --no-cache add sudo pixz bash pv coreutils outils-md5 && \
+RUN apk -U upgrade --update && \
+    apk add pixz --repository=http://dl-cdn.alpinelinux.org/alpine/edge/testing/ && \
+    apk --no-cache add sudo bash pv coreutils outils-md5 && \
     rm -rf /var/cache/apk/*
 
 RUN	adduser -D -s /bin/bash -h /photon photon && \
