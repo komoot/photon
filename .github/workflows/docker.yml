@@ -1,5 +1,7 @@
-name: Publish Docker image with version
+name: Publish Docker image
+
 on:
+  pull_request:
   push:
     branches:
      - main
