@@ -98,7 +98,7 @@ public class Server {
 
             esClient = trClient;
 
-            log.info("Started elastic search client connected to " + transportAddresses);
+            log.info("Started elastic search client connected to " + String.join(", ", transportAddresses));
 
         } else {
 
