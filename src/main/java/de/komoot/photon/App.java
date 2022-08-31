@@ -144,7 +144,7 @@ public class App {
         // Get database properties and ensure that the version is compatible.
         DatabaseProperties dbProperties = new DatabaseProperties();
         server.loadFromDatabase(dbProperties);
-        if (args.getLanguages().length > 0) {
+        if (args.getLanguages(false).length > 0) {
             dbProperties.restrictLanguages(args.getLanguages());
         }
 

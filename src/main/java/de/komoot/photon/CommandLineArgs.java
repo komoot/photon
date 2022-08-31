@@ -27,7 +27,7 @@ public class CommandLineArgs {
     private boolean nominatimUpdate = false;
 
     @Parameter(names = "-languages", description = "languages nominatim importer should import and use at run-time, comma separated (default is 'en,fr,de,it')", converter = StringArrayConverter.class)
-    private String[] languages = new String[]{"en", "de", "fr", "it"};
+    private String[] languages = new String[]{};
 
     @Parameter(names = "-default-language", description = "language to return results in when no explicit language is choosen by the user")
     private String defaultLanguage = "default";
@@ -79,5 +79,17 @@ public class CommandLineArgs {
 
     @Parameter(names = "-h", description = "show help / usage")
     private boolean usage = false;
+
+    public String[] getLanguages(boolean useDefaultIfEmpty) {
+        if (useDefaultIfEmpty && languages.length == 0) {
+            return new String[]{"en", "de", "fr", "it"};
+        }
+
+        return languages;
+    }
+
+    public String[] getLanguages() {
+        return getLanguages(true);
+    }
 }
 
