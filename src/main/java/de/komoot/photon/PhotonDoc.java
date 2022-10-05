@@ -164,10 +164,35 @@ public class PhotonDoc {
     public String getUid() {
         if (houseNumber == null)
             return String.valueOf(placeId);
-        else
-            return String.valueOf(placeId) + "." + houseNumber;
+
+        return String.valueOf(placeId) + "." + houseNumber;
     }
 
+    public void copyName(Map<String, String> target, String target_field, String name_field) {
+        String outname = name.get("_place_" + name_field);
+        if (outname == null) {
+            outname = name.get(name_field);
+        }
+
+        if (outname != null) {
+            target.put(target_field, outname);
+        }
+    }
+
+    public void copyAddressName(Map<String, String> target, String target_field, AddressType address_field, String name_field) {
+        Map<String, String> names = addressParts.get(address_field);
+
+        if (names != null) {
+            String outname = names.get("_place_" + name_field);
+            if (outname == null) {
+                outname = names.get(name_field);
+            }
+
+            if (outname != null) {
+                target.put(target_field, outname);
+            }
+        }
+    }
 
     public AddressType getAddressType() {
         return AddressType.fromRank(rankAddress);

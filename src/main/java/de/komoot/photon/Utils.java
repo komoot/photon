@@ -44,10 +44,20 @@ public class Utils {
             builder.field("postcode", doc.getPostcode());
         }
 
-        writeName(builder, doc.getName(), languages);
-        for (Map.Entry<AddressType, Map<String, String>> entry : doc.getAddressParts().entrySet()) {
-            writeIntlNames(builder, entry.getValue(), entry.getKey().getName(), languages);
+        writeName(builder, doc, languages);
+
+        for (AddressType entry : doc.getAddressParts().keySet()) {
+            Map<String, String> fNames = new HashMap<>();
+
+            doc.copyAddressName(fNames, "default", entry, "name");
+
+            for (String language : languages) {
+                doc.copyAddressName(fNames, language, entry, "name:" + language);
+            }
+
+            write(builder, fNames, entry.getName());
         }
+
         String countryCode = doc.getCountryCode();
         if (countryCode != null)
             builder.field(Constants.COUNTRYCODE, countryCode);
@@ -97,26 +107,21 @@ public class Utils {
         builder.endObject();
     }
 
-    private static void writeName(XContentBuilder builder, Map<String, String> name, String[] languages) throws IOException {
-        Map<String, String> fNames = filterNames(name, languages);
+    private static void writeName(XContentBuilder builder, PhotonDoc doc, String[] languages) throws IOException {
+        Map<String, String> fNames = new HashMap<>();
 
-        if (name.get("alt_name") != null)
-            fNames.put("alt", name.get("alt_name"));
+        doc.copyName(fNames, "default", "name");
 
-        if (name.get("int_name") != null)
-            fNames.put("int", name.get("int_name"));
+        for (String language : languages) {
+            doc.copyName(fNames, language, "name:" + language);
+        }
 
-        if (name.get("loc_name") != null)
-            fNames.put("loc", name.get("loc_name"));
-
-        if (name.get("old_name") != null)
-            fNames.put("old", name.get("old_name"));
-
-        if (name.get("reg_name") != null)
-            fNames.put("reg", name.get("reg_name"));
-
-        if (name.get("addr:housename") != null)
-            fNames.put("housename", name.get("addr:housename"));
+        doc.copyName(fNames, "alt", "alt_name");
+        doc.copyName(fNames, "int", "int_name");
+        doc.copyName(fNames, "loc", "loc_name");
+        doc.copyName(fNames, "old", "old_name");
+        doc.copyName(fNames, "reg", "reg_name");
+        doc.copyName(fNames, "housename", "addr:housename");
 
         write(builder, fNames, "name");
     }
@@ -153,31 +158,6 @@ public class Utils {
             }
             builder.endObject();
         }
-    }
-
-    private static void writeIntlNames(XContentBuilder builder, Map<String, String> names, String name, String[] languages) throws IOException {
-        Map<String, String> fNames = filterNames(names, languages);
-        write(builder, fNames, name);
-    }
-
-    private static Map<String, String> filterNames(Map<String, String> names, String[] languages) {
-        return filterNames(names, new HashMap<String, String>(), languages);
-    }
-
-    private static Map<String, String> filterNames(Map<String, String> names, HashMap<String, String> filteredNames, String[] languages) {
-        if (names == null) return filteredNames;
-
-        if (names.get("name") != null) {
-            filteredNames.put("default", names.get("name"));
-        }
-
-        for (String language : languages) {
-            if (names.get("name:" + language) != null) {
-                filteredNames.put(language, names.get("name:" + language));
-            }
-        }
-
-        return filteredNames;
     }
 
     // http://stackoverflow.com/a/4031040/1437096
