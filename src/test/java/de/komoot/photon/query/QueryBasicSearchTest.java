@@ -61,6 +61,21 @@ public class QueryBasicSearchTest extends ESBaseTester {
     }
 
     @Test
+    public void testSearchNameSkipTerms() {
+        Importer instance = makeImporter();
+        instance.add(createDoc("name", "Hunted House Hotel"));
+        instance.finish();
+        refresh();
+
+        assertAll("default name",
+                () -> assertEquals(1, search("hunted").size()),
+                () -> assertEquals(1, search("hunted hotel").size()),
+                () -> assertEquals(1, search("hunted house hotel").size()),
+                () -> assertEquals(1, search("hunted house hotel 7").size()),
+                () -> assertEquals(1, search("hunted hotel 7").size())
+        );
+    }
+    @Test
     public void testSearchByAlternativeNames() {
         Importer instance = makeImporter();
         instance.add(createDoc("name", "original", "alt_name", "alt", "old_name", "older", "int_name", "int",

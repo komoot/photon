@@ -63,12 +63,12 @@ public class PhotonQueryBuilder {
                             .fuzziness(Fuzziness.ONE)
                             .prefixLength(2)
                             .analyzer("search_ngram")
-                            .minimumShouldMatch("-1"))
+                            .minimumShouldMatch("-34%"))
                     .should(QueryBuilders.matchQuery(String.format("collector.%s.ngrams", language), query)
                             .fuzziness(Fuzziness.ONE)
                             .prefixLength(2)
                             .analyzer("search_ngram")
-                            .minimumShouldMatch("-1"))
+                            .minimumShouldMatch("-34%"))
                     .minimumShouldMatch("1");
         } else {
             MultiMatchQueryBuilder builder =
