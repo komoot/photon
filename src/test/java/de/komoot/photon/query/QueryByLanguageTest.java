@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -97,5 +98,20 @@ public class QueryByLanguageTest extends ESBaseTester {
 
         assertEquals(1, search("here, original", "de").size());
         assertEquals(1, search("here, Deutsch", "de").size());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"default", "de", "en"})
+    public void queryAltNamesFuzzy(String lang) throws IOException {
+        Importer instance = setup("de", "en");
+        instance.add(createDoc("name", "simple", "alt_name", "ancient", "name:de", "einfach"));
+        instance.finish();
+        refresh();
+
+        assertEquals(1, search("simplle", lang).size());
+        assertEquals(1, search("einfah", lang).size());
+        assertEquals(1, search("anciemt", lang).size());
+        assertEquals(0, search("sinister", lang).size());
+
     }
 }
