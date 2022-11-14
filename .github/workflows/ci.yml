@@ -64,7 +64,7 @@ jobs:
       - uses: actions/cache@v3
         with:
             path: |
-               Nominatim/data/country_grid.sql.gz
+               Nominatim/data/country_osm_grid.sql.gz
                monaco-latest.osm.pbf
             key: nominatim-test-data-${{ steps.get-date.outputs.date }}
 
