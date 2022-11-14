@@ -56,9 +56,7 @@ jobs:
           path: Nominatim
 
       - name: Get Date
-        id: get-date
-        run: |
-            echo "name=date::$(/bin/date -u "+%Y%W")" >> $GITHUB_OUTPUT
+        run: echo "cache_key=$(/bin/date -u "+%Y%W")" >> $GITHUB_ENV
         shell: bash
 
       - uses: actions/cache@v3
@@ -66,7 +64,7 @@ jobs:
             path: |
                Nominatim/data/country_osm_grid.sql.gz
                monaco-latest.osm.pbf
-            key: nominatim-test-data-${{ steps.get-date.outputs.date }}
+            key: nominatim-test-data-${{ env.cache_key }}
 
       - name: Setup database
         run: |
