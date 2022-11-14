@@ -56,32 +56,21 @@ public class PhotonQueryBuilder {
         BoolQueryBuilder query4QueryBuilder = QueryBuilders.boolQuery();
 
         // 1. All terms of the quey must be contained in the place record somehow. Be more lenient on second try.
-        QueryBuilder collectorQuery;
-        if (lenient) {
-            collectorQuery = QueryBuilders.boolQuery()
-                    .should(QueryBuilders.matchQuery("collector.default", query)
-                            .fuzziness(Fuzziness.ONE)
-                            .prefixLength(2)
-                            .analyzer("search_ngram")
-                            .minimumShouldMatch("-34%"))
-                    .should(QueryBuilders.matchQuery(String.format("collector.%s.ngrams", language), query)
-                            .fuzziness(Fuzziness.ONE)
-                            .prefixLength(2)
-                            .analyzer("search_ngram")
-                            .minimumShouldMatch("-34%"))
-                    .minimumShouldMatch("1");
-        } else {
-            MultiMatchQueryBuilder builder =
-                    QueryBuilders.multiMatchQuery(query).field("collector.default", 1.0f).type(MultiMatchQueryBuilder.Type.CROSS_FIELDS).prefixLength(2).analyzer("search_ngram").minimumShouldMatch("100%");
+        MultiMatchQueryBuilder builder =
+                QueryBuilders.multiMatchQuery(query)
+                        .field("collector.default", 1.0f)
+                        .type(lenient ? MultiMatchQueryBuilder.Type.BEST_FIELDS : MultiMatchQueryBuilder.Type.CROSS_FIELDS)
+                        .prefixLength(2)
+                        .analyzer("search_ngram")
+                        .fuzziness(lenient ? Fuzziness.AUTO : Fuzziness.ZERO)
+                        .tieBreaker(0.4f)
+                        .minimumShouldMatch(lenient ? "-34%" : "100%");
 
-            for (String lang : languages) {
-                builder.field(String.format("collector.%s.ngrams", lang), lang.equals(language) ? 1.0f : 0.6f);
-            }
-
-            collectorQuery = builder;
+        for (String lang : languages) {
+            builder.field(String.format("collector.%s.ngrams", lang), lang.equals(language) ? 1.0f : 0.6f);
         }
 
-        query4QueryBuilder.must(collectorQuery);
+        query4QueryBuilder.must(builder);
 
         // 2. Prefer records that have the full names in. For address records with housenumbers this is the main
         //    filter creterion because they have no name. Therefore boost the score in this case.
@@ -124,7 +113,7 @@ public class PhotonQueryBuilder {
 
         // 4. Rerank results for having the full name in the default language.
         query4QueryBuilder
-                .should(QueryBuilders.matchQuery(String.format("name.%s.raw", language), query));
+                .should(QueryBuilders.matchQuery(String.format("name.%s.raw", language), query).fuzziness(lenient ? Fuzziness.AUTO : Fuzziness.ZERO));
 
 
         // Weigh the resulting score by importance. Use a linear scale function that ensures that the weight
