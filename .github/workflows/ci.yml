@@ -33,7 +33,7 @@ jobs:
 
   import:
     name: Import OSM data from Nominatim into Photon
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
 
     steps:
       - uses: actions/checkout@v3
@@ -66,6 +66,13 @@ jobs:
                monaco-latest.osm.pbf
             key: nominatim-test-data-${{ env.cache_key }}
 
+      - name: Install prerequisits
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq libboost-system-dev libboost-filesystem-dev libexpat1-dev zlib1g-dev libbz2-dev libpq-dev libproj-dev liblua5.3-dev lua5.3 python3-psycopg2 python3-pyosmium python3-dotenv python3-psutil python3-jinja2 python3-icu python3-datrie postgresql-14-postgis-3 postgresql-client-14 postgresql-14 postgresql-14-postgis-3-scripts
+          pip3 install sqlalchemy GeoAlchemy2 psycopg
+        shell: bash
+
       - name: Setup database
         run: |
             echo 'fsync = off' | sudo tee /etc/postgresql/14/main/conf.d/local.conf
@@ -78,13 +85,6 @@ jobs:
             psql -d postgres -c "ALTER USER runner PASSWORD 'foobar'"
             psql --version
             psql -d postgres -c "SELECT version()"
-        shell: bash
-
-      - name: Install prerequisits
-        run: |
-          sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
-          sudo apt-get update -qq
-          sudo apt-get install -y -qq libboost-system-dev libboost-filesystem-dev libexpat1-dev zlib1g-dev libbz2-dev libpq-dev libproj-dev liblua5.3-dev lua5.3 python3-psycopg2 python3-pyosmium python3-dotenv python3-psutil python3-jinja2 python3-icu python3-datrie postgresql-14-postgis-3
         shell: bash
 
       - name: Download dependencies
