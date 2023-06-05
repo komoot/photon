@@ -260,3 +260,4 @@ Example above will return both cities and localities.
 
  - photon's search configuration was developed with a specific test framework. It is written in Python and [hosted separately](https://github.com/yohanboniface/osm-geocoding-tester).
  - [R package](https://github.com/rCarto/photon) to access photon's public API with [R](https://www.r-project.org/)
+ - [PHP Geocoder provider](https://github.com/geocoder-php/photon-provider) to access photon's public API with PHP using the [GeoCoder Package](https://github.com/geocoder-php/Geocoder)
