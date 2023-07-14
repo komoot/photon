@@ -1,4 +1,4 @@
 API_URL = 'http://localhost:5001/api/?';
-TILELAYER = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png;
+TILELAYER = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
 CENTER = [52.3879, 13.0582];
 MAXZOOM = 18;
