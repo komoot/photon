@@ -180,6 +180,12 @@ Or, just by they key
 http://localhost:2322/api?q=berlin&osm_tag=tourism
 ```
 
+You can also use this feature for reverse geocoding. Want to see the 5 pharmacies closest to a location ?
+
+```
+http://localhost:2322/reverse?lon=10&lat=52&osm_tag=amenity:pharmacy&limit=5
+```
+
 #### Filter results by layer
 
 List of available layers:
