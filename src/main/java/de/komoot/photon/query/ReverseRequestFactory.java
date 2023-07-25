@@ -1,6 +1,8 @@
 package de.komoot.photon.query;
 
 import com.vividsolutions.jts.geom.Point;
+
+import de.komoot.photon.searcher.TagFilter;
 import spark.QueryParamsMap;
 import spark.Request;
 
@@ -18,7 +20,7 @@ public class ReverseRequestFactory {
     private final LayerParamValidator layerParamValidator;
 
     private static final HashSet<String> REQUEST_QUERY_PARAMS = new HashSet<>(Arrays.asList("lang", "lon", "lat", "radius",
-            "query_string_filter", "distance_sort", "limit", "layer", "debug"));
+            "query_string_filter", "distance_sort", "limit", "layer", "osm_tag", "debug"));
 
     public ReverseRequestFactory(List<String> supportedLanguages, String defaultLanguage) {
         this.languageResolver = new RequestLanguageResolver(supportedLanguages, defaultLanguage);
@@ -83,6 +85,19 @@ public class ReverseRequestFactory {
         }
 
         String queryStringFilter = webRequest.queryParams("query_string_filter");
-        return new ReverseRequest(location, language, radius, queryStringFilter, limit, locationDistanceSort, layerFilter, enableDebug);
+        ReverseRequest request = new ReverseRequest(location, language, radius, queryStringFilter, limit, locationDistanceSort, layerFilter, enableDebug);
+
+        QueryParamsMap tagFiltersQueryMap = webRequest.queryMap("osm_tag");
+        if (tagFiltersQueryMap.hasValue()) {
+            for (String filter : tagFiltersQueryMap.values()) {
+                TagFilter tagFilter = TagFilter.buildOsmTagFilter(filter);
+                if (tagFilter == null) {
+                    throw new BadRequestException(400, String.format("Invalid parameter 'osm_tag=%s': bad syntax for tag filter.", filter));
+                }
+                request.addOsmTagFilter(TagFilter.buildOsmTagFilter(filter));
+            }
+        }
+
+        return request;
     }
 }

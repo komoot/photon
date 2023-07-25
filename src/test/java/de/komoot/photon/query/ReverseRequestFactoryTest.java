@@ -7,12 +7,15 @@ package de.komoot.photon.query;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+
+import de.komoot.photon.searcher.TagFilter;
 import spark.QueryParamsMap;
 import spark.Request;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -31,9 +34,19 @@ public class ReverseRequestFactoryTest {
         Mockito.when(mockRequest.queryParamOrDefault("distance_sort", "true")).thenReturn("true");
 
         QueryParamsMap mockEmptyQueryParamsMap = Mockito.mock(QueryParamsMap.class);
+        Mockito.when(mockRequest.queryMap("osm_tag")).thenReturn(mockEmptyQueryParamsMap);
         Mockito.when(mockRequest.queryMap("layer")).thenReturn(mockEmptyQueryParamsMap);
 
         return mockRequest;
+    }
+
+    public void requestWithOsmFilters(Request mockRequest, String... filterParams) {
+        Mockito.when(mockRequest.queryParams("q")).thenReturn("new york");
+
+        QueryParamsMap mockQueryParamsMap = Mockito.mock(QueryParamsMap.class);
+        Mockito.when(mockQueryParamsMap.hasValue()).thenReturn(true);
+        Mockito.when(mockQueryParamsMap.values()).thenReturn(filterParams);
+        Mockito.when(mockRequest.queryMap("osm_tag")).thenReturn(mockQueryParamsMap);
     }
 
     public void requestWithLayers(Request mockRequest, String... layers) {
@@ -209,6 +222,32 @@ public class ReverseRequestFactoryTest {
         requestWithLayers(mockRequest, "city", "bad");
 
         assertBadRequest(mockRequest, "Invalid layer 'bad'. Allowed layers are: house,street,locality,district,city,county,state,country");
+    }
+
+    @Test
+    public void testTagFilters() throws Exception {
+        Request mockRequest = createRequestWithLongitudeLatitude(-87d, 41d);
+        requestWithOsmFilters(mockRequest, "foo", ":!bar");
+        ReverseRequestFactory reverseRequestFactory = new ReverseRequestFactory(Collections.singletonList("en"), "en");
+        reverseRequest = reverseRequestFactory.create(mockRequest);
+
+        List<TagFilter> result = reverseRequest.getOsmTagFilters();
+
+        assertEquals(2, result.size());
+
+        assertAll("filterlist",
+                () -> assertNotNull(result.get(0)),
+                () -> assertNotNull(result.get(1))
+        );
+    }
+
+    @Test
+    public void testBadTagFilters() throws BadRequestException {
+        Request mockRequest = createRequestWithLongitudeLatitude(-87d, 41d);
+        requestWithOsmFilters(mockRequest, "good", "bad:bad:bad");
+        ReverseRequestFactory reverseRequestFactory = new ReverseRequestFactory(Collections.singletonList("en"), "en");
+
+        assertThrows(BadRequestException.class, () -> reverseRequestFactory.create(mockRequest));
     }
 
     @Test

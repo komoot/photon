@@ -62,8 +62,8 @@ public class ElasticsearchReverseHandler implements ReverseHandler {
     }
 
     private ReverseQueryBuilder buildQuery(ReverseRequest photonRequest) {
-        return ReverseQueryBuilder.builder(photonRequest.getLocation(), photonRequest.getRadius(),
-                photonRequest.getQueryStringFilter(), photonRequest.getLayerFilters());
+        return ReverseQueryBuilder.
+                builder(photonRequest.getLocation(), photonRequest.getRadius(), photonRequest.getQueryStringFilter(), photonRequest.getLayerFilters()).
+                withOsmTagFilters(photonRequest.getOsmTagFilters());
     }
-
 }
