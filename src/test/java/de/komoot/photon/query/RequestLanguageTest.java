@@ -31,19 +31,19 @@ public class RequestLanguageTest {
     @Test
     public void testValidQueryLangs()
     {
-        supportedLangs.forEach(l -> validateReturnedLanguage(l, null, l));
-        validateReturnedLanguage("default", null, "default");
+        supportedLangs.forEach(l -> validateReturnedLanguage2(l, null, l));
+        validateReturnedLanguage2("default", null, "default");
     }
 
     @Test
     public void testLanguageNotSupported() {
-        asList("ru", "pl", "xyaasdas").forEach(l -> validateNotSupported(l, null));
+        asList("ru", "pl", "xyaasdas").forEach(l -> validateNotSupported2(l, null));
     }
 
     @Test
     public void testPriorityOfQueryParam() {
-        validateReturnedLanguage("de", "en", "de");
-        validateNotSupported("ko", "en");
+        validateReturnedLanguage2("de", "en", "de");
+        validateNotSupported2("ko", "en");
     }
 
     @Test
@@ -90,6 +90,31 @@ public class RequestLanguageTest {
             languageResolver.resolveRequestedLanguage(req);
             fail("Language " + queryLang + " is not supported");
         } catch (BadRequestException ignored) {
+        }
+    }
+
+    private Request buildRequest2(String queryLang, String acceptLangHeader) {
+        Request request = mock(Request.class);
+        when(request.queryParams("lang")).thenReturn(queryLang);
+        return request;
+    }
+
+    private void validateNotSupported2(String queryLang, String acceptHeader) {
+        Request req = buildRequest2(queryLang, acceptHeader);
+        try {
+            languageResolver.resolveRequestedLanguage(req);
+            fail("Language " + queryLang + " is not supported");
+        } catch (BadRequestException ignored) {
+        }
+    }
+
+    private void validateReturnedLanguage2(String queryLang, String acceptHeader, String expected) {
+        Request req = buildRequest2(queryLang, acceptHeader);
+        try {
+            String actual = languageResolver.resolveRequestedLanguage(req);
+            assertEquals(expected, actual);
+        } catch (BadRequestException e) {
+            fail(e.getMessage());
         }
     }
 }
