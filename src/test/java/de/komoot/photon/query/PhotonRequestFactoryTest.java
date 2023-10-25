@@ -149,7 +149,7 @@ public class PhotonRequestFactoryTest {
 
     @Test
     public void testTagFilters() throws Exception {
-        Request mockRequest = createRequestWithQueryParams("q", "new york");
+        Request mockRequest = createRequestWithQueryParams4("q", "new york");
         requestWithOsmFilters(mockRequest, "foo", ":!bar");
         PhotonRequest photonRequest = createPhotonRequest(mockRequest);
 
@@ -165,7 +165,7 @@ public class PhotonRequestFactoryTest {
 
     @Test
     public void testBadTagFilters() throws BadRequestException {
-        Request mockRequest = createRequestWithQueryParams("q", "new york");
+        Request mockRequest = createRequestWithQueryParams3("q", "new york");
         requestWithOsmFilters(mockRequest, "good", "bad:bad:bad");
 
         BadRequestException exception = assertThrows(BadRequestException.class,
@@ -182,7 +182,7 @@ public class PhotonRequestFactoryTest {
 
     @Test
     public void testWithLayerFilters() throws Exception {
-        Request mockRequest = createRequestWithQueryParams("q", "new york");
+        Request mockRequest = createRequestWithQueryParams2("q", "new york");
         requestWithLayers(mockRequest, "city", "locality");
         PhotonRequest photonRequest = createPhotonRequest(mockRequest);
 
@@ -191,7 +191,7 @@ public class PhotonRequestFactoryTest {
 
     @Test
     public void testWithDuplicatedLayerFilters() throws Exception {
-        Request mockRequest = createRequestWithQueryParams("q", "new york");
+        Request mockRequest = createRequestWithQueryParams2("q", "new york");
         requestWithLayers(mockRequest, "city", "locality", "city");
         PhotonRequest photonRequest = createPhotonRequest(mockRequest);
 
@@ -200,7 +200,7 @@ public class PhotonRequestFactoryTest {
 
     @Test
     public void testWithBadLayerFilters() throws Exception {
-        Request mockRequest = createRequestWithQueryParams("q", "new york");
+        Request mockRequest = createRequestWithQueryParams2("q", "new york");
         requestWithLayers(mockRequest, "city", "bad");
 
         BadRequestException exception = assertThrows(BadRequestException.class,
@@ -210,5 +210,51 @@ public class PhotonRequestFactoryTest {
 
         assertTrue(exception.getMessage().contains(expectedMessageFragment),
                 String.format("Error message doesn not contain '%s': %s", expectedMessageFragment, exception.getMessage()));
+    }
+
+    private Request createRequestWithQueryParams2(String... queryParams) throws BadRequestException {
+        Request mockRequest = Mockito.mock(Request.class);
+
+        Set<String> keys = new HashSet<>();
+        for (int pos = 0; pos < queryParams.length; pos += 2) {
+            Mockito.when(mockRequest.queryParams(queryParams[pos])).thenReturn(queryParams[pos + 1]);
+            keys.add(queryParams[pos]);
+        }
+
+        Mockito.when(mockRequest.queryParams()).thenReturn(keys);
+
+        QueryParamsMap mockEmptyQueryParamsMap = Mockito.mock(QueryParamsMap.class);
+        Mockito.when(mockRequest.queryMap("osm_tag")).thenReturn(mockEmptyQueryParamsMap);
+        return mockRequest;
+    }
+
+    private Request createRequestWithQueryParams3(String... queryParams) throws BadRequestException {
+        Request mockRequest = Mockito.mock(Request.class);
+
+        Set<String> keys = new HashSet<>();
+        for (int pos = 0; pos < queryParams.length; pos += 2) {
+            keys.add(queryParams[pos]);
+        }
+
+        Mockito.when(mockRequest.queryParams()).thenReturn(keys);
+
+        QueryParamsMap mockEmptyQueryParamsMap = Mockito.mock(QueryParamsMap.class);
+        return mockRequest;
+    }
+
+    private Request createRequestWithQueryParams4(String... queryParams) throws BadRequestException {
+        Request mockRequest = Mockito.mock(Request.class);
+
+        Set<String> keys = new HashSet<>();
+        for (int pos = 0; pos < queryParams.length; pos += 2) {
+            keys.add(queryParams[pos]);
+        }
+
+        Mockito.when(mockRequest.queryParams()).thenReturn(keys);
+
+        QueryParamsMap mockEmptyQueryParamsMap = Mockito.mock(QueryParamsMap.class);
+        Mockito.when(mockRequest.queryMap("layer")).thenReturn(mockEmptyQueryParamsMap);
+
+        return mockRequest;
     }
 }
