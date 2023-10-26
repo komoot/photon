@@ -36,7 +36,7 @@ photon software is open source and licensed under [Apache License, Version 2.0](
 
 photon requires java, at least version 8.
 
-Download the search index (53G gb compressed, worldwide coverage, languages: English, German, French and local name). The search index is updated weekly and thankfully provided by [GraphHopper](https://www.graphhopper.com/) with the support of [lonvia](https://github.com/lonvia).
+Download the search index (72G GB compressed, 159GB uncompressed as of 2023-10-26), worldwide coverage, languages: English, German, French and local name). The search index is updated weekly and thankfully provided by [GraphHopper](https://www.graphhopper.com/) with the support of [lonvia](https://github.com/lonvia).
 
 Make sure you have bzip2 or pbzip2 installed and execute one of these two commands in your shell. This will download, uncompress and extract the huge database in one step:
 
