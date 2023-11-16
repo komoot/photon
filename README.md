@@ -31,23 +31,32 @@ photon software is open source and licensed under [Apache License, Version 2.0](
 - reverse geocode a coordinate to an address
 - OSM data import (built upon [Nominatim](https://nominatim.org)) inclusive continuous updates
 
-
 ### Installation
 
 photon requires java, at least version 8.
 
-Download the search index (72G GB compressed, 159GB uncompressed as of 2023-10-26), worldwide coverage, languages: English, German, French and local name). The search index is updated weekly and thankfully provided by [GraphHopper](https://www.graphhopper.com/) with the support of [lonvia](https://github.com/lonvia).
+Download the search index (72G GB compressed, 159GB uncompressed as of 2023-10-26, worldwide coverage, languages: English, German, French and local name). The search index is updated weekly and thankfully provided by [GraphHopper](https://www.graphhopper.com/) with the support of [lonvia](https://github.com/lonvia).
+Now get the latest version of photon from [the releases](https://github.com/komoot/photon/releases).
 
 Make sure you have bzip2 or pbzip2 installed and execute one of these two commands in your shell. This will download, uncompress and extract the huge database in one step:
 
- ```bash
+```bash
 wget -O - https://download1.graphhopper.com/public/photon-db-latest.tar.bz2 | bzip2 -cd | tar x
 # you can significantly speed up extracting using pbzip2 (recommended):
 wget -O - https://download1.graphhopper.com/public/photon-db-latest.tar.bz2 | pbzip2 -cd | tar x
- ```
- 
-Now get the latest version of photon from
-[the releases](https://github.com/komoot/photon/releases) and start it:
+```
+
+### Building
+
+photon uses [maven](https://maven.apache.org/) for building. To build the package from source make sure you have a JDK and maven installed. Then run:
+
+```
+mvn package
+```
+
+### Usage
+
+Start photon with the following command:
 
 ```bash
 java -jar photon-*.jar
@@ -59,14 +68,55 @@ Check the URL `http://localhost:2322/api?q=berlin` to see if photon is running w
 
 To enable CORS (cross-site requests), use `-cors-any` to allow any origin or `-cors-origin` with a specific origin as the argument. By default, CORS support is disabled.
 
-Discover more of photon's feature with its usage `java -jar photon-*.jar -h`.
-
-### Building
-
-photon uses [maven](https://maven.apache.org/) for building. To build the package from source make sure you have a JDK and maven installed. Then run:
+Discover more of photon's feature with its usage `java -jar photon-*.jar -h`. The available options are as follows:
 
 ```
-mvn package
+-h                    Show help / usage
+
+-cluster              Name of elasticsearch cluster to put the server into (default is 'photon')
+
+-transport-addresses  The comma separated addresses of external elasticsearch nodes where the
+                      client can connect to (default is an empty string which forces an internal node to start)
+
+-nominatim-import     Import nominatim database into photon (this will delete previous index)
+
+-nominatim-update     Fetch updates from nominatim database into photon and exit (this updates the index only
+                      without offering an API)
+
+-languages            Languages nominatim importer should import and use at run-time, comma separated (default is 'en,fr,de,it')
+
+-default-language     Language to return results in when no explicit language is choosen by the user
+
+-country-codes        Country codes filter that nominatim importer should import, comma separated. If empty full planet is done
+
+-extra-tags           Comma-separated list of additional tags to save for each place
+
+-synonym-file         File with synonym and classification terms
+
+-json                 Import nominatim database and dump it to a json like files in (useful for developing)
+
+-host                 Postgres host (default 127.0.0.1)
+
+-port                 Postgres port (default 5432)
+
+-database             Postgres host (default nominatim)
+
+-user                 Postgres user (default nominatim)
+
+-password             Postgres password (default '')
+
+-data-dir             Data directory (default '.')
+
+-listen-port          Listen to port (default 2322)
+
+-listen-ip            Listen to address (default '0.0.0.0')
+
+-cors-any             Enable cross-site resource sharing for any origin (default CORS not supported)
+
+-cors-origin          Enable cross-site resource sharing for the specified origin (default CORS not supported)
+
+-enable-update-api    Enable the additional endpoint /nominatim-update, which allows to trigger updates
+                      from a nominatim database
 ```
 
 ### Customized Search Data
@@ -81,7 +131,9 @@ su postgres
 psql
 ALTER USER nominatim WITH ENCRYPTED PASSWORD 'mysecretpassword';
 ```
+
 Import the data to photon:
+
 ```bash
 java -jar photon-*.jar -nominatim-import -host localhost -port 5432 -database nominatim -user nominatim -password mysecretpassword -languages es,fr
 ```
@@ -109,15 +161,16 @@ If you have updated nominatim with another method, photon can be updated by maki
 curl http://localhost:2322/nominatim-update
 ```
 
-
 ### Search API
 
 #### Search
+
 ```
 http://localhost:2322/api?q=berlin
 ```
 
 #### Search with Location Bias
+
 ```
 http://localhost:2322/api?q=berlin&lon=10&lat=52
 ```
@@ -137,39 +190,45 @@ http://localhost:2322/api?q=berlin&lon=10&lat=52&zoom=12&location_bias_scale=0.1
 ```
 
 #### Reverse geocode a coordinate
+
 ```
 http://localhost:2322/reverse?lon=10&lat=52
 ```
 
 #### Adapt Number of Results
+
 ```
 http://localhost:2322/api?q=berlin&limit=2
 ```
 
 #### Adjust Language
+
 ```
 http://localhost:2322/api?q=berlin&lang=it
 ```
 
 #### Filter results by bounding box
-Expected format is minLon,minLat,maxLon,maxLat. 
+
+Expected format is minLon,minLat,maxLon,maxLat.
+
 ```
 http://localhost:2322/api?q=berlin&bbox=9.5,51.5,11.5,53.5
 ```
 
 #### Filter results by [tags and values](https://taginfo.openstreetmap.org/projects/nominatim#tags)
 
-*Note: the filter only works on principal OSM tags and not all OSM tag/value combinations can be searched. The actual list depends on the import style used for the Nominatim database (e.g. [settings/import-full.style](https://github.com/osm-search/Nominatim/blob/master/settings/import-full.style)). All tag/value combinations with a property 'main' are included in the photon database.*
-If one or many query parameters named ```osm_tag``` are present, photon will attempt to filter results by those tags. In general, here is the expected format (syntax) for the value of osm_tag request parameters.
+_Note: the filter only works on principal OSM tags and not all OSM tag/value combinations can be searched. The actual list depends on the import style used for the Nominatim database (e.g. [settings/import-full.style](https://github.com/osm-search/Nominatim/blob/master/settings/import-full.style)). All tag/value combinations with a property 'main' are included in the photon database._
+If one or many query parameters named `osm_tag` are present, photon will attempt to filter results by those tags. In general, here is the expected format (syntax) for the value of osm_tag request parameters.
 
-1. Include places with tag: ```osm_tag=key:value```
-2. Exclude places with tag: ```osm_tag=!key:value```
-3. Include places with tag key: ```osm_tag=key```
-4. Include places with tag value: ```osm_tag=:value```
-5. Exclude places with tag key: ```osm_tag=!key```
-6. Exclude places with tag value: ```osm_tag=:!value```
+1. Include places with tag: `osm_tag=key:value`
+2. Exclude places with tag: `osm_tag=!key:value`
+3. Include places with tag key: `osm_tag=key`
+4. Include places with tag value: `osm_tag=:value`
+5. Exclude places with tag key: `osm_tag=!key`
+6. Exclude places with tag value: `osm_tag=:!value`
 
-For example, to search for all places named ```berlin``` with tag of ```tourism=museum```, one should construct url as follows:
+For example, to search for all places named `berlin` with tag of `tourism=museum`, one should construct url as follows:
+
 ```
 http://localhost:2322/api?q=berlin&osm_tag=tourism:museum
 ```
@@ -205,8 +264,8 @@ http://localhost:2322/api?q=berlin&layer=city&layer=locality
 
 Example above will return both cities and localities.
 
-
 #### Results as GeoJSON
+
 ```json
 {
   "features": [
@@ -224,10 +283,7 @@ Example above will return both cities and localities.
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [
-          13.3888599,
-          52.5170365
-        ]
+        "coordinates": [13.3888599, 52.5170365]
       }
     },
     {
@@ -243,27 +299,20 @@ Example above will return both cities and localities.
         "osm_value": "stadium",
         "osm_type": "W",
         "osm_id": 38862723,
-        "extent": [
-          13.23727,
-          52.5157151,
-          13.241757,
-          52.5135972
-        ]
+        "extent": [13.23727, 52.5157151, 13.241757, 52.5135972]
       },
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [
-          13.239514674078611,
-          52.51467945
-        ]
+        "coordinates": [13.239514674078611, 52.51467945]
       }
-    }]
-  }
+    }
+  ]
+}
 ```
 
 ### Related Projects
 
- - photon's search configuration was developed with a specific test framework. It is written in Python and [hosted separately](https://github.com/yohanboniface/osm-geocoding-tester).
- - [R package](https://github.com/rCarto/photon) to access photon's public API with [R](https://www.r-project.org/)
- - [PHP Geocoder provider](https://github.com/geocoder-php/photon-provider) to access photon's public API with PHP using the [GeoCoder Package](https://github.com/geocoder-php/Geocoder)
+- photon's search configuration was developed with a specific test framework. It is written in Python and [hosted separately](https://github.com/yohanboniface/osm-geocoding-tester).
+- [R package](https://github.com/rCarto/photon) to access photon's public API with [R](https://www.r-project.org/)
+- [PHP Geocoder provider](https://github.com/geocoder-php/photon-provider) to access photon's public API with PHP using the [GeoCoder Package](https://github.com/geocoder-php/Geocoder)
