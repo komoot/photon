@@ -52,6 +52,7 @@ public class Server {
     private static final String BASE_FIELD = "document_properties";
     private static final String FIELD_VERSION = "database_version";
     private static final String FIELD_LANGUAGES = "indexed_languages";
+    private static final String FIELD_IMPORT_DATE = "import_date";
 
     private Node esNode;
 
@@ -172,14 +173,16 @@ public class Server {
 
     }
 
-    public DatabaseProperties recreateIndex(String[] languages) throws IOException {
+    public DatabaseProperties recreateIndex(String[] languages, Date importDate) throws IOException {
         deleteIndex();
 
         loadIndexSettings().createIndex(esClient, PhotonIndex.NAME);
 
         new IndexMapping().addLanguages(languages).putMapping(esClient, PhotonIndex.NAME, PhotonIndex.TYPE);
 
-        DatabaseProperties dbProperties = new DatabaseProperties().setLanguages(languages);
+        DatabaseProperties dbProperties = new DatabaseProperties()
+            .setLanguages(languages)
+            .setImportDate(importDate);
         saveToDatabase(dbProperties);
 
         return dbProperties;
@@ -226,6 +229,7 @@ public class Server {
         final XContentBuilder builder = XContentFactory.jsonBuilder().startObject().startObject(BASE_FIELD)
                         .field(FIELD_VERSION, DATABASE_VERSION)
                         .field(FIELD_LANGUAGES, String.join(",", dbProperties.getLanguages()))
+                        .field(FIELD_IMPORT_DATE, dbProperties.getImportDate() instanceof Date ? String.valueOf(dbProperties.getImportDate().getTime()) : null)
                         .endObject().endObject();
 
         esClient.prepareIndex(PhotonIndex.NAME, PhotonIndex.TYPE).
@@ -263,6 +267,9 @@ public class Server {
 
         String langString = properties.get(FIELD_LANGUAGES);
         dbProperties.setLanguages(langString == null ? null : langString.split(","));
+
+        String importDateString = properties.get(FIELD_IMPORT_DATE);
+        dbProperties.setImportDate(importDateString == null ? null : new Date(Long.parseLong(importDateString)));
     }
 
     public Importer createImporter(String[] languages, String[] extraTags) {

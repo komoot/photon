@@ -12,6 +12,7 @@ import spark.Response;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Date;
 
 import static spark.Spark.*;
 
@@ -110,14 +111,15 @@ public class App {
      */
     private static void startNominatimImport(CommandLineArgs args, Server esServer) {
         DatabaseProperties dbProperties;
+        NominatimConnector nominatimConnector = new NominatimConnector(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
+        Date importDate = nominatimConnector.getLastImportDate();
         try {
-            dbProperties = esServer.recreateIndex(args.getLanguages()); // clear out previous data
+            dbProperties = esServer.recreateIndex(args.getLanguages(), importDate); // clear out previous data
         } catch (IOException e) {
             throw new RuntimeException("cannot setup index, elastic search config files not readable", e);
         }
 
         log.info("starting import from nominatim to photon with languages: " + String.join(",", dbProperties.getLanguages()));
-        NominatimConnector nominatimConnector = new NominatimConnector(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
         nominatimConnector.setImporter(esServer.createImporter(dbProperties.getLanguages(), args.getExtraTags()));
         nominatimConnector.readEntireDatabase(args.getCountryCodes());
 
@@ -162,6 +164,9 @@ public class App {
 
         // setup search API
         String[] langs = dbProperties.getLanguages();
+        Date importDate = dbProperties.getImportDate();
+        get("status", new StatusRequestHandler("status", importDate));
+        get("status/", new StatusRequestHandler("/status", importDate));
         get("api", new SearchRequestHandler("api", server.createSearchHandler(langs), langs, args.getDefaultLanguage()));
         get("api/", new SearchRequestHandler("api/", server.createSearchHandler(langs), langs, args.getDefaultLanguage()));
         get("reverse", new ReverseSearchRequestHandler("reverse", server.createReverseHandler(), dbProperties.getLanguages(), args.getDefaultLanguage()));

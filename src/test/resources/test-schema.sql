@@ -63,3 +63,9 @@ CREATE TABLE country_name (
 
 INSERT INTO country_name
     VALUES ('de', JSON '{"name" : "Deutschland", "name:en" : "Germany"}', 'de', 2);
+
+
+CREATE TABLE import_status (
+    lastimportdate timestamp with TIME ZONE NOT NULL,
+    indexed boolean
+);
