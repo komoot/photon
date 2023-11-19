@@ -296,17 +296,16 @@ public class NominatimConnector {
     }
 
     public Date getLastImportDate() {
-        Date importDate = null;
-        try {
-            importDate = template.query("SELECT lastimportdate FROM import_status LIMIT 1", rs -> {
-                if(!rs.first()) {
-                    return null;
-                }
+        List<Date> importDates = template.query("SELECT lastimportdate FROM import_status LIMIT 1", new RowMapper<Date>() {
+            public Date mapRow(ResultSet rs, int rowNum) throws SQLException {
                 return rs.getTimestamp("lastimportdate");
-            });
-        } finally {}
+            }
+        });
+        if (importDates.isEmpty()) {
+            return null;
+        }
 
-        return importDate;
+        return importDates.get(0);
     }
 
     /**
