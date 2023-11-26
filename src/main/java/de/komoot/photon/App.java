@@ -166,6 +166,8 @@ public class App {
         get("api/", new SearchRequestHandler("api/", server.createSearchHandler(langs), langs, args.getDefaultLanguage()));
         get("reverse", new ReverseSearchRequestHandler("reverse", server.createReverseHandler(), dbProperties.getLanguages(), args.getDefaultLanguage()));
         get("reverse/", new ReverseSearchRequestHandler("reverse/", server.createReverseHandler(), dbProperties.getLanguages(), args.getDefaultLanguage()));
+        get("lookup", new LookupSearchRequestHandler("lookup", server.createLookupHandler(), dbProperties.getLanguages(), args.getDefaultLanguage()));
+        get("lookup/", new LookupSearchRequestHandler("lookup/", server.createLookupHandler(), dbProperties.getLanguages(), args.getDefaultLanguage()));
 
         if (args.isEnableUpdateApi()) {
             // setup update API

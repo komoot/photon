@@ -258,6 +258,14 @@
 						]
 					}
 				}
+			},
+			"place_id": {
+				"type": "text",
+				"index": false
+			},
+			"parent_place_id": {
+				"type": "text",
+				"index": false
 			}
 		}
 	}

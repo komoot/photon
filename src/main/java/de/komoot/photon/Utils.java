@@ -19,6 +19,8 @@ public class Utils {
         XContentBuilder builder = XContentFactory.jsonBuilder().startObject()
                 .field(Constants.OSM_ID, doc.getOsmId())
                 .field(Constants.OSM_TYPE, doc.getOsmType())
+                .field(Constants.PARENT_PLACE_ID, doc.getParentPlaceId())
+                .field(Constants.PLACE_ID, doc.getPlaceId())
                 .field(Constants.OSM_KEY, doc.getTagKey())
                 .field(Constants.OSM_VALUE, doc.getTagValue())
                 .field(Constants.OBJECT_TYPE, atype == null ? "locality" : atype.getName())
@@ -74,17 +76,31 @@ public class Utils {
     private static void writeExtraTags(XContentBuilder builder, Map<String, String> docTags, String[] extraTags) throws IOException {
         boolean foundTag = false;
 
-        for (String tag: extraTags) {
-            String value = docTags.get(tag);
-            if (value != null) {
-                if (!foundTag) {
-                    builder.startObject("extra");
-                    foundTag = true;
+        if (extraTags.length == 0) {
+            for (Map.Entry<String, String> entry : docTags.entrySet()) {
+                String tag = entry.getKey();
+                String value = entry.getValue();
+
+                if (value != null) {
+                    if (!foundTag) {
+                        builder.startObject("extra");
+                        foundTag = true;
+                    }
+                    builder.field(tag, value);
                 }
-                builder.field(tag, value);
+            }
+        } else {
+            for (String tag : extraTags) {
+                String value = docTags.get(tag);
+                if (value != null) {
+                    if (!foundTag) {
+                        builder.startObject("extra");
+                        foundTag = true;
+                    }
+                    builder.field(tag, value);
+                }
             }
         }
-
         if (foundTag) {
             builder.endObject();
         }
