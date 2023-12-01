@@ -7,5 +7,4 @@ public class PhotonIndex {
     private PhotonIndex() {}
 
     public static final String NAME = "photon";
-    public static final String TYPE = "place";
 }

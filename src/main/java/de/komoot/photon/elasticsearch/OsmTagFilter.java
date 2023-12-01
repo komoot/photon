@@ -2,72 +2,105 @@ package de.komoot.photon.elasticsearch;
 
 import java.util.List;
 
-import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
+import co.elastic.clients.elasticsearch._types.query_dsl.BoolQuery;
+import co.elastic.clients.elasticsearch._types.query_dsl.Query;
+import co.elastic.clients.util.ObjectBuilder;
 
 import de.komoot.photon.searcher.TagFilter;
 import de.komoot.photon.searcher.TagFilterKind;
 
 public class OsmTagFilter {
-    private BoolQueryBuilder orQueryBuilderForIncludeTagFiltering = null;
-    private BoolQueryBuilder andQueryBuilderForExcludeTagFiltering = null;
+    private BoolQuery.Builder orQueryBuilderForIncludeTagFiltering = null;
+    private BoolQuery.Builder andQueryBuilderForExcludeTagFiltering = null;
     
-    public OsmTagFilter withOsmTagFilters(List<TagFilter> filters) {
+    public void withOsmTagFilters(List<TagFilter> filters) {
         for (TagFilter filter : filters) {
             addOsmTagFilter(filter);
         }
-        return this;
     }
 
-    public BoolQueryBuilder getTagFiltersQuery() {
+    public Query getTagFiltersQuery() {
         if (orQueryBuilderForIncludeTagFiltering != null || andQueryBuilderForExcludeTagFiltering != null) {
-            BoolQueryBuilder tagFilters = QueryBuilders.boolQuery();
+            BoolQuery.Builder tagFilters = new BoolQuery.Builder();
             if (orQueryBuilderForIncludeTagFiltering != null)
-                tagFilters.must(orQueryBuilderForIncludeTagFiltering);
+                tagFilters.must(orQueryBuilderForIncludeTagFiltering.build()._toQuery());
             if (andQueryBuilderForExcludeTagFiltering != null)
-                tagFilters.mustNot(andQueryBuilderForExcludeTagFiltering);
-            return tagFilters;
+                tagFilters.mustNot(andQueryBuilderForExcludeTagFiltering.build()._toQuery());
+            return tagFilters.build()._toQuery();
         }
         return null;
     }
 
     private OsmTagFilter addOsmTagFilter(TagFilter filter) {
         if (filter.getKind() == TagFilterKind.EXCLUDE_VALUE) {
-            appendIncludeTermQuery(QueryBuilders.boolQuery()
-                    .must(QueryBuilders.termQuery("osm_key", filter.getKey()))
-                    .mustNot(QueryBuilders.termQuery("osm_value", filter.getValue())));
+            appendIncludeTermQuery(new BoolQuery.Builder()
+                    .must(q -> q
+                            .term(t -> t
+                                    .field("osm_key")
+                                    .value(filter.getKey()
+                                    )
+                            )
+                    )
+                    .mustNot(q -> q
+                            .term(t -> t
+                                    .field("osm_value")
+                                    .value(filter.getValue())
+                            )
+                    )
+                    .build()
+                    ._toQuery()
+            );
         } else {
-            QueryBuilder builder;
+            ObjectBuilder<Query> builder;
             if (filter.isKeyOnly()) {
-                builder = QueryBuilders.termQuery("osm_key", filter.getKey());
+                builder = new Query.Builder()
+                        .term(t -> t
+                            .field("osm_key")
+                            .value(filter.getKey())
+                        );
             } else if (filter.isValueOnly()) {
-                builder = QueryBuilders.termQuery("osm_value", filter.getValue());
+                builder = new Query.Builder()
+                        .term(t -> t
+                            .field("osm_value")
+                            .value(filter.getValue())
+                        );
             } else {
-                builder = QueryBuilders.boolQuery()
-                        .must(QueryBuilders.termQuery("osm_key", filter.getKey()))
-                        .must(QueryBuilders.termQuery("osm_value", filter.getValue()));
+                builder = new Query.Builder()
+                        .bool(b -> b
+                            .must(q -> q
+                                    .term(t -> t
+                                            .field("osm_key")
+                                            .value(filter.getKey())
+                                    )
+                            )
+                            .must(q -> q
+                                    .term(t -> t
+                                            .field("osm_value")
+                                            .value(filter.getValue())
+                                    )
+                            )
+                        );
             }
             if (filter.getKind() == TagFilterKind.INCLUDE) {
-                appendIncludeTermQuery(builder);
+                appendIncludeTermQuery(builder.build());
             } else {
-                appendExcludeTermQuery(builder);
+                appendExcludeTermQuery(builder.build());
             }
         }
         return this;
     }
 
-    private void appendIncludeTermQuery(QueryBuilder termQuery) {
+    private void appendIncludeTermQuery(Query termQuery) {
         if (orQueryBuilderForIncludeTagFiltering == null)
-            orQueryBuilderForIncludeTagFiltering = QueryBuilders.boolQuery();
+            orQueryBuilderForIncludeTagFiltering = new BoolQuery.Builder();
 
         orQueryBuilderForIncludeTagFiltering.should(termQuery);
     }
 
 
-    private void appendExcludeTermQuery(QueryBuilder termQuery) {
+    private void appendExcludeTermQuery(Query termQuery) {
         if (andQueryBuilderForExcludeTagFiltering == null)
-            andQueryBuilderForExcludeTagFiltering = QueryBuilders.boolQuery();
+            andQueryBuilderForExcludeTagFiltering = new BoolQuery.Builder();
 
         andQueryBuilderForExcludeTagFiltering.should(termQuery);
     }

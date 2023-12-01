@@ -9,7 +9,7 @@ import spark.Request;
  * A factory that creates a {@link LookupRequest} from a {@link Request web request}
  */
 public class LookupRequestFactory {
-    protected static HashSet<String> m_hsRequestQueryParams = new HashSet<>(Arrays.asList("lang", "placeId"));
+    protected static HashSet<String> allowedQueryParams = new HashSet<>(Arrays.asList("lang", "placeId"));
     private final RequestLanguageResolver languageResolver;
 
     public LookupRequestFactory(List<String> supportedLanguages, String defaultLanguage) {
@@ -29,14 +29,15 @@ public class LookupRequestFactory {
     }
 
     private void validateQueryParams(Request webRequest) throws BadRequestException {
-        HashSet<String> allowedParams = new HashSet<>(m_hsRequestQueryParams);
-        HashSet<String> actualParams = new HashSet<>(webRequest.queryParams());
+        HashSet<String> params = new HashSet<>(webRequest.queryParams());
 
-        actualParams.removeAll(allowedParams);
+        params.removeAll(allowedQueryParams);
 
-        if (!actualParams.isEmpty()) {
-            throw new BadRequestException(400, "Unknown query parameter(s): " + actualParams +
-                    ". Allowed parameters are: " + m_hsRequestQueryParams);
+        if (!params.isEmpty()) {
+            throw new BadRequestException(
+                    400,
+                    "Unknown query parameter(s): " + params + ". Allowed parameters are: " + allowedQueryParams
+            );
         }
     }
 

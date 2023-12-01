@@ -1,13 +1,22 @@
 package de.komoot.photon.elasticsearch;
 
+import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import co.elastic.clients.elasticsearch._helpers.bulk.BulkIngester;
+import co.elastic.clients.elasticsearch._helpers.bulk.BulkListener;
+import co.elastic.clients.elasticsearch._types.ErrorCause;
+import co.elastic.clients.elasticsearch.core.BulkRequest;
+import co.elastic.clients.elasticsearch.core.BulkResponse;
+import co.elastic.clients.elasticsearch.core.bulk.BulkOperation;
+import co.elastic.clients.elasticsearch.core.bulk.BulkResponseItem;
+import co.elastic.clients.elasticsearch.core.bulk.IndexOperation;
 import de.komoot.photon.PhotonDoc;
 import de.komoot.photon.Utils;
 import lombok.extern.slf4j.Slf4j;
-import org.elasticsearch.action.bulk.BulkRequestBuilder;
-import org.elasticsearch.action.bulk.BulkResponse;
-import org.elasticsearch.client.Client;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 /**
  * elasticsearch importer
@@ -17,47 +26,66 @@ import java.io.IOException;
 @Slf4j
 public class Importer implements de.komoot.photon.Importer {
     private int documentCount = 0;
-
-    private final Client esClient;
-    private BulkRequestBuilder bulkRequest;
+    private final BulkIngester<String> ingester;
     private final String[] languages;
     private final String[] extraTags;
+    private final boolean allExtraTags;
 
-    public Importer(Client esClient, String[] languages, String[] extraTags) {
-        this.esClient = esClient;
-        this.bulkRequest = esClient.prepareBulk();
+    public Importer(ElasticsearchClient client, String[] languages, String[] extraTags, boolean allExtraTags) {
         this.languages = languages;
         this.extraTags = extraTags;
+        this.allExtraTags = allExtraTags;
+        BulkListener<String> listener = new BulkListener<>() {
+            @Override
+            public void beforeBulk(long executionId, BulkRequest request, List<String> contexts) {}
+
+            @Override
+            public void afterBulk(long executionId, BulkRequest request, List<String> contexts, BulkResponse response) {
+                documentCount += contexts.size();
+                if (response.errors()) {
+                    List<ErrorCause> errors = response
+                            .items()
+                            .stream()
+                            .map(BulkResponseItem::error)
+                            .filter(Objects::nonNull)
+                            .toList();
+                    for (ErrorCause error : errors) {
+                        log.error(String.format("Error during bulk ingest: %s", error.reason()));
+                    }
+                } else {
+                    log.debug(String.format("Successfully ingested %s documents", documentCount));
+                }
+            }
+
+            @Override
+            public void afterBulk(long executionId, BulkRequest request, List<String> contexts, Throwable failure) {
+                log.error(String.format("Bulk request with executionId %s failed", executionId), failure);
+            }
+        };
+
+        this.ingester = new BulkIngester.Builder<String>()
+                .client(client)
+                .flushInterval(1, TimeUnit.SECONDS)
+                .maxOperations(10000)
+                .listener(listener)
+                .build();
     }
 
     @Override
     public void add(PhotonDoc doc) {
-        try {
-            this.bulkRequest.add(this.esClient.prepareIndex(PhotonIndex.NAME, PhotonIndex.TYPE).
-                    setSource(Utils.convert(doc, languages, extraTags)).setId(doc.getUid()));
-        } catch (IOException e) {
-            log.error("could not bulk add document " + doc.getUid(), e);
-            return;
-        }
-        this.documentCount += 1;
-        if (this.documentCount > 0 && this.documentCount % 10000 == 0) {
-            this.saveDocuments();
-        }
-    }
-
-    private void saveDocuments() {
-        if (this.documentCount < 1) return;
-
-        BulkResponse bulkResponse = bulkRequest.execute().actionGet();
-        if (bulkResponse.hasFailures()) {
-            log.error("error while bulk import:" + bulkResponse.buildFailureMessage());
-        }
-        this.bulkRequest = this.esClient.prepareBulk();
+        this.ingester.add(op -> op
+                .index(idx -> idx
+                        .index(PhotonIndex.NAME)
+                        .document(Utils.convert(doc, languages, extraTags, allExtraTags))
+                        .id(doc.getUid())
+                )
+        );
     }
 
     @Override
     public void finish() {
-        this.saveDocuments();
+        this.ingester.close();
         this.documentCount = 0;
     }
+
 }

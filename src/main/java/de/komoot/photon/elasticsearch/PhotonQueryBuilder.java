@@ -1,17 +1,22 @@
 package de.komoot.photon.elasticsearch;
 
 
+import co.elastic.clients.elasticsearch._types.FieldValue;
+import co.elastic.clients.elasticsearch._types.query_dsl.BoolQuery;
+import co.elastic.clients.elasticsearch._types.query_dsl.FunctionBoostMode;
+import co.elastic.clients.elasticsearch._types.query_dsl.FunctionScore;
+import co.elastic.clients.elasticsearch._types.query_dsl.FunctionScoreMode;
+import co.elastic.clients.elasticsearch._types.query_dsl.FunctionScoreQuery;
+import co.elastic.clients.elasticsearch._types.query_dsl.GeoBoundingBoxQuery;
+import co.elastic.clients.elasticsearch._types.query_dsl.MatchQuery;
+import co.elastic.clients.elasticsearch._types.query_dsl.MultiMatchQuery;
+import co.elastic.clients.elasticsearch._types.query_dsl.Query;
+import co.elastic.clients.elasticsearch._types.query_dsl.TermsQuery;
+import co.elastic.clients.elasticsearch._types.query_dsl.TextQueryType;
+import co.elastic.clients.json.JsonData;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Point;
 import de.komoot.photon.searcher.TagFilter;
-import org.elasticsearch.common.lucene.search.function.CombineFunction;
-import org.elasticsearch.common.lucene.search.function.FiltersFunctionScoreQuery.ScoreMode;
-import org.elasticsearch.common.unit.Fuzziness;
-import org.elasticsearch.index.query.*;
-import org.elasticsearch.index.query.functionscore.FunctionScoreQueryBuilder;
-import org.elasticsearch.index.query.functionscore.FunctionScoreQueryBuilder.FilterFunctionBuilder;
-import org.elasticsearch.index.query.functionscore.ScoreFunctionBuilders;
-import org.elasticsearch.index.query.functionscore.WeightBuilder;
 
 import java.util.*;
 
@@ -24,7 +29,7 @@ import java.util.*;
  * <li>{@link PhotonQueryBuilder.State#FILTERED FILTERED} The query builder is being used to build a query that has tag filters and can no longer
  * be used to build a PLAIN filter.</li>
  * <li>{@link PhotonQueryBuilder.State#FINISHED FINISHED} The query builder has been built and the query has been placed inside a
- * {@link QueryBuilder filtered query}. Further calls to any methods will have no effect on this query builder.</li>
+ * {@link BoolQuery.Builder filtered query}. Further calls to any methods will have no effect on this query builder.</li>
  * </ul>
  * <p/>
  * Created by Sachin Dole on 2/12/2015.
@@ -32,102 +37,156 @@ import java.util.*;
 public class PhotonQueryBuilder {
     private static final String[] ALT_NAMES = new String[]{"alt", "int", "loc", "old", "reg", "housename"};
 
-    private FunctionScoreQueryBuilder finalQueryWithoutTagFilterBuilder;
+    private FunctionScoreQuery.Builder finalQueryWithoutTagFilterBuilder;
 
-    private BoolQueryBuilder queryBuilderForTopLevelFilter;
+    private BoolQuery.Builder queryBuilderForTopLevelFilter;
 
     private State state;
 
     private OsmTagFilter osmTagFilter;
 
-    private GeoBoundingBoxQueryBuilder bboxQueryBuilder;
+    private GeoBoundingBoxQuery.Builder bboxQueryBuilder;
 
-    private TermsQueryBuilder layerQueryBuilder;
+    private TermsQuery.Builder layerQueryBuilder;
 
-    private BoolQueryBuilder finalQueryBuilder;
+    private BoolQuery.Builder finalQueryBuilder;
 
-    protected ArrayList<FilterFunctionBuilder> alFilterFunction4QueryBuilder = new ArrayList<>(1);
 
 
     private PhotonQueryBuilder(String query, String language, String[] languages, boolean lenient) {
-        BoolQueryBuilder query4QueryBuilder = QueryBuilders.boolQuery();
+        BoolQuery.Builder query4QueryBuilder = new BoolQuery.Builder();
 
-        // 1. All terms of the quey must be contained in the place record somehow. Be more lenient on second try.
-        MultiMatchQueryBuilder builder =
-                QueryBuilders.multiMatchQuery(query)
-                        .field("collector.default", 1.0f)
-                        .type(lenient ? MultiMatchQueryBuilder.Type.BEST_FIELDS : MultiMatchQueryBuilder.Type.CROSS_FIELDS)
-                        .prefixLength(2)
-                        .analyzer("search_ngram")
-                        .fuzziness(lenient ? Fuzziness.AUTO : Fuzziness.ZERO)
-                        .tieBreaker(0.4f)
-                        .minimumShouldMatch(lenient ? "-34%" : "100%");
+        // 1. All terms of the query must be contained in the place record somehow. Be more lenient on second try.
+        MultiMatchQuery.Builder builder = new MultiMatchQuery.Builder().query(query)
+                .fields("collector.default^1.0")
+                .type(lenient ? TextQueryType.BestFields : TextQueryType.CrossFields)
+                .prefixLength(2)
+                .analyzer("search_ngram")
+                .tieBreaker(0.4)
+                .minimumShouldMatch(lenient ? "-34%" : "100%");
 
-        for (String lang : languages) {
-            builder.field(String.format("collector.%s.ngrams", lang), lang.equals(language) ? 1.0f : 0.6f);
+        if (lenient) {
+            builder.fuzziness("AUTO");
         }
 
-        query4QueryBuilder.must(builder);
+        {
+            List<String> languageFields = new ArrayList<>();
+            for (String lang : languages) {
+                languageFields.add(String.format("collector.%s.ngrams^%s", lang, lang.equals(language) ? "1.0" : "0.6"));
+            }
+            builder.fields(languageFields);
+        }
+
+        query4QueryBuilder.must(builder.build()._toQuery());
 
         // 2. Prefer records that have the full names in. For address records with housenumbers this is the main
-        //    filter creterion because they have no name. Therefore boost the score in this case.
-        MultiMatchQueryBuilder hnrQuery = QueryBuilders.multiMatchQuery(query)
-                .field("collector.default.raw", 1.0f)
-                .type(MultiMatchQueryBuilder.Type.BEST_FIELDS);
+        //    filter criterion because they have no name. Therefore, boost the score in this case.
+        MultiMatchQuery.Builder hnrQueryBuilder = new MultiMatchQuery.Builder().query(query)
+                .fields("collector.default.raw^1.0")
+                .type(TextQueryType.BestFields);
 
-        for (String lang : languages) {
-            hnrQuery.field(String.format("collector.%s.raw", lang), lang.equals(language) ? 1.0f : 0.6f);
+        {
+            List<String> languageFields = new ArrayList<>();
+            for (String lang : languages) {
+                languageFields.add(String.format("collector.%s.raw^%s", lang, lang.equals(language) ? "1.0" : "0.6"));
+            }
+            hnrQueryBuilder.fields(languageFields);
         }
 
-        query4QueryBuilder.should(QueryBuilders.functionScoreQuery(hnrQuery.boost(0.3f), new FilterFunctionBuilder[]{
-                new FilterFunctionBuilder(QueryBuilders.matchQuery("housenumber", query).analyzer("standard"), new WeightBuilder().setWeight(10f))
-        }));
+        FunctionScoreQuery.Builder fnScoreQuery = new FunctionScoreQuery.Builder()
+                .query(hnrQueryBuilder.build()._toQuery())
+                .boost(0.3f)
+                .functions(new FunctionScore.Builder()
+                        .filter(q -> q
+                                .match(v -> v
+                                        .field("housenumber")
+                                        .query(query)
+                                        .analyzer("standard")
+                                )
+                        )
+                        .weight(10d)
+                        .build()
+                );
+
+        query4QueryBuilder.should(fnScoreQuery.build()._toQuery());
+
 
         // 3. Either the name or housenumber must be in the query terms.
         String defLang = "default".equals(language) ? languages[0] : language;
-        MultiMatchQueryBuilder nameNgramQuery = QueryBuilders.multiMatchQuery(query)
-                .type(MultiMatchQueryBuilder.Type.BEST_FIELDS)
-                .fuzziness(lenient ? Fuzziness.ONE : Fuzziness.ZERO)
+        MultiMatchQuery.Builder nameNgramQueryBuilder = new MultiMatchQuery.Builder()
+                .query(query)
+                .type(TextQueryType.BestFields)
+                .fuzziness(lenient ? String.valueOf(1) : String.valueOf(0))
                 .analyzer("search_ngram");
 
-        for (String lang: languages) {
-            nameNgramQuery.field(String.format("name.%s.ngrams", lang), lang.equals(defLang) ? 1.0f : 0.4f);
-        }
-
-        for (String alt: ALT_NAMES) {
-            nameNgramQuery.field(String.format("name.%s.raw", alt), 0.4f);
+        {
+            List<String> languageFields = new ArrayList<>();
+            for (String lang : languages) {
+                languageFields.add(String.format("name.%s.ngrams^%s", lang, lang.equals(defLang) ? "1.0" : "0.4"));
+            }
+            for (String alt : ALT_NAMES) {
+                languageFields.add(String.format("name.%s.raw^%s", alt, "0.4"));
+            }
+            nameNgramQueryBuilder.fields(languageFields);
         }
 
         if (query.indexOf(',') < 0 && query.indexOf(' ') < 0) {
-            query4QueryBuilder.must(nameNgramQuery.boost(2f));
+            query4QueryBuilder.must(nameNgramQueryBuilder.boost(2f).build()._toQuery());
         } else {
-            query4QueryBuilder.must(QueryBuilders.boolQuery()
-                                        .should(nameNgramQuery)
-                                        .should(QueryBuilders.matchQuery("housenumber", query).analyzer("standard"))
-                                        .should(QueryBuilders.matchQuery("classification", query).boost(0.1f))
-                                        .minimumShouldMatch("1"));
+            query4QueryBuilder.must(new BoolQuery.Builder()
+                    .should(nameNgramQueryBuilder.build()._toQuery())
+                    .should(q -> q.match(v -> v.field("housenumber").query(query).analyzer("standard")))
+                    .should(q -> q.match(v -> v.field("classification").query(query).boost(0.1f)))
+                    .minimumShouldMatch("1")
+                    .build()
+                    ._toQuery()
+            );
+
         }
 
-        // 4. Rerank results for having the full name in the default language.
-        query4QueryBuilder
-                .should(QueryBuilders.matchQuery(String.format("name.%s.raw", language), query).fuzziness(lenient ? Fuzziness.AUTO : Fuzziness.ZERO));
-
+        // 4. Re-rank results for having the full name in the default language.
+        query4QueryBuilder.should(new MatchQuery.Builder()
+                .field(String.format("name.%s.raw", language))
+                .query(query)
+                .fuzziness(lenient ? "AUTO" : String.valueOf(0))
+                .build()
+                ._toQuery()
+        );
 
         // Weigh the resulting score by importance. Use a linear scale function that ensures that the weight
         // never drops to 0 and cancels out the ES score.
-        finalQueryWithoutTagFilterBuilder = QueryBuilders.functionScoreQuery(query4QueryBuilder, new FilterFunctionBuilder[]{
-                new FilterFunctionBuilder(ScoreFunctionBuilders.linearDecayFunction("importance", "1.0", "0.6")),
-                new FilterFunctionBuilder(QueryBuilders.matchQuery("classification", query), ScoreFunctionBuilders.weightFactorFunction(0.1f))
-        }).scoreMode(ScoreMode.SUM);
+        finalQueryWithoutTagFilterBuilder = new FunctionScoreQuery.Builder()
+                .query(query4QueryBuilder.build()._toQuery())
+                .functions(
+                        new FunctionScore.Builder()
+                                .linear(fn -> fn
+                                        .field("importance")
+                                        .placement(p -> p
+                                                .origin(JsonData.of("1.0"))
+                                                .scale(JsonData.of("0.6"))
+                                        )
+                                )
+                                .build(),
+                        new FunctionScore.Builder()
+                                .filter(new MatchQuery.Builder()
+                                        .field("classification")
+                                        .query(query)
+                                        .build()
+                                        ._toQuery()
+                                )
+                                .weight(0.1d)
+                                .build()
+                )
+                .scoreMode(FunctionScoreMode.Sum);
 
         // Filter for later: records that have a housenumber and no name must only appear when the housenumber matches.
-        queryBuilderForTopLevelFilter = QueryBuilders.boolQuery()
-                .should(QueryBuilders.boolQuery().mustNot(QueryBuilders.existsQuery("housenumber")))
-                .should(QueryBuilders.matchQuery("housenumber", query).analyzer("standard"))
-                .should(QueryBuilders.existsQuery(String.format("name.%s.raw", language)));
+        queryBuilderForTopLevelFilter = new BoolQuery.Builder()
+                .should(a -> a.bool(b -> b.mustNot(c -> c.exists(d -> d.field("housenumber")))))
+                .should(a -> a.match(b -> b.field("housenumber").query(query).analyzer("standard")))
+                .should(a -> a.exists(b -> b.field(String.format("name.%s.raw", language))));
 
         osmTagFilter = new OsmTagFilter();
-        
+
         state = State.PLAIN;
     }
 
@@ -155,23 +214,49 @@ public class PhotonQueryBuilder {
             scale = 0.0000001;
         }
 
-        Map<String, Object> params = new HashMap<>();
-        params.put("lon", point.getX());
-        params.put("lat", point.getY());
+        double finalScale = scale;
+        finalQueryWithoutTagFilterBuilder = new FunctionScoreQuery.Builder()
+                .query(finalQueryWithoutTagFilterBuilder.build()._toQuery())
+                .functions(
+                    new FunctionScore.Builder()
+                            .exp(fn -> fn
+                                    .field("coordinate")
+                                    .placement(p -> p
+                                            .origin(JsonData.of(String.format("%s, %s", point.getX(), point.getY())))
+                                            .scale(JsonData.of(String.format("%skm", radius)))
+                                            .offset(JsonData.of(String.format("%skm", radius / 10)))
+                                            .decay(0.8)
+                                    )
+                            )
+                            .build(),
+                    new FunctionScore.Builder()
+                            .linear(fn -> fn
+                                    .field("importance")
+                                    .placement(p -> p
+                                            .origin(JsonData.of("1.0"))
+                                            .scale(JsonData.of(finalScale))
+                                    )
+                            ).build()
+                )
+                .boostMode(FunctionBoostMode.Multiply)
+                .scoreMode(FunctionScoreMode.Max);
 
-        finalQueryWithoutTagFilterBuilder =
-                QueryBuilders.functionScoreQuery(finalQueryWithoutTagFilterBuilder, new FilterFunctionBuilder[] {
-                     new FilterFunctionBuilder(ScoreFunctionBuilders.exponentialDecayFunction("coordinate", params, radius + "km", radius / 10 + "km", 0.8)),
-                     new FilterFunctionBuilder(ScoreFunctionBuilders.linearDecayFunction("importance", "1.0", scale))
-                }).boostMode(CombineFunction.MULTIPLY).scoreMode(ScoreMode.MAX);
         return this;
     }
     
     public PhotonQueryBuilder withBoundingBox(Envelope bbox) {
         if (bbox == null) return this;
-        bboxQueryBuilder = new GeoBoundingBoxQueryBuilder("coordinate");
-        bboxQueryBuilder.setCorners(bbox.getMaxY(), bbox.getMinX(), bbox.getMinY(), bbox.getMaxX());
-        
+        bboxQueryBuilder = new GeoBoundingBoxQuery.Builder()
+                .field("coordinate")
+                .boundingBox(bb -> bb
+                        .coords(c -> c
+                                .top(bbox.getMaxY())
+                                .bottom(bbox.getMinY())
+                                .right(bbox.getMaxX())
+                                .left(bbox.getMinX())
+                        )
+                );
+
         return this;
     }
 
@@ -182,8 +267,16 @@ public class PhotonQueryBuilder {
     }
 
     public PhotonQueryBuilder withLayerFilters(Set<String> filters) {
-        if (filters.size() > 0) {
-            layerQueryBuilder = new TermsQueryBuilder("type", filters);
+        if (!filters.isEmpty()) {
+            layerQueryBuilder = new TermsQuery.Builder()
+                    .field("type")
+                    .terms(tv -> tv
+                            .value(filters
+                                    .stream()
+                                    .map(FieldValue::of)
+                                    .toList()
+                            )
+                    );
         }
 
         return this;
@@ -195,25 +288,27 @@ public class PhotonQueryBuilder {
      * builder is built. Subsequent invocations of this method have no additional effect. Note that after this method
      * is called, calling other methods on this class also have no effect.
      */
-    public QueryBuilder buildQuery() {
-        if (state.equals(State.FINISHED)) return finalQueryBuilder;
+    public Query buildQuery() {
+        if (state.equals(State.FINISHED)) return finalQueryBuilder.build()._toQuery();
 
-        finalQueryBuilder = QueryBuilders.boolQuery().must(finalQueryWithoutTagFilterBuilder).filter(queryBuilderForTopLevelFilter);
+        finalQueryBuilder = new BoolQuery.Builder().must(finalQueryWithoutTagFilterBuilder.build()._toQuery());
 
-        BoolQueryBuilder tagFilters = osmTagFilter.getTagFiltersQuery();
+        Query tagFilters = osmTagFilter.getTagFiltersQuery();
+
         if (state.equals(State.FILTERED) && tagFilters != null) {
             finalQueryBuilder.filter(tagFilters);
         }
         
         if (bboxQueryBuilder != null) 
-            queryBuilderForTopLevelFilter.filter(bboxQueryBuilder);
+            queryBuilderForTopLevelFilter.filter(bboxQueryBuilder.build()._toQuery());
 
         if (layerQueryBuilder != null)
-            queryBuilderForTopLevelFilter.filter(layerQueryBuilder);
+            queryBuilderForTopLevelFilter.filter(layerQueryBuilder.build()._toQuery());
 
+        finalQueryBuilder.filter(queryBuilderForTopLevelFilter.build()._toQuery());
         state = State.FINISHED;
 
-        return finalQueryBuilder;
+        return finalQueryBuilder.build()._toQuery();
     }
 
     private enum State {

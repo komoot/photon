@@ -17,8 +17,11 @@ public class CommandLineArgs {
     @Parameter(names = "-cluster", description = "name of elasticsearch cluster to put the server into (default is 'photon')")
     private String cluster = "photon";
 
-    @Parameter(names = "-transport-addresses", description = "the comma separated addresses of external elasticsearch nodes where the client can connect to (default is an empty string which forces an internal node to start)", converter = StringArrayConverter.class)
-    private String[] transportAddresses = new String[]{};
+    @Parameter(names = "-server-url", description = "the server url to connect to the elasticsearch cluster")
+    private String serverUrl = null;
+
+    @Parameter(names = "-api-key", description = "the api key required to connect to the elasticsearch cluster")
+    private String apiKey = null;
 
     @Parameter(names = "-nominatim-import", description = "import nominatim database into photon (this will delete previous index)")
     private boolean nominatimImport = false;
@@ -29,7 +32,7 @@ public class CommandLineArgs {
     @Parameter(names = "-languages", description = "languages nominatim importer should import and use at run-time, comma separated (default is 'en,fr,de,it')", converter = StringArrayConverter.class)
     private String[] languages = new String[]{};
 
-    @Parameter(names = "-default-language", description = "language to return results in when no explicit language is choosen by the user")
+    @Parameter(names = "-default-language", description = "language to return results in when no explicit language is chosen by the user")
     private String defaultLanguage = "default";
 
     @Parameter(names = "-country-codes", description = "country codes filter that nominatim importer should import, comma separated. If empty full planet is done", converter = StringArrayConverter.class)
@@ -37,6 +40,9 @@ public class CommandLineArgs {
 
     @Parameter(names = "-extra-tags", description = "comma-separated list of additional tags to save for each place", converter = StringArrayConverter.class)
     private String[] extraTags = new String[]{};
+
+    @Parameter(names = "-all-extra-tags", description = "include all extra tags during nominatim import, overrides -extra-tags")
+    private boolean allExtraTags = false;
 
     @Parameter(names = "-synonym-file", description = "file with synonym and classification terms")
     private String synonymFile = null;

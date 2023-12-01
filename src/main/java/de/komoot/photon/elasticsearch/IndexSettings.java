@@ -1,15 +1,13 @@
 package de.komoot.photon.elasticsearch;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import de.komoot.photon.Utils;
-import org.elasticsearch.client.Client;
-import org.elasticsearch.common.xcontent.XContentType;
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.json.JSONTokener;
 
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.*;
 
 /**
@@ -18,182 +16,251 @@ import java.util.*;
  *
  */
 public class IndexSettings {
-    private final JSONObject settings;
-    private Integer numShards = null;
+    private static final ObjectMapper objMapper = new ObjectMapper();
 
     /**
-     * Create a new settings object and initialize it with the index settings
-     * from the resources.
-     */
-    public IndexSettings() {
-        final InputStream indexSettings = Thread.currentThread().getContextClassLoader()
-                .getResourceAsStream("index_settings.json");
-
-        settings = new JSONObject(new JSONTokener(indexSettings));
-    }
-
-    /**
-     * Set the number of shards to use for the index.
-     *
-     * @param numShards Number of shards to use.
-     *
-     * @return Return this object for chaining.
-     */
-    public IndexSettings setShards(Integer numShards) {
-        this.numShards = numShards;
-
-        return this;
-    }
-
-
-    /**
+     * Build index settings
      * Add query-time synonyms and classification terms from a file.
      *
      * Synonyms need to be supplied in a simple text file with one synonym entry per line.
      * Synonyms need to be comma-separated. Only single-term synonyms are supported at this
      * time. Spaces in the synonym list are considered a syntax error.
      *
-     * @param synonymFile File containing the synonyms.
+     * @param synonymFilePath File containing the synonyms.
      *
-     * @return This object for chaining.
+     * @return Index settings as an ObjectNode
      */
-    public IndexSettings setSynonymFile(String synonymFile) throws IOException {
-        if (synonymFile == null) {
-            return this;
+    public static ObjectNode buildSettings(String synonymFilePath) throws IOException {
+        ArrayNode synonyms = null;
+        ArrayNode classSynonyms = null;
+
+        if (synonymFilePath != null) {
+            ObjectNode synonymConfig = objMapper.readValue(new FileReader(synonymFilePath), ObjectNode.class);
+
+            if (synonymConfig.hasNonNull("search_synonyms")) {
+                synonyms = (ArrayNode) synonymConfig.get("search_synonyms");
+            }
+
+            if (synonymConfig.hasNonNull("classification_terms")) {
+                ArrayNode terms = (ArrayNode) synonymConfig.get("classification_terms");
+                classSynonyms = collectClassificationTerms(terms);
+            }
         }
 
-        JSONObject synonymConfig = new JSONObject(new JSONTokener(new FileReader(synonymFile)));
-
-        setSearchTimeSynonyms(synonymConfig.optJSONArray("search_synonyms"));
-        setClassificationTerms(synonymConfig.optJSONArray("classification_terms"));
-
-        return this;
+        return objMapper.createObjectNode()
+                .putPOJO("analysis", objMapper.createObjectNode()
+                    .putPOJO("analyzer", buildAnalyzer(synonyms, classSynonyms))
+                    .putPOJO("tokenizer", buildTokenizer())
+                    .putPOJO("char_filter", buildCharFilter())
+                    .putPOJO("filter", buildFilter(synonyms, classSynonyms))
+                );
     }
 
-    public IndexSettings setSearchTimeSynonyms(JSONArray synonyms) {
-        if (synonyms != null) {
-            insertSynonymFilter("extra_synonyms", synonyms);
+    public static ObjectNode setShards(ObjectNode settings, Integer numShards) {
+        return settings.putPOJO("index", objMapper
+                .createObjectNode()
+                .put("number_of_shards", numShards)
+        );
+    }
+
+    public static ObjectNode unsetShards(ObjectNode settings) {
+        return (ObjectNode) settings.remove("index");
+    }
+
+    private static ObjectNode buildAnalyzer(ArrayNode synonyms, ArrayNode classSynonyms) {
+        ObjectNode indexNgram = objMapper.createObjectNode()
+                .put("tokenizer", "edge_ngram")
+                .putPOJO("char_filter", objMapper
+                        .createArrayNode()
+                        .add("punctuationgreedy")
+                        .add("remove_ws_hnr_suffix")
+                )
+                .putPOJO("filter", objMapper
+                        .createArrayNode()
+                        .add("preserving_word_delimiter")
+                        .add("lowercase")
+                        .add("german_normalization")
+                        .add("asciifolding")
+                        .add("unique")
+                );
+
+        ObjectNode indexRaw = objMapper.createObjectNode()
+                .put("tokenizer", "standard")
+                .putPOJO("char_filter", objMapper
+                        .createArrayNode()
+                        .add("punctuationgreedy")
+                )
+                .putPOJO("filter", objMapper
+                        .createArrayNode()
+                        .add("word_delimiter")
+                        .add("lowercase")
+                        .add("german_normalization")
+                        .add("asciifolding")
+                        .add("unique")
+                );
+
+        ObjectNode indexHousenumber = objMapper.createObjectNode()
+                .put("tokenizer", "standard")
+                .putPOJO("char_filter", objMapper
+                        .createArrayNode()
+                        .add("punctuationgreedy")
+                        .add("remove_ws_hnr_suffix")
+                )
+                .putPOJO("filter", objMapper
+                        .createArrayNode()
+                        .add("lowercase")
+                        .add("preserving_word_delimiter")
+                );
+
+        ArrayNode searchClassificationFilter = objMapper.createArrayNode().add("lowercase");
+        ArrayNode searchNgramFilter = objMapper.createArrayNode().add("lowercase");
+        ArrayNode searchRawFilter = objMapper.createArrayNode().add("word_delimiter").add("lowercase");
+
+        if (classSynonyms != null && !classSynonyms.isEmpty()) {
+            searchClassificationFilter.add("classification_synonyms");
+            searchNgramFilter.add("classification_synonyms");
+            searchRawFilter.add("classification_synonyms");
         }
 
-        return this;
+        if (synonyms != null && !synonyms.isEmpty()) {
+            searchNgramFilter.add("extra_synonyms");
+            searchRawFilter.add("extra_synonyms");
+        }
+
+        ObjectNode searchClassification = objMapper.createObjectNode()
+                .put("tokenizer", "whitespace")
+                .putPOJO("filter", searchClassificationFilter);
+
+
+        ObjectNode searchNgram = objMapper.createObjectNode()
+                .put("tokenizer", "standard")
+                .putPOJO("char_filter", objMapper
+                        .createArrayNode()
+                        .add("punctuationgreedy")
+                )
+                .putPOJO("filter", searchNgramFilter
+                        .add("german_normalization")
+                        .add("asciifolding")
+                );
+
+        ObjectNode searchRaw = objMapper.createObjectNode()
+                .put("tokenizer", "standard")
+                .putPOJO("char_filter", objMapper
+                        .createArrayNode()
+                        .add("punctuationgreedy")
+                )
+                .putPOJO("filter", searchRawFilter
+                        .add("german_normalization")
+                        .add("asciifolding")
+                        .add("unique")
+                );
+
+
+        return objMapper.createObjectNode()
+                .putPOJO("index_ngram", indexNgram)
+                .putPOJO("search_ngram", searchNgram)
+                .putPOJO("index_raw", indexRaw)
+                .putPOJO("search_raw", searchRaw)
+                .putPOJO("index_housenumber", indexHousenumber)
+                .putPOJO("search_classification", searchClassification);
     }
 
-    public IndexSettings setClassificationTerms(JSONArray terms) {
+    private static ObjectNode buildTokenizer() {
+        return objMapper.createObjectNode()
+                .putPOJO("edge_ngram", objMapper
+                        .createObjectNode()
+                        .put("type", "edge_ngram")
+                        .put("min_gram", 1)
+                        .put("max_gram", 100)
+                        .putPOJO("token_chars", objMapper
+                                .createArrayNode()
+                                .add("letter")
+                                .add("digit")
+                        )
+                );
+    }
+
+    private static ObjectNode buildCharFilter() {
+        return objMapper.createObjectNode()
+                .putPOJO("punctuationgreedy", objMapper
+                        .createObjectNode()
+                        .put("type", "pattern_replace")
+                        .put("pattern", "[\\.,']")
+                        .put("replacement", " ")
+                )
+                .putPOJO("remove_ws_hnr_suffix", objMapper
+                        .createObjectNode()
+                        .put("type", "pattern_replace")
+                        .put("pattern", "(\\d+)\\s(?=\\p{L}\\b)")
+                        .put("replacement", "$1")
+                );
+    }
+
+    private static ObjectNode buildFilter(ArrayNode synonyms, ArrayNode classTerms) {
+        ObjectNode filter = objMapper.createObjectNode()
+                .putPOJO("photonlength", objMapper
+                        .createObjectNode()
+                        .put("min", 2)
+                        .put("type", "length")
+                )
+                .putPOJO("preserving_word_delimiter", objMapper
+                        .createObjectNode()
+                        .put("type", "word_delimiter_graph")
+                        .put("preserve_original", true)
+                );
+
+        if (synonyms != null && !synonyms.isEmpty()) {
+            ObjectNode extraSynonyms = objMapper.createObjectNode()
+                    .put("type", "synonym")
+                    .putPOJO("synonyms", synonyms);
+
+            filter.putPOJO("extra_synonyms", extraSynonyms);
+        }
+
+        if (classTerms != null && !classTerms.isEmpty()) {
+            ObjectNode classSynonyms = objMapper.createObjectNode()
+                    .put("type", "synonym")
+                    .putPOJO("synonyms", classTerms);
+
+            filter.putPOJO("classification_synonyms", classSynonyms);
+        }
+
+        return filter;
+    }
+
+    private static ArrayNode collectClassificationTerms(ArrayNode terms) {
         if (terms == null) {
-            return this;
+            return null;
         }
 
-        // Collect for each term in the list the possible classification expansions.
         Map<String, Set<String>> collector = new HashMap<>();
-        for (int i = 0; i < terms.length(); i++) {
-            JSONObject descr = terms.getJSONObject(i);
+        for (JsonNode termObject : terms) {
+            String classString = Utils.buildClassificationString(
+                    termObject.get("key").asText(),
+                    termObject.get("value").asText()
+            );
 
-            String classString = Utils.buildClassificationString(descr.getString("key"), descr.getString("value")).toLowerCase();
-
-            if (classString != null) {
-                JSONArray jsonTerms = descr.getJSONArray("terms");
-                for (int j = 0; j < jsonTerms.length(); j++) {
-                    String term = jsonTerms.getString(j).toLowerCase().trim();
-                    if (term.indexOf(' ') >= 0) {
+            if (classString != null)  {
+                classString = classString.toLowerCase();
+                ArrayNode jsonTerms = (ArrayNode) termObject.get("terms");
+                for (JsonNode term : jsonTerms) {
+                    String termString = term.asText().toLowerCase().trim();
+                    if (termString.indexOf(' ') >= 0) {
                         throw new RuntimeException("Syntax error in synonym file: only single word classification terms allowed.");
                     }
 
-                    if (term.length() > 1) {
-                        collector.computeIfAbsent(term, k -> new HashSet<>()).add(classString);
+                    if (termString.length() > 1) {
+                        collector.computeIfAbsent(termString, k -> new HashSet<>()).add(classString);
                     }
                 }
             }
         }
 
-        // Create the final list of synonyms. A term can expand to any classificator or not at all.
-        JSONArray synonyms = new JSONArray();
-        collector.forEach((term, classificators) ->
-            synonyms.put(term + " => " + term + "," + String.join(",", classificators)));
-
-        insertSynonymFilter("classification_synonyms", synonyms);
-        insertJsonArrayAfter("/analysis/analyzer/search_classification", "filter", "lowercase", "classification_synonyms");
-
-        return this;
+        ArrayNode synonyms = objMapper.createArrayNode();
+        collector.forEach(
+                (term, classifier) -> synonyms.add(term + " => " + term + "," + String.join(",", classifier))
+        );
+        return synonyms;
     }
 
-    private void insertSynonymFilter(String filterName, JSONArray synonyms) {
-        if (!synonyms.isEmpty()) {
-            // Create a filter for the synonyms.
-            JSONObject filters = (JSONObject) settings.optQuery("/analysis/filter");
-            if (filters == null) {
-                throw new RuntimeException("Analyser update: cannot find filter definition");
-            }
-            filters.put(filterName, new JSONObject().put("type", "synonym").put("synonyms", synonyms));
-
-            // add synonym filter to the search analyzers
-            insertJsonArrayAfter("/analysis/analyzer/search_ngram", "filter", "lowercase", filterName);
-            insertJsonArrayAfter("/analysis/analyzer/search_raw", "filter", "lowercase", filterName);
-        }
-    }
-
-    /**
-     * Create a new index using the current index settings.
-     *
-     * @param client Client connection to use for creating the index.
-     * @param indexName Name of the new index
-     */
-    public void createIndex(Client client, String indexName) {
-        if (numShards != null) {
-            settings.put("index", new JSONObject().put("number_of_shards", numShards));
-        }
-
-        client.admin().indices().prepareCreate(indexName)
-                .setSettings(settings.toString(), XContentType.JSON)
-                .execute()
-                .actionGet();
-
-        if (numShards != null) {
-            settings.remove("index");
-        }
-    }
-
-    /**
-     * Update the index settings for an existing index.
-     *
-     * @param client Client connection to use for creating the index.
-     * @param indexName Name of the index to update
-     */
-    public void updateIndex(Client client, String indexName) {
-        client.admin().indices().prepareClose(PhotonIndex.NAME).execute().actionGet();
-        client.admin().indices().prepareUpdateSettings(PhotonIndex.NAME).setSettings(settings.toString(), XContentType.JSON).execute().actionGet();
-        client.admin().indices().prepareOpen(PhotonIndex.NAME).execute().actionGet();
-    }
-
-        /**
-     * Insert the given value into the array after the string given by positionString.
-     * If the position string is not found, throws a runtime error.
-     *
-     * @param jsonPointer    Path description of the array to insert into.
-     * @param positionString Marker string after which to insert.
-     * @param value          Value to insert.
-     */
-    private void insertJsonArrayAfter(String jsonPointer, String field, String positionString, String value) {
-        JSONObject parent = (JSONObject) settings.optQuery(jsonPointer);
-        JSONArray array = parent == null ? null : parent.optJSONArray(field);
-        if (array == null) {
-            throw new RuntimeException("Analyser update: cannot find JSON array at" + jsonPointer);
-        }
-
-        // We can't just insert items, so build a new array instead.
-        JSONArray new_array = new JSONArray();
-        boolean done = false;
-        for (int i = 0; i < array.length(); i++) {
-            new_array.put(array.get(i));
-            if (!done && positionString.equals(array.getString(i))) {
-                new_array.put(value);
-                done = true;
-            }
-        }
-
-        if (!done) {
-            throw new RuntimeException("Analyser update: cannot find position string " + positionString);
-        }
-
-        parent.put(field, new_array);
-    }
 }

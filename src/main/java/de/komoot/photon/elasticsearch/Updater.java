@@ -1,13 +1,11 @@
 package de.komoot.photon.elasticsearch;
 
+import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import co.elastic.clients.elasticsearch._helpers.bulk.BulkIngester;
 import de.komoot.photon.PhotonDoc;
 import de.komoot.photon.Utils;
 import lombok.extern.slf4j.Slf4j;
-import org.elasticsearch.action.bulk.BulkRequestBuilder;
-import org.elasticsearch.action.bulk.BulkResponse;
-import org.elasticsearch.client.Client;
-
-import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Updater for elasticsearch
@@ -16,16 +14,21 @@ import java.io.IOException;
  */
 @Slf4j
 public class Updater implements de.komoot.photon.Updater {
-    private final Client esClient;
-    private BulkRequestBuilder bulkRequest;
+    private final BulkIngester<Void> ingester;
     private final String[] languages;
     private final String[] extraTags;
+    private final boolean allExtraTags;
 
-    public Updater(Client esClient, String[] languages, String[] extraTags) {
-        this.esClient = esClient;
-        this.bulkRequest = esClient.prepareBulk();
+    public Updater(ElasticsearchClient client, String[] languages, String[] extraTags, boolean allExtraTags) {
+
         this.languages = languages;
         this.extraTags = extraTags;
+        this.allExtraTags = allExtraTags;
+        this.ingester = new BulkIngester.Builder<Void>()
+                .client(client)
+                .flushInterval(1, TimeUnit.SECONDS)
+                .maxOperations(10000)
+                .build();
     }
 
     public void finish() {
@@ -34,26 +37,34 @@ public class Updater implements de.komoot.photon.Updater {
 
     @Override
     public void create(PhotonDoc doc) {
-        try {
-            bulkRequest.add(esClient.prepareIndex(PhotonIndex.NAME, PhotonIndex.TYPE).setSource(Utils.convert(doc, languages, extraTags)).setId(String.valueOf(doc.getPlaceId())));
-        } catch (IOException e) {
-            log.error(String.format("creation of new doc [%s] failed", doc), e);
-        }
+        this.ingester.add(
+                op -> op
+                        .index(v -> v
+                                .index(PhotonIndex.NAME)
+                                .document(Utils.convert(doc, languages, extraTags, allExtraTags))
+                                .id(String.valueOf(doc.getPlaceId()))
+                        )
+        );
+
+        // TODO reimplement error handling using listener
+        // log.error(String.format("creation of new doc [%s] failed", doc), e);
     }
 
     public void delete(Long id) {
-        this.bulkRequest.add(this.esClient.prepareDelete(PhotonIndex.NAME, PhotonIndex.TYPE, String.valueOf(id)));
+        this.ingester.add(op -> op.delete(fn -> fn.index(PhotonIndex.NAME).id(String.valueOf(id))));
     }
 
     private void updateDocuments() {
-        if (this.bulkRequest.numberOfActions() == 0) {
+        if (this.ingester.pendingOperations() == 0) {
             log.warn("Update empty");
             return;
         }
-        BulkResponse bulkResponse = bulkRequest.execute().actionGet();
+        this.ingester.flush();
+        /* TODO reimplement error handling using listener
         if (bulkResponse.hasFailures()) {
             log.error("error while bulk update: " + bulkResponse.buildFailureMessage());
         }
         this.bulkRequest = this.esClient.prepareBulk();
+         */
     }
 }

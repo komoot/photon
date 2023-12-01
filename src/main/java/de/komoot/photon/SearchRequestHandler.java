@@ -9,6 +9,7 @@ import spark.Request;
 import spark.Response;
 import spark.RouteImpl;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -29,7 +30,7 @@ public class SearchRequestHandler extends RouteImpl {
     }
 
     @Override
-    public String handle(Request request, Response response) {
+    public String handle(Request request, Response response) throws IOException {
         PhotonRequest photonRequest = null;
         try {
             photonRequest = photonRequestFactory.create(request);
@@ -41,7 +42,7 @@ public class SearchRequestHandler extends RouteImpl {
 
         List<PhotonResult> results = requestHandler.search(photonRequest);
 
-        // Futher filtering
+        // Further filtering
         results = new StreetDupesRemover(photonRequest.getLanguage()).execute(results);
 
         // Restrict to the requested limit.

@@ -11,6 +11,7 @@ import spark.Request;
 import spark.Response;
 import spark.RouteImpl;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -27,7 +28,7 @@ public class LookupSearchRequestHandler extends RouteImpl {
         this.requestHandler = dbHandler;
     }
 
-    public String handle(Request request, Response response) {
+    public String handle(Request request, Response response) throws IOException {
         LookupRequest lookupRequest = null;
 
         try {
@@ -38,8 +39,8 @@ public class LookupSearchRequestHandler extends RouteImpl {
             halt(e.getHttpStatus(), json.toString());
         }
 
-        List<PhotonResult> results = requestHandler.lookup(lookupRequest);
+        PhotonResult result = requestHandler.lookup(lookupRequest.getPlaceId());
 
-        return new GeocodeJsonFormatter(false, lookupRequest.getLanguage()).convert(results, null);
+        return new GeocodeJsonFormatter(false, lookupRequest.getLanguage()).convert(result);
     }
 }

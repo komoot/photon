@@ -1,5 +1,7 @@
 package de.komoot.photon.searcher;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+
 import java.util.List;
 
 /**
@@ -7,5 +9,6 @@ import java.util.List;
  */
 public interface ResultFormatter {
 
-    String convert(List<PhotonResult> results, String debugInfo);
+    String convert(List<PhotonResult> results, String debugInfo) throws JsonProcessingException;
+    String convert(PhotonResult result);
 }

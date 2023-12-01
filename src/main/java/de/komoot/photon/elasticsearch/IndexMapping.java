@@ -1,93 +1,194 @@
 package de.komoot.photon.elasticsearch;
 
-import lombok.extern.slf4j.Slf4j;
-import org.elasticsearch.client.Client;
-import org.elasticsearch.common.xcontent.XContentType;
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.json.JSONTokener;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import java.io.InputStream;
+import lombok.extern.slf4j.Slf4j;
+
 
 /**
  * Encapsulates the ES index mapping for the photon index.
  */
 @Slf4j
 public class IndexMapping {
-    private final JSONObject mappings;
+    private static final ObjectMapper objMapper = new ObjectMapper();
 
-    /**
-     * Create a new settings object and initialize it with the index settings
-     * from the resources.
-     */
-    public IndexMapping() {
-        final InputStream indexSettings = Thread.currentThread().getContextClassLoader()
-                .getResourceAsStream("mappings.json");
+    public static ObjectNode buildMinimalMappings() {
+        return objMapper.createObjectNode()
+                .put("dynamic", false)
+                .putPOJO("_source", objMapper
+                        .createObjectNode()
+                        .putPOJO("excludes", objMapper
+                                .createArrayNode()
+                                .add("context.*")
+                        )
+                );
+    }
+    public static ObjectNode buildMappings(String[] languages) {
+        ObjectNode mappings = buildMinimalMappings();
 
-        mappings = new JSONObject(new JSONTokener(indexSettings));
+        ObjectNode propertiesWithLanguages = propertiesWithLanguages(languages);
+
+        ObjectNode basicTextField = objMapper.createObjectNode()
+                .put("type", "text")
+                .put("index", false);
+
+        ObjectNode basicKeywordField = objMapper.createObjectNode()
+                .put("type", "keyword")
+                .put("index", true);
+
+        ObjectNode coordinate = objMapper.createObjectNode().put("type", "geo_point");
+        ObjectNode importance = objMapper.createObjectNode().put("type", "float");
+        ObjectNode osmId = objMapper.createObjectNode().put("type", "long");
+        ObjectNode postcode = copyToCollector("default");
+
+        ArrayNode copyToDefault = objMapper.createArrayNode().add("collector.default");
+
+        ObjectNode housenumber = objMapper.createObjectNode()
+                .put("type", "text")
+                .put("index", true)
+                .put("analyzer", "index_housenumber")
+                .put("search_analyzer", "standard")
+                .putPOJO("copy_to", copyToDefault);
+
+        ObjectNode classification = objMapper.createObjectNode()
+                .put("type", "text")
+                .put("index", true)
+                .put("analyzer", "keyword")
+                .put("search_analyzer", "search_classification")
+                .putPOJO("copy_to", copyToDefault);
+
+        ObjectNode properties = objMapper.createObjectNode()
+                .putPOJO("city", propertiesWithLanguages)
+                .putPOJO("context", propertiesWithLanguages)
+                .putPOJO("county", propertiesWithLanguages)
+                .putPOJO("country", propertiesWithLanguages)
+                .putPOJO("state", propertiesWithLanguages)
+                .putPOJO("street", propertiesWithLanguages)
+                .putPOJO("district", propertiesWithLanguages)
+                .putPOJO("locality", propertiesWithLanguages)
+                .putPOJO("countrycode", basicTextField)
+                .putPOJO("osm_key", basicKeywordField)
+                .putPOJO("osm_type", basicTextField)
+                .putPOJO("osm_value", basicKeywordField)
+                .putPOJO("type", basicKeywordField)
+                .putPOJO("place_id", basicTextField)
+                .putPOJO("parent_place_id", basicTextField)
+                .putPOJO("coordinate", coordinate)
+                .putPOJO("importance", importance)
+                .putPOJO("osm_id", osmId)
+                .putPOJO("name", buildNameField(languages))
+                .putPOJO("collector", buildCollectorField(languages))
+                .putPOJO("postcode", postcode)
+                .putPOJO("housenumber", housenumber)
+                .putPOJO("classification", classification);
+
+        return mappings.putPOJO("properties", properties);
     }
 
-    public void putMapping(Client client, String indexName, String indexType) {
-        client.admin().indices().preparePutMapping(indexName)
-                .setType(indexType)
-                .setSource(mappings.toString(), XContentType.JSON)
-                .execute()
-                .actionGet();
+    private static ObjectNode copyToCollector(String lang) {
+        return objMapper.createObjectNode()
+                .put("type", "text")
+                .put("index", "false")
+                .putPOJO("copy_to", objMapper
+                        .createArrayNode()
+                        .add(String.format("collector.%s", lang))
+                );
     }
 
-
-    public IndexMapping addLanguages(String[] languages) {
-        // define collector json strings
-        String copyToCollectorString = "{\"type\":\"text\",\"index\":false,\"copy_to\":[\"collector.{lang}\"]}";
-        String nameToCollectorString = "{\"type\":\"text\",\"index\":false,\"fields\":{\"ngrams\":{\"type\":\"text\",\"analyzer\":\"index_ngram\"},\"raw\":{\"type\":\"text\",\"analyzer\":\"index_raw\",\"search_analyzer\":\"search_raw\"}},\"copy_to\":[\"collector.{lang}\"]}";
-        String collectorString = "{\"type\":\"text\",\"index\":false,\"fields\":{\"ngrams\":{\"type\":\"text\",\"analyzer\":\"index_ngram\"},\"raw\":{\"type\":\"text\",\"analyzer\":\"index_raw\",\"search_analyzer\":\"search_raw\"}},\"copy_to\":[\"collector.{lang}\"]}";
-
-        JSONObject placeObject = mappings.optJSONObject("place");
-        JSONObject propertiesObject = placeObject == null ? null : placeObject.optJSONObject("properties");
-
-        if (propertiesObject == null) {
-            log.error("cannot add languages to mapping.json, please double-check the mappings.json or the language values supplied");
-            return this;
-        }
-
-        for (String lang : languages) {
-            // create lang-specific json objects
-            JSONObject copyToCollectorObject = new JSONObject(copyToCollectorString.replace("{lang}", lang));
-            JSONObject nameToCollectorObject = new JSONObject(nameToCollectorString.replace("{lang}", lang));
-            JSONObject collectorObject = new JSONObject(collectorString.replace("{lang}", lang));
-
-            // add language specific tags to the collector
-            addToCollector("city", propertiesObject, copyToCollectorObject, lang);
-            addToCollector("context", propertiesObject, copyToCollectorObject, lang);
-            addToCollector("county", propertiesObject, copyToCollectorObject, lang);
-            addToCollector("country", propertiesObject, copyToCollectorObject, lang);
-            addToCollector("state", propertiesObject, copyToCollectorObject, lang);
-            addToCollector("street", propertiesObject, copyToCollectorObject, lang);
-            addToCollector("district", propertiesObject, copyToCollectorObject, lang);
-            addToCollector("locality", propertiesObject, copyToCollectorObject, lang);
-            addToCollector("name", propertiesObject, nameToCollectorObject, lang);
-
-            // add language specific collector to default for name
-            JSONObject name = propertiesObject.optJSONObject("name");
-            JSONObject nameProperties = name == null ? null : name.optJSONObject("properties");
-            if (nameProperties != null) {
-                JSONObject defaultObject = nameProperties.optJSONObject("default");
-                JSONArray copyToArray = defaultObject.optJSONArray("copy_to");
-                copyToArray.put("name." + lang);
-            }
-
-            // add language specific collector
-            addToCollector("collector", propertiesObject, collectorObject, lang);
-        }
-
-        return this;
+    private static ObjectNode copyToCollectorWithRaw(String lang) {
+        ObjectNode raw = objMapper.createObjectNode()
+                .putPOJO("raw", objMapper
+                        .createObjectNode()
+                        .put("type", "text")
+                        .put("analyzer", "index_raw")
+                );
+        return copyToCollector(lang).putPOJO("fields", raw);
     }
 
-    private void addToCollector(String key, JSONObject properties, JSONObject collectorObject, String lang) {
-        JSONObject keyObject = properties.optJSONObject(key);
-        JSONObject keyProperties = keyObject == null ? null : keyObject.optJSONObject("properties");
-        if (keyProperties != null && !keyProperties.has(lang)) {
-            keyProperties.put(lang, collectorObject);
+    private static ObjectNode buildNameField(String[] languages) {
+        ArrayNode defaultCopyTo = objMapper.createArrayNode()
+                .add("collector.default");
+
+        ObjectNode defaultName = objMapper.createObjectNode()
+                .put("type", "text")
+                .put("index", false)
+                .putPOJO("copy_to", defaultCopyTo);
+
+        ObjectNode properties = objMapper.createObjectNode()
+                .putPOJO("alt", copyToCollectorWithRaw("default"))
+                .putPOJO("int", copyToCollectorWithRaw("default"))
+                .putPOJO("loc", copyToCollectorWithRaw("default"))
+                .putPOJO("old", copyToCollectorWithRaw("default"))
+                .putPOJO("reg", copyToCollectorWithRaw("default"))
+                .putPOJO("housename", copyToCollectorWithRaw("default"));
+
+
+        for (String language : languages) {
+            properties.putPOJO(language, nameToCollector(language));
+            defaultCopyTo.add(String.format("name.%s", language));
         }
+
+        properties.putPOJO("default", defaultName);
+
+        return objMapper.createObjectNode().putPOJO("properties", properties);
+    }
+
+    private static ObjectNode buildCollectorField(String[] languages) {
+        ObjectNode defaultCollector = objMapper.createObjectNode()
+                .put("type", "text")
+                .put("analyzer", "index_ngram")
+                .putPOJO("fields", objMapper.createObjectNode()
+                    .putPOJO("raw", objMapper
+                            .createObjectNode()
+                            .put("type", "text")
+                            .put("analyzer", "index_raw")
+                    )
+                );
+
+        ObjectNode collectorProperties = objMapper.createObjectNode()
+                .putPOJO("default", defaultCollector);
+
+        for (String language : languages) {
+            collectorProperties.putPOJO(language, nameToCollector(language));
+        }
+
+        return objMapper.createObjectNode().putPOJO("properties", collectorProperties);
+    }
+
+    private static ObjectNode nameToCollector(String lang) {
+        return objMapper.createObjectNode()
+                .put("type", "text")
+                .put("index", "false")
+                .putPOJO("fields", objMapper
+                        .createObjectNode()
+                        .putPOJO("ngrams", objMapper
+                                .createObjectNode()
+                                .put("type", "text")
+                                .put("analyzer", "index_ngram")
+                        )
+                        .putPOJO("raw", objMapper
+                                .createObjectNode()
+                                .put("type", "text")
+                                .put("analyzer", "index_raw")
+                                .put("search_analyzer", "search_raw")
+                        )
+                )
+                .putPOJO("copy_to", objMapper
+                        .createArrayNode()
+                        .add(String.format("collector.%s", lang))
+                );
+    }
+
+    private static ObjectNode propertiesWithLanguages(String[] languages) {
+        ObjectNode properties = objMapper.createObjectNode()
+                .putPOJO("default", copyToCollector("default"));
+
+        for (String language : languages) {
+            properties.putPOJO(language, copyToCollector(language));
+        }
+
+        return objMapper.createObjectNode().putPOJO("properties", properties);
     }
 }

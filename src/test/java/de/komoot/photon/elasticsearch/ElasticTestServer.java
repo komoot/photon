@@ -1,8 +1,10 @@
 package de.komoot.photon.elasticsearch;
 
+import co.elastic.clients.elasticsearch.core.GetResponse;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import de.komoot.photon.searcher.PhotonResult;
-import org.elasticsearch.action.admin.indices.refresh.RefreshRequest;
-import org.elasticsearch.action.get.GetResponse;
+
+import java.io.IOException;
 
 public class ElasticTestServer extends Server {
     public ElasticTestServer(String mainDirectory) {
@@ -14,13 +16,17 @@ public class ElasticTestServer extends Server {
         return new IndexSettings().setShards(1);
     }
 
-    public PhotonResult getById(int id) {
-        GetResponse response =  esClient.prepareGet(PhotonIndex.NAME,PhotonIndex.TYPE, String.valueOf(id)).execute().actionGet();
+    public PhotonResult getById(int id) throws IOException {
+         GetResponse<ObjectNode> response = client.get(fn -> fn
+                 .index(PhotonIndex.NAME)
+                 .id(String.valueOf(id)),
+                 ObjectNode.class
+         );
 
-        return response.isExists() ? new ElasticGetIdResult(response) : null;
+        return response.found() ? new ElasticGetIdResult(response.source()) : null;
     }
 
-    public void refresh() {
-        esClient.admin().indices().refresh(new RefreshRequest(PhotonIndex.NAME)).actionGet();
+    public void refresh() throws IOException {
+        client.indices().refresh(fn -> fn.index(PhotonIndex.NAME));
     }
 }

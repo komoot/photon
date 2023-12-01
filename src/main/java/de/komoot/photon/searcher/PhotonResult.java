@@ -19,7 +19,6 @@ public interface PhotonResult {
     Object get(String key);
 
     String getLocalised(String key, String language);
-    Map<String, String> getMap(String key);
 
     double[] getCoordinates();
     double[] getExtent();

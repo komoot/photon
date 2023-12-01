@@ -1,9 +1,7 @@
 package de.komoot.photon.searcher;
 
-import de.komoot.photon.query.LookupRequest;
-
-import java.util.List;
+import java.io.IOException;
 
 public interface LookupHandler {
-    List<PhotonResult> lookup(LookupRequest lookupRequest);
+    PhotonResult lookup(String lookupRequest) throws IOException;
 }

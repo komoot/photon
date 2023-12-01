@@ -1,8 +1,10 @@
 package de.komoot.photon.searcher;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import de.komoot.photon.Constants;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.util.List;
 
@@ -16,6 +18,7 @@ public class GeocodeJsonFormatter implements ResultFormatter {
 
     private final boolean addDebugInfo;
     private final String language;
+    private final ObjectMapper mapper = new ObjectMapper();
 
     public GeocodeJsonFormatter(boolean addDebugInfo, String language) {
         this.addDebugInfo = addDebugInfo;
@@ -23,63 +26,78 @@ public class GeocodeJsonFormatter implements ResultFormatter {
     }
 
     @Override
-    public String convert(List<PhotonResult> results, String debugInfo) {
-        final JSONArray features = new JSONArray(results.size());
+    public String convert(List<PhotonResult> results, String debugInfo) throws JsonProcessingException {
+        final ArrayNode features = mapper.createArrayNode();
 
         for (PhotonResult result : results) {
             final double[] coordinates = result.getCoordinates();
 
-            features.put(new JSONObject()
+            features.add(mapper.createObjectNode()
                         .put("type", "Feature")
-                        .put("properties", getResultProperties(result))
-                        .put("geometry", new JSONObject()
+                        .putPOJO("properties", getResultProperties(result))
+                        .putPOJO("geometry", mapper.createObjectNode()
                                 .put("type", "Point")
-                                .put("coordinates", coordinates)));
+                                .putPOJO("coordinates", coordinates)
+                        )
+            );
         }
 
-        final JSONObject out = new JSONObject();
+        final ObjectNode out = mapper.createObjectNode();
         out.put("type", "FeatureCollection")
-           .put("features", features);
+           .putPOJO("features", features);
 
         if (debugInfo != null) {
-            out.put("properties", new JSONObject().put("debug", new JSONObject(debugInfo)));
-        }
-
-        if (addDebugInfo) {
-            return out.toString(4);
+            out.putPOJO("properties", mapper.createObjectNode()
+                    .putPOJO("debug", mapper.readTree(debugInfo))
+            );
         }
 
         return out.toString();
     }
 
-    private JSONObject getResultProperties(PhotonResult result) {
-        JSONObject props = new JSONObject();
+    @Override
+    public String convert(PhotonResult result) {
+        if (result == null) return null;
+
+        final double[] coordinates = result.getCoordinates();
+
+        ObjectNode out = mapper.createObjectNode()
+                .put("type", "Feature")
+                .putPOJO("properties", getResultProperties(result))
+                .putPOJO("geometry", mapper.createObjectNode()
+                    .put("type", "Point")
+                    .putPOJO("coordinates", coordinates)
+        );
+
+
+        return out.toString();
+    }
+
+    private ObjectNode getResultProperties(PhotonResult result) {
+        ObjectNode props = mapper.createObjectNode();
+
         if (addDebugInfo) {
             props.put("score", result.getScore());
-            put(props,"importance", result.get("importance"));
+            props.putPOJO("importance", result.get("importance"));
         }
 
         for (String key : KEYS_LANG_UNSPEC) {
-            put(props, key, result.get(key));
+            props.putPOJO(key, result.get(key));
         }
 
         for (String key : KEYS_LANG_SPEC) {
-            put(props, key, result.getLocalised(key, language));
+            props.put(key, result.getLocalised(key, language));
         }
 
         final double[] extent = result.getExtent();
-        if (extent != null) {
-            props.put("extent", extent);
+
+        if (extent != null && extent.length != 0) {
+            props.putPOJO("extent", extent);
         }
 
-        put(props, "extra", result.getMap("extra"));
+        props.putPOJO("extra", result.get("extra"));
 
         return props;
     }
 
-    private void put(JSONObject out, String key, Object value) {
-        if (value != null) {
-            out.put(key, value);
-        }
-    }
 }

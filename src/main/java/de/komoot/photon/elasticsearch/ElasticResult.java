@@ -1,10 +1,12 @@
 package de.komoot.photon.elasticsearch;
 
+import co.elastic.clients.elasticsearch.core.search.Hit;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import de.komoot.photon.Constants;
+import de.komoot.photon.PhotonDoc;
 import de.komoot.photon.searcher.PhotonResult;
 import lombok.extern.slf4j.Slf4j;
-import org.elasticsearch.action.get.GetResponse;
-import org.elasticsearch.search.SearchHit;
 
 import java.util.List;
 import java.util.Map;
@@ -13,83 +15,73 @@ import java.util.Map;
 public class ElasticResult implements PhotonResult {
     private static final String[] NAME_PRECEDENCE = {"default", "housename", "int", "loc", "reg", "alt", "old"};
 
-    private final Object result;
-    private final Map<String, Object> resultMap;
+    private final ObjectNode result;
+    private Double score = 0.0;
 
-    ElasticResult(SearchHit result) {
-        this.result = result;
-        this.resultMap = result.getSource();
+    ElasticResult(Hit<ObjectNode> result) {
+        this.result = result.source();
+        this.score = result.score();
     }
 
-    ElasticResult(GetResponse result) {
+    ElasticResult(ObjectNode result) {
         this.result = result;
-        this.resultMap = result.getSource();
     }
 
     @Override
     public Object get(String key) {
-        return resultMap.get(key);
+        return result.get(key);
     }
 
     @Override
     public String getLocalised(String key, String language) {
-        final Map<String, String> map = (Map<String, String>) resultMap.get(key);
+        final ObjectNode map = (ObjectNode) result.get(key);
 
         if (map == null) return null;
 
         if (map.get(language) != null) {
             // language specific field
-            return map.get(language);
+            return map.get(language).asText();
         }
 
         if ("name".equals(key)) {
             for (String name : NAME_PRECEDENCE) {
-                if (map.containsKey(name))
-                    return map.get(name);
+                if (map.hasNonNull(name))
+                    return map.get(name).asText();
             }
         }
 
-        return map.get("default");
-    }
-
-    @Override
-    public Map<String, String> getMap(String key) {
-        return (Map<String, String>) resultMap.get(key);
+        return map.get("default").asText();
     }
 
     @Override
     public double[] getCoordinates() {
-        final Map<String, Double> coordinate = (Map<String, Double>) resultMap.get("coordinate");
+        final ObjectNode coordinate = (ObjectNode) result.get("coordinate");
         if (coordinate == null) {
             log.error(String.format("invalid data [id=%s, type=%s], coordinate is missing!",
-                    resultMap.get(Constants.OSM_ID),
-                    resultMap.get(Constants.OSM_VALUE)));
+                    result.get(Constants.OSM_ID),
+                    result.get(Constants.OSM_VALUE)));
             return INVALID_COORDINATES;
         }
 
-        return new double[]{coordinate.get(Constants.LON), coordinate.get(Constants.LAT)};
+        return new double[]{coordinate.get(Constants.LON).asDouble(), coordinate.get(Constants.LAT).asDouble()};
     }
 
     @Override
     public double[] getExtent() {
-        final Map<String, Object> extent = (Map<String, Object>) resultMap.get("extent");
+        final ObjectNode extent = (ObjectNode) result.get("extent");
         if (extent == null) {
             return null;
         }
 
-        final List<List<Double>> coords = (List<List<Double>>) extent.get("coordinates");
-        final List<Double> nw = coords.get(0);
-        final List<Double> se = coords.get(1);
+        final ArrayNode coords = (ArrayNode) extent.get("coordinates");
+        final ArrayNode nw = (ArrayNode) coords.get(0);
+        final ArrayNode se = (ArrayNode) coords.get(1);
 
-        return new double[]{nw.get(0), nw.get(1), se.get(0), se.get(1)};
+        return new double[]{ nw.get(0).asDouble(), nw.get(1).asDouble(), se.get(0).asDouble(), se.get(1).asDouble() };
     }
 
     @Override
     public double getScore() {
-        if (result instanceof SearchHit) {
-            return ((SearchHit)result).getScore();
-        } else {
-            return 0.0;
-        }
+        return score;
     }
 }

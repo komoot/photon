@@ -1,33 +1,29 @@
 package de.komoot.photon.elasticsearch;
 
-import de.komoot.photon.query.LookupRequest;
+import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import co.elastic.clients.elasticsearch.core.GetRequest;
+import co.elastic.clients.elasticsearch.core.GetResponse;
+
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import de.komoot.photon.searcher.LookupHandler;
 import de.komoot.photon.searcher.PhotonResult;
-import org.elasticsearch.action.get.GetRequestBuilder;
-import org.elasticsearch.action.get.GetResponse;
-import org.elasticsearch.client.Client;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.IOException;
 
 
 public class ElasticsearchLookupHandler implements LookupHandler {
-    private final Client client;
+    private final ElasticsearchClient client;
 
-    public ElasticsearchLookupHandler(Client client) {
+    public ElasticsearchLookupHandler(ElasticsearchClient client) {
         this.client = client;
     }
 
-    public List<PhotonResult> lookup(LookupRequest request) {
-        GetRequestBuilder builder = this.client.prepareGet().
-                setIndex("photon").
-                setType("place").
-                setId(request.getPlaceId());
-        GetResponse response = builder.execute().actionGet();
-        List<PhotonResult> ret = new ArrayList<>(1);
-        if (response != null) {
-            ret.add(new ElasticResult(response));
+    public PhotonResult lookup(String placeId) throws IOException {
+        GetRequest request = new GetRequest.Builder().index(PhotonIndex.NAME).id(placeId).build();
+        GetResponse<ObjectNode> response = client.get(request, ObjectNode.class);
+        if (!response.found()) {
+            return null;
         }
-        return ret;
+        return new ElasticResult(response.source());
     }
 }

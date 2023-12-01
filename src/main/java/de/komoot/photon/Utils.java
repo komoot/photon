@@ -1,11 +1,11 @@
 package de.komoot.photon;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.vividsolutions.jts.geom.Envelope;
 import de.komoot.photon.nominatim.model.AddressType;
-import org.elasticsearch.common.xcontent.XContentBuilder;
-import org.elasticsearch.common.xcontent.XContentFactory;
 
-import java.io.IOException;
 import java.util.*;
 
 /**
@@ -14,39 +14,44 @@ import java.util.*;
  * @author christoph
  */
 public class Utils {
-    public static XContentBuilder convert(PhotonDoc doc, String[] languages, String[] extraTags) throws IOException {
-        final AddressType atype = doc.getAddressType();
-        XContentBuilder builder = XContentFactory.jsonBuilder().startObject()
-                .field(Constants.OSM_ID, doc.getOsmId())
-                .field(Constants.OSM_TYPE, doc.getOsmType())
-                .field(Constants.PARENT_PLACE_ID, doc.getParentPlaceId())
-                .field(Constants.PLACE_ID, doc.getPlaceId())
-                .field(Constants.OSM_KEY, doc.getTagKey())
-                .field(Constants.OSM_VALUE, doc.getTagValue())
-                .field(Constants.OBJECT_TYPE, atype == null ? "locality" : atype.getName())
-                .field(Constants.IMPORTANCE, doc.getImportance());
+    private static final ObjectMapper mapper = new ObjectMapper();
+
+    public static ObjectNode convert(PhotonDoc doc, String[] languages, String[] extraTags, boolean allExtraTags) {
+        final AddressType addressType = doc.getAddressType();
+
+        ObjectNode rootNode = mapper
+                .createObjectNode()
+                .put(Constants.OSM_ID, doc.getOsmId())
+                .put(Constants.OSM_TYPE, doc.getOsmType())
+                .put(Constants.OSM_KEY, doc.getTagKey())
+                .put(Constants.OSM_VALUE, doc.getTagValue())
+                .put(Constants.PLACE_ID, doc.getPlaceId())
+                .put(Constants.PARENT_PLACE_ID, doc.getParentPlaceId())
+                .put(Constants.OBJECT_TYPE, addressType == null ? "locality" : addressType.getName())
+                .put(Constants.IMPORTANCE, doc.getImportance());
 
         String classification = buildClassificationString(doc.getTagKey(), doc.getTagValue());
         if (classification != null) {
-            builder.field(Constants.CLASSIFICATION, classification);
+            rootNode.put(Constants.CLASSIFICATION, classification);
         }
 
         if (doc.getCentroid() != null) {
-            builder.startObject("coordinate")
-                    .field("lat", doc.getCentroid().getY())
-                    .field("lon", doc.getCentroid().getX())
-                    .endObject();
+            ObjectNode coordinateNode = mapper
+                    .createObjectNode()
+                    .put("lat", doc.getCentroid().getY())
+                    .put("lon", doc.getCentroid().getX());
+            rootNode.set("coordinate", coordinateNode);
         }
 
         if (doc.getHouseNumber() != null) {
-            builder.field("housenumber", doc.getHouseNumber());
+            rootNode.put("housenumber", doc.getHouseNumber());
         }
 
         if (doc.getPostcode() != null) {
-            builder.field("postcode", doc.getPostcode());
+            rootNode.put("postcode", doc.getPostcode());
         }
 
-        writeName(builder, doc, languages);
+        writeName(rootNode, doc, languages);
 
         for (AddressType entry : doc.getAddressParts().keySet()) {
             Map<String, String> fNames = new HashMap<>();
@@ -57,73 +62,66 @@ public class Utils {
                 doc.copyAddressName(fNames, language, entry, "name:" + language);
             }
 
-            write(builder, fNames, entry.getName());
+            write(rootNode, fNames, entry.getName());
         }
 
         String countryCode = doc.getCountryCode();
         if (countryCode != null)
-            builder.field(Constants.COUNTRYCODE, countryCode);
-        writeContext(builder, doc.getContext(), languages);
-        writeExtraTags(builder, doc.getExtratags(), extraTags);
-        writeExtent(builder, doc.getBbox());
+            rootNode.put(Constants.COUNTRYCODE, countryCode);
 
-        builder.endObject();
+        writeContext(rootNode, doc.getContext(), languages);
+        writeExtraTags(rootNode, doc.getExtratags(), extraTags, allExtraTags);
+        writeExtent(rootNode, doc.getBbox());
 
-
-        return builder;
+        return rootNode;
     }
 
-    private static void writeExtraTags(XContentBuilder builder, Map<String, String> docTags, String[] extraTags) throws IOException {
-        boolean foundTag = false;
+    private static void writeExtraTags(ObjectNode objectNode, Map<String, String> docTags, String[] extraTags, boolean allExtraTags) {
+        ObjectNode extraNode = mapper.createObjectNode();
 
-        if (extraTags.length == 0) {
+        if (allExtraTags) {
             for (Map.Entry<String, String> entry : docTags.entrySet()) {
                 String tag = entry.getKey();
                 String value = entry.getValue();
 
                 if (value != null) {
-                    if (!foundTag) {
-                        builder.startObject("extra");
-                        foundTag = true;
-                    }
-                    builder.field(tag, value);
+                    extraNode.put(tag, value);
                 }
             }
         } else {
             for (String tag : extraTags) {
                 String value = docTags.get(tag);
                 if (value != null) {
-                    if (!foundTag) {
-                        builder.startObject("extra");
-                        foundTag = true;
-                    }
-                    builder.field(tag, value);
+                    extraNode.put(tag, value);
                 }
             }
         }
-        if (foundTag) {
-            builder.endObject();
+
+        if (!extraNode.isEmpty()) {
+            objectNode.set("extra", extraNode);
         }
     }
 
-    private static void writeExtent(XContentBuilder builder, Envelope bbox) throws IOException {
+    private static void writeExtent(ObjectNode objectNode, Envelope bbox) {
         if (bbox == null) return;
 
         if (bbox.getArea() == 0.) return;
 
         // http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/mapping-geo-shape-type.html#_envelope
-        builder.startObject("extent");
-        builder.field("type", "envelope");
+        ObjectNode extentNode = mapper
+                .createObjectNode()
+                .put("type", "envelope");
 
-        builder.startArray("coordinates");
-        builder.startArray().value(bbox.getMinX()).value(bbox.getMaxY()).endArray();
-        builder.startArray().value(bbox.getMaxX()).value(bbox.getMinY()).endArray();
+        ArrayNode coordinateNode = mapper
+                .createArrayNode()
+                .add(mapper.createArrayNode().add(bbox.getMinX()).add(bbox.getMaxY()))
+                .add(mapper.createArrayNode().add(bbox.getMaxX()).add(bbox.getMinY()));
 
-        builder.endArray();
-        builder.endObject();
+        extentNode.set("coordinates", coordinateNode);
+        objectNode.set("extent", extentNode);
     }
 
-    private static void writeName(XContentBuilder builder, PhotonDoc doc, String[] languages) throws IOException {
+    private static void writeName(ObjectNode objectNode, PhotonDoc doc, String[] languages) {
         Map<String, String> fNames = new HashMap<>();
 
         doc.copyName(fNames, "default", "name");
@@ -139,20 +137,20 @@ public class Utils {
         doc.copyName(fNames, "reg", "reg_name");
         doc.copyName(fNames, "housename", "addr:housename");
 
-        write(builder, fNames, "name");
+        write(objectNode, fNames, "name");
     }
 
-    private static void write(XContentBuilder builder, Map<String, String> fNames, String name) throws IOException {
+    private static void write(ObjectNode objectNode, Map<String, String> fNames, String name) {
         if (fNames.isEmpty()) return;
 
-        builder.startObject(name);
+        ObjectNode childNode = mapper.createObjectNode();
         for (Map.Entry<String, String> entry : fNames.entrySet()) {
-            builder.field(entry.getKey(), entry.getValue());
+            childNode.put(entry.getKey(), entry.getValue());
         }
-        builder.endObject();
+        objectNode.set(name, childNode);
     }
 
-    protected static void writeContext(XContentBuilder builder, Set<Map<String, String>> contexts, String[] languages) throws IOException {
+    protected static void writeContext(ObjectNode objectNode, Set<Map<String, String>> contexts, String[] languages) {
         final Map<String, Set<String>> multimap = new HashMap<>();
 
         for (Map<String, String> context : contexts) {
@@ -168,11 +166,11 @@ public class Utils {
         }
 
         if (!multimap.isEmpty()) {
-            builder.startObject("context");
+            ObjectNode contextNode = mapper.createObjectNode();
             for (Map.Entry<String, Set<String>> entry : multimap.entrySet()) {
-                builder.field(entry.getKey(), String.join(", ", entry.getValue()));
+                contextNode.put(entry.getKey(), String.join(", ", entry.getValue()));
             }
-            builder.endObject();
+            objectNode.set("context", contextNode);
         }
     }
 

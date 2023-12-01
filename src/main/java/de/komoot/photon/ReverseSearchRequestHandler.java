@@ -11,6 +11,7 @@ import spark.Request;
 import spark.Response;
 import spark.RouteImpl;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -31,7 +32,7 @@ public class ReverseSearchRequestHandler extends RouteImpl {
     }
 
     @Override
-    public String handle(Request request, Response response) {
+    public String handle(Request request, Response response) throws IOException {
         ReverseRequest photonRequest = null;
         try {
             photonRequest = reverseRequestFactory.create(request);
