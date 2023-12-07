@@ -114,15 +114,23 @@ public class App {
      */
     private static void startNominatimImport(CommandLineArgs args, ElasticsearchServer esServer) {
         try {
-            esServer.recreateIndex(
-                    IndexSettings.buildSettings(args.getSynonymFile()),
-                    IndexMapping.buildMappings(args.getLanguages()),
-                    args.getLanguages()
-            ); // clear out previous data
+            if (args.isFreshCluster()) {
+                esServer.createIndex(
+                        IndexSettings.buildSettings(args.getSynonymFile()),
+                        args.getLanguages()
+                ).updateMappings(
+                        IndexMapping.buildMappings(args.getLanguages())
+                );
+            } else if (!args.isContinueImport()){ // clear out previous data
+                esServer.recreateIndex(
+                        IndexSettings.buildSettings(args.getSynonymFile()),
+                        IndexMapping.buildMappings(args.getLanguages()),
+                        args.getLanguages()
+                );
+            }
         } catch (IOException e) {
             throw new RuntimeException("cannot setup index, elastic search config files not readable", e);
         }
-
 
         log.info("starting import from nominatim to photon with languages: " + String.join(",", args.getLanguages()));
         NominatimConnector nominatimConnector = new NominatimConnector(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());

@@ -6,17 +6,13 @@ import co.elastic.clients.elasticsearch._helpers.bulk.BulkListener;
 import co.elastic.clients.elasticsearch._types.ErrorCause;
 import co.elastic.clients.elasticsearch.core.BulkRequest;
 import co.elastic.clients.elasticsearch.core.BulkResponse;
-import co.elastic.clients.elasticsearch.core.bulk.BulkOperation;
 import co.elastic.clients.elasticsearch.core.bulk.BulkResponseItem;
-import co.elastic.clients.elasticsearch.core.bulk.IndexOperation;
 import de.komoot.photon.PhotonDoc;
 import de.komoot.photon.Utils;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.TimeUnit;
 
 /**
  * elasticsearch importer
@@ -65,8 +61,8 @@ public class Importer implements de.komoot.photon.Importer {
 
         this.ingester = new BulkIngester.Builder<String>()
                 .client(client)
-                .flushInterval(1, TimeUnit.SECONDS)
                 .maxOperations(10000)
+                .maxConcurrentRequests(32)
                 .listener(listener)
                 .build();
     }

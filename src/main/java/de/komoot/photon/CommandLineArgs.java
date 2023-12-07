@@ -23,6 +23,12 @@ public class CommandLineArgs {
     @Parameter(names = "-api-key", description = "the api key required to connect to the elasticsearch cluster")
     private String apiKey = null;
 
+    @Parameter(names = "-fresh-cluster", description = "use when importing to a cluster with no indexes")
+    private boolean freshCluster = false;
+
+    @Parameter(names = "-continue-import", description = "use to skip the index recreation")
+    private boolean continueImport = false;
+
     @Parameter(names = "-nominatim-import", description = "import nominatim database into photon (this will delete previous index)")
     private boolean nominatimImport = false;
 
