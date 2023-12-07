@@ -55,24 +55,6 @@ public class GeocodeJsonFormatter implements ResultFormatter {
         return out.toString();
     }
 
-    @Override
-    public String convert(PhotonResult result) {
-        if (result == null) return null;
-
-        final double[] coordinates = result.getCoordinates();
-
-        ObjectNode out = mapper.createObjectNode()
-                .put("type", "Feature")
-                .putPOJO("properties", getResultProperties(result))
-                .putPOJO("geometry", mapper.createObjectNode()
-                    .put("type", "Point")
-                    .putPOJO("coordinates", coordinates)
-        );
-
-
-        return out.toString();
-    }
-
     private ObjectNode getResultProperties(PhotonResult result) {
         ObjectNode props = mapper.createObjectNode();
 

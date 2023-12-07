@@ -12,6 +12,7 @@ import spark.Response;
 import spark.RouteImpl;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -39,8 +40,9 @@ public class LookupSearchRequestHandler extends RouteImpl {
             halt(e.getHttpStatus(), json.toString());
         }
 
-        PhotonResult result = requestHandler.lookup(lookupRequest.getPlaceId());
+        List<PhotonResult> results = new ArrayList<>();
+        results.add(requestHandler.lookup(lookupRequest.getPlaceId()));
 
-        return new GeocodeJsonFormatter(false, lookupRequest.getLanguage()).convert(result);
+        return new GeocodeJsonFormatter(false, lookupRequest.getLanguage()).convert(results, null);
     }
 }
