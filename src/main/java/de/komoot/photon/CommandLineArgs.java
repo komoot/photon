@@ -18,10 +18,13 @@ public class CommandLineArgs {
     private String cluster = "photon";
 
     @Parameter(names = "-server-url", description = "the server url to connect to the elasticsearch cluster")
-    private String serverUrl = null;
+    private String serverUrl = System.getenv("ELASTIC_CLUSTER_SERVER_URL");
 
     @Parameter(names = "-api-key", description = "the api key required to connect to the elasticsearch cluster")
-    private String apiKey = null;
+    private String apiKey = System.getenv("ELASTIC_CLUSTER_API_KEY");
+
+    @Parameter(names = "-refresh-index-settings", description = "refresh the index settings on start")
+    private boolean refreshIndexSettings = false;
 
     @Parameter(names = "-fresh-cluster", description = "use when importing to a cluster with no indexes")
     private boolean freshCluster = false;

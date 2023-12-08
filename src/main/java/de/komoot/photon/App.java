@@ -44,9 +44,12 @@ public class App {
 
         // Working on an existing installation.
         // Update the index settings in case there are any changes.
-        log.info("Refreshing index settings.");
-        esServer.updateSettings(IndexSettings.buildSettings(args.getSynonymFile()));
-        esServer.waitForReady();
+        if (args.isRefreshIndexSettings()) {
+            log.info("Refreshing index settings.");
+            esServer.updateSettings(IndexSettings.buildSettings(args.getSynonymFile()));
+            esServer.waitForReady();
+        }
+
         log.info("ES cluster is now ready.");
 
         if (args.isNominatimUpdate()) {
