@@ -16,7 +16,7 @@ import java.util.*;
 public class Utils {
     private static final ObjectMapper mapper = new ObjectMapper();
 
-    public static ObjectNode convert(PhotonDoc doc, String[] languages, String[] extraTags, boolean allExtraTags) {
+    public static ObjectNode convert(PhotonDoc doc, String[] languages, String[] extraTags, boolean allExtraTags, boolean includeExtraNames) {
         final AddressType addressType = doc.getAddressType();
 
         ObjectNode rootNode = mapper
@@ -71,9 +71,29 @@ public class Utils {
 
         writeContext(rootNode, doc.getContext(), languages);
         writeExtraTags(rootNode, doc.getExtratags(), extraTags, allExtraTags);
+        writeExtraNames(rootNode, doc.getName(), includeExtraNames);
         writeExtent(rootNode, doc.getBbox());
 
         return rootNode;
+    }
+
+    private static void writeExtraNames(ObjectNode objectNode, Map<String, String> docNames, boolean includeExtraNames) {
+        ObjectNode extraNamesNode = mapper.createObjectNode();
+
+        if (includeExtraNames) {
+            for (Map.Entry<String, String> entry : docNames.entrySet()) {
+                String name = entry.getKey();
+                String value = entry.getValue();
+
+                if (value != null) {
+                    extraNamesNode.put(name, value);
+                }
+            }
+        }
+
+        if (!extraNamesNode.isEmpty()) {
+            objectNode.set("names", extraNamesNode);
+        }
     }
 
     private static void writeExtraTags(ObjectNode objectNode, Map<String, String> docTags, String[] extraTags, boolean allExtraTags) {
