@@ -46,7 +46,7 @@ public class App {
         // Update the index settings in case there are any changes.
         if (args.isRefreshIndexSettings()) {
             log.info("Refreshing index settings.");
-            esServer.updateSettings(IndexSettings.buildSettings(args.getSynonymFile()));
+            esServer.updateSettings(IndexSettings.buildSettings(args.getSynonymFile(), args.getNumShards()));
             esServer.waitForReady();
         }
 
@@ -96,7 +96,7 @@ public class App {
     /**
      * take nominatim data and dump it to json
      *
-     * @param args
+     * @param args Command-line arguments
      */
     private static void startJsonDump(CommandLineArgs args) {
         try {
@@ -119,14 +119,14 @@ public class App {
         try {
             if (args.isFreshCluster()) {
                 esServer.createIndex(
-                        IndexSettings.buildSettings(args.getSynonymFile()),
+                        IndexSettings.buildSettings(args.getSynonymFile(), args.getNumShards()),
                         args.getLanguages()
                 ).updateMappings(
                         IndexMapping.buildMappings(args.getLanguages())
                 );
             } else if (!args.isContinueImport()){ // clear out previous data
                 esServer.recreateIndex(
-                        IndexSettings.buildSettings(args.getSynonymFile()),
+                        IndexSettings.buildSettings(args.getSynonymFile(), args.getNumShards()),
                         IndexMapping.buildMappings(args.getLanguages()),
                         args.getLanguages()
                 );

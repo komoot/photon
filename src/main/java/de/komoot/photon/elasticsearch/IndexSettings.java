@@ -21,16 +21,16 @@ public class IndexSettings {
     /**
      * Build index settings
      * Add query-time synonyms and classification terms from a file.
-     *
      * Synonyms need to be supplied in a simple text file with one synonym entry per line.
      * Synonyms need to be comma-separated. Only single-term synonyms are supported at this
      * time. Spaces in the synonym list are considered a syntax error.
      *
      * @param synonymFilePath File containing the synonyms.
+     * @param numShards The number of primary shards to create.
      *
      * @return Index settings as an ObjectNode
      */
-    public static ObjectNode buildSettings(String synonymFilePath) throws IOException {
+    public static ObjectNode buildSettings(String synonymFilePath, Integer numShards) throws IOException {
         ArrayNode synonyms = null;
         ArrayNode classSynonyms = null;
 
@@ -53,18 +53,11 @@ public class IndexSettings {
                     .putPOJO("tokenizer", buildTokenizer())
                     .putPOJO("char_filter", buildCharFilter())
                     .putPOJO("filter", buildFilter(synonyms, classSynonyms))
+                )
+                .putPOJO("settings", objMapper.createObjectNode()
+                    .put("number_of_shards", numShards)
+                    .put("number_of_replicas", 1)
                 );
-    }
-
-    public static ObjectNode setShards(ObjectNode settings, Integer numShards) {
-        return settings.putPOJO("index", objMapper
-                .createObjectNode()
-                .put("number_of_shards", numShards)
-        );
-    }
-
-    public static ObjectNode unsetShards(ObjectNode settings) {
-        return (ObjectNode) settings.remove("index");
     }
 
     private static ObjectNode buildAnalyzer(ArrayNode synonyms, ArrayNode classSynonyms) {

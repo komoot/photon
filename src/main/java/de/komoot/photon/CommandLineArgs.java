@@ -26,13 +26,16 @@ public class CommandLineArgs {
     @Parameter(names = "-refresh-index-settings", description = "refresh the index settings on start")
     private boolean refreshIndexSettings = false;
 
-    @Parameter(names = "-fresh-cluster", description = "use when importing to a cluster with no indexes")
+    @Parameter(names = "-num-shards", description = "set the number of primary shards on index creation")
+    private Integer numShards = 1;
+
+    @Parameter(names = "-fresh-cluster", description = "use when importing to a cluster with no indexes, skips past deletion to creation")
     private boolean freshCluster = false;
 
-    @Parameter(names = "-continue-import", description = "use to skip the index recreation")
+    @Parameter(names = "-continue-import", description = "use to skip the index recreation entirely")
     private boolean continueImport = false;
 
-    @Parameter(names = "-nominatim-import", description = "import nominatim database into photon (this will delete previous index)")
+    @Parameter(names = "-nominatim-import", description = "import nominatim database into photon (this will delete previous index by default)")
     private boolean nominatimImport = false;
 
     @Parameter(names = "-nominatim-update", description = "fetch updates from nominatim database into photon and exit (this updates the index only without offering an API)")
