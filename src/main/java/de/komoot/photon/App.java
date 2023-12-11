@@ -101,7 +101,7 @@ public class App {
     private static void startJsonDump(CommandLineArgs args) {
         try {
             final String filename = args.getJsonDump();
-            final JsonDumper jsonDumper = new JsonDumper(filename, args.getLanguages(), args.getExtraTags(), args.isAllExtraTags());
+            final JsonDumper jsonDumper = new JsonDumper(filename, args.getLanguages(), args.getExtraTags(), args.isAllExtraTags(), args.isIncludeExtraNames());
             NominatimConnector nominatimConnector = new NominatimConnector(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
             nominatimConnector.setImporter(jsonDumper);
             nominatimConnector.readEntireDatabase(args.getCountryCodes());
@@ -137,7 +137,7 @@ public class App {
 
         log.info("starting import from nominatim to photon with languages: " + String.join(",", args.getLanguages()));
         NominatimConnector nominatimConnector = new NominatimConnector(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
-        nominatimConnector.setImporter(esServer.createImporter(args.getLanguages(), args.getExtraTags(), args.isAllExtraTags()));
+        nominatimConnector.setImporter(esServer.createImporter(args.getLanguages(), args.getExtraTags(), args.isAllExtraTags(), args.isIncludeExtraNames()));
         nominatimConnector.readEntireDatabase(args.getCountryCodes());
 
         log.info("imported data from nominatim to photon with languages: " + String.join(",", args.getLanguages()));
@@ -151,7 +151,7 @@ public class App {
         DatabaseProperties dbProperties = server.loadDbProperties();
 
         NominatimUpdater nominatimUpdater = new NominatimUpdater(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
-        nominatimUpdater.setUpdater(server.createUpdater(dbProperties.getLanguages(), args.getExtraTags(), args.isAllExtraTags()));
+        nominatimUpdater.setUpdater(server.createUpdater(dbProperties.getLanguages(), args.getExtraTags(), args.isAllExtraTags(), args.isIncludeExtraNames()));
         return nominatimUpdater;
     }
 

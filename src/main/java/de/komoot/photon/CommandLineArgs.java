@@ -53,6 +53,9 @@ public class CommandLineArgs {
     @Parameter(names = "-all-extra-tags", description = "include all extra tags during nominatim import, overrides -extra-tags")
     private boolean allExtraTags = false;
 
+    @Parameter(names = "-include-extra-names", description = "includes all extra name data from nominatim")
+    private boolean includeExtraNames = false;
+
     @Parameter(names = "-synonym-file", description = "file with synonym and classification terms")
     private String synonymFile = null;
 

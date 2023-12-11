@@ -26,11 +26,14 @@ public class Importer implements de.komoot.photon.Importer {
     private final String[] languages;
     private final String[] extraTags;
     private final boolean allExtraTags;
+    private final boolean includeExtraNames;
 
-    public Importer(ElasticsearchClient client, String[] languages, String[] extraTags, boolean allExtraTags) {
+    public Importer(ElasticsearchClient client, String[] languages, String[] extraTags, boolean allExtraTags, boolean includeExtraNames) {
         this.languages = languages;
         this.extraTags = extraTags;
         this.allExtraTags = allExtraTags;
+        this.includeExtraNames = includeExtraNames;
+
         BulkListener<String> listener = new BulkListener<>() {
             @Override
             public void beforeBulk(long executionId, BulkRequest request, List<String> contexts) {}
@@ -72,7 +75,7 @@ public class Importer implements de.komoot.photon.Importer {
         this.ingester.add(op -> op
                 .index(idx -> idx
                         .index(PhotonIndex.NAME)
-                        .document(Utils.convert(doc, languages, extraTags, allExtraTags))
+                        .document(Utils.convert(doc, languages, extraTags, allExtraTags, includeExtraNames))
                         .id(doc.getUid())
                 )
         );

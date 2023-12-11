@@ -17,18 +17,20 @@ public class JsonDumper implements Importer {
     private final String[] languages;
     private final String[] extraTags;
     private final boolean allExtraTags;
+    private final boolean includeExtraNames;
 
-    public JsonDumper(String filename, String[] languages, String[] extraTags, boolean allExtraTags) throws FileNotFoundException {
+    public JsonDumper(String filename, String[] languages, String[] extraTags, boolean allExtraTags, boolean includeExtraNames) throws FileNotFoundException {
         this.writer = new PrintWriter(filename);
         this.languages = languages;
         this.extraTags = extraTags;
         this.allExtraTags = allExtraTags;
+        this.includeExtraNames = includeExtraNames;
     }
 
     @Override
     public void add(PhotonDoc doc) {
         writer.println("{\"index\": {}}");
-        writer.println(Utils.convert(doc, languages, extraTags, allExtraTags).asText());
+        writer.println(Utils.convert(doc, languages, extraTags, allExtraTags, includeExtraNames).asText());
     }
 
     @Override

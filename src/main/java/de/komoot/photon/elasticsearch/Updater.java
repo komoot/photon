@@ -18,12 +18,14 @@ public class Updater implements de.komoot.photon.Updater {
     private final String[] languages;
     private final String[] extraTags;
     private final boolean allExtraTags;
+    private final boolean includeExtraNames;
 
-    public Updater(ElasticsearchClient client, String[] languages, String[] extraTags, boolean allExtraTags) {
+    public Updater(ElasticsearchClient client, String[] languages, String[] extraTags, boolean allExtraTags, boolean includeExtraNames) {
 
         this.languages = languages;
         this.extraTags = extraTags;
         this.allExtraTags = allExtraTags;
+        this.includeExtraNames = includeExtraNames;
         this.ingester = new BulkIngester.Builder<Void>()
                 .client(client)
                 .flushInterval(1, TimeUnit.SECONDS)
@@ -41,7 +43,7 @@ public class Updater implements de.komoot.photon.Updater {
                 op -> op
                         .index(v -> v
                                 .index(PhotonIndex.NAME)
-                                .document(Utils.convert(doc, languages, extraTags, allExtraTags))
+                                .document(Utils.convert(doc, languages, extraTags, allExtraTags, includeExtraNames))
                                 .id(String.valueOf(doc.getPlaceId()))
                         )
         );

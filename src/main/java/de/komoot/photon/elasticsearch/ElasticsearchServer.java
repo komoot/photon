@@ -196,12 +196,12 @@ public class ElasticsearchServer {
         return deleteIndex().createIndex(settings, languages).updateMappings(mappings);
     }
 
-    public de.komoot.photon.Importer createImporter(String[] languages, String[] extraTags, boolean allExtraTags) {
-        return new de.komoot.photon.elasticsearch.Importer(esClient, languages, extraTags, allExtraTags);
+    public de.komoot.photon.Importer createImporter(String[] languages, String[] extraTags, boolean allExtraTags, boolean includeExtraNames) {
+        return new de.komoot.photon.elasticsearch.Importer(esClient, languages, extraTags, allExtraTags, includeExtraNames);
     }
 
-    public de.komoot.photon.Updater createUpdater(String[] languages, String[] extraTags, boolean allExtraTags) {
-        return new de.komoot.photon.elasticsearch.Updater(esClient, languages, extraTags, allExtraTags);
+    public de.komoot.photon.Updater createUpdater(String[] languages, String[] extraTags, boolean allExtraTags, boolean includeExtraNames) {
+        return new de.komoot.photon.elasticsearch.Updater(esClient, languages, extraTags, allExtraTags, includeExtraNames);
     }
 
     public SearchHandler createSearchHandler(String[] languages) {
