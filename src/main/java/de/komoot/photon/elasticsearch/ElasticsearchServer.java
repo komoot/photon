@@ -186,7 +186,7 @@ public class ElasticsearchServer {
             throw new RuntimeException("Incompatible database.");
         }
 
-        String langString = String.valueOf(properties.get(FIELD_LANGUAGES));
+        String langString = properties.get(FIELD_LANGUAGES).asText();
 
         return new DatabaseProperties().setLanguages(langString == null ? null : langString.split(","));
     }
