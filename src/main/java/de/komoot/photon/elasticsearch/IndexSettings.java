@@ -54,10 +54,8 @@ public class IndexSettings {
                     .putPOJO("char_filter", buildCharFilter())
                     .putPOJO("filter", buildFilter(synonyms, classSynonyms))
                 )
-                .putPOJO("settings", objMapper.createObjectNode()
-                    .put("number_of_shards", numShards)
-                    .put("number_of_replicas", 1)
-                );
+                .put("number_of_shards", numShards)
+                .put("number_of_replicas", 1);
     }
 
     private static ObjectNode buildAnalyzer(ArrayNode synonyms, ArrayNode classSynonyms) {
