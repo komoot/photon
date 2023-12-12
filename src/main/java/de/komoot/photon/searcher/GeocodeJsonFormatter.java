@@ -78,6 +78,7 @@ public class GeocodeJsonFormatter implements ResultFormatter {
         }
 
         props.putPOJO("extra", result.get("extra"));
+        props.putPOJO("names", result.get("names"));
 
         return props;
     }
