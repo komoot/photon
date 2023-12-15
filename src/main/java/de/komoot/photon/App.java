@@ -166,7 +166,7 @@ public class App {
         String[] langs = dbProperties.getLanguages();
         Date importDate = dbProperties.getImportDate();
         get("status", new StatusRequestHandler("status", importDate));
-        get("status/", new StatusRequestHandler("/status", importDate));
+        get("status/", new StatusRequestHandler("status/", importDate));
         get("api", new SearchRequestHandler("api", server.createSearchHandler(langs), langs, args.getDefaultLanguage()));
         get("api/", new SearchRequestHandler("api/", server.createSearchHandler(langs), langs, args.getDefaultLanguage()));
         get("reverse", new ReverseSearchRequestHandler("reverse", server.createReverseHandler(), dbProperties.getLanguages(), args.getDefaultLanguage()));
