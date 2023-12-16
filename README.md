@@ -33,7 +33,7 @@ photon software is open source and licensed under [Apache License, Version 2.0](
 
 ### Installation
 
-photon requires java, at least version 8.
+photon requires java, at least version 11.
 
 Download the search index (72G GB compressed, 159GB uncompressed as of 2023-10-26, worldwide coverage, languages: English, German, French and local name). The search index is updated weekly and thankfully provided by [GraphHopper](https://www.graphhopper.com/) with the support of [lonvia](https://github.com/lonvia).
 Now get the latest version of photon from [the releases](https://github.com/komoot/photon/releases).
