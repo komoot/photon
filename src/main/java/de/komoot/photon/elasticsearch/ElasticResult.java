@@ -1,6 +1,7 @@
 package de.komoot.photon.elasticsearch;
 
 import co.elastic.clients.elasticsearch.core.search.Hit;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import de.komoot.photon.Constants;
@@ -50,7 +51,13 @@ public class ElasticResult implements PhotonResult {
             }
         }
 
-        return map.get("default").asText();
+        JsonNode defaultValue = map.get("default");
+
+        if (defaultValue != null) {
+            return defaultValue.asText();
+        }
+
+        return null;
     }
 
     @Override

@@ -30,6 +30,10 @@ public class GeocodeJsonFormatter implements ResultFormatter {
         final ArrayNode features = mapper.createArrayNode();
 
         for (PhotonResult result : results) {
+            if (result == null) {
+                continue;
+            }
+
             final double[] coordinates = result.getCoordinates();
 
             features.add(mapper.createObjectNode()
