@@ -12,7 +12,7 @@ import java.util.List;
  * Format a database result into a Photon GeocodeJson response.
  */
 public class GeocodeJsonFormatter implements ResultFormatter {
-    private static final String[] KEYS_LANG_UNSPEC = {Constants.PARENT_PLACE_ID, Constants.PLACE_ID, Constants.OSM_TYPE, Constants.OSM_ID, Constants.OSM_KEY, Constants.OSM_VALUE, Constants.OBJECT_TYPE, Constants.POSTCODE, Constants.HOUSENUMBER, Constants.COUNTRYCODE};
+    private static final String[] KEYS_LANG_UNSPEC = {Constants.RANK_ADDRESS, Constants.PARENT_PLACE_ID, Constants.PLACE_ID, Constants.OSM_TYPE, Constants.OSM_ID, Constants.OSM_KEY, Constants.OSM_VALUE, Constants.OBJECT_TYPE, Constants.POSTCODE, Constants.HOUSENUMBER, Constants.COUNTRYCODE};
     private static final String[] KEYS_LANG_SPEC = {Constants.NAME, Constants.COUNTRY, Constants.CITY, Constants.DISTRICT, Constants.LOCALITY, Constants.STREET, Constants.STATE, Constants.COUNTY};
     private static final String[] NAME_PRECEDENCE = {"default", "housename", "int", "loc", "reg", "alt", "old"};
 

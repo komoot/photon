@@ -34,4 +34,5 @@ public class Constants {
     public static final String CLASSIFICATION = "classification";
     public static final String PARENT_PLACE_ID = "parent_place_id";
     public static final String PLACE_ID = "place_id";
+    public static final String RANK_ADDRESS = "rank_address";
 }

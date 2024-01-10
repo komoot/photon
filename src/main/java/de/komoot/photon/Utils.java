@@ -28,7 +28,8 @@ public class Utils {
                 .put(Constants.PLACE_ID, doc.getPlaceId())
                 .put(Constants.PARENT_PLACE_ID, doc.getParentPlaceId())
                 .put(Constants.OBJECT_TYPE, addressType == null ? "locality" : addressType.getName())
-                .put(Constants.IMPORTANCE, doc.getImportance());
+                .put(Constants.IMPORTANCE, doc.getImportance())
+                .put(Constants.RANK_ADDRESS, doc.getRankAddress());
 
         String classification = buildClassificationString(doc.getTagKey(), doc.getTagValue());
         if (classification != null) {
