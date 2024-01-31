@@ -41,6 +41,9 @@ public class CommandLineArgs {
     @Parameter(names = "-synonym-file", description = "file with synonym and classification terms")
     private String synonymFile = null;
 
+    @Parameter(names = "-query-timeout", description = "Time after which to cancel queries to the ES database (in seconds).")
+    private int queryTimeout = 7;
+
     @Parameter(names = "-json", description = "import nominatim database and dump it to a json like files in (useful for developing)")
     private String jsonDump = null;
 

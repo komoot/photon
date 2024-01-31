@@ -20,10 +20,12 @@ public class ElasticsearchSearchHandler implements SearchHandler {
     private final Client client;
     private final String[] supportedLanguages;
     private boolean lastLenient = false;
+    private TimeValue queryTimeout;
 
-    public ElasticsearchSearchHandler(Client client, String[] languages) {
+    public ElasticsearchSearchHandler(Client client, String[] languages, int queryTimeoutSec) {
         this.client = client;
         this.supportedLanguages = languages;
+        queryTimeout = TimeValue.timeValueSeconds(queryTimeoutSec);
     }
 
     @Override
@@ -63,12 +65,11 @@ public class ElasticsearchSearchHandler implements SearchHandler {
     }
 
     private SearchResponse sendQuery(QueryBuilder queryBuilder, Integer limit) {
-        TimeValue timeout = TimeValue.timeValueSeconds(7);
         return client.prepareSearch(PhotonIndex.NAME).
                 setSearchType(SearchType.QUERY_THEN_FETCH).
                 setQuery(queryBuilder).
                 setSize(limit).
-                setTimeout(timeout).
+                setTimeout(queryTimeout).
                 execute().
                 actionGet();
 

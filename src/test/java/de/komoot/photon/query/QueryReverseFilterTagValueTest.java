@@ -72,7 +72,7 @@ public class QueryReverseFilterTagValueTest extends ESBaseTester {
         for (String param : params) {
             request.addOsmTagFilter(TagFilter.buildOsmTagFilter(param));
         }
-        return getServer().createReverseHandler().reverse(request);
+        return getServer().createReverseHandler(1).reverse(request);
     }
 
     @ParameterizedTest
