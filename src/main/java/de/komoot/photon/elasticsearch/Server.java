@@ -273,11 +273,11 @@ public class Server {
         return new de.komoot.photon.elasticsearch.Updater(esClient, languages, extraTags);
     }
 
-    public SearchHandler createSearchHandler(String[] languages) {
-        return new ElasticsearchSearchHandler(esClient, languages);
+    public SearchHandler createSearchHandler(String[] languages, int queryTimeoutSec) {
+        return new ElasticsearchSearchHandler(esClient, languages, queryTimeoutSec);
     }
 
-    public ReverseHandler createReverseHandler() {
-        return new ElasticsearchReverseHandler(esClient);
+    public ReverseHandler createReverseHandler(int queryTimeoutSec) {
+        return new ElasticsearchReverseHandler(esClient, queryTimeoutSec);
     }
 }

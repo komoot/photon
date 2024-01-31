@@ -54,7 +54,7 @@ public class QueryReverseFilterLayerTest extends ESBaseTester {
         Set<String> layerSet = Arrays.stream(layers).collect(Collectors.toSet());
         ReverseRequest request = new ReverseRequest(pt, "en", 1.0, "", 10, true, layerSet, false);
 
-        return getServer().createReverseHandler().reverse(request);
+        return getServer().createReverseHandler(1).reverse(request);
     }
 
     @Test

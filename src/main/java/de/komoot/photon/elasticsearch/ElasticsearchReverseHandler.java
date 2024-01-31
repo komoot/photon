@@ -23,9 +23,11 @@ import java.util.List;
  */
 public class ElasticsearchReverseHandler implements ReverseHandler {
     private Client client;
+    private TimeValue queryTimeout;
 
-    public ElasticsearchReverseHandler(Client client) {
+    public ElasticsearchReverseHandler(Client client, int queryTimeoutSec) {
         this.client = client;
+        queryTimeout = TimeValue.timeValueSeconds(queryTimeoutSec);
     }
 
     @Override
@@ -49,10 +51,8 @@ public class ElasticsearchReverseHandler implements ReverseHandler {
 
     private SearchResponse search(QueryBuilder queryBuilder, Integer limit, Point location,
                                  Boolean locationDistanceSort) {
-        TimeValue timeout = TimeValue.timeValueSeconds(7);
-
         SearchRequestBuilder builder = client.prepareSearch(PhotonIndex.NAME).setSearchType(SearchType.QUERY_THEN_FETCH)
-                .setQuery(queryBuilder).setSize(limit).setTimeout(timeout);
+                .setQuery(queryBuilder).setSize(limit).setTimeout(queryTimeout);
 
         if (locationDistanceSort)
             builder.addSort(SortBuilders.geoDistanceSort("coordinate", new GeoPoint(location.getY(), location.getX()))

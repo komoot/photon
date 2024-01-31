@@ -5,6 +5,8 @@ import com.beust.jcommander.ParameterException;
 import de.komoot.photon.elasticsearch.Server;
 import de.komoot.photon.nominatim.NominatimConnector;
 import de.komoot.photon.nominatim.NominatimUpdater;
+import de.komoot.photon.searcher.ReverseHandler;
+import de.komoot.photon.searcher.SearchHandler;
 import de.komoot.photon.utils.CorsFilter;
 import lombok.extern.slf4j.Slf4j;
 import spark.Request;
@@ -162,10 +164,13 @@ public class App {
 
         // setup search API
         String[] langs = dbProperties.getLanguages();
-        get("api", new SearchRequestHandler("api", server.createSearchHandler(langs), langs, args.getDefaultLanguage()));
-        get("api/", new SearchRequestHandler("api/", server.createSearchHandler(langs), langs, args.getDefaultLanguage()));
-        get("reverse", new ReverseSearchRequestHandler("reverse", server.createReverseHandler(), dbProperties.getLanguages(), args.getDefaultLanguage()));
-        get("reverse/", new ReverseSearchRequestHandler("reverse/", server.createReverseHandler(), dbProperties.getLanguages(), args.getDefaultLanguage()));
+        SearchHandler searchHandler = server.createSearchHandler(langs, args.getQueryTimeout());
+        get("api", new SearchRequestHandler("api", searchHandler, langs, args.getDefaultLanguage()));
+        get("api/", new SearchRequestHandler("api/", searchHandler, langs, args.getDefaultLanguage()));
+
+        ReverseHandler reverseHandler = server.createReverseHandler(args.getQueryTimeout());
+        get("reverse", new ReverseSearchRequestHandler("reverse", reverseHandler, dbProperties.getLanguages(), args.getDefaultLanguage()));
+        get("reverse/", new ReverseSearchRequestHandler("reverse/", reverseHandler, dbProperties.getLanguages(), args.getDefaultLanguage()));
 
         if (args.isEnableUpdateApi()) {
             // setup update API

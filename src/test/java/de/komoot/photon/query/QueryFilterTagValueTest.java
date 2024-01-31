@@ -67,7 +67,7 @@ public class QueryFilterTagValueTest extends ESBaseTester {
             request.addOsmTagFilter(TagFilter.buildOsmTagFilter(param));
         }
 
-        return getServer().createSearchHandler(new String[]{"en"}).search(request);
+        return getServer().createSearchHandler(new String[]{"en"}, 1).search(request);
     }
 
 
