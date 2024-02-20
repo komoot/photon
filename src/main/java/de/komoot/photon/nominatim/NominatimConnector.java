@@ -13,10 +13,7 @@ import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Export nominatim data
@@ -150,7 +147,9 @@ public class NominatimConnector {
 
         dataSource.setUrl(String.format("jdbc:postgres_jts://%s:%d/%s", host, port, database));
         dataSource.setUsername(username);
-        dataSource.setPassword(password);
+        if (password != null) {
+            dataSource.setPassword(password);
+        }
         dataSource.setDriverClassName(JtsWrapper.class.getCanonicalName());
         dataSource.setDefaultAutoCommit(autocommit);
         return dataSource;
@@ -172,18 +171,22 @@ public class NominatimConnector {
     }
 
     public List<PhotonDoc> getByPlaceId(long placeId) {
-        NominatimResult result = template.queryForObject(SELECT_COLS_PLACEX + " FROM placex WHERE place_id = ?",
+        List<NominatimResult> result = template.query(SELECT_COLS_PLACEX + " FROM placex WHERE place_id = ?",
                                                          placeRowMapper, placeId);
-        assert(result != null);
-        return result.getDocsWithHousenumber();
+        if (result.size() == 0)
+            return null;
+
+        return result.get(0).getDocsWithHousenumber();
     }
 
     public List<PhotonDoc> getInterpolationsByPlaceId(long placeId) {
-        NominatimResult result = template.queryForObject(selectOsmlineSql
+        List<NominatimResult> result = template.query(selectOsmlineSql
                                                           + " FROM location_property_osmline WHERE place_id = ?",
                                                           osmlineRowMapper, placeId);
-        assert(result != null);
-        return result.getDocsWithHousenumber();
+        if (result.size() == 0)
+            return null;
+
+        return result.get(0).getDocsWithHousenumber();
     }
 
     private long parentPlaceId = -1;

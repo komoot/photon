@@ -1,13 +1,31 @@
 package de.komoot.photon.nominatim.model;
 
-import lombok.Data;
+import java.util.Date;
 
 /**
- * @author felix
+ * Information about places in the database that need updating.
  */
-@Data
 public class UpdateRow {
 
-    public Long placeId;
-    public Integer indexdStatus; // 1 - index, 2 - update, 100 - delete
+    private Long placeId;
+    private boolean toDelete;
+    private Date updateDate;
+
+    public UpdateRow(Long placeId, boolean toDelete, Date updateDate) {
+        this.placeId = placeId;
+        this.toDelete = toDelete;
+        this.updateDate = updateDate;
+    }
+
+    public Long getPlaceId() {
+        return placeId;
+    }
+
+    public boolean isToDelete() {
+        return toDelete;
+    }
+
+    public Date getUpdateDate() {
+        return updateDate;
+    }
 }
