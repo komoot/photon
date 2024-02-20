@@ -59,7 +59,7 @@ jobs:
         run: echo "cache_key=$(/bin/date -u "+%Y%W")" >> $GITHUB_ENV
         shell: bash
 
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         with:
             path: |
                Nominatim/data/country_osm_grid.sql.gz
@@ -117,11 +117,12 @@ jobs:
       - name: Import Photon
         run: |
             java -jar target/photon-*.jar -nominatim-import -database nominatim -user runner -password foobar
+            java -jar target/photon-*.jar -nominatim-update-init-for runner -database nominatim -user runner -password foobar
 
       - name: Update Nominatim
         run: |
           nominatim replication --init
-          nominatim replication --no-index --once
+          nominatim replication --once
         shell: bash
         working-directory: data-env
         env:
