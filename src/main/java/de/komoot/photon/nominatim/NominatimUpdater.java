@@ -151,7 +151,8 @@ public class NominatimUpdater {
     }
 
     private List<UpdateRow> getPlaces(String table) {
-        List<UpdateRow> results = template.query("DELETE FROM photon_updates WHERE rel = ? RETURNING place_id, operation, indexed_date",
+        List<UpdateRow> results = template.query(exporter.getDataAdaptor().deleteReturning(
+                "DELETE FROM photon_updates WHERE rel = ?", "place_id, operation, indexed_date"),
                 (rs, rowNum) -> {
                     boolean isDelete = "DELETE".equals(rs.getString("operation"));
                     return new UpdateRow(rs.getLong("place_id"), isDelete, rs.getDate("indexed_date"));
@@ -172,10 +173,14 @@ public class NominatimUpdater {
      * @param username Nominatim database username
      * @param password Nominatim database password
      */
-    public NominatimUpdater(String host, int port, String database, String username, String password) {
+    public NominatimUpdater(String host, int port, String database, String username, String password, DBDataAdapter dataAdapter) {
         BasicDataSource dataSource = NominatimConnector.buildDataSource(host, port, database, username, password, true);
 
-        exporter = new NominatimConnector(host, port, database, username, password);
+        exporter = new NominatimConnector(host, port, database, username, password, dataAdapter);
         template = new JdbcTemplate(dataSource);
+    }
+
+    public NominatimUpdater(String host, int port, String database, String username, String password) {
+        this(host, port, database, username, password, new PostgisDataAdapter());
     }
 }

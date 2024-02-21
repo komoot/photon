@@ -46,4 +46,9 @@ public class PostgisDataAdapter implements DBDataAdapter {
                     }
                 }, table, column).get(0);
     }
+
+    @Override
+    public String deleteReturning(String deleteSQL, String columns) {
+        return deleteSQL + " RETURNING " + columns;
+    }
 }

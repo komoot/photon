@@ -35,6 +35,7 @@ public class NominatimConnector {
      */
     private final RowMapper<NominatimResult> osmlineRowMapper;
     private final String selectOsmlineSql;
+    private Importer importer;
 
 
     /**
@@ -72,7 +73,6 @@ public class NominatimConnector {
             return result;
         }
     };
-    private Importer importer;
 
     /**
      * @param host     database host
@@ -315,5 +315,9 @@ public class NominatimConnector {
                 doc.getContext().add(address.getName());
             }
         }
+    }
+
+    public DBDataAdapter getDataAdaptor() {
+        return dbutils;
     }
 }

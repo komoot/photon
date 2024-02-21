@@ -35,6 +35,10 @@ public class ESBaseTester {
     }
 
     protected PhotonResult getById(int id) {
+        return getById(String.valueOf(id));
+    }
+
+    protected PhotonResult getById(String id) {
         return server.getById(id);
     }
 

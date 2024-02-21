@@ -25,4 +25,9 @@ public interface DBDataAdapter {
      * Check if a table has the given column.
      */
     boolean hasColumn(JdbcTemplate template, String table, String column);
+
+    /**
+     * Wrap a DELETE statement with a RETURNING clause.
+     */
+    String deleteReturning(String deleteSQL, String columns);
 }
