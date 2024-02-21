@@ -4,6 +4,7 @@ import de.komoot.photon.Importer;
 import de.komoot.photon.PhotonDoc;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.atomic.AtomicLong;
@@ -11,8 +12,8 @@ import java.util.concurrent.atomic.AtomicLong;
 @Slf4j
 class ImportThread {
     private static final int PROGRESS_INTERVAL = 50000;
-    private static final PhotonDoc FINAL_DOCUMENT = new PhotonDoc(0, null, 0, null, null);
-    private final BlockingQueue<PhotonDoc> documents = new LinkedBlockingDeque<>(20);
+    private static final NominatimResult FINAL_DOCUMENT = new NominatimResult(new PhotonDoc(0, null, 0, null, null));
+    private final BlockingQueue<NominatimResult> documents = new LinkedBlockingDeque<>(20);
     private final AtomicLong counter = new AtomicLong();
     private final Importer importer;
     private final Thread thread;
@@ -31,21 +32,21 @@ class ImportThread {
      * @param docs Fully filled nominatim document.
      */
     public void addDocument(NominatimResult docs) {
-        for (PhotonDoc doc : docs.getDocsWithHousenumber()) {
-            while (true) {
-                try {
-                    documents.put(doc);
-                    break;
-                } catch (InterruptedException e) {
-                    log.warn("Thread interrupted while placing document in queue.");
-                    // Restore interrupted state.
-                    Thread.currentThread().interrupt();
-                }
+        assert docs != null;
+        while (true) {
+            try {
+                documents.put(docs);
+                break;
+            } catch (InterruptedException e) {
+                log.warn("Thread interrupted while placing document in queue.");
+                // Restore interrupted state.
+                Thread.currentThread().interrupt();
             }
-            if (counter.incrementAndGet() % PROGRESS_INTERVAL == 0) {
-                final double documentsPerSecond = 1000d * counter.longValue() / (System.currentTimeMillis() - startMillis);
-                log.info(String.format("imported %d documents [%.1f/second]", counter.longValue(), documentsPerSecond));
-            }
+        }
+
+        if (counter.incrementAndGet() % PROGRESS_INTERVAL == 0) {
+            final double documentsPerSecond = 1000d * counter.longValue() / (System.currentTimeMillis() - startMillis);
+            log.info(String.format("imported %d documents [%.1f/second]", counter.longValue(), documentsPerSecond));
         }
     }
 
@@ -74,12 +75,15 @@ class ImportThread {
         @Override
         public void run() {
             while (true) {
-                PhotonDoc doc;
                 try {
-                    doc = documents.take();
-                    if (doc == FINAL_DOCUMENT)
+                    NominatimResult docs = documents.take();
+                    if (docs == FINAL_DOCUMENT) {
                         break;
-                    importer.add(doc);
+                    }
+                    int object_id = 0;
+                    for (PhotonDoc doc : docs.getDocsWithHousenumber()) {
+                        importer.add(doc, object_id++);
+                    }
                 } catch (InterruptedException e) {
                     log.info("interrupted exception ", e);
                     // Restore interrupted state.

@@ -25,8 +25,8 @@ public class ApiIntegrationTest extends ESBaseTester {
     public void setUp() throws Exception {
         setUpES();
         Importer instance = makeImporter();
-        instance.add(createDoc(13.38886, 52.51704, 1000, 1000, "place", "city").importance(0.6));
-        instance.add(createDoc(13.39026, 52.54714, 1001, 1001, "place", "town").importance(0.3));
+        instance.add(createDoc(13.38886, 52.51704, 1000, 1000, "place", "city").importance(0.6), 0);
+        instance.add(createDoc(13.39026, 52.54714, 1001, 1001, "place", "town").importance(0.3), 0);
         instance.finish();
         refresh();
     }

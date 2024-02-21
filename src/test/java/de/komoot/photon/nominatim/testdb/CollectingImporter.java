@@ -7,18 +7,20 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
 public class CollectingImporter implements Importer {
-    private List<PhotonDoc> docs = new ArrayList<>();
+    private List<Map.Entry<Integer, PhotonDoc>> docs = new ArrayList<>();
     private int finishCalled = 0;
 
 
     @Override
-    public void add(PhotonDoc doc) {
-        docs.add(doc);
+    public void add(PhotonDoc doc, int object_id)
+    {
+        docs.add(Map.entry(object_id, doc));
     }
 
     @Override
@@ -39,9 +41,9 @@ public class CollectingImporter implements Importer {
     }
 
     public PhotonDoc get(long placeId) {
-        for (PhotonDoc doc : docs) {
-            if (doc.getPlaceId() == placeId) {
-                return doc;
+        for (Map.Entry<Integer, PhotonDoc> doc : docs) {
+            if (doc.getValue().getPlaceId() == placeId) {
+                return doc.getValue();
             }
         }
 
@@ -51,10 +53,10 @@ public class CollectingImporter implements Importer {
 
     public void assertContains(PlacexTestRow row) throws ParseException {
         PhotonDoc doc = null;
-        for (PhotonDoc outdoc : docs) {
-            if (outdoc.getPlaceId() == row.getPlaceId()) {
+        for (Map.Entry<Integer, PhotonDoc> outdoc : docs) {
+            if (outdoc.getValue().getPlaceId() == row.getPlaceId()) {
                 assertNull(doc, "Row is contained multiple times");
-                doc = outdoc;
+                doc = outdoc.getValue();
             }
         }
 
@@ -63,13 +65,13 @@ public class CollectingImporter implements Importer {
         row.assertEquals(doc);
     }
 
-    public void assertContains(PlacexTestRow row, int housenumber) throws ParseException {
-        String hnrstr = Integer.toString(housenumber);
+    public void assertContains(PlacexTestRow row, String housenumber) throws ParseException {
         PhotonDoc doc = null;
-        for (PhotonDoc outdoc : docs) {
-            if (outdoc.getPlaceId() == row.getPlaceId() && hnrstr.equals(outdoc.getHouseNumber())) {
+        for (Map.Entry<Integer, PhotonDoc> outdoc : docs) {
+            if (outdoc.getValue().getPlaceId() == row.getPlaceId()
+                    && housenumber.equals(outdoc.getValue().getHouseNumber())) {
                 assertNull(doc, "Row is contained multiple times");
-                doc = outdoc;
+                doc = outdoc.getValue();
             }
         }
 

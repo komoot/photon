@@ -24,7 +24,7 @@ public class JsonDumper implements Importer {
     }
 
     @Override
-    public void add(PhotonDoc doc) {
+    public void add(PhotonDoc doc, int object_id) {
         try {
             writer.println("{\"index\": {}}");
             writer.println(Utils.convert(doc, languages, extraTags).string());

@@ -161,11 +161,11 @@ public class PhotonDoc {
         return this;
     }
 
-    public String getUid() {
-        if (houseNumber == null)
+    public String getUid(int object_id) {
+        if (object_id <= 0)
             return String.valueOf(placeId);
 
-        return String.valueOf(placeId) + "." + houseNumber;
+        return String.format("%d.%d", placeId, object_id);
     }
 
     public void copyName(Map<String, String> target, String target_field, String name_field) {

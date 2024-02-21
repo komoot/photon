@@ -10,9 +10,7 @@ import org.elasticsearch.client.Client;
 import java.io.IOException;
 
 /**
- * elasticsearch importer
- *
- * @author felix
+ * Elasticsearch importer
  */
 @Slf4j
 public class Importer implements de.komoot.photon.Importer {
@@ -31,12 +29,13 @@ public class Importer implements de.komoot.photon.Importer {
     }
 
     @Override
-    public void add(PhotonDoc doc) {
+    public void add(PhotonDoc doc, int object_id) {
+        String uid = doc.getUid(object_id);
         try {
             this.bulkRequest.add(this.esClient.prepareIndex(PhotonIndex.NAME, PhotonIndex.TYPE).
-                    setSource(Utils.convert(doc, languages, extraTags)).setId(doc.getUid()));
+                    setSource(Utils.convert(doc, languages, extraTags)).setId(uid));
         } catch (IOException e) {
-            log.error("could not bulk add document " + doc.getUid(), e);
+            log.error("could not bulk add document " + uid, e);
             return;
         }
         this.documentCount += 1;

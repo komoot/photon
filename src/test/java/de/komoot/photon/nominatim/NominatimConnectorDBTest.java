@@ -135,7 +135,7 @@ public class NominatimConnectorDBTest {
         PlacexTestRow expect = new PlacexTestRow("place", "house_number").id(osmline.getPlaceId()).parent(street).osm("W", 23);
 
         for (int i = 2; i < 11; ++i) {
-            importer.assertContains(expect.centroid(0, (i - 1) * 0.1), i);
+            importer.assertContains(expect.centroid(0, (i - 1) * 0.1), String.valueOf(i));
         }
     }
 
@@ -204,15 +204,15 @@ public class NominatimConnectorDBTest {
     @Test
     public void testObjectWithHousenumberList() throws ParseException {
         PlacexTestRow parent = PlacexTestRow.make_street("Main St").add(jdbc);
-        PlacexTestRow place = new PlacexTestRow("building", "yes").addr("housenumber", "1;2;3").parent(parent).add(jdbc);
+        PlacexTestRow place = new PlacexTestRow("building", "yes").addr("housenumber", "1;2a;3").parent(parent).add(jdbc);
 
         connector.readEntireDatabase();
 
         assertEquals(4, importer.size());
 
-        importer.assertContains(place, 1);
-        importer.assertContains(place, 2);
-        importer.assertContains(place, 3);
+        importer.assertContains(place, "1");
+        importer.assertContains(place, "2a");
+        importer.assertContains(place, "3");
     }
 
     /**
@@ -230,8 +230,8 @@ public class NominatimConnectorDBTest {
 
         assertEquals(3, importer.size());
 
-        importer.assertContains(place, 34);
-        importer.assertContains(place, 99521);
+        importer.assertContains(place, "34");
+        importer.assertContains(place, "99521");
     }
     /**
      * Unnamed objects are ignored when they do not have a housenumber.
