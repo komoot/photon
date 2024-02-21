@@ -14,8 +14,8 @@ public class ElasticTestServer extends Server {
         return new IndexSettings().setShards(1);
     }
 
-    public PhotonResult getById(int id) {
-        GetResponse response =  esClient.prepareGet(PhotonIndex.NAME,PhotonIndex.TYPE, String.valueOf(id)).execute().actionGet();
+    public PhotonResult getById(String id) {
+        GetResponse response =  esClient.prepareGet(PhotonIndex.NAME,PhotonIndex.TYPE, id).execute().actionGet();
 
         return response.isExists() ? new ElasticGetIdResult(response) : null;
     }

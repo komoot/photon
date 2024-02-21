@@ -63,3 +63,11 @@ CREATE TABLE country_name (
 
 INSERT INTO country_name
     VALUES ('de', JSON '{"name" : "Deutschland", "name:en" : "Germany"}', 'de', 2);
+
+
+CREATE TABLE photon_updates (
+    rel TEXT,
+    place_id BIGINT,
+    operation TEXT,
+    indexed_date TIMESTAMP
+);

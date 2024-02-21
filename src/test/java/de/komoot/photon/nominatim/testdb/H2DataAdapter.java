@@ -46,4 +46,10 @@ public class H2DataAdapter implements DBDataAdapter {
     public boolean hasColumn(JdbcTemplate template, String table, String column) {
         return false;
     }
+
+    @Override
+    public String deleteReturning(String deleteSQL, String columns) {
+        return "SELECT " + columns + " FROM OLD TABLE (" + deleteSQL + ")";
+    }
+
 }

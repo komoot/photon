@@ -43,6 +43,26 @@ public class ImporterTest extends ESBaseTester {
     }
 
     @Test
+    public void testAddHousenumberDoc() {
+        Importer instance = makeImporterWithExtra("");
+
+        instance.add(new PhotonDoc(4432, "N", 100, "building", "yes").houseNumber("34"));
+        instance.finish();
+        refresh();
+
+        PhotonResult response = getById("4432.34");
+
+        assertNotNull(response);
+
+        assertEquals("N", response.get("osm_type"));
+        assertEquals(100, response.get("osm_id"));
+        assertEquals("building", response.get("osm_key"));
+        assertEquals("yes", response.get("osm_value"));
+        assertEquals("34", response.get("housenumber"));
+
+    }
+
+    @Test
     public void testSelectedExtraTagsCanBeIncluded() {
         Importer instance = makeImporterWithExtra("maxspeed", "website");
 

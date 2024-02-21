@@ -142,24 +142,55 @@ The import of worldwide data set will take some hours/days, SSD/NVME disks are r
 
 #### Updating from OSM via Nominatim
 
-In order to update nominatim from OSM and then photon from nominatim, you must start photon with the nominatim database credentials on the command line:
+To update an existing Photon database from Nominatim, first prepare the
+Nominatim database with the appropriate triggers:
 
 ```bash
-java -jar photon-*.jar -host localhost -port 5432 -database nominatim -user nominatim -password ...
+java -jar photon-*.jar -database nominatim -user nominatim -password ... -nominatim-update-init-for update_user
 ```
 
-A nominatim setup is also a requirement to have continuous updates. To keep nominatim in sync with the latest OSM changes and to update photon with nominatim afterwards run:
+This script must be run with a user that has the right to create tables,
+functions and triggers.
+
+'update-user' is the PostgreSQL user that will be used when updating the
+Photon database. The user needs read rights on the database. The necessary
+update rights will be granted during initialisation.
+
+Now you can run updates on Nominatim using the usual methods as described
+in the [documentation](https://nominatim.org/release-docs/latest/admin/Update/).
+To bring the Photon database up-to-date, stop the Nominatim updates and
+then run the Photon update process:
 
 ```bash
-export NOMINATIM_DIR=/home/nominatim/...
-./continuously_update_from_nominatim.sh
+java -jar photon-*.jar -database nominatim -user nominatim -password ... -nominatim-update
 ```
 
-If you have updated nominatim with another method, photon can be updated by making a HTTP GET request to `/nominatim-update`, e.g. with this command:
+You can also run the photon process with the update API enabled:
+
+```bash
+java -jar photon-*.jar -enable-update-api -database nominatim -user nominatim -password ...
+```
+
+Then you can trigger updates like this:
 
 ```bash
 curl http://localhost:2322/nominatim-update
 ```
+
+For your convenience, this repository contains a script to continuously update
+both Nominatim and Photon. To run it, first customize some environment
+variables according to your installation:
+
+```bash
+export NOMINATIM_DIR=/srv/nominatim/...
+export PHOTON_JAR=photon.jar
+export PHOTON_DB_NAME=nominatim
+export PHOTON_DB_USER=nominatim
+export PHOTON_DB_PASSWORD=...
+./continuously_update_from_nominatim.sh
+```
+
+If you have Nominatim < 3.7, please read the comments in the script carefully.
 
 ### Search API
 
