@@ -40,8 +40,8 @@ public class OsmlineTestRow {
 
     public OsmlineTestRow add(JdbcTemplate jdbc) {
         jdbc.update("INSERT INTO location_property_osmline (place_id, parent_place_id, osm_id,"
-                        + " startnumber, endnumber, interpolationtype, linegeo, country_code)"
-                        + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                        + " startnumber, endnumber, interpolationtype, linegeo, country_code, indexed_status)"
+                        + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0)",
                 placeId, parentPlaceId, osmId, startnumber, endnumber, interpolationtype, lineGeo, countryCode);
 
         return this;

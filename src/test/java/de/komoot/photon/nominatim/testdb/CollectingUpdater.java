@@ -39,9 +39,7 @@ public class CollectingUpdater implements Updater {
     }
 
     @Override
-    public void finish() {
-        ++finishCalled;
-    }
+    public void finish() { ++finishCalled; }
 
 
     public void add_existing(long place_id, int ... object_id)

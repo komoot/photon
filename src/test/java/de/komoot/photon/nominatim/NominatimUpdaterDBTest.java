@@ -266,4 +266,26 @@ public class NominatimUpdaterDBTest {
         updater.assertHasDeleted(osmline.getPlaceId(), 2);
     }
 
+    @Test
+    public void testUpdateWithDuplicatesDeleteLast() throws InterruptedException {
+        PlacexTestRow place1 = new PlacexTestRow("place", "city").name("Town").rankAddress(12).add(jdbc);
+        PlacexTestRow place2 = new PlacexTestRow("building", "yes").housenumber(23).rankAddress(30).add(jdbc);
+
+        (new PhotonUpdateRow("placex", place2.getPlaceId(), "UPDATE")).add(jdbc);
+        (new PhotonUpdateRow("placex", place1.getPlaceId(), "UPDATE")).add(jdbc);
+        Thread.sleep(2L);
+        (new PhotonUpdateRow("placex", place2.getPlaceId(), "UPDATE")).add(jdbc);
+        Thread.sleep(2L);
+        (new PhotonUpdateRow("placex", place1.getPlaceId(), "UPDATE")).add(jdbc);
+        (new PhotonUpdateRow("placex", place2.getPlaceId(), "DELETE")).add(jdbc);
+
+        connector.update();
+        updater.assertFinishCalled();
+
+        assertEquals(1, updater.numDeleted());
+        assertEquals(1, updater.numCreated());
+
+        updater.assertHasCreated(place1.getPlaceId());
+        updater.assertHasDeleted(place2.getPlaceId());
+    }
 }

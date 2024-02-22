@@ -6,6 +6,7 @@ import de.komoot.photon.nominatim.model.UpdateRow;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
@@ -165,12 +166,24 @@ public class NominatimUpdater {
                 "DELETE FROM photon_updates WHERE rel = ?", "place_id, operation, indexed_date"),
                 (rs, rowNum) -> {
                     boolean isDelete = "DELETE".equals(rs.getString("operation"));
-                    return new UpdateRow(rs.getLong("place_id"), isDelete, rs.getDate("indexed_date"));
-                }, new Object[]{table});
+                    return new UpdateRow(rs.getLong("place_id"), isDelete, rs.getTimestamp("indexed_date"));
+                }, table);
 
-        results.sort(Comparator.comparing(UpdateRow::getUpdateDate));
+        // For each place only keep the newest item.
+        // Order doesn't really matter because updates of each place are independent now.
+        results.sort(Comparator.comparing(UpdateRow::getPlaceId).thenComparing(
+                     Comparator.comparing(UpdateRow::getUpdateDate).reversed()));
 
-        return results;
+        ArrayList<UpdateRow> todo = new ArrayList<>();
+        long prev_id = -1;
+        for (UpdateRow row: results) {
+            if (row.getPlaceId() != prev_id) {
+                prev_id = row.getPlaceId();
+                todo.add(row);
+            }
+        }
+
+        return todo;
     }
 
 

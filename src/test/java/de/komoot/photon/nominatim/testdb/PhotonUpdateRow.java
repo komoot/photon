@@ -2,6 +2,8 @@ package de.komoot.photon.nominatim.testdb;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import java.util.Date;
+
 public class PhotonUpdateRow {
     private String rel;
     private Long placeId;
@@ -16,8 +18,8 @@ public class PhotonUpdateRow {
 
      public PhotonUpdateRow add(JdbcTemplate jdbc) {
         jdbc.update("INSERT INTO photon_updates (rel, place_id, operation, indexed_date)"
-                        + "VALUES (?, ?, ?, now())",
-                    rel, placeId, operation);
+                        + "VALUES (?, ?, ?, ?)",
+                    rel, placeId, operation, new Date());
 
         return this;
     }
