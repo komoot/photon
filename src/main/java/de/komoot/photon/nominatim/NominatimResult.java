@@ -5,6 +5,7 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.linearref.LengthIndexedLine;
 import de.komoot.photon.PhotonDoc;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.*;
 import java.util.regex.Pattern;
@@ -13,6 +14,7 @@ import java.util.regex.Pattern;
  * A Nominatim result consisting of the basic PhotonDoc for the object
  * and a map of attached house numbers together with their respective positions.
  */
+@Slf4j
 class NominatimResult {
     private PhotonDoc doc;
     private Map<String, Point> housenumbers;
@@ -144,20 +146,24 @@ class NominatimResult {
      * @param geom Geometry of the interpolation line.
      */
     public void addHouseNumbersFromInterpolation(long first, long last, long step, Geometry geom) {
-         if (last <= first || (last - first) > 1000)
+         if (last < first || (last - first) > 1000)
             return;
 
         if (housenumbers == null)
             housenumbers = new HashMap<>();
 
-        LengthIndexedLine line = new LengthIndexedLine(geom);
-        double si = line.getStartIndex();
-        double ei = line.getEndIndex();
-        double lstep = (ei - si) / (double) (last - first);
+        if (last == first) {
+            housenumbers.put(String.valueOf(first), geom.getCentroid());
+        } else {
+            LengthIndexedLine line = new LengthIndexedLine(geom);
+            double si = line.getStartIndex();
+            double ei = line.getEndIndex();
+            double lstep = (ei - si) / (double) (last - first);
 
-        GeometryFactory fac = geom.getFactory();
-        for (long num = 1; first + num <= last; num += step) {
-            housenumbers.put(String.valueOf(num + first), fac.createPoint(line.extractPoint(si + lstep * num)));
+            GeometryFactory fac = geom.getFactory();
+            for (long num = 0; first + num <= last; num += step) {
+                housenumbers.put(String.valueOf(num + first), fac.createPoint(line.extractPoint(si + lstep * num)));
+            }
         }
     }
 }

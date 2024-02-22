@@ -189,7 +189,7 @@ public class NominatimUpdaterDBTest {
         PlacexTestRow street = PlacexTestRow.make_street("La strada").add(jdbc);
 
         OsmlineTestRow osmline =
-                new OsmlineTestRow().number(5, 9, "all").parent(street).geom("LINESTRING(0 0, 0 1)").add(jdbc);
+                new OsmlineTestRow().number(6, 8, 1).parent(street).geom("LINESTRING(0 0, 0 1)").add(jdbc);
         (new PhotonUpdateRow("location_property_osmline", osmline.getPlaceId(), "UPDATE")).add(jdbc);
 
         connector.update();
@@ -208,7 +208,7 @@ public class NominatimUpdaterDBTest {
         PlacexTestRow street = PlacexTestRow.make_street("La strada").add(jdbc);
 
         OsmlineTestRow osmline =
-                new OsmlineTestRow().number(5, 9, "all").parent(street).geom("LINESTRING(0 0, 0 1)").add(jdbc);
+                new OsmlineTestRow().number(6, 8, 1).parent(street).geom("LINESTRING(0 0, 0 1)").add(jdbc);
         (new PhotonUpdateRow("location_property_osmline", osmline.getPlaceId(), "UPDATE")).add(jdbc);
 
         updater.add_existing(osmline.getPlaceId(), 0, 1, 2);
@@ -229,7 +229,7 @@ public class NominatimUpdaterDBTest {
         PlacexTestRow street = PlacexTestRow.make_street("La strada").add(jdbc);
 
         OsmlineTestRow osmline =
-                new OsmlineTestRow().number(5, 9, "all").parent(street).geom("LINESTRING(0 0, 0 1)").add(jdbc);
+                new OsmlineTestRow().number(6, 8, 1).parent(street).geom("LINESTRING(0 0, 0 1)").add(jdbc);
         (new PhotonUpdateRow("location_property_osmline", osmline.getPlaceId(), "UPDATE")).add(jdbc);
 
         updater.add_existing(osmline.getPlaceId(), 0);
@@ -249,7 +249,7 @@ public class NominatimUpdaterDBTest {
         PlacexTestRow street = PlacexTestRow.make_street("La strada").add(jdbc);
 
         OsmlineTestRow osmline =
-                new OsmlineTestRow().number(5, 9, "all").parent(street).geom("LINESTRING(0 0, 0 1)").add(jdbc);
+                new OsmlineTestRow().number(6, 8, 1).parent(street).geom("LINESTRING(0 0, 0 1)").add(jdbc);
         (new PhotonUpdateRow("location_property_osmline", osmline.getPlaceId(), "UPDATE")).add(jdbc);
 
         updater.add_existing(osmline.getPlaceId(), 0, 1, 2, 3, 4);
