@@ -171,7 +171,7 @@ public class NominatimConnector {
     }
 
     public List<PhotonDoc> getByPlaceId(long placeId) {
-        List<NominatimResult> result = template.query(SELECT_COLS_PLACEX + " FROM placex WHERE place_id = ?",
+        List<NominatimResult> result = template.query(SELECT_COLS_PLACEX + " FROM placex WHERE place_id = ? and indexed_status = 0",
                                                          placeRowMapper, placeId);
         if (result.size() == 0)
             return null;
@@ -181,7 +181,7 @@ public class NominatimConnector {
 
     public List<PhotonDoc> getInterpolationsByPlaceId(long placeId) {
         List<NominatimResult> result = template.query(selectOsmlineSql
-                                                          + " FROM location_property_osmline WHERE place_id = ?",
+                                                          + " FROM location_property_osmline WHERE place_id = ? and indexed_status = 0",
                                                           osmlineRowMapper, placeId);
         if (result.size() == 0)
             return null;

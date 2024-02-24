@@ -46,7 +46,7 @@ public class QueryBasicSearchTest extends ESBaseTester {
     @Test
     public void testSearchByDefaultName() {
         Importer instance = makeImporter();
-        instance.add(createDoc("name", "Muffle Flu"));
+        instance.add(createDoc("name", "Muffle Flu"), 0);
         instance.finish();
         refresh();
 
@@ -63,7 +63,7 @@ public class QueryBasicSearchTest extends ESBaseTester {
     @Test
     public void testSearchNameSkipTerms() {
         Importer instance = makeImporter();
-        instance.add(createDoc("name", "Hunted House Hotel"));
+        instance.add(createDoc("name", "Hunted House Hotel"), 0);
         instance.finish();
         refresh();
 
@@ -80,7 +80,7 @@ public class QueryBasicSearchTest extends ESBaseTester {
         Importer instance = makeImporter();
         instance.add(createDoc("name", "original", "alt_name", "alt", "old_name", "older", "int_name", "int",
                                "loc_name", "local", "reg_name", "regional", "addr:housename", "house",
-                               "other_name", "other"));
+                               "other_name", "other"), 0);
         instance.finish();
         refresh();
 
@@ -107,7 +107,7 @@ public class QueryBasicSearchTest extends ESBaseTester {
         address.put("state", "Estado");
 
         Importer instance = makeImporter();
-        instance.add(createDoc("name", "Castillo").address(address));
+        instance.add(createDoc("name", "Castillo").address(address), 0);
         instance.finish();
         refresh();
 
@@ -124,7 +124,7 @@ public class QueryBasicSearchTest extends ESBaseTester {
     @Test
     public void testSearchMustContainANameTerm() {
         Importer instance = makeImporter();
-        instance.add(createDoc("name", "Palermo").address(Collections.singletonMap("state", "Sicilia")));
+        instance.add(createDoc("name", "Palermo").address(Collections.singletonMap("state", "Sicilia")), 0);
         instance.finish();
         refresh();
 
@@ -141,7 +141,7 @@ public class QueryBasicSearchTest extends ESBaseTester {
     @Test
     public void testSearchWithHousenumberNamed() {
         Importer instance = makeImporter();
-        instance.add(createDoc("name", "Edeka").houseNumber("5").address(Collections.singletonMap("street", "Hauptstrasse")));
+        instance.add(createDoc("name", "Edeka").houseNumber("5").address(Collections.singletonMap("street", "Hauptstrasse")), 0);
         instance.finish();
         refresh();
 
@@ -156,7 +156,7 @@ public class QueryBasicSearchTest extends ESBaseTester {
     @Test
     public void testSearchWithHousenumberUnnamed() {
         Importer instance = makeImporter();
-        instance.add(createDoc().houseNumber("5").address(Collections.singletonMap("street", "Hauptstrasse")));
+        instance.add(createDoc().houseNumber("5").address(Collections.singletonMap("street", "Hauptstrasse")), 0);
         instance.finish();
         refresh();
 

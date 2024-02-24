@@ -12,7 +12,7 @@ public class OsmlineTestRow {
     private Long osmId = 23L;
     private Integer startnumber;
     private Integer endnumber;
-    private String interpolationtype;
+    private Integer step;
     private String countryCode = "de";
     private String lineGeo;
 
@@ -21,10 +21,10 @@ public class OsmlineTestRow {
         lineGeo = "LINESTRING(0 0, 0.1 0.1, 0 0.2)";
     }
 
-    public OsmlineTestRow number(int start, int end, String type) {
+    public OsmlineTestRow number(int start, int end, int step) {
         startnumber = start;
         endnumber = end;
-        interpolationtype = type;
+        this.step = step;
         return this;
     }
 
@@ -40,9 +40,9 @@ public class OsmlineTestRow {
 
     public OsmlineTestRow add(JdbcTemplate jdbc) {
         jdbc.update("INSERT INTO location_property_osmline (place_id, parent_place_id, osm_id,"
-                        + " startnumber, endnumber, interpolationtype, linegeo, country_code)"
-                        + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-                placeId, parentPlaceId, osmId, startnumber, endnumber, interpolationtype, lineGeo, countryCode);
+                        + " startnumber, endnumber, step, linegeo, country_code, indexed_status)"
+                        + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0)",
+                placeId, parentPlaceId, osmId, startnumber, endnumber, step, lineGeo, countryCode);
 
         return this;
     }

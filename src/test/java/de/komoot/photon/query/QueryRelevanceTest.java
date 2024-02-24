@@ -49,8 +49,8 @@ public class QueryRelevanceTest extends ESBaseTester {
     @Test
     public void testRelevanceByImportance() {
         Importer instance = makeImporter();
-        instance.add(createDoc("amenity", "restuarant", 1001, "name", "New York").importance(0.0));
-        instance.add(createDoc("place", "city", 2000, "name", "New York").importance(0.5));
+        instance.add(createDoc("amenity", "restuarant", 1001, "name", "New York").importance(0.0), 0);
+        instance.add(createDoc("place", "city", 2000, "name", "New York").importance(0.5), 0);
         instance.finish();
         refresh();
 
@@ -63,8 +63,8 @@ public class QueryRelevanceTest extends ESBaseTester {
     @Test
     public void testFullNameOverPartialName() {
         Importer instance = makeImporter();
-        instance.add(createDoc("place", "hamlet", 1000, "name", "Ham"));
-        instance.add(createDoc("place", "hamlet", 1001, "name", "Hamburg"));
+        instance.add(createDoc("place", "hamlet", 1000, "name", "Ham"), 0);
+        instance.add(createDoc("place", "hamlet", 1001, "name", "Hamburg"), 0);
         instance.finish();
         refresh();
 
@@ -77,8 +77,8 @@ public class QueryRelevanceTest extends ESBaseTester {
     @Test
     public void testPartialNameWithImportanceOverFullName() {
         Importer instance = makeImporter();
-        instance.add(createDoc("place", "hamlet", 1000, "name", "Ham").importance(0.1));
-        instance.add(createDoc("place", "city", 1001, "name", "Hamburg").importance(0.5));
+        instance.add(createDoc("place", "hamlet", 1000, "name", "Ham").importance(0.1), 0);
+        instance.add(createDoc("place", "city", 1001, "name", "Hamburg").importance(0.5), 0);
         instance.finish();
         refresh();
 
@@ -93,9 +93,9 @@ public class QueryRelevanceTest extends ESBaseTester {
     void testLocationPreferenceForEqualImportance(String placeName) {
         Importer instance = makeImporter();
         instance.add(createDoc("place", "hamlet", 1000, "name", "Ham")
-                .centroid(FACTORY.createPoint(new Coordinate(10, 10))));
+                .centroid(FACTORY.createPoint(new Coordinate(10, 10))), 0);
         instance.add(createDoc("place", "hamlet", 1001, "name", placeName)
-                .centroid(FACTORY.createPoint(new Coordinate(-10, -10))));
+                .centroid(FACTORY.createPoint(new Coordinate(-10, -10))), 0);
         instance.finish();
         refresh();
 
@@ -111,10 +111,10 @@ public class QueryRelevanceTest extends ESBaseTester {
         Importer instance = makeImporter();
         instance.add(createDoc("place", "hamlet", 1000, "name", "Ham")
                         .importance(0.8)
-                .centroid(FACTORY.createPoint(new Coordinate(10, 10))));
+                .centroid(FACTORY.createPoint(new Coordinate(10, 10))), 0);
         instance.add(createDoc("place", "hamlet", 1001, "name", "Ham")
                         .importance(0.01)
-                .centroid(FACTORY.createPoint(new Coordinate(-10, -10))));
+                .centroid(FACTORY.createPoint(new Coordinate(-10, -10))), 0);
         instance.finish();
         refresh();
 

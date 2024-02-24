@@ -9,6 +9,7 @@ import de.komoot.photon.nominatim.testdb.CollectingImporter;
 import de.komoot.photon.nominatim.testdb.H2DataAdapter;
 import de.komoot.photon.nominatim.testdb.OsmlineTestRow;
 import de.komoot.photon.nominatim.testdb.PlacexTestRow;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
@@ -17,7 +18,7 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
-
+@Slf4j
 public class NominatimConnectorDBTest {
     private EmbeddedDatabase db;
     private NominatimConnector connector;
@@ -122,20 +123,58 @@ public class NominatimConnectorDBTest {
     }
 
     @Test
+    public void testInterpolationPoint() throws ParseException {
+        PlacexTestRow street = PlacexTestRow.make_street("La strada").add(jdbc);
+
+        OsmlineTestRow osmline =
+                new OsmlineTestRow().number(45, 45, 1).parent(street).geom("POINT(45 23)").add(jdbc);
+
+        connector.readEntireDatabase();
+
+        assertEquals(2, importer.size());
+
+        PlacexTestRow expect = new PlacexTestRow("place", "house_number")
+                .id(osmline.getPlaceId())
+                .parent(street)
+                .osm("W", 23)
+                .centroid(45.0, 23.0);
+
+        importer.assertContains(expect, "45");
+    }
+
+    @Test
     public void testInterpolationAny() throws ParseException {
         PlacexTestRow street = PlacexTestRow.make_street("La strada").add(jdbc);
 
         OsmlineTestRow osmline =
-                new OsmlineTestRow().number(1, 11, "all").parent(street).geom("LINESTRING(0 0, 0 1)").add(jdbc);
+                new OsmlineTestRow().number(1, 11, 1).parent(street).geom("LINESTRING(0 0, 0 1)").add(jdbc);
 
         connector.readEntireDatabase();
 
-        assertEquals(10, importer.size());
+        assertEquals(12, importer.size());
 
         PlacexTestRow expect = new PlacexTestRow("place", "house_number").id(osmline.getPlaceId()).parent(street).osm("W", 23);
 
-        for (int i = 2; i < 11; ++i) {
-            importer.assertContains(expect.centroid(0, (i - 1) * 0.1), i);
+        for (int i = 1; i <= 11; ++i) {
+            importer.assertContains(expect.centroid(0, (i - 1) * 0.1), String.valueOf(i));
+        }
+    }
+
+    @Test
+    public void testInterpolationWithSteps() throws ParseException {
+        PlacexTestRow street = PlacexTestRow.make_street("La strada").add(jdbc);
+
+        OsmlineTestRow osmline =
+                new OsmlineTestRow().number(10, 20, 2).parent(street).geom("LINESTRING(0 0, 0 1)").add(jdbc);
+
+        connector.readEntireDatabase();
+
+        assertEquals(7, importer.size());
+
+        PlacexTestRow expect = new PlacexTestRow("place", "house_number").id(osmline.getPlaceId()).parent(street).osm("W", 23);
+
+        for (int i = 0; i < 6; ++i) {
+            importer.assertContains(expect.centroid(0, i * 0.2), String.valueOf(10 + i * 2));
         }
     }
 
@@ -204,15 +243,15 @@ public class NominatimConnectorDBTest {
     @Test
     public void testObjectWithHousenumberList() throws ParseException {
         PlacexTestRow parent = PlacexTestRow.make_street("Main St").add(jdbc);
-        PlacexTestRow place = new PlacexTestRow("building", "yes").addr("housenumber", "1;2;3").parent(parent).add(jdbc);
+        PlacexTestRow place = new PlacexTestRow("building", "yes").addr("housenumber", "1;2a;3").parent(parent).add(jdbc);
 
         connector.readEntireDatabase();
 
         assertEquals(4, importer.size());
 
-        importer.assertContains(place, 1);
-        importer.assertContains(place, 2);
-        importer.assertContains(place, 3);
+        importer.assertContains(place, "1");
+        importer.assertContains(place, "2a");
+        importer.assertContains(place, "3");
     }
 
     /**
@@ -230,8 +269,8 @@ public class NominatimConnectorDBTest {
 
         assertEquals(3, importer.size());
 
-        importer.assertContains(place, 34);
-        importer.assertContains(place, 99521);
+        importer.assertContains(place, "34");
+        importer.assertContains(place, "99521");
     }
     /**
      * Unnamed objects are ignored when they do not have a housenumber.

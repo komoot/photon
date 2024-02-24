@@ -52,16 +52,16 @@ public class ElasticResultTest  extends ESBaseTester {
                 .names(makeMap("name", "München", "name:it", "Monacco", "name:en", "Munich"))
                 .address(Collections.singletonMap("state", "Bavaria"))
                 .countryCode("de")
-                .extraTags(makeMap("population", "many", "capital", "yes", "maxage", "99")));
+                .extraTags(makeMap("population", "many", "capital", "yes", "maxage", "99")), 0);
         instance.add(createDoc(0, 0, 99, 11999, "place", "locality")
-                .names(makeMap("name", "null island")));
+                .names(makeMap("name", "null island")), 0);
         instance.add(createDoc(-179, 1.0001, 923, 1923, "place", "house")
                 .houseNumber("34")
                 .bbox(FACTORY.createMultiPoint(new Coordinate[]{new Coordinate(-179.5, 1.0),
                         new Coordinate(-178.5, 1.1)}))
-                .address(makeMap("street", "Hauptstr", "city", "Hamburg")));
+                .address(makeMap("street", "Hauptstr", "city", "Hamburg")), 0);
         instance.add(new PhotonDoc(42, "N", 42, "place", "hamlet")
-                .names(makeMap("name", "nowhere")));
+                .names(makeMap("name", "nowhere")), 0);
 
         instance.finish();
         refresh();

@@ -50,7 +50,7 @@ public class QueryByLanguageTest extends ESBaseTester {
     public void queryNonStandardLanguages() throws IOException {
         Importer instance = setup("en", "fi");
 
-        instance.add(createDoc("name", "original", "name:fi", "finish", "name:ru", "russian"));
+        instance.add(createDoc("name", "original", "name:fi", "finish", "name:ru", "russian"), 0);
 
         instance.finish();
         refresh();
@@ -68,7 +68,7 @@ public class QueryByLanguageTest extends ESBaseTester {
     @Test
     public void queryAltNames() throws IOException {
         Importer instance = setup("de");
-        instance.add(createDoc("name", "simple", "alt_name", "ancient", "name:de", "einfach"));
+        instance.add(createDoc("name", "simple", "alt_name", "ancient", "name:de", "einfach"), 0);
         instance.finish();
         refresh();
 
@@ -92,7 +92,7 @@ public class QueryByLanguageTest extends ESBaseTester {
 
         doc.setAddressPartIfNew(addressType, address_names);
 
-        instance.add(doc);
+        instance.add(doc, 0);
         instance.finish();
         refresh();
 
@@ -104,7 +104,7 @@ public class QueryByLanguageTest extends ESBaseTester {
     @ValueSource(strings = {"default", "de", "en"})
     public void queryAltNamesFuzzy(String lang) throws IOException {
         Importer instance = setup("de", "en");
-        instance.add(createDoc("name", "simple", "alt_name", "ancient", "name:de", "einfach"));
+        instance.add(createDoc("name", "simple", "alt_name", "ancient", "name:de", "einfach"), 0);
         instance.finish();
         refresh();
 

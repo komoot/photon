@@ -11,7 +11,7 @@ public interface Importer {
      *
      * @param doc
      */
-    public void add(PhotonDoc doc);
+    public void add(PhotonDoc doc, int object_id);
 
     /**
      * import is finished

@@ -6,6 +6,7 @@ import de.komoot.photon.nominatim.model.UpdateRow;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
@@ -94,22 +95,29 @@ public class NominatimUpdater {
         int deletedPlaces = 0;
         for (UpdateRow place : getPlaces("placex")) {
             long placeId = place.getPlaceId();
+            int object_id = -1;
+            boolean check_for_multidoc = true;
 
-            // Always delete to catch some corner cases around places with exploded housenumbers.
-            updater.delete(placeId);
-
-            if (place.isToDelete()) {
-                deletedPlaces++;
-                continue;
+            if (!place.isToDelete()) {
+                final List<PhotonDoc> updatedDocs = exporter.getByPlaceId(placeId);
+                if (updatedDocs != null && !updatedDocs.isEmpty() && updatedDocs.get(0).isUsefulForIndex()) {
+                    check_for_multidoc = updatedDocs.get(0).getRankAddress() == 30;
+                    ++updatedPlaces;
+                    for (PhotonDoc updatedDoc : updatedDocs) {
+                            updater.create(updatedDoc, ++object_id);
+                    }
+                }
             }
 
-            final List<PhotonDoc> updatedDocs = exporter.getByPlaceId(placeId);
-            if (updatedDocs != null) {
-                updatedPlaces++;
-                for (PhotonDoc updatedDoc : updatedDocs) {
-                    if (updatedDoc.isUsefulForIndex()) {
-                        updater.create(updatedDoc);
-                    }
+            if (object_id < 0) {
+                ++deletedPlaces;
+                updater.delete(placeId, 0);
+                object_id = 0;
+            }
+
+            if (check_for_multidoc) {
+                while (updater.exists(placeId, ++object_id)) {
+                    updater.delete(placeId, object_id);
                 }
             }
         }
@@ -126,28 +134,31 @@ public class NominatimUpdater {
         LOGGER.info("Starting interpolations");
         int updatedInterpolations = 0;
         int deletedInterpolations = 0;
-        int interpolationDocuments = 0;
         for (UpdateRow place : getPlaces("location_property_osmline")) {
             long placeId = place.getPlaceId();
+            int object_id = -1;
 
-            updater.delete(placeId);
-            if (place.isToDelete()) {
-                deletedInterpolations++;
-                continue;
-            }
-
-            final List<PhotonDoc> updatedDocs = exporter.getInterpolationsByPlaceId(place.getPlaceId());
-            if (updatedDocs != null) {
-                updatedInterpolations++;
-                for (PhotonDoc updatedDoc : updatedDocs) {
-                    updater.create(updatedDoc);
-                    interpolationDocuments++;
+            if (!place.isToDelete()) {
+                final List<PhotonDoc> updatedDocs = exporter.getInterpolationsByPlaceId(placeId);
+                if (updatedDocs != null) {
+                    ++updatedInterpolations;
+                    for (PhotonDoc updatedDoc : updatedDocs) {
+                        updater.create(updatedDoc, ++object_id);
+                    }
                 }
             }
-        }
-        LOGGER.info(String.format("%d interpolations created or updated, %d deleted, %d documents added or updated", updatedInterpolations,
-                deletedInterpolations, interpolationDocuments));
 
+            if (object_id < 0) {
+                ++deletedInterpolations;
+            }
+
+            while (updater.exists(placeId, ++object_id)) {
+                updater.delete(placeId, object_id);
+            }
+        }
+
+        LOGGER.info(String.format("%d interpolations created or updated, %d deleted",
+                updatedInterpolations, deletedInterpolations));
     }
 
     private List<UpdateRow> getPlaces(String table) {
@@ -155,12 +166,24 @@ public class NominatimUpdater {
                 "DELETE FROM photon_updates WHERE rel = ?", "place_id, operation, indexed_date"),
                 (rs, rowNum) -> {
                     boolean isDelete = "DELETE".equals(rs.getString("operation"));
-                    return new UpdateRow(rs.getLong("place_id"), isDelete, rs.getDate("indexed_date"));
-                }, new Object[]{table});
+                    return new UpdateRow(rs.getLong("place_id"), isDelete, rs.getTimestamp("indexed_date"));
+                }, table);
 
-        results.sort(Comparator.comparing(UpdateRow::getUpdateDate));
+        // For each place only keep the newest item.
+        // Order doesn't really matter because updates of each place are independent now.
+        results.sort(Comparator.comparing(UpdateRow::getPlaceId).thenComparing(
+                     Comparator.comparing(UpdateRow::getUpdateDate).reversed()));
 
-        return results;
+        ArrayList<UpdateRow> todo = new ArrayList<>();
+        long prev_id = -1;
+        for (UpdateRow row: results) {
+            if (row.getPlaceId() != prev_id) {
+                prev_id = row.getPlaceId();
+                todo.add(row);
+            }
+        }
+
+        return todo;
     }
 
 
