@@ -5,7 +5,6 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.linearref.LengthIndexedLine;
 import de.komoot.photon.PhotonDoc;
-import lombok.extern.slf4j.Slf4j;
 
 import java.util.*;
 import java.util.regex.Pattern;
@@ -14,7 +13,6 @@ import java.util.regex.Pattern;
  * A Nominatim result consisting of the basic PhotonDoc for the object
  * and a map of attached house numbers together with their respective positions.
  */
-@Slf4j
 class NominatimResult {
     private PhotonDoc doc;
     private Map<String, Point> housenumbers;

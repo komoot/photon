@@ -4,19 +4,16 @@ import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Point;
 import de.komoot.photon.nominatim.model.AddressType;
-import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
 
 import java.util.*;
 
 /**
  * denormalized doc with all information needed be dumped to elasticsearch
- *
- * @author christoph
  */
-@Getter
-@Slf4j
 public class PhotonDoc {
+    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(PhotonDoc.class);
+
     private final long placeId;
     private final String osmType;
     private final long osmId;
@@ -108,8 +105,8 @@ public class PhotonDoc {
 
             String addressPostCode = address.get("postcode");
             if (addressPostCode != null && !addressPostCode.equals(postcode)) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Replacing postcode " + postcode + " with " + addressPostCode + " for osmId #" + osmId);
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Replacing postcode " + postcode + " with " + addressPostCode + " for osmId #" + osmId);
                 }
                 postcode = addressPostCode;
             }
@@ -223,8 +220,8 @@ public class PhotonDoc {
 
             String existingName = map.get("name");
             if (!field.equals(existingName)) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Replacing " + addressFieldName + " name '" + existingName + "' with '" + field + "' for osmId #" + osmId);
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Replacing " + addressFieldName + " name '" + existingName + "' with '" + field + "' for osmId #" + osmId);
                 }
                 // we keep the former name in the context as it might be helpful when looking up typos
                 if (!Objects.isNull(existingName)) {
@@ -248,4 +245,71 @@ public class PhotonDoc {
         addressParts.put(AddressType.COUNTRY, names);
     }
 
+    public long getPlaceId() {
+        return this.placeId;
+    }
+
+    public String getOsmType() {
+        return this.osmType;
+    }
+
+    public long getOsmId() {
+        return this.osmId;
+    }
+
+    public String getTagKey() {
+        return this.tagKey;
+    }
+
+    public String getTagValue() {
+        return this.tagValue;
+    }
+
+    public Map<String, String> getName() {
+        return this.name;
+    }
+
+    public String getPostcode() {
+        return this.postcode;
+    }
+
+    public Map<String, String> getExtratags() {
+        return this.extratags;
+    }
+
+    public Envelope getBbox() {
+        return this.bbox;
+    }
+
+    public long getParentPlaceId() {
+        return this.parentPlaceId;
+    }
+
+    public double getImportance() {
+        return this.importance;
+    }
+
+    public String getCountryCode() {
+        return this.countryCode;
+    }
+
+    public int getRankAddress() {
+        return this.rankAddress;
+    }
+
+    public Map<AddressType, Map<String, String>> getAddressParts() {
+        return this.addressParts;
+    }
+
+    public Set<Map<String, String>> getContext() {
+        return this.context;
+    }
+
+    public String getHouseNumber() {
+        return this.houseNumber;
+    }
+
+    public Point getCentroid() {
+        return this.centroid;
+    }
 }

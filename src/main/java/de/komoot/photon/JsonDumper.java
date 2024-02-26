@@ -1,6 +1,6 @@
 package de.komoot.photon;
 
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -8,11 +8,10 @@ import java.io.PrintWriter;
 
 /**
  * useful to create json files that can be used for fast re imports
- *
- * @author christoph
  */
-@Slf4j
 public class JsonDumper implements Importer {
+    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(JsonDumper.class);
+
     private PrintWriter writer;
     private final String[] languages;
     private final String[] extraTags;
@@ -29,7 +28,7 @@ public class JsonDumper implements Importer {
             writer.println("{\"index\": {}}");
             writer.println(Utils.convert(doc, languages, extraTags).string());
         } catch (IOException e) {
-            log.error("error writing json file", e);
+            LOGGER.error("error writing json file", e);
         }
     }
 

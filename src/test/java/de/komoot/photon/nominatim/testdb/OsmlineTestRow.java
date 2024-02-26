@@ -1,9 +1,7 @@
 package de.komoot.photon.nominatim.testdb;
 
-import lombok.Getter;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-@Getter
 public class OsmlineTestRow {
     private static long place_id_sequence = 100000;
 
@@ -45,5 +43,9 @@ public class OsmlineTestRow {
                 placeId, parentPlaceId, osmId, startnumber, endnumber, step, lineGeo, countryCode);
 
         return this;
+    }
+
+    public Long getPlaceId() {
+        return this.placeId;
     }
 }
