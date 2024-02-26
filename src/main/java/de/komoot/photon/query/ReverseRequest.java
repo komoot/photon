@@ -7,22 +7,19 @@ import de.komoot.photon.searcher.TagFilter;
 import java.io.Serializable;
 import java.util.*;
 
-/**
- * @author svantulden
- */
 public class ReverseRequest implements Serializable {
-    private Point location;
-    private String language;
-    private Double radius;
-    private Integer limit;
-    private String queryStringFilter;
-    private Boolean locationDistanceSort = true;
-    private Set<String> layerFilters;
+    private final Point location;
+    private final String language;
+    private final double radius;
+    private final int limit;
+    private final String queryStringFilter;
+    private final boolean locationDistanceSort;
+    private final Set<String> layerFilters;
     private final List<TagFilter> osmTagFilters = new ArrayList<>(1);
-    private boolean debug;
+    private final boolean debug;
 
-    public ReverseRequest(Point location, String language, Double radius, String queryStringFilter, Integer limit,
-                          Boolean locationDistanceSort, Set<String> layerFilter, boolean debug) {
+    public ReverseRequest(Point location, String language, double radius, String queryStringFilter, int limit,
+                          boolean locationDistanceSort, Set<String> layerFilter, boolean debug) {
         this.location = location;
         this.language = language;
         this.radius = radius;
@@ -41,11 +38,11 @@ public class ReverseRequest implements Serializable {
         return language;
     }
 
-    public Double getRadius() {
+    public double getRadius() {
         return radius;
     }
 
-    public Integer getLimit() {
+    public int getLimit() {
         return limit;
     }
 
@@ -53,7 +50,7 @@ public class ReverseRequest implements Serializable {
         return queryStringFilter;
     }
 
-    public Boolean getLocationDistanceSort() {
+    public boolean getLocationDistanceSort() {
         return locationDistanceSort;
     }
 
