@@ -95,7 +95,7 @@ public class Server {
 
             esClient = trClient;
 
-            LOGGER.info("Started elastic search client connected to " + String.join(", ", transportAddresses));
+            LOGGER.info("Started elastic search client connected to {}", String.join(", ", transportAddresses));
 
         } else {
 
@@ -107,7 +107,7 @@ public class Server {
                 esNode = new MyNode(settings, lList);
                 esNode.start();
 
-                LOGGER.info("started elastic search node");
+                LOGGER.info("Started elastic search node");
 
                 esClient = esNode.client();
 
@@ -254,7 +254,7 @@ public class Server {
 
         String version = properties.getOrDefault(FIELD_VERSION, "");
         if (!DATABASE_VERSION.equals(version)) {
-            LOGGER.error("Database has incompatible version '" + version + "'. Expected: " + DATABASE_VERSION);
+            LOGGER.error("Database has incompatible version '{}'. Expected: {}", version, DATABASE_VERSION);
             throw new RuntimeException("Incompatible database.");
         }
 

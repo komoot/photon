@@ -267,7 +267,7 @@ public class NominatimConnector {
             andCountryCodeStr = "AND country_code in (" + countryCodeStr + ")";
         }
 
-        LOGGER.info("start importing documents from nominatim (" + (countryCodeStr.isEmpty() ? "global" : countryCodeStr) + ")");
+        LOGGER.info("Start importing documents from nominatim ({})", countryCodeStr.isEmpty() ? "global" : countryCodeStr);
 
         ImportThread importThread = new ImportThread(importer);
 

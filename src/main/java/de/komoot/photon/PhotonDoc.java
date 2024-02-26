@@ -105,9 +105,7 @@ public class PhotonDoc {
 
             String addressPostCode = address.get("postcode");
             if (addressPostCode != null && !addressPostCode.equals(postcode)) {
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("Replacing postcode " + postcode + " with " + addressPostCode + " for osmId #" + osmId);
-                }
+                LOGGER.debug("Replacing postcode {} with {} for osmId #{}", postcode, addressPostCode, osmId);
                 postcode = addressPostCode;
             }
         }
@@ -220,9 +218,7 @@ public class PhotonDoc {
 
             String existingName = map.get("name");
             if (!field.equals(existingName)) {
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("Replacing " + addressFieldName + " name '" + existingName + "' with '" + field + "' for osmId #" + osmId);
-                }
+                LOGGER.debug("Replacing {} name '{}' with '{}' for osmId #{}", addressFieldName, existingName, field, osmId);
                 // we keep the former name in the context as it might be helpful when looking up typos
                 if (!Objects.isNull(existingName)) {
                     context.add(Collections.singletonMap("formerName", existingName));

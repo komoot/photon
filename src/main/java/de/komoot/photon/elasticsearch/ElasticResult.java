@@ -53,9 +53,9 @@ public class ElasticResult implements PhotonResult {
     public double[] getCoordinates() {
         final Map<String, Double> coordinate = (Map<String, Double>) result.getSource().get("coordinate");
         if (coordinate == null) {
-            LOGGER.error(String.format("invalid data [id=%s, type=%s], coordinate is missing!",
+            LOGGER.error("invalid data [id={}, type={}], coordinate is missing!",
                     result.getSource().get(Constants.OSM_ID),
-                    result.getSource().get(Constants.OSM_VALUE)));
+                    result.getSource().get(Constants.OSM_VALUE));
             return INVALID_COORDINATES;
         }
 

@@ -36,7 +36,7 @@ public class Importer implements de.komoot.photon.Importer {
             this.bulkRequest.add(this.esClient.prepareIndex(PhotonIndex.NAME, PhotonIndex.TYPE).
                     setSource(Utils.convert(doc, languages, extraTags)).setId(uid));
         } catch (IOException e) {
-            LOGGER.error("could not bulk add document " + uid, e);
+            LOGGER.error("Could not bulk add document {}", uid, e);
             return;
         }
         this.documentCount += 1;
@@ -50,7 +50,7 @@ public class Importer implements de.komoot.photon.Importer {
 
         BulkResponse bulkResponse = bulkRequest.execute().actionGet();
         if (bulkResponse.hasFailures()) {
-            LOGGER.error("error while bulk import:" + bulkResponse.buildFailureMessage());
+            LOGGER.error("Error during bulk import: {}", bulkResponse.buildFailureMessage());
         }
         this.bulkRequest = this.esClient.prepareBulk();
     }

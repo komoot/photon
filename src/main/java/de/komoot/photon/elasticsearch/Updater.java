@@ -37,7 +37,7 @@ public class Updater implements de.komoot.photon.Updater {
         try {
             bulkRequest.add(esClient.prepareIndex(PhotonIndex.NAME, PhotonIndex.TYPE).setSource(Utils.convert(doc, languages, extraTags)).setId(uid));
         } catch (IOException e) {
-            LOGGER.error(String.format("creation of new doc [%s] failed", uid), e);
+            LOGGER.error("Creation of new doc {} failed", uid, e);
         }
     }
 
@@ -63,7 +63,7 @@ public class Updater implements de.komoot.photon.Updater {
         }
         BulkResponse bulkResponse = bulkRequest.execute().actionGet();
         if (bulkResponse.hasFailures()) {
-            LOGGER.error("error while bulk update: " + bulkResponse.buildFailureMessage());
+            LOGGER.error("Error while bulk update: {}", bulkResponse.buildFailureMessage());
         }
         this.bulkRequest = this.esClient.prepareBulk();
     }

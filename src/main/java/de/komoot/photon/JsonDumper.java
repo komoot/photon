@@ -28,7 +28,7 @@ public class JsonDumper implements Importer {
             writer.println("{\"index\": {}}");
             writer.println(Utils.convert(doc, languages, extraTags).string());
         } catch (IOException e) {
-            LOGGER.error("error writing json file", e);
+            LOGGER.error("Error writing json file", e);
         }
     }
 

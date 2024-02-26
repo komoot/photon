@@ -78,7 +78,7 @@ public class App {
                 throw new ParameterException("Use only one cors configuration type");
             }
         } catch (ParameterException e) {
-            LOGGER.warn("could not start photon: " + e.getMessage());
+            LOGGER.warn("Could not start photon: {}", e.getMessage());
             jCommander.usage();
             System.exit(1);
         }
@@ -105,9 +105,9 @@ public class App {
             NominatimConnector nominatimConnector = new NominatimConnector(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
             nominatimConnector.setImporter(jsonDumper);
             nominatimConnector.readEntireDatabase(args.getCountryCodes());
-            LOGGER.info("json dump was created: " + filename);
+            LOGGER.info("Json dump was created: {}", filename);
         } catch (FileNotFoundException e) {
-            LOGGER.error("cannot create dump", e);
+            LOGGER.error("Cannot create dump", e);
         }
     }
 
@@ -120,15 +120,15 @@ public class App {
         try {
             dbProperties = esServer.recreateIndex(args.getLanguages()); // clear out previous data
         } catch (IOException e) {
-            throw new RuntimeException("cannot setup index, elastic search config files not readable", e);
+            throw new RuntimeException("Cannot setup index, elastic search config files not readable", e);
         }
 
-        LOGGER.info("starting import from nominatim to photon with languages: " + String.join(",", dbProperties.getLanguages()));
+        LOGGER.info("Starting import from nominatim to photon with languages: {}", String.join(",", dbProperties.getLanguages()));
         NominatimConnector nominatimConnector = new NominatimConnector(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
         nominatimConnector.setImporter(esServer.createImporter(dbProperties.getLanguages(), args.getExtraTags()));
         nominatimConnector.readEntireDatabase(args.getCountryCodes());
 
-        LOGGER.info("imported data from nominatim to photon with languages: " + String.join(",", dbProperties.getLanguages()));
+        LOGGER.info("Imported data from nominatim to photon with languages: {}", String.join(",", dbProperties.getLanguages()));
     }
 
     private static void startNominatimUpdateInit(CommandLineArgs args) {

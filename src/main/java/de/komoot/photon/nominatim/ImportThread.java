@@ -46,7 +46,7 @@ class ImportThread {
 
         if (counter.incrementAndGet() % PROGRESS_INTERVAL == 0) {
             final double documentsPerSecond = 1000d * counter.longValue() / (System.currentTimeMillis() - startMillis);
-            LOGGER.info(String.format("imported %d documents [%.1f/second]", counter.longValue(), documentsPerSecond));
+            LOGGER.info("Imported {} documents [{}/second]", counter.longValue(), documentsPerSecond);
         }
     }
 
@@ -67,7 +67,7 @@ class ImportThread {
                 Thread.currentThread().interrupt();
             }
         }
-        LOGGER.info(String.format("finished import of %d photon documents.", counter.longValue()));
+        LOGGER.info("Finished import of {} photon documents.", counter.longValue());
     }
 
     private class ImportRunnable implements Runnable {
@@ -85,7 +85,7 @@ class ImportThread {
                         importer.add(doc, object_id++);
                     }
                 } catch (InterruptedException e) {
-                    LOGGER.info("interrupted exception ", e);
+                    LOGGER.info("Interrupted exception", e);
                     // Restore interrupted state.
                     Thread.currentThread().interrupt();
                 }

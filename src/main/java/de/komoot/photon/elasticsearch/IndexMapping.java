@@ -47,7 +47,7 @@ public class IndexMapping {
         JSONObject propertiesObject = placeObject == null ? null : placeObject.optJSONObject("properties");
 
         if (propertiesObject == null) {
-            LOGGER.error("cannot add languages to mapping.json, please double-check the mappings.json or the language values supplied");
+            LOGGER.error("Cannot add languages to mapping.json, please double-check the mappings.json or the language values supplied");
             return this;
         }
 

@@ -122,7 +122,7 @@ public class NominatimUpdater {
             }
         }
 
-        LOGGER.info(String.format("%d places created or updated, %d deleted", updatedPlaces, deletedPlaces));
+        LOGGER.info("{} places created or updated, {} deleted", updatedPlaces, deletedPlaces);
     }
 
     /**
@@ -157,8 +157,7 @@ public class NominatimUpdater {
             }
         }
 
-        LOGGER.info(String.format("%d interpolations created or updated, %d deleted",
-                updatedInterpolations, deletedInterpolations));
+        LOGGER.info("{} interpolations created or updated, {} deleted", updatedInterpolations, deletedInterpolations);
     }
 
     private List<UpdateRow> getPlaces(String table) {
