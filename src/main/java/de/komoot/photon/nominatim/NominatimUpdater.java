@@ -13,8 +13,6 @@ import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Nominatim update logic
- *
- * @author felix
  */
 
 public class NominatimUpdater {
@@ -46,13 +44,6 @@ public class NominatimUpdater {
             + "CREATE OR REPLACE TRIGGER photon_trigger_delete_interpolation"
             + "   AFTER DELETE ON location_property_osmline FOR EACH ROW"
             + "   EXECUTE FUNCTION photon_update_func()";
-
-    private static final int CREATE = 1;
-    private static final int UPDATE = 2;
-    private static final int DELETE = 100;
-
-    private static final int MIN_RANK = 1;
-    private static final int MAX_RANK = 30;
 
     private final JdbcTemplate       template;
     private final NominatimConnector exporter;
