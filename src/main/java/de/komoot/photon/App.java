@@ -8,7 +8,7 @@ import de.komoot.photon.nominatim.NominatimUpdater;
 import de.komoot.photon.searcher.ReverseHandler;
 import de.komoot.photon.searcher.SearchHandler;
 import de.komoot.photon.utils.CorsFilter;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
 import spark.Request;
 import spark.Response;
 
@@ -18,8 +18,8 @@ import java.io.IOException;
 import static spark.Spark.*;
 
 
-@Slf4j
 public class App {
+    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(App.class);
 
     public static void main(String[] rawArgs) throws Exception {
         CommandLineArgs args = parseCommandLine(rawArgs);
@@ -37,9 +37,9 @@ public class App {
         boolean shutdownES = false;
         final Server esServer = new Server(args.getDataDirectory()).start(args.getCluster(), args.getTransportAddresses());
         try {
-            log.info("Make sure that the ES cluster is ready, this might take some time.");
+            LOGGER.info("Make sure that the ES cluster is ready, this might take some time.");
             esServer.waitForReady();
-            log.info("ES cluster is now ready.");
+            LOGGER.info("ES cluster is now ready.");
 
             if (args.isNominatimImport()) {
                 shutdownES = true;
@@ -78,7 +78,7 @@ public class App {
                 throw new ParameterException("Use only one cors configuration type");
             }
         } catch (ParameterException e) {
-            log.warn("could not start photon: " + e.getMessage());
+            LOGGER.warn("could not start photon: " + e.getMessage());
             jCommander.usage();
             System.exit(1);
         }
@@ -105,9 +105,9 @@ public class App {
             NominatimConnector nominatimConnector = new NominatimConnector(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
             nominatimConnector.setImporter(jsonDumper);
             nominatimConnector.readEntireDatabase(args.getCountryCodes());
-            log.info("json dump was created: " + filename);
+            LOGGER.info("json dump was created: " + filename);
         } catch (FileNotFoundException e) {
-            log.error("cannot create dump", e);
+            LOGGER.error("cannot create dump", e);
         }
     }
 
@@ -123,12 +123,12 @@ public class App {
             throw new RuntimeException("cannot setup index, elastic search config files not readable", e);
         }
 
-        log.info("starting import from nominatim to photon with languages: " + String.join(",", dbProperties.getLanguages()));
+        LOGGER.info("starting import from nominatim to photon with languages: " + String.join(",", dbProperties.getLanguages()));
         NominatimConnector nominatimConnector = new NominatimConnector(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
         nominatimConnector.setImporter(esServer.createImporter(dbProperties.getLanguages(), args.getExtraTags()));
         nominatimConnector.readEntireDatabase(args.getCountryCodes());
 
-        log.info("imported data from nominatim to photon with languages: " + String.join(",", dbProperties.getLanguages()));
+        LOGGER.info("imported data from nominatim to photon with languages: " + String.join(",", dbProperties.getLanguages()));
     }
 
     private static void startNominatimUpdateInit(CommandLineArgs args) {

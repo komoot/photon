@@ -2,20 +2,19 @@ package de.komoot.photon.elasticsearch;
 
 import de.komoot.photon.PhotonDoc;
 import de.komoot.photon.Utils;
-import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.client.Client;
+import org.slf4j.Logger;
 
 import java.io.IOException;
 
 /**
  * Updater for elasticsearch
- *
- * @author felix
  */
-@Slf4j
 public class Updater implements de.komoot.photon.Updater {
+    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(Updater.class);
+
     private final Client esClient;
     private BulkRequestBuilder bulkRequest;
     private final String[] languages;
@@ -38,7 +37,7 @@ public class Updater implements de.komoot.photon.Updater {
         try {
             bulkRequest.add(esClient.prepareIndex(PhotonIndex.NAME, PhotonIndex.TYPE).setSource(Utils.convert(doc, languages, extraTags)).setId(uid));
         } catch (IOException e) {
-            log.error(String.format("creation of new doc [%s] failed", uid), e);
+            LOGGER.error(String.format("creation of new doc [%s] failed", uid), e);
         }
     }
 
@@ -59,12 +58,12 @@ public class Updater implements de.komoot.photon.Updater {
 
     private void updateDocuments() {
         if (this.bulkRequest.numberOfActions() == 0) {
-            log.warn("Update empty");
+            LOGGER.warn("Update empty");
             return;
         }
         BulkResponse bulkResponse = bulkRequest.execute().actionGet();
         if (bulkResponse.hasFailures()) {
-            log.error("error while bulk update: " + bulkResponse.buildFailureMessage());
+            LOGGER.error("error while bulk update: " + bulkResponse.buildFailureMessage());
         }
         this.bulkRequest = this.esClient.prepareBulk();
     }

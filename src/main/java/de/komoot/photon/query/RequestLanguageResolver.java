@@ -1,6 +1,5 @@
 package de.komoot.photon.query;
 
-import lombok.AllArgsConstructor;
 import spark.Request;
 import spark.utils.StringUtils;
 
@@ -10,12 +9,16 @@ import java.util.Locale;
 /**
  * Resolver for the response language for a web request.
  */
-@AllArgsConstructor
 public class RequestLanguageResolver {
     static final String ACCEPT_LANGUAGE_HEADER = "Accept-Language";
 
     private final List<String> supportedLanguages;
     private final String defaultLanguage;
+
+    public RequestLanguageResolver(List<String> supportedLanguages, String defaultLanguage) {
+        this.supportedLanguages = supportedLanguages;
+        this.defaultLanguage = defaultLanguage;
+    }
 
     /**
      * Get the language to use for the response to the given request.

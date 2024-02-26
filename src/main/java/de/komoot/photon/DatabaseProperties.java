@@ -1,6 +1,5 @@
 package de.komoot.photon;
 
-import lombok.extern.slf4j.Slf4j;
 import java.util.*;
 
 /**
@@ -8,10 +7,7 @@ import java.util.*;
  *
  * The server is responsible for making the data persistent throught the Photon database.
  */
-@Slf4j
 public class DatabaseProperties {
-
-
     private String[] languages = null;
 
     /**

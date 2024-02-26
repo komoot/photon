@@ -1,20 +1,22 @@
 package de.komoot.photon.nominatim.model;
 
-import lombok.Data;
-
 import java.util.Map;
 
 /**
  * representation of an address as returned by nominatim's get_addressdata PL/pgSQL function
- *
- * @author christoph
  */
-@Data
 public class AddressRow {
     private final Map<String, String> name;
     private final String osmKey;
     private final String osmValue;
     private final int rankAddress;
+
+    public AddressRow(Map<String, String> name, String osmKey, String osmValue, int rankAddress) {
+        this.name = name;
+        this.osmKey = osmKey;
+        this.osmValue = osmValue;
+        this.rankAddress = rankAddress;
+    }
 
     public AddressType getAddressType() {
         return AddressType.fromRank(rankAddress);
@@ -30,5 +32,9 @@ public class AddressRow {
 
     public boolean isUsefulForContext() {
         return !name.isEmpty() && !isPostcode();
+    }
+
+    public Map<String, String> getName() {
+        return this.name;
     }
 }

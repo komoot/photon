@@ -2,7 +2,6 @@ package de.komoot.photon.nominatim.testdb;
 
 import de.komoot.photon.PhotonDoc;
 import de.komoot.photon.Updater;
-import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +9,6 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@Slf4j
 public class CollectingUpdater implements Updater {
     private List<Map.Entry<Integer, PhotonDoc>> created = new ArrayList<>();
     private List<Map.Entry<Integer, Long>> deleted = new ArrayList<>();

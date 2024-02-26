@@ -2,14 +2,15 @@ package de.komoot.photon.elasticsearch;
 
 import de.komoot.photon.Constants;
 import de.komoot.photon.searcher.PhotonResult;
-import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.search.SearchHit;
+import org.slf4j.Logger;
 
 import java.util.List;
 import java.util.Map;
 
-@Slf4j
 public class ElasticResult implements PhotonResult {
+    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(ElasticResult.class);
+
     private static final String[] NAME_PRECEDENCE = {"default", "housename", "int", "loc", "reg", "alt", "old"};
 
     private final SearchHit result;
@@ -52,7 +53,7 @@ public class ElasticResult implements PhotonResult {
     public double[] getCoordinates() {
         final Map<String, Double> coordinate = (Map<String, Double>) result.getSource().get("coordinate");
         if (coordinate == null) {
-            log.error(String.format("invalid data [id=%s, type=%s], coordinate is missing!",
+            LOGGER.error(String.format("invalid data [id=%s, type=%s], coordinate is missing!",
                     result.getSource().get(Constants.OSM_ID),
                     result.getSource().get(Constants.OSM_VALUE)));
             return INVALID_COORDINATES;

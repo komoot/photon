@@ -5,7 +5,6 @@ import de.komoot.photon.PhotonDoc;
 import de.komoot.photon.Importer;
 import de.komoot.photon.nominatim.model.AddressType;
 import de.komoot.photon.searcher.PhotonResult;
-import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -20,7 +19,6 @@ import java.util.*;
 /**
  * Tests for queries in different languages.
  */
-@Slf4j
 public class QueryByLanguageTest extends ESBaseTester {
     private int testDocId = 10001;
     private String[] languageList;

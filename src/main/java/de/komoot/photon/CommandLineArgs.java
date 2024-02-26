@@ -6,12 +6,10 @@ package de.komoot.photon;
 
 import com.beust.jcommander.Parameter;
 import de.komoot.photon.utils.StringArrayConverter;
-import lombok.Data;
 
 import java.io.File;
 
 
-@Data
 public class CommandLineArgs {
 
     @Parameter(names = "-cluster", description = "name of elasticsearch cluster to put the server into (default is 'photon')")
@@ -96,6 +94,98 @@ public class CommandLineArgs {
 
     public String[] getLanguages() {
         return getLanguages(true);
+    }
+
+    public String getCluster() {
+        return this.cluster;
+    }
+
+    public String[] getTransportAddresses() {
+        return this.transportAddresses;
+    }
+
+    public boolean isNominatimImport() {
+        return this.nominatimImport;
+    }
+
+    public String getNominatimUpdateInit() {
+        return this.nominatimUpdateInit;
+    }
+
+    public boolean isNominatimUpdate() {
+        return this.nominatimUpdate;
+    }
+
+    public String getDefaultLanguage() {
+        return this.defaultLanguage;
+    }
+
+    public String[] getCountryCodes() {
+        return this.countryCodes;
+    }
+
+    public String[] getExtraTags() {
+        return this.extraTags;
+    }
+
+    public String getSynonymFile() {
+        return this.synonymFile;
+    }
+
+    public int getQueryTimeout() {
+        return this.queryTimeout;
+    }
+
+    public String getJsonDump() {
+        return this.jsonDump;
+    }
+
+    public String getHost() {
+        return this.host;
+    }
+
+    public Integer getPort() {
+        return this.port;
+    }
+
+    public String getDatabase() {
+        return this.database;
+    }
+
+    public String getUser() {
+        return this.user;
+    }
+
+    public String getPassword() {
+        return this.password;
+    }
+
+    public String getDataDirectory() {
+        return this.dataDirectory;
+    }
+
+    public int getListenPort() {
+        return this.listenPort;
+    }
+
+    public String getListenIp() {
+        return this.listenIp;
+    }
+
+    public boolean isCorsAnyOrigin() {
+        return this.corsAnyOrigin;
+    }
+
+    public String getCorsOrigin() {
+        return this.corsOrigin;
+    }
+
+    public boolean isEnableUpdateApi() {
+        return this.enableUpdateApi;
+    }
+
+    public boolean isUsage() {
+        return this.usage;
     }
 }
 

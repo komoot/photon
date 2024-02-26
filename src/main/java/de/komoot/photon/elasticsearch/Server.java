@@ -5,7 +5,6 @@ import de.komoot.photon.Importer;
 import de.komoot.photon.Updater;
 import de.komoot.photon.searcher.ReverseHandler;
 import de.komoot.photon.searcher.SearchHandler;
-import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.TransportClient;
@@ -20,22 +19,25 @@ import org.elasticsearch.node.NodeValidationException;
 import org.elasticsearch.plugins.Plugin;
 import org.elasticsearch.transport.Netty4Plugin;
 import org.elasticsearch.transport.client.PreBuiltTransportClient;
+import org.slf4j.Logger;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
-import java.util.*;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.Map;
 
 /**
  * Helper class to start/stop elasticsearch node and get elasticsearch clients
- *
- * @author felix
  */
-@Slf4j
 public class Server {
+    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(Server.class);
+
     /**
      * Database version created by new imports with the current code.
      *
@@ -93,7 +95,7 @@ public class Server {
 
             esClient = trClient;
 
-            log.info("Started elastic search client connected to " + String.join(", ", transportAddresses));
+            LOGGER.info("Started elastic search client connected to " + String.join(", ", transportAddresses));
 
         } else {
 
@@ -105,7 +107,7 @@ public class Server {
                 esNode = new MyNode(settings, lList);
                 esNode.start();
 
-                log.info("started elastic search node");
+                LOGGER.info("started elastic search node");
 
                 esClient = esNode.client();
 
@@ -252,7 +254,7 @@ public class Server {
 
         String version = properties.getOrDefault(FIELD_VERSION, "");
         if (!DATABASE_VERSION.equals(version)) {
-            log.error("Database has incompatible version '" + version + "'. Expected: " + DATABASE_VERSION);
+            LOGGER.error("Database has incompatible version '" + version + "'. Expected: " + DATABASE_VERSION);
             throw new RuntimeException("Incompatible database.");
         }
 

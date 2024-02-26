@@ -2,7 +2,6 @@ package de.komoot.photon.query;
 
 import de.komoot.photon.*;
 import de.komoot.photon.searcher.PhotonResult;
-import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,7 +16,6 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@Slf4j
 public class QueryByClassificationTest extends ESBaseTester {
     @TempDir
     static Path sharedTempDir;
