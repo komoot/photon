@@ -14,9 +14,6 @@ import java.util.List;
 
 import static spark.Spark.halt;
 
-/**
- * Created by Sachin Dole on 2/12/2015.
- */
 public class SearchRequestHandler extends RouteImpl {
     private final PhotonRequestFactory photonRequestFactory;
     private final SearchHandler requestHandler;
@@ -36,7 +33,7 @@ public class SearchRequestHandler extends RouteImpl {
         } catch (BadRequestException e) {
             JSONObject json = new JSONObject();
             json.put("message", e.getMessage());
-            halt(e.getHttpStatus(), json.toString());
+            throw halt(e.getHttpStatus(), json.toString());
         }
 
         List<PhotonResult> results = requestHandler.search(photonRequest);
