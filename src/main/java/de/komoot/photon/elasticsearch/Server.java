@@ -6,7 +6,6 @@ import de.komoot.photon.Updater;
 import de.komoot.photon.searcher.ReverseHandler;
 import de.komoot.photon.searcher.SearchHandler;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.SystemUtils;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.TransportClient;
@@ -67,11 +66,7 @@ public class Server {
 
     public Server(String mainDirectory) {
         try {
-            if (SystemUtils.IS_OS_WINDOWS) {
-                setupDirectories(new URL("file:///" + mainDirectory));
-            } else {
-                setupDirectories(new URL("file://" + mainDirectory));
-            }
+            setupDirectories(new File(mainDirectory).toURI().toURL());
         } catch (Exception e) {
             throw new RuntimeException("Can't create directories: " + mainDirectory, e);
         }
