@@ -193,6 +193,6 @@ public class Utils {
             }
         }
 
-        return "tpfld" + value.replaceAll("_", "").toLowerCase() + "clsfld" + key.replaceAll("_", "").toLowerCase();
+        return "tpfld" + value.replace("_", "").toLowerCase() + "clsfld" + key.replace("_", "").toLowerCase();
     }
 }
