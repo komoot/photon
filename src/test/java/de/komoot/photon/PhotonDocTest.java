@@ -7,10 +7,10 @@ import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class PhotonDocTest {
+class PhotonDocTest {
 
     @Test
-    public void testCompleteAddressOverwritesStreet() {
+    void testCompleteAddressOverwritesStreet() {
         PhotonDoc doc = simplePhotonDoc();
         
         HashMap<String, String> streetNames = new HashMap<>();
@@ -24,7 +24,7 @@ public class PhotonDocTest {
     }
 
     @Test
-    public void testCompleteAddressCreatesStreetIfNonExistantBefore() {
+    void testCompleteAddressCreatesStreetIfNonExistantBefore() {
         PhotonDoc doc = simplePhotonDoc();
 
         HashMap<String, String> address = new HashMap<>();
@@ -34,7 +34,7 @@ public class PhotonDocTest {
     }
 
     @Test
-    public void testAddCountryCode() {
+    void testAddCountryCode() {
         PhotonDoc doc = new PhotonDoc(1, "W", 2, "highway", "residential").countryCode("de");
 
         assertNotNull(doc.getCountryCode());

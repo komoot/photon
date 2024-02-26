@@ -14,7 +14,7 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class ImporterTest extends ESBaseTester {
+class ImporterTest extends ESBaseTester {
 
     @BeforeEach
     public void setUp() throws IOException {
@@ -22,7 +22,7 @@ public class ImporterTest extends ESBaseTester {
     }
 
     @Test
-    public void testAddSimpleDoc() {
+    void testAddSimpleDoc() {
         Importer instance = makeImporterWithExtra("");
 
         instance.add(new PhotonDoc(1234, "N", 1000, "place", "city")
@@ -43,7 +43,7 @@ public class ImporterTest extends ESBaseTester {
     }
 
     @Test
-    public void testAddHousenumberMultiDoc() {
+    void testAddHousenumberMultiDoc() {
         Importer instance = makeImporterWithExtra("");
 
         instance.add(new PhotonDoc(4432, "N", 100, "building", "yes").houseNumber("34"), 0);
@@ -73,7 +73,7 @@ public class ImporterTest extends ESBaseTester {
     }
 
     @Test
-    public void testSelectedExtraTagsCanBeIncluded() {
+    void testSelectedExtraTagsCanBeIncluded() {
         Importer instance = makeImporterWithExtra("maxspeed", "website");
 
         Map<String, String> extratags = new HashMap<>();

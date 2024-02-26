@@ -10,10 +10,10 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class GeocodeJsonFormatterTest {
+class GeocodeJsonFormatterTest {
 
     @Test
-    public void testConvertToGeojson() {
+    void testConvertToGeojson() {
         GeocodeJsonFormatter formatter = new GeocodeJsonFormatter(false, "en");
         List<PhotonResult> allResults = new ArrayList<>();
         allResults.add(createDummyResult("99999", "Park Foo", "leisure", "park"));

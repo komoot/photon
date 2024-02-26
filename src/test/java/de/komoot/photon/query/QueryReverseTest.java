@@ -21,12 +21,12 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class QueryReverseTest extends ESBaseTester {
+class QueryReverseTest extends ESBaseTester {
     @TempDir
     private static Path instanceTestDirectory;
 
     @BeforeAll
-    public void setup() throws IOException {
+    void setup() throws IOException {
         setUpES(instanceTestDirectory, "en");
 
         Importer instance = makeImporter();
@@ -53,7 +53,7 @@ public class QueryReverseTest extends ESBaseTester {
     }
 
     @Test
-    public void testReverse() {
+    void testReverse() {
         List<PhotonResult> results = reverse(10, 10, 0.1, 1);
 
         assertEquals(1, results.size());
@@ -62,7 +62,7 @@ public class QueryReverseTest extends ESBaseTester {
 
     @ParameterizedTest
     @ValueSource(ints = {2, 3, 10})
-    public void testReverseMultiple(int limit) {
+    void testReverseMultiple(int limit) {
         List<PhotonResult> results = reverse(10, 10, 20, limit);
 
         assertEquals(2, results.size());

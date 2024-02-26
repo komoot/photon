@@ -9,13 +9,13 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * Tests for the database-global property store.
  */
-public class DatabasePropertiesTest extends ESBaseTester {
+class DatabasePropertiesTest extends ESBaseTester {
 
     /**
      * setLanguages() overwrites the language settings.
      */
     @Test
-    public void testSetLanguages() {
+    void testSetLanguages() {
         DatabaseProperties prop = new DatabaseProperties();
 
         prop.setLanguages(new String[]{"en", "bg", "de"});
@@ -29,7 +29,7 @@ public class DatabasePropertiesTest extends ESBaseTester {
      * If languages is not set, then the restricted language set is used as is.
      */
     @Test
-    public void testRestrictLanguagesUnsetLanguages() {
+    void testRestrictLanguagesUnsetLanguages() {
         DatabaseProperties prop = new DatabaseProperties();
         prop.restrictLanguages(new String[]{"en", "bg", "de"});
 
@@ -41,7 +41,7 @@ public class DatabasePropertiesTest extends ESBaseTester {
      * that already exist and the order of the input is preserved.
      */
     @Test
-    public void testRestrictLanguagesAlreadySet() {
+    void testRestrictLanguagesAlreadySet() {
         DatabaseProperties prop = new DatabaseProperties();
         prop.setLanguages(new String[]{"en", "de", "fr"});
 

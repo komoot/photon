@@ -18,11 +18,11 @@ import static spark.Spark.*;
 /**
  * These test connect photon to an already running ES node (setup in ESBaseTester) so that we can directly test the API
  */
-public class ApiIntegrationTest extends ESBaseTester {
+class ApiIntegrationTest extends ESBaseTester {
     private static final int LISTEN_PORT = 30234;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         setUpES();
         Importer instance = makeImporter();
         instance.add(createDoc(13.38886, 52.51704, 1000, 1000, "place", "city").importance(0.6), 0);
@@ -32,7 +32,7 @@ public class ApiIntegrationTest extends ESBaseTester {
     }
 
     @AfterEach
-    public void shutdown() {
+    void shutdown() {
         stop();
         awaitStop();
     }
@@ -41,7 +41,7 @@ public class ApiIntegrationTest extends ESBaseTester {
      * Test that the Access-Control-Allow-Origin header is not set
      */
     @Test
-    public void testNoCors() throws Exception {
+    void testNoCors() throws Exception {
         App.main(new String[]{"-cluster", TEST_CLUSTER_NAME, "-listen-port", Integer.toString(LISTEN_PORT), "-transport-addresses", "127.0.0.1"});
         awaitInitialization();
         HttpURLConnection connection = (HttpURLConnection) new URL("http://127.0.0.1:" + port() + "/api?q=berlin").openConnection();
@@ -52,7 +52,7 @@ public class ApiIntegrationTest extends ESBaseTester {
      * Test that the Access-Control-Allow-Origin header is set to *
      */
     @Test
-    public void testCorsAny() throws Exception {
+    void testCorsAny() throws Exception {
         App.main(new String[]{"-cluster", TEST_CLUSTER_NAME, "-listen-port", Integer.toString(LISTEN_PORT), "-transport-addresses", "127.0.0.1",
                 "-cors-any"});
         awaitInitialization();
@@ -64,7 +64,7 @@ public class ApiIntegrationTest extends ESBaseTester {
      * Test that the Access-Control-Allow-Origin header is set to a specific domain
      */
     @Test
-    public void testCorsOriginIsSetToSpecificDomain() throws Exception {
+    void testCorsOriginIsSetToSpecificDomain() throws Exception {
         App.main(new String[]{"-cluster", TEST_CLUSTER_NAME, "-listen-port", Integer.toString(LISTEN_PORT), "-transport-addresses", "127.0.0.1",
                 "-cors-origin", "www.poole.ch"});
         awaitInitialization();
@@ -73,7 +73,7 @@ public class ApiIntegrationTest extends ESBaseTester {
     }
 
     @Test
-    public void testSearchForBerlin() throws Exception {
+    void testSearchForBerlin() throws Exception {
         App.main(new String[]{"-cluster", TEST_CLUSTER_NAME, "-listen-port", Integer.toString(LISTEN_PORT), "-transport-addresses", "127.0.0.1"});
         awaitInitialization();
         HttpURLConnection connection = (HttpURLConnection) new URL("http://127.0.0.1:" + port() + "/api?q=berlin&limit=1").openConnection();
@@ -93,7 +93,7 @@ public class ApiIntegrationTest extends ESBaseTester {
      * Search with location bias (this should give the last generated object which is roughly 2km away from the first)
      */
     @Test
-    public void testApiWithLocationBias() throws Exception {
+    void testApiWithLocationBias() throws Exception {
         App.main(new String[]{"-cluster", TEST_CLUSTER_NAME, "-listen-port", Integer.toString(LISTEN_PORT), "-transport-addresses", "127.0.0.1"});
         awaitInitialization();
         HttpURLConnection connection = (HttpURLConnection) new URL("http://127.0.0.1:" + port() + "/api?q=berlin&limit=1&lat=52.54714&lon=13.39026&zoom=16")
@@ -114,7 +114,7 @@ public class ApiIntegrationTest extends ESBaseTester {
      * Search with large location bias
      */
     @Test
-    public void testApiWithLargerLocationBias() throws Exception {
+    void testApiWithLargerLocationBias() throws Exception {
         App.main(new String[]{"-cluster", TEST_CLUSTER_NAME, "-listen-port", Integer.toString(LISTEN_PORT), "-transport-addresses", "127.0.0.1"});
         awaitInitialization();
         HttpURLConnection connection = (HttpURLConnection) new URL("http://127.0.0.1:" + port() + "/api?q=berlin&limit=1&lat=52.54714&lon=13.39026&zoom=12&location_bias_scale=0.6")
@@ -135,7 +135,7 @@ public class ApiIntegrationTest extends ESBaseTester {
      * Reverse geocode test
      */
     @Test
-    public void testApiReverse() throws Exception {
+    void testApiReverse() throws Exception {
         App.main(new String[]{"-cluster", TEST_CLUSTER_NAME, "-listen-port", Integer.toString(LISTEN_PORT), "-transport-addresses", "127.0.0.1"});
         awaitInitialization();
         HttpURLConnection connection = (HttpURLConnection) new URL("http://127.0.0.1:" + port() + "/reverse/?lon=13.38886&lat=52.51704").openConnection();
