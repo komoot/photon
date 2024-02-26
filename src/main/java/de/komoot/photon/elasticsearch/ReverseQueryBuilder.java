@@ -43,7 +43,7 @@ public class ReverseQueryBuilder {
         if (queryStringFilter != null && queryStringFilter.trim().length() > 0)
             finalQuery.must(QueryBuilders.queryStringQuery(queryStringFilter));
 
-        if (layerFilter.size() > 0) {
+        if (!layerFilter.isEmpty()) {
             finalQuery.must(new TermsQueryBuilder("type", layerFilter));
         }
 
@@ -52,7 +52,7 @@ public class ReverseQueryBuilder {
             finalQuery.filter(tagFilters);
         }
 
-        if (finalQuery.must().size() == 0) {
+        if (finalQuery.must().isEmpty()) {
             finalQuery.must(QueryBuilders.matchAllQuery());
         }
 

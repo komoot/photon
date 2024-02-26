@@ -27,7 +27,6 @@ import java.util.*;
  * {@link QueryBuilder filtered query}. Further calls to any methods will have no effect on this query builder.</li>
  * </ul>
  * <p/>
- * Created by Sachin Dole on 2/12/2015.
  */
 public class PhotonQueryBuilder {
     private static final String[] ALT_NAMES = new String[]{"alt", "int", "loc", "old", "reg", "housename"};
@@ -182,7 +181,7 @@ public class PhotonQueryBuilder {
     }
 
     public PhotonQueryBuilder withLayerFilters(Set<String> filters) {
-        if (filters.size() > 0) {
+        if (!filters.isEmpty()) {
             layerQueryBuilder = new TermsQueryBuilder("type", filters);
         }
 
