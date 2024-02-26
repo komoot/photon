@@ -80,9 +80,9 @@ class ImportThread {
                     if (docs == FINAL_DOCUMENT) {
                         break;
                     }
-                    int object_id = 0;
+                    int objectId = 0;
                     for (PhotonDoc doc : docs.getDocsWithHousenumber()) {
-                        importer.add(doc, object_id++);
+                        importer.add(doc, objectId++);
                     }
                 } catch (InterruptedException e) {
                     LOGGER.info("Interrupted exception", e);

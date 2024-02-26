@@ -77,8 +77,8 @@ public class NominatimUpdater {
     public void update() {
         if (updateLock.tryLock()) {
             try {
-                update_from_placex();
-                update_from_interpolations();
+                updateFromPlacex();
+                updateFromInterpolations();
                 updater.finish();
                 LOGGER.info("Finished updating");
             } finally {
@@ -89,35 +89,35 @@ public class NominatimUpdater {
         }
     }
 
-    private void update_from_placex() {
+    private void updateFromPlacex() {
         LOGGER.info("Starting place updates");
         int updatedPlaces = 0;
         int deletedPlaces = 0;
         for (UpdateRow place : getPlaces("placex")) {
             long placeId = place.getPlaceId();
-            int object_id = -1;
-            boolean check_for_multidoc = true;
+            int objectId = -1;
+            boolean checkForMultidoc = true;
 
             if (!place.isToDelete()) {
                 final List<PhotonDoc> updatedDocs = exporter.getByPlaceId(placeId);
                 if (updatedDocs != null && !updatedDocs.isEmpty() && updatedDocs.get(0).isUsefulForIndex()) {
-                    check_for_multidoc = updatedDocs.get(0).getRankAddress() == 30;
+                    checkForMultidoc = updatedDocs.get(0).getRankAddress() == 30;
                     ++updatedPlaces;
                     for (PhotonDoc updatedDoc : updatedDocs) {
-                            updater.create(updatedDoc, ++object_id);
+                            updater.create(updatedDoc, ++objectId);
                     }
                 }
             }
 
-            if (object_id < 0) {
+            if (objectId < 0) {
                 ++deletedPlaces;
                 updater.delete(placeId, 0);
-                object_id = 0;
+                objectId = 0;
             }
 
-            if (check_for_multidoc) {
-                while (updater.exists(placeId, ++object_id)) {
-                    updater.delete(placeId, object_id);
+            if (checkForMultidoc) {
+                while (updater.exists(placeId, ++objectId)) {
+                    updater.delete(placeId, objectId);
                 }
             }
         }
@@ -128,7 +128,7 @@ public class NominatimUpdater {
     /**
      * Update documents generated from address interpolations.
      */
-    private void update_from_interpolations() {
+    private void updateFromInterpolations() {
         // .isUsefulForIndex() should always return true for documents
         // created from interpolations so no need to check them
         LOGGER.info("Starting interpolations");
@@ -136,24 +136,24 @@ public class NominatimUpdater {
         int deletedInterpolations = 0;
         for (UpdateRow place : getPlaces("location_property_osmline")) {
             long placeId = place.getPlaceId();
-            int object_id = -1;
+            int objectId = -1;
 
             if (!place.isToDelete()) {
                 final List<PhotonDoc> updatedDocs = exporter.getInterpolationsByPlaceId(placeId);
                 if (updatedDocs != null) {
                     ++updatedInterpolations;
                     for (PhotonDoc updatedDoc : updatedDocs) {
-                        updater.create(updatedDoc, ++object_id);
+                        updater.create(updatedDoc, ++objectId);
                     }
                 }
             }
 
-            if (object_id < 0) {
+            if (objectId < 0) {
                 ++deletedInterpolations;
             }
 
-            while (updater.exists(placeId, ++object_id)) {
-                updater.delete(placeId, object_id);
+            while (updater.exists(placeId, ++objectId)) {
+                updater.delete(placeId, objectId);
             }
         }
 
@@ -174,10 +174,10 @@ public class NominatimUpdater {
                      Comparator.comparing(UpdateRow::getUpdateDate).reversed()));
 
         ArrayList<UpdateRow> todo = new ArrayList<>();
-        long prev_id = -1;
+        long prevId = -1;
         for (UpdateRow row: results) {
-            if (row.getPlaceId() != prev_id) {
-                prev_id = row.getPlaceId();
+            if (row.getPlaceId() != prevId) {
+                prevId = row.getPlaceId();
                 todo.add(row);
             }
         }

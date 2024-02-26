@@ -16,19 +16,19 @@ public class CollectingUpdater implements Updater {
     private int finishCalled = 0;
 
     @Override
-    public void create(PhotonDoc doc, int object_id) {
-        created.add(Map.entry(object_id, doc));
+    public void create(PhotonDoc doc, int objectId) {
+        created.add(Map.entry(objectId, doc));
     }
 
     @Override
-    public void delete(long id, int object_id) {
-        deleted.add(Map.entry(object_id, id));
+    public void delete(long docId, int objectId) {
+        deleted.add(Map.entry(objectId, docId));
     }
 
     @Override
-    public boolean exists(long id, int object_id) {
+    public boolean exists(long docId, int objectId) {
         for (Map.Entry<Integer, Long> entry: existing) {
-            if (entry.getKey() == object_id && id == entry.getValue()) {
+            if (entry.getKey() == objectId && docId == entry.getValue()) {
                 return true;
             }
         }

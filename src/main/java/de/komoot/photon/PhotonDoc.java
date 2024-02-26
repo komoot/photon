@@ -156,35 +156,35 @@ public class PhotonDoc {
         return this;
     }
 
-    public String getUid(int object_id) {
-        if (object_id <= 0)
+    public String getUid(int objectId) {
+        if (objectId <= 0)
             return String.valueOf(placeId);
 
-        return String.format("%d.%d", placeId, object_id);
+        return String.format("%d.%d", placeId, objectId);
     }
 
-    public void copyName(Map<String, String> target, String target_field, String name_field) {
-        String outname = name.get("_place_" + name_field);
+    public void copyName(Map<String, String> target, String targetField, String nameField) {
+        String outname = name.get("_place_" + nameField);
         if (outname == null) {
-            outname = name.get(name_field);
+            outname = name.get(nameField);
         }
 
         if (outname != null) {
-            target.put(target_field, outname);
+            target.put(targetField, outname);
         }
     }
 
-    public void copyAddressName(Map<String, String> target, String target_field, AddressType address_field, String name_field) {
-        Map<String, String> names = addressParts.get(address_field);
+    public void copyAddressName(Map<String, String> target, String targetField, AddressType addressType, String nameField) {
+        Map<String, String> names = addressParts.get(addressType);
 
         if (names != null) {
-            String outname = names.get("_place_" + name_field);
+            String outname = names.get("_place_" + nameField);
             if (outname == null) {
-                outname = names.get(name_field);
+                outname = names.get(nameField);
             }
 
             if (outname != null) {
-                target.put(target_field, outname);
+                target.put(targetField, outname);
             }
         }
     }

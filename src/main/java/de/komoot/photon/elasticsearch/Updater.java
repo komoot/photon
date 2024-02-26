@@ -32,8 +32,8 @@ public class Updater implements de.komoot.photon.Updater {
     }
 
     @Override
-    public void create(PhotonDoc doc, int object_id) {
-        String uid = doc.getUid(object_id);
+    public void create(PhotonDoc doc, int objectId) {
+        String uid = doc.getUid(objectId);
         try {
             bulkRequest.add(esClient.prepareIndex(PhotonIndex.NAME, PhotonIndex.TYPE).setSource(Utils.convert(doc, languages, extraTags)).setId(uid));
         } catch (IOException e) {
@@ -41,19 +41,19 @@ public class Updater implements de.komoot.photon.Updater {
         }
     }
 
-    public void delete(long doc_id, int object_id) {
-        this.bulkRequest.add(this.esClient.prepareDelete(PhotonIndex.NAME, PhotonIndex.TYPE, makeUid(doc_id, object_id)));
+    public void delete(long docId, int objectId) {
+        this.bulkRequest.add(this.esClient.prepareDelete(PhotonIndex.NAME, PhotonIndex.TYPE, makeUid(docId, objectId)));
     }
 
-    public boolean exists(long doc_id, int object_id) {
-        return esClient.prepareGet(PhotonIndex.NAME, PhotonIndex.TYPE, makeUid(doc_id, object_id)).execute().actionGet().isExists();
+    public boolean exists(long docId, int objectId) {
+        return esClient.prepareGet(PhotonIndex.NAME, PhotonIndex.TYPE, makeUid(docId, objectId)).execute().actionGet().isExists();
     }
 
-    private String makeUid(Long doc_id, int object_id) {
-        if (object_id <= 0) {
-            return String.valueOf(doc_id);
+    private String makeUid(Long docId, int objectId) {
+        if (objectId <= 0) {
+            return String.valueOf(docId);
         }
-        return String.format("%d.%d", doc_id, object_id);
+        return String.format("%d.%d", docId, objectId);
     }
 
     private void updateDocuments() {

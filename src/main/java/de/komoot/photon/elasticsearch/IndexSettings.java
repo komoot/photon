@@ -180,12 +180,12 @@ public class IndexSettings {
         }
 
         // We can't just insert items, so build a new array instead.
-        JSONArray new_array = new JSONArray();
+        JSONArray newArray = new JSONArray();
         boolean done = false;
         for (int i = 0; i < array.length(); i++) {
-            new_array.put(array.get(i));
+            newArray.put(array.get(i));
             if (!done && positionString.equals(array.getString(i))) {
-                new_array.put(value);
+                newArray.put(value);
                 done = true;
             }
         }
@@ -194,6 +194,6 @@ public class IndexSettings {
             throw new RuntimeException("Analyser update: cannot find position string " + positionString);
         }
 
-        parent.put(field, new_array);
+        parent.put(field, newArray);
     }
 }
