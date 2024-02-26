@@ -157,7 +157,7 @@ class ReverseRequestFactoryTest {
         Mockito.when(mockRequest.queryParams("radius")).thenReturn("5.1");
         ReverseRequestFactory reverseRequestFactory = new ReverseRequestFactory(Collections.singletonList("en"), "en");
         reverseRequest = reverseRequestFactory.create(mockRequest);
-        assertEquals(reverseRequest.getRadius(), 5.1d, 0);
+        assertEquals(5.1d, reverseRequest.getRadius(), 0);
         Mockito.verify(mockRequest, Mockito.times(1)).queryParams("radius");
     }
 
@@ -182,7 +182,7 @@ class ReverseRequestFactoryTest {
         Mockito.when(mockRequest.queryParams("limit")).thenReturn("51");
         ReverseRequestFactory reverseRequestFactory = new ReverseRequestFactory(Collections.singletonList("en"), "en");
         reverseRequest = reverseRequestFactory.create(mockRequest);
-        assertEquals(reverseRequest.getLimit(), 50);
+        assertEquals(50, reverseRequest.getLimit());
         Mockito.verify(mockRequest, Mockito.times(1)).queryParams("limit");
     }
     

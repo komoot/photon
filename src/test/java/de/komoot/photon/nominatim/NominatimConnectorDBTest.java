@@ -232,7 +232,7 @@ class NominatimConnectorDBTest {
         assertEquals(2, importer.size());
 
         PhotonDoc doc = importer.get(place);
-        assertEquals(doc.getHouseNumber(), "123");
+        assertEquals("123", doc.getHouseNumber());
     }
 
     /**

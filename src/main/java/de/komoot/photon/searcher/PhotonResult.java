@@ -6,7 +6,7 @@ import java.util.Map;
  * A single response object from the database.
  */
 public interface PhotonResult {
-    public double[] INVALID_COORDINATES = new double[]{0, 0};
+    final double[] INVALID_COORDINATES = new double[]{0, 0};
 
     /**
      * Get the value for the given field.
