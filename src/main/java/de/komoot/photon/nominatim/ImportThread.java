@@ -2,17 +2,21 @@ package de.komoot.photon.nominatim;
 
 import de.komoot.photon.Importer;
 import de.komoot.photon.PhotonDoc;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.atomic.AtomicLong;
 
-@Slf4j
+/**
+ * Worker thread for bulk importing data from a Nominatim database.
+ */
 class ImportThread {
+    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(ImportThread.class);
+
     private static final int PROGRESS_INTERVAL = 50000;
-    private static final PhotonDoc FINAL_DOCUMENT = new PhotonDoc(0, null, 0, null, null);
-    private final BlockingQueue<PhotonDoc> documents = new LinkedBlockingDeque<>(20);
+    private static final NominatimResult FINAL_DOCUMENT = new NominatimResult(new PhotonDoc(0, null, 0, null, null));
+    private final BlockingQueue<NominatimResult> documents = new LinkedBlockingDeque<>(20);
     private final AtomicLong counter = new AtomicLong();
     private final Importer importer;
     private final Thread thread;
@@ -31,28 +35,28 @@ class ImportThread {
      * @param docs Fully filled nominatim document.
      */
     public void addDocument(NominatimResult docs) {
-        for (PhotonDoc doc : docs.getDocsWithHousenumber()) {
-            while (true) {
-                try {
-                    documents.put(doc);
-                    break;
-                } catch (InterruptedException e) {
-                    log.warn("Thread interrupted while placing document in queue.");
-                    // Restore interrupted state.
-                    Thread.currentThread().interrupt();
-                }
+        assert docs != null;
+        while (true) {
+            try {
+                documents.put(docs);
+                break;
+            } catch (InterruptedException e) {
+                LOGGER.warn("Thread interrupted while placing document in queue.");
+                // Restore interrupted state.
+                Thread.currentThread().interrupt();
             }
-            if (counter.incrementAndGet() % PROGRESS_INTERVAL == 0) {
-                final double documentsPerSecond = 1000d * counter.longValue() / (System.currentTimeMillis() - startMillis);
-                log.info(String.format("imported %d documents [%.1f/second]", counter.longValue(), documentsPerSecond));
-            }
+        }
+
+        if (counter.incrementAndGet() % PROGRESS_INTERVAL == 0) {
+            final double documentsPerSecond = 1000d * counter.longValue() / (System.currentTimeMillis() - startMillis);
+            LOGGER.info("Imported {} documents [{}/second]", counter.longValue(), documentsPerSecond);
         }
     }
 
     /**
      * Finalize the import.
      *
-     * Sends an end marker to the import thread and waiting for it to join.
+     * Sends an end marker to the import thread and then waits for it to join.
      */
     public void finish() {
         while (true) {
@@ -61,12 +65,12 @@ class ImportThread {
                 thread.join();
                 break;
             } catch (InterruptedException e) {
-                log.warn("Thread interrupted while placing document in queue.");
+                LOGGER.warn("Thread interrupted while placing document in queue.");
                 // Restore interrupted state.
                 Thread.currentThread().interrupt();
             }
         }
-        log.info(String.format("finished import of %d photon documents.", counter.longValue()));
+        LOGGER.info("Finished import of {} photon documents.", counter.longValue());
     }
 
     private class ImportRunnable implements Runnable {
@@ -74,14 +78,17 @@ class ImportThread {
         @Override
         public void run() {
             while (true) {
-                PhotonDoc doc;
                 try {
-                    doc = documents.take();
-                    if (doc == FINAL_DOCUMENT)
+                    NominatimResult docs = documents.take();
+                    if (docs == FINAL_DOCUMENT) {
                         break;
-                    importer.add(doc);
+                    }
+                    int objectId = 0;
+                    for (PhotonDoc doc : docs.getDocsWithHousenumber()) {
+                        importer.add(doc, objectId++);
+                    }
                 } catch (InterruptedException e) {
-                    log.info("interrupted exception ", e);
+                    LOGGER.info("Interrupted exception", e);
                     // Restore interrupted state.
                     Thread.currentThread().interrupt();
                 }

@@ -19,12 +19,12 @@ import java.util.stream.Collectors;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class QueryFilterLayerTest extends ESBaseTester {
+class QueryFilterLayerTest extends ESBaseTester {
     @TempDir
     private static Path instanceTestDirectory;
 
     @BeforeAll
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         setUpES(instanceTestDirectory, "en", "de", "fr");
         Importer instance = makeImporter();
 
@@ -32,7 +32,7 @@ public class QueryFilterLayerTest extends ESBaseTester {
 
         int[] docRanks = {10, 13, 14, 22}; // state, city * 2, locality
         for (int rank : docRanks) {
-            instance.add(createDoc(++id, rank));
+            instance.add(createDoc(++id, rank), 0);
         }
 
         instance.finish();
@@ -44,12 +44,12 @@ public class QueryFilterLayerTest extends ESBaseTester {
     }
 
     @Test
-    public void testSingleLayer() {
+    void testSingleLayer() {
         assertEquals(2, searchWithLayers("city").size());
     }
 
     @Test
-    public void testMultipleLayers() {
+    void testMultipleLayers() {
         assertEquals(3, searchWithLayers("city", "locality").size());
     }
 
@@ -57,7 +57,7 @@ public class QueryFilterLayerTest extends ESBaseTester {
         PhotonRequest request = new PhotonRequest("berlin", "en").setLimit(50);
         request.setLayerFilter(Arrays.stream(layers).collect(Collectors.toSet()));
 
-        return getServer().createSearchHandler(new String[]{"en"}).search(request);
+        return getServer().createSearchHandler(new String[]{"en"}, 1).search(request);
     }
 
     @AfterAll

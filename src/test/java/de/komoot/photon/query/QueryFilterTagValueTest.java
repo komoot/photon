@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class QueryFilterTagValueTest extends ESBaseTester {
+class QueryFilterTagValueTest extends ESBaseTester {
     @TempDir
     private static Path instanceTestDirectory;
 
@@ -34,7 +34,7 @@ public class QueryFilterTagValueTest extends ESBaseTester {
                                                       "railway", "station"};
 
     @BeforeAll
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         setUpES(instanceTestDirectory, "en", "de", "fr");
         Importer instance = makeImporter();
         double lon = 13.38886;
@@ -43,11 +43,11 @@ public class QueryFilterTagValueTest extends ESBaseTester {
             String key = TAGS[i];
             String value = TAGS[++i];
             PhotonDoc doc = this.createDoc(lon, lat, i, i, key, value);
-            instance.add(doc);
+            instance.add(doc, 0);
             lon += 0.00004;
             lat += 0.00086;
             doc = this.createDoc(lon, lat, i + 1, i + 1, key, value);
-            instance.add(doc);
+            instance.add(doc, 0);
             lon += 0.00004;
             lat += 0.00086;
         }
@@ -67,13 +67,13 @@ public class QueryFilterTagValueTest extends ESBaseTester {
             request.addOsmTagFilter(TagFilter.buildOsmTagFilter(param));
         }
 
-        return getServer().createSearchHandler(new String[]{"en"}).search(request);
+        return getServer().createSearchHandler(new String[]{"en"}, 1).search(request);
     }
 
 
     @ParameterizedTest
     @MethodSource("simpleTagFilterProvider")
-    public void testSingleTagFilter(String filter, int expectedResults) {
+    void testSingleTagFilter(String filter, int expectedResults) {
         assertEquals(expectedResults, searchWithTags(new String[]{filter}).size());
     }
 
@@ -93,7 +93,7 @@ public class QueryFilterTagValueTest extends ESBaseTester {
 
     @ParameterizedTest
     @MethodSource("combinedTagFilterProvider")
-    public void testCombinedTagFilter(String[] filters, int expectedResults) {
+    void testCombinedTagFilter(String[] filters, int expectedResults) {
         assertEquals(expectedResults, searchWithTags(filters).size());
     }
 

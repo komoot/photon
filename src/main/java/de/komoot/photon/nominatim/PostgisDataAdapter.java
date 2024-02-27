@@ -11,9 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * utility functions to parse data from postgis
- *
- * @author christoph
+ * Utility functions to parse data from and create SQL for PostgreSQL/PostGIS.
  */
 public class PostgisDataAdapter implements DBDataAdapter {
 
@@ -45,5 +43,10 @@ public class PostgisDataAdapter implements DBDataAdapter {
                         return resultSet.getInt(1) > 0;
                     }
                 }, table, column).get(0);
+    }
+
+    @Override
+    public String deleteReturning(String deleteSQL, String columns) {
+        return deleteSQL + " RETURNING " + columns;
     }
 }

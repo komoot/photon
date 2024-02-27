@@ -9,7 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 
 /**
- * A factory that creates a {@link PhotonRequest} from a {@link Request web request}
+ * Factory that creates a {@link PhotonRequest} from a {@link Request web request}
  */
 public class PhotonRequestFactory {
     private final RequestLanguageResolver languageResolver;

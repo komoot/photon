@@ -8,10 +8,10 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class StreetDupesRemoverTest {
+class StreetDupesRemoverTest {
 
     @Test
-    public void testDeduplicatesStreets() {
+    void testDeduplicatesStreets() {
         StreetDupesRemover streetDupesRemover = new StreetDupesRemover("en");
         List<PhotonResult> allResults = new ArrayList<>();
         allResults.add(createDummyResult("99999", "Main Street", "highway", "Unclassified"));
@@ -22,7 +22,7 @@ public class StreetDupesRemoverTest {
     }
 
     @Test
-    public void testStreetAndBusStopNotDeduplicated() {
+    void testStreetAndBusStopNotDeduplicated() {
         StreetDupesRemover streetDupesRemover = new StreetDupesRemover("en");
         List<PhotonResult> allResults = new ArrayList<>();
         allResults.add(createDummyResult("99999", "Main Street", "highway", "bus_stop"));

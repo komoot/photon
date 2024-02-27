@@ -9,7 +9,7 @@ import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class NominatimResultTest {
+class NominatimResultTest {
     private final PhotonDoc simpleDoc = new PhotonDoc(10000, "N", 123, "place", "house")
                                                 .countryCode("de");
 
@@ -46,19 +46,19 @@ public class NominatimResultTest {
     }
 
     @Test
-    public void testIsUsefulForIndex() {
+    void testIsUsefulForIndex() {
         assertFalse(simpleDoc.isUsefulForIndex());
         assertFalse(new NominatimResult(simpleDoc).isUsefulForIndex());
     }
 
     @Test
-    public void testGetDocsWithHousenumber() {
+    void testGetDocsWithHousenumber() {
         List<PhotonDoc> docs = new NominatimResult(simpleDoc).getDocsWithHousenumber();
         assertSimpleOnly(docs);
     }
 
     @Test
-    public void testAddHousenumbersFromStringSimple() {
+    void testAddHousenumbersFromStringSimple() {
         NominatimResult res = new NominatimResult(simpleDoc);
         res.addHousenumbersFromString("34");
 
@@ -66,7 +66,7 @@ public class NominatimResultTest {
     }
 
     @Test
-    public void testAddHousenumbersFromStringList() {
+    void testAddHousenumbersFromStringList() {
         NominatimResult res = new NominatimResult(simpleDoc);
         res.addHousenumbersFromString("34; 50b");
 
@@ -77,7 +77,7 @@ public class NominatimResultTest {
     }
 
     @Test
-    public void testLongHousenumber() {
+    void testLongHousenumber() {
         NominatimResult res = new NominatimResult(simpleDoc);
 
         res.addHousenumbersFromString("987987誰も住んでいないスーパーマーケット誰も住んでいないスーパーマーケット誰も住んでいないスーパーマーケット誰も住んでいないスーパーマーケット誰も住んでいないスーパーマーケット誰も住んでいないスーパーマーケット誰も住んでいないスーパーマーケット誰も住んでいないスーパーマーケット誰も住んでいないスーパーマー");
@@ -85,7 +85,7 @@ public class NominatimResultTest {
     }
 
     @Test
-    public void testHousenumberWithNoNumber() {
+    void testHousenumberWithNoNumber() {
         NominatimResult res = new NominatimResult(simpleDoc);
 
         res.addHousenumbersFromString("something bad");
@@ -93,7 +93,7 @@ public class NominatimResultTest {
     }
 
     @Test
-    public void testHousenumberWithNoNumberInPart() {
+    void testHousenumberWithNoNumberInPart() {
         NominatimResult res = new NominatimResult(simpleDoc);
 
         res.addHousenumbersFromString("14, portsmith");
@@ -101,7 +101,7 @@ public class NominatimResultTest {
     }
 
     @Test
-    public void testAddHouseNumbersFromInterpolationBad() throws ParseException {
+    void testAddHouseNumbersFromInterpolationBad() throws ParseException {
         NominatimResult res = new NominatimResult(simpleDoc);
 
         WKTReader reader = new WKTReader();
@@ -115,7 +115,7 @@ public class NominatimResultTest {
     }
 
     @Test
-    public void testAddHouseNumbersFromInterpolationOdd() throws ParseException {
+    void testAddHouseNumbersFromInterpolationOdd() throws ParseException {
         NominatimResult res = new NominatimResult(simpleDoc);
 
         WKTReader reader = new WKTReader();
@@ -134,7 +134,7 @@ public class NominatimResultTest {
     }
 
     @Test
-    public void testAddHouseNumbersFromInterpolationEven() throws ParseException {
+    void testAddHouseNumbersFromInterpolationEven() throws ParseException {
         NominatimResult res = new NominatimResult(simpleDoc);
 
         WKTReader reader = new WKTReader();
@@ -153,7 +153,7 @@ public class NominatimResultTest {
     }
 
     @Test
-    public void testAddHouseNumbersFromInterpolationAll() throws ParseException {
+    void testAddHouseNumbersFromInterpolationAll() throws ParseException {
         NominatimResult res = new NominatimResult(simpleDoc);
 
         WKTReader reader = new WKTReader();

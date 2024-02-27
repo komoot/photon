@@ -19,11 +19,11 @@ import static org.junit.jupiter.api.Assertions.*;
  * Tests that the database backend produces queries which can find all
  * expected results. These tests do not check relevance.
  */
-public class QueryBasicSearchTest extends ESBaseTester {
+class QueryBasicSearchTest extends ESBaseTester {
     private int testDocId = 10000;
 
     @BeforeEach
-    public void setup() throws IOException {
+    void setup() throws IOException {
         setUpES();
     }
 
@@ -39,14 +39,14 @@ public class QueryBasicSearchTest extends ESBaseTester {
     }
 
     private List<PhotonResult> search(String query) {
-        return getServer().createSearchHandler(new String[]{"en"}).search(new PhotonRequest(query, "en"));
+        return getServer().createSearchHandler(new String[]{"en"}, 1).search(new PhotonRequest(query, "en"));
     }
 
 
     @Test
-    public void testSearchByDefaultName() {
+    void testSearchByDefaultName() {
         Importer instance = makeImporter();
-        instance.add(createDoc("name", "Muffle Flu"));
+        instance.add(createDoc("name", "Muffle Flu"), 0);
         instance.finish();
         refresh();
 
@@ -61,9 +61,9 @@ public class QueryBasicSearchTest extends ESBaseTester {
     }
 
     @Test
-    public void testSearchNameSkipTerms() {
+    void testSearchNameSkipTerms() {
         Importer instance = makeImporter();
-        instance.add(createDoc("name", "Hunted House Hotel"));
+        instance.add(createDoc("name", "Hunted House Hotel"), 0);
         instance.finish();
         refresh();
 
@@ -76,11 +76,11 @@ public class QueryBasicSearchTest extends ESBaseTester {
         );
     }
     @Test
-    public void testSearchByAlternativeNames() {
+    void testSearchByAlternativeNames() {
         Importer instance = makeImporter();
         instance.add(createDoc("name", "original", "alt_name", "alt", "old_name", "older", "int_name", "int",
                                "loc_name", "local", "reg_name", "regional", "addr:housename", "house",
-                               "other_name", "other"));
+                               "other_name", "other"), 0);
         instance.finish();
         refresh();
 
@@ -97,7 +97,7 @@ public class QueryBasicSearchTest extends ESBaseTester {
     }
 
     @Test
-    public void testSearchByNameAndAddress() {
+    void testSearchByNameAndAddress() {
         Map<String, String> address = new HashMap<>();
         address.put("street", "Callino");
         address.put("city", "Madrid");
@@ -107,7 +107,7 @@ public class QueryBasicSearchTest extends ESBaseTester {
         address.put("state", "Estado");
 
         Importer instance = makeImporter();
-        instance.add(createDoc("name", "Castillo").address(address));
+        instance.add(createDoc("name", "Castillo").address(address), 0);
         instance.finish();
         refresh();
 
@@ -122,9 +122,9 @@ public class QueryBasicSearchTest extends ESBaseTester {
     }
 
     @Test
-    public void testSearchMustContainANameTerm() {
+    void testSearchMustContainANameTerm() {
         Importer instance = makeImporter();
-        instance.add(createDoc("name", "Palermo").address(Collections.singletonMap("state", "Sicilia")));
+        instance.add(createDoc("name", "Palermo").address(Collections.singletonMap("state", "Sicilia")), 0);
         instance.finish();
         refresh();
 
@@ -139,9 +139,9 @@ public class QueryBasicSearchTest extends ESBaseTester {
     }
 
     @Test
-    public void testSearchWithHousenumberNamed() {
+    void testSearchWithHousenumberNamed() {
         Importer instance = makeImporter();
-        instance.add(createDoc("name", "Edeka").houseNumber("5").address(Collections.singletonMap("street", "Hauptstrasse")));
+        instance.add(createDoc("name", "Edeka").houseNumber("5").address(Collections.singletonMap("street", "Hauptstrasse")), 0);
         instance.finish();
         refresh();
 
@@ -154,9 +154,9 @@ public class QueryBasicSearchTest extends ESBaseTester {
     }
 
     @Test
-    public void testSearchWithHousenumberUnnamed() {
+    void testSearchWithHousenumberUnnamed() {
         Importer instance = makeImporter();
-        instance.add(createDoc().houseNumber("5").address(Collections.singletonMap("street", "Hauptstrasse")));
+        instance.add(createDoc().houseNumber("5").address(Collections.singletonMap("street", "Hauptstrasse")), 0);
         instance.finish();
         refresh();
 

@@ -1,6 +1,5 @@
 package de.komoot.photon.query;
 
-import lombok.AllArgsConstructor;
 import spark.Request;
 import spark.utils.StringUtils;
 
@@ -10,12 +9,16 @@ import java.util.Locale;
 /**
  * Resolver for the response language for a web request.
  */
-@AllArgsConstructor
 public class RequestLanguageResolver {
     static final String ACCEPT_LANGUAGE_HEADER = "Accept-Language";
 
     private final List<String> supportedLanguages;
     private final String defaultLanguage;
+
+    public RequestLanguageResolver(List<String> supportedLanguages, String defaultLanguage) {
+        this.supportedLanguages = supportedLanguages;
+        this.defaultLanguage = defaultLanguage;
+    }
 
     /**
      * Get the language to use for the response to the given request.
@@ -26,7 +29,7 @@ public class RequestLanguageResolver {
      *
      * The function first checks for a 'lang' query parameter. If this is not given, it looks for
      * an Accept-Language header and tries to find a supported language there. If that does not
-     * work either, the default language is returned
+     * work either, the default language is returned.
      */
     public String resolveRequestedLanguage(Request webRequest) throws BadRequestException {
         String language = webRequest.queryParams("lang");
@@ -45,7 +48,7 @@ public class RequestLanguageResolver {
      * Look for a language parameter in the request headers.
      *
      * @param webRequest Incoming HTTP request.
-     * @return A suitable language header or null if not could be found.
+     * @return A suitable language header or null if none could be found.
      */
     private String fallbackLanguageFromHeaders(Request webRequest) {
         String acceptLanguageHeader = webRequest.headers(ACCEPT_LANGUAGE_HEADER);
@@ -69,7 +72,7 @@ public class RequestLanguageResolver {
      */
     private void checkLanguageSupported(String lang) throws BadRequestException {
         if (!("default".equals(lang) || supportedLanguages.contains((lang)))) {
-            throw new BadRequestException(400, "language " + lang + " is not supported, supported languages are: default, " + String.join(", ", supportedLanguages));
+            throw new BadRequestException(400, "Language " + lang + " is not supported, supported languages are: default, " + String.join(", ", supportedLanguages));
         }
     }
 }

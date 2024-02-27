@@ -2,7 +2,6 @@ package de.komoot.photon.query;
 
 import de.komoot.photon.*;
 import de.komoot.photon.searcher.PhotonResult;
-import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,15 +16,14 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@Slf4j
-public class QueryByClassificationTest extends ESBaseTester {
+class QueryByClassificationTest extends ESBaseTester {
     @TempDir
     static Path sharedTempDir;
 
     private int testDocId = 10000;
 
     @BeforeEach
-    public void setup() throws IOException {
+    void setup() throws IOException {
         setUpES();
     }
 
@@ -35,7 +33,7 @@ public class QueryByClassificationTest extends ESBaseTester {
     }
 
     private List<PhotonResult> search(String query) {
-        return getServer().createSearchHandler(new String[]{"en"}).search(new PhotonRequest(query, "en"));
+        return getServer().createSearchHandler(new String[]{"en"}, 1).search(new PhotonRequest(query, "en"));
     }
 
     private void updateClassification(String key, String value, String... terms) {
@@ -70,9 +68,9 @@ public class QueryByClassificationTest extends ESBaseTester {
     }
 
     @Test
-    public void testQueryByClassificationString() {
+    void testQueryByClassificationString() {
         Importer instance = makeImporter();
-        instance.add(createDoc("amenity", "restaurant", "curliflower"));
+        instance.add(createDoc("amenity", "restaurant", "curliflower"), 0);
         instance.finish();
         refresh();
 
@@ -91,9 +89,9 @@ public class QueryByClassificationTest extends ESBaseTester {
     }
 
     @Test
-    public void testQueryByClassificationSynonym() {
+    void testQueryByClassificationSynonym() {
         Importer instance = makeImporter();
-        instance.add(createDoc("amenity", "restaurant", "curliflower"));
+        instance.add(createDoc("amenity", "restaurant", "curliflower"), 0);
         instance.finish();
         refresh();
 
@@ -111,10 +109,10 @@ public class QueryByClassificationTest extends ESBaseTester {
 
 
     @Test
-    public void testSynonymDoNotInterfereWithWords() {
+    void testSynonymDoNotInterfereWithWords() {
         Importer instance = makeImporter();
-        instance.add(createDoc("amenity", "restaurant", "airport"));
-        instance.add(createDoc("aeroway", "terminal", "Houston"));
+        instance.add(createDoc("amenity", "restaurant", "airport"), 0);
+        instance.add(createDoc("aeroway", "terminal", "Houston"), 0);
         instance.finish();
         refresh();
 
@@ -131,10 +129,10 @@ public class QueryByClassificationTest extends ESBaseTester {
     }
 
     @Test
-    public void testSameSynonymForDifferentTags() {
+    void testSameSynonymForDifferentTags() {
         Importer instance = makeImporter();
-        instance.add(createDoc("railway", "halt", "Newtown"));
-        instance.add(createDoc("railway", "station", "King's Cross"));
+        instance.add(createDoc("railway", "halt", "Newtown"), 0);
+        instance.add(createDoc("railway", "station", "King's Cross"), 0);
         instance.finish();
         refresh();
 

@@ -3,7 +3,6 @@ package de.komoot.photon.nominatim.testdb;
 import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKTReader;
 import de.komoot.photon.PhotonDoc;
-import lombok.Getter;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -11,7 +10,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import java.util.HashMap;
 import java.util.Map;
 
-@Getter
 public class PlacexTestRow {
     private static final WKTReader wkt = new WKTReader();
     private static long place_id_sequence = 10000;
@@ -114,8 +112,8 @@ public class PlacexTestRow {
 
     public PlacexTestRow add(JdbcTemplate jdbc) {
         jdbc.update("INSERT INTO placex (place_id, parent_place_id, osm_type, osm_id, class, type, rank_search, rank_address,"
-                        + " centroid, name, country_code, importance, address)"
-                        + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ? FORMAT JSON, ?, ?, ? FORMAT JSON)",
+                        + " centroid, name, country_code, importance, address, indexed_status)"
+                        + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ? FORMAT JSON, ?, ?, ? FORMAT JSON, 0)",
                 placeId, parentPlaceId, osmType, osmId, key, value, rankSearch, rankAddress, centroid,
                 asJson(names), countryCode, importance, asJson(address));
 
@@ -138,5 +136,25 @@ public class PlacexTestRow {
         Assertions.assertEquals(rankAddress, (Integer) doc.getRankAddress());
         Assertions.assertEquals(new WKTReader().read(centroid), doc.getCentroid());
         Assertions.assertEquals(names, doc.getName());
+    }
+
+    public Long getPlaceId() {
+        return this.placeId;
+    }
+
+    public String getKey() {
+        return this.key;
+    }
+
+    public String getValue() {
+        return this.value;
+    }
+
+    public Map<String, String> getNames() {
+        return this.names;
+    }
+
+    public Integer getRankAddress() {
+        return this.rankAddress;
     }
 }

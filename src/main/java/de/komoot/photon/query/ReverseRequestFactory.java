@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * @author svantulden
+ * Factory that creates a {@link ReverseRequest} from a {@link Request web request}
  */
 public class ReverseRequestFactory {
     private final RequestLanguageResolver languageResolver;
@@ -30,48 +30,47 @@ public class ReverseRequestFactory {
     public ReverseRequest create(Request webRequest) throws BadRequestException {
         for (String queryParam : webRequest.queryParams()) {
             if (!REQUEST_QUERY_PARAMS.contains(queryParam))
-                throw new BadRequestException(400, "unknown query parameter '" + queryParam + "'.  Allowed parameters are: " + REQUEST_QUERY_PARAMS);
+                throw new BadRequestException(400, "Unknown query parameter '" + queryParam + "'.  Allowed parameters are: " + REQUEST_QUERY_PARAMS);
         }
 
         String language = languageResolver.resolveRequestedLanguage(webRequest);
 
         Point location = mandatoryLocationParamConverter.apply(webRequest);
 
-        Double radius = 1d;
+        double radius = 1d;
         String radiusParam = webRequest.queryParams("radius");
         if (radiusParam != null) {
             try {
-                radius = Double.valueOf(radiusParam);
+                radius = Double.parseDouble(radiusParam);
             } catch (Exception nfe) {
-                throw new BadRequestException(400, "invalid search term 'radius', expected a number.");
+                throw new BadRequestException(400, "Invalid search term 'radius', expected a number.");
             }
             if (radius <= 0) {
-                throw new BadRequestException(400, "invalid search term 'radius', expected a strictly positive number.");
+                throw new BadRequestException(400, "Invalid search term 'radius', expected a strictly positive number.");
             } else {
                 // limit search radius to 5000km
                 radius = Math.min(radius, 5000d);
             }
         }
 
-        Boolean locationDistanceSort;
+        boolean locationDistanceSort;
         try {
-            locationDistanceSort = Boolean.valueOf(webRequest.queryParamOrDefault("distance_sort", "true"));
+            locationDistanceSort = Boolean.parseBoolean(webRequest.queryParamOrDefault("distance_sort", "true"));
         } catch (Exception nfe) {
-            throw new BadRequestException(400, "invalid parameter 'distance_sort', can only be true or false");
+            throw new BadRequestException(400, "Invalid parameter 'distance_sort', can only be true or false");
         }
 
-        Integer limit = 1;
+        int limit = 1;
         String limitParam = webRequest.queryParams("limit");
         if (limitParam != null) {
             try {
-                limit = Integer.valueOf(limitParam);
+                limit = Integer.parseInt(limitParam);
             } catch (Exception nfe) {
-                throw new BadRequestException(400, "invalid search term 'limit', expected an integer.");
+                throw new BadRequestException(400, "Invalid search term 'limit', expected an integer.");
             }
             if (limit <= 0) {
-                throw new BadRequestException(400, "invalid search term 'limit', expected a strictly positive integer.");
+                throw new BadRequestException(400, "Invalid search term 'limit', expected a strictly positive integer.");
             } else {
-                // limit number of results to 50
                 limit = Math.min(limit, 50);
             }
         }

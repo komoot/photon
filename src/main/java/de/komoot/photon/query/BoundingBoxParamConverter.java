@@ -5,12 +5,11 @@ import com.vividsolutions.jts.geom.Envelope;
 import spark.Request;
 
 /**
- * Converts the bbox parameter into an Envelope and performs format checking.
- * Created by Holger Bruch on 10/13/2018.
+ * Converter which transforms a bbox parameter into an Envelope and performs format checking.
  */
 public class BoundingBoxParamConverter {
 
-    public static final String INVALID_BBOX_ERROR_MESSAGE = "invalid number of supplied coordinates for parameter 'bbox', expected format is: minLon,minLat,maxLon,maxLat";
+    public static final String INVALID_BBOX_ERROR_MESSAGE = "Invalid number of supplied coordinates for parameter 'bbox', expected format is: minLon,minLat,maxLon,maxLat";
     public static final String INVALID_BBOX_BOUNDS_MESSAGE = "Invalid bounds for parameter 'bbox', expected values minLat, maxLat element [-90,90], minLon, maxLon element [-180,180]";
 
     public Envelope apply(Request webRequest) throws BadRequestException {

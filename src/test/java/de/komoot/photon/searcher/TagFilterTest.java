@@ -14,7 +14,7 @@ class TagFilterTest {
 
     @ParameterizedTest
     @MethodSource("validOsmTagFilterValueProvider")
-    public void testBuildOsmTagFilterOk(String filter, TagFilterKind kind, String key, String value) {
+    void testBuildOsmTagFilterOk(String filter, TagFilterKind kind, String key, String value) {
         assertEquals(new TagFilter(kind, key, value),
                 TagFilter.buildOsmTagFilter(filter));
     }
@@ -36,7 +36,7 @@ class TagFilterTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"", ":", "addr:housenumber:1", "shop:"})
-    public void testBuildOsmTagFilterInvalid(String filter) {
+    void testBuildOsmTagFilterInvalid(String filter) {
         assertNull(TagFilter.buildOsmTagFilter(filter));
     }
 

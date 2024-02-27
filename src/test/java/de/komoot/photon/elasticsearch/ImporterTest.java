@@ -14,7 +14,7 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class ImporterTest extends ESBaseTester {
+class ImporterTest extends ESBaseTester {
 
     @BeforeEach
     public void setUp() throws IOException {
@@ -22,11 +22,11 @@ public class ImporterTest extends ESBaseTester {
     }
 
     @Test
-    public void testAddSimpleDoc() {
+    void testAddSimpleDoc() {
         Importer instance = makeImporterWithExtra("");
 
         instance.add(new PhotonDoc(1234, "N", 1000, "place", "city")
-                .extraTags(Collections.singletonMap("maxspeed", "100")));
+                .extraTags(Collections.singletonMap("maxspeed", "100")), 0);
         instance.finish();
         refresh();
 
@@ -43,7 +43,37 @@ public class ImporterTest extends ESBaseTester {
     }
 
     @Test
-    public void testSelectedExtraTagsCanBeIncluded() {
+    void testAddHousenumberMultiDoc() {
+        Importer instance = makeImporterWithExtra("");
+
+        instance.add(new PhotonDoc(4432, "N", 100, "building", "yes").houseNumber("34"), 0);
+        instance.add(new PhotonDoc(4432, "N", 100, "building", "yes").houseNumber("35"), 1);
+        instance.finish();
+        refresh();
+
+        PhotonResult response = getById("4432");
+
+        assertNotNull(response);
+
+        assertEquals("N", response.get("osm_type"));
+        assertEquals(100, response.get("osm_id"));
+        assertEquals("building", response.get("osm_key"));
+        assertEquals("yes", response.get("osm_value"));
+        assertEquals("34", response.get("housenumber"));
+
+        response = getById("4432.1");
+
+        assertNotNull(response);
+
+        assertEquals("N", response.get("osm_type"));
+        assertEquals(100, response.get("osm_id"));
+        assertEquals("building", response.get("osm_key"));
+        assertEquals("yes", response.get("osm_value"));
+        assertEquals("35", response.get("housenumber"));
+    }
+
+    @Test
+    void testSelectedExtraTagsCanBeIncluded() {
         Importer instance = makeImporterWithExtra("maxspeed", "website");
 
         Map<String, String> extratags = new HashMap<>();
@@ -51,9 +81,9 @@ public class ImporterTest extends ESBaseTester {
         extratags.put("maxspeed", "100 mph");
         extratags.put("source", "survey");
 
-        instance.add(new PhotonDoc(1234, "N", 1000, "place", "city").extraTags(extratags));
+        instance.add(new PhotonDoc(1234, "N", 1000, "place", "city").extraTags(extratags), 0);
         instance.add(new PhotonDoc(1235, "N", 1001, "place", "city")
-                .extraTags(Collections.singletonMap("wikidata", "100")));
+                .extraTags(Collections.singletonMap("wikidata", "100")), 0);
         instance.finish();
         refresh();
 

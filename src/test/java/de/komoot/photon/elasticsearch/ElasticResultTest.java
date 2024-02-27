@@ -23,7 +23,7 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class ElasticResultTest  extends ESBaseTester {
+class ElasticResultTest  extends ESBaseTester {
     @TempDir
     private static Path instanceTestDirectory;
 
@@ -43,7 +43,7 @@ public class ElasticResultTest  extends ESBaseTester {
 
 
     @BeforeAll
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         setUpES(instanceTestDirectory, "en", "de", "fr", "it");
         Importer instance = getServer().createImporter(new String[]{"en", "de", "fr", "it"},
                  new String[]{"population",  "capital"});
@@ -52,16 +52,16 @@ public class ElasticResultTest  extends ESBaseTester {
                 .names(makeMap("name", "München", "name:it", "Monacco", "name:en", "Munich"))
                 .address(Collections.singletonMap("state", "Bavaria"))
                 .countryCode("de")
-                .extraTags(makeMap("population", "many", "capital", "yes", "maxage", "99")));
+                .extraTags(makeMap("population", "many", "capital", "yes", "maxage", "99")), 0);
         instance.add(createDoc(0, 0, 99, 11999, "place", "locality")
-                .names(makeMap("name", "null island")));
+                .names(makeMap("name", "null island")), 0);
         instance.add(createDoc(-179, 1.0001, 923, 1923, "place", "house")
                 .houseNumber("34")
                 .bbox(FACTORY.createMultiPoint(new Coordinate[]{new Coordinate(-179.5, 1.0),
                         new Coordinate(-178.5, 1.1)}))
-                .address(makeMap("street", "Hauptstr", "city", "Hamburg")));
+                .address(makeMap("street", "Hauptstr", "city", "Hamburg")), 0);
         instance.add(new PhotonDoc(42, "N", 42, "place", "hamlet")
-                .names(makeMap("name", "nowhere")));
+                .names(makeMap("name", "nowhere")), 0);
 
         instance.finish();
         refresh();
@@ -74,14 +74,14 @@ public class ElasticResultTest  extends ESBaseTester {
     }
 
     private PhotonResult search(String query) {
-        SearchHandler handler = getServer().createSearchHandler(new String[]{"en", "de", "it"});
+        SearchHandler handler = getServer().createSearchHandler(new String[]{"en", "de", "it"}, 1);
 
         return handler.search(new PhotonRequest(query, "default")).get(0);
     }
 
 
     @Test
-    public void testGet() {
+    void testGet() {
         PhotonResult result = search("München");
 
         assertAll("get",
@@ -91,7 +91,7 @@ public class ElasticResultTest  extends ESBaseTester {
     }
 
     @Test
-    public void testGetMap() {
+    void testGetMap() {
         assertAll("getMap",
                 () -> assertEquals(makeMap("default", "München", "en", "Munich", "it", "Monacco"),
                                    search("München").getMap("name")),
@@ -104,7 +104,7 @@ public class ElasticResultTest  extends ESBaseTester {
     }
 
     @Test
-    public void testGetLocalized() {
+    void testGetLocalized() {
         PhotonResult result = search("München");
 
         assertAll("getLocalized",
@@ -116,7 +116,7 @@ public class ElasticResultTest  extends ESBaseTester {
     }
 
     @Test
-    public void testGetCoordinates() {
+    void testGetCoordinates() {
         assertAll("getCoordinates",
                 () -> assertArrayEquals(new double[]{-179, 1.0001}, search("Hauptstr 34").getCoordinates()),
                 () -> assertArrayEquals(PhotonResult.INVALID_COORDINATES, search("nowhere").getCoordinates())
@@ -124,7 +124,7 @@ public class ElasticResultTest  extends ESBaseTester {
     }
 
     @Test
-    public void testGetExtent() {
+    void testGetExtent() {
         assertAll("getExtent",
                 () -> assertNull(search("Munich").getExtent()),
                 () -> assertArrayEquals(new double[]{-179.5, 1.1, -178.5, 1.0}, search("hauptstr 34").getExtent())
@@ -132,7 +132,7 @@ public class ElasticResultTest  extends ESBaseTester {
     }
 
     @Test
-    public void testGetScore() {
+    void testGetScore() {
         assertTrue(Double.isFinite(search("null island").getScore()));
     }
 }

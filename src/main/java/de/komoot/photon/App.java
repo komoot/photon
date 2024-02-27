@@ -5,8 +5,10 @@ import com.beust.jcommander.ParameterException;
 import de.komoot.photon.elasticsearch.Server;
 import de.komoot.photon.nominatim.NominatimConnector;
 import de.komoot.photon.nominatim.NominatimUpdater;
+import de.komoot.photon.searcher.ReverseHandler;
+import de.komoot.photon.searcher.SearchHandler;
 import de.komoot.photon.utils.CorsFilter;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
 import spark.Request;
 import spark.Response;
 
@@ -16,9 +18,11 @@ import java.util.Date;
 
 import static spark.Spark.*;
 
-
-@Slf4j
+/**
+ * Main Photon application.
+ */
 public class App {
+    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(App.class);
 
     public static void main(String[] rawArgs) throws Exception {
         CommandLineArgs args = parseCommandLine(rawArgs);
@@ -28,12 +32,17 @@ public class App {
             return;
         }
 
+        if (args.getNominatimUpdateInit() != null) {
+            startNominatimUpdateInit(args);
+            return;
+        }
+
         boolean shutdownES = false;
         final Server esServer = new Server(args.getDataDirectory()).start(args.getCluster(), args.getTransportAddresses());
         try {
-            log.info("Make sure that the ES cluster is ready, this might take some time.");
+            LOGGER.info("Make sure that the ES cluster is ready, this might take some time.");
             esServer.waitForReady();
-            log.info("ES cluster is now ready.");
+            LOGGER.info("ES cluster is now ready.");
 
             if (args.isNominatimImport()) {
                 shutdownES = true;
@@ -53,7 +62,7 @@ public class App {
                 return;
             }
 
-            // no special action specified -> normal mode: start search API
+            // No special action specified -> normal mode: start search API
             startApi(args, esServer);
         } finally {
             if (shutdownES) esServer.shutdown();
@@ -72,7 +81,7 @@ public class App {
                 throw new ParameterException("Use only one cors configuration type");
             }
         } catch (ParameterException e) {
-            log.warn("could not start photon: " + e.getMessage());
+            LOGGER.warn("Could not start photon: {}", e.getMessage());
             jCommander.usage();
             System.exit(1);
         }
@@ -88,9 +97,7 @@ public class App {
 
 
     /**
-     * take nominatim data and dump it to json
-     *
-     * @param args
+     * Take nominatim data and dump it to a Json file.
      */
     private static void startJsonDump(CommandLineArgs args) {
         try {
@@ -99,9 +106,9 @@ public class App {
             NominatimConnector nominatimConnector = new NominatimConnector(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
             nominatimConnector.setImporter(jsonDumper);
             nominatimConnector.readEntireDatabase(args.getCountryCodes());
-            log.info("json dump was created: " + filename);
+            LOGGER.info("Json dump was created: {}", filename);
         } catch (FileNotFoundException e) {
-            log.error("cannot create dump", e);
+            LOGGER.error("Cannot create dump", e);
         }
     }
 
@@ -116,15 +123,21 @@ public class App {
         try {
             dbProperties = esServer.recreateIndex(args.getLanguages(), importDate); // clear out previous data
         } catch (IOException e) {
-            throw new RuntimeException("cannot setup index, elastic search config files not readable", e);
+            throw new RuntimeException("Cannot setup index, elastic search config files not readable", e);
         }
 
-        log.info("starting import from nominatim to photon with languages: " + String.join(",", dbProperties.getLanguages()));
+        LOGGER.info("Starting import from nominatim to photon with languages: {}", String.join(",", dbProperties.getLanguages()));
         nominatimConnector.setImporter(esServer.createImporter(dbProperties.getLanguages(), args.getExtraTags()));
         nominatimConnector.readEntireDatabase(args.getCountryCodes());
 
-        log.info("imported data from nominatim to photon with languages: " + String.join(",", dbProperties.getLanguages()));
+        LOGGER.info("Imported data from nominatim to photon with languages: {}", String.join(",", dbProperties.getLanguages()));
     }
+
+    private static void startNominatimUpdateInit(CommandLineArgs args) {
+        NominatimUpdater nominatimUpdater = new NominatimUpdater(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
+        nominatimUpdater.initUpdates(args.getNominatimUpdateInit());
+    }
+
 
     /**
      * Prepare Nominatim updater.
@@ -157,9 +170,8 @@ public class App {
         if (allowedOrigin != null) {
             CorsFilter.enableCORS(allowedOrigin, "get", "*");
         } else {
-            before((request, response) -> {
-                response.type("application/json; charset=UTF-8"); // in the other case set by enableCors
-            });
+            // Set Json content type. In the other case already set by enableCors.
+            before((request, response) -> response.type("application/json; charset=UTF-8"));
         }
 
         // setup search API
@@ -167,16 +179,20 @@ public class App {
         Date importDate = dbProperties.getImportDate();
         get("status", new StatusRequestHandler("status", importDate));
         get("status/", new StatusRequestHandler("status/", importDate));
-        get("api", new SearchRequestHandler("api", server.createSearchHandler(langs), langs, args.getDefaultLanguage()));
-        get("api/", new SearchRequestHandler("api/", server.createSearchHandler(langs), langs, args.getDefaultLanguage()));
-        get("reverse", new ReverseSearchRequestHandler("reverse", server.createReverseHandler(), dbProperties.getLanguages(), args.getDefaultLanguage()));
-        get("reverse/", new ReverseSearchRequestHandler("reverse/", server.createReverseHandler(), dbProperties.getLanguages(), args.getDefaultLanguage()));
+
+        SearchHandler searchHandler = server.createSearchHandler(langs, args.getQueryTimeout());
+        get("api", new SearchRequestHandler("api", searchHandler, langs, args.getDefaultLanguage()));
+        get("api/", new SearchRequestHandler("api/", searchHandler, langs, args.getDefaultLanguage()));
+
+        ReverseHandler reverseHandler = server.createReverseHandler(args.getQueryTimeout());
+        get("reverse", new ReverseSearchRequestHandler("reverse", reverseHandler, dbProperties.getLanguages(), args.getDefaultLanguage()));
+        get("reverse/", new ReverseSearchRequestHandler("reverse/", reverseHandler, dbProperties.getLanguages(), args.getDefaultLanguage()));
 
         if (args.isEnableUpdateApi()) {
             // setup update API
             final NominatimUpdater nominatimUpdater = setupNominatimUpdater(args, server);
             get("/nominatim-update", (Request request, Response response) -> {
-                new Thread(() -> nominatimUpdater.update()).start();
+                new Thread(nominatimUpdater::update).start();
                 return "nominatim update started (more information in console output) ...";
             });
         }

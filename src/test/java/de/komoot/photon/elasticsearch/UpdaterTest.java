@@ -14,23 +14,23 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class UpdaterTest extends ESBaseTester {
+class UpdaterTest extends ESBaseTester {
 
     @Test
-    public void addNameToDoc() throws IOException {
+    void addNameToDoc() throws IOException {
         Map<String, String> names = new HashMap<>();
         names.put("name", "Foo");
         PhotonDoc doc = new PhotonDoc(1234, "N", 1000, "place", "city").names(names);
 
         setUpES();
         Importer instance = makeImporter();
-        instance.add(doc);
+        instance.add(doc, 0);
         instance.finish();
         refresh();
 
         names.put("name:en", "Enfoo");
         Updater updater = makeUpdater();
-        updater.create(doc);
+        updater.create(doc, 0);
         updater.finish();
         refresh();
 
@@ -43,7 +43,7 @@ public class UpdaterTest extends ESBaseTester {
     }
 
     @Test
-    public void removeNameFromDoc() throws IOException {
+    void removeNameFromDoc() throws IOException {
         Map<String, String> names = new HashMap<>();
         names.put("name", "Foo");
         names.put("name:en", "Enfoo");
@@ -51,13 +51,13 @@ public class UpdaterTest extends ESBaseTester {
 
         setUpES();
         Importer instance = makeImporter();
-        instance.add(doc);
+        instance.add(doc, 0);
         instance.finish();
         refresh();
 
         names.remove("name");
         Updater updater = makeUpdater();
-        updater.create(doc);
+        updater.create(doc, 0);
         updater.finish();
         refresh();
 
@@ -70,14 +70,14 @@ public class UpdaterTest extends ESBaseTester {
     }
 
     @Test
-    public void addExtraTagsToDoc() throws IOException {
+    void addExtraTagsToDoc() throws IOException {
         Map<String, String> names = new HashMap<>();
         names.put("name", "Foo");
         PhotonDoc doc = new PhotonDoc(1234, "N", 1000, "place", "city").names(names);
 
         setUpES();
         Importer instance = makeImporterWithExtra("website");
-        instance.add(doc);
+        instance.add(doc, 0);
         instance.finish();
         refresh();
 
@@ -88,7 +88,7 @@ public class UpdaterTest extends ESBaseTester {
 
         doc.extraTags(Collections.singletonMap("website", "http://site.foo"));
         Updater updater = makeUpdaterWithExtra("website");
-        updater.create(doc);
+        updater.create(doc, 0);
         updater.finish();
         refresh();
 
@@ -99,5 +99,45 @@ public class UpdaterTest extends ESBaseTester {
 
         assertNotNull(extra);
         assertEquals(Collections.singletonMap("website", "http://site.foo"), extra);
+    }
+
+    @Test
+    void deleteDoc() throws IOException {
+        setUpES();
+        Importer instance = makeImporterWithExtra("website");
+        instance.add(new PhotonDoc(4432, "N", 100, "building", "yes").houseNumber("34"), 0);
+        instance.add(new PhotonDoc(4432, "N", 100, "building", "yes").houseNumber("35"), 1);
+        instance.finish();
+        refresh();
+
+        assertNotNull(getById("4432"));
+        assertNotNull(getById("4432.1"));
+
+        Updater updater = makeUpdaterWithExtra("website");
+        updater.delete(4432L, 1);
+        updater.finish();
+        refresh();
+
+        assertNotNull(getById("4432"));
+        assertNull(getById("4432.1"));
+    }
+
+    @Test
+    void checkExistence() throws IOException {
+        setUpES();
+        Importer instance = makeImporterWithExtra("website");
+        instance.add(new PhotonDoc(4432, "N", 100, "building", "yes").houseNumber("34"), 0);
+        instance.add(new PhotonDoc(4432, "N", 100, "building", "yes").houseNumber("35"), 1);
+        instance.finish();
+        refresh();
+
+        Updater updater = makeUpdaterWithExtra("website");
+        assertTrue(updater.exists(4432L, 0));
+        assertTrue(updater.exists(4432L, 1));
+        assertFalse(updater.exists(4432L, 2));
+        assertFalse(updater.exists(4433L, 0));
+        assertFalse(updater.exists(4433L, 1));
+        updater.finish();
+        refresh();
     }
 }

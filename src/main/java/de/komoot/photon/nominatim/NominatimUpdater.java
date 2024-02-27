@@ -5,29 +5,44 @@ import de.komoot.photon.Updater;
 import de.komoot.photon.nominatim.model.UpdateRow;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * Nominatim update logic
- *
- * @author felix
+ * Importer for updates from a Nominatim database.
  */
-
 public class NominatimUpdater {
     private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(NominatimUpdater.class);
 
-    private static final int CREATE = 1;
-    private static final int UPDATE = 2;
-    private static final int DELETE = 100;
-
-    private static final int MIN_RANK = 1;
-    private static final int MAX_RANK = 30;
+    private static final String TRIGGER_SQL =
+            "DROP TABLE IF EXISTS photon_updates;"
+            + "CREATE TABLE photon_updates (rel TEXT, place_id BIGINT,"
+            + "                             operation TEXT,"
+            + "                             indexed_date TIMESTAMP WITH TIME ZONE);"
+            + "CREATE OR REPLACE FUNCTION photon_update_func()\n"
+            + " RETURNS TRIGGER AS $$\n"
+            + "BEGIN\n"
+            + "  INSERT INTO photon_updates("
+            + "     VALUES (TG_TABLE_NAME, OLD.place_id, TG_OP, statement_timestamp()));"
+            + "  RETURN NEW;"
+            + "END; $$ LANGUAGE plpgsql;"
+            + "CREATE OR REPLACE TRIGGER photon_trigger_update_placex"
+            + "   AFTER UPDATE ON placex FOR EACH ROW"
+            + "   WHEN (OLD.indexed_status > 0 AND NEW.indexed_status = 0)"
+            + "   EXECUTE FUNCTION photon_update_func();"
+            + "CREATE OR REPLACE TRIGGER photon_trigger_delete_placex"
+            + "   AFTER DELETE ON placex FOR EACH ROW"
+            + "   EXECUTE FUNCTION photon_update_func();"
+            + "CREATE OR REPLACE TRIGGER photon_trigger_update_interpolation "
+            + "   AFTER UPDATE ON location_property_osmline FOR EACH ROW"
+            + "   WHEN (OLD.indexed_status > 0 AND NEW.indexed_status = 0)"
+            + "   EXECUTE FUNCTION photon_update_func();"
+            + "CREATE OR REPLACE TRIGGER photon_trigger_delete_interpolation"
+            + "   AFTER DELETE ON location_property_osmline FOR EACH ROW"
+            + "   EXECUTE FUNCTION photon_update_func()";
 
     private final JdbcTemplate       template;
     private final NominatimConnector exporter;
@@ -35,7 +50,7 @@ public class NominatimUpdater {
     private Updater updater;
 
     /**
-     * when updating lockout other threads
+     * Lock to prevent thread from updating concurrently.
      */
     private ReentrantLock updateLock = new ReentrantLock();
 
@@ -43,84 +58,18 @@ public class NominatimUpdater {
         this.updater = updater;
     }
 
+    public void initUpdates(String updateUser) {
+        LOGGER.info("Creating tracking tables");
+        template.execute(TRIGGER_SQL);
+        template.execute("GRANT SELECT, DELETE ON photon_updates TO \"" + updateUser + '"');
+    }
+
     public void update() {
         if (updateLock.tryLock()) {
             try {
-                int updatedPlaces = 0;
-                int deletedPlaces = 0;
-                for (int rank = MIN_RANK; rank <= MAX_RANK; rank++) {
-                    LOGGER.info(String.format("Starting rank %d", rank));
-                    for (Map<String, Object> sector : getIndexSectors(rank)) {
-                        for (UpdateRow place : getIndexSectorPlaces(rank, (Integer) sector.get("geometry_sector"))) {
-                            long placeId = place.getPlaceId();
-                            template.update("update placex set indexed_status = 0 where place_id = ?;", placeId);
-
-                            Integer indexedStatus = place.getIndexdStatus();
-                            if (indexedStatus == DELETE || (indexedStatus == UPDATE && rank == MAX_RANK)) {
-                                updater.delete(placeId);
-                                if (indexedStatus == DELETE) {
-                                    deletedPlaces++;
-                                    continue;
-                                }
-                                indexedStatus = CREATE; // always create
-                            }
-                            updatedPlaces++;
-
-                            final List<PhotonDoc> updatedDocs = exporter.getByPlaceId(place.getPlaceId());
-                            boolean wasUseful = false;
-                            for (PhotonDoc updatedDoc : updatedDocs) {
-                                if (updatedDoc.isUsefulForIndex()) {
-                                    updater.create(updatedDoc);
-                                    wasUseful = true;
-                                }
-                            }
-                            if (indexedStatus == UPDATE && !wasUseful) {
-                                // only true when rank != 30
-                                // if no documents for the place id exist this will likely cause moaning
-                                updater.delete(placeId);
-                                updatedPlaces--;
-                            }
-                        }
-                    }
-                }
-
-                LOGGER.info(String.format("%d places created or updated, %d deleted", updatedPlaces, deletedPlaces));
-
-                // update documents generated from address interpolations
-                // .isUsefulForIndex() should always return true for documents
-                // created from interpolations so no need to check them
-                LOGGER.info("Starting interpolations");
-                int updatedInterpolations = 0;
-                int deletedInterpolations = 0;
-                int interpolationDocuments = 0;
-                for (Map<String, Object> sector : template.queryForList(
-                        "select geometry_sector,count(*) from location_property_osmline where indexed_status > 0 group by geometry_sector order by geometry_sector;")) {
-                    for (UpdateRow place : getIndexSectorInterpolations((Integer) sector.get("geometry_sector"))) {
-                        long placeId = place.getPlaceId();
-                        template.update("update location_property_osmline set indexed_status = 0 where place_id = ?;", placeId);
-
-                        Integer indexedStatus = place.getIndexdStatus();
-                        if (indexedStatus != CREATE) {
-                            updater.delete(placeId);
-                            if (indexedStatus == DELETE) {
-                                deletedInterpolations++;
-                                continue;
-                            }
-                        }
-                        updatedInterpolations++;
-
-                        final List<PhotonDoc> updatedDocs = exporter.getInterpolationsByPlaceId(place.getPlaceId());
-                        for (PhotonDoc updatedDoc : updatedDocs) {
-                            updater.create(updatedDoc);
-                            interpolationDocuments++;
-                        }
-                    }
-                }
-                LOGGER.info(String.format("%d interpolations created or updated, %d deleted, %d documents added or updated", updatedInterpolations,
-                        deletedInterpolations, interpolationDocuments));
+                updateFromPlacex();
+                updateFromInterpolations();
                 updater.finish();
-                template.update("update import_status set indexed=true;"); // indicate that we are finished
-
                 LOGGER.info("Finished updating");
             } finally {
                 updateLock.unlock();
@@ -130,39 +79,105 @@ public class NominatimUpdater {
         }
     }
 
-    private List<Map<String, Object>> getIndexSectors(Integer rank) {
-        return template.queryForList("select geometry_sector,count(*) from placex where rank_search = ? "
-                + "and indexed_status > 0 group by geometry_sector order by geometry_sector;", rank);
-    }
+    private void updateFromPlacex() {
+        LOGGER.info("Starting place updates");
+        int updatedPlaces = 0;
+        int deletedPlaces = 0;
+        for (UpdateRow place : getPlaces("placex")) {
+            long placeId = place.getPlaceId();
+            int objectId = -1;
+            boolean checkForMultidoc = true;
 
-    private List<UpdateRow> getIndexSectorPlaces(Integer rank, Integer geometrySector) {
-        return template.query("select place_id, indexed_status from placex where rank_search = ?" + " and geometry_sector = ? and indexed_status > 0;",
-                new Object[] { rank, geometrySector }, new RowMapper<UpdateRow>() {
-                    @Override
-                    public UpdateRow mapRow(ResultSet rs, int rowNum) throws SQLException {
-                        UpdateRow updateRow = new UpdateRow();
-                        updateRow.setPlaceId(rs.getLong("place_id"));
-                        updateRow.setIndexdStatus(rs.getInt("indexed_status"));
-                        return updateRow;
+            if (!place.isToDelete()) {
+                final List<PhotonDoc> updatedDocs = exporter.getByPlaceId(placeId);
+                if (updatedDocs != null && !updatedDocs.isEmpty() && updatedDocs.get(0).isUsefulForIndex()) {
+                    checkForMultidoc = updatedDocs.get(0).getRankAddress() == 30;
+                    ++updatedPlaces;
+                    for (PhotonDoc updatedDoc : updatedDocs) {
+                            updater.create(updatedDoc, ++objectId);
                     }
-                });
-    }
+                }
+            }
 
-    private List<UpdateRow> getIndexSectorInterpolations(Integer geometrySector) {
-        return template.query("select place_id, indexed_status from location_property_osmline where geometry_sector = ? and indexed_status > 0;",
-                new Object[] { geometrySector }, new RowMapper<UpdateRow>() {
-                    @Override
-                    public UpdateRow mapRow(ResultSet rs, int rowNum) throws SQLException {
-                        UpdateRow updateRow = new UpdateRow();
-                        updateRow.setPlaceId(rs.getLong("place_id"));
-                        updateRow.setIndexdStatus(rs.getInt("indexed_status"));
-                        return updateRow;
-                    }
-                });
+            if (objectId < 0) {
+                ++deletedPlaces;
+                updater.delete(placeId, 0);
+                objectId = 0;
+            }
+
+            if (checkForMultidoc) {
+                while (updater.exists(placeId, ++objectId)) {
+                    updater.delete(placeId, objectId);
+                }
+            }
+        }
+
+        LOGGER.info("{} places created or updated, {} deleted", updatedPlaces, deletedPlaces);
     }
 
     /**
-     * Creates a new instance
+     * Update documents generated from address interpolations.
+     */
+    private void updateFromInterpolations() {
+        // .isUsefulForIndex() should always return true for documents
+        // created from interpolations so no need to check them
+        LOGGER.info("Starting interpolations");
+        int updatedInterpolations = 0;
+        int deletedInterpolations = 0;
+        for (UpdateRow place : getPlaces("location_property_osmline")) {
+            long placeId = place.getPlaceId();
+            int objectId = -1;
+
+            if (!place.isToDelete()) {
+                final List<PhotonDoc> updatedDocs = exporter.getInterpolationsByPlaceId(placeId);
+                if (updatedDocs != null) {
+                    ++updatedInterpolations;
+                    for (PhotonDoc updatedDoc : updatedDocs) {
+                        updater.create(updatedDoc, ++objectId);
+                    }
+                }
+            }
+
+            if (objectId < 0) {
+                ++deletedInterpolations;
+            }
+
+            while (updater.exists(placeId, ++objectId)) {
+                updater.delete(placeId, objectId);
+            }
+        }
+
+        LOGGER.info("{} interpolations created or updated, {} deleted", updatedInterpolations, deletedInterpolations);
+    }
+
+    private List<UpdateRow> getPlaces(String table) {
+        List<UpdateRow> results = template.query(exporter.getDataAdaptor().deleteReturning(
+                "DELETE FROM photon_updates WHERE rel = ?", "place_id, operation, indexed_date"),
+                (rs, rowNum) -> {
+                    boolean isDelete = "DELETE".equals(rs.getString("operation"));
+                    return new UpdateRow(rs.getLong("place_id"), isDelete, rs.getTimestamp("indexed_date"));
+                }, table);
+
+        // For each place only keep the newest item.
+        // Order doesn't really matter because updates of each place are independent now.
+        results.sort(Comparator.comparing(UpdateRow::getPlaceId).thenComparing(
+                     Comparator.comparing(UpdateRow::getUpdateDate).reversed()));
+
+        ArrayList<UpdateRow> todo = new ArrayList<>();
+        long prevId = -1;
+        for (UpdateRow row: results) {
+            if (row.getPlaceId() != prevId) {
+                prevId = row.getPlaceId();
+                todo.add(row);
+            }
+        }
+
+        return todo;
+    }
+
+
+    /**
+     * Create a new instance.
      * 
      * @param host Nominatim database host
      * @param port Nominatim database port
@@ -170,10 +185,14 @@ public class NominatimUpdater {
      * @param username Nominatim database username
      * @param password Nominatim database password
      */
-    public NominatimUpdater(String host, int port, String database, String username, String password) {
+    public NominatimUpdater(String host, int port, String database, String username, String password, DBDataAdapter dataAdapter) {
         BasicDataSource dataSource = NominatimConnector.buildDataSource(host, port, database, username, password, true);
 
-        exporter = new NominatimConnector(host, port, database, username, password);
+        exporter = new NominatimConnector(host, port, database, username, password, dataAdapter);
         template = new JdbcTemplate(dataSource);
+    }
+
+    public NominatimUpdater(String host, int port, String database, String username, String password) {
+        this(host, port, database, username, password, new PostgisDataAdapter());
     }
 }

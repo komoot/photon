@@ -24,7 +24,7 @@ import de.komoot.photon.searcher.PhotonResult;
 import de.komoot.photon.searcher.TagFilter;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class QueryReverseFilterTagValueTest extends ESBaseTester {
+class QueryReverseFilterTagValueTest extends ESBaseTester {
     @TempDir
     private static Path instanceTestDirectory;
 
@@ -39,7 +39,7 @@ public class QueryReverseFilterTagValueTest extends ESBaseTester {
                                                       "railway", "station"};
 
     @BeforeAll
-    public void setup() throws IOException {
+    void setup() throws IOException {
         setUpES(instanceTestDirectory, "en", "de", "fr");
         Importer instance = makeImporter();
         double lon = 13.38886;
@@ -48,11 +48,11 @@ public class QueryReverseFilterTagValueTest extends ESBaseTester {
             String key = TAGS[i];
             String value = TAGS[++i];
             PhotonDoc doc = this.createDoc(lon, lat, i, i, key, value);
-            instance.add(doc);
+            instance.add(doc, 0);
             lon += 0.00004;
             lat += 0.00006;
             doc = this.createDoc(lon, lat, i + 1, i + 1, key, value);
-            instance.add(doc);
+            instance.add(doc, 0);
             lon += 0.00004;
             lat += 0.00006;
         }
@@ -72,12 +72,12 @@ public class QueryReverseFilterTagValueTest extends ESBaseTester {
         for (String param : params) {
             request.addOsmTagFilter(TagFilter.buildOsmTagFilter(param));
         }
-        return getServer().createReverseHandler().reverse(request);
+        return getServer().createReverseHandler(1).reverse(request);
     }
 
     @ParameterizedTest
     @MethodSource("simpleTagFilterProvider")
-    public void testSingleTagFilter(String filter, int expectedResults) {
+    void testSingleTagFilter(String filter, int expectedResults) {
         assertEquals(expectedResults, reverseWithTags(new String[]{filter}).size());
     }
 
@@ -96,7 +96,7 @@ public class QueryReverseFilterTagValueTest extends ESBaseTester {
 
     @ParameterizedTest
     @MethodSource("combinedTagFilterProvider")
-    public void testCombinedTagFilter(String[] filters, int expectedResults) {
+    void testCombinedTagFilter(String[] filters, int expectedResults) {
         assertEquals(expectedResults, reverseWithTags(filters).size());
     }
 

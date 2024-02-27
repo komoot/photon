@@ -43,7 +43,17 @@ public class H2DataAdapter implements DBDataAdapter {
     }
 
     @Override
-    public boolean hasColumn(JdbcTemplate template, String table, String column) {
+    public boolean hasColumn(JdbcTemplate template, String table, String column)
+    {
+        if ("location_property_osmline".equals(table) && "step".equals(column)) {
+            return true;
+        }
         return false;
     }
+
+    @Override
+    public String deleteReturning(String deleteSQL, String columns) {
+        return "SELECT " + columns + " FROM OLD TABLE (" + deleteSQL + ")";
+    }
+
 }

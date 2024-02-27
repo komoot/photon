@@ -1,19 +1,20 @@
 package de.komoot.photon.elasticsearch;
 
-import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.xcontent.XContentType;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
+import org.slf4j.Logger;
 
 import java.io.InputStream;
 
 /**
- * Encapsulates the ES index mapping for the photon index.
+ * ElasticSearch index mapping for the photon index.
  */
-@Slf4j
 public class IndexMapping {
+    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(IndexMapping.class);
+
     private final JSONObject mappings;
 
     /**
@@ -46,17 +47,17 @@ public class IndexMapping {
         JSONObject propertiesObject = placeObject == null ? null : placeObject.optJSONObject("properties");
 
         if (propertiesObject == null) {
-            log.error("cannot add languages to mapping.json, please double-check the mappings.json or the language values supplied");
+            LOGGER.error("Cannot add languages to mapping.json, please double-check the mappings.json or the language values supplied");
             return this;
         }
 
         for (String lang : languages) {
-            // create lang-specific json objects
+            // create language-specific json objects
             JSONObject copyToCollectorObject = new JSONObject(copyToCollectorString.replace("{lang}", lang));
             JSONObject nameToCollectorObject = new JSONObject(nameToCollectorString.replace("{lang}", lang));
             JSONObject collectorObject = new JSONObject(collectorString.replace("{lang}", lang));
 
-            // add language specific tags to the collector
+            // add language-specific tags to the collector
             addToCollector("city", propertiesObject, copyToCollectorObject, lang);
             addToCollector("context", propertiesObject, copyToCollectorObject, lang);
             addToCollector("county", propertiesObject, copyToCollectorObject, lang);
@@ -67,7 +68,7 @@ public class IndexMapping {
             addToCollector("locality", propertiesObject, copyToCollectorObject, lang);
             addToCollector("name", propertiesObject, nameToCollectorObject, lang);
 
-            // add language specific collector to default for name
+            // add language-specific collector to default for name
             JSONObject name = propertiesObject.optJSONObject("name");
             JSONObject nameProperties = name == null ? null : name.optJSONObject("properties");
             if (nameProperties != null) {
@@ -76,7 +77,7 @@ public class IndexMapping {
                 copyToArray.put("name." + lang);
             }
 
-            // add language specific collector
+            // add language-specific collector
             addToCollector("collector", propertiesObject, collectorObject, lang);
         }
 

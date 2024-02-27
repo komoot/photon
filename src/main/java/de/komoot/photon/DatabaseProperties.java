@@ -1,17 +1,13 @@
 package de.komoot.photon;
 
-import lombok.extern.slf4j.Slf4j;
 import java.util.*;
 
 /**
  * Class collecting database global properties.
  *
- * The server is responsible for making the data persistent throught the Photon database.
+ * The server is responsible for making the data persistent in the Photon database.
  */
-@Slf4j
 public class DatabaseProperties {
-
-
     private String[] languages = null;
 
     /**
@@ -36,7 +32,7 @@ public class DatabaseProperties {
      *
      * @param languages Array of two-letter language codes.
      *
-     * @return This object for chaining.
+     * @return This object for function chaining.
      */
     public DatabaseProperties setLanguages(String[] languages) {
         this.languages = languages;
@@ -66,8 +62,8 @@ public class DatabaseProperties {
             }
 
             if (newLanguageList.isEmpty()) {
-                throw new RuntimeException("Language list '" + languageList.toString() +
-                        "not compatible with languages in database(" + languages.toString() + ")");
+                throw new RuntimeException("Language list '" + Arrays.toString(languageList) +
+                        "' not compatible with languages in database(" + Arrays.toString(languages) + ")");
             }
 
             languages = newLanguageList.toArray(new String[]{});

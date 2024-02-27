@@ -2,20 +2,19 @@ package de.komoot.photon.elasticsearch;
 
 import de.komoot.photon.PhotonDoc;
 import de.komoot.photon.Utils;
-import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.client.Client;
+import org.slf4j.Logger;
 
 import java.io.IOException;
 
 /**
- * elasticsearch importer
- *
- * @author felix
+ * Elasticsearch importer
  */
-@Slf4j
 public class Importer implements de.komoot.photon.Importer {
+    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(Importer.class);
+
     private int documentCount = 0;
 
     private final Client esClient;
@@ -31,12 +30,13 @@ public class Importer implements de.komoot.photon.Importer {
     }
 
     @Override
-    public void add(PhotonDoc doc) {
+    public void add(PhotonDoc doc, int objectId) {
+        String uid = doc.getUid(objectId);
         try {
             this.bulkRequest.add(this.esClient.prepareIndex(PhotonIndex.NAME, PhotonIndex.TYPE).
-                    setSource(Utils.convert(doc, languages, extraTags)).setId(doc.getUid()));
+                    setSource(Utils.convert(doc, languages, extraTags)).setId(uid));
         } catch (IOException e) {
-            log.error("could not bulk add document " + doc.getUid(), e);
+            LOGGER.error("Could not bulk add document {}", uid, e);
             return;
         }
         this.documentCount += 1;
@@ -50,7 +50,7 @@ public class Importer implements de.komoot.photon.Importer {
 
         BulkResponse bulkResponse = bulkRequest.execute().actionGet();
         if (bulkResponse.hasFailures()) {
-            log.error("error while bulk import:" + bulkResponse.buildFailureMessage());
+            LOGGER.error("Error during bulk import: {}", bulkResponse.buildFailureMessage());
         }
         this.bulkRequest = this.esClient.prepareBulk();
     }

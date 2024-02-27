@@ -6,7 +6,6 @@ import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.PrecisionModel;
 import de.komoot.photon.elasticsearch.ElasticTestServer;
 import de.komoot.photon.searcher.PhotonResult;
-import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -17,10 +16,7 @@ import java.util.Date;
 
 /**
  * Start an ES server with some test data that then can be queried in tests that extend this class
- *
- * @author Peter Karich
  */
-@Slf4j
 public class ESBaseTester {
     @TempDir
     protected Path dataDirectory;
@@ -36,6 +32,10 @@ public class ESBaseTester {
     }
 
     protected PhotonResult getById(int id) {
+        return getById(String.valueOf(id));
+    }
+
+    protected PhotonResult getById(String id) {
         return server.getById(id);
     }
 

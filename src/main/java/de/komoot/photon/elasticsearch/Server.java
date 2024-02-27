@@ -5,8 +5,6 @@ import de.komoot.photon.Importer;
 import de.komoot.photon.Updater;
 import de.komoot.photon.searcher.ReverseHandler;
 import de.komoot.photon.searcher.SearchHandler;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.SystemUtils;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.TransportClient;
@@ -21,22 +19,25 @@ import org.elasticsearch.node.NodeValidationException;
 import org.elasticsearch.plugins.Plugin;
 import org.elasticsearch.transport.Netty4Plugin;
 import org.elasticsearch.transport.client.PreBuiltTransportClient;
+import org.slf4j.Logger;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
-import java.util.*;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.Map;
 
 /**
- * Helper class to start/stop elasticsearch node and get elasticsearch clients
- *
- * @author felix
+ * Helper class to start/stop ElasticSearch node and get ElasticSearch clients.
  */
-@Slf4j
 public class Server {
+    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(Server.class);
+
     /**
      * Database version created by new imports with the current code.
      *
@@ -68,11 +69,7 @@ public class Server {
 
     public Server(String mainDirectory) {
         try {
-            if (SystemUtils.IS_OS_WINDOWS) {
-                setupDirectories(new URL("file:///" + mainDirectory));
-            } else {
-                setupDirectories(new URL("file://" + mainDirectory));
-            }
+            setupDirectories(new File(mainDirectory).toURI().toURL());
         } catch (Exception e) {
             throw new RuntimeException("Can't create directories: " + mainDirectory, e);
         }
@@ -99,7 +96,7 @@ public class Server {
 
             esClient = trClient;
 
-            log.info("Started elastic search client connected to " + String.join(", ", transportAddresses));
+            LOGGER.info("Started elastic search client connected to {}", String.join(", ", transportAddresses));
 
         } else {
 
@@ -111,7 +108,7 @@ public class Server {
                 esNode = new MyNode(settings, lList);
                 esNode.start();
 
-                log.info("started elastic search node");
+                LOGGER.info("Started elastic search node");
 
                 esClient = esNode.client();
 
@@ -155,7 +152,7 @@ public class Server {
             directory.mkdirs();
         }
 
-        // copy script directory to elastic search directory
+        // copy script directory to ElasticSearch directory
         final ClassLoader loader = Thread.currentThread().getContextClassLoader();
 
         Files.copy(loader.getResourceAsStream("modules/lang-painless/antlr4-runtime.jar"),
@@ -222,7 +219,7 @@ public class Server {
    /**
      * Save the global properties to the database.
      *
-     * The function saved properties available as members and the database version
+     * The function saves properties available as members and the database version
      * as currently defined in DATABASE_VERSION.
      */
     public void saveToDatabase(DatabaseProperties dbProperties) throws IOException  {
@@ -261,7 +258,7 @@ public class Server {
 
         String version = properties.getOrDefault(FIELD_VERSION, "");
         if (!DATABASE_VERSION.equals(version)) {
-            log.error("Database has incompatible version '" + version + "'. Expected: " + DATABASE_VERSION);
+            LOGGER.error("Database has incompatible version '{}'. Expected: {}", version, DATABASE_VERSION);
             throw new RuntimeException("Incompatible database.");
         }
 
@@ -280,11 +277,11 @@ public class Server {
         return new de.komoot.photon.elasticsearch.Updater(esClient, languages, extraTags);
     }
 
-    public SearchHandler createSearchHandler(String[] languages) {
-        return new ElasticsearchSearchHandler(esClient, languages);
+    public SearchHandler createSearchHandler(String[] languages, int queryTimeoutSec) {
+        return new ElasticsearchSearchHandler(esClient, languages, queryTimeoutSec);
     }
 
-    public ReverseHandler createReverseHandler() {
-        return new ElasticsearchReverseHandler(esClient);
+    public ReverseHandler createReverseHandler(int queryTimeoutSec) {
+        return new ElasticsearchReverseHandler(esClient, queryTimeoutSec);
     }
 }

@@ -1,12 +1,14 @@
 package de.komoot.photon;
 
 /**
- * @author felix
+ * Interface for classes accepting database updates.
  */
 public interface Updater {
-    public void create(PhotonDoc doc);
+    void create(PhotonDoc doc, int objectId);
 
-    public void delete(Long id);
+    void delete(long docId, int objectId);
 
-    public void finish();
+    boolean exists(long docId, int objectId);
+
+    void finish();
 }

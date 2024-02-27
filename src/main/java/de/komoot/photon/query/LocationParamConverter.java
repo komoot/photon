@@ -8,8 +8,7 @@ import com.vividsolutions.jts.geom.PrecisionModel;
 import spark.Request;
 
 /**
- * Converts lon/lat parameter into location and validates the given coordinates.
- * Created by Holger Bruch on 10/13/2018.
+ * Convertor which transforms lon/lat parameter into a location and validates the given coordinates.
  */
 public class LocationParamConverter {
     private static final GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);

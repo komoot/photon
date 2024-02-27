@@ -22,12 +22,12 @@ import java.util.stream.Collectors;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class QueryReverseFilterLayerTest extends ESBaseTester {
+class QueryReverseFilterLayerTest extends ESBaseTester {
     @TempDir
     private static Path instanceTestDirectory;
 
     @BeforeAll
-    public void setup() throws IOException {
+    void setup() throws IOException {
         setUpES(instanceTestDirectory, "en");
 
         Importer instance = makeImporter();
@@ -36,7 +36,7 @@ public class QueryReverseFilterLayerTest extends ESBaseTester {
 
         int[] docRanks = {10, 13, 14, 22}; // state, city * 2, locality
         for (int rank : docRanks) {
-            instance.add(createDoc(++id, rank));
+            instance.add(createDoc(++id, rank), 0);
         }
 
         instance.finish();
@@ -54,16 +54,16 @@ public class QueryReverseFilterLayerTest extends ESBaseTester {
         Set<String> layerSet = Arrays.stream(layers).collect(Collectors.toSet());
         ReverseRequest request = new ReverseRequest(pt, "en", 1.0, "", 10, true, layerSet, false);
 
-        return getServer().createReverseHandler().reverse(request);
+        return getServer().createReverseHandler(1).reverse(request);
     }
 
     @Test
-    public void testSingleLayer() {
+    void testSingleLayer() {
         assertEquals(2, reverse("city").size());
     }
 
     @Test
-    public void testMultipleLayers() {
+    void testMultipleLayers() {
         assertEquals(3, reverse("city", "locality").size());
     }
 

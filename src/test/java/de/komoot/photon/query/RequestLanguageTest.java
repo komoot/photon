@@ -11,7 +11,7 @@ import static java.util.Arrays.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-public class RequestLanguageTest {
+class RequestLanguageTest {
     // maybe could access directly from RequestLanguageResolver, but in case of change... whatever.
     private final List<String> supportedLangs = asList("en", "fr", "de");
     private RequestLanguageResolver languageResolver;
@@ -19,40 +19,40 @@ public class RequestLanguageTest {
     private static final String DEFAULT_LANGUAGE = "en";
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         languageResolver = new RequestLanguageResolver(supportedLangs, DEFAULT_LANGUAGE);
     }
 
     @Test
-    public void testDefaultLanguageFallback() {
+    void testDefaultLanguageFallback() {
         validateReturnedLanguage(null, null, DEFAULT_LANGUAGE);
     }
 
     @Test
-    public void testValidQueryLangs()
+    void testValidQueryLangs()
     {
         supportedLangs.forEach(l -> validateReturnedLanguage(l, null, l));
         validateReturnedLanguage("default", null, "default");
     }
 
     @Test
-    public void testLanguageNotSupported() {
+    void testLanguageNotSupported() {
         asList("ru", "pl", "xyaasdas").forEach(l -> validateNotSupported(l, null));
     }
 
     @Test
-    public void testPriorityOfQueryParam() {
+    void testPriorityOfQueryParam() {
         validateReturnedLanguage("de", "en", "de");
         validateNotSupported("ko", "en");
     }
 
     @Test
-    public void testFallbackOnQueryNotSetBasicHeader() {
+    void testFallbackOnQueryNotSetBasicHeader() {
         supportedLangs.forEach(l -> validateReturnedLanguage(null, l, l));
     }
 
     @Test
-    public void testFallbackMatchingHeaderLang() {
+    void testFallbackMatchingHeaderLang() {
         validateReturnedLanguage(null, "ru,pl;q=0.9,sp,fr;q=0.1", "fr");
         validateReturnedLanguage(null, "ru,pl;q=0.7,sp,de", "de");
         validateReturnedLanguage(null, "de-DE", "de");
@@ -60,7 +60,7 @@ public class RequestLanguageTest {
     }
 
     @Test
-    public void validateIgnoreInvalidAcceptLangHeader() {
+    void validateIgnoreInvalidAcceptLangHeader() {
         validateReturnedLanguage(null, "we loves cats", DEFAULT_LANGUAGE);
         validateReturnedLanguage(null, "cookies?", DEFAULT_LANGUAGE);
         validateReturnedLanguage(null, "Illegal/Header_", DEFAULT_LANGUAGE);

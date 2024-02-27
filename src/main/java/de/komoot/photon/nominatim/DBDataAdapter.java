@@ -8,7 +8,7 @@ import java.sql.SQLException;
 import java.util.Map;
 
 /**
- * Defines utility functions to parse data from the database.
+ * Defines utility functions to parse data from the database and create SQL queries.
  */
 public interface DBDataAdapter {
     /**
@@ -25,4 +25,9 @@ public interface DBDataAdapter {
      * Check if a table has the given column.
      */
     boolean hasColumn(JdbcTemplate template, String table, String column);
+
+    /**
+     * Wrap a DELETE statement with a RETURNING clause.
+     */
+    String deleteReturning(String deleteSQL, String columns);
 }

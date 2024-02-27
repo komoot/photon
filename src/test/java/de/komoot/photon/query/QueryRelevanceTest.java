@@ -21,10 +21,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * Test that the database backend produces queries that rank the
  * results in the expected order.
  */
-public class QueryRelevanceTest extends ESBaseTester {
+class QueryRelevanceTest extends ESBaseTester {
 
     @BeforeEach
-    public void setup() throws IOException {
+    void setup() throws IOException {
         setUpES();
     }
 
@@ -39,18 +39,18 @@ public class QueryRelevanceTest extends ESBaseTester {
     }
 
     private List<PhotonResult> search(String query) {
-        return getServer().createSearchHandler(new String[]{"en"}).search(new PhotonRequest(query, "en"));
+        return getServer().createSearchHandler(new String[]{"en"}, 1).search(new PhotonRequest(query, "en"));
     }
 
     private List<PhotonResult> search(PhotonRequest request) {
-        return getServer().createSearchHandler(new String[]{"en"}).search(request);
+        return getServer().createSearchHandler(new String[]{"en"}, 1).search(request);
     }
 
     @Test
-    public void testRelevanceByImportance() {
+    void testRelevanceByImportance() {
         Importer instance = makeImporter();
-        instance.add(createDoc("amenity", "restuarant", 1001, "name", "New York").importance(0.0));
-        instance.add(createDoc("place", "city", 2000, "name", "New York").importance(0.5));
+        instance.add(createDoc("amenity", "restuarant", 1001, "name", "New York").importance(0.0), 0);
+        instance.add(createDoc("place", "city", 2000, "name", "New York").importance(0.5), 0);
         instance.finish();
         refresh();
 
@@ -61,10 +61,10 @@ public class QueryRelevanceTest extends ESBaseTester {
     }
 
     @Test
-    public void testFullNameOverPartialName() {
+    void testFullNameOverPartialName() {
         Importer instance = makeImporter();
-        instance.add(createDoc("place", "hamlet", 1000, "name", "Ham"));
-        instance.add(createDoc("place", "hamlet", 1001, "name", "Hamburg"));
+        instance.add(createDoc("place", "hamlet", 1000, "name", "Ham"), 0);
+        instance.add(createDoc("place", "hamlet", 1001, "name", "Hamburg"), 0);
         instance.finish();
         refresh();
 
@@ -75,10 +75,10 @@ public class QueryRelevanceTest extends ESBaseTester {
     }
 
     @Test
-    public void testPartialNameWithImportanceOverFullName() {
+    void testPartialNameWithImportanceOverFullName() {
         Importer instance = makeImporter();
-        instance.add(createDoc("place", "hamlet", 1000, "name", "Ham").importance(0.1));
-        instance.add(createDoc("place", "city", 1001, "name", "Hamburg").importance(0.5));
+        instance.add(createDoc("place", "hamlet", 1000, "name", "Ham").importance(0.1), 0);
+        instance.add(createDoc("place", "city", 1001, "name", "Hamburg").importance(0.5), 0);
         instance.finish();
         refresh();
 
@@ -93,9 +93,9 @@ public class QueryRelevanceTest extends ESBaseTester {
     void testLocationPreferenceForEqualImportance(String placeName) {
         Importer instance = makeImporter();
         instance.add(createDoc("place", "hamlet", 1000, "name", "Ham")
-                .centroid(FACTORY.createPoint(new Coordinate(10, 10))));
+                .centroid(FACTORY.createPoint(new Coordinate(10, 10))), 0);
         instance.add(createDoc("place", "hamlet", 1001, "name", placeName)
-                .centroid(FACTORY.createPoint(new Coordinate(-10, -10))));
+                .centroid(FACTORY.createPoint(new Coordinate(-10, -10))), 0);
         instance.finish();
         refresh();
 
@@ -111,10 +111,10 @@ public class QueryRelevanceTest extends ESBaseTester {
         Importer instance = makeImporter();
         instance.add(createDoc("place", "hamlet", 1000, "name", "Ham")
                         .importance(0.8)
-                .centroid(FACTORY.createPoint(new Coordinate(10, 10))));
+                .centroid(FACTORY.createPoint(new Coordinate(10, 10))), 0);
         instance.add(createDoc("place", "hamlet", 1001, "name", "Ham")
                         .importance(0.01)
-                .centroid(FACTORY.createPoint(new Coordinate(-10, -10))));
+                .centroid(FACTORY.createPoint(new Coordinate(-10, -10))), 0);
         instance.finish();
         refresh();
 

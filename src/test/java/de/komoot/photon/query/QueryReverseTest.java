@@ -21,19 +21,19 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class QueryReverseTest extends ESBaseTester {
+class QueryReverseTest extends ESBaseTester {
     @TempDir
     private static Path instanceTestDirectory;
 
     @BeforeAll
-    public void setup() throws IOException {
+    void setup() throws IOException {
         setUpES(instanceTestDirectory, "en");
 
         Importer instance = makeImporter();
-        instance.add(createDoc(10,10, 100, 100, "place", "house"));
-        instance.add(createDoc(10,10.1, 101, 101, "place", "house"));
-        instance.add(createDoc(10,10.2, 102, 102, "place", "house"));
-        instance.add(createDoc(-10,-10, 202, 102, "place", "house"));
+        instance.add(createDoc(10,10, 100, 100, "place", "house"), 0);
+        instance.add(createDoc(10,10.1, 101, 101, "place", "house"), 0);
+        instance.add(createDoc(10,10.2, 102, 102, "place", "house"), 0);
+        instance.add(createDoc(-10,-10, 202, 102, "place", "house"), 0);
         instance.finish();
         refresh();
     }
@@ -47,13 +47,13 @@ public class QueryReverseTest extends ESBaseTester {
     private List<PhotonResult> reverse(double lon, double lat, double radius, int limit) {
         Point pt = FACTORY.createPoint(new Coordinate(lon, lat));
 
-        return getServer().createReverseHandler().reverse(
+        return getServer().createReverseHandler(1).reverse(
             new ReverseRequest(pt, "en", radius, "", limit, true, new HashSet<>(), false)
         );
     }
 
     @Test
-    public void testReverse() {
+    void testReverse() {
         List<PhotonResult> results = reverse(10, 10, 0.1, 1);
 
         assertEquals(1, results.size());
@@ -62,7 +62,7 @@ public class QueryReverseTest extends ESBaseTester {
 
     @ParameterizedTest
     @ValueSource(ints = {2, 3, 10})
-    public void testReverseMultiple(int limit) {
+    void testReverseMultiple(int limit) {
         List<PhotonResult> results = reverse(10, 10, 20, limit);
 
         assertEquals(2, results.size());
