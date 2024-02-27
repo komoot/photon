@@ -17,7 +17,7 @@ import java.util.List;
 import static spark.Spark.halt;
 
 /**
- * @author svantulden
+ * Webserver route for reverse geocoding requests.
  */
 public class ReverseSearchRequestHandler extends RouteImpl {
     private final ReverseRequestFactory reverseRequestFactory;
@@ -38,7 +38,7 @@ public class ReverseSearchRequestHandler extends RouteImpl {
         } catch (BadRequestException e) {
             JSONObject json = new JSONObject();
             json.put("message", e.getMessage());
-            halt(e.getHttpStatus(), json.toString());
+            throw halt(e.getHttpStatus(), json.toString());
         }
 
         List<PhotonResult> results = requestHandler.reverse(photonRequest);

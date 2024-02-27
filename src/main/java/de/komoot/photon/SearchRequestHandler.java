@@ -15,7 +15,7 @@ import java.util.List;
 import static spark.Spark.halt;
 
 /**
- * Created by Sachin Dole on 2/12/2015.
+ * Webserver route for forward geocoding requests.
  */
 public class SearchRequestHandler extends RouteImpl {
     private final PhotonRequestFactory photonRequestFactory;
@@ -36,12 +36,12 @@ public class SearchRequestHandler extends RouteImpl {
         } catch (BadRequestException e) {
             JSONObject json = new JSONObject();
             json.put("message", e.getMessage());
-            halt(e.getHttpStatus(), json.toString());
+            throw halt(e.getHttpStatus(), json.toString());
         }
 
         List<PhotonResult> results = requestHandler.search(photonRequest);
 
-        // Futher filtering
+        // Further filtering
         results = new StreetDupesRemover(photonRequest.getLanguage()).execute(results);
 
         // Restrict to the requested limit.

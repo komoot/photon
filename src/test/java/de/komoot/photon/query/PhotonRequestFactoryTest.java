@@ -19,7 +19,7 @@ import static org.junit.jupiter.params.provider.Arguments.arguments;
 /**
  * Tests for correct parsing of the query parameters into a PhotonRequest.
  */
-public class PhotonRequestFactoryTest {
+class PhotonRequestFactoryTest {
 
     private Request createRequestWithQueryParams(String... queryParams) throws BadRequestException {
         Request mockRequest = Mockito.mock(Request.class);
@@ -39,7 +39,7 @@ public class PhotonRequestFactoryTest {
         return mockRequest;
     }
 
-    public void requestWithOsmFilters(Request mockRequest, String... filterParams) {
+    private void requestWithOsmFilters(Request mockRequest, String... filterParams) {
         Mockito.when(mockRequest.queryParams("q")).thenReturn("new york");
 
         QueryParamsMap mockQueryParamsMap = Mockito.mock(QueryParamsMap.class);
@@ -48,7 +48,7 @@ public class PhotonRequestFactoryTest {
         Mockito.when(mockRequest.queryMap("osm_tag")).thenReturn(mockQueryParamsMap);
     }
 
-    public void requestWithLayers(Request mockRequest, String... layers) {
+    private void requestWithLayers(Request mockRequest, String... layers) {
         QueryParamsMap mockQueryParamsMap = Mockito.mock(QueryParamsMap.class);
         Mockito.when(mockQueryParamsMap.hasValue()).thenReturn(true);
         Mockito.when(mockQueryParamsMap.values()).thenReturn(layers);
@@ -61,7 +61,7 @@ public class PhotonRequestFactoryTest {
     }
 
     @Test
-    public void testWithLocationBiasAndLimit() throws Exception {
+    void testWithLocationBiasAndLimit() throws Exception {
         Request mockRequest = createRequestWithQueryParams("q", "berlin", "lon", "-87", "lat", "41", "limit", "5");
         PhotonRequest photonRequest = createPhotonRequest(mockRequest);
 
@@ -74,7 +74,7 @@ public class PhotonRequestFactoryTest {
     }
 
     @Test
-    public void testWithEmptyLimit() throws Exception {
+    void testWithEmptyLimit() throws Exception {
         Request mockRequest = createRequestWithQueryParams("q", "berlin", "limit", "");
         PhotonRequest photonRequest = createPhotonRequest(mockRequest);
 
@@ -82,7 +82,7 @@ public class PhotonRequestFactoryTest {
     }
 
     @Test
-    public void testWithoutLocationBias() throws Exception {
+    void testWithoutLocationBias() throws Exception {
         Request mockRequest = createRequestWithQueryParams("q", "berlin");
         PhotonRequest photonRequest = createPhotonRequest(mockRequest);
 
@@ -93,7 +93,7 @@ public class PhotonRequestFactoryTest {
     }
 
     @Test
-    public void testInfiniteScale() throws Exception {
+    void testInfiniteScale() throws Exception {
         Request mockRequest = createRequestWithQueryParams("q", "berlin", "location_bias_scale", "Infinity");
         PhotonRequest photonRequest = createPhotonRequest(mockRequest);
 
@@ -101,7 +101,7 @@ public class PhotonRequestFactoryTest {
     }
 
     @Test
-    public void testEmptyScale() throws Exception {
+    void testEmptyScale() throws Exception {
         Request mockRequest = createRequestWithQueryParams("q", "berlin", "location_bias_scale", "");
         PhotonRequest photonRequest = createPhotonRequest(mockRequest);
 
@@ -109,7 +109,7 @@ public class PhotonRequestFactoryTest {
     }
 
     @Test
-    public void testWithDebug() throws Exception {
+    void testWithDebug() throws Exception {
         Request mockRequest = createRequestWithQueryParams("q", "berlin", "debug", "1");
         PhotonRequest photonRequest = createPhotonRequest(mockRequest);
 
@@ -118,7 +118,7 @@ public class PhotonRequestFactoryTest {
 
     @ParameterizedTest
     @MethodSource("badParamsProvider")
-    public void testBadParameters(List<String> queryParams, String expectedMessageFragment) throws BadRequestException {
+    void testBadParameters(List<String> queryParams, String expectedMessageFragment) throws BadRequestException {
         Request mockRequest = createRequestWithQueryParams(queryParams.toArray(new String[0]));
 
         BadRequestException exception = assertThrows(BadRequestException.class,
@@ -148,7 +148,7 @@ public class PhotonRequestFactoryTest {
     }
 
     @Test
-    public void testTagFilters() throws Exception {
+    void testTagFilters() throws Exception {
         Request mockRequest = createRequestWithQueryParams("q", "new york");
         requestWithOsmFilters(mockRequest, "foo", ":!bar");
         PhotonRequest photonRequest = createPhotonRequest(mockRequest);
@@ -164,7 +164,7 @@ public class PhotonRequestFactoryTest {
     }
 
     @Test
-    public void testBadTagFilters() throws BadRequestException {
+    void testBadTagFilters() throws BadRequestException {
         Request mockRequest = createRequestWithQueryParams("q", "new york");
         requestWithOsmFilters(mockRequest, "good", "bad:bad:bad");
 
@@ -173,7 +173,7 @@ public class PhotonRequestFactoryTest {
     }
 
     @Test
-    public void testWithBboxFilter() throws Exception {
+    void testWithBboxFilter() throws Exception {
         Request mockRequest = createRequestWithQueryParams("q", "hanover", "bbox", "9.6,52.3,9.8,52.4");
         PhotonRequest photonRequest = createPhotonRequest(mockRequest);
 
@@ -181,7 +181,7 @@ public class PhotonRequestFactoryTest {
     }
 
     @Test
-    public void testWithLayerFilters() throws Exception {
+    void testWithLayerFilters() throws Exception {
         Request mockRequest = createRequestWithQueryParams("q", "new york");
         requestWithLayers(mockRequest, "city", "locality");
         PhotonRequest photonRequest = createPhotonRequest(mockRequest);
@@ -190,7 +190,7 @@ public class PhotonRequestFactoryTest {
     }
 
     @Test
-    public void testWithDuplicatedLayerFilters() throws Exception {
+    void testWithDuplicatedLayerFilters() throws Exception {
         Request mockRequest = createRequestWithQueryParams("q", "new york");
         requestWithLayers(mockRequest, "city", "locality", "city");
         PhotonRequest photonRequest = createPhotonRequest(mockRequest);
@@ -199,7 +199,7 @@ public class PhotonRequestFactoryTest {
     }
 
     @Test
-    public void testWithBadLayerFilters() throws Exception {
+    void testWithBadLayerFilters() throws Exception {
         Request mockRequest = createRequestWithQueryParams("q", "new york");
         requestWithLayers(mockRequest, "city", "bad");
 

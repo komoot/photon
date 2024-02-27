@@ -17,7 +17,9 @@ import java.io.IOException;
 
 import static spark.Spark.*;
 
-
+/**
+ * Main Photon application.
+ */
 public class App {
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(App.class);
 
@@ -59,7 +61,7 @@ public class App {
                 return;
             }
 
-            // no special action specified -> normal mode: start search API
+            // No special action specified -> normal mode: start search API
             startApi(args, esServer);
         } finally {
             if (shutdownES) esServer.shutdown();
@@ -78,7 +80,7 @@ public class App {
                 throw new ParameterException("Use only one cors configuration type");
             }
         } catch (ParameterException e) {
-            LOGGER.warn("could not start photon: " + e.getMessage());
+            LOGGER.warn("Could not start photon: {}", e.getMessage());
             jCommander.usage();
             System.exit(1);
         }
@@ -94,9 +96,7 @@ public class App {
 
 
     /**
-     * take nominatim data and dump it to json
-     *
-     * @param args
+     * Take nominatim data and dump it to a Json file.
      */
     private static void startJsonDump(CommandLineArgs args) {
         try {
@@ -105,9 +105,9 @@ public class App {
             NominatimConnector nominatimConnector = new NominatimConnector(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
             nominatimConnector.setImporter(jsonDumper);
             nominatimConnector.readEntireDatabase(args.getCountryCodes());
-            LOGGER.info("json dump was created: " + filename);
+            LOGGER.info("Json dump was created: {}", filename);
         } catch (FileNotFoundException e) {
-            LOGGER.error("cannot create dump", e);
+            LOGGER.error("Cannot create dump", e);
         }
     }
 
@@ -120,15 +120,15 @@ public class App {
         try {
             dbProperties = esServer.recreateIndex(args.getLanguages()); // clear out previous data
         } catch (IOException e) {
-            throw new RuntimeException("cannot setup index, elastic search config files not readable", e);
+            throw new RuntimeException("Cannot setup index, elastic search config files not readable", e);
         }
 
-        LOGGER.info("starting import from nominatim to photon with languages: " + String.join(",", dbProperties.getLanguages()));
+        LOGGER.info("Starting import from nominatim to photon with languages: {}", String.join(",", dbProperties.getLanguages()));
         NominatimConnector nominatimConnector = new NominatimConnector(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
         nominatimConnector.setImporter(esServer.createImporter(dbProperties.getLanguages(), args.getExtraTags()));
         nominatimConnector.readEntireDatabase(args.getCountryCodes());
 
-        LOGGER.info("imported data from nominatim to photon with languages: " + String.join(",", dbProperties.getLanguages()));
+        LOGGER.info("Imported data from nominatim to photon with languages: {}", String.join(",", dbProperties.getLanguages()));
     }
 
     private static void startNominatimUpdateInit(CommandLineArgs args) {
@@ -137,9 +137,9 @@ public class App {
     }
 
 
-        /**
-         * Prepare Nominatim updater.
-         */
+    /**
+     * Prepare Nominatim updater.
+     */
     private static NominatimUpdater setupNominatimUpdater(CommandLineArgs args, Server server) {
         // Get database properties and ensure that the version is compatible.
         DatabaseProperties dbProperties = new DatabaseProperties();
@@ -168,9 +168,8 @@ public class App {
         if (allowedOrigin != null) {
             CorsFilter.enableCORS(allowedOrigin, "get", "*");
         } else {
-            before((request, response) -> {
-                response.type("application/json; charset=UTF-8"); // in the other case set by enableCors
-            });
+            // Set Json content type. In the other case already set by enableCors.
+            before((request, response) -> response.type("application/json; charset=UTF-8"));
         }
 
         // setup search API
@@ -187,7 +186,7 @@ public class App {
             // setup update API
             final NominatimUpdater nominatimUpdater = setupNominatimUpdater(args, server);
             get("/nominatim-update", (Request request, Response response) -> {
-                new Thread(() -> nominatimUpdater.update()).start();
+                new Thread(nominatimUpdater::update).start();
                 return "nominatim update started (more information in console output) ...";
             });
         }

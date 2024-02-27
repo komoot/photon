@@ -22,12 +22,12 @@ import java.util.stream.Collectors;
 import static org.junit.jupiter.api.Assertions.*;
 import static spark.Spark.*;
 
-public class ApiLanguagesTest extends ESBaseTester {
+class ApiLanguagesTest extends ESBaseTester {
 
     private static final int LISTEN_PORT = 30234;
 
     @AfterEach
-    public void shutdown() {
+    void shutdown() {
         stop();
         awaitStop();
     }
@@ -87,7 +87,7 @@ public class ApiLanguagesTest extends ESBaseTester {
     }
 
     @Test
-    public void testOnlyImportSelectedLanguages() throws Exception {
+    void testOnlyImportSelectedLanguages() throws Exception {
         importPlaces("en");
         startAPI("");
 
@@ -99,7 +99,7 @@ public class ApiLanguagesTest extends ESBaseTester {
     }
 
     @Test
-    public void testUseImportLanguagesWhenNoOtherIsGiven() throws Exception {
+    void testUseImportLanguagesWhenNoOtherIsGiven() throws Exception {
         importPlaces("en", "fr", "ch");
         startAPI("");
 
@@ -108,7 +108,7 @@ public class ApiLanguagesTest extends ESBaseTester {
     }
 
     @Test
-    public void testUseCommandLineLangauges() throws Exception {
+    void testUseCommandLineLangauges() throws Exception {
         importPlaces("en", "fr", "ch");
         startAPI("en,fr");
 

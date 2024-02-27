@@ -49,14 +49,14 @@ public class ElasticsearchReverseHandler implements ReverseHandler {
     }
 
 
-    private SearchResponse search(QueryBuilder queryBuilder, Integer limit, Point location,
-                                 Boolean locationDistanceSort) {
+    private SearchResponse search(QueryBuilder queryBuilder, int limit, Point location, boolean locationDistanceSort) {
         SearchRequestBuilder builder = client.prepareSearch(PhotonIndex.NAME).setSearchType(SearchType.QUERY_THEN_FETCH)
                 .setQuery(queryBuilder).setSize(limit).setTimeout(queryTimeout);
 
-        if (locationDistanceSort)
+        if (locationDistanceSort) {
             builder.addSort(SortBuilders.geoDistanceSort("coordinate", new GeoPoint(location.getY(), location.getX()))
-                    .order(SortOrder.ASC));
+                   .order(SortOrder.ASC));
+        }
 
         return builder.execute().actionGet();
     }

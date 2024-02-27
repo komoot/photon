@@ -16,9 +16,9 @@ public class CollectingImporter implements Importer {
 
 
     @Override
-    public void add(PhotonDoc doc, int object_id)
+    public void add(PhotonDoc doc, int objectId)
     {
-        docs.add(Map.entry(object_id, doc));
+        docs.add(Map.entry(objectId, doc));
     }
 
     @Override

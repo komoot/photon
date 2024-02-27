@@ -9,7 +9,7 @@ import org.slf4j.Logger;
 import java.util.*;
 
 /**
- * denormalized doc with all information needed be dumped to elasticsearch
+ * Denormalized document with all information needed for saving in the Photon database.
  */
 public class PhotonDoc {
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(PhotonDoc.class);
@@ -105,9 +105,7 @@ public class PhotonDoc {
 
             String addressPostCode = address.get("postcode");
             if (addressPostCode != null && !addressPostCode.equals(postcode)) {
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("Replacing postcode " + postcode + " with " + addressPostCode + " for osmId #" + osmId);
-                }
+                LOGGER.debug("Replacing postcode {} with {} for osmId #{}", postcode, addressPostCode, osmId);
                 postcode = addressPostCode;
             }
         }
@@ -158,35 +156,35 @@ public class PhotonDoc {
         return this;
     }
 
-    public String getUid(int object_id) {
-        if (object_id <= 0)
+    public String getUid(int objectId) {
+        if (objectId <= 0)
             return String.valueOf(placeId);
 
-        return String.format("%d.%d", placeId, object_id);
+        return String.format("%d.%d", placeId, objectId);
     }
 
-    public void copyName(Map<String, String> target, String target_field, String name_field) {
-        String outname = name.get("_place_" + name_field);
+    public void copyName(Map<String, String> target, String targetField, String nameField) {
+        String outname = name.get("_place_" + nameField);
         if (outname == null) {
-            outname = name.get(name_field);
+            outname = name.get(nameField);
         }
 
         if (outname != null) {
-            target.put(target_field, outname);
+            target.put(targetField, outname);
         }
     }
 
-    public void copyAddressName(Map<String, String> target, String target_field, AddressType address_field, String name_field) {
-        Map<String, String> names = addressParts.get(address_field);
+    public void copyAddressName(Map<String, String> target, String targetField, AddressType addressType, String nameField) {
+        Map<String, String> names = addressParts.get(addressType);
 
         if (names != null) {
-            String outname = names.get("_place_" + name_field);
+            String outname = names.get("_place_" + nameField);
             if (outname == null) {
-                outname = names.get(name_field);
+                outname = names.get(nameField);
             }
 
             if (outname != null) {
-                target.put(target_field, outname);
+                target.put(targetField, outname);
             }
         }
     }
@@ -220,9 +218,7 @@ public class PhotonDoc {
 
             String existingName = map.get("name");
             if (!field.equals(existingName)) {
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("Replacing " + addressFieldName + " name '" + existingName + "' with '" + field + "' for osmId #" + osmId);
-                }
+                LOGGER.debug("Replacing {} name '{}' with '{}' for osmId #{}", addressFieldName, existingName, field, osmId);
                 // we keep the former name in the context as it might be helpful when looking up typos
                 if (!Objects.isNull(existingName)) {
                     context.add(Collections.singletonMap("formerName", existingName));

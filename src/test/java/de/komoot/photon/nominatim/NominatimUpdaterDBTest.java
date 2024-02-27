@@ -1,6 +1,5 @@
 package de.komoot.photon.nominatim;
 
-import com.vividsolutions.jts.io.ParseException;
 import de.komoot.photon.ReflectionTestUtil;
 import de.komoot.photon.nominatim.testdb.*;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,14 +11,14 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class NominatimUpdaterDBTest {
+class NominatimUpdaterDBTest {
     private EmbeddedDatabase db;
     private NominatimUpdater connector;
     private CollectingUpdater updater;
     private JdbcTemplate jdbc;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         db = new EmbeddedDatabaseBuilder()
                 .setType(EmbeddedDatabaseType.H2)
                 .generateUniqueName(true)
@@ -37,7 +36,7 @@ public class NominatimUpdaterDBTest {
     }
 
     @Test
-    public void testSimpleInsert() {
+    void testSimpleInsert() {
         PlacexTestRow place = new PlacexTestRow("place", "city").name("Town").add(jdbc);
         (new PhotonUpdateRow("placex", place.getPlaceId(), "UPDATE")).add(jdbc);
 
@@ -51,7 +50,7 @@ public class NominatimUpdaterDBTest {
     }
 
     @Test
-    public void testSimpleDelete() {
+    void testSimpleDelete() {
         final long place_id = 47836;
         (new PhotonUpdateRow("placex", place_id, "DELETE")).add(jdbc);
 
@@ -67,7 +66,7 @@ public class NominatimUpdaterDBTest {
     }
 
     @Test
-    public void testSimpleDeleteNonExisting() {
+    void testSimpleDeleteNonExisting() {
         final long place_id = 28119;
         (new PhotonUpdateRow("placex", place_id, "DELETE")).add(jdbc);
 
@@ -81,7 +80,7 @@ public class NominatimUpdaterDBTest {
     }
 
     @Test
-    public void testDeleteMultiDocument() {
+    void testDeleteMultiDocument() {
         final long place_id = 887;
         (new PhotonUpdateRow("placex", place_id, "DELETE")).add(jdbc);
 
@@ -97,7 +96,7 @@ public class NominatimUpdaterDBTest {
     }
 
     @Test
-    public void testUpdateLowerRanks() {
+    void testUpdateLowerRanks() {
         PlacexTestRow place = new PlacexTestRow("place", "city").name("Town").rankAddress(12).add(jdbc);
         (new PhotonUpdateRow("placex", place.getPlaceId(), "UPDATE")).add(jdbc);
 
@@ -116,7 +115,7 @@ public class NominatimUpdaterDBTest {
     }
 
     @Test
-    public void testUpdateSimpleRank30() {
+    void testUpdateSimpleRank30() {
         PlacexTestRow place = new PlacexTestRow("building", "yes").housenumber(23).rankAddress(30).add(jdbc);
         (new PhotonUpdateRow("placex", place.getPlaceId(), "UPDATE")).add(jdbc);
 
@@ -132,7 +131,7 @@ public class NominatimUpdaterDBTest {
     }
 
     @Test
-    public void testUpdateRank30MoreHousenumbers() {
+    void testUpdateRank30MoreHousenumbers() {
         PlacexTestRow place = new PlacexTestRow("building", "yes").addr("housenumber", "1;2a;3").rankAddress(30).add(jdbc);
         (new PhotonUpdateRow("placex", place.getPlaceId(), "UPDATE")).add(jdbc);
 
@@ -150,7 +149,7 @@ public class NominatimUpdaterDBTest {
     }
 
     @Test
-    public void testUpdateRank30SameHousenumbers() {
+    void testUpdateRank30SameHousenumbers() {
         PlacexTestRow place = new PlacexTestRow("building", "yes").addr("housenumber", "1;2a;3").rankAddress(30).add(jdbc);
         (new PhotonUpdateRow("placex", place.getPlaceId(), "UPDATE")).add(jdbc);
 
@@ -168,7 +167,7 @@ public class NominatimUpdaterDBTest {
     }
 
     @Test
-    public void testUpdateRank30LessHousenumbers() {
+    void testUpdateRank30LessHousenumbers() {
         PlacexTestRow place = new PlacexTestRow("building", "yes").addr("housenumber", "1").rankAddress(30).add(jdbc);
         (new PhotonUpdateRow("placex", place.getPlaceId(), "UPDATE")).add(jdbc);
 
@@ -185,7 +184,7 @@ public class NominatimUpdaterDBTest {
     }
 
     @Test
-    public void testInsertInterpolation() {
+    void testInsertInterpolation() {
         PlacexTestRow street = PlacexTestRow.make_street("La strada").add(jdbc);
 
         OsmlineTestRow osmline =
@@ -204,7 +203,7 @@ public class NominatimUpdaterDBTest {
     }
 
     @Test
-    public void testUpdateInterpolationSameLength() {
+    void testUpdateInterpolationSameLength() {
         PlacexTestRow street = PlacexTestRow.make_street("La strada").add(jdbc);
 
         OsmlineTestRow osmline =
@@ -224,8 +223,8 @@ public class NominatimUpdaterDBTest {
         updater.assertHasCreated(osmline.getPlaceId(), "8");
     }
 
-     @Test
-    public void testUpdateInterpolationLonger() {
+    @Test
+    void testUpdateInterpolationLonger() {
         PlacexTestRow street = PlacexTestRow.make_street("La strada").add(jdbc);
 
         OsmlineTestRow osmline =
@@ -244,8 +243,9 @@ public class NominatimUpdaterDBTest {
         updater.assertHasCreated(osmline.getPlaceId(), "7");
         updater.assertHasCreated(osmline.getPlaceId(), "8");
     }
-   @Test
-    public void testUpdateInterpolationShorter() {
+
+    @Test
+    void testUpdateInterpolationShorter() {
         PlacexTestRow street = PlacexTestRow.make_street("La strada").add(jdbc);
 
         OsmlineTestRow osmline =
@@ -267,7 +267,7 @@ public class NominatimUpdaterDBTest {
     }
 
     @Test
-    public void testUpdateWithDuplicatesDeleteLast() throws InterruptedException {
+    void testUpdateWithDuplicatesDeleteLast() throws InterruptedException {
         PlacexTestRow place1 = new PlacexTestRow("place", "city").name("Town").rankAddress(12).add(jdbc);
         PlacexTestRow place2 = new PlacexTestRow("building", "yes").housenumber(23).rankAddress(30).add(jdbc);
 

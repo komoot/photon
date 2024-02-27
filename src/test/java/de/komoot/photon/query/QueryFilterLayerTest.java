@@ -19,12 +19,12 @@ import java.util.stream.Collectors;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class QueryFilterLayerTest extends ESBaseTester {
+class QueryFilterLayerTest extends ESBaseTester {
     @TempDir
     private static Path instanceTestDirectory;
 
     @BeforeAll
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         setUpES(instanceTestDirectory, "en", "de", "fr");
         Importer instance = makeImporter();
 
@@ -44,12 +44,12 @@ public class QueryFilterLayerTest extends ESBaseTester {
     }
 
     @Test
-    public void testSingleLayer() {
+    void testSingleLayer() {
         assertEquals(2, searchWithLayers("city").size());
     }
 
     @Test
-    public void testMultipleLayers() {
+    void testMultipleLayers() {
         assertEquals(3, searchWithLayers("city", "locality").size());
     }
 

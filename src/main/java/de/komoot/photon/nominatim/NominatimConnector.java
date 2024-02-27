@@ -19,9 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Export nominatim data
- *
- * @author felix, christoph
+ * Importer for data from a Mominatim database.
  */
 public class NominatimConnector {
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(NominatimConnector.class);
@@ -34,8 +32,9 @@ public class NominatimConnector {
     private Map<String, Map<String, String>> countryNames;
 
     /**
-     * Maps a row from location_property_osmline (address interpolation lines)
-     * with old-style intepolation (using interpolationtype) to a photon doc.
+     * Map a row from location_property_osmline (address interpolation lines) to a photon doc.
+     * This may be old-style interpolation (using interpolationtype) or
+     * new-style interpolation (using step).
      */
     private final RowMapper<NominatimResult> osmlineRowMapper;
     private final String selectOsmlineSql;
@@ -43,9 +42,10 @@ public class NominatimConnector {
 
 
     /**
-     * maps a placex row in nominatim to a photon doc, some attributes are still missing and can be derived by connected address items.
+     * Maps a placex row in nominatim to a photon doc.
+     * Some attributes are still missing and can be derived by connected address items.
      */
-    private final RowMapper<NominatimResult> placeRowMapper = new RowMapper<NominatimResult>() {
+    private final RowMapper<NominatimResult> placeRowMapper = new RowMapper<>() {
         @Override
         public NominatimResult mapRow(ResultSet rs, int rowNum) throws SQLException {
             Map<String, String> address = dbutils.getMap(rs, "address");
@@ -79,6 +79,8 @@ public class NominatimConnector {
     };
 
     /**
+     * Construct a new importer.
+     *
      * @param host     database host
      * @param port     database port
      * @param database database name
@@ -97,7 +99,7 @@ public class NominatimConnector {
 
         dbutils = dataAdapter;
 
-        // Setup handling of interpolation table. It has changed its format. Need to find out which one to use.
+        // Setup handling of interpolation table. There are two different formats depending on the Nominatim version.
         if (dbutils.hasColumn(template, "location_property_osmline", "step")) {
             // new-style interpolations
             selectOsmlineSql = "SELECT place_id, osm_id, parent_place_id, startnumber, endnumber, step, postcode, country_code, linegeo";
@@ -177,20 +179,16 @@ public class NominatimConnector {
     public List<PhotonDoc> getByPlaceId(long placeId) {
         List<NominatimResult> result = template.query(SELECT_COLS_PLACEX + " FROM placex WHERE place_id = ? and indexed_status = 0",
                                                          placeRowMapper, placeId);
-        if (result.size() == 0)
-            return null;
 
-        return result.get(0).getDocsWithHousenumber();
+        return result.isEmpty() ? null : result.get(0).getDocsWithHousenumber();
     }
 
     public List<PhotonDoc> getInterpolationsByPlaceId(long placeId) {
         List<NominatimResult> result = template.query(selectOsmlineSql
                                                           + " FROM location_property_osmline WHERE place_id = ? and indexed_status = 0",
                                                           osmlineRowMapper, placeId);
-        if (result.size() == 0)
-            return null;
 
-        return result.get(0).getDocsWithHousenumber();
+        return result.isEmpty() ? null : result.get(0).getDocsWithHousenumber();
     }
 
     private long parentPlaceId = -1;
@@ -245,7 +243,6 @@ public class NominatimConnector {
     static String convertCountryCode(String... countryCodes) {
         String countryCodeStr = "";
         for (String cc : countryCodes) {
-            // "".split(",") results in 'new String[]{""}' and not 'new String[0]'
             if (cc.isEmpty())
                 continue;
             if (cc.length() != 2)
@@ -258,7 +255,7 @@ public class NominatimConnector {
     }
 
     /**
-     * parses every relevant row in placex, creates a corresponding document and calls the {@link #importer} for every document
+     * Parse every relevant row in placex, create a corresponding document and call the {@link #importer} for each document.
      */
     public void readEntireDatabase(String... countryCodes) {
         String andCountryCodeStr = "";
@@ -267,7 +264,7 @@ public class NominatimConnector {
             andCountryCodeStr = "AND country_code in (" + countryCodeStr + ")";
         }
 
-        LOGGER.info("start importing documents from nominatim (" + (countryCodeStr.isEmpty() ? "global" : countryCodeStr) + ")");
+        LOGGER.info("Start importing documents from nominatim ({})", countryCodeStr.isEmpty() ? "global" : countryCodeStr);
 
         ImportThread importThread = new ImportThread(importer);
 
@@ -302,7 +299,7 @@ public class NominatimConnector {
     }
 
     /**
-     * querying nominatim's address hierarchy to complete photon doc with missing data (like country, city, street, ...)
+     * Query Nominatim's address hierarchy to complete photon doc with missing data (like country, city, street, ...)
      *
      * @param doc
      */

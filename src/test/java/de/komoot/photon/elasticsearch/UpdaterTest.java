@@ -14,10 +14,10 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class UpdaterTest extends ESBaseTester {
+class UpdaterTest extends ESBaseTester {
 
     @Test
-    public void addNameToDoc() throws IOException {
+    void addNameToDoc() throws IOException {
         Map<String, String> names = new HashMap<>();
         names.put("name", "Foo");
         PhotonDoc doc = new PhotonDoc(1234, "N", 1000, "place", "city").names(names);
@@ -43,7 +43,7 @@ public class UpdaterTest extends ESBaseTester {
     }
 
     @Test
-    public void removeNameFromDoc() throws IOException {
+    void removeNameFromDoc() throws IOException {
         Map<String, String> names = new HashMap<>();
         names.put("name", "Foo");
         names.put("name:en", "Enfoo");
@@ -70,7 +70,7 @@ public class UpdaterTest extends ESBaseTester {
     }
 
     @Test
-    public void addExtraTagsToDoc() throws IOException {
+    void addExtraTagsToDoc() throws IOException {
         Map<String, String> names = new HashMap<>();
         names.put("name", "Foo");
         PhotonDoc doc = new PhotonDoc(1234, "N", 1000, "place", "city").names(names);
@@ -101,7 +101,8 @@ public class UpdaterTest extends ESBaseTester {
         assertEquals(Collections.singletonMap("website", "http://site.foo"), extra);
     }
 
-    @Test void deleteDoc() throws IOException {
+    @Test
+    void deleteDoc() throws IOException {
         setUpES();
         Importer instance = makeImporterWithExtra("website");
         instance.add(new PhotonDoc(4432, "N", 100, "building", "yes").houseNumber("34"), 0);
@@ -122,7 +123,7 @@ public class UpdaterTest extends ESBaseTester {
     }
 
     @Test
-    public void checkExistence() throws IOException {
+    void checkExistence() throws IOException {
         setUpES();
         Importer instance = makeImporterWithExtra("website");
         instance.add(new PhotonDoc(4432, "N", 100, "building", "yes").houseNumber("34"), 0);

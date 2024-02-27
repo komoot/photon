@@ -3,7 +3,7 @@ package de.komoot.photon.nominatim.model;
 import java.util.Map;
 
 /**
- * representation of an address as returned by nominatim's get_addressdata PL/pgSQL function
+ * Representation of an address as returned by Nominatim's get_addressdata PL/pgSQL function.
  */
 public class AddressRow {
     private final Map<String, String> name;

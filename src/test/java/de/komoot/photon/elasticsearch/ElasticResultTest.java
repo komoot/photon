@@ -23,7 +23,7 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class ElasticResultTest  extends ESBaseTester {
+class ElasticResultTest  extends ESBaseTester {
     @TempDir
     private static Path instanceTestDirectory;
 
@@ -43,7 +43,7 @@ public class ElasticResultTest  extends ESBaseTester {
 
 
     @BeforeAll
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         setUpES(instanceTestDirectory, "en", "de", "fr", "it");
         Importer instance = getServer().createImporter(new String[]{"en", "de", "fr", "it"},
                  new String[]{"population",  "capital"});
@@ -81,7 +81,7 @@ public class ElasticResultTest  extends ESBaseTester {
 
 
     @Test
-    public void testGet() {
+    void testGet() {
         PhotonResult result = search("München");
 
         assertAll("get",
@@ -91,7 +91,7 @@ public class ElasticResultTest  extends ESBaseTester {
     }
 
     @Test
-    public void testGetMap() {
+    void testGetMap() {
         assertAll("getMap",
                 () -> assertEquals(makeMap("default", "München", "en", "Munich", "it", "Monacco"),
                                    search("München").getMap("name")),
@@ -104,7 +104,7 @@ public class ElasticResultTest  extends ESBaseTester {
     }
 
     @Test
-    public void testGetLocalized() {
+    void testGetLocalized() {
         PhotonResult result = search("München");
 
         assertAll("getLocalized",
@@ -116,7 +116,7 @@ public class ElasticResultTest  extends ESBaseTester {
     }
 
     @Test
-    public void testGetCoordinates() {
+    void testGetCoordinates() {
         assertAll("getCoordinates",
                 () -> assertArrayEquals(new double[]{-179, 1.0001}, search("Hauptstr 34").getCoordinates()),
                 () -> assertArrayEquals(PhotonResult.INVALID_COORDINATES, search("nowhere").getCoordinates())
@@ -124,7 +124,7 @@ public class ElasticResultTest  extends ESBaseTester {
     }
 
     @Test
-    public void testGetExtent() {
+    void testGetExtent() {
         assertAll("getExtent",
                 () -> assertNull(search("Munich").getExtent()),
                 () -> assertArrayEquals(new double[]{-179.5, 1.1, -178.5, 1.0}, search("hauptstr 34").getExtent())
@@ -132,7 +132,7 @@ public class ElasticResultTest  extends ESBaseTester {
     }
 
     @Test
-    public void testGetScore() {
+    void testGetScore() {
         assertTrue(Double.isFinite(search("null island").getScore()));
     }
 }

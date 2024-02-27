@@ -16,19 +16,19 @@ public class CollectingUpdater implements Updater {
     private int finishCalled = 0;
 
     @Override
-    public void create(PhotonDoc doc, int object_id) {
-        created.add(Map.entry(object_id, doc));
+    public void create(PhotonDoc doc, int objectId) {
+        created.add(Map.entry(objectId, doc));
     }
 
     @Override
-    public void delete(long id, int object_id) {
-        deleted.add(Map.entry(object_id, id));
+    public void delete(long docId, int objectId) {
+        deleted.add(Map.entry(objectId, docId));
     }
 
     @Override
-    public boolean exists(long id, int object_id) {
+    public boolean exists(long docId, int objectId) {
         for (Map.Entry<Integer, Long> entry: existing) {
-            if (entry.getKey() == object_id && id == entry.getValue()) {
+            if (entry.getKey() == objectId && docId == entry.getValue()) {
                 return true;
             }
         }
@@ -49,7 +49,7 @@ public class CollectingUpdater implements Updater {
 
 
     public void assertFinishCalled() {
-        assertEquals(finishCalled, 1);
+        assertEquals(1, finishCalled);
     }
 
     public int numDeleted() {
@@ -65,13 +65,13 @@ public class CollectingUpdater implements Updater {
         int object_id = -1;
         for (Map.Entry<Integer, PhotonDoc> outdoc : created) {
             if (outdoc.getValue().getPlaceId() == id) {
-                assertTrue(object_id == -1, "Row is contained multiple times");
+                assertEquals(-1, object_id, "Row is contained multiple times");
                 object_id = outdoc.getKey();
             }
         }
 
         assertTrue(object_id >= 0, "Row not found");
-        assertTrue(object_id == 0, "Row inserted with a non-zero object id");
+        assertEquals(0, object_id, "Row inserted with a non-zero object id");
     }
 
     public void assertHasCreated(long id, String housenumber) {
@@ -79,7 +79,7 @@ public class CollectingUpdater implements Updater {
         for (Map.Entry<Integer, PhotonDoc> outdoc : created) {
             PhotonDoc doc = outdoc.getValue();
             if (doc.getPlaceId() == id && housenumber.equals(doc.getHouseNumber())) {
-                assertTrue(object_id == -1, "Row is contained multiple times");
+                assertEquals(-1, object_id, "Row is contained multiple times");
                 object_id = outdoc.getKey();
             }
         }

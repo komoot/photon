@@ -19,7 +19,7 @@ import java.util.*;
 /**
  * Tests for queries in different languages.
  */
-public class QueryByLanguageTest extends ESBaseTester {
+class QueryByLanguageTest extends ESBaseTester {
     private int testDocId = 10001;
     private String[] languageList;
 
@@ -45,7 +45,7 @@ public class QueryByLanguageTest extends ESBaseTester {
     }
 
     @Test
-    public void queryNonStandardLanguages() throws IOException {
+    void queryNonStandardLanguages() throws IOException {
         Importer instance = setup("en", "fi");
 
         instance.add(createDoc("name", "original", "name:fi", "finish", "name:ru", "russian"), 0);
@@ -64,7 +64,7 @@ public class QueryByLanguageTest extends ESBaseTester {
     }
 
     @Test
-    public void queryAltNames() throws IOException {
+    void queryAltNames() throws IOException {
         Importer instance = setup("de");
         instance.add(createDoc("name", "simple", "alt_name", "ancient", "name:de", "einfach"), 0);
         instance.finish();
@@ -78,7 +78,7 @@ public class QueryByLanguageTest extends ESBaseTester {
 
     @ParameterizedTest
     @EnumSource(names = {"STREET", "LOCALITY", "DISTRICT", "CITY", "COUNTRY", "STATE"})
-    public void queryAddressPartsLanguages(AddressType addressType) throws IOException {
+    void queryAddressPartsLanguages(AddressType addressType) throws IOException {
         Importer instance = setup("en", "de");
 
         Map<String, String> address_names = new HashMap<>();
@@ -100,7 +100,7 @@ public class QueryByLanguageTest extends ESBaseTester {
 
     @ParameterizedTest
     @ValueSource(strings = {"default", "de", "en"})
-    public void queryAltNamesFuzzy(String lang) throws IOException {
+    void queryAltNamesFuzzy(String lang) throws IOException {
         Importer instance = setup("de", "en");
         instance.add(createDoc("name", "simple", "alt_name", "ancient", "name:de", "einfach"), 0);
         instance.finish();

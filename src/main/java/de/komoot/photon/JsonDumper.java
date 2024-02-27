@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 /**
- * useful to create json files that can be used for fast re imports
+ * Importer which writes out the documents in a json-like file.
  */
 public class JsonDumper implements Importer {
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(JsonDumper.class);
@@ -23,12 +23,12 @@ public class JsonDumper implements Importer {
     }
 
     @Override
-    public void add(PhotonDoc doc, int object_id) {
+    public void add(PhotonDoc doc, int objectId) {
         try {
             writer.println("{\"index\": {}}");
             writer.println(Utils.convert(doc, languages, extraTags).string());
         } catch (IOException e) {
-            LOGGER.error("error writing json file", e);
+            LOGGER.error("Error writing json file", e);
         }
     }
 

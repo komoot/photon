@@ -8,6 +8,9 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.atomic.AtomicLong;
 
+/**
+ * Worker thread for bulk importing data from a Nominatim database.
+ */
 class ImportThread {
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(ImportThread.class);
 
@@ -46,14 +49,14 @@ class ImportThread {
 
         if (counter.incrementAndGet() % PROGRESS_INTERVAL == 0) {
             final double documentsPerSecond = 1000d * counter.longValue() / (System.currentTimeMillis() - startMillis);
-            LOGGER.info(String.format("imported %d documents [%.1f/second]", counter.longValue(), documentsPerSecond));
+            LOGGER.info("Imported {} documents [{}/second]", counter.longValue(), documentsPerSecond);
         }
     }
 
     /**
      * Finalize the import.
      *
-     * Sends an end marker to the import thread and waiting for it to join.
+     * Sends an end marker to the import thread and then waits for it to join.
      */
     public void finish() {
         while (true) {
@@ -67,7 +70,7 @@ class ImportThread {
                 Thread.currentThread().interrupt();
             }
         }
-        LOGGER.info(String.format("finished import of %d photon documents.", counter.longValue()));
+        LOGGER.info("Finished import of {} photon documents.", counter.longValue());
     }
 
     private class ImportRunnable implements Runnable {
@@ -80,12 +83,12 @@ class ImportThread {
                     if (docs == FINAL_DOCUMENT) {
                         break;
                     }
-                    int object_id = 0;
+                    int objectId = 0;
                     for (PhotonDoc doc : docs.getDocsWithHousenumber()) {
-                        importer.add(doc, object_id++);
+                        importer.add(doc, objectId++);
                     }
                 } catch (InterruptedException e) {
-                    LOGGER.info("interrupted exception ", e);
+                    LOGGER.info("Interrupted exception", e);
                     // Restore interrupted state.
                     Thread.currentThread().interrupt();
                 }

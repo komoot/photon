@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class ServerTest extends ESBaseTester {
 
     @Test
-    public void testSaveAndLoadFromDatabase() throws IOException {
+    void testSaveAndLoadFromDatabase() throws IOException {
         setUpES();
 
         DatabaseProperties prop = new DatabaseProperties();

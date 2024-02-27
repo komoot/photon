@@ -135,12 +135,12 @@ class NominatimResult {
     /**
      * Add new-style interpolated house numbers.
      *
-     * New-style interpolations only have a step with and first and last are included in the numbers that
+     * New-style interpolations only have a step width. First and last housenumbers are included in the numbers that
      * need interpolation.
      *
      * @param first First number of the interpolation.
      * @param last Last number of the interpolation.
-     * @param step Gap to leave between each interpolated housenumber.
+     * @param step Gap to leave between each interpolated house number.
      * @param geom Geometry of the interpolation line.
      */
     public void addHouseNumbersFromInterpolation(long first, long last, long step, Geometry geom) {

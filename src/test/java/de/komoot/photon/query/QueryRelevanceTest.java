@@ -21,10 +21,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * Test that the database backend produces queries that rank the
  * results in the expected order.
  */
-public class QueryRelevanceTest extends ESBaseTester {
+class QueryRelevanceTest extends ESBaseTester {
 
     @BeforeEach
-    public void setup() throws IOException {
+    void setup() throws IOException {
         setUpES();
     }
 
@@ -47,7 +47,7 @@ public class QueryRelevanceTest extends ESBaseTester {
     }
 
     @Test
-    public void testRelevanceByImportance() {
+    void testRelevanceByImportance() {
         Importer instance = makeImporter();
         instance.add(createDoc("amenity", "restuarant", 1001, "name", "New York").importance(0.0), 0);
         instance.add(createDoc("place", "city", 2000, "name", "New York").importance(0.5), 0);
@@ -61,7 +61,7 @@ public class QueryRelevanceTest extends ESBaseTester {
     }
 
     @Test
-    public void testFullNameOverPartialName() {
+    void testFullNameOverPartialName() {
         Importer instance = makeImporter();
         instance.add(createDoc("place", "hamlet", 1000, "name", "Ham"), 0);
         instance.add(createDoc("place", "hamlet", 1001, "name", "Hamburg"), 0);
@@ -75,7 +75,7 @@ public class QueryRelevanceTest extends ESBaseTester {
     }
 
     @Test
-    public void testPartialNameWithImportanceOverFullName() {
+    void testPartialNameWithImportanceOverFullName() {
         Importer instance = makeImporter();
         instance.add(createDoc("place", "hamlet", 1000, "name", "Ham").importance(0.1), 0);
         instance.add(createDoc("place", "city", 1001, "name", "Hamburg").importance(0.5), 0);

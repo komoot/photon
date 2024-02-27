@@ -2,6 +2,9 @@ package de.komoot.photon.searcher;
 
 import java.util.Objects;
 
+/**
+ * Filter description for a single filter by OSM key or key/value.
+ */
 public class TagFilter {
     private final TagFilterKind kind;
     private final String key;

@@ -10,7 +10,7 @@ import org.slf4j.Logger;
 import java.io.IOException;
 
 /**
- * Updater for elasticsearch
+ * Updater for ElasticSearch.
  */
 public class Updater implements de.komoot.photon.Updater {
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(Updater.class);
@@ -32,28 +32,28 @@ public class Updater implements de.komoot.photon.Updater {
     }
 
     @Override
-    public void create(PhotonDoc doc, int object_id) {
-        String uid = doc.getUid(object_id);
+    public void create(PhotonDoc doc, int objectId) {
+        String uid = doc.getUid(objectId);
         try {
             bulkRequest.add(esClient.prepareIndex(PhotonIndex.NAME, PhotonIndex.TYPE).setSource(Utils.convert(doc, languages, extraTags)).setId(uid));
         } catch (IOException e) {
-            LOGGER.error(String.format("creation of new doc [%s] failed", uid), e);
+            LOGGER.error("Creation of new doc {} failed", uid, e);
         }
     }
 
-    public void delete(long doc_id, int object_id) {
-        this.bulkRequest.add(this.esClient.prepareDelete(PhotonIndex.NAME, PhotonIndex.TYPE, makeUid(doc_id, object_id)));
+    public void delete(long docId, int objectId) {
+        this.bulkRequest.add(this.esClient.prepareDelete(PhotonIndex.NAME, PhotonIndex.TYPE, makeUid(docId, objectId)));
     }
 
-    public boolean exists(long doc_id, int object_id) {
-        return esClient.prepareGet(PhotonIndex.NAME, PhotonIndex.TYPE, makeUid(doc_id, object_id)).execute().actionGet().isExists();
+    public boolean exists(long docId, int objectId) {
+        return esClient.prepareGet(PhotonIndex.NAME, PhotonIndex.TYPE, makeUid(docId, objectId)).execute().actionGet().isExists();
     }
 
-    private String makeUid(Long doc_id, int object_id) {
-        if (object_id <= 0) {
-            return String.valueOf(doc_id);
+    private String makeUid(Long docId, int objectId) {
+        if (objectId <= 0) {
+            return String.valueOf(docId);
         }
-        return String.format("%d.%d", doc_id, object_id);
+        return String.format("%d.%d", docId, objectId);
     }
 
     private void updateDocuments() {
@@ -63,7 +63,7 @@ public class Updater implements de.komoot.photon.Updater {
         }
         BulkResponse bulkResponse = bulkRequest.execute().actionGet();
         if (bulkResponse.hasFailures()) {
-            LOGGER.error("error while bulk update: " + bulkResponse.buildFailureMessage());
+            LOGGER.error("Error while bulk update: {}", bulkResponse.buildFailureMessage());
         }
         this.bulkRequest = this.esClient.prepareBulk();
     }

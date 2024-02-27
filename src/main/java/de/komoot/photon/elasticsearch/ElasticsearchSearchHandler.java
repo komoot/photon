@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Sachin Dole on 2/12/2015.
+ * Execute a forward lookup on a Elasticsearch database.
  */
 public class ElasticsearchSearchHandler implements SearchHandler {
     private final Client client;

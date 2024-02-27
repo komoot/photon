@@ -33,7 +33,7 @@ import java.util.LinkedList;
 import java.util.Map;
 
 /**
- * Helper class to start/stop elasticsearch node and get elasticsearch clients
+ * Helper class to start/stop ElasticSearch node and get ElasticSearch clients.
  */
 public class Server {
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(Server.class);
@@ -95,7 +95,7 @@ public class Server {
 
             esClient = trClient;
 
-            LOGGER.info("Started elastic search client connected to " + String.join(", ", transportAddresses));
+            LOGGER.info("Started elastic search client connected to {}", String.join(", ", transportAddresses));
 
         } else {
 
@@ -107,7 +107,7 @@ public class Server {
                 esNode = new MyNode(settings, lList);
                 esNode.start();
 
-                LOGGER.info("started elastic search node");
+                LOGGER.info("Started elastic search node");
 
                 esClient = esNode.client();
 
@@ -151,7 +151,7 @@ public class Server {
             directory.mkdirs();
         }
 
-        // copy script directory to elastic search directory
+        // copy script directory to ElasticSearch directory
         final ClassLoader loader = Thread.currentThread().getContextClassLoader();
 
         Files.copy(loader.getResourceAsStream("modules/lang-painless/antlr4-runtime.jar"),
@@ -216,7 +216,7 @@ public class Server {
    /**
      * Save the global properties to the database.
      *
-     * The function saved properties available as members and the database version
+     * The function saves properties available as members and the database version
      * as currently defined in DATABASE_VERSION.
      */
     public void saveToDatabase(DatabaseProperties dbProperties) throws IOException  {
@@ -254,7 +254,7 @@ public class Server {
 
         String version = properties.getOrDefault(FIELD_VERSION, "");
         if (!DATABASE_VERSION.equals(version)) {
-            LOGGER.error("Database has incompatible version '" + version + "'. Expected: " + DATABASE_VERSION);
+            LOGGER.error("Database has incompatible version '{}'. Expected: {}", version, DATABASE_VERSION);
             throw new RuntimeException("Incompatible database.");
         }
 

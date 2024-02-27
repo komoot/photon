@@ -8,6 +8,9 @@ import org.slf4j.Logger;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Response object from the ElasticSearch database.
+ */
 public class ElasticResult implements PhotonResult {
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(ElasticResult.class);
 
@@ -53,9 +56,9 @@ public class ElasticResult implements PhotonResult {
     public double[] getCoordinates() {
         final Map<String, Double> coordinate = (Map<String, Double>) result.getSource().get("coordinate");
         if (coordinate == null) {
-            LOGGER.error(String.format("invalid data [id=%s, type=%s], coordinate is missing!",
+            LOGGER.error("invalid data [id={}, type={}], coordinate is missing!",
                     result.getSource().get(Constants.OSM_ID),
-                    result.getSource().get(Constants.OSM_VALUE)));
+                    result.getSource().get(Constants.OSM_VALUE));
             return INVALID_COORDINATES;
         }
 
