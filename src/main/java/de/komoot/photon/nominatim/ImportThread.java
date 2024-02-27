@@ -8,6 +8,9 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.atomic.AtomicLong;
 
+/**
+ * Worker thread for bulk importing data from a Nominatim database.
+ */
 class ImportThread {
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(ImportThread.class);
 
@@ -53,7 +56,7 @@ class ImportThread {
     /**
      * Finalize the import.
      *
-     * Sends an end marker to the import thread and waiting for it to join.
+     * Sends an end marker to the import thread and then waits for it to join.
      */
     public void finish() {
         while (true) {

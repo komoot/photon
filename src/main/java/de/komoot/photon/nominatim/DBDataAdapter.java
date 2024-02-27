@@ -8,7 +8,7 @@ import java.sql.SQLException;
 import java.util.Map;
 
 /**
- * Defines utility functions to parse data from the database.
+ * Defines utility functions to parse data from the database and create SQL queries.
  */
 public interface DBDataAdapter {
     /**

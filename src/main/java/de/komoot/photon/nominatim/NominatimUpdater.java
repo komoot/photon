@@ -12,9 +12,8 @@ import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * Nominatim update logic
+ * Importer for updates from a Nominatim database.
  */
-
 public class NominatimUpdater {
     private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(NominatimUpdater.class);
 
@@ -51,7 +50,7 @@ public class NominatimUpdater {
     private Updater updater;
 
     /**
-     * when updating lockout other threads
+     * Lock to prevent thread from updating concurrently.
      */
     private ReentrantLock updateLock = new ReentrantLock();
 
@@ -178,7 +177,7 @@ public class NominatimUpdater {
 
 
     /**
-     * Creates a new instance
+     * Create a new instance.
      * 
      * @param host Nominatim database host
      * @param port Nominatim database port

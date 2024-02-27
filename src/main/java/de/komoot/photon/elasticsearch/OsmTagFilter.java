@@ -9,6 +9,9 @@ import org.elasticsearch.index.query.QueryBuilders;
 import de.komoot.photon.searcher.TagFilter;
 import de.komoot.photon.searcher.TagFilterKind;
 
+/**
+ * Query builder adding filters for OSM keys and key/value pairs.
+ */
 public class OsmTagFilter {
     private BoolQueryBuilder orQueryBuilderForIncludeTagFiltering = null;
     private BoolQueryBuilder andQueryBuilderForExcludeTagFiltering = null;

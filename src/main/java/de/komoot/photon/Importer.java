@@ -1,20 +1,16 @@
 package de.komoot.photon;
 
 /**
- * interface for bulk imports from a data source like nominatim
- *
- * @author felix
+ * Interface for bulk imports from a data source like nominatim
  */
 public interface Importer {
     /**
-     * a new document was imported
-     *
-     * @param doc
+     * Add a new document to the Photon database.
      */
     public void add(PhotonDoc doc, int objectId);
 
     /**
-     * import is finished
+     * Finish up the import.
      */
     public void finish();
 }

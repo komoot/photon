@@ -5,7 +5,7 @@ import java.util.*;
 /**
  * Class collecting database global properties.
  *
- * The server is responsible for making the data persistent throught the Photon database.
+ * The server is responsible for making the data persistent in the Photon database.
  */
 public class DatabaseProperties {
     private String[] languages = null;
@@ -27,7 +27,7 @@ public class DatabaseProperties {
      *
      * @param languages Array of two-letter language codes.
      *
-     * @return This object for chaining.
+     * @return This object for function chaining.
      */
     public DatabaseProperties setLanguages(String[] languages) {
         this.languages = languages;

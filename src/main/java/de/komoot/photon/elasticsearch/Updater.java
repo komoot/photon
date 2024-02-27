@@ -10,7 +10,7 @@ import org.slf4j.Logger;
 import java.io.IOException;
 
 /**
- * Updater for elasticsearch
+ * Updater for ElasticSearch.
  */
 public class Updater implements de.komoot.photon.Updater {
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(Updater.class);

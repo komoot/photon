@@ -13,8 +13,9 @@ import java.io.InputStream;
 import java.util.*;
 
 /**
- * Encapsulates the ES index settings for the photon index. Adds functions to
- * manipulate and apply the settings.
+ * ElasticSearch index settings for the photon index.
+ *
+ * The class also provides functions to manipulate and apply the settings.
  *
  */
 public class IndexSettings {
@@ -37,7 +38,7 @@ public class IndexSettings {
      *
      * @param numShards Number of shards to use.
      *
-     * @return Return this object for chaining.
+     * @return Return this object for function chaining.
      */
     public IndexSettings setShards(Integer numShards) {
         this.numShards = numShards;
@@ -55,7 +56,7 @@ public class IndexSettings {
      *
      * @param synonymFile File containing the synonyms.
      *
-     * @return This object for chaining.
+     * @return This object for function chaining.
      */
     public IndexSettings setSynonymFile(String synonymFile) throws IOException {
         if (synonymFile == null) {
@@ -164,7 +165,7 @@ public class IndexSettings {
         client.admin().indices().prepareOpen(PhotonIndex.NAME).execute().actionGet();
     }
 
-        /**
+    /**
      * Insert the given value into the array after the string given by positionString.
      * If the position string is not found, throws a runtime error.
      *

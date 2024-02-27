@@ -9,7 +9,7 @@ import org.slf4j.Logger;
 import java.util.*;
 
 /**
- * denormalized doc with all information needed be dumped to elasticsearch
+ * Denormalized document with all information needed for saving in the Photon database.
  */
 public class PhotonDoc {
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(PhotonDoc.class);

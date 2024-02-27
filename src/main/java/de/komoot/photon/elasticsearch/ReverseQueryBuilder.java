@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * @author svantulden
+ * Query builder creating a ElasticSearch query for reverse searching.
  */
 public class ReverseQueryBuilder {
     private Double radius;

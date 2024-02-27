@@ -14,6 +14,9 @@ import java.util.List;
 
 import static spark.Spark.halt;
 
+/**
+ * Webserver route for forward geocoding requests.
+ */
 public class SearchRequestHandler extends RouteImpl {
     private final PhotonRequestFactory photonRequestFactory;
     private final SearchHandler requestHandler;
@@ -38,7 +41,7 @@ public class SearchRequestHandler extends RouteImpl {
 
         List<PhotonResult> results = requestHandler.search(photonRequest);
 
-        // Futher filtering
+        // Further filtering
         results = new StreetDupesRemover(photonRequest.getLanguage()).execute(results);
 
         // Restrict to the requested limit.

@@ -138,17 +138,17 @@ class ReverseRequestFactoryTest {
 
     @Test
     void testWithNegativeRadius() throws Exception {
-        testWithBadParam("radius", "-10.0", "invalid search term 'radius', expected a strictly positive number.");
+        testWithBadParam("radius", "-10.0", "Invalid search term 'radius', expected a strictly positive number.");
     }
 
     @Test
     void testWithZeroRadius() throws Exception {
-        testWithBadParam("radius", "0.0", "invalid search term 'radius', expected a strictly positive number.");
+        testWithBadParam("radius", "0.0", "Invalid search term 'radius', expected a strictly positive number.");
     }
 
     @Test
     void testWithBadRadius() throws Exception {
-        testWithBadParam("radius", "bad", "invalid search term 'radius', expected a number.");
+        testWithBadParam("radius", "bad", "Invalid search term 'radius', expected a number.");
     }
 
     @Test
@@ -163,17 +163,17 @@ class ReverseRequestFactoryTest {
 
     @Test
     void testWithNegativeLimit() throws Exception {
-        testWithBadParam("limit", "-1", "invalid search term 'limit', expected a strictly positive integer.");
+        testWithBadParam("limit", "-1", "Invalid search term 'limit', expected a strictly positive integer.");
     }
 
     @Test
     void testWithZeroLimit() throws Exception {
-        testWithBadParam("limit", "0", "invalid search term 'limit', expected a strictly positive integer.");
+        testWithBadParam("limit", "0", "Invalid search term 'limit', expected a strictly positive integer.");
     }
 
     @Test
     void testWithBadLimit() throws Exception {
-        testWithBadParam("limit", "bad", "invalid search term 'limit', expected an integer.");
+        testWithBadParam("limit", "bad", "Invalid search term 'limit', expected an integer.");
     }
 
     @Test

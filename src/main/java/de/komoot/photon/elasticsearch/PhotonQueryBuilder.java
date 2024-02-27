@@ -17,18 +17,19 @@ import java.util.*;
 
 
 /**
- * There are four {@link PhotonQueryBuilder.State states} that this query builder goes through before a query can be executed on elastic search. Of
- * these, three are of importance.
- * <ul>
- * <li>{@link PhotonQueryBuilder.State#PLAIN PLAIN} The query builder is being used to build a query without any tag filters.</li>
- * <li>{@link PhotonQueryBuilder.State#FILTERED FILTERED} The query builder is being used to build a query that has tag filters and can no longer
- * be used to build a PLAIN filter.</li>
- * <li>{@link PhotonQueryBuilder.State#FINISHED FINISHED} The query builder has been built and the query has been placed inside a
- * {@link QueryBuilder filtered query}. Further calls to any methods will have no effect on this query builder.</li>
- * </ul>
- * <p/>
+ * Query builder creating a ElasticSearch query for forward searching.
  */
 public class PhotonQueryBuilder {
+    private enum State {
+        /** Query builder is being used to build a query without any tag filters. */
+        PLAIN,
+        /** Query builder is being used to build a query that has tag filters and
+         *  can no longer be used to build a PLAIN filter */
+        FILTERED,
+        /** Query has been built. Further calls have no effect. */
+        FINISHED,
+    }
+
     private static final String[] ALT_NAMES = new String[]{"alt", "int", "loc", "old", "reg", "housename"};
 
     private FunctionScoreQueryBuilder finalQueryWithoutTagFilterBuilder;
@@ -45,13 +46,11 @@ public class PhotonQueryBuilder {
 
     private BoolQueryBuilder finalQueryBuilder;
 
-    protected ArrayList<FilterFunctionBuilder> alFilterFunction4QueryBuilder = new ArrayList<>(1);
-
 
     private PhotonQueryBuilder(String query, String language, String[] languages, boolean lenient) {
         BoolQueryBuilder query4QueryBuilder = QueryBuilders.boolQuery();
 
-        // 1. All terms of the quey must be contained in the place record somehow. Be more lenient on second try.
+        // 1. All terms of the query must be contained in the place record somehow. Be more lenient on second try.
         MultiMatchQueryBuilder builder =
                 QueryBuilders.multiMatchQuery(query)
                         .field("collector.default", 1.0f)
@@ -68,8 +67,8 @@ public class PhotonQueryBuilder {
 
         query4QueryBuilder.must(builder);
 
-        // 2. Prefer records that have the full names in. For address records with housenumbers this is the main
-        //    filter creterion because they have no name. Therefore boost the score in this case.
+        // 2. Prefer records that have the full names in. For address records with house numbers this is the main
+        //    filter criterion because they have no name. Boost the score in this case.
         MultiMatchQueryBuilder hnrQuery = QueryBuilders.multiMatchQuery(query)
                 .field("collector.default.raw", 1.0f)
                 .type(MultiMatchQueryBuilder.Type.BEST_FIELDS);
@@ -82,7 +81,7 @@ public class PhotonQueryBuilder {
                 new FilterFunctionBuilder(QueryBuilders.matchQuery("housenumber", query).analyzer("standard"), new WeightBuilder().setWeight(10f))
         }));
 
-        // 3. Either the name or housenumber must be in the query terms.
+        // 3. Either the name or house number must be in the query terms.
         String defLang = "default".equals(language) ? languages[0] : language;
         MultiMatchQueryBuilder nameNgramQuery = QueryBuilders.multiMatchQuery(query)
                 .type(MultiMatchQueryBuilder.Type.BEST_FIELDS)
@@ -119,7 +118,7 @@ public class PhotonQueryBuilder {
                 new FilterFunctionBuilder(QueryBuilders.matchQuery("classification", query), ScoreFunctionBuilders.weightFactorFunction(0.1f))
         }).scoreMode(ScoreMode.SUM);
 
-        // Filter for later: records that have a housenumber and no name must only appear when the housenumber matches.
+        // Filter for later: records that have a house number and no name must only appear when the house number matches.
         queryBuilderForTopLevelFilter = QueryBuilders.boolQuery()
                 .should(QueryBuilders.boolQuery().mustNot(QueryBuilders.existsQuery("housenumber")))
                 .should(QueryBuilders.matchQuery("housenumber", query).analyzer("standard"))
@@ -134,8 +133,8 @@ public class PhotonQueryBuilder {
     /**
      * Create an instance of this builder which can then be embellished as needed.
      *
-     * @param query    the value for photon query parameter "q"
-     * @param language
+     * @param query    Value for photon query parameter "q"
+     * @param language Preferred output language. Also influences search with words in that language preferred.
      * @return An initialized {@link PhotonQueryBuilder photon query builder}.
      */
     public static PhotonQueryBuilder builder(String query, String language, String[] languages, boolean lenient) {
@@ -192,7 +191,7 @@ public class PhotonQueryBuilder {
     /**
      * When this method is called, all filters are placed inside their containers and the top level filter
      * builder is built. Subsequent invocations of this method have no additional effect. Note that after this method
-     * is called, calling other methods on this class also have no effect.
+     * is called, calling other methods on this class also has no effect.
      */
     public QueryBuilder buildQuery() {
         if (state.equals(State.FINISHED)) return finalQueryBuilder;
@@ -213,9 +212,5 @@ public class PhotonQueryBuilder {
         state = State.FINISHED;
 
         return finalQueryBuilder;
-    }
-
-    private enum State {
-        PLAIN, FILTERED, QUERY_ALREADY_BUILT, FINISHED,
     }
 }

@@ -17,7 +17,7 @@ import java.util.List;
 import static spark.Spark.halt;
 
 /**
- * @author svantulden
+ * Webserver route for reverse geocoding requests.
  */
 public class ReverseSearchRequestHandler extends RouteImpl {
     private final ReverseRequestFactory reverseRequestFactory;

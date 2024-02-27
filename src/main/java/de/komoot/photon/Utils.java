@@ -9,9 +9,7 @@ import java.io.IOException;
 import java.util.*;
 
 /**
- * helper functions to create convert a photon document to XContentBuilder object / JSON
- *
- * @author christoph
+ * Helper functions to convert a photon document to XContentBuilder object / JSON
  */
 public class Utils {
     public static XContentBuilder convert(PhotonDoc doc, String[] languages, String[] extraTags) throws IOException {

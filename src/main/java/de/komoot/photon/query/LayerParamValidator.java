@@ -6,6 +6,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Validator that checks the layer parameter for valid values.
+ */
 public class LayerParamValidator {
     private static final List<String> availableLayers = AddressType.getNames();
 

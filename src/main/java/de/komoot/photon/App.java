@@ -17,7 +17,9 @@ import java.io.IOException;
 
 import static spark.Spark.*;
 
-
+/**
+ * Main Photon application.
+ */
 public class App {
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(App.class);
 
@@ -59,7 +61,7 @@ public class App {
                 return;
             }
 
-            // no special action specified -> normal mode: start search API
+            // No special action specified -> normal mode: start search API
             startApi(args, esServer);
         } finally {
             if (shutdownES) esServer.shutdown();
@@ -94,9 +96,7 @@ public class App {
 
 
     /**
-     * take nominatim data and dump it to json
-     *
-     * @param args
+     * Take nominatim data and dump it to a Json file.
      */
     private static void startJsonDump(CommandLineArgs args) {
         try {
@@ -137,9 +137,9 @@ public class App {
     }
 
 
-        /**
-         * Prepare Nominatim updater.
-         */
+    /**
+     * Prepare Nominatim updater.
+     */
     private static NominatimUpdater setupNominatimUpdater(CommandLineArgs args, Server server) {
         // Get database properties and ensure that the version is compatible.
         DatabaseProperties dbProperties = new DatabaseProperties();
@@ -168,7 +168,7 @@ public class App {
         if (allowedOrigin != null) {
             CorsFilter.enableCORS(allowedOrigin, "get", "*");
         } else {
-            // Set Json content type. In the other case set by enableCors.
+            // Set Json content type. In the other case already set by enableCors.
             before((request, response) -> response.type("application/json; charset=UTF-8"));
         }
 

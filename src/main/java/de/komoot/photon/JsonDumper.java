@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 /**
- * useful to create json files that can be used for fast re imports
+ * Importer which writes out the documents in a json-like file.
  */
 public class JsonDumper implements Importer {
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(JsonDumper.class);

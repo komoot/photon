@@ -49,8 +49,7 @@ public class ElasticsearchReverseHandler implements ReverseHandler {
     }
 
 
-    private SearchResponse search(QueryBuilder queryBuilder, int limit, Point location,
-                                 boolean locationDistanceSort) {
+    private SearchResponse search(QueryBuilder queryBuilder, int limit, Point location, boolean locationDistanceSort) {
         SearchRequestBuilder builder = client.prepareSearch(PhotonIndex.NAME).setSearchType(SearchType.QUERY_THEN_FETCH)
                 .setQuery(queryBuilder).setSize(limit).setTimeout(queryTimeout);
 

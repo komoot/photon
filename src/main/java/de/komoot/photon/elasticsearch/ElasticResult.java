@@ -8,6 +8,9 @@ import org.slf4j.Logger;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Response object from the ElasticSearch database.
+ */
 public class ElasticResult implements PhotonResult {
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(ElasticResult.class);
 

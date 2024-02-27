@@ -7,6 +7,9 @@ import de.komoot.photon.searcher.TagFilter;
 import java.io.Serializable;
 import java.util.*;
 
+/**
+ * Collection of query parameters for a reverse request.
+ */
 public class ReverseRequest implements Serializable {
     private final Point location;
     private final String language;

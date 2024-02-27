@@ -1,7 +1,7 @@
 package de.komoot.photon.query;
 
 /**
- * Created by Sachin Dole on 2/12/2015.
+ * Exception thrown when parsing the input request failed.
  */
 public class BadRequestException extends Exception {
     private final int httpStatus;
