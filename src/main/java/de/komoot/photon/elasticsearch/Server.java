@@ -28,6 +28,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.time.Instant;
 import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
@@ -227,7 +228,7 @@ public class Server {
         final XContentBuilder builder = XContentFactory.jsonBuilder().startObject().startObject(BASE_FIELD)
                         .field(FIELD_VERSION, DATABASE_VERSION)
                         .field(FIELD_LANGUAGES, String.join(",", dbProperties.getLanguages()))
-                        .field(FIELD_IMPORT_DATE, dbProperties.getImportDate() instanceof Date ? String.valueOf(dbProperties.getImportDate().getTime()) : null)
+                        .field(FIELD_IMPORT_DATE, dbProperties.getImportDate() instanceof Date ? dbProperties.getImportDate().toInstant() : null)
                         .endObject().endObject();
 
         esClient.prepareIndex(PhotonIndex.NAME, PhotonIndex.TYPE).
@@ -267,7 +268,7 @@ public class Server {
         dbProperties.setLanguages(langString == null ? null : langString.split(","));
 
         String importDateString = properties.get(FIELD_IMPORT_DATE);
-        dbProperties.setImportDate(importDateString == null ? null : new Date(Long.parseLong(importDateString)));
+        dbProperties.setImportDate(importDateString == null ? null : Date.from(Instant.parse(importDateString)));
     }
 
     public Importer createImporter(String[] languages, String[] extraTags) {
