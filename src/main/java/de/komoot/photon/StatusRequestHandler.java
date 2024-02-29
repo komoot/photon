@@ -1,5 +1,7 @@
 package de.komoot.photon;
 
+import java.util.Date;
+
 import org.json.JSONObject;
 
 import de.komoot.photon.elasticsearch.Server;
@@ -19,7 +21,10 @@ public class StatusRequestHandler extends RouteImpl {
     public String handle(Request request, Response response) {
         DatabaseProperties dbProperties = new DatabaseProperties();
         server.loadFromDatabase(dbProperties);
-        String importDateStr = dbProperties.getImportDate().toInstant().toString();
+        String importDateStr = null;
+        if (dbProperties.getImportDate() instanceof Date) {
+            importDateStr = dbProperties.getImportDate().toInstant().toString();
+        }
         
         final JSONObject out = new JSONObject();
         out.put("status", "Ok");
