@@ -57,8 +57,7 @@ public class App {
 
             if (args.isNominatimUpdate()) {
                 shutdownES = true;
-                final NominatimUpdater nominatimUpdater = setupNominatimUpdater(args, esServer);
-                nominatimUpdater.update();
+                startNominatimUpdate(args, esServer);
                 return;
             }
 
@@ -138,6 +137,22 @@ public class App {
         nominatimUpdater.initUpdates(args.getNominatimUpdateInit());
     }
 
+    private static void startNominatimUpdate(CommandLineArgs args, Server esServer) {
+        final NominatimUpdater nominatimUpdater = setupNominatimUpdater(args, esServer);
+        nominatimUpdater.update();
+
+        DatabaseProperties dbProperties = new DatabaseProperties();
+        esServer.loadFromDatabase(dbProperties);
+        NominatimConnector nominatimConnector = new NominatimConnector(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
+        Date importDate = nominatimConnector.getLastImportDate();
+        dbProperties.setImportDate(importDate);
+        try {
+            esServer.saveToDatabase(dbProperties);
+        } catch (IOException e) {
+            throw new RuntimeException("Cannot setup index, elastic search config files not readable", e);
+        }
+    }
+
 
     /**
      * Prepare Nominatim updater.
@@ -176,9 +191,6 @@ public class App {
 
         // setup search API
         String[] langs = dbProperties.getLanguages();
-        Date importDate = dbProperties.getImportDate();
-        get("status", new StatusRequestHandler("status", importDate));
-        get("status/", new StatusRequestHandler("status/", importDate));
 
         SearchHandler searchHandler = server.createSearchHandler(langs, args.getQueryTimeout());
         get("api", new SearchRequestHandler("api", searchHandler, langs, args.getDefaultLanguage()));
@@ -187,6 +199,9 @@ public class App {
         ReverseHandler reverseHandler = server.createReverseHandler(args.getQueryTimeout());
         get("reverse", new ReverseSearchRequestHandler("reverse", reverseHandler, dbProperties.getLanguages(), args.getDefaultLanguage()));
         get("reverse/", new ReverseSearchRequestHandler("reverse/", reverseHandler, dbProperties.getLanguages(), args.getDefaultLanguage()));
+        
+        get("status", new StatusRequestHandler("status", server));
+        get("status/", new StatusRequestHandler("status/", server));
 
         if (args.isEnableUpdateApi()) {
             // setup update API

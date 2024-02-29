@@ -300,7 +300,7 @@ public class NominatimConnector {
     }
 
     public Date getLastImportDate() {
-        List<Date> importDates = template.query("SELECT lastimportdate FROM import_status LIMIT 1", new RowMapper<Date>() {
+        List<Date> importDates = template.query("SELECT lastimportdate FROM import_status ORDER BY lastimportdate DESC LIMIT 1", new RowMapper<Date>() {
             public Date mapRow(ResultSet rs, int rowNum) throws SQLException {
                 return rs.getTimestamp("lastimportdate");
             }

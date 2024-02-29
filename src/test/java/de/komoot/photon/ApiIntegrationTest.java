@@ -161,6 +161,6 @@ class ApiIntegrationTest extends ESBaseTester {
         JSONObject json = new JSONObject(
                 new BufferedReader(new InputStreamReader(connection.getInputStream())).lines().collect(Collectors.joining("\n")));
         assertEquals("Ok", json.getString("status"));
-        assertEquals(prop.getImportDate().toString(), json.getString("import_date"));
+        assertEquals(prop.getImportDate().toInstant().toString(), json.getString("import_date"));
     }
 }
