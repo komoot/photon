@@ -207,7 +207,7 @@ public class App {
             // setup update API
             final NominatimUpdater nominatimUpdater = setupNominatimUpdater(args, server);
             get("/nominatim-update", (Request request, Response response) -> {
-                new Thread(nominatimUpdater::update).start();
+                new Thread(()-> App.startNominatimUpdate(args, server)).start();
                 return "nominatim update started (more information in console output) ...";
             });
         }
