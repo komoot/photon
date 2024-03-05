@@ -71,3 +71,9 @@ CREATE TABLE photon_updates (
     operation TEXT,
     indexed_date TIMESTAMP
 );
+
+
+CREATE TABLE import_status (
+    lastimportdate timestamp with TIME ZONE NOT NULL,
+    indexed boolean
+);

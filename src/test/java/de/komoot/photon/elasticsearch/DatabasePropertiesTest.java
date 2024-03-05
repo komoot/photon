@@ -6,6 +6,8 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.Date;
+
 /**
  * Tests for the database-global property store.
  */
@@ -19,7 +21,10 @@ class DatabasePropertiesTest extends ESBaseTester {
         DatabaseProperties prop = new DatabaseProperties();
 
         prop.setLanguages(new String[]{"en", "bg", "de"});
+        Date now = new Date();
+        prop.setImportDate(now);
         assertArrayEquals(new String[]{"en", "bg", "de"}, prop.getLanguages());
+        assertEquals(now, prop.getImportDate());
 
         prop.setLanguages(new String[]{"ru"});
         assertArrayEquals(new String[]{"ru"}, prop.getLanguages());

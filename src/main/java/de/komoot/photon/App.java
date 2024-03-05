@@ -14,6 +14,7 @@ import spark.Response;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Date;
 
 import static spark.Spark.*;
 
@@ -56,8 +57,7 @@ public class App {
 
             if (args.isNominatimUpdate()) {
                 shutdownES = true;
-                final NominatimUpdater nominatimUpdater = setupNominatimUpdater(args, esServer);
-                nominatimUpdater.update();
+                startNominatimUpdate(args, esServer);
                 return;
             }
 
@@ -117,14 +117,15 @@ public class App {
      */
     private static void startNominatimImport(CommandLineArgs args, Server esServer) {
         DatabaseProperties dbProperties;
+        NominatimConnector nominatimConnector = new NominatimConnector(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
+        Date importDate = nominatimConnector.getLastImportDate();
         try {
-            dbProperties = esServer.recreateIndex(args.getLanguages()); // clear out previous data
+            dbProperties = esServer.recreateIndex(args.getLanguages(), importDate); // clear out previous data
         } catch (IOException e) {
             throw new RuntimeException("Cannot setup index, elastic search config files not readable", e);
         }
 
         LOGGER.info("Starting import from nominatim to photon with languages: {}", String.join(",", dbProperties.getLanguages()));
-        NominatimConnector nominatimConnector = new NominatimConnector(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
         nominatimConnector.setImporter(esServer.createImporter(dbProperties.getLanguages(), args.getExtraTags()));
         nominatimConnector.readEntireDatabase(args.getCountryCodes());
 
@@ -134,6 +135,22 @@ public class App {
     private static void startNominatimUpdateInit(CommandLineArgs args) {
         NominatimUpdater nominatimUpdater = new NominatimUpdater(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
         nominatimUpdater.initUpdates(args.getNominatimUpdateInit());
+    }
+
+    private static void startNominatimUpdate(CommandLineArgs args, Server esServer) {
+        final NominatimUpdater nominatimUpdater = setupNominatimUpdater(args, esServer);
+        nominatimUpdater.update();
+
+        DatabaseProperties dbProperties = new DatabaseProperties();
+        esServer.loadFromDatabase(dbProperties);
+        NominatimConnector nominatimConnector = new NominatimConnector(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
+        Date importDate = nominatimConnector.getLastImportDate();
+        dbProperties.setImportDate(importDate);
+        try {
+            esServer.saveToDatabase(dbProperties);
+        } catch (IOException e) {
+            throw new RuntimeException("Cannot setup index, elastic search config files not readable", e);
+        }
     }
 
 
@@ -174,6 +191,7 @@ public class App {
 
         // setup search API
         String[] langs = dbProperties.getLanguages();
+
         SearchHandler searchHandler = server.createSearchHandler(langs, args.getQueryTimeout());
         get("api", new SearchRequestHandler("api", searchHandler, langs, args.getDefaultLanguage()));
         get("api/", new SearchRequestHandler("api/", searchHandler, langs, args.getDefaultLanguage()));
@@ -181,12 +199,15 @@ public class App {
         ReverseHandler reverseHandler = server.createReverseHandler(args.getQueryTimeout());
         get("reverse", new ReverseSearchRequestHandler("reverse", reverseHandler, dbProperties.getLanguages(), args.getDefaultLanguage()));
         get("reverse/", new ReverseSearchRequestHandler("reverse/", reverseHandler, dbProperties.getLanguages(), args.getDefaultLanguage()));
+        
+        get("status", new StatusRequestHandler("status", server));
+        get("status/", new StatusRequestHandler("status/", server));
 
         if (args.isEnableUpdateApi()) {
             // setup update API
             final NominatimUpdater nominatimUpdater = setupNominatimUpdater(args, server);
             get("/nominatim-update", (Request request, Response response) -> {
-                new Thread(nominatimUpdater::update).start();
+                new Thread(()-> App.startNominatimUpdate(args, server)).start();
                 return "nominatim update started (more information in console output) ...";
             });
         }

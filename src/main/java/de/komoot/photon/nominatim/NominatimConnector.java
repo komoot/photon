@@ -14,6 +14,7 @@ import org.springframework.jdbc.core.RowMapper;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -296,6 +297,19 @@ public class NominatimConnector {
         } finally {
             importThread.finish();
         }
+    }
+
+    public Date getLastImportDate() {
+        List<Date> importDates = template.query("SELECT lastimportdate FROM import_status ORDER BY lastimportdate DESC LIMIT 1", new RowMapper<Date>() {
+            public Date mapRow(ResultSet rs, int rowNum) throws SQLException {
+                return rs.getTimestamp("lastimportdate");
+            }
+        });
+        if (importDates.isEmpty()) {
+            return null;
+        }
+
+        return importDates.get(0);
     }
 
     /**

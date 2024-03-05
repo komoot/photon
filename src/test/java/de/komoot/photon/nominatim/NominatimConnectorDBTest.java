@@ -12,6 +12,9 @@ import de.komoot.photon.nominatim.testdb.PlacexTestRow;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
+
+import java.util.Date;
+
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
@@ -312,5 +315,15 @@ class NominatimConnectorDBTest {
         assertEquals(1, importer.size());
 
         assertNull(importer.get(place).getCountryCode());
+    }
+
+    @Test
+    public void testGetImportDate() {
+        Date importDate = connector.getLastImportDate();
+        assertNull(importDate);
+        
+        importDate = new Date();
+        jdbc.update("INSERT INTO import_status(lastimportdate, indexed) VALUES(?, ?)", importDate, true);
+        assertEquals(importDate, connector.getLastImportDate());
     }
 }

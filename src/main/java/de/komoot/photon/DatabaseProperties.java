@@ -11,6 +11,11 @@ public class DatabaseProperties {
     private String[] languages = null;
 
     /**
+     * The OSM data date
+     */
+    private Date importDate;
+
+    /**
      * Return the list of languages for which the database is configured.
      * @return
      */
@@ -63,5 +68,14 @@ public class DatabaseProperties {
 
             languages = newLanguageList.toArray(new String[]{});
         }
+    }
+
+    public Date getImportDate() {
+        return this.importDate;
+    }
+
+    public DatabaseProperties setImportDate(Date importDate) {
+        this.importDate = importDate;
+        return this;
     }
 }
