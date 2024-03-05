@@ -196,7 +196,7 @@ export NOMINATIM_DIR=/srv/nominatim/...
 ./continuously_update_from_nominatim.sh
 ```
 
-If you have Nominatim < 3.7, please read the comments in the script carefully.
+where `NOMINATIM_DIR` is the project directory of your Nominatim installation.
 
 ### Search API
 

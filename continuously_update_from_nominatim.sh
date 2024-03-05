@@ -12,8 +12,6 @@ do
     # The important part here is to leave out the indexing step. This
     # will be handled by Photon.
 
-    # For Nominatim versions < 3.7 use the following:
-    # ./utils/update.php --import-osmosis
     nominatim replication --project-dir $NOMINATIM_DIR  --once
 
     # Now tell Photon to finish the updates and copy the new data into its
