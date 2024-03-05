@@ -63,6 +63,11 @@ public class NominatimUpdater {
         return updateLock.isLocked();
     }
 
+    public boolean isSetUpForUpdates() {
+        int result = template.queryForObject("SELECT count(*) FROM pg_tables WHERE tablename = 'photon_updates'", Integer.class);
+        return result > 0;
+    }
+
     public void setUpdater(Updater updater) {
         this.updater = updater;
     }
