@@ -8,6 +8,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -53,6 +54,14 @@ public class NominatimUpdater {
      * Lock to prevent thread from updating concurrently.
      */
     private ReentrantLock updateLock = new ReentrantLock();
+
+    public Date getLastImportDate() {
+        return exporter.getLastImportDate();
+    }
+
+    public boolean isBusy() {
+        return updateLock.isLocked();
+    }
 
     public void setUpdater(Updater updater) {
         this.updater = updater;
