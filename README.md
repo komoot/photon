@@ -124,7 +124,7 @@ Discover more of photon's feature with its usage `java -jar photon-*.jar -h`. Th
 If you need search data in other languages or restricted to a country you will need to create your search data by your own.
 Once you have your [Nominatim](https://nominatim.org) database ready, you can import the data to photon.
 
-If you haven't already set a password for your nominatim database user, do it now (change user name and password as you like, below):
+If you haven't already set a password for your Nominatim database user, do it now (change user name and password as you like, below):
 
 ```bash
 su postgres
@@ -138,7 +138,7 @@ Import the data to photon:
 java -jar photon-*.jar -nominatim-import -host localhost -port 5432 -database nominatim -user nominatim -password mysecretpassword -languages es,fr
 ```
 
-The import of worldwide data set will take some hours/days, SSD/NVME disks are recommended to accelerate nominatim queries.
+The import of worldwide data set will take some hours/days, SSD/NVME disks are recommended to accelerate Nominatim queries.
 
 #### Updating from OSM via Nominatim
 
@@ -177,20 +177,26 @@ Then you can trigger updates like this:
 curl http://localhost:2322/nominatim-update
 ```
 
+This will only start the updates. To check if the updates have finished,
+use the status API:
+
+```bash
+curl http://localhost:2322/nominatim-update/status
+```
+
+It returns a single JSON string `"BUSY"` when updates are in progress or
+`"OK"` when another update round can be started.
+
 For your convenience, this repository contains a script to continuously update
-both Nominatim and Photon. To run it, first customize some environment
-variables according to your installation:
+both Nominatim and Photon using Photon's update API. Make sure you have
+Photon started with `-enable-update-api` and then run:
 
 ```bash
 export NOMINATIM_DIR=/srv/nominatim/...
-export PHOTON_JAR=photon.jar
-export PHOTON_DB_NAME=nominatim
-export PHOTON_DB_USER=nominatim
-export PHOTON_DB_PASSWORD=...
 ./continuously_update_from_nominatim.sh
 ```
 
-If you have Nominatim < 3.7, please read the comments in the script carefully.
+where `NOMINATIM_DIR` is the project directory of your Nominatim installation.
 
 ### Search API
 

@@ -57,7 +57,7 @@ public class App {
 
             if (args.isNominatimUpdate()) {
                 shutdownES = true;
-                startNominatimUpdate(args, esServer);
+                startNominatimUpdate(setupNominatimUpdater(args, esServer), esServer);
                 return;
             }
 
@@ -137,14 +137,12 @@ public class App {
         nominatimUpdater.initUpdates(args.getNominatimUpdateInit());
     }
 
-    private static void startNominatimUpdate(CommandLineArgs args, Server esServer) {
-        final NominatimUpdater nominatimUpdater = setupNominatimUpdater(args, esServer);
+    private static void startNominatimUpdate(NominatimUpdater nominatimUpdater, Server esServer) {
         nominatimUpdater.update();
 
         DatabaseProperties dbProperties = new DatabaseProperties();
         esServer.loadFromDatabase(dbProperties);
-        NominatimConnector nominatimConnector = new NominatimConnector(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
-        Date importDate = nominatimConnector.getLastImportDate();
+        Date importDate = nominatimUpdater.getLastImportDate();
         dbProperties.setImportDate(importDate);
         try {
             esServer.saveToDatabase(dbProperties);
@@ -206,9 +204,19 @@ public class App {
         if (args.isEnableUpdateApi()) {
             // setup update API
             final NominatimUpdater nominatimUpdater = setupNominatimUpdater(args, server);
+            if (!nominatimUpdater.isSetUpForUpdates()) {
+                throw new RuntimeException("Update API enabled, but Nominatim database is not prepared. Run -nominiatim-update-init-for first.");
+            }
+            get("/nominatim-update/status", (Request request, Response response) -> {
+               if (nominatimUpdater.isBusy()) {
+                   return "\"BUSY\"";
+               }
+
+               return "\"OK\"";
+            });
             get("/nominatim-update", (Request request, Response response) -> {
-                new Thread(()-> App.startNominatimUpdate(args, server)).start();
-                return "nominatim update started (more information in console output) ...";
+                new Thread(()-> App.startNominatimUpdate(nominatimUpdater, server)).start();
+                return "\"nominatim update started (more information in console output) ...\"";
             });
         }
     }
