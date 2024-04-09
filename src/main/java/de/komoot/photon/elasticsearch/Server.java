@@ -157,12 +157,12 @@ public class Server {
         // copy script directory to ElasticSearch directory
         final ClassLoader loader = Thread.currentThread().getContextClassLoader();
 
-        Files.copy(loader.getResourceAsStream("modules/lang-painless/antlr4-runtime.jar"),
+        Files.copy(loader.getResourceAsStream("modules/lang-painless/antlr4-runtime.jarx"),
                 new File(painlessDirectory, "antlr4-runtime.jar").toPath(),
                 StandardCopyOption.REPLACE_EXISTING);
-        Files.copy(loader.getResourceAsStream("modules/lang-painless/asm-debug-all.jar"),
+        Files.copy(loader.getResourceAsStream("modules/lang-painless/asm-debug-all.jarx"),
                 new File(painlessDirectory, "asm-debug-all.jar").toPath(), StandardCopyOption.REPLACE_EXISTING);
-        Files.copy(loader.getResourceAsStream("modules/lang-painless/lang-painless.jar"),
+        Files.copy(loader.getResourceAsStream("modules/lang-painless/lang-painless.jarx"),
                 new File(painlessDirectory, "lang-painless.jar").toPath(), StandardCopyOption.REPLACE_EXISTING);
         Files.copy(loader.getResourceAsStream("modules/lang-painless/plugin-descriptor.properties"),
                 new File(painlessDirectory, "plugin-descriptor.properties").toPath(),

@@ -1,0 +1,107 @@
+plugins {
+  id 'com.github.johnrengelman.shadow' version '8.1.1'
+  id 'application'
+}
+
+group = 'de.komoot.photon'
+version = '0.5.0'
+
+description = "Geocoder for OSM data"
+
+application {
+    mainClass = 'de.komoot.photon.App';
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+}
+
+repositories {
+     maven { url "https://www.datanucleus.org/downloads/maven2/" }
+     mavenCentral()
+}
+
+configurations {
+    runtimePlugins.extendsFrom runtimeOnly {
+        canBeResolved = true
+    }
+}
+
+sourceSets {
+    main {
+        resources {
+            srcDir 'build/es'
+            srcDir 'es'
+        }
+    }
+}
+
+dependencies {
+    implementation('org.elasticsearch:elasticsearch:5.6.16') {
+exclude(module: 'log4j-api')
+    }
+    implementation 'org.elasticsearch.plugin:transport-netty4-client:5.6.16'
+    implementation 'org.apache.logging.log4j:log4j-core:2.22.0'
+    implementation 'org.apache.logging.log4j:log4j-api:2.22.0'
+    implementation('org.elasticsearch.client:transport:5.6.16') {
+exclude(module: 'commons-logging')
+    }
+    implementation 'org.postgresql:postgresql:42.7.2'
+    implementation 'org.slf4j:slf4j-api:1.7.36'
+    implementation 'org.apache.logging.log4j:log4j-slf4j-impl:2.22.0'
+    implementation 'com.beust:jcommander:1.82'
+    implementation 'org.apache.commons:commons-lang3:3.14.0'
+    implementation 'org.springframework:spring-jdbc:5.3.32'
+    implementation('org.apache.commons:commons-dbcp2:2.12.0') {
+exclude(module: 'commons-logging')
+    }
+    implementation 'com.vividsolutions:jts:1.13'
+    implementation 'com.sparkjava:spark-core:2.9.4'
+    implementation 'net.postgis:postgis-jdbc:2.5.0'
+    implementation 'net.postgis:postgis-jdbc-jtsparser:2.2.2'
+    implementation 'org.json:json:20240303'
+
+    testImplementation(platform("org.junit:junit-bom:5.10.2"))
+    testImplementation 'com.h2database:h2:2.2.224'
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testImplementation 'org.mockito:mockito-core:5.11.0'
+
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    runtimePlugins 'org.codelibs.elasticsearch.module:lang-painless:5.6.16'
+    runtimePlugins 'org.ow2.asm:asm-debug-all:5.1'
+    runtimePlugins 'org.antlr:antlr4-runtime:4.5.1-1'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
+
+task copyLibs(type: Copy){
+    from configurations.runtimePlugins {
+        into layout.buildDirectory.dir('es/modules/lang-painless')
+        rename '(.*[^0-9])-[0-9.-]+?.jar', '$1.jarx'
+    }
+}
+
+tasks.named('jar') {
+    archiveBaseName.set('original-photon')
+    manifest.attributes('Multi-Release': 'true')
+}
+
+tasks.named('processResources') {
+    dependsOn(copyLibs)
+}
+
+shadowJar {
+    mergeServiceFiles()
+    archiveClassifier.set('')
+    // This mitigates against the log4j JNDI lookup vulnerability:
+    // https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-44228
+    // Since we are using an old version of elastic search that is incompatible
+    // with a patched, newer version of log4j we have to remove the class
+    // JndiLookup from the fat jar. This is the recommended course of action
+    // when you cannot upgrade as per https://logging.apache.org/log4j/2.x/security.html
+    exclude 'org/apache/logging/log4j/core/lookup/JndiLookup.class'
+}
