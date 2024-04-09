@@ -27,8 +27,7 @@ jobs:
           cache: 'gradle'
 
       - name: Compile project, run tests
-        run: |
-          gradle build --no-daemon
+        run: ./gradlew build --no-daemon
 
 
   import:
@@ -46,8 +45,7 @@ jobs:
           cache: 'gradle'
 
       - name: Compile project
-        run: |
-          gradle assemble --no-daemon
+        run: ./gradlew assemble --no-daemon
 
       - uses: actions/checkout@v4
         with:
