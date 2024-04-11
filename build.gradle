@@ -97,6 +97,9 @@ tasks.named('processResources') {
 shadowJar {
     mergeServiceFiles()
     archiveClassifier.set('')
+
+    exclude '**/module-info.class'
+
     // This mitigates against the log4j JNDI lookup vulnerability:
     // https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-44228
     // Since we are using an old version of elastic search that is incompatible
