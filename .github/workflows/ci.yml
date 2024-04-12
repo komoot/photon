@@ -24,11 +24,10 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: ${{ matrix.java }}
-          cache: 'maven'
+          cache: 'gradle'
 
       - name: Compile project, run tests
-        run: |
-          mvn --no-transfer-progress test
+        run: ./gradlew build --no-daemon
 
 
   import:
@@ -43,11 +42,10 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: 11
-          cache: 'maven'
+          cache: 'gradle'
 
       - name: Compile project
-        run: |
-          mvn --no-transfer-progress package -Dmaven.test.skip=true
+        run: ./gradlew assemble --no-daemon
 
       - uses: actions/checkout@v4
         with:
@@ -95,7 +93,7 @@ jobs:
         shell: bash
 
       - name: Build Nominatim
-        run: mkdir build && cd build && cmake -DBUILD_MODULE=off ../Nominatim && make -j2 && sudo make install
+        run: mkdir nomin-build && cd nomin-build && cmake -DBUILD_MODULE=off ../Nominatim && make -j2 && sudo make install
         shell: bash
 
       - name: Prepare import environment
@@ -116,8 +114,8 @@ jobs:
 
       - name: Import Photon
         run: |
-            java -jar target/photon-*.jar -nominatim-import -database nominatim -user runner -password foobar
-            java -jar target/photon-*.jar -nominatim-update-init-for runner -database nominatim -user runner -password foobar
+            java -jar build/libs/photon-*.jar -nominatim-import -database nominatim -user runner -password foobar
+            java -jar build/libs/photon-*.jar -nominatim-update-init-for runner -database nominatim -user runner -password foobar
 
       - name: Update Nominatim
         run: |
@@ -130,4 +128,4 @@ jobs:
 
       - name: Update Photon
         run: |
-          java -jar target/photon-*.jar -nominatim-update -database nominatim -user runner -password foobar
+          java -jar build/libs/photon-*.jar -nominatim-update -database nominatim -user runner -password foobar
