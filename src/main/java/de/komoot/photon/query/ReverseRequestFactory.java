@@ -1,7 +1,6 @@
 package de.komoot.photon.query;
 
 import com.vividsolutions.jts.geom.Point;
-
 import de.komoot.photon.searcher.TagFilter;
 import spark.QueryParamsMap;
 import spark.Request;
@@ -15,16 +14,19 @@ import java.util.Set;
  * Factory that creates a {@link ReverseRequest} from a {@link Request web request}
  */
 public class ReverseRequestFactory {
-    private final RequestLanguageResolver languageResolver;
-    private static final LocationParamConverter mandatoryLocationParamConverter = new LocationParamConverter(true);
-    private final LayerParamValidator layerParamValidator;
 
     private static final HashSet<String> REQUEST_QUERY_PARAMS = new HashSet<>(Arrays.asList("lang", "lon", "lat", "radius",
             "query_string_filter", "distance_sort", "limit", "layer", "osm_tag", "debug"));
+    private static final LocationParamConverter mandatoryLocationParamConverter = new LocationParamConverter(true);
 
-    public ReverseRequestFactory(List<String> supportedLanguages, String defaultLanguage) {
+    private final RequestLanguageResolver languageResolver;
+    private final LayerParamValidator layerParamValidator;
+    private final int maxResults;
+
+    public ReverseRequestFactory(List<String> supportedLanguages, String defaultLanguage, int maxResults) {
         this.languageResolver = new RequestLanguageResolver(supportedLanguages, defaultLanguage);
         this.layerParamValidator = new LayerParamValidator();
+        this.maxResults = maxResults;
     }
 
     public ReverseRequest create(Request webRequest) throws BadRequestException {
@@ -70,9 +72,9 @@ public class ReverseRequestFactory {
             }
             if (limit <= 0) {
                 throw new BadRequestException(400, "Invalid search term 'limit', expected a strictly positive integer.");
-            } else {
-                limit = Math.min(limit, 50);
             }
+
+            limit = Math.min(limit, maxResults);
         }
 
         boolean enableDebug = webRequest.queryParams("debug") != null;

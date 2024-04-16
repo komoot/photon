@@ -16,14 +16,16 @@ public class PhotonRequestFactory {
     private static final LocationParamConverter optionalLocationParamConverter = new LocationParamConverter(false);
     private final BoundingBoxParamConverter bboxParamConverter;
     private final LayerParamValidator layerParamValidator;
+    private final int maxResults;
 
     private static final HashSet<String> REQUEST_QUERY_PARAMS = new HashSet<>(Arrays.asList("lang", "q", "lon", "lat",
             "limit", "osm_tag", "location_bias_scale", "bbox", "debug", "zoom", "layer"));
 
-    public PhotonRequestFactory(List<String> supportedLanguages, String defaultLanguage) {
+    public PhotonRequestFactory(List<String> supportedLanguages, String defaultLanguage, int maxResults) {
         this.languageResolver = new RequestLanguageResolver(supportedLanguages, defaultLanguage);
         this.bboxParamConverter = new BoundingBoxParamConverter();
         this.layerParamValidator = new LayerParamValidator();
+        this.maxResults = maxResults;
     }
 
     public PhotonRequest create(Request webRequest) throws BadRequestException {
@@ -38,7 +40,8 @@ public class PhotonRequestFactory {
 
         PhotonRequest request = new PhotonRequest(query, languageResolver.resolveRequestedLanguage(webRequest));
 
-        request.setLimit(parseInt(webRequest, "limit"));
+        int limit = parseInt(webRequest, "limit");
+        request.setLimit(Integer.max(Integer.min(limit, maxResults), 1));
         request.setLocationForBias(optionalLocationParamConverter.apply(webRequest));
         request.setBbox(bboxParamConverter.apply(webRequest));
         request.setScale(parseDouble(webRequest, "location_bias_scale"));

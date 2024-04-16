@@ -77,9 +77,7 @@ public class PhotonRequest {
     }
 
     PhotonRequest setLimit(Integer limit) {
-        if (limit != null) {
-            this.limit = Integer.max(Integer.min(limit, 50), 1);
-        }
+        this.limit = limit;
         return this;
     }
 
