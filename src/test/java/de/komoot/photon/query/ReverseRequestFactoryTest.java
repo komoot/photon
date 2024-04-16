@@ -180,7 +180,7 @@ class ReverseRequestFactoryTest {
     void testHighLimit() throws Exception {
         Request mockRequest = createRequestWithLongitudeLatitude(-87d, 41d);
         Mockito.when(mockRequest.queryParams("limit")).thenReturn("51");
-        ReverseRequestFactory reverseRequestFactory = new ReverseRequestFactory(Collections.singletonList("en"), "en", 10);
+        ReverseRequestFactory reverseRequestFactory = new ReverseRequestFactory(Collections.singletonList("en"), "en", 50);
         reverseRequest = reverseRequestFactory.create(mockRequest);
         assertEquals(50, reverseRequest.getLimit());
         Mockito.verify(mockRequest, Mockito.times(1)).queryParams("limit");

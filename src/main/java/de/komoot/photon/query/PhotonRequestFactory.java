@@ -40,8 +40,10 @@ public class PhotonRequestFactory {
 
         PhotonRequest request = new PhotonRequest(query, languageResolver.resolveRequestedLanguage(webRequest));
 
-        int limit = parseInt(webRequest, "limit");
-        request.setLimit(Integer.max(Integer.min(limit, maxResults), 1));
+        Integer limit = parseInt(webRequest, "limit");
+        if(limit != null)
+            request.setLimit(Integer.max(Integer.min(limit, maxResults), 1));
+
         request.setLocationForBias(optionalLocationParamConverter.apply(webRequest));
         request.setBbox(bboxParamConverter.apply(webRequest));
         request.setScale(parseDouble(webRequest, "location_bias_scale"));
