@@ -56,7 +56,7 @@ class ReverseRequestFactoryTest {
     @Test
     void testWithLocation() throws Exception {
         Request mockRequest = createRequestWithLongitudeLatitude(-87d, 41d);
-        ReverseRequestFactory reverseRequestFactory = new ReverseRequestFactory(Collections.singletonList("en"), "en");
+        ReverseRequestFactory reverseRequestFactory = new ReverseRequestFactory(Collections.singletonList("en"), "en", 10);
         reverseRequest = reverseRequestFactory.create(mockRequest);
         assertEquals(-87, reverseRequest.getLocation().getX(), 0);
         assertEquals(41, reverseRequest.getLocation().getY(), 0);
@@ -66,7 +66,7 @@ class ReverseRequestFactoryTest {
 
     private void assertBadRequest(Request mockRequest, String expectedMessage) {
         try {
-            ReverseRequestFactory reverseRequestFactory = new ReverseRequestFactory(Collections.singletonList("en"), "en");
+            ReverseRequestFactory reverseRequestFactory = new ReverseRequestFactory(Collections.singletonList("en"), "en", 10);
             reverseRequest = reverseRequestFactory.create(mockRequest);
             fail();
         } catch (BadRequestException e) {
@@ -155,7 +155,7 @@ class ReverseRequestFactoryTest {
     void testHighRadius() throws Exception {
         Request mockRequest = createRequestWithLongitudeLatitude(-87d, 41d);
         Mockito.when(mockRequest.queryParams("radius")).thenReturn("5.1");
-        ReverseRequestFactory reverseRequestFactory = new ReverseRequestFactory(Collections.singletonList("en"), "en");
+        ReverseRequestFactory reverseRequestFactory = new ReverseRequestFactory(Collections.singletonList("en"), "en", 10);
         reverseRequest = reverseRequestFactory.create(mockRequest);
         assertEquals(5.1d, reverseRequest.getRadius(), 0);
         Mockito.verify(mockRequest, Mockito.times(1)).queryParams("radius");
@@ -180,7 +180,7 @@ class ReverseRequestFactoryTest {
     void testHighLimit() throws Exception {
         Request mockRequest = createRequestWithLongitudeLatitude(-87d, 41d);
         Mockito.when(mockRequest.queryParams("limit")).thenReturn("51");
-        ReverseRequestFactory reverseRequestFactory = new ReverseRequestFactory(Collections.singletonList("en"), "en");
+        ReverseRequestFactory reverseRequestFactory = new ReverseRequestFactory(Collections.singletonList("en"), "en", 10);
         reverseRequest = reverseRequestFactory.create(mockRequest);
         assertEquals(50, reverseRequest.getLimit());
         Mockito.verify(mockRequest, Mockito.times(1)).queryParams("limit");
@@ -189,7 +189,7 @@ class ReverseRequestFactoryTest {
     @Test
     void testDistanceSortDefault() throws Exception {
         Request mockRequest = createRequestWithLongitudeLatitude(-87d, 41d);
-        ReverseRequestFactory reverseRequestFactory = new ReverseRequestFactory(Collections.singletonList("en"), "en");
+        ReverseRequestFactory reverseRequestFactory = new ReverseRequestFactory(Collections.singletonList("en"), "en", 10);
         reverseRequest = reverseRequestFactory.create(mockRequest);
         Mockito.verify(mockRequest, Mockito.times(1)).queryParamOrDefault("distance_sort", "true");
         assertEquals(true, reverseRequest.getLocationDistanceSort());
@@ -199,7 +199,7 @@ class ReverseRequestFactoryTest {
     void testWithLayersFilters() throws Exception {
         Request mockRequest = createRequestWithLongitudeLatitude(-87d, 41d);
         requestWithLayers(mockRequest, "city", "locality");
-        ReverseRequestFactory reverseRequestFactory = new ReverseRequestFactory(Collections.singletonList("en"), "en");
+        ReverseRequestFactory reverseRequestFactory = new ReverseRequestFactory(Collections.singletonList("en"), "en", 10);
         reverseRequest = reverseRequestFactory.create(mockRequest);
         assertEquals(new HashSet<>(Arrays.asList("city", "locality")), reverseRequest.getLayerFilters());
     }
@@ -208,7 +208,7 @@ class ReverseRequestFactoryTest {
     void testWithDuplicatedLayerFilters() throws Exception {
         Request mockRequest = createRequestWithLongitudeLatitude(-87d, 41d);
         requestWithLayers(mockRequest, "city", "locality", "city");
-        ReverseRequestFactory reverseRequestFactory = new ReverseRequestFactory(Collections.singletonList("en"), "en");
+        ReverseRequestFactory reverseRequestFactory = new ReverseRequestFactory(Collections.singletonList("en"), "en", 10);
         reverseRequest = reverseRequestFactory.create(mockRequest);
         assertEquals(new HashSet<>(Arrays.asList("city", "locality")), reverseRequest.getLayerFilters());
     }
@@ -225,7 +225,7 @@ class ReverseRequestFactoryTest {
     void testTagFilters() throws Exception {
         Request mockRequest = createRequestWithLongitudeLatitude(-87d, 41d);
         requestWithOsmFilters(mockRequest, "foo", ":!bar");
-        ReverseRequestFactory reverseRequestFactory = new ReverseRequestFactory(Collections.singletonList("en"), "en");
+        ReverseRequestFactory reverseRequestFactory = new ReverseRequestFactory(Collections.singletonList("en"), "en", 10);
         reverseRequest = reverseRequestFactory.create(mockRequest);
 
         List<TagFilter> result = reverseRequest.getOsmTagFilters();
@@ -242,7 +242,7 @@ class ReverseRequestFactoryTest {
     void testBadTagFilters() {
         Request mockRequest = createRequestWithLongitudeLatitude(-87d, 41d);
         requestWithOsmFilters(mockRequest, "good", "bad:bad:bad");
-        ReverseRequestFactory reverseRequestFactory = new ReverseRequestFactory(Collections.singletonList("en"), "en");
+        ReverseRequestFactory reverseRequestFactory = new ReverseRequestFactory(Collections.singletonList("en"), "en", 10);
 
         assertThrows(BadRequestException.class, () -> reverseRequestFactory.create(mockRequest));
     }
@@ -252,7 +252,7 @@ class ReverseRequestFactoryTest {
         Request mockRequest = createRequestWithLongitudeLatitude(-87d, 41d);
         Mockito.when(mockRequest.queryParams("debug")).thenReturn("1");
 
-        ReverseRequestFactory reverseRequestFactory = new ReverseRequestFactory(Collections.singletonList("en"), "en");
+        ReverseRequestFactory reverseRequestFactory = new ReverseRequestFactory(Collections.singletonList("en"), "en", 10);
         reverseRequest = reverseRequestFactory.create(mockRequest);
 
         assertTrue(reverseRequest.getDebug());
