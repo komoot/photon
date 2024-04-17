@@ -1,6 +1,6 @@
 # photon
 
-[![Continuous Integration](https://github.com/komoot/photon/workflows/Continuous%20Integration/badge.svg)](https://github.com/komoot/photon/actions)
+[![Continuous Integration](https://github.com/komoot/photon/workflows/CI/badge.svg)](https://github.com/komoot/photon/actions)
 
 _photon_ is an open source geocoder built for [OpenStreetMap](https://openstreetmap.org) data. It is based on [elasticsearch](http://elasticsearch.org/) - an efficient, powerful and highly scalable search platform.
 
@@ -33,7 +33,7 @@ photon software is open source and licensed under [Apache License, Version 2.0](
 
 ### Installation
 
-photon requires java, at least version 11.
+photon requires Java, at least version 11.
 
 Download the search index (72G GB compressed, 159GB uncompressed as of 2023-10-26, worldwide coverage, languages: English, German, French and local name). The search index is updated weekly and thankfully provided by [GraphHopper](https://www.graphhopper.com/) with the support of [lonvia](https://github.com/lonvia).
 Now get the latest version of photon from [the releases](https://github.com/komoot/photon/releases).
@@ -48,11 +48,14 @@ wget -O - https://download1.graphhopper.com/public/photon-db-latest.tar.bz2 | pb
 
 ### Building
 
-photon uses [maven](https://maven.apache.org/) for building. To build the package from source make sure you have a JDK and maven installed. Then run:
+photon uses [gradle](https://gradle.org) for building. To build the package
+from source make sure you have a JDK installed. Then run:
 
 ```
-mvn package
+./gradlew build
 ```
+
+This will build and test photon. The final jar cn be found in `build/libs`.
 
 ### Usage
 
@@ -68,7 +71,7 @@ Check the URL `http://localhost:2322/api?q=berlin` to see if photon is running w
 
 To enable CORS (cross-site requests), use `-cors-any` to allow any origin or `-cors-origin` with a specific origin as the argument. By default, CORS support is disabled.
 
-Discover more of photon's feature with its usage `java -jar photon-*.jar -h`. The available options are as follows:
+Discover more of photon's featurse with its usage `java -jar photon-*.jar -h`. The available options are as follows:
 
 ```
 -h                    Show help / usage
