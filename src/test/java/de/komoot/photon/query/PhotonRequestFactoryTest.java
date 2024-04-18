@@ -56,7 +56,7 @@ class PhotonRequestFactoryTest {
     }
 
     private PhotonRequest createPhotonRequest(Request mockRequest) throws BadRequestException {
-        PhotonRequestFactory factory = new PhotonRequestFactory(Collections.singletonList("en"), "en");
+        PhotonRequestFactory factory = new PhotonRequestFactory(Collections.singletonList("en"), "en", 10);
         return factory.create(mockRequest);
     }
 

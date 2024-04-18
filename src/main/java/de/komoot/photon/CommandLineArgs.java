@@ -82,6 +82,12 @@ public class CommandLineArgs {
     @Parameter(names = "-h", description = "Show help / usage")
     private boolean usage = false;
 
+    @Parameter(names = "-max-results", description = "The maximum possible 'limit' parameter for geocoding searches")
+    private int maxResults = 50;
+
+    @Parameter(names = "-max-reverse-results", description = "The maximum possible 'limit' parameter for reverse geocoding searches")
+    private int maxReverseResults = 50;
+
     public String[] getLanguages(boolean useDefaultIfEmpty) {
         if (useDefaultIfEmpty && languages.length == 0) {
             return new String[]{"en", "de", "fr", "it"};
@@ -184,6 +190,14 @@ public class CommandLineArgs {
 
     public boolean isUsage() {
         return this.usage;
+    }
+
+    public int getMaxReverseResults() {
+        return maxReverseResults;
+    }
+
+    public int getMaxResults() {
+        return maxResults;
     }
 }
 

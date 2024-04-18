@@ -23,10 +23,10 @@ public class ReverseSearchRequestHandler extends RouteImpl {
     private final ReverseRequestFactory reverseRequestFactory;
     private final ReverseHandler requestHandler;
 
-    ReverseSearchRequestHandler(String path, ReverseHandler dbHandler, String[] languages, String defaultLanguage) {
+    ReverseSearchRequestHandler(String path, ReverseHandler dbHandler, String[] languages, String defaultLanguage, int maxResults) {
         super(path);
         List<String> supportedLanguages = Arrays.asList(languages);
-        this.reverseRequestFactory = new ReverseRequestFactory(supportedLanguages, defaultLanguage);
+        this.reverseRequestFactory = new ReverseRequestFactory(supportedLanguages, defaultLanguage, maxResults);
         this.requestHandler = dbHandler;
     }
 

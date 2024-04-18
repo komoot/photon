@@ -20,12 +20,14 @@ import static spark.Spark.halt;
 public class SearchRequestHandler extends RouteImpl {
     private final PhotonRequestFactory photonRequestFactory;
     private final SearchHandler requestHandler;
+    private final int maxResults;
 
-    SearchRequestHandler(String path, SearchHandler dbHandler, String[] languages, String defaultLanguage) {
+    SearchRequestHandler(String path, SearchHandler dbHandler, String[] languages, String defaultLanguage, int maxResults) {
         super(path);
         List<String> supportedLanguages = Arrays.asList(languages);
-        this.photonRequestFactory = new PhotonRequestFactory(supportedLanguages, defaultLanguage);
+        this.photonRequestFactory = new PhotonRequestFactory(supportedLanguages, defaultLanguage, maxResults);
         this.requestHandler = dbHandler;
+        this.maxResults = maxResults;
     }
 
     @Override

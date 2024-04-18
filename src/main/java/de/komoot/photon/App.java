@@ -191,12 +191,14 @@ public class App {
         String[] langs = dbProperties.getLanguages();
 
         SearchHandler searchHandler = server.createSearchHandler(langs, args.getQueryTimeout());
-        get("api", new SearchRequestHandler("api", searchHandler, langs, args.getDefaultLanguage()));
-        get("api/", new SearchRequestHandler("api/", searchHandler, langs, args.getDefaultLanguage()));
+        get("api", new SearchRequestHandler("api", searchHandler, langs, args.getDefaultLanguage(), args.getMaxResults()));
+        get("api/", new SearchRequestHandler("api/", searchHandler, langs, args.getDefaultLanguage(), args.getMaxResults()));
 
         ReverseHandler reverseHandler = server.createReverseHandler(args.getQueryTimeout());
-        get("reverse", new ReverseSearchRequestHandler("reverse", reverseHandler, dbProperties.getLanguages(), args.getDefaultLanguage()));
-        get("reverse/", new ReverseSearchRequestHandler("reverse/", reverseHandler, dbProperties.getLanguages(), args.getDefaultLanguage()));
+        get("reverse", new ReverseSearchRequestHandler("reverse", reverseHandler, dbProperties.getLanguages(),
+                args.getDefaultLanguage(), args.getMaxReverseResults()));
+        get("reverse/", new ReverseSearchRequestHandler("reverse/", reverseHandler, dbProperties.getLanguages(),
+                args.getDefaultLanguage(), args.getMaxReverseResults()));
         
         get("status", new StatusRequestHandler("status", server));
         get("status/", new StatusRequestHandler("status/", server));
