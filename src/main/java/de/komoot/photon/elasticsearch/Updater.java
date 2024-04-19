@@ -29,6 +29,7 @@ public class Updater implements de.komoot.photon.Updater {
 
     public void finish() {
         this.updateDocuments();
+        esClient.admin().indices().prepareRefresh(PhotonIndex.NAME).get();
     }
 
     @Override

@@ -126,6 +126,11 @@ public class Server {
         esClient.admin().cluster().prepareHealth().setWaitForYellowStatus().get();
     }
 
+    public void refreshIndexes() {
+        esClient.admin().cluster().prepareHealth().setWaitForYellowStatus().get();
+        esClient.admin().indices().prepareRefresh(PhotonIndex.NAME).get();
+    }
+
     /**
      * stops the elasticsearch node
      */
