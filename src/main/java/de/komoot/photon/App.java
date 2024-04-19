@@ -53,7 +53,7 @@ public class App {
             // Working on an existing installation.
             // Update the index settings in case there are any changes.
             esServer.updateIndexSettings(args.getSynonymFile());
-            esServer.waitForReady();
+            esServer.refreshIndexes();
 
             if (args.isNominatimUpdate()) {
                 shutdownES = true;
