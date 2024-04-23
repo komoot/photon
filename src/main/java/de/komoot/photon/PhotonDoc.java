@@ -1,8 +1,8 @@
 package de.komoot.photon;
 
-import com.vividsolutions.jts.geom.Envelope;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.Point;
+import org.locationtech.jts.geom.Envelope;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.Point;
 import de.komoot.photon.nominatim.model.AddressType;
 import org.slf4j.Logger;
 

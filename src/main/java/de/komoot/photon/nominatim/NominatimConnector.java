@@ -1,12 +1,11 @@
 package de.komoot.photon.nominatim;
 
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 import de.komoot.photon.Importer;
 import de.komoot.photon.PhotonDoc;
 import de.komoot.photon.nominatim.model.AddressRow;
 import de.komoot.photon.nominatim.model.AddressType;
 import org.apache.commons.dbcp2.BasicDataSource;
-import org.postgis.jts.JtsWrapper;
 import org.slf4j.Logger;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -152,12 +151,11 @@ public class NominatimConnector {
     static BasicDataSource buildDataSource(String host, int port, String database, String username, String password, boolean autocommit) {
         BasicDataSource dataSource = new BasicDataSource();
 
-        dataSource.setUrl(String.format("jdbc:postgres_jts://%s:%d/%s", host, port, database));
+        dataSource.setUrl(String.format("jdbc:postgresql://%s:%d/%s", host, port, database));
         dataSource.setUsername(username);
         if (password != null) {
             dataSource.setPassword(password);
         }
-        dataSource.setDriverClassName(JtsWrapper.class.getCanonicalName());
         dataSource.setDefaultAutoCommit(autocommit);
         return dataSource;
     }

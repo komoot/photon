@@ -1,6 +1,6 @@
 package de.komoot.photon;
 
-import com.vividsolutions.jts.geom.Envelope;
+import org.locationtech.jts.geom.Envelope;
 import de.komoot.photon.nominatim.model.AddressType;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;

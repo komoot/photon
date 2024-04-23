@@ -1,7 +1,9 @@
 package de.komoot.photon.nominatim;
 
-import com.vividsolutions.jts.geom.Geometry;
-import org.postgis.jts.JtsGeometry;
+import net.postgis.jdbc.PGgeometry;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.io.ParseException;
+import org.locationtech.jts.io.WKTReader;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 
@@ -27,11 +29,18 @@ public class PostgisDataAdapter implements DBDataAdapter {
 
     @Override
     public Geometry extractGeometry(ResultSet rs, String columnName) throws SQLException {
-        JtsGeometry geom = (JtsGeometry) rs.getObject(columnName);
-        if (geom == null) {
-            return null;
+        PGgeometry wkt = (PGgeometry) rs.getObject(columnName);
+        if (wkt != null) {
+            try {
+                StringBuffer sb = new StringBuffer();
+                wkt.getGeometry().outerWKT(sb);
+                return new WKTReader().read(sb.toString());
+            } catch (ParseException e) {
+                // ignore
+            }
         }
-        return geom.getGeometry();
+
+        return null;
     }
 
     @Override

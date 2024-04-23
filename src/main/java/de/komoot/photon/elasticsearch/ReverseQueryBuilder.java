@@ -1,6 +1,6 @@
 package de.komoot.photon.elasticsearch;
 
-import com.vividsolutions.jts.geom.Point;
+import org.locationtech.jts.geom.Point;
 import de.komoot.photon.searcher.TagFilter;
 import org.elasticsearch.common.unit.DistanceUnit;
 import org.elasticsearch.index.query.BoolQueryBuilder;
