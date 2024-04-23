@@ -1,7 +1,7 @@
 package de.komoot.photon.nominatim.testdb;
 
-import com.vividsolutions.jts.io.ParseException;
-import com.vividsolutions.jts.io.WKTReader;
+import org.locationtech.jts.io.ParseException;
+import org.locationtech.jts.io.WKTReader;
 import de.komoot.photon.PhotonDoc;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Assertions;

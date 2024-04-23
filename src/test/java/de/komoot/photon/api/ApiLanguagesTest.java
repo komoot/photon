@@ -1,7 +1,7 @@
 package de.komoot.photon.api;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Point;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Point;
 
 import de.komoot.photon.App;
 import de.komoot.photon.ESBaseTester;
