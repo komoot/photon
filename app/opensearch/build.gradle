@@ -1,0 +1,47 @@
+plugins {
+  id 'com.github.johnrengelman.shadow' version '8.1.1'
+  id 'application'
+}
+
+apply from: rootProject.file('buildSrc/shared.gradle')
+
+description = "Geocoder for OSM data (OpenSearch-based version)"
+
+sourceSets {
+    test {
+        java {
+            srcDir 'src/test/java'
+        }
+    }
+}
+
+dependencies {
+    implementation 'org.opensearch.client:opensearch-java:2.10.1'
+    implementation 'org.apache.httpcomponents.client5:httpclient5:5.3.1'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.17.0'
+
+    testImplementation 'org.codelibs.opensearch:opensearch-runner:2.13.0.0'
+}
+
+tasks.named('jar') {
+    archiveBaseName.set('original-photon-opensearch')
+    manifest.attributes('Multi-Release': 'true')
+}
+
+shadowJar {
+    mergeServiceFiles()
+    destinationDirectory.set(rootProject.file('target'))
+    archiveBaseName.set('photon-opensearch')
+    archiveClassifier.set('')
+
+    exclude '**/module-info.class'
+
+    // This mitigates against the log4j JNDI lookup vulnerability:
+    // https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-44228
+    // Since we are using an old version of elastic search that is incompatible
+    // with a patched, newer version of log4j we have to remove the class
+    // JndiLookup from the fat jar. This is the recommended course of action
+    // when you cannot upgrade as per https://logging.apache.org/log4j/2.x/security.html
+    exclude 'org/apache/logging/log4j/core/lookup/JndiLookup.class'
+}
+

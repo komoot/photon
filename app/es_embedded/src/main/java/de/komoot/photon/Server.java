@@ -1,10 +1,11 @@
-package de.komoot.photon.elasticsearch;
+package de.komoot.photon;
 
 import de.komoot.photon.DatabaseProperties;
 import de.komoot.photon.Importer;
 import de.komoot.photon.Updater;
 import de.komoot.photon.searcher.ReverseHandler;
 import de.komoot.photon.searcher.SearchHandler;
+import de.komoot.photon.elasticsearch.*;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.TransportClient;

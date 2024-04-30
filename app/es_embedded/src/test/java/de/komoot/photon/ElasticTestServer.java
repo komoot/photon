@@ -1,5 +1,6 @@
-package de.komoot.photon.elasticsearch;
+package de.komoot.photon;
 
+import de.komoot.photon.elasticsearch.*;
 import de.komoot.photon.searcher.PhotonResult;
 import org.elasticsearch.action.admin.indices.refresh.RefreshRequest;
 import org.elasticsearch.action.get.GetResponse;
