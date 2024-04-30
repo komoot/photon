@@ -1,1 +1,3 @@
 rootProject.name = 'photon'
+
+include ':app:es_embedded'
