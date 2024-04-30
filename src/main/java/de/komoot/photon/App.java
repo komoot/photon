@@ -136,14 +136,14 @@ public class App {
         nominatimUpdater.initUpdates(args.getNominatimUpdateInit());
     }
 
-    private static void startNominatimUpdate(NominatimUpdater nominatimUpdater, Server esServer) {
+    private static void startNominatimUpdate(NominatimUpdater nominatimUpdater, Server esServer)  {
         nominatimUpdater.update();
 
         DatabaseProperties dbProperties = new DatabaseProperties();
-        esServer.loadFromDatabase(dbProperties);
-        Date importDate = nominatimUpdater.getLastImportDate();
-        dbProperties.setImportDate(importDate);
         try {
+            esServer.loadFromDatabase(dbProperties);
+            Date importDate = nominatimUpdater.getLastImportDate();
+            dbProperties.setImportDate(importDate);
             esServer.saveToDatabase(dbProperties);
         } catch (IOException e) {
             throw new RuntimeException("Cannot setup index, elastic search config files not readable", e);
@@ -154,7 +154,7 @@ public class App {
     /**
      * Prepare Nominatim updater.
      */
-    private static NominatimUpdater setupNominatimUpdater(CommandLineArgs args, Server server) {
+    private static NominatimUpdater setupNominatimUpdater(CommandLineArgs args, Server server)throws IOException {
         // Get database properties and ensure that the version is compatible.
         DatabaseProperties dbProperties = new DatabaseProperties();
         server.loadFromDatabase(dbProperties);
@@ -167,7 +167,7 @@ public class App {
     /**
      * Start API server to accept search requests via http.
      */
-    private static void startApi(CommandLineArgs args, Server server) {
+    private static void startApi(CommandLineArgs args, Server server) throws IOException {
         // Get database properties and ensure that the version is compatible.
         DatabaseProperties dbProperties = new DatabaseProperties();
         server.loadFromDatabase(dbProperties);

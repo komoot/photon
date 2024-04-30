@@ -40,7 +40,7 @@ public class ESBaseTester {
 
 
     @AfterEach
-    public void tearDown() {
+    public void tearDown() throws IOException {
         shutdownES();
     }
 

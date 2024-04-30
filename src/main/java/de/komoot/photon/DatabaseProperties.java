@@ -8,6 +8,17 @@ import java.util.*;
  * The server is responsible for making the data persistent in the Photon database.
  */
 public class DatabaseProperties {
+    /**
+     * Database version created by new imports with the current code.
+     *
+     * Format must be: major.minor.patch-dev
+     *
+     * Increase to next to be released version when the database layout
+     * changes in an incompatible way. If it is already at the next released
+     * version, increase the dev version.
+     */
+    public static final String DATABASE_VERSION = "0.3.6-1";
+
     private String[] languages = null;
 
     /**
