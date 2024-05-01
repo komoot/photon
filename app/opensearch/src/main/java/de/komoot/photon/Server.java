@@ -134,7 +134,7 @@ public class Server {
     }
 
     public SearchHandler createSearchHandler(String[] languages, int queryTimeoutSec) {
-        return null;
+        return new OpenSearchSearchHandler(client, languages, queryTimeoutSec);
     }
 
     public ReverseHandler createReverseHandler(int queryTimeoutSec) {

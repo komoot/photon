@@ -20,6 +20,10 @@ public class OpenSearchResult implements PhotonResult {
         this.localeTags = localeTags;
     }
 
+    public OpenSearchResult setScore(double score) {
+        this.score = score;
+        return this;
+    }
 
     @Override
     public Object get(String key) {
