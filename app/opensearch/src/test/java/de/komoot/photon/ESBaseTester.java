@@ -66,11 +66,11 @@ public class ESBaseTester {
     }
 
     protected Updater makeUpdater() {
-        return null;
+        return server.createUpdater(new String[]{"en"}, new String[]{});
     }
 
     protected Updater makeUpdaterWithExtra(String... extraTags) {
-        return null;
+        return server.createUpdater(new String[]{"en"}, extraTags);
     }
 
     protected Server getServer() {

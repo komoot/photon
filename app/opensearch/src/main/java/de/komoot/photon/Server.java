@@ -129,7 +129,8 @@ public class Server {
     }
 
     public Updater createUpdater(String[] languages, String[] extraTags) {
-        return null;
+        registerPhotonDocSerializer(languages, extraTags);
+        return new de.komoot.photon.opensearch.Updater(client);
     }
 
     public SearchHandler createSearchHandler(String[] languages, int queryTimeoutSec) {
