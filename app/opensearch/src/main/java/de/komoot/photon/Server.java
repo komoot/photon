@@ -31,7 +31,7 @@ public class Server {
         for (int i = 0; i < transportAddresses.length; ++i) {
             final String[] parts = transportAddresses[i].split(":", 2);
             hosts[i] = new HttpHost("http", parts[0],
-                                    parts.length > 1 ? Integer.parseInt(parts[1]) : 9200);
+                                    parts.length > 1 ? Integer.parseInt(parts[1]) : 9201);
         }
 
         final var module = new SimpleModule("PhotonResultDeserializer",
