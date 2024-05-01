@@ -4,11 +4,13 @@ import de.komoot.photon.opensearch.OpenSearchTestServer;
 import de.komoot.photon.searcher.PhotonResult;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.io.TempDir;
+import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.PrecisionModel;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Collections;
 import java.util.Date;
 
 public class ESBaseTester {
@@ -20,9 +22,11 @@ public class ESBaseTester {
 
     private OpenSearchTestServer server;
 
-
     protected PhotonDoc createDoc(double lon, double lat, int id, int osmId, String key, String value) {
-        return null;
+        final var location = FACTORY.createPoint(new Coordinate(lon, lat));
+        return new PhotonDoc(id, "W", osmId, key, value)
+                .names(Collections.singletonMap("name", "berlin"))
+                .centroid(location);
     }
 
     @AfterEach
@@ -31,7 +35,11 @@ public class ESBaseTester {
     }
 
     protected PhotonResult getById(int id) {
-        return null;
+        return getById(Integer.toString(id));
+    }
+
+    protected PhotonResult getById(String id) {
+        return server.getByID(id);
     }
 
     public void setUpES() throws IOException {
@@ -46,15 +54,15 @@ public class ESBaseTester {
     }
 
     protected Importer makeImporter() {
-        return null;
+        return server.createImporter(new String[]{"en"}, new String[]{});
     }
 
     protected Importer makeImporterWithExtra(String... extraTags) {
-        return null;
+        return server.createImporter(new String[]{"en"}, extraTags);
     }
 
     protected Importer makeImporterWithLanguages(String... languages) {
-        return null;
+        return server.createImporter(languages, new String[]{});
     }
 
     protected Updater makeUpdater() {

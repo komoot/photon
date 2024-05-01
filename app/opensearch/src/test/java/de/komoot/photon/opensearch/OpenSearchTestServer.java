@@ -49,4 +49,19 @@ public class OpenSearchTestServer extends Server {
         runner.clean();
     }
 
+    public PhotonResult getByID(String id) {
+        try {
+            final var response = client.get(fn -> fn
+                    .index(PhotonIndex.NAME)
+                    .id(id), OpenSearchResult.class);
+
+            if (response.found()) {
+                return response.source();
+            }
+        } catch (IOException e) {
+            // ignore
+        }
+
+        return null;
+    }
 }

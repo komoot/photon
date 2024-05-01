@@ -1,16 +1,14 @@
 package de.komoot.photon;
 
-import de.komoot.photon.opensearch.DBPropertyEntry;
-import de.komoot.photon.opensearch.IndexMapping;
-import de.komoot.photon.opensearch.IndexSettingBuilder;
-import de.komoot.photon.opensearch.PhotonIndex;
+import com.fasterxml.jackson.core.Version;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import de.komoot.photon.opensearch.*;
 import de.komoot.photon.searcher.ReverseHandler;
 import de.komoot.photon.searcher.SearchHandler;
 import org.apache.hc.core5.http.HttpHost;
 import org.opensearch.client.json.jackson.JacksonJsonpMapper;
 import org.opensearch.client.opensearch.OpenSearchClient;
 import org.opensearch.client.opensearch._types.HealthStatus;
-import org.opensearch.client.opensearch._types.OpenSearchException;
 import org.opensearch.client.transport.httpclient5.ApacheHttpClient5TransportBuilder;
 import org.slf4j.Logger;
 
@@ -20,7 +18,7 @@ import java.util.Date;
 public class Server {
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(Server.class);
 
-    protected OpenSearchClient esClient;
+    protected OpenSearchClient client;
 
     public Server(String mainDirectory) {
     }
@@ -36,23 +34,30 @@ public class Server {
                                     parts.length > 1 ? Integer.parseInt(parts[1]) : 9200);
         }
 
+        final var module = new SimpleModule("PhotonResultDeserializer",
+                new Version(1, 0, 0, null, null, null));
+        module.addDeserializer(OpenSearchResult.class, new OpenSearchResultDeserializer());
+
+        final var mapper = new JacksonJsonpMapper();
+        mapper.objectMapper().registerModule(module);
+
         final var transport = ApacheHttpClient5TransportBuilder
                 .builder(hosts)
-                .setMapper(new JacksonJsonpMapper())
+                .setMapper(mapper)
                 .build();
 
-        esClient = new OpenSearchClient(transport);
+        client = new OpenSearchClient(transport);
 
         return this;
     }
 
     public void waitForReady() throws IOException{
-        esClient.cluster().health(h -> h.waitForStatus(HealthStatus.Yellow));
+        client.cluster().health(h -> h.waitForStatus(HealthStatus.Yellow));
     }
 
     public void refreshIndexes() throws IOException {
         waitForReady();
-        esClient.indices().refresh();
+        client.indices().refresh();
     }
 
     public void shutdown() {
@@ -61,13 +66,13 @@ public class Server {
 
     public DatabaseProperties recreateIndex(String[] languages, Date importDate) throws IOException {
         // delete any existing data
-        if (esClient.indices().exists(e -> e.index(PhotonIndex.NAME)).value()) {
-            esClient.indices().delete(d -> d.index(PhotonIndex.NAME));
+        if (client.indices().exists(e -> e.index(PhotonIndex.NAME)).value()) {
+            client.indices().delete(d -> d.index(PhotonIndex.NAME));
         }
 
-        (new IndexSettingBuilder()).createIndex(esClient, PhotonIndex.NAME);
+        (new IndexSettingBuilder()).createIndex(client, PhotonIndex.NAME);
 
-        (new IndexMapping()).addLanguages(languages).putMapping(esClient, PhotonIndex.NAME);
+        (new IndexMapping()).addLanguages(languages).putMapping(client, PhotonIndex.NAME);
 
         var dbProperties = new DatabaseProperties()
                 .setLanguages(languages)
@@ -81,17 +86,17 @@ public class Server {
         var dbProperties = new DatabaseProperties();
         loadFromDatabase(dbProperties);
 
-        (new IndexSettingBuilder()).setSynonymFile(synonymFile).updateIndex(esClient, PhotonIndex.NAME);
+        (new IndexSettingBuilder()).setSynonymFile(synonymFile).updateIndex(client, PhotonIndex.NAME);
 
         if (dbProperties.getLanguages() != null) {
             (new IndexMapping())
                     .addLanguages(dbProperties.getLanguages())
-                    .putMapping(esClient, PhotonIndex.NAME);
+                    .putMapping(client, PhotonIndex.NAME);
         }
     }
 
     public void saveToDatabase(DatabaseProperties dbProperties) throws IOException {
-        esClient.index(r -> r
+        client.index(r -> r
                         .index(PhotonIndex.NAME)
                         .id(PhotonIndex.PROPERTY_DOCUMENT_ID)
                         .document(new DBPropertyEntry(dbProperties))
@@ -99,7 +104,7 @@ public class Server {
     }
 
     public void loadFromDatabase(DatabaseProperties dbProperties) throws IOException {
-        var dbEntry = esClient.get(r -> r
+        var dbEntry = client.get(r -> r
                 .index(PhotonIndex.NAME)
                 .id(PhotonIndex.PROPERTY_DOCUMENT_ID),
                 DBPropertyEntry.class);
@@ -119,7 +124,8 @@ public class Server {
     }
 
     public Importer createImporter(String[] languages, String[] extraTags) {
-        return null;
+        registerPhotonDocSerializer(languages, extraTags);
+        return new de.komoot.photon.opensearch.Importer(client);
     }
 
     public Updater createUpdater(String[] languages, String[] extraTags) {
@@ -134,4 +140,11 @@ public class Server {
         return null;
     }
 
+    private void registerPhotonDocSerializer(String[] languages, String[] extraTags) {
+        final var module = new SimpleModule("PhotonDocSerializer",
+                new Version(1, 0, 0, null, null, null));
+        module.addSerializer(PhotonDoc.class, new PhotonDocSerializer(languages, extraTags));
+
+        ((JacksonJsonpMapper) client._transport().jsonpMapper()).objectMapper().registerModule(module);
+    }
 }
