@@ -138,7 +138,7 @@ public class Server {
     }
 
     public ReverseHandler createReverseHandler(int queryTimeoutSec) {
-        return null;
+        return new OpenSearchReverseHandler(client, queryTimeoutSec);
     }
 
     private void registerPhotonDocSerializer(String[] languages, String[] extraTags) {
