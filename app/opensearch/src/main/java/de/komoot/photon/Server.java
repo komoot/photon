@@ -6,12 +6,14 @@ import de.komoot.photon.opensearch.*;
 import de.komoot.photon.searcher.ReverseHandler;
 import de.komoot.photon.searcher.SearchHandler;
 import org.apache.hc.core5.http.HttpHost;
+import org.codelibs.opensearch.runner.OpenSearchRunner;
 import org.opensearch.client.json.jackson.JacksonJsonpMapper;
 import org.opensearch.client.opensearch.OpenSearchClient;
 import org.opensearch.client.opensearch._types.HealthStatus;
 import org.opensearch.client.transport.httpclient5.ApacheHttpClient5TransportBuilder;
 import org.slf4j.Logger;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 
@@ -19,19 +21,24 @@ public class Server {
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(Server.class);
 
     protected OpenSearchClient client;
+    private OpenSearchRunner runner = null;
+    final protected String dataDirectory;
 
     public Server(String mainDirectory) {
+        dataDirectory = new File(mainDirectory, "photon_data").getAbsolutePath();
     }
 
     public Server start(String clusterName, String[] transportAddresses) {
+        HttpHost[] hosts;
         if (transportAddresses.length == 0) {
-            throw new RuntimeException("OpenSearch-port neds an external OpeSearch instance. Use -transport-addresses.");
-        }
-        final HttpHost[] hosts = new HttpHost[transportAddresses.length];
-        for (int i = 0; i < transportAddresses.length; ++i) {
-            final String[] parts = transportAddresses[i].split(":", 2);
-            hosts[i] = new HttpHost("http", parts[0],
-                                    parts.length > 1 ? Integer.parseInt(parts[1]) : 9201);
+            hosts = startInternal(clusterName);
+        } else {
+            hosts = new HttpHost[transportAddresses.length];
+            for (int i = 0; i < transportAddresses.length; ++i) {
+                final String[] parts = transportAddresses[i].split(":", 2);
+                hosts[i] = new HttpHost("http", parts[0],
+                        parts.length > 1 ? Integer.parseInt(parts[1]) : 9201);
+            }
         }
 
         final var module = new SimpleModule("PhotonResultDeserializer",
@@ -51,7 +58,27 @@ public class Server {
         return this;
     }
 
-    public void waitForReady() throws IOException{
+    private HttpHost[] startInternal(String clusterName) {
+        runner = new OpenSearchRunner();
+        runner.onBuild((number, settingsBuilder) -> {
+            settingsBuilder.put("http.cors.enabled", false);
+            settingsBuilder.put("discovery.type", "single-node");
+            settingsBuilder.putList("discovery.seed_hosts", "127.0.0.1:9201");
+            settingsBuilder.put("indices.query.bool.max_clause_count", "30000");
+        }).build(OpenSearchRunner.newConfigs().basePath(dataDirectory).clusterName(clusterName).numOfNode(1));
+
+        runner.ensureYellow();
+
+        HttpHost[] hosts = new HttpHost[runner.getNodeSize()];
+
+        for (int i = 0; i < runner.getNodeSize(); ++i) {
+            hosts[i] = new HttpHost("http", "127.0.0.1", Integer.parseInt(runner.getNode(i).settings().get("http.port")));
+        }
+
+        return hosts;
+    }
+
+    public void waitForReady() throws IOException {
         client.cluster().health(h -> h.waitForStatus(HealthStatus.Yellow));
     }
 
@@ -61,7 +88,13 @@ public class Server {
     }
 
     public void shutdown() {
-        // external node only, do nothing
+        if (runner != null) {
+            try {
+                runner.close();
+            } catch (IOException e) {
+                LOGGER.error("IO error on closing database", e);
+            }
+        }
     }
 
     public DatabaseProperties recreateIndex(String[] languages, Date importDate) throws IOException {
@@ -70,7 +103,7 @@ public class Server {
             client.indices().delete(d -> d.index(PhotonIndex.NAME));
         }
 
-        (new IndexSettingBuilder()).createIndex(client, PhotonIndex.NAME);
+        (new IndexSettingBuilder()).setShards(5).createIndex(client, PhotonIndex.NAME);
 
         (new IndexMapping()).addLanguages(languages).putMapping(client, PhotonIndex.NAME);
 

@@ -24,21 +24,17 @@ public class SearchQueryBuilder {
         var query4QueryBuilder = QueryBuilders.bool();
 
         // 1. All terms of the query must be contained in the place record somehow. Be more lenient on second try.
-        query4QueryBuilder.must(base -> base.multiMatch(q -> {
-            q.query(query)
-                    .fields("collector.default^1.0")
-                        .prefixLength(2)
-                        .analyzer("search_ngram")
-                        .tieBreaker(0.4)
-                        .minimumShouldMatch(lenient ? "-34%" : "100%");
+        query4QueryBuilder.must(base -> base.match(q -> {
+            q.query(fn -> fn.stringValue(query));
+            q.analyzer("search");
+            q.field("collector.base");
 
             if (lenient) {
-                q.type(TextQueryType.BestFields).fuzziness("auto");
+                q.fuzziness("AUTO");
+                q.prefixLength(2);
+                q.minimumShouldMatch("-34%");
             } else {
-                q.type(TextQueryType.CrossFields);
-            }
-            for (String lang : languages) {
-                q.fields(String.format("collector.%s.ngrams^%f", lang, lang.equals(language) ? 1.0f : 0.6f));
+                q.operator(Operator.And);
             }
             return q;
         }));
@@ -47,11 +43,11 @@ public class SearchQueryBuilder {
         //    filter criterion because they have no name. Boost the score in this case.
         query4QueryBuilder.should(shd -> shd.functionScore(fs -> fs
                 .query(q -> q.multiMatch(mm -> {
-                    mm.query(query).type(TextQueryType.BestFields);
-                    mm.fields(String.format("%s^%f", "collector.default.raw", 1.0f));
+                    mm.query(query).type(TextQueryType.BestFields).analyzer("search");
+                    mm.fields(String.format("%s^%f", "collector.default", 1.0f));
 
                     for (String lang : languages) {
-                        mm.fields(String.format("collector.%s.raw^%f", lang, lang.equals(language) ? 1.0f : 0.6f));
+                        mm.fields(String.format("collector.%s^%f", lang, lang.equals(language) ? 1.0f : 0.6f));
                     }
 
                     return mm.boost(0.3f);
@@ -68,15 +64,17 @@ public class SearchQueryBuilder {
         // 3. Either the name or house number must be in the query terms.
         final String defLang = "default".equals(language) ? languages[0] : language;
         var nameNgramQuery = MultiMatchQuery.of(q -> {
-            q.query(query).type(TextQueryType.BestFields).fuzziness(lenient ? "1" : "0").analyzer("search_ngram");
+            q.query(query).type(TextQueryType.BestFields).analyzer("search");
+
+            if (lenient) {
+                q.fuzziness("AUTO").prefixLength(2);
+            }
 
             for (String lang : languages) {
                 q.fields(String.format("name.%s.ngrams^%f", lang, lang.equals(defLang) ? 1.0f : 0.4f));
             }
 
-            for (String alt : ALT_NAMES) {
-                q.fields(String.format("name.%s.raw^0.4", alt));
-            }
+            q.fields("name.other^0.4");
 
             if (query.indexOf(',') < 0 && query.indexOf(' ') < 0) {
                 q.boost(2f);
@@ -108,6 +106,7 @@ public class SearchQueryBuilder {
         query4QueryBuilder.should(m -> m.match(inner -> inner
                 .query(q -> q.stringValue(query))
                 .field(String.format("name.%s.raw", language))
+                .analyzer("search")
                 .fuzziness(lenient ? "auto" : "0")
         ));
 

@@ -136,7 +136,7 @@ public class IndexSettingBuilder {
                                 "german_normalization",
                                 "asciifolding",
                                 "unique")));
-        settings.analyzer("search_ngram",
+        settings.analyzer("search",
                 f -> f.custom(d -> {
                     d.charFilter("punctuationgreedy")
                             .tokenizer("standard")
@@ -156,19 +156,6 @@ public class IndexSettingBuilder {
                                 "german_normalization",
                                 "asciifolding",
                                 "unique")));
-        settings.analyzer("search_raw",
-                f -> f.custom(d -> {
-                    d.charFilter("punctuationgreedy")
-                            .tokenizer("standard")
-                            .filter("lowercase");
-                    for (var filter : extra_filters) {
-                        d.filter(filter);
-                    }
-                    d.filter("german_normalization",
-                            "asciifolding",
-                            "unique");
-                    return d;
-                }));
         settings.analyzer("index_housenumber",
                 f -> f.custom(d -> d
                         .charFilter("punctuationgreedy", "remove_ws_hnr_suffix")

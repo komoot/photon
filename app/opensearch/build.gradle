@@ -20,7 +20,7 @@ dependencies {
     implementation 'org.apache.httpcomponents.client5:httpclient5:5.3.1'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.17.0'
 
-    testImplementation 'org.codelibs.opensearch:opensearch-runner:2.13.0.0'
+    implementation 'org.codelibs.opensearch:opensearch-runner:2.13.0.0'
 }
 
 tasks.named('jar') {
@@ -33,6 +33,8 @@ shadowJar {
     destinationDirectory.set(rootProject.file('target'))
     archiveBaseName.set('photon-opensearch')
     archiveClassifier.set('')
+
+    transform(com.github.jengelman.gradle.plugins.shadow.transformers.Log4j2PluginsCacheFileTransformer)
 
     exclude '**/module-info.class'
 

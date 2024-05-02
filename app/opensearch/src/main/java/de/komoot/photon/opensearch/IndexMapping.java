@@ -25,27 +25,29 @@ public class IndexMapping {
         List<String> name_collectors = new ArrayList<>();
         for (var lang: languages) {
             mappings.properties("collector." + lang,
-                    b -> b.text(p -> p.index(false)
-                            .fields("ngrams", f -> f.text(pi -> pi.index(true).analyzer("index_ngram")))
-                            .fields("raw", f2 -> f2.text(pi2 -> pi2.index(true).analyzer("index_raw").searchAnalyzer("search_raw"))
-                            )));
+                    b -> b.text(p -> p.index(true)
+                                      .analyzer("index_raw"))
+            );
 
             for (var field: ADDRESS_FIELDS) {
                 mappings.properties(String.format("%s.%s", field, lang),
-                        b -> b.text(p -> p.index(false).copyTo("collector." + lang)));
+                        b -> b.text(p -> p
+                                .index(false)
+                                .copyTo("collector.base", "collector." + lang)));
             }
 
             mappings.properties("name." + lang,
                     b -> b.text(p -> p.index(false)
                             .fields("ngrams", f -> f.text(pi -> pi.index(true).analyzer("index_ngram")))
-                            .fields("raw", f2 -> f2.text(pi2 -> pi2.index(true).analyzer("index_raw").searchAnalyzer("search_raw")))
-                            .copyTo("collector." + lang)));
+                            .fields("raw", f2 -> f2.text(pi2 -> pi2.index(true).analyzer("index_raw")))
+                            .copyTo("collector." + lang, "collector.base")));
 
             //add language-specific collector to default for name
             name_collectors.add("name." + lang);
         }
 
         name_collectors.add("collector.default");
+        name_collectors.add("collector.base");
         mappings.properties("name.default", b -> b.text(p -> p.index(false).copyTo(name_collectors)));
 
         return this;
@@ -70,30 +72,43 @@ public class IndexMapping {
 
         mappings.properties("housenumber", b -> b.text(p -> p.index(true)
                 .analyzer("index_housenumber").searchAnalyzer("standard")
-                .copyTo("collector.default")
+                .copyTo("collector.default", "collector.base")
         ));
 
         mappings.properties("classification", b -> b.text(p -> p.index(true)
                 .analyzer("keyword")
                 .searchAnalyzer("search_classification")
-                .copyTo("collector.default")));
+                .copyTo("collector.default", "collector.base")));
 
-        mappings.properties("collector.default",
-                b -> b.text(p -> p.index(true)
-                        .analyzer("index_ngram")
-                        .fields("raw", f -> f.text(pi -> pi.index(true).analyzer("index_raw")))));
+        // The catch-all collector used to find overall matches.
+        mappings.properties("collector.base", b -> b.text(p -> p
+                .index(true)
+                .analyzer("index_ngram")));
+
+        // Collector for all address parts in the default language.
+        mappings.properties("collector.default", b -> b.text(p -> p
+                .index(true)
+                .analyzer("index_raw")));
 
         for (var field : ADDRESS_FIELDS) {
-            mappings.properties(field + ".default", b -> b.text(p -> p.index(false).copyTo("collector.default")));
+            mappings.properties(field + ".default", b -> b.text(p -> p
+                    .index(false)
+                    .copyTo("collector.default", "collector.base")));
         }
-        mappings.properties("postcode", b -> b.text(p -> p.index(false).copyTo("collector.default")));
+        mappings.properties("postcode", b -> b.text(p -> p
+                .index(false)
+                .copyTo("collector.default", "collector.base")));
 
-        mappings.properties("name.default", b -> b.text(p -> p.index(false).copyTo("collector.default")));
+        mappings.properties("name.default", b -> b.text(p -> p
+                .index(false)
+                .copyTo("collector.default", "collector_base")));
+
+        // Collector for all name parts.
+        mappings.properties("name.other", b -> b.text(pi -> pi.index(true).analyzer("index_raw")));
 
         for (var suffix : new String[]{"alt", "int", "loc", "old", "reg", "housename"}) {
             mappings.properties("name." + suffix, b -> b.text(p -> p.index(false)
-                    .fields("raw", bi -> bi.text(pi -> pi.index(true).analyzer("index_raw")))
-                    .copyTo("collector.default")));
+                    .copyTo("collector.default", "name.other", "collector.base")));
         }
     }
 }
