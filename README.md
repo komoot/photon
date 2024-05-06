@@ -52,10 +52,26 @@ photon uses [gradle](https://gradle.org) for building. To build the package
 from source make sure you have a JDK installed. Then run:
 
 ```
-./gradlew build
+./gradlew app:es_embedded:build
 ```
 
-This will build and test photon. The final jar cn be found in `build/libs`.
+This will build and test photon. The final jar can be found in `target`.
+
+#### Experimental OpenSearch version
+
+The repository also contains a version that runs against the latest
+version of [OpenSearch](https://opensearch.org/). This version is still
+experimental. To build the OpenSearch version run:
+
+```
+./gradlew app:opensearch:build
+```
+
+The final jar can be found in `target/photon-opensearch-<VERSION>.jar`.
+
+Indexes produced by this version are not compatible with the ElasticSearch
+version. There are no prebuilt indexes available. You need to create your
+own export from a Nominatim database. See 'Customized Search Data' below.
 
 ### Usage
 
@@ -71,7 +87,7 @@ Check the URL `http://localhost:2322/api?q=berlin` to see if photon is running w
 
 To enable CORS (cross-site requests), use `-cors-any` to allow any origin or `-cors-origin` with a specific origin as the argument. By default, CORS support is disabled.
 
-Discover more of photon's featurse with its usage `java -jar photon-*.jar -h`. The available options are as follows:
+Discover more of photon's features with its usage `java -jar photon-*.jar -h`. The available options are as follows:
 
 ```
 -h                    Show help / usage
