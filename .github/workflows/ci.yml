@@ -45,7 +45,7 @@ jobs:
           cache: 'gradle'
 
       - name: Compile project
-        run: ./gradlew assemble --no-daemon
+        run: ./gradlew app:es_embedded:assemble --no-daemon
 
       - uses: actions/checkout@v4
         with:
@@ -114,8 +114,9 @@ jobs:
 
       - name: Import Photon
         run: |
-            java -jar build/libs/photon-*.jar -nominatim-import -database nominatim -user runner -password foobar
-            java -jar build/libs/photon-*.jar -nominatim-update-init-for runner -database nominatim -user runner -password foobar
+          PHOTON_VERSION=`grep 'version =' buildSrc/shared.gradle | head -n 1 | sed "s:.*= '::;s:'.*::"`
+          java -jar target/photon-${PHOTON_VERSION}.jar -nominatim-import -database nominatim -user runner -password foobar
+          java -jar target/photon-${PHOTON_VERSION}.jar -nominatim-update-init-for runner -database nominatim -user runner -password foobar
 
       - name: Update Nominatim
         run: |
@@ -128,4 +129,5 @@ jobs:
 
       - name: Update Photon
         run: |
-          java -jar build/libs/photon-*.jar -nominatim-update -database nominatim -user runner -password foobar
+          PHOTON_VERSION=`grep 'version =' buildSrc/shared.gradle | head -n 1 | sed "s:.*= '::;s:'.*::"`
+          java -jar target/photon-${PHOTON_VERSION}.jar -nominatim-update -database nominatim -user runner -password foobar
