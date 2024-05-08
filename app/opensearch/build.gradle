@@ -21,6 +21,10 @@ dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.17.0'
 
     implementation 'org.codelibs.opensearch:opensearch-runner:2.13.0.0'
+
+    // updates for indirect dependencies
+    implementation 'io.netty:netty-codec:4.1.109.Final'
+    implementation 'io.netty:netty-codec-http:4.1.109.Final'
 }
 
 tasks.named('jar') {
