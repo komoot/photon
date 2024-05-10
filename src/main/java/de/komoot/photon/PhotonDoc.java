@@ -157,6 +157,10 @@ public class PhotonDoc {
     }
 
     public String getUid(int objectId) {
+        return makeUid(placeId, objectId);
+    }
+
+    static public String makeUid(long placeId, int objectId) {
         if (objectId <= 0)
             return String.valueOf(placeId);
 

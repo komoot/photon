@@ -1,10 +1,11 @@
-package de.komoot.photon.elasticsearch;
+package de.komoot.photon;
 
 import de.komoot.photon.DatabaseProperties;
 import de.komoot.photon.Importer;
 import de.komoot.photon.Updater;
 import de.komoot.photon.searcher.ReverseHandler;
 import de.komoot.photon.searcher.SearchHandler;
+import de.komoot.photon.elasticsearch.*;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.TransportClient;
@@ -40,16 +41,6 @@ import java.util.Map;
 public class Server {
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(Server.class);
 
-    /**
-     * Database version created by new imports with the current code.
-     *
-     * Format must be: major.minor.patch-dev
-     *
-     * Increase to next to be released version when the database layout
-     * changes in an incompatible way. If it is already at the next released
-     * version, increase the dev version.
-     */
-    private static final String DATABASE_VERSION = "0.3.6-1";
     public static final String PROPERTY_DOCUMENT_ID = "DATABASE_PROPERTIES";
 
     private static final String BASE_FIELD = "document_properties";
@@ -231,7 +222,7 @@ public class Server {
      */
     public void saveToDatabase(DatabaseProperties dbProperties) throws IOException  {
         final XContentBuilder builder = XContentFactory.jsonBuilder().startObject().startObject(BASE_FIELD)
-                        .field(FIELD_VERSION, DATABASE_VERSION)
+                        .field(FIELD_VERSION, DatabaseProperties.DATABASE_VERSION)
                         .field(FIELD_LANGUAGES, String.join(",", dbProperties.getLanguages()))
                         .field(FIELD_IMPORT_DATE, dbProperties.getImportDate() instanceof Date ? dbProperties.getImportDate().toInstant() : null)
                         .endObject().endObject();
@@ -264,8 +255,8 @@ public class Server {
         }
 
         String version = properties.getOrDefault(FIELD_VERSION, "");
-        if (!DATABASE_VERSION.equals(version)) {
-            LOGGER.error("Database has incompatible version '{}'. Expected: {}", version, DATABASE_VERSION);
+        if (!DatabaseProperties.DATABASE_VERSION.equals(version)) {
+            LOGGER.error("Database has incompatible version '{}'. Expected: {}", version, DatabaseProperties.DATABASE_VERSION);
             throw new RuntimeException("Incompatible database.");
         }
 

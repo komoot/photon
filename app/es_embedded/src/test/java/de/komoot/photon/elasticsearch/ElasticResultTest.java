@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.io.TempDir;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.HashMap;
@@ -68,7 +69,7 @@ class ElasticResultTest  extends ESBaseTester {
 
     @AfterAll
     @Override
-    public void tearDown() {
+    public void tearDown() throws IOException {
         super.tearDown();
     }
 

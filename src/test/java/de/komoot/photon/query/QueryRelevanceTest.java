@@ -47,7 +47,7 @@ class QueryRelevanceTest extends ESBaseTester {
     }
 
     @Test
-    void testRelevanceByImportance() {
+    void testRelevanceByImportance() throws IOException {
         Importer instance = makeImporter();
         instance.add(createDoc("amenity", "restuarant", 1001, "name", "New York").importance(0.0), 0);
         instance.add(createDoc("place", "city", 2000, "name", "New York").importance(0.5), 0);
@@ -61,7 +61,7 @@ class QueryRelevanceTest extends ESBaseTester {
     }
 
     @Test
-    void testFullNameOverPartialName() {
+    void testFullNameOverPartialName() throws IOException {
         Importer instance = makeImporter();
         instance.add(createDoc("place", "hamlet", 1000, "name", "Ham"), 0);
         instance.add(createDoc("place", "hamlet", 1001, "name", "Hamburg"), 0);
@@ -75,7 +75,7 @@ class QueryRelevanceTest extends ESBaseTester {
     }
 
     @Test
-    void testPartialNameWithImportanceOverFullName() {
+    void testPartialNameWithImportanceOverFullName() throws IOException {
         Importer instance = makeImporter();
         instance.add(createDoc("place", "hamlet", 1000, "name", "Ham").importance(0.1), 0);
         instance.add(createDoc("place", "city", 1001, "name", "Hamburg").importance(0.5), 0);
@@ -90,7 +90,7 @@ class QueryRelevanceTest extends ESBaseTester {
 
     @ParameterizedTest
     @ValueSource(strings = {"Ham", "Hamm", "Hamburg"})
-    void testLocationPreferenceForEqualImportance(String placeName) {
+    void testLocationPreferenceForEqualImportance(String placeName) throws IOException {
         Importer instance = makeImporter();
         instance.add(createDoc("place", "hamlet", 1000, "name", "Ham")
                 .centroid(FACTORY.createPoint(new Coordinate(10, 10))), 0);
@@ -107,7 +107,7 @@ class QueryRelevanceTest extends ESBaseTester {
     }
 
     @Test
-    void testLocationPreferenceForHigherImportance() {
+    void testLocationPreferenceForHigherImportance() throws IOException {
         Importer instance = makeImporter();
         instance.add(createDoc("place", "hamlet", 1000, "name", "Ham")
                         .importance(0.8)

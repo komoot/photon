@@ -1,5 +1,6 @@
 package de.komoot.photon;
 
+import de.komoot.photon.elasticsearch.PhotonDocConverter;
 import org.slf4j.Logger;
 
 import java.io.FileNotFoundException;
@@ -26,7 +27,7 @@ public class JsonDumper implements Importer {
     public void add(PhotonDoc doc, int objectId) {
         try {
             writer.println("{\"index\": {}}");
-            writer.println(Utils.convert(doc, languages, extraTags).string());
+            writer.println(PhotonDocConverter.convert(doc, languages, extraTags).string());
         } catch (IOException e) {
             LOGGER.error("Error writing json file", e);
         }

@@ -36,7 +36,7 @@ class QueryByClassificationTest extends ESBaseTester {
         return getServer().createSearchHandler(new String[]{"en"}, 1).search(new PhotonRequest(query, "en"));
     }
 
-    private void updateClassification(String key, String value, String... terms) {
+    private void updateClassification(String key, String value, String... terms) throws IOException {
         JSONArray jsonTerms = new JSONArray();
         for (String term : terms) {
             jsonTerms.put(term);
@@ -68,7 +68,7 @@ class QueryByClassificationTest extends ESBaseTester {
     }
 
     @Test
-    void testQueryByClassificationString() {
+    void testQueryByClassificationString() throws IOException {
         Importer instance = makeImporter();
         instance.add(createDoc("amenity", "restaurant", "curliflower"), 0);
         instance.finish();
@@ -89,7 +89,7 @@ class QueryByClassificationTest extends ESBaseTester {
     }
 
     @Test
-    void testQueryByClassificationSynonym() {
+    void testQueryByClassificationSynonym() throws IOException {
         Importer instance = makeImporter();
         instance.add(createDoc("amenity", "restaurant", "curliflower"), 0);
         instance.finish();
@@ -109,7 +109,7 @@ class QueryByClassificationTest extends ESBaseTester {
 
 
     @Test
-    void testSynonymDoNotInterfereWithWords() {
+    void testSynonymDoNotInterfereWithWords() throws IOException {
         Importer instance = makeImporter();
         instance.add(createDoc("amenity", "restaurant", "airport"), 0);
         instance.add(createDoc("aeroway", "terminal", "Houston"), 0);
@@ -129,7 +129,7 @@ class QueryByClassificationTest extends ESBaseTester {
     }
 
     @Test
-    void testSameSynonymForDifferentTags() {
+    void testSameSynonymForDifferentTags() throws IOException {
         Importer instance = makeImporter();
         instance.add(createDoc("railway", "halt", "Newtown"), 0);
         instance.add(createDoc("railway", "station", "King's Cross"), 0);

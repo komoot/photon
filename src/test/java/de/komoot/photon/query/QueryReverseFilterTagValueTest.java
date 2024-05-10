@@ -62,7 +62,7 @@ class QueryReverseFilterTagValueTest extends ESBaseTester {
 
     @AfterAll
     @Override
-    public void tearDown() {
+    public void tearDown() throws IOException {
         super.tearDown();
     }
 

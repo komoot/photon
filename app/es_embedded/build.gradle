@@ -1,0 +1,73 @@
+plugins {
+  id 'com.github.johnrengelman.shadow' version '8.1.1'
+  id 'application'
+}
+
+apply from: rootProject.file('buildSrc/shared.gradle')
+
+description = "Geocoder for OSM data (ElasticSearch-based version)"
+
+sourceSets {
+    main {
+        resources {
+            srcDir 'es'
+            srcDir 'build/es'
+        }
+    }
+    test {
+        java {
+            srcDir 'src/test/java'
+        }
+    }
+}
+
+configurations {
+    runtimePlugins.extendsFrom runtimeOnly {
+        canBeResolved = true
+    }
+}
+
+dependencies {
+    implementation 'org.elasticsearch:elasticsearch:5.6.16'
+    implementation 'org.elasticsearch.plugin:transport-netty4-client:5.6.16'
+    implementation('org.elasticsearch.client:transport:5.6.16') {
+        exclude(module: 'commons-logging')
+    }
+
+    runtimePlugins 'org.codelibs.elasticsearch.module:lang-painless:5.6.16'
+    runtimePlugins 'org.ow2.asm:asm-debug-all:5.1'
+    runtimePlugins 'org.antlr:antlr4-runtime:4.5.1-1'
+}
+
+task copyLibs(type: Copy){
+    from configurations.runtimePlugins {
+        into layout.buildDirectory.dir('es/modules/lang-painless')
+        rename '(.*[^0-9])-[0-9.-]+?.jar', '$1.jarx'
+    }
+}
+
+tasks.named('jar') {
+    archiveBaseName.set('original-photon')
+    manifest.attributes('Multi-Release': 'true')
+}
+
+tasks.named('processResources') {
+    dependsOn(copyLibs)
+}
+
+shadowJar {
+    mergeServiceFiles()
+    destinationDirectory.set(rootProject.file('target'))
+    archiveBaseName.set('photon')
+    archiveClassifier.set('')
+
+    exclude '**/module-info.class'
+
+    // This mitigates against the log4j JNDI lookup vulnerability:
+    // https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-44228
+    // Since we are using an old version of elastic search that is incompatible
+    // with a patched, newer version of log4j we have to remove the class
+    // JndiLookup from the fat jar. This is the recommended course of action
+    // when you cannot upgrade as per https://logging.apache.org/log4j/2.x/security.html
+    exclude 'org/apache/logging/log4j/core/lookup/JndiLookup.class'
+}

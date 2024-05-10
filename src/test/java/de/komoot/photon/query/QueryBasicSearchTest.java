@@ -44,7 +44,7 @@ class QueryBasicSearchTest extends ESBaseTester {
 
 
     @Test
-    void testSearchByDefaultName() {
+    void testSearchByDefaultName() throws IOException {
         Importer instance = makeImporter();
         instance.add(createDoc("name", "Muffle Flu"), 0);
         instance.finish();
@@ -61,7 +61,7 @@ class QueryBasicSearchTest extends ESBaseTester {
     }
 
     @Test
-    void testSearchNameSkipTerms() {
+    void testSearchNameSkipTerms() throws IOException {
         Importer instance = makeImporter();
         instance.add(createDoc("name", "Hunted House Hotel"), 0);
         instance.finish();
@@ -76,7 +76,7 @@ class QueryBasicSearchTest extends ESBaseTester {
         );
     }
     @Test
-    void testSearchByAlternativeNames() {
+    void testSearchByAlternativeNames() throws IOException {
         Importer instance = makeImporter();
         instance.add(createDoc("name", "original", "alt_name", "alt", "old_name", "older", "int_name", "int",
                                "loc_name", "local", "reg_name", "regional", "addr:housename", "house",
@@ -97,7 +97,7 @@ class QueryBasicSearchTest extends ESBaseTester {
     }
 
     @Test
-    void testSearchByNameAndAddress() {
+    void testSearchByNameAndAddress() throws IOException {
         Map<String, String> address = new HashMap<>();
         address.put("street", "Callino");
         address.put("city", "Madrid");
@@ -122,7 +122,7 @@ class QueryBasicSearchTest extends ESBaseTester {
     }
 
     @Test
-    void testSearchMustContainANameTerm() {
+    void testSearchMustContainANameTerm() throws IOException {
         Importer instance = makeImporter();
         instance.add(createDoc("name", "Palermo").address(Collections.singletonMap("state", "Sicilia")), 0);
         instance.finish();
@@ -139,7 +139,7 @@ class QueryBasicSearchTest extends ESBaseTester {
     }
 
     @Test
-    void testSearchWithHousenumberNamed() {
+    void testSearchWithHousenumberNamed() throws IOException {
         Importer instance = makeImporter();
         instance.add(createDoc("name", "Edeka").houseNumber("5").address(Collections.singletonMap("street", "Hauptstrasse")), 0);
         instance.finish();
@@ -154,7 +154,7 @@ class QueryBasicSearchTest extends ESBaseTester {
     }
 
     @Test
-    void testSearchWithHousenumberUnnamed() {
+    void testSearchWithHousenumberUnnamed() throws IOException {
         Importer instance = makeImporter();
         instance.add(createDoc().houseNumber("5").address(Collections.singletonMap("street", "Hauptstrasse")), 0);
         instance.finish();

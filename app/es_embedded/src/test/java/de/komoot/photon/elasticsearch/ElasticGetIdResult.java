@@ -10,7 +10,7 @@ public class ElasticGetIdResult implements PhotonResult {
 
     private final GetResponse result;
 
-    ElasticGetIdResult(GetResponse result) {
+    public ElasticGetIdResult(GetResponse result) {
         this.result = result;
     }
     @Override

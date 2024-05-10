@@ -34,7 +34,7 @@ public class Importer implements de.komoot.photon.Importer {
         String uid = doc.getUid(objectId);
         try {
             this.bulkRequest.add(this.esClient.prepareIndex(PhotonIndex.NAME, PhotonIndex.TYPE).
-                    setSource(Utils.convert(doc, languages, extraTags)).setId(uid));
+                    setSource(PhotonDocConverter.convert(doc, languages, extraTags)).setId(uid));
         } catch (IOException e) {
             LOGGER.error("Could not bulk add document {}", uid, e);
             return;

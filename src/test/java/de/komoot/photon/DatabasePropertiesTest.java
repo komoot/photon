@@ -1,4 +1,4 @@
-package de.komoot.photon.elasticsearch;
+package de.komoot.photon;
 
 import de.komoot.photon.DatabaseProperties;
 import de.komoot.photon.ESBaseTester;

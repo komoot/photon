@@ -4,7 +4,6 @@ import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.PrecisionModel;
-import de.komoot.photon.elasticsearch.ElasticTestServer;
 import de.komoot.photon.searcher.PhotonResult;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.io.TempDir;
@@ -41,7 +40,7 @@ public class ESBaseTester {
 
 
     @AfterEach
-    public void tearDown() {
+    public void tearDown() throws IOException {
         shutdownES();
     }
 
