@@ -206,7 +206,7 @@ public class App {
             // setup update API
             final NominatimUpdater nominatimUpdater = setupNominatimUpdater(args, server);
             if (!nominatimUpdater.isSetUpForUpdates()) {
-                throw new RuntimeException("Update API enabled, but Nominatim database is not prepared. Run -nominiatim-update-init-for first.");
+                throw new RuntimeException("Update API enabled, but Nominatim database is not prepared. Run -nominatim-update-init-for first.");
             }
             get("/nominatim-update/status", (Request request, Response response) -> {
                if (nominatimUpdater.isBusy()) {
