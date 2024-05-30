@@ -313,6 +313,7 @@ List of available layers:
 - county
 - state
 - country
+- other (e.g. natural features)
 
 ```
 http://localhost:2322/api?q=berlin&layer=city&layer=locality

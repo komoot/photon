@@ -18,7 +18,8 @@ public enum AddressType {
     CITY("city", 13, 16),
     COUNTY("county", 10, 12),
     STATE("state", 5, 9),
-    COUNTRY("country", 4, 4);
+    COUNTRY("country", 4, 4),
+    OTHER("other", 0, 0);
 
     private final String name;
     private final int minRank;
