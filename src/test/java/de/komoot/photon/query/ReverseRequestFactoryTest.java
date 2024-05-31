@@ -218,7 +218,7 @@ class ReverseRequestFactoryTest {
         Request mockRequest = createRequestWithLongitudeLatitude(-87d, 41d);
         requestWithLayers(mockRequest, "city", "bad");
 
-        assertBadRequest(mockRequest, "Invalid layer 'bad'. Allowed layers are: house,street,locality,district,city,county,state,country");
+        assertBadRequest(mockRequest, "Invalid layer 'bad'. Allowed layers are: house,street,locality,district,city,county,state,country,other");
     }
 
     @Test
