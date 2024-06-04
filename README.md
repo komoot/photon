@@ -263,6 +263,10 @@ http://localhost:2322/api?q=berlin&limit=2
 http://localhost:2322/api?q=berlin&lang=it
 ```
 
+If omitted the ['accept-language' HTTP header](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Language)
+will be used (browsers set this by default). If neither is set the local name of the place is returned. In OpenStreetMap
+data that's usually the value of the `name` tag, for example the local name for Tokyo is 東京都.
+
 #### Filter results by bounding box
 
 Expected format is minLon,minLat,maxLon,maxLat.
