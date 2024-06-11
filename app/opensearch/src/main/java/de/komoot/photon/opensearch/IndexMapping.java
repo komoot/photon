@@ -101,7 +101,7 @@ public class IndexMapping {
 
         mappings.properties("name.default", b -> b.text(p -> p
                 .index(false)
-                .copyTo("collector.default", "collector_base")));
+                .copyTo("collector.default", "collector.base")));
 
         // Collector for all name parts.
         mappings.properties("name.other", b -> b.text(pi -> pi.index(true).analyzer("index_raw")));
