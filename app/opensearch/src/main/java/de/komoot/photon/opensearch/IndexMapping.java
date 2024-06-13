@@ -3,17 +3,23 @@ package de.komoot.photon.opensearch;
 import org.opensearch.client.opensearch.OpenSearchClient;
 import org.opensearch.client.opensearch._types.mapping.DynamicMapping;
 import org.opensearch.client.opensearch.indices.PutMappingRequest;
+import de.komoot.photon.Constants;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 public class IndexMapping {
     private static final String[] ADDRESS_FIELDS = new String[]{"street", "city", "locality", "district", "county", "state", "country", "context"};
 
     private PutMappingRequest.Builder mappings;
 
-    public IndexMapping() {
+    private boolean supportStructuredQueries;
+
+    public IndexMapping(boolean supportStructuredQueries) {
+        this.supportStructuredQueries = supportStructuredQueries;
         setupBaseMappings();
     }
 
@@ -30,10 +36,14 @@ public class IndexMapping {
             );
 
             for (var field: ADDRESS_FIELDS) {
-                mappings.properties(String.format("%s.%s", field, lang),
-                        b -> b.text(p -> p
-                                .index(false)
-                                .copyTo("collector.base", "collector." + lang)));
+                var propertyName = String.format("%s.%s", field, lang);
+                var collectors = new ArrayList<>(Arrays.asList("collector.base", "collector." + lang));
+                if (shouldIndexAddressField(field)) {
+                    collectors.add(getAddressFieldCollector(field));
+                }
+
+                mappings.properties(propertyName,
+                        b -> b.text(p -> p.copyTo(collectors)));
             }
 
             mappings.properties("name." + lang,
@@ -67,7 +77,7 @@ public class IndexMapping {
         }
 
         mappings.properties("coordinate", b -> b.geoPoint(p -> p));
-        mappings.properties("countrycode", b -> b.text(p -> p.index(true)));
+        mappings.properties("countrycode", b -> b.keyword(p -> p.index(true)));
         mappings.properties("importance", b -> b.float_(p -> p.index(false)));
 
         mappings.properties("housenumber", b -> b.text(p -> p.index(true)
@@ -91,12 +101,25 @@ public class IndexMapping {
                 .analyzer("index_raw")));
 
         for (var field : ADDRESS_FIELDS) {
+            var collectors = new ArrayList<>(Arrays.asList("collector.default", "collector.base"));
+
+            if (shouldIndexAddressField(field)) {
+                var collectorName = getAddressFieldCollector(field);
+                mappings.properties(collectorName,
+                        b -> b.text(p -> p.index(true)
+                                .searchAnalyzer("search")
+                                .analyzer("index_raw"))
+                );
+
+                collectors.add(collectorName);
+            }
+
             mappings.properties(field + ".default", b -> b.text(p -> p
-                    .index(false)
-                    .copyTo("collector.default", "collector.base")));
+                    .index(shouldIndexAddressField(field))
+                    .copyTo(collectors)));
         }
         mappings.properties("postcode", b -> b.text(p -> p
-                .index(false)
+                .index(supportStructuredQueries)
                 .copyTo("collector.default", "collector.base")));
 
         mappings.properties("name.default", b -> b.text(p -> p
@@ -110,5 +133,13 @@ public class IndexMapping {
             mappings.properties("name." + suffix, b -> b.text(p -> p.index(false)
                     .copyTo("collector.default", "name.other", "collector.base")));
         }
+    }
+
+    private String getAddressFieldCollector(String field) {
+        return field + "_collector";
+    }
+
+    private boolean shouldIndexAddressField(String field) {
+        return supportStructuredQueries && !Objects.equals(field, "locality") && !Objects.equals(field, "context");
     }
 }

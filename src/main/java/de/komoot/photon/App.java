@@ -6,6 +6,7 @@ import de.komoot.photon.nominatim.NominatimConnector;
 import de.komoot.photon.nominatim.NominatimUpdater;
 import de.komoot.photon.searcher.ReverseHandler;
 import de.komoot.photon.searcher.SearchHandler;
+import de.komoot.photon.searcher.StructuredSearchHandler;
 import de.komoot.photon.utils.CorsFilter;
 import org.slf4j.Logger;
 import spark.Request;
@@ -119,7 +120,7 @@ public class App {
         NominatimConnector nominatimConnector = new NominatimConnector(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
         Date importDate = nominatimConnector.getLastImportDate();
         try {
-            dbProperties = esServer.recreateIndex(args.getLanguages(), importDate); // clear out previous data
+            dbProperties = esServer.recreateIndex(args.getLanguages(), importDate, args.getSupportStructuredQueries()); // clear out previous data
         } catch (IOException e) {
             throw new RuntimeException("Cannot setup index, elastic search config files not readable", e);
         }
@@ -192,6 +193,12 @@ public class App {
         SearchHandler searchHandler = server.createSearchHandler(langs, args.getQueryTimeout());
         get("api", new SearchRequestHandler("api", searchHandler, langs, args.getDefaultLanguage(), args.getMaxResults()));
         get("api/", new SearchRequestHandler("api/", searchHandler, langs, args.getDefaultLanguage(), args.getMaxResults()));
+
+        if (dbProperties.getSupportStructuredQueries()) {
+            StructuredSearchHandler structured = server.createStructuredSearchHandler(langs, args.getQueryTimeout());
+            get("structured", new StructuredSearchRequestHandler("structured", structured, langs, args.getDefaultLanguage(), args.getMaxResults()));
+            get("structured/", new StructuredSearchRequestHandler("structured/", structured, langs, args.getDefaultLanguage(), args.getMaxResults()));
+        }
 
         ReverseHandler reverseHandler = server.createReverseHandler(args.getQueryTimeout());
         get("reverse", new ReverseSearchRequestHandler("reverse", reverseHandler, dbProperties.getLanguages(),
