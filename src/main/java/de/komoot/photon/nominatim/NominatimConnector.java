@@ -24,7 +24,7 @@ import java.util.Map;
 public class NominatimConnector {
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(NominatimConnector.class);
 
-    private static final String SELECT_COLS_PLACEX = "SELECT place_id, osm_type, osm_id, class, type, name, postcode, address, extratags, ST_Envelope(geometry) AS bbox, parent_place_id, linked_place_id, rank_address, rank_search, importance, country_code, centroid";
+    private static final String SELECT_COLS_PLACEX = "SELECT place_id, osm_type, osm_id, class, type, name, postcode, address, extratags, ST_Envelope(geometry) AS bbox, parent_place_id, linked_place_id, rank_address, rank_search, importance, country_code, centroid, geometry";
     private static final String SELECT_COLS_ADDRESS = "SELECT p.name, p.class, p.type, p.rank_address";
 
     private final DBDataAdapter dbutils;
@@ -58,6 +58,7 @@ public class NominatimConnector {
                     .parentPlaceId(rs.getLong("parent_place_id"))
                     .countryCode(rs.getString("country_code"))
                     .centroid(dbutils.extractGeometry(rs, "centroid"))
+                    .geometry(dbutils.extractGeometry(rs, "geometry"))
                     .linkedPlaceId(rs.getLong("linked_place_id"))
                     .rankAddress(rs.getInt("rank_address"))
                     .postcode(rs.getString("postcode"));

@@ -7,12 +7,10 @@ import de.komoot.photon.Constants;
 import de.komoot.photon.PhotonDoc;
 import de.komoot.photon.Utils;
 import org.locationtech.jts.geom.Envelope;
+import org.locationtech.jts.io.geojson.GeoJsonWriter;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class PhotonDocSerializer extends StdSerializer<PhotonDoc> {
     final private String[] languages;
@@ -46,6 +44,11 @@ public class PhotonDocSerializer extends StdSerializer<PhotonDoc> {
             gen.writeNumberField("lat", value.getCentroid().getY());
             gen.writeNumberField("lon", value.getCentroid().getX());
             gen.writeEndObject();
+        }
+
+        if (value.getGeometry() != null) {
+            GeoJsonWriter g = new GeoJsonWriter();
+            gen.writeObjectField("geometry", g.write(value.getGeometry()));
         }
 
         if (value.getHouseNumber() != null) {

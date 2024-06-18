@@ -52,6 +52,7 @@ dependencies {
         exclude(module: 'commons-logging')
     }
     implementation 'org.locationtech.jts:jts-core:1.19.0'
+    implementation 'org.locationtech.jts.io:jts-io-common:1.19.0'
     implementation 'com.sparkjava:spark-core:2.9.4'
     implementation 'net.postgis:postgis-jdbc:2023.1.0'
     implementation 'org.json:json:20240303'

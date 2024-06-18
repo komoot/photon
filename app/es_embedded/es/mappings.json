@@ -49,6 +49,9 @@
 			"coordinate": {
 				"type": "geo_point"
 			},
+			"geometry": {
+				"type": "geo_shape"
+			},
 			"country": {
 				"properties": {
 					"default": {

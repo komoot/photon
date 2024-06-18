@@ -31,9 +31,11 @@ public class GeocodeJsonFormatter implements ResultFormatter {
             features.put(new JSONObject()
                         .put("type", "Feature")
                         .put("properties", getResultProperties(result))
-                        .put("geometry", new JSONObject()
-                                .put("type", "Point")
-                                .put("coordinates", coordinates)));
+                        .put("geometry", result.get("geometry")));
+                        
+                        // .put("geometry", new JSONObject()
+                                // .put("type", "Point")
+                                // .put("coordinates", coordinates)));
         }
 
         final JSONObject out = new JSONObject();
