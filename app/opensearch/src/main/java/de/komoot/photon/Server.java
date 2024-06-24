@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import de.komoot.photon.opensearch.*;
 import de.komoot.photon.searcher.ReverseHandler;
 import de.komoot.photon.searcher.SearchHandler;
+import de.komoot.photon.searcher.StructuredSearchHandler;
 import org.apache.hc.core5.http.HttpHost;
 import org.codelibs.opensearch.runner.OpenSearchRunner;
 import org.opensearch.client.json.jackson.JacksonJsonpMapper;
@@ -97,7 +98,7 @@ public class Server {
         }
     }
 
-    public DatabaseProperties recreateIndex(String[] languages, Date importDate) throws IOException {
+    public DatabaseProperties recreateIndex(String[] languages, Date importDate, boolean supportStructuredQueries) throws IOException {
         // delete any existing data
         if (client.indices().exists(e -> e.index(PhotonIndex.NAME)).value()) {
             client.indices().delete(d -> d.index(PhotonIndex.NAME));
@@ -105,10 +106,11 @@ public class Server {
 
         (new IndexSettingBuilder()).setShards(5).createIndex(client, PhotonIndex.NAME);
 
-        (new IndexMapping()).addLanguages(languages).putMapping(client, PhotonIndex.NAME);
+        (new IndexMapping(supportStructuredQueries)).addLanguages(languages).putMapping(client, PhotonIndex.NAME);
 
         var dbProperties = new DatabaseProperties()
                 .setLanguages(languages)
+                .setSupportStructuredQueries(supportStructuredQueries)
                 .setImportDate(importDate);
         saveToDatabase(dbProperties);
 
@@ -122,7 +124,7 @@ public class Server {
         (new IndexSettingBuilder()).setSynonymFile(synonymFile).updateIndex(client, PhotonIndex.NAME);
 
         if (dbProperties.getLanguages() != null) {
-            (new IndexMapping())
+            (new IndexMapping(dbProperties.getSupportStructuredQueries()))
                     .addLanguages(dbProperties.getLanguages())
                     .putMapping(client, PhotonIndex.NAME);
         }
@@ -154,6 +156,7 @@ public class Server {
 
         dbProperties.setLanguages(dbEntry.source().languages);
         dbProperties.setImportDate(dbEntry.source().importDate);
+        dbProperties.setSupportStructuredQueries(dbEntry.source().supportStructuredQueries);
     }
 
     public Importer createImporter(String[] languages, String[] extraTags) {
@@ -168,6 +171,10 @@ public class Server {
 
     public SearchHandler createSearchHandler(String[] languages, int queryTimeoutSec) {
         return new OpenSearchSearchHandler(client, languages, queryTimeoutSec);
+    }
+
+    public StructuredSearchHandler createStructuredSearchHandler(String[] languages, int queryTimeoutSec) {
+        return new OpenSearchStructuredSearchHandler(client, languages, queryTimeoutSec);
     }
 
     public ReverseHandler createReverseHandler(int queryTimeoutSec) {

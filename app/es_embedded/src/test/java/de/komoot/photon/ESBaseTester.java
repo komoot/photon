@@ -55,7 +55,7 @@ public class ESBaseTester {
     public void setUpES(Path test_directory, String... languages) throws IOException {
         server = new ElasticTestServer(test_directory.toString());
         server.start(TEST_CLUSTER_NAME, new String[]{});
-        server.recreateIndex(languages, new Date());
+        server.recreateIndex(languages, new Date(), false);
         refresh();
     }
 

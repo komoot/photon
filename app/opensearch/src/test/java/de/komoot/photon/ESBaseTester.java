@@ -49,7 +49,7 @@ public class ESBaseTester {
     public void setUpES(Path test_directory, String... languages) throws IOException {
         server = new OpenSearchTestServer(test_directory.toString());
         server.startTestServer(TEST_CLUSTER_NAME);
-        server.recreateIndex(languages, new Date());
+        server.recreateIndex(languages, new Date(), true);
         server.refreshIndexes();
     }
 

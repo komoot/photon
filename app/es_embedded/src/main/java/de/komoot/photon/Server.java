@@ -3,6 +3,7 @@ package de.komoot.photon;
 import de.komoot.photon.DatabaseProperties;
 import de.komoot.photon.Importer;
 import de.komoot.photon.Updater;
+import de.komoot.photon.searcher.StructuredSearchHandler;
 import de.komoot.photon.searcher.ReverseHandler;
 import de.komoot.photon.searcher.SearchHandler;
 import de.komoot.photon.elasticsearch.*;
@@ -168,12 +169,12 @@ public class Server {
 
     }
 
-    public DatabaseProperties recreateIndex(String[] languages, Date importDate) throws IOException {
+    public DatabaseProperties recreateIndex(String[] languages, Date importDate, boolean supportStructuredQueries) throws IOException {
         deleteIndex();
 
         loadIndexSettings().createIndex(esClient, PhotonIndex.NAME);
 
-        new IndexMapping().addLanguages(languages).putMapping(esClient, PhotonIndex.NAME, PhotonIndex.TYPE);
+        createAndPutIndexMapping(languages, supportStructuredQueries);
 
         DatabaseProperties dbProperties = new DatabaseProperties()
             .setLanguages(languages)
@@ -181,6 +182,16 @@ public class Server {
         saveToDatabase(dbProperties);
 
         return dbProperties;
+    }
+
+    private void createAndPutIndexMapping(String[] languages, boolean supportStructuredQueries)
+    {
+        if (supportStructuredQueries) {
+            throw new UnsupportedOperationException("Structured queries are not supported for elasticsearch-based Photon. Consider to use OpenSearch.");
+        }
+
+        new IndexMapping().addLanguages(languages)
+                          .putMapping(esClient, PhotonIndex.NAME, PhotonIndex.TYPE);
     }
 
     public void updateIndexSettings(String synonymFile) throws IOException {
@@ -195,9 +206,7 @@ public class Server {
         // Sanity check: legacy databases don't save the languages, so there is no way to update
         //               the mappings consistently.
         if (dbProperties.getLanguages() != null) {
-            new IndexMapping()
-                    .addLanguages(dbProperties.getLanguages())
-                    .putMapping(esClient, PhotonIndex.NAME, PhotonIndex.TYPE);
+            this.createAndPutIndexMapping(dbProperties.getLanguages(), false);
         }
     }
 
@@ -277,6 +286,10 @@ public class Server {
 
     public SearchHandler createSearchHandler(String[] languages, int queryTimeoutSec) {
         return new ElasticsearchSearchHandler(esClient, languages, queryTimeoutSec);
+    }
+
+    public StructuredSearchHandler createStructuredSearchHandler(String[] languages, int queryTimeoutSec) {
+        throw new UnsupportedOperationException("Structured queries are not supported for elasticsearch-based Photon. Consider to use OpenSearch.");
     }
 
     public ReverseHandler createReverseHandler(int queryTimeoutSec) {

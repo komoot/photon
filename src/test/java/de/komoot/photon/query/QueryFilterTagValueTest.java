@@ -63,7 +63,8 @@ class QueryFilterTagValueTest extends ESBaseTester {
     }
 
     private List<PhotonResult> searchWithTags(String[] params) {
-        PhotonRequest request = new PhotonRequest("berlin", "en").setLimit(50);
+        PhotonRequest request = new PhotonRequest("berlin", "en");
+        request.setLimit(50);
         for (String param : params) {
             request.addOsmTagFilter(TagFilter.buildOsmTagFilter(param));
         }

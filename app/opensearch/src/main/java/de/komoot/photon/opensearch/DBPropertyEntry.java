@@ -8,6 +8,7 @@ public class DBPropertyEntry {
     public String databaseVersion;
     public Date importDate;
     public String[] languages;
+    public boolean supportStructuredQueries;
 
     public DBPropertyEntry() {}
 
@@ -15,5 +16,6 @@ public class DBPropertyEntry {
         databaseVersion = DatabaseProperties.DATABASE_VERSION;
         importDate = props.getImportDate();
         languages = props.getLanguages();
+        supportStructuredQueries = props.getSupportStructuredQueries();
     }
 }

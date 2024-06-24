@@ -99,8 +99,7 @@ class QueryRelevanceTest extends ESBaseTester {
         instance.finish();
         refresh();
 
-        List<PhotonResult> results = search(new PhotonRequest("ham", "en")
-                .setLocationForBias(FACTORY.createPoint(new Coordinate(-9.9, -10))));
+        List<PhotonResult> results = search(createBiasedRequest());
 
         assertEquals(2, results.size());
         assertEquals(1001, results.get(0).get("osm_id"));
@@ -118,10 +117,16 @@ class QueryRelevanceTest extends ESBaseTester {
         instance.finish();
         refresh();
 
-        List<PhotonResult> results = search(new PhotonRequest("ham", "en")
-                .setLocationForBias(FACTORY.createPoint(new Coordinate(-9.9, -10))));
+        List<PhotonResult> results = search(createBiasedRequest());
 
         assertEquals(2, results.size());
         assertEquals(1000, results.get(0).get("osm_id"));
+    }
+
+    private PhotonRequest createBiasedRequest()
+    {
+        PhotonRequest result = new PhotonRequest("ham", "en");
+        result.setLocationForBias(FACTORY.createPoint(new Coordinate(-9.9, -10)));
+        return result;
     }
 }
