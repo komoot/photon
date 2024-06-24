@@ -16,8 +16,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class StructuredQueryTest extends ESBaseTester {
@@ -34,11 +33,9 @@ public class StructuredQueryTest extends ESBaseTester {
     @TempDir
     private static Path instanceTestDirectory;
 
-    private static int getRank(AddressType type)
-    {
-        for(int i = 0; i < 50; ++i)
-        {
-            if (type.coversRank(i)){
+    private static int getRank(AddressType type) {
+        for (int i = 0; i < 50; ++i) {
+            if (type.coversRank(i)) {
                 return i;
             }
         }
@@ -91,6 +88,15 @@ public class StructuredQueryTest extends ESBaseTester {
                 .importance(1.0)
                 .rankAddress(getRank(AddressType.HOUSE));
 
+        var busStop = new PhotonDoc(8, "N", 8, "highway", "house")
+                .names(Collections.singletonMap("name", City + ' ' + Street))
+                .countryCode(CountryCode)
+                .postcode("12345")
+                .address(address)
+                .houseNumber(HouseNumber)
+                .importance(1.0)
+                .rankAddress(getRank(AddressType.HOUSE));
+
         instance.add(country, 0);
         instance.add(city, 1);
         instance.add(suburb, 2);
@@ -99,13 +105,23 @@ public class StructuredQueryTest extends ESBaseTester {
         addHamletHouse(instance, 5, "1");
         addHamletHouse(instance, 6, "2");
         addHamletHouse(instance, 7, "3");
+        instance.add(busStop, 8);
         instance.finish();
         refresh();
     }
 
     @Test
-    void doesFindDistrictByPostcode()
-    {
+    void findsDistrictFuzzy() {
+        var request = new StructuredPhotonRequest(Language);
+        request.setCountryCode(CountryCode);
+        request.setDistrict(District + District.charAt(District.length() - 1));
+
+        var result = search(request);
+        Assertions.assertEquals(2, result.get(Constants.OSM_ID));
+    }
+
+    @Test
+    void findsDistrictByPostcode() {
         var request = new StructuredPhotonRequest(Language);
         request.setCountryCode(CountryCode);
         request.setCity(City);
@@ -116,7 +132,7 @@ public class StructuredQueryTest extends ESBaseTester {
     }
 
     @Test
-    void doesFindHouseNumberInHamletWithoutStreetName() {
+    void findsHouseNumberInHamletWithoutStreetName() {
         var request = new StructuredPhotonRequest(Language);
         request.setDistrict(Hamlet);
         request.setHouseNumber("2");
@@ -129,8 +145,32 @@ public class StructuredQueryTest extends ESBaseTester {
     }
 
     @Test
-    void doesNotReturnHousesForCityRequest()
-    {
+    void doesNotReturnBusStops() {
+        var request = new StructuredPhotonRequest(Language);
+        request.setCountryCode(CountryCode);
+        request.setCity(City);
+        request.setStreet(Street);
+        StructuredSearchHandler queryHandler = getServer().createStructuredSearchHandler(new String[]{Language}, 1);
+        var results = queryHandler.search(request);
+        for (var result : results)
+        {
+            assertNotEquals(5, result.get(Constants.OSM_ID));
+        }
+    }
+
+    @Test
+    void returnsOnlyCountryForCountryRequests() {
+        var request = new StructuredPhotonRequest(Language);
+        request.setCountryCode(CountryCode);
+        StructuredSearchHandler queryHandler = getServer().createStructuredSearchHandler(new String[]{Language}, 1);
+        var results = queryHandler.search(request);
+        assertEquals(1, results.size());
+        var result = results.get(0);
+        assertEquals(0, result.get(Constants.OSM_ID));
+    }
+
+    @Test
+    void doesNotReturnHousesForCityRequest() {
         var request = new StructuredPhotonRequest(Language);
         request.setCountryCode(CountryCode);
         request.setCity(City);
@@ -138,16 +178,14 @@ public class StructuredQueryTest extends ESBaseTester {
         StructuredSearchHandler queryHandler = getServer().createStructuredSearchHandler(new String[]{Language}, 1);
         var results = queryHandler.search(request);
 
-        for(var result : results)
-        {
+        for (var result : results) {
             assertNull(result.getLocalised(Constants.STREET, Language));
             assertNull(result.get(Constants.HOUSENUMBER));
         }
     }
 
     @Test
-    void testWrongStreet()
-    {
+    void testWrongStreet() {
         var request = new StructuredPhotonRequest(Language);
         request.setCountryCode(CountryCode);
         request.setCity(City);
@@ -160,8 +198,7 @@ public class StructuredQueryTest extends ESBaseTester {
     }
 
     @Test
-    void testDistrictAsCity()
-    {
+    void testDistrictAsCity() {
         var request = new StructuredPhotonRequest(Language);
         request.setCountryCode(CountryCode);
         request.setCity(District);
@@ -171,8 +208,7 @@ public class StructuredQueryTest extends ESBaseTester {
     }
 
     @Test
-    void testWrongHouseNumber()
-    {
+    void testWrongHouseNumber() {
         var request = new StructuredPhotonRequest(Language);
         request.setCountryCode(CountryCode);
         request.setCity(City);
@@ -185,8 +221,7 @@ public class StructuredQueryTest extends ESBaseTester {
     }
 
     @Test
-    void testWrongHouseNumberAndWrongStreet()
-    {
+    void testWrongHouseNumberAndWrongStreet() {
         var request = new StructuredPhotonRequest(Language);
         request.setCountryCode(CountryCode);
         request.setCity(City);
@@ -199,8 +234,7 @@ public class StructuredQueryTest extends ESBaseTester {
     }
 
     @Test
-    void testHouse()
-    {
+    void testHouse() {
         var request = new StructuredPhotonRequest(Language);
         request.setCountryCode(CountryCode);
         request.setCity(City);

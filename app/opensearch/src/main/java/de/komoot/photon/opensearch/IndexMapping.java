@@ -43,7 +43,9 @@ public class IndexMapping {
                 }
 
                 mappings.properties(propertyName,
-                        b -> b.text(p -> p.copyTo(collectors)));
+                        b -> b.text(p -> p
+                                .index(false)
+                                .copyTo(collectors)));
             }
 
             mappings.properties("name." + lang,
@@ -115,7 +117,7 @@ public class IndexMapping {
             }
 
             mappings.properties(field + ".default", b -> b.text(p -> p
-                    .index(shouldIndexAddressField(field))
+                    .index(false)
                     .copyTo(collectors)));
         }
         mappings.properties("postcode", b -> b.text(p -> p

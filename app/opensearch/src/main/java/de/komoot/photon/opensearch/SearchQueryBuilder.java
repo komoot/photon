@@ -147,9 +147,10 @@ public class SearchQueryBuilder {
 
     public SearchQueryBuilder(StructuredPhotonRequest request, String language, String[] languages, boolean lenient)
     {
+        var hasSubStateField = request.hasCounty() || request.hasCityOrPostCode() || request.hasDistrict() || request.hasStreet();
         var query4QueryBuilder = new AddressQueryBuilder(lenient, language, languages)
-                .addCountryCode(request.getCountryCode())
-                .addState(request.getState(), request.hasCounty() || request.hasCityOrPostCode() || request.hasDistrict() || request.hasStreet())
+                .addCountryCode(request.getCountryCode(), request.hasState() || hasSubStateField)
+                .addState(request.getState(), hasSubStateField)
                 .addCounty(request.getCounty(), request.hasCityOrPostCode() || request.hasDistrict() || request.hasStreet())
                 .addCity(request.getCity(), request.hasDistrict(), request.hasStreet(), request.hasPostCode())
                 .addPostalCode(request.getPostCode())
@@ -170,7 +171,8 @@ public class SearchQueryBuilder {
 
         if (!request.hasHouseNumber())
         {
-            queryBuilderForTopLevelFilter = QueryBuilders.bool().mustNot(QueryBuilders.exists().field(Constants.HOUSENUMBER).build().toQuery());
+            queryBuilderForTopLevelFilter = QueryBuilders.bool().mustNot(QueryBuilders.exists().field(Constants.HOUSENUMBER).build().toQuery())
+                    .mustNot(QueryBuilders.term().field(Constants.OBJECT_TYPE).value(FieldValue.of("house")).build().toQuery());
         }
 
         osmTagFilter = new OsmTagFilter();

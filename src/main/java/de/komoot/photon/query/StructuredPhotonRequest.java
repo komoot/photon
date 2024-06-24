@@ -84,6 +84,8 @@ public class StructuredPhotonRequest extends PhotonRequestBase {
         this.state = state;
     }
 
+    public boolean hasState() { return !StringUtils.isEmpty(this.state); }
+
     public boolean hasDistrict() { return !StringUtils.isEmpty(this.district); }
 
     public boolean hasPostCode() { return !StringUtils.isEmpty(this.postCode); }
