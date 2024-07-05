@@ -169,10 +169,22 @@ public class SearchQueryBuilder {
                                         .decay(0.5))))
                 .scoreMode(FunctionScoreMode.Sum));
 
+        var hasHouseNumberQuery = QueryBuilders.exists().field(Constants.HOUSENUMBER).build().toQuery();
+        var isHouseQuery = QueryBuilders.term().field(Constants.OBJECT_TYPE).value(FieldValue.of("house")).build().toQuery();
+        var typeOtherQuery = QueryBuilders.term().field(Constants.OBJECT_TYPE).value(FieldValue.of("other")).build().toQuery();
         if (!request.hasHouseNumber())
         {
-            queryBuilderForTopLevelFilter = QueryBuilders.bool().mustNot(QueryBuilders.exists().field(Constants.HOUSENUMBER).build().toQuery())
-                    .mustNot(QueryBuilders.term().field(Constants.OBJECT_TYPE).value(FieldValue.of("house")).build().toQuery());
+            queryBuilderForTopLevelFilter = QueryBuilders.bool().mustNot(hasHouseNumberQuery)
+                    .mustNot(isHouseQuery)
+                    .mustNot(typeOtherQuery);
+        }
+        else {
+            var noHouseOrHouseNumber = QueryBuilders.bool().should(hasHouseNumberQuery)
+                    .should(QueryBuilders.bool().mustNot(isHouseQuery).build().toQuery())
+                    .build()
+                    .toQuery();
+            queryBuilderForTopLevelFilter = QueryBuilders.bool().must(noHouseOrHouseNumber)
+                    .mustNot(typeOtherQuery);
         }
 
         osmTagFilter = new OsmTagFilter();
