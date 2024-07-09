@@ -90,11 +90,8 @@ public class PhotonDoc {
     }
 
     public PhotonDoc geometry(Geometry polygon) {
-        // if (polygon.getGeometryType().equals("Polygon")) {
-            this.geometry = (Geometry) polygon;
-        // }
+        this.geometry = (Geometry) polygon;
         return this;
-
     }
 
     public PhotonDoc countryCode(String countryCode) {
