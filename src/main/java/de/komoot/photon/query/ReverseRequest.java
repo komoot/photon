@@ -20,9 +20,10 @@ public class ReverseRequest implements Serializable {
     private final Set<String> layerFilters;
     private final List<TagFilter> osmTagFilters = new ArrayList<>(1);
     private final boolean debug;
+    private final boolean polygon;
 
     public ReverseRequest(Point location, String language, double radius, String queryStringFilter, int limit,
-                          boolean locationDistanceSort, Set<String> layerFilter, boolean debug) {
+                          boolean locationDistanceSort, Set<String> layerFilter, boolean debug, boolean polygon) {
         this.location = location;
         this.language = language;
         this.radius = radius;
@@ -31,6 +32,7 @@ public class ReverseRequest implements Serializable {
         this.locationDistanceSort = locationDistanceSort;
         this.layerFilters = layerFilter;
         this.debug = debug;
+        this.polygon = polygon;
     }
 
     public Point getLocation() {
@@ -67,6 +69,10 @@ public class ReverseRequest implements Serializable {
 
     public boolean getDebug() {
         return debug;
+    }
+
+    public boolean getPolygon() {
+        return polygon;
     }
 
     ReverseRequest addOsmTagFilter(TagFilter filter) {

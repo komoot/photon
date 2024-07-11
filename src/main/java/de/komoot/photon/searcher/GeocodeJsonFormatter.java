@@ -28,7 +28,7 @@ public class GeocodeJsonFormatter implements ResultFormatter {
         final JSONArray features = new JSONArray(results.size());
 
         for (PhotonResult result : results) {
-            if (useGeometryColumn) {
+            if (useGeometryColumn && result.get("geometry") != null) {
                 features.put(new JSONObject()
                         .put("type", "Feature")
                         .put("properties", getResultProperties(result))

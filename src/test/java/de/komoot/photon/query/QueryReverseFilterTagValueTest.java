@@ -68,7 +68,7 @@ class QueryReverseFilterTagValueTest extends ESBaseTester {
 
     private List<PhotonResult> reverseWithTags(String[] params) {
         Point pt = FACTORY.createPoint(new Coordinate(13.38886, 52.51704));
-        ReverseRequest request = new ReverseRequest(pt, "en", 1.0, "", 50, true, new HashSet<>(), false);
+        ReverseRequest request = new ReverseRequest(pt, "en", 1.0, "", 50, true, new HashSet<>(), false, false);
         for (String param : params) {
             request.addOsmTagFilter(TagFilter.buildOsmTagFilter(param));
         }

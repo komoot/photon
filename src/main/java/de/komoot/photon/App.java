@@ -191,20 +191,20 @@ public class App {
         String[] langs = dbProperties.getLanguages();
 
         SearchHandler searchHandler = server.createSearchHandler(langs, args.getQueryTimeout());
-        get("api", new SearchRequestHandler("api", searchHandler, langs, args.getDefaultLanguage(), args.getMaxResults(), args.isUseGeometryColumn()));
-        get("api/", new SearchRequestHandler("api/", searchHandler, langs, args.getDefaultLanguage(), args.getMaxResults(), args.isUseGeometryColumn()));
+        get("api", new SearchRequestHandler("api", searchHandler, langs, args.getDefaultLanguage(), args.getMaxResults()));
+        get("api/", new SearchRequestHandler("api/", searchHandler, langs, args.getDefaultLanguage(), args.getMaxResults()));
 
         if (dbProperties.getSupportStructuredQueries()) {
             StructuredSearchHandler structured = server.createStructuredSearchHandler(langs, args.getQueryTimeout());
-            get("structured", new StructuredSearchRequestHandler("structured", structured, langs, args.getDefaultLanguage(), args.getMaxResults(), args.isUseGeometryColumn()));
-            get("structured/", new StructuredSearchRequestHandler("structured/", structured, langs, args.getDefaultLanguage(), args.getMaxResults(), args.isUseGeometryColumn()));
+            get("structured", new StructuredSearchRequestHandler("structured", structured, langs, args.getDefaultLanguage(), args.getMaxResults()));
+            get("structured/", new StructuredSearchRequestHandler("structured/", structured, langs, args.getDefaultLanguage(), args.getMaxResults()));
         }
 
         ReverseHandler reverseHandler = server.createReverseHandler(args.getQueryTimeout());
         get("reverse", new ReverseSearchRequestHandler("reverse", reverseHandler, dbProperties.getLanguages(),
-                args.getDefaultLanguage(), args.getMaxReverseResults(), args.isUseGeometryColumn()));
+                args.getDefaultLanguage(), args.getMaxReverseResults()));
         get("reverse/", new ReverseSearchRequestHandler("reverse/", reverseHandler, dbProperties.getLanguages(),
-                args.getDefaultLanguage(), args.getMaxReverseResults(), args.isUseGeometryColumn()));
+                args.getDefaultLanguage(), args.getMaxReverseResults()));
         
         get("status", new StatusRequestHandler("status", server));
         get("status/", new StatusRequestHandler("status/", server));

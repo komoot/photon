@@ -22,13 +22,11 @@ import static spark.Spark.halt;
 public class ReverseSearchRequestHandler extends RouteImpl {
     private final ReverseRequestFactory reverseRequestFactory;
     private final ReverseHandler requestHandler;
-    private final boolean useGeometryColumn;
 
-    ReverseSearchRequestHandler(String path, ReverseHandler dbHandler, String[] languages, String defaultLanguage, int maxResults, boolean useGeometryColumn) {
+    ReverseSearchRequestHandler(String path, ReverseHandler dbHandler, String[] languages, String defaultLanguage, int maxResults) {
         super(path);
-        this.useGeometryColumn = useGeometryColumn;
         List<String> supportedLanguages = Arrays.asList(languages);
-        this.reverseRequestFactory = new ReverseRequestFactory(supportedLanguages, defaultLanguage, maxResults, useGeometryColumn);
+        this.reverseRequestFactory = new ReverseRequestFactory(supportedLanguages, defaultLanguage, maxResults);
         this.requestHandler = dbHandler;
     }
 
@@ -55,6 +53,6 @@ public class ReverseSearchRequestHandler extends RouteImpl {
             debugInfo = requestHandler.dumpQuery(photonRequest);
         }
 
-        return new GeocodeJsonFormatter(false, photonRequest.getLanguage(), useGeometryColumn).convert(results, debugInfo);
+        return new GeocodeJsonFormatter(false, photonRequest.getLanguage(), photonRequest.getPolygon()).convert(results, debugInfo);
     }
 }
