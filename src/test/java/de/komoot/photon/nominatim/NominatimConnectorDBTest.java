@@ -35,7 +35,7 @@ class NominatimConnectorDBTest {
                 .build();
 
 
-        connector = new NominatimConnector(null, 0, null, null, null, new H2DataAdapter());
+        connector = new NominatimConnector(null, 0, null, null, null, new H2DataAdapter(), false);
         importer = new CollectingImporter();
         connector.setImporter(importer);
 

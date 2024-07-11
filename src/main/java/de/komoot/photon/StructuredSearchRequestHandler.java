@@ -17,10 +17,12 @@ import static spark.Spark.halt;
 public class StructuredSearchRequestHandler extends RouteImpl {
     private final PhotonRequestFactory photonRequestFactory;
     private final StructuredSearchHandler requestHandler;
+    private final boolean useGeometryColumn;
 
-    StructuredSearchRequestHandler(String path, StructuredSearchHandler dbHandler, String[] languages, String defaultLanguage, int maxResults) {
+    StructuredSearchRequestHandler(String path, StructuredSearchHandler dbHandler, String[] languages, String defaultLanguage, int maxResults, boolean useGeometryColumn) {
         super(path);
         List<String> supportedLanguages = Arrays.asList(languages);
+        this.useGeometryColumn = useGeometryColumn;
         this.photonRequestFactory = new PhotonRequestFactory(supportedLanguages, defaultLanguage, maxResults);
         this.requestHandler = dbHandler;
     }
@@ -51,6 +53,6 @@ public class StructuredSearchRequestHandler extends RouteImpl {
             debugInfo = requestHandler.dumpQuery(photonRequest);
         }
  */
-        return new GeocodeJsonFormatter(photonRequest.getDebug(), photonRequest.getLanguage()).convert(results, debugInfo);
+        return new GeocodeJsonFormatter(photonRequest.getDebug(), photonRequest.getLanguage(), useGeometryColumn).convert(results, debugInfo);
     }
 }

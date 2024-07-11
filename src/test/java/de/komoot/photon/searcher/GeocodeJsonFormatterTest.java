@@ -13,15 +13,11 @@ import static org.junit.jupiter.api.Assertions.*;
 class GeocodeJsonFormatterTest {
 
     @Test
-    void testConvertToGeojson() {
-        GeocodeJsonFormatter formatter = new GeocodeJsonFormatter(false, "en");
+    void testConvertPointToGeojson() {
+        GeocodeJsonFormatter formatter = new GeocodeJsonFormatter(false, "en", false);
         List<PhotonResult> allPointResults = new ArrayList<>();
         allPointResults.add(createDummyPointResult("99999", "Park Foo", "leisure", "park"));
         allPointResults.add(createDummyPointResult("88888", "Bar Park", "leisure", "park"));
-
-        List<PhotonResult> allPolygonResults = new ArrayList<>();
-        allPolygonResults.add(createDummyPolygonResult("99999", "Park Foo", "leisure", "park"));
-        allPolygonResults.add(createDummyPolygonResult("88888", "Bar Park", "leisure", "park"));
 
         // Test Points
         String geojsonString = formatter.convert(allPointResults, null);
@@ -36,12 +32,21 @@ class GeocodeJsonFormatterTest {
             assertEquals("leisure", feature.getJSONObject("properties").getString(Constants.OSM_KEY));
             assertEquals("park", feature.getJSONObject("properties").getString(Constants.OSM_VALUE));
         }
+    }
+
+    @Test
+    void testConvertPolygonToGeojson() {
+        GeocodeJsonFormatter formatter = new GeocodeJsonFormatter(false, "en", true);
+
+        List<PhotonResult> allPolygonResults = new ArrayList<>();
+        allPolygonResults.add(createDummyPolygonResult("99999", "Park Foo", "leisure", "park"));
+        allPolygonResults.add(createDummyPolygonResult("88888", "Bar Park", "leisure", "park"));
 
         // Test Polygon
-        geojsonString = formatter.convert(allPolygonResults, null);
-        jsonObj = new JSONObject(geojsonString);
+        String geojsonString = formatter.convert(allPolygonResults, null);
+        JSONObject jsonObj = new JSONObject(geojsonString);
         assertEquals("FeatureCollection", jsonObj.getString("type"));
-        features = jsonObj.getJSONArray("features");
+        JSONArray features = jsonObj.getJSONArray("features");
         assertEquals(2, features.length());
         for (int i = 0; i < features.length(); i++) {
             JSONObject feature = features.getJSONObject(i);
