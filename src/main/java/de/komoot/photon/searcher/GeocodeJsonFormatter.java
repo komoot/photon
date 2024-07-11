@@ -15,10 +15,12 @@ public class GeocodeJsonFormatter implements ResultFormatter {
 
     private final boolean addDebugInfo;
     private final String language;
+    private final boolean useGeometryColumn;
 
-    public GeocodeJsonFormatter(boolean addDebugInfo, String language) {
+    public GeocodeJsonFormatter(boolean addDebugInfo, String language, boolean useGeometryColumn) {
         this.addDebugInfo = addDebugInfo;
         this.language = language;
+        this.useGeometryColumn = useGeometryColumn;
     }
 
     @Override
@@ -26,16 +28,21 @@ public class GeocodeJsonFormatter implements ResultFormatter {
         final JSONArray features = new JSONArray(results.size());
 
         for (PhotonResult result : results) {
-            final double[] coordinates = result.getCoordinates();
-
-            features.put(new JSONObject()
+            if (useGeometryColumn) {
+                features.put(new JSONObject()
                         .put("type", "Feature")
                         .put("properties", getResultProperties(result))
                         .put("geometry", result.get("geometry")));
-                        
-                        // .put("geometry", new JSONObject()
-                                // .put("type", "Point")
-                                // .put("coordinates", coordinates)));
+            } else {
+                final double[] coordinates = result.getCoordinates();
+
+                features.put(new JSONObject()
+                        .put("type", "Feature")
+                        .put("properties", getResultProperties(result))
+                        .put("geometry", new JSONObject()
+                                .put("type", "Point")
+                                .put("coordinates", coordinates)));
+            }
         }
 
         final JSONObject out = new JSONObject();

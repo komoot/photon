@@ -23,7 +23,7 @@ public class ReverseRequestFactory {
     private final LayerParamValidator layerParamValidator;
     private final int maxResults;
 
-    public ReverseRequestFactory(List<String> supportedLanguages, String defaultLanguage, int maxResults) {
+    public ReverseRequestFactory(List<String> supportedLanguages, String defaultLanguage, int maxResults, boolean useGeometryColumn) {
         this.languageResolver = new RequestLanguageResolver(supportedLanguages, defaultLanguage);
         this.layerParamValidator = new LayerParamValidator();
         this.maxResults = maxResults;
