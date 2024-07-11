@@ -1,6 +1,9 @@
 package de.komoot.photon.opensearch;
 
 import de.komoot.photon.searcher.TagFilter;
+import de.komoot.photon.StructuredSearchRequestHandler;
+import de.komoot.photon.query.StructuredPhotonRequest;
+import de.komoot.photon.Constants;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Point;
 import org.opensearch.client.json.JsonData;
@@ -44,10 +47,10 @@ public class SearchQueryBuilder {
         query4QueryBuilder.should(shd -> shd.functionScore(fs -> fs
                 .query(q -> q.multiMatch(mm -> {
                     mm.query(query).type(TextQueryType.BestFields).analyzer("search");
-                    mm.fields(String.format("%s^%f", "collector.default", 1.0f));
+                    mm.fields(String.format(Locale.ROOT, "%s^%f", "collector.default", 1.0f));
 
                     for (String lang : languages) {
-                        mm.fields(String.format("collector.%s^%f", lang, lang.equals(language) ? 1.0f : 0.6f));
+                        mm.fields(String.format(Locale.ROOT, "collector.%s^%f", lang, lang.equals(language) ? 1.0f : 0.6f));
                     }
 
                     return mm.boost(0.3f);
@@ -71,7 +74,7 @@ public class SearchQueryBuilder {
             }
 
             for (String lang : languages) {
-                q.fields(String.format("name.%s.ngrams^%f", lang, lang.equals(defLang) ? 1.0f : 0.4f));
+                q.fields(String.format(Locale.ROOT, "name.%s.ngrams^%f", lang, lang.equals(defLang) ? 1.0f : 0.4f));
             }
 
             q.fields("name.other^0.4");
@@ -142,6 +145,51 @@ public class SearchQueryBuilder {
                         .field(String.format("name.%s.raw", language))));
     }
 
+    public SearchQueryBuilder(StructuredPhotonRequest request, String language, String[] languages, boolean lenient)
+    {
+        var hasSubStateField = request.hasCounty() || request.hasCityOrPostCode() || request.hasDistrict() || request.hasStreet();
+        var query4QueryBuilder = new AddressQueryBuilder(lenient, language, languages)
+                .addCountryCode(request.getCountryCode(), request.hasState() || hasSubStateField)
+                .addState(request.getState(), hasSubStateField)
+                .addCounty(request.getCounty(), request.hasCityOrPostCode() || request.hasDistrict() || request.hasStreet())
+                .addCity(request.getCity(), request.hasDistrict(), request.hasStreet(), request.hasPostCode())
+                .addPostalCode(request.getPostCode())
+                .addDistrict(request.getDistrict(), request.hasStreet())
+                .addStreetAndHouseNumber(request.getStreet(), request.getHouseNumber())
+                .getQuery();
+
+        finalQueryWithoutTagFilterBuilder = new Query.Builder().functionScore(fs -> fs
+                .query(query4QueryBuilder)
+                .functions(fn1 -> fn1
+                        .linear(df1 -> df1
+                                .field("importance")
+                                .placement(p1 -> p1
+                                        .origin(JsonData.of(1.0))
+                                        .scale(JsonData.of(1.0))
+                                        .decay(0.5))))
+                .scoreMode(FunctionScoreMode.Sum));
+
+        var hasHouseNumberQuery = QueryBuilders.exists().field(Constants.HOUSENUMBER).build().toQuery();
+        var isHouseQuery = QueryBuilders.term().field(Constants.OBJECT_TYPE).value(FieldValue.of("house")).build().toQuery();
+        var typeOtherQuery = QueryBuilders.term().field(Constants.OBJECT_TYPE).value(FieldValue.of("other")).build().toQuery();
+        if (!request.hasHouseNumber())
+        {
+            queryBuilderForTopLevelFilter = QueryBuilders.bool().mustNot(hasHouseNumberQuery)
+                    .mustNot(isHouseQuery)
+                    .mustNot(typeOtherQuery);
+        }
+        else {
+            var noHouseOrHouseNumber = QueryBuilders.bool().should(hasHouseNumberQuery)
+                    .should(QueryBuilders.bool().mustNot(isHouseQuery).build().toQuery())
+                    .build()
+                    .toQuery();
+            queryBuilderForTopLevelFilter = QueryBuilders.bool().must(noHouseOrHouseNumber)
+                    .mustNot(typeOtherQuery);
+        }
+
+        osmTagFilter = new OsmTagFilter();
+    }
+
     public SearchQueryBuilder withLocationBias(Point point, double scale, int zoom) {
         if (point == null || zoom < 4) return this;
 
@@ -205,7 +253,10 @@ public class SearchQueryBuilder {
         if (finalQuery == null) {
             finalQuery = BoolQuery.of(q -> {
                 q.must(finalQueryWithoutTagFilterBuilder.build());
-                q.filter(queryBuilderForTopLevelFilter.build().toQuery());
+                if (queryBuilderForTopLevelFilter != null) {
+                    q.filter(queryBuilderForTopLevelFilter.build().toQuery());
+                }
+
                 q.filter(f -> f.bool(fb -> fb
                         .mustNot(n -> n.ids(i -> i.values(PhotonIndex.PROPERTY_DOCUMENT_ID)))
                 ));
