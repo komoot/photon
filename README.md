@@ -372,6 +372,10 @@ Example above will return both cities and localities.
 }
 ```
 
+### Structured queries
+
+The OpenSeach based version of photon has opt-in support for structured queries. See [docs/structured.md](docs/structured.md) for details. Please note that structured queries are disabled for photon.komoot.io. 
+
 ### Related Projects
 
 - photon's search configuration was developed with a specific test framework. It is written in Python and [hosted separately](https://github.com/yohanboniface/osm-geocoding-tester).
