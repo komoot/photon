@@ -251,6 +251,14 @@ http://localhost:2322/api?q=berlin&lon=10&lat=52&zoom=12&location_bias_scale=0.1
 http://localhost:2322/reverse?lon=10&lat=52
 ```
 
+#### Reverse geocode a coordinate with radius
+An optional radius parameter can be used to specify a value in kilometers
+to reverse geocode within. The value has to be greater than 0 and lower than 5000.
+
+```
+http://localhost:2322/reverse?lon=10&lat=52&radius=10
+```
+
 #### Adapt Number of Results
 
 ```
