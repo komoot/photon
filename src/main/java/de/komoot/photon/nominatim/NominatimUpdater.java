@@ -199,14 +199,14 @@ public class NominatimUpdater {
      * @param username Nominatim database username
      * @param password Nominatim database password
      */
-    public NominatimUpdater(String host, int port, String database, String username, String password, DBDataAdapter dataAdapter) {
+    public NominatimUpdater(String host, int port, String database, String username, String password, DBDataAdapter dataAdapter, boolean useGeometryColumn) {
         BasicDataSource dataSource = NominatimConnector.buildDataSource(host, port, database, username, password, true);
 
-        exporter = new NominatimConnector(host, port, database, username, password, dataAdapter);
+        exporter = new NominatimConnector(host, port, database, username, password, dataAdapter, useGeometryColumn);
         template = new JdbcTemplate(dataSource);
     }
 
-    public NominatimUpdater(String host, int port, String database, String username, String password) {
-        this(host, port, database, username, password, new PostgisDataAdapter());
+    public NominatimUpdater(String host, int port, String database, String username, String password, boolean useGeometryColumn) {
+        this(host, port, database, username, password, new PostgisDataAdapter(), useGeometryColumn);
     }
 }

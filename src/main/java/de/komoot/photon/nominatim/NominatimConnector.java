@@ -24,7 +24,7 @@ import java.util.Map;
 public class NominatimConnector {
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(NominatimConnector.class);
 
-    private static final String SELECT_COLS_PLACEX = "SELECT place_id, osm_type, osm_id, class, type, name, postcode, address, extratags, ST_Envelope(geometry) AS bbox, parent_place_id, linked_place_id, rank_address, rank_search, importance, country_code, centroid";
+    private static final String SELECT_COLS_PLACEX = "SELECT place_id, osm_type, osm_id, class, type, name, postcode, address, extratags, ST_Envelope(geometry) AS bbox, parent_place_id, linked_place_id, rank_address, rank_search, importance, country_code, centroid, geometry";
     private static final String SELECT_COLS_ADDRESS = "SELECT p.name, p.class, p.type, p.rank_address";
 
     private final DBDataAdapter dbutils;
@@ -40,6 +40,7 @@ public class NominatimConnector {
     private final String selectOsmlineSql;
     private Importer importer;
 
+    private final boolean useGeometryColumn;
 
     /**
      * Maps a placex row in nominatim to a photon doc.
@@ -61,6 +62,10 @@ public class NominatimConnector {
                     .linkedPlaceId(rs.getLong("linked_place_id"))
                     .rankAddress(rs.getInt("rank_address"))
                     .postcode(rs.getString("postcode"));
+
+            if (useGeometryColumn) {
+                doc.geometry(dbutils.extractGeometry(rs, "geometry"));
+            }
 
             double importance = rs.getDouble("importance");
             doc.importance(rs.wasNull() ? (0.75 - rs.getInt("rank_search") / 40d) : importance);
@@ -87,17 +92,19 @@ public class NominatimConnector {
      * @param username db username
      * @param password db username's password
      */
-    public NominatimConnector(String host, int port, String database, String username, String password) {
-        this(host, port, database, username, password, new PostgisDataAdapter());
+    public NominatimConnector(String host, int port, String database, String username, String password, boolean useGeometryColumn) {
+        this(host, port, database, username, password, new PostgisDataAdapter(), useGeometryColumn);
     }
 
-    public NominatimConnector(String host, int port, String database, String username, String password, DBDataAdapter dataAdapter) {
+    public NominatimConnector(String host, int port, String database, String username, String password, DBDataAdapter dataAdapter, boolean useGeometryColumn) {
         BasicDataSource dataSource = buildDataSource(host, port, database, username, password, false);
 
         template = new JdbcTemplate(dataSource);
         template.setFetchSize(100000);
 
         dbutils = dataAdapter;
+
+        this.useGeometryColumn = useGeometryColumn;
 
         // Setup handling of interpolation table. There are two different formats depending on the Nominatim version.
         if (dbutils.hasColumn(template, "location_property_osmline", "step")) {

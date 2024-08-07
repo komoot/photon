@@ -48,7 +48,7 @@ class QueryReverseTest extends ESBaseTester {
         Point pt = FACTORY.createPoint(new Coordinate(lon, lat));
 
         return getServer().createReverseHandler(1).reverse(
-            new ReverseRequest(pt, "en", radius, "", limit, true, new HashSet<>(), false)
+            new ReverseRequest(pt, "en", radius, "", limit, true, new HashSet<>(), false, false)
         );
     }
 

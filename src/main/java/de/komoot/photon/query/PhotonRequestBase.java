@@ -18,6 +18,7 @@ public class PhotonRequestBase
     private int zoom = 14;
     private Envelope bbox = null;
     private boolean debug = false;
+    private boolean polygon = false;
 
     private final List<TagFilter> osmTagFilters = new ArrayList<>(1);
     private Set<String> layerFilters = new HashSet<>(1);
@@ -52,6 +53,8 @@ public class PhotonRequestBase
     }
 
     public boolean getDebug() { return debug; }
+
+    public boolean getPolygon() { return polygon; }
 
     public List<TagFilter> getOsmTagFilters() {
         return osmTagFilters;
@@ -99,5 +102,9 @@ public class PhotonRequestBase
 
     void enableDebug() {
         this.debug = true;
+    }
+
+    public void setPolygon(boolean polygon) {
+        this.polygon = polygon;
     }
 }
