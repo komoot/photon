@@ -132,7 +132,7 @@ Discover more of photon's features with its usage `java -jar photon-*.jar -h`. T
 
 -cors-any             Enable cross-site resource sharing for any origin (default CORS not supported)
 
--cors-origin          Enable cross-site resource sharing for the specified origin (default CORS not supported)
+-cors-origin          Enable cross-site resource sharing for the specified origins, comma separated (default CORS not supported)
 
 -enable-update-api    Enable the additional endpoint /nominatim-update, which allows to trigger updates
                       from a nominatim database

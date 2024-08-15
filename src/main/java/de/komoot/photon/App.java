@@ -76,7 +76,7 @@ public class App {
             jCommander.parse(rawArgs);
 
             // Cors arguments are mutually exclusive.
-            if (args.isCorsAnyOrigin() && args.getCorsOrigin() != null) {
+            if (args.isCorsAnyOrigin() && args.getCorsOrigin().length > 0) {
                 throw new ParameterException("Use only one cors configuration type");
             }
         } catch (ParameterException e) {
@@ -179,8 +179,8 @@ public class App {
         port(args.getListenPort());
         ipAddress(args.getListenIp());
 
-        String allowedOrigin = args.isCorsAnyOrigin() ? "*" : args.getCorsOrigin();
-        if (allowedOrigin != null) {
+        String[] allowedOrigin = args.isCorsAnyOrigin() ? new String[]{ "*" } : args.getCorsOrigin();
+        if (allowedOrigin.length > 0) {
             CorsFilter.enableCORS(allowedOrigin, "get", "*");
         } else {
             // Set Json content type. In the other case already set by enableCors.

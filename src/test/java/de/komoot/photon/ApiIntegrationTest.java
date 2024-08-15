@@ -10,6 +10,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -70,6 +71,42 @@ class ApiIntegrationTest extends ESBaseTester {
         awaitInitialization();
         HttpURLConnection connection = (HttpURLConnection) new URL("http://127.0.0.1:" + port() + "/api?q=berlin").openConnection();
         assertEquals("www.poole.ch", connection.getHeaderField("Access-Control-Allow-Origin"));
+    }
+
+    /*
+     * Test that the Access-Control-Allow-Origin header is set to the matching domain
+     */
+    @Test
+    void testCorsOriginIsSetToMatchingDomain() throws Exception {
+        App.main(new String[]{"-cluster", TEST_CLUSTER_NAME, "-listen-port", Integer.toString(LISTEN_PORT), "-transport-addresses", "127.0.0.1",
+                "-cors-origin", "www.poole.ch,alt.poole.ch"});
+        awaitInitialization();
+        String[] origins = {"www.poole.ch", "alt.poole.ch"};
+        for (String origin: origins) {
+            URLConnection urlConnection = new URL("http://127.0.0.1:" + port() + "/api?q=berlin").openConnection();
+
+            HttpURLConnection connection = (HttpURLConnection) urlConnection;
+            connection.setRequestProperty("Origin", origin);
+            assertEquals(origin, connection.getRequestProperty("Origin"));
+            assertEquals(origin, connection.getHeaderField("Access-Control-Allow-Origin"));
+        }
+    }
+
+    /*
+     * Test that the Access-Control-Allow-Origin header does not return mismatching origins
+     */
+    @Test
+    void testMismatchedCorsOriginsAreBlock() throws Exception {
+        App.main(new String[]{"-cluster", TEST_CLUSTER_NAME, "-listen-port", Integer.toString(LISTEN_PORT), "-transport-addresses", "127.0.0.1",
+                "-cors-origin", "www.poole.ch,alt.poole.ch"});
+        awaitInitialization();
+        String[] origins = {"www.randomsite.com", "www.arbitrary.com"};
+        for (String origin: origins) {
+            URLConnection urlConnection = new URL("http://127.0.0.1:" + port() + "/api?q=berlin").openConnection();
+            urlConnection.setRequestProperty("Origin", origin);
+            HttpURLConnection connection = (HttpURLConnection) urlConnection;
+            assertEquals("www.poole.ch", connection.getHeaderField("Access-Control-Allow-Origin"));
+        }
     }
 
     @Test
