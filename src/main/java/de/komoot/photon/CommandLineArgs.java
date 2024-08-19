@@ -76,8 +76,8 @@ public class CommandLineArgs {
     @Parameter(names = "-cors-any", description = "Enable cross-site resource sharing for any origin")
     private boolean corsAnyOrigin = false;
     
-    @Parameter(names = "-cors-origin", description = "Enable cross-site resource sharing for the specified origin")
-    private String corsOrigin = null;
+    @Parameter(names = "-cors-origin", description = "Enable cross-site resource sharing for the specified origins, comma separated", converter = StringArrayConverter.class)
+    private String[] corsOrigin = new String[]{};
 
     @Parameter(names = "-enable-update-api", description = "Enable the additional endpoint /nominatim-update, which allows to trigger updates from a nominatim database")
     private boolean enableUpdateApi = false;
@@ -183,7 +183,7 @@ public class CommandLineArgs {
         return this.corsAnyOrigin;
     }
 
-    public String getCorsOrigin() {
+    public String[] getCorsOrigin() {
         return this.corsOrigin;
     }
 

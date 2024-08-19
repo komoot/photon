@@ -50,4 +50,3 @@ shadowJar {
     // when you cannot upgrade as per https://logging.apache.org/log4j/2.x/security.html
     exclude 'org/apache/logging/log4j/core/lookup/JndiLookup.class'
 }
-
