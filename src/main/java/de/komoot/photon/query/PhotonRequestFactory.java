@@ -112,7 +112,10 @@ public class PhotonRequestFactory {
             request.setLayerFilter(layerParamValidator.validate(layerFiltersQueryMap.values()));
         }
 
-        request.setPolygon(Boolean.parseBoolean(webRequest.queryParams("polygon")));
+        if (webRequest.queryParams("polygon") != null) {
+            request.setPolygonRequest(true);
+            request.setReturnPolygon(Boolean.parseBoolean(webRequest.queryParams("polygon")));
+        }
     }
 
     private Integer parseInt(Request webRequest, String param) throws BadRequestException {

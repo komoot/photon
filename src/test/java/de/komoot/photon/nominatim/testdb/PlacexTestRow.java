@@ -24,6 +24,7 @@ public class PlacexTestRow {
     private Integer rankAddress = 30;
     private Integer rankSearch = 30;
     private String centroid;
+    private String geometry;
     private String countryCode = "us";
     private Double importance = null;
 
@@ -33,6 +34,7 @@ public class PlacexTestRow {
         this.value = value;
         osmId = placeId;
         centroid = "POINT (1.0 34.0)";
+        geometry = "POLYGON ((6.4440619 52.1969454, 6.4441094 52.1969158, 6.4441408 52.1969347, 6.4441138 52.1969516, 6.4440933 52.1969643, 6.4440619 52.1969454))";
     }
 
     public static PlacexTestRow make_street(String name) {

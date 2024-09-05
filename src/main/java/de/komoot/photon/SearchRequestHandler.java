@@ -21,17 +21,19 @@ public class SearchRequestHandler extends RouteImpl {
     private final PhotonRequestFactory photonRequestFactory;
     private final SearchHandler requestHandler;
     private final int maxResults;
+    private final boolean supportPolygons;
 
-    SearchRequestHandler(String path, SearchHandler dbHandler, String[] languages, String defaultLanguage, int maxResults) {
+    SearchRequestHandler(String path, SearchHandler dbHandler, String[] languages, String defaultLanguage, int maxResults, boolean supportPolygons) {
         super(path);
         List<String> supportedLanguages = Arrays.asList(languages);
         this.photonRequestFactory = new PhotonRequestFactory(supportedLanguages, defaultLanguage, maxResults);
         this.requestHandler = dbHandler;
         this.maxResults = maxResults;
+        this.supportPolygons = supportPolygons;
     }
 
     @Override
-    public String handle(Request request, Response response) {
+    public String handle(Request request, Response response) throws BadRequestException {
         PhotonRequest photonRequest = null;
         try {
             photonRequest = photonRequestFactory.create(request);
@@ -56,6 +58,15 @@ public class SearchRequestHandler extends RouteImpl {
             debugInfo = requestHandler.dumpQuery(photonRequest);
         }
 
-        return new GeocodeJsonFormatter(photonRequest.getDebug(), photonRequest.getLanguage(), photonRequest.getPolygon()).convert(results, debugInfo);
+        boolean returnPolygon = supportPolygons;
+        if (photonRequest.isPolygonRequest()) {
+            returnPolygon = photonRequest.getReturnPolygon();
+        }
+
+        if (!supportPolygons && (photonRequest.isPolygonRequest() && photonRequest.getReturnPolygon())) {
+            throw new BadRequestException(400, "You're requesting a polygon, but polygons are not imported!");
+        }
+
+        return new GeocodeJsonFormatter(photonRequest.getDebug(), photonRequest.getLanguage(), returnPolygon).convert(results, debugInfo);
     }
 }

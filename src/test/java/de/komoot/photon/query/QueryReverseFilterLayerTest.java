@@ -28,7 +28,7 @@ class QueryReverseFilterLayerTest extends ESBaseTester {
 
     @BeforeAll
     void setup() throws IOException {
-        setUpES(instanceTestDirectory, "en");
+        setUpES(instanceTestDirectory, false,"en");
 
         Importer instance = makeImporter();
 

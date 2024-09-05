@@ -28,6 +28,8 @@ public class DatabaseProperties {
 
     private boolean supportStructuredQueries;
 
+    private boolean supportPolygons;
+
     /**
      * Return the list of languages for which the database is configured.
      * @return
@@ -99,5 +101,24 @@ public class DatabaseProperties {
     public DatabaseProperties setSupportStructuredQueries(boolean supportStructuredQueries) {
         this.supportStructuredQueries = supportStructuredQueries;
         return this;
+    }
+
+    public boolean getSupportPolygons() {
+        return supportPolygons;
+    }
+
+    public DatabaseProperties setSupportPolygons(boolean supportPolygons) {
+        this.supportPolygons = supportPolygons;
+        return this;
+    }
+
+    @Override
+    public String toString() {
+        return "DatabaseProperties{" +
+                "languages=" + Arrays.toString(languages) +
+                ", importDate=" + importDate +
+                ", supportStructuredQueries=" + supportStructuredQueries +
+                ", supportPolygons=" + supportPolygons +
+                '}';
     }
 }

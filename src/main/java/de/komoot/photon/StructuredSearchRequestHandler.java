@@ -51,6 +51,6 @@ public class StructuredSearchRequestHandler extends RouteImpl {
             debugInfo = requestHandler.dumpQuery(photonRequest);
         }
  */
-        return new GeocodeJsonFormatter(photonRequest.getDebug(), photonRequest.getLanguage(), photonRequest.getPolygon()).convert(results, debugInfo);
+        return new GeocodeJsonFormatter(photonRequest.getDebug(), photonRequest.getLanguage(), photonRequest.getReturnPolygon()).convert(results, debugInfo);
     }
 }

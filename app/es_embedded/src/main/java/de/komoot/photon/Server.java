@@ -48,6 +48,7 @@ public class Server {
     private static final String FIELD_VERSION = "database_version";
     private static final String FIELD_LANGUAGES = "indexed_languages";
     private static final String FIELD_IMPORT_DATE = "import_date";
+    private static final String FIELD_SUPPORT_POLYGONS = "support_polygons";
 
     private Node esNode;
 
@@ -169,7 +170,7 @@ public class Server {
 
     }
 
-    public DatabaseProperties recreateIndex(String[] languages, Date importDate, boolean supportStructuredQueries) throws IOException {
+    public DatabaseProperties recreateIndex(String[] languages, Date importDate, boolean supportStructuredQueries, boolean supportPolygons) throws IOException {
         deleteIndex();
 
         loadIndexSettings().createIndex(esClient, PhotonIndex.NAME);
@@ -178,7 +179,10 @@ public class Server {
 
         DatabaseProperties dbProperties = new DatabaseProperties()
             .setLanguages(languages)
-            .setImportDate(importDate);
+            .setImportDate(importDate)
+            .setSupportPolygons(supportPolygons);
+
+        LOGGER.info(dbProperties.toString());
         saveToDatabase(dbProperties);
 
         return dbProperties;
@@ -234,6 +238,7 @@ public class Server {
                         .field(FIELD_VERSION, DatabaseProperties.DATABASE_VERSION)
                         .field(FIELD_LANGUAGES, String.join(",", dbProperties.getLanguages()))
                         .field(FIELD_IMPORT_DATE, dbProperties.getImportDate() instanceof Date ? dbProperties.getImportDate().toInstant() : null)
+                        .field(FIELD_SUPPORT_POLYGONS, Boolean.toString(dbProperties.getSupportPolygons()))
                         .endObject().endObject();
 
         esClient.prepareIndex(PhotonIndex.NAME, PhotonIndex.TYPE).
@@ -274,6 +279,9 @@ public class Server {
 
         String importDateString = properties.get(FIELD_IMPORT_DATE);
         dbProperties.setImportDate(importDateString == null ? null : Date.from(Instant.parse(importDateString)));
+
+        String supportPolygons = properties.get(FIELD_SUPPORT_POLYGONS);
+        dbProperties.setSupportPolygons(supportPolygons == null ? null : Boolean.parseBoolean(supportPolygons));
     }
 
     public Importer createImporter(String[] languages, String[] extraTags) {

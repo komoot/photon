@@ -7,6 +7,8 @@ import org.locationtech.jts.geom.PrecisionModel;
 import de.komoot.photon.searcher.PhotonResult;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.io.TempDir;
+import org.locationtech.jts.io.ParseException;
+import org.locationtech.jts.io.WKTReader;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -25,9 +27,9 @@ public class ESBaseTester {
 
     private ElasticTestServer server;
 
-    protected PhotonDoc createDoc(double lon, double lat, int id, int osmId, String key, String value) {
+    protected PhotonDoc createDoc(double lon, double lat, int id, int osmId, String key, String value) throws ParseException {
         Point location = FACTORY.createPoint(new Coordinate(lon, lat));
-        return new PhotonDoc(id, "W", osmId, key, value).names(Collections.singletonMap("name", "berlin")).centroid(location);
+        return new PhotonDoc(id, "W", osmId, key, value).names(Collections.singletonMap("name", "berlin")).centroid(location).geometry(new WKTReader().read("POLYGON ((6.4440619 52.1969454, 6.4441094 52.1969158, 6.4441408 52.1969347, 6.4441138 52.1969516, 6.4440933 52.1969643, 6.4440619 52.1969454))"));
     }
 
     protected PhotonResult getById(int id) {
@@ -45,17 +47,21 @@ public class ESBaseTester {
     }
 
     public void setUpES() throws IOException {
-        setUpES(dataDirectory, "en");
+        setUpES(dataDirectory, false,"en");
+    }
+
+    public void setUpESWithPolygons() throws IOException {
+        setUpES(dataDirectory, true,"en");
     }
     /**
      * Setup the ES server
      *
      * @throws IOException
      */
-    public void setUpES(Path test_directory, String... languages) throws IOException {
+    public void setUpES(Path test_directory, boolean supportPolygons, String... languages) throws IOException {
         server = new ElasticTestServer(test_directory.toString());
         server.start(TEST_CLUSTER_NAME, new String[]{});
-        server.recreateIndex(languages, new Date(), false);
+        server.recreateIndex(languages, new Date(), false, supportPolygons);
         refresh();
     }
 

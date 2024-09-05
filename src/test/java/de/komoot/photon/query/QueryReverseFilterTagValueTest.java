@@ -22,6 +22,7 @@ import de.komoot.photon.Importer;
 import de.komoot.photon.PhotonDoc;
 import de.komoot.photon.searcher.PhotonResult;
 import de.komoot.photon.searcher.TagFilter;
+import org.locationtech.jts.io.ParseException;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class QueryReverseFilterTagValueTest extends ESBaseTester {
@@ -39,8 +40,8 @@ class QueryReverseFilterTagValueTest extends ESBaseTester {
                                                       "railway", "station"};
 
     @BeforeAll
-    void setup() throws IOException {
-        setUpES(instanceTestDirectory, "en", "de", "fr");
+    void setup() throws IOException, ParseException {
+        setUpES(instanceTestDirectory, false, "en", "de", "fr");
         Importer instance = makeImporter();
         double lon = 13.38886;
         double lat = 52.51704;

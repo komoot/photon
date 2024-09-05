@@ -79,6 +79,7 @@ public class IndexMapping {
         }
 
         mappings.properties("coordinate", b -> b.geoPoint(p -> p));
+        mappings.properties("geometry", b -> b.geoShape(p -> p));
         mappings.properties("countrycode", b -> b.keyword(p -> p.index(true)));
         mappings.properties("importance", b -> b.float_(p -> p.index(false)));
 

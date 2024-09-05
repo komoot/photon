@@ -26,7 +26,7 @@ class QueryFilterLayerTest extends ESBaseTester {
 
     @BeforeAll
     void setUp() throws Exception {
-        setUpES(instanceTestDirectory, "en", "de", "fr");
+        setUpES(instanceTestDirectory, false, "en", "de", "fr");
         Importer instance = makeImporter();
 
         int id = 0;

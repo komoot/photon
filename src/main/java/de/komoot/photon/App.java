@@ -102,7 +102,7 @@ public class App {
         try {
             final String filename = args.getJsonDump();
             final JsonDumper jsonDumper = new JsonDumper(filename, args.getLanguages(), args.getExtraTags());
-            NominatimConnector nominatimConnector = new NominatimConnector(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword(), args.isUseGeometryColumn());
+            NominatimConnector nominatimConnector = new NominatimConnector(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword(), args.getUseGeometryColumn());
             nominatimConnector.setImporter(jsonDumper);
             nominatimConnector.readEntireDatabase(args.getCountryCodes());
             LOGGER.info("Json dump was created: {}", filename);
@@ -117,10 +117,14 @@ public class App {
      */
     private static void startNominatimImport(CommandLineArgs args, Server esServer) {
         DatabaseProperties dbProperties;
-        NominatimConnector nominatimConnector = new NominatimConnector(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword(), args.isUseGeometryColumn());
+        NominatimConnector nominatimConnector = new NominatimConnector(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword(), args.getUseGeometryColumn());
         Date importDate = nominatimConnector.getLastImportDate();
+        LOGGER.info("Starting import with the following settings: " +
+                "\n Languages: {} \n Import Date: {} \n Support Structured Queries: {} \n Support Polygons: {}",
+                args.getLanguages(), importDate, args.getSupportStructuredQueries(), args.getUseGeometryColumn());
+
         try {
-            dbProperties = esServer.recreateIndex(args.getLanguages(), importDate, args.getSupportStructuredQueries()); // clear out previous data
+            dbProperties = esServer.recreateIndex(args.getLanguages(), importDate, args.getSupportStructuredQueries(), args.getUseGeometryColumn()); // clear out previous data
         } catch (IOException e) {
             throw new RuntimeException("Cannot setup index, elastic search config files not readable", e);
         }
@@ -133,7 +137,7 @@ public class App {
     }
 
     private static void startNominatimUpdateInit(CommandLineArgs args) {
-        NominatimUpdater nominatimUpdater = new NominatimUpdater(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword(), args.isUseGeometryColumn());
+        NominatimUpdater nominatimUpdater = new NominatimUpdater(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword(), args.getUseGeometryColumn());
         nominatimUpdater.initUpdates(args.getNominatimUpdateInit());
     }
 
@@ -160,7 +164,7 @@ public class App {
         DatabaseProperties dbProperties = new DatabaseProperties();
         server.loadFromDatabase(dbProperties);
 
-        NominatimUpdater nominatimUpdater = new NominatimUpdater(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword(), args.isUseGeometryColumn());
+        NominatimUpdater nominatimUpdater = new NominatimUpdater(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword(), args.getUseGeometryColumn());
         nominatimUpdater.setUpdater(server.createUpdater(dbProperties.getLanguages(), args.getExtraTags()));
         return nominatimUpdater;
     }
@@ -175,6 +179,10 @@ public class App {
         if (args.getLanguages(false).length > 0) {
             dbProperties.restrictLanguages(args.getLanguages());
         }
+
+        LOGGER.info("Starting API with the following settings: " +
+                        "\n Languages: {} \n Import Date: {} \n Support Structured Queries: {} \n Support Polygons: {}",
+                dbProperties.getLanguages(), dbProperties.getImportDate(), dbProperties.getSupportStructuredQueries(), dbProperties.getSupportPolygons());
 
         port(args.getListenPort());
         ipAddress(args.getListenIp());
@@ -191,8 +199,8 @@ public class App {
         String[] langs = dbProperties.getLanguages();
 
         SearchHandler searchHandler = server.createSearchHandler(langs, args.getQueryTimeout());
-        get("api", new SearchRequestHandler("api", searchHandler, langs, args.getDefaultLanguage(), args.getMaxResults()));
-        get("api/", new SearchRequestHandler("api/", searchHandler, langs, args.getDefaultLanguage(), args.getMaxResults()));
+        get("api", new SearchRequestHandler("api", searchHandler, langs, args.getDefaultLanguage(), args.getMaxResults(), dbProperties.getSupportPolygons()));
+        get("api/", new SearchRequestHandler("api/", searchHandler, langs, args.getDefaultLanguage(), args.getMaxResults(), dbProperties.getSupportPolygons()));
 
         if (dbProperties.getSupportStructuredQueries()) {
             StructuredSearchHandler structured = server.createStructuredSearchHandler(langs, args.getQueryTimeout());
