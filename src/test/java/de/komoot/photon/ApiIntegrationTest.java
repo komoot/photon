@@ -166,7 +166,7 @@ class ApiIntegrationTest extends ESBaseTester {
 
     @Test
     void testSearchAndGetPolygon() throws Exception {
-        App.main(new String[]{"-cluster", TEST_CLUSTER_NAME, "-listen-port", Integer.toString(LISTEN_PORT), "-transport-addresses", "127.0.0.1", "-use-geometry-column"});
+        App.main(new String[]{"-cluster", TEST_CLUSTER_NAME, "-listen-port", Integer.toString(LISTEN_PORT), "-transport-addresses", "127.0.0.1", "-import-geometry-column"});
         awaitInitialization();
         HttpURLConnection connection = (HttpURLConnection) new URL("http://127.0.0.1:" + port() + "/api?q=berlin&limit=1").openConnection();
         JSONObject json = new JSONObject(
