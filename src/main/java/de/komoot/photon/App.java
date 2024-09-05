@@ -102,7 +102,7 @@ public class App {
         try {
             final String filename = args.getJsonDump();
             final JsonDumper jsonDumper = new JsonDumper(filename, args.getLanguages(), args.getExtraTags());
-            NominatimConnector nominatimConnector = new NominatimConnector(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword(), args.getUseGeometryColumn());
+            NominatimConnector nominatimConnector = new NominatimConnector(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword(), args.getImportGeometryColumn());
             nominatimConnector.setImporter(jsonDumper);
             nominatimConnector.readEntireDatabase(args.getCountryCodes());
             LOGGER.info("Json dump was created: {}", filename);
@@ -117,14 +117,14 @@ public class App {
      */
     private static void startNominatimImport(CommandLineArgs args, Server esServer) {
         DatabaseProperties dbProperties;
-        NominatimConnector nominatimConnector = new NominatimConnector(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword(), args.getUseGeometryColumn());
+        NominatimConnector nominatimConnector = new NominatimConnector(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword(), args.getImportGeometryColumn());
         Date importDate = nominatimConnector.getLastImportDate();
         LOGGER.info("Starting import with the following settings: " +
                 "\n Languages: {} \n Import Date: {} \n Support Structured Queries: {} \n Support Polygons: {}",
-                args.getLanguages(), importDate, args.getSupportStructuredQueries(), args.getUseGeometryColumn());
+                args.getLanguages(), importDate, args.getSupportStructuredQueries(), args.getImportGeometryColumn());
 
         try {
-            dbProperties = esServer.recreateIndex(args.getLanguages(), importDate, args.getSupportStructuredQueries(), args.getUseGeometryColumn()); // clear out previous data
+            dbProperties = esServer.recreateIndex(args.getLanguages(), importDate, args.getSupportStructuredQueries(), args.getImportGeometryColumn()); // clear out previous data
         } catch (IOException e) {
             throw new RuntimeException("Cannot setup index, elastic search config files not readable", e);
         }
@@ -137,7 +137,7 @@ public class App {
     }
 
     private static void startNominatimUpdateInit(CommandLineArgs args) {
-        NominatimUpdater nominatimUpdater = new NominatimUpdater(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword(), args.getUseGeometryColumn());
+        NominatimUpdater nominatimUpdater = new NominatimUpdater(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword(), args.getImportGeometryColumn());
         nominatimUpdater.initUpdates(args.getNominatimUpdateInit());
     }
 
@@ -164,7 +164,7 @@ public class App {
         DatabaseProperties dbProperties = new DatabaseProperties();
         server.loadFromDatabase(dbProperties);
 
-        NominatimUpdater nominatimUpdater = new NominatimUpdater(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword(), args.getUseGeometryColumn());
+        NominatimUpdater nominatimUpdater = new NominatimUpdater(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword(), args.getImportGeometryColumn());
         nominatimUpdater.setUpdater(server.createUpdater(dbProperties.getLanguages(), args.getExtraTags()));
         return nominatimUpdater;
     }

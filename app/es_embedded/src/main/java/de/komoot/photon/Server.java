@@ -182,7 +182,6 @@ public class Server {
             .setImportDate(importDate)
             .setSupportPolygons(supportPolygons);
 
-        LOGGER.info(dbProperties.toString());
         saveToDatabase(dbProperties);
 
         return dbProperties;

@@ -335,19 +335,13 @@ class NominatimConnectorDBTest {
 
         assertNull(importer.get(place).getCountryCode());
     }
-
-    /**
-     * Places without a country can be imported.
-     */
+    
     @Test
     void testGeometry() {
         PlacexTestRow place = new PlacexTestRow("building", "yes").name("Oosterbroek Zuivel").country("nl").add(jdbc);
-
         connector.readEntireDatabase();
-
         assertEquals(1, importer.size());
-
-        assertNull(importer.get(place).getGeometry());
+        assertNotNull(importer.get(place).getGeometry());
     }
 
     @Test
