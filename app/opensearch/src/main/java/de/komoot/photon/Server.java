@@ -98,7 +98,7 @@ public class Server {
         }
     }
 
-    public DatabaseProperties recreateIndex(String[] languages, Date importDate, boolean supportStructuredQueries) throws IOException {
+    public DatabaseProperties recreateIndex(String[] languages, Date importDate, boolean supportStructuredQueries, boolean supportPolygons) throws IOException {
         // delete any existing data
         if (client.indices().exists(e -> e.index(PhotonIndex.NAME)).value()) {
             client.indices().delete(d -> d.index(PhotonIndex.NAME));
@@ -111,7 +111,8 @@ public class Server {
         var dbProperties = new DatabaseProperties()
                 .setLanguages(languages)
                 .setSupportStructuredQueries(supportStructuredQueries)
-                .setImportDate(importDate);
+                .setImportDate(importDate)
+                .setSupportPolygons(supportPolygons);
         saveToDatabase(dbProperties);
 
         return dbProperties;
@@ -157,6 +158,7 @@ public class Server {
         dbProperties.setLanguages(dbEntry.source().languages);
         dbProperties.setImportDate(dbEntry.source().importDate);
         dbProperties.setSupportStructuredQueries(dbEntry.source().supportStructuredQueries);
+        dbProperties.setSupportPolygons(dbEntry.source().supportPolygons);
     }
 
     public Importer createImporter(String[] languages, String[] extraTags) {

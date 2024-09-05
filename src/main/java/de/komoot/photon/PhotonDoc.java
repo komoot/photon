@@ -1,9 +1,10 @@
-package de.komoot.photon;
+    package de.komoot.photon;
 
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Point;
 import de.komoot.photon.nominatim.model.AddressType;
+import org.locationtech.jts.geom.Polygon;
 import org.slf4j.Logger;
 
 import java.util.*;
@@ -34,6 +35,7 @@ public class PhotonDoc {
     private Set<Map<String, String>> context = new HashSet<>();
     private String houseNumber = null;
     private Point centroid = null;
+    private Geometry geometry = null;
 
     public PhotonDoc(long placeId, String osmType, long osmId, String tagKey, String tagValue) {
         this.placeId = placeId;
@@ -41,6 +43,15 @@ public class PhotonDoc {
         this.osmId = osmId;
         this.tagKey = tagKey;
         this.tagValue = tagValue;
+    }
+
+    public PhotonDoc(long placeId, String osmType, long osmId, String tagKey, String tagValue, Geometry geometry) {
+        this.placeId = placeId;
+        this.osmType = osmType;
+        this.osmId = osmId;
+        this.tagKey = tagKey;
+        this.tagValue = tagValue;
+        this.geometry = geometry;
     }
 
     public PhotonDoc(PhotonDoc other) {
@@ -62,6 +73,7 @@ public class PhotonDoc {
         this.rankAddress = other.rankAddress;
         this.addressParts = other.addressParts;
         this.context = other.context;
+        this.geometry = other.geometry;
     }
 
     public PhotonDoc names(Map<String, String> names) {
@@ -83,6 +95,11 @@ public class PhotonDoc {
 
     public PhotonDoc centroid(Geometry centroid) {
         this.centroid = (Point) centroid;
+        return this;
+    }
+
+    public PhotonDoc geometry(Geometry polygon) {
+        this.geometry = (Geometry) polygon;
         return this;
     }
 
@@ -311,5 +328,8 @@ public class PhotonDoc {
 
     public Point getCentroid() {
         return this.centroid;
+    }
+    public Geometry getGeometry() {
+        return this.geometry;
     }
 }

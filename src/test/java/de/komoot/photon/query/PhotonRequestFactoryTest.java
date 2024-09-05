@@ -211,4 +211,12 @@ class PhotonRequestFactoryTest {
         assertTrue(exception.getMessage().contains(expectedMessageFragment),
                 String.format("Error message doesn not contain '%s': %s", expectedMessageFragment, exception.getMessage()));
     }
+
+    @Test
+    void testWithoutPolygon() throws Exception {
+        Request mockRequest = createRequestWithQueryParams("q", "berlin", "polygon", "false");
+        PhotonRequest photonRequest = createPhotonRequest(mockRequest);
+
+        assertFalse(photonRequest.getReturnPolygon());
+    }
 }
