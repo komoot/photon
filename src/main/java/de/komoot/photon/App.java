@@ -74,11 +74,6 @@ public class App {
         final JCommander jCommander = new JCommander(args);
         try {
             jCommander.parse(rawArgs);
-
-            // Cors arguments are mutually exclusive.
-            if (args.isCorsAnyOrigin() && args.getCorsOrigin().length > 0) {
-                throw new ParameterException("Use only one cors configuration type");
-            }
         } catch (ParameterException e) {
             LOGGER.warn("Could not start photon: {}", e.getMessage());
             jCommander.usage();
