@@ -16,15 +16,15 @@ sourceSets {
 }
 
 dependencies {
-    implementation 'org.opensearch.client:opensearch-java:2.10.1'
-    implementation 'org.apache.httpcomponents.client5:httpclient5:5.3.1'
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.17.0'
+    implementation 'org.opensearch.client:opensearch-java:2.16.0'
+    implementation 'org.apache.httpcomponents.client5:httpclient5:5.4'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.18.0'
 
-    implementation 'org.codelibs.opensearch:opensearch-runner:2.13.0.0'
+    implementation 'org.codelibs.opensearch:opensearch-runner:2.17.1.0'
 
     // updates for indirect dependencies
-    implementation 'io.netty:netty-codec:4.1.109.Final'
-    implementation 'io.netty:netty-codec-http:4.1.109.Final'
+    implementation 'io.netty:netty-codec:4.1.114.Final'
+    implementation 'io.netty:netty-codec-http:4.1.114.Final'
 }
 
 tasks.named('jar') {

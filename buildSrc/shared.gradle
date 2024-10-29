@@ -40,34 +40,34 @@ sourceSets {
 }
 
 dependencies {
-    implementation 'org.apache.logging.log4j:log4j-core:2.23.1'
-    implementation 'org.apache.logging.log4j:log4j-api:2.23.1'
-    implementation 'org.postgresql:postgresql:42.7.2'
-    implementation 'org.slf4j:slf4j-api:2.0.13'
-    implementation 'org.apache.logging.log4j:log4j-slf4j2-impl:2.23.1'
-    implementation 'com.beust:jcommander:1.82'
-    implementation 'org.apache.commons:commons-lang3:3.14.0'
-    implementation 'org.springframework:spring-jdbc:5.3.32'
+    implementation 'org.apache.logging.log4j:log4j-core:2.24.1'
+    implementation 'org.apache.logging.log4j:log4j-api:2.24.1'
+    implementation 'org.postgresql:postgresql:42.7.4'
+    implementation 'org.slf4j:slf4j-api:2.0.16'
+    implementation 'org.apache.logging.log4j:log4j-slf4j2-impl:2.24.1'
+    implementation 'org.jcommander:jcommander:2.0'
+    implementation 'org.apache.commons:commons-lang3:3.17.0'
+    implementation 'org.springframework:spring-jdbc:5.3.39'
     implementation ('org.apache.commons:commons-dbcp2:2.12.0') {
         exclude(module: 'commons-logging')
     }
-    implementation 'org.locationtech.jts:jts-core:1.19.0'
+    implementation 'org.locationtech.jts:jts-core:1.20.0'
     implementation 'com.sparkjava:spark-core:2.9.4'
-    implementation 'net.postgis:postgis-jdbc:2023.1.0'
+    implementation 'net.postgis:postgis-jdbc:2024.1.0'
     implementation 'org.json:json:20240303'
 
-    testImplementation(platform("org.junit:junit-bom:5.10.2"))
-    testImplementation 'com.h2database:h2:2.2.224'
+    testImplementation(platform("org.junit:junit-bom:5.11.3"))
+    testImplementation 'com.h2database:h2:2.3.232'
     testImplementation 'org.junit.jupiter:junit-jupiter'
-    testImplementation 'org.mockito:mockito-core:5.11.0'
+    testImplementation 'org.mockito:mockito-core:5.14.2'
 
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
     // updates for indirect dependencies
-    implementation 'org.eclipse.jetty:jetty-server:9.4.54.v20240208'
-    implementation 'org.eclipse.jetty:jetty-webapp:9.4.54.v20240208'
-    implementation 'org.eclipse.jetty.websocket:websocket-server:9.4.54.v20240208'
-    implementation 'org.eclipse.jetty.websocket:websocket-servlet:9.4.54.v20240208'
+    implementation 'org.eclipse.jetty:jetty-server:9.4.56.v20240826'
+    implementation 'org.eclipse.jetty:jetty-webapp:9.4.56.v20240826'
+    implementation 'org.eclipse.jetty.websocket:websocket-server:9.4.56.v20240826'
+    implementation 'org.eclipse.jetty.websocket:websocket-servlet:9.4.56.v20240826'
 }
 
 tasks.named('test') {
