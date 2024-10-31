@@ -1,7 +1,5 @@
 package de.komoot.photon;
 
-import de.komoot.photon.DatabaseProperties;
-import de.komoot.photon.ESBaseTester;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

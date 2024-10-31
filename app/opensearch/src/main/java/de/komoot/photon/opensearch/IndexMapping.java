@@ -3,7 +3,6 @@ package de.komoot.photon.opensearch;
 import org.opensearch.client.opensearch.OpenSearchClient;
 import org.opensearch.client.opensearch._types.mapping.DynamicMapping;
 import org.opensearch.client.opensearch.indices.PutMappingRequest;
-import de.komoot.photon.Constants;
 
 import java.io.IOException;
 import java.util.ArrayList;

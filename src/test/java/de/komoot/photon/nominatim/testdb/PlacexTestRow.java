@@ -11,7 +11,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class PlacexTestRow {
-    private static final WKTReader wkt = new WKTReader();
     private static long place_id_sequence = 10000;
     private Long placeId;
     private Long parentPlaceId;

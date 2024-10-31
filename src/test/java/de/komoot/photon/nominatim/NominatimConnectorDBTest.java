@@ -298,7 +298,7 @@ class NominatimConnectorDBTest {
     @Test
     void testUnnamedObjectWithOutHousenumber() {
         PlacexTestRow parent = PlacexTestRow.make_street("Main St").add(jdbc);
-        PlacexTestRow place = new PlacexTestRow("building", "yes").parent(parent).add(jdbc);
+        new PlacexTestRow("building", "yes").parent(parent).add(jdbc);
 
         connector.readEntireDatabase();
 
@@ -313,7 +313,7 @@ class NominatimConnectorDBTest {
     @Test
     void testInterpolationLines() {
         PlacexTestRow parent = PlacexTestRow.make_street("Main St").add(jdbc);
-        PlacexTestRow place = new PlacexTestRow("place", "houses").name("something").parent(parent).add(jdbc);
+        new PlacexTestRow("place", "houses").name("something").parent(parent).add(jdbc);
 
         connector.readEntireDatabase();
 

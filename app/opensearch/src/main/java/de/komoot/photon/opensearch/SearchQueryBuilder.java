@@ -1,7 +1,6 @@
 package de.komoot.photon.opensearch;
 
 import de.komoot.photon.searcher.TagFilter;
-import de.komoot.photon.StructuredSearchRequestHandler;
 import de.komoot.photon.query.StructuredPhotonRequest;
 import de.komoot.photon.Constants;
 import org.locationtech.jts.geom.Envelope;
@@ -14,8 +13,6 @@ import org.opensearch.client.util.ObjectBuilder;
 import java.util.*;
 
 public class SearchQueryBuilder {
-    private static final String[] ALT_NAMES = new String[]{"alt", "int", "loc", "old", "reg", "housename"};
-
     private ObjectBuilder<Query> finalQueryWithoutTagFilterBuilder;
     private BoolQuery.Builder queryBuilderForTopLevelFilter;
     private OsmTagFilter osmTagFilter = new OsmTagFilter();

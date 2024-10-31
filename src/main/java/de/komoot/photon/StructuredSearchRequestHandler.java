@@ -27,7 +27,7 @@ public class StructuredSearchRequestHandler extends RouteImpl {
 
     @Override
     public String handle(Request request, Response response) {
-        StructuredPhotonRequest photonRequest = null;
+        StructuredPhotonRequest photonRequest;
         try {
             photonRequest = photonRequestFactory.createStructured(request);
         } catch (BadRequestException e) {
@@ -47,10 +47,6 @@ public class StructuredSearchRequestHandler extends RouteImpl {
         }
 
         String debugInfo = null;
-     /*   if (photonRequest.getDebug()) {
-            debugInfo = requestHandler.dumpQuery(photonRequest);
-        }
- */
         return new GeocodeJsonFormatter(photonRequest.getDebug(), photonRequest.getLanguage()).convert(results, debugInfo);
     }
 }

@@ -3,7 +3,6 @@ package de.komoot.photon.utils;
 import com.beust.jcommander.IParametersValidator;
 import com.beust.jcommander.ParameterException;
 
-import java.util.List;
 import java.util.Map;
 
 import static java.lang.Boolean.TRUE;
