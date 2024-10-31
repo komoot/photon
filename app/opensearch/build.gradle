@@ -1,6 +1,8 @@
 plugins {
   id 'com.github.johnrengelman.shadow' version '8.1.1'
   id 'application'
+  id 'jacoco'
+  id 'org.sonarqube' version '5.1.0.4882'
 }
 
 apply from: rootProject.file('buildSrc/shared.gradle')
