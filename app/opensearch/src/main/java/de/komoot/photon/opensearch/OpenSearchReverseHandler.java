@@ -52,7 +52,8 @@ public class OpenSearchReverseHandler implements ReverseHandler {
                 s.index(PhotonIndex.NAME)
                         .searchType(SearchType.QueryThenFetch)
                         .query(query)
-                        .size(limit);
+                        .size(limit)
+                        .timeout(queryTimeout);
 
                 if (location != null) {
                     s.sort(sq -> sq
