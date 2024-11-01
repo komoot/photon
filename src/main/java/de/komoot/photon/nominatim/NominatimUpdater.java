@@ -64,8 +64,8 @@ public class NominatimUpdater {
     }
 
     public boolean isSetUpForUpdates() {
-        int result = template.queryForObject("SELECT count(*) FROM pg_tables WHERE tablename = 'photon_updates'", Integer.class);
-        return result > 0;
+        Integer result = template.queryForObject("SELECT count(*) FROM pg_tables WHERE tablename = 'photon_updates'", Integer.class);
+        return (result != null) && (result > 0);
     }
 
     public void setUpdater(Updater updater) {
