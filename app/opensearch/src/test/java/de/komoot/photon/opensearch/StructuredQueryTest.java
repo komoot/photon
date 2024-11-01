@@ -21,14 +21,14 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class StructuredQueryTest extends ESBaseTester {
 
-    private static final String CountryCode = "DE";
-    private static final String Language = "en";
-    private static final String District = "MajorSuburb";
-    private static final String HouseNumber = "42";
-    private static final String City = "Some City";
-    private static final String Hamlet = "Hamlet";
-    private static final String Street = "Some street";
-    public static final String DistrictPostCode = "12346";
+    private static final String COUNTRY_CODE = "DE";
+    private static final String LANGUAGE = "en";
+    private static final String DISTRICT = "MajorSuburb";
+    private static final String HOUSE_NUMBER = "42";
+    private static final String CITY = "Some City";
+    private static final String HAMLET = "Hamlet";
+    private static final String STREET = "Some street";
+    public static final String DISTRICT_POST_CODE = "12346";
 
     @TempDir
     private static Path instanceTestDirectory;
@@ -45,55 +45,55 @@ public class StructuredQueryTest extends ESBaseTester {
 
     @BeforeEach
     void setUp() throws Exception {
-        setUpES(instanceTestDirectory, Language, "de", "fr");
+        setUpES(instanceTestDirectory, LANGUAGE, "de", "fr");
         Importer instance = makeImporter();
 
         var country = new PhotonDoc(0, "R", 0, "place", "country")
                 .names(Collections.singletonMap("name", "Germany"))
-                .countryCode(CountryCode)
+                .countryCode(COUNTRY_CODE)
                 .importance(1.0)
                 .rankAddress(getRank(AddressType.COUNTRY));
 
         var city = new PhotonDoc(1, "R", 1, "place", "city")
-                .names(Collections.singletonMap("name", City))
-                .countryCode(CountryCode)
+                .names(Collections.singletonMap("name", CITY))
+                .countryCode(COUNTRY_CODE)
                 .postcode("12345")
                 .importance(1.0)
                 .rankAddress(getRank(AddressType.CITY));
 
         Map<String, String> address = new HashMap<>();
-        address.put("city", City);
+        address.put("city", CITY);
         var suburb = new PhotonDoc(2, "N", 2, "place", "suburb")
-                .names(Collections.singletonMap("name", District))
-                .countryCode(CountryCode)
-                .postcode(DistrictPostCode)
+                .names(Collections.singletonMap("name", DISTRICT))
+                .countryCode(COUNTRY_CODE)
+                .postcode(DISTRICT_POST_CODE)
                 .address(address)
                 .importance(1.0)
                 .rankAddress(getRank(AddressType.DISTRICT));
 
         var street = new PhotonDoc(3, "W", 3, "place", "street")
-                .names(Collections.singletonMap("name", Street))
-                .countryCode(CountryCode)
+                .names(Collections.singletonMap("name", STREET))
+                .countryCode(COUNTRY_CODE)
                 .postcode("12345")
                 .address(address)
                 .importance(1.0)
                 .rankAddress(getRank(AddressType.STREET));
 
-        address.put("street", Street);
+        address.put("street", STREET);
         var house = new PhotonDoc(4, "R", 4, "place", "house")
-                .countryCode(CountryCode)
+                .countryCode(COUNTRY_CODE)
                 .postcode("12345")
                 .address(address)
-                .houseNumber(HouseNumber)
+                .houseNumber(HOUSE_NUMBER)
                 .importance(1.0)
                 .rankAddress(getRank(AddressType.HOUSE));
 
         var busStop = new PhotonDoc(8, "N", 8, "highway", "house")
-                .names(Collections.singletonMap("name", City + ' ' + Street))
-                .countryCode(CountryCode)
+                .names(Collections.singletonMap("name", CITY + ' ' + STREET))
+                .countryCode(COUNTRY_CODE)
                 .postcode("12345")
                 .address(address)
-                .houseNumber(HouseNumber)
+                .houseNumber(HOUSE_NUMBER)
                 .importance(1.0)
                 .rankAddress(getRank(AddressType.HOUSE));
 
@@ -112,9 +112,9 @@ public class StructuredQueryTest extends ESBaseTester {
 
     @Test
     void findsDistrictFuzzy() {
-        var request = new StructuredPhotonRequest(Language);
-        request.setCountryCode(CountryCode);
-        request.setDistrict(District + District.charAt(District.length() - 1));
+        var request = new StructuredPhotonRequest(LANGUAGE);
+        request.setCountryCode(COUNTRY_CODE);
+        request.setDistrict(DISTRICT + DISTRICT.charAt(DISTRICT.length() - 1));
 
         var result = search(request);
         Assertions.assertEquals(2, result.get(Constants.OSM_ID));
@@ -122,10 +122,10 @@ public class StructuredQueryTest extends ESBaseTester {
 
     @Test
     void findsDistrictByPostcode() {
-        var request = new StructuredPhotonRequest(Language);
-        request.setCountryCode(CountryCode);
-        request.setCity(City);
-        request.setPostCode(DistrictPostCode);
+        var request = new StructuredPhotonRequest(LANGUAGE);
+        request.setCountryCode(COUNTRY_CODE);
+        request.setCity(CITY);
+        request.setPostCode(DISTRICT_POST_CODE);
 
         var result = search(request);
         Assertions.assertEquals(request.getPostCode(), result.get(Constants.POSTCODE));
@@ -133,11 +133,11 @@ public class StructuredQueryTest extends ESBaseTester {
 
     @Test
     void findsHouseNumberInHamletWithoutStreetName() {
-        var request = new StructuredPhotonRequest(Language);
-        request.setDistrict(Hamlet);
+        var request = new StructuredPhotonRequest(LANGUAGE);
+        request.setDistrict(HAMLET);
         request.setHouseNumber("2");
 
-        StructuredSearchHandler queryHandler = getServer().createStructuredSearchHandler(new String[]{Language}, 1);
+        StructuredSearchHandler queryHandler = getServer().createStructuredSearchHandler(new String[]{LANGUAGE}, 1);
         var results = queryHandler.search(request);
         assertEquals(1, results.size());
         var result = results.get(0);
@@ -146,11 +146,11 @@ public class StructuredQueryTest extends ESBaseTester {
 
     @Test
     void doesNotReturnBusStops() {
-        var request = new StructuredPhotonRequest(Language);
-        request.setCountryCode(CountryCode);
-        request.setCity(City);
-        request.setStreet(Street);
-        StructuredSearchHandler queryHandler = getServer().createStructuredSearchHandler(new String[]{Language}, 1);
+        var request = new StructuredPhotonRequest(LANGUAGE);
+        request.setCountryCode(COUNTRY_CODE);
+        request.setCity(CITY);
+        request.setStreet(STREET);
+        StructuredSearchHandler queryHandler = getServer().createStructuredSearchHandler(new String[]{LANGUAGE}, 1);
         var results = queryHandler.search(request);
         for (var result : results)
         {
@@ -160,9 +160,9 @@ public class StructuredQueryTest extends ESBaseTester {
 
     @Test
     void returnsOnlyCountryForCountryRequests() {
-        var request = new StructuredPhotonRequest(Language);
-        request.setCountryCode(CountryCode);
-        StructuredSearchHandler queryHandler = getServer().createStructuredSearchHandler(new String[]{Language}, 1);
+        var request = new StructuredPhotonRequest(LANGUAGE);
+        request.setCountryCode(COUNTRY_CODE);
+        StructuredSearchHandler queryHandler = getServer().createStructuredSearchHandler(new String[]{LANGUAGE}, 1);
         var results = queryHandler.search(request);
         assertEquals(1, results.size());
         var result = results.get(0);
@@ -171,84 +171,84 @@ public class StructuredQueryTest extends ESBaseTester {
 
     @Test
     void doesNotReturnHousesForCityRequest() {
-        var request = new StructuredPhotonRequest(Language);
-        request.setCountryCode(CountryCode);
-        request.setCity(City);
+        var request = new StructuredPhotonRequest(LANGUAGE);
+        request.setCountryCode(COUNTRY_CODE);
+        request.setCity(CITY);
 
-        StructuredSearchHandler queryHandler = getServer().createStructuredSearchHandler(new String[]{Language}, 1);
+        StructuredSearchHandler queryHandler = getServer().createStructuredSearchHandler(new String[]{LANGUAGE}, 1);
         var results = queryHandler.search(request);
 
         for (var result : results) {
-            assertNull(result.getLocalised(Constants.STREET, Language));
+            assertNull(result.getLocalised(Constants.STREET, LANGUAGE));
             assertNull(result.get(Constants.HOUSENUMBER));
         }
     }
 
     @Test
     void testWrongStreet() {
-        var request = new StructuredPhotonRequest(Language);
-        request.setCountryCode(CountryCode);
-        request.setCity(City);
+        var request = new StructuredPhotonRequest(LANGUAGE);
+        request.setCountryCode(COUNTRY_CODE);
+        request.setCity(CITY);
         request.setStreet("totally wrong");
-        request.setHouseNumber(HouseNumber);
+        request.setHouseNumber(HOUSE_NUMBER);
 
         var result = search(request);
-        assertNull(result.getLocalised(Constants.STREET, Language));
-        Assertions.assertEquals(request.getCity(), result.getLocalised(Constants.NAME, Language));
+        assertNull(result.getLocalised(Constants.STREET, LANGUAGE));
+        Assertions.assertEquals(request.getCity(), result.getLocalised(Constants.NAME, LANGUAGE));
     }
 
     @Test
     void testDistrictAsCity() {
-        var request = new StructuredPhotonRequest(Language);
-        request.setCountryCode(CountryCode);
-        request.setCity(District);
+        var request = new StructuredPhotonRequest(LANGUAGE);
+        request.setCountryCode(COUNTRY_CODE);
+        request.setCity(DISTRICT);
         var result = search(request);
-        Assertions.assertEquals(City, result.getLocalised(Constants.CITY, Language));
-        Assertions.assertEquals(request.getCity(), result.getLocalised(Constants.NAME, Language));
+        Assertions.assertEquals(CITY, result.getLocalised(Constants.CITY, LANGUAGE));
+        Assertions.assertEquals(request.getCity(), result.getLocalised(Constants.NAME, LANGUAGE));
     }
 
     @Test
     void testWrongHouseNumber() {
-        var request = new StructuredPhotonRequest(Language);
-        request.setCountryCode(CountryCode);
-        request.setCity(City);
-        request.setStreet(Street);
+        var request = new StructuredPhotonRequest(LANGUAGE);
+        request.setCountryCode(COUNTRY_CODE);
+        request.setCity(CITY);
+        request.setStreet(STREET);
         request.setHouseNumber("1");
         var result = search(request);
-        assertNull(result.getLocalised(Constants.HOUSENUMBER, Language));
-        Assertions.assertEquals(request.getStreet(), result.getLocalised(Constants.NAME, Language));
-        Assertions.assertEquals(request.getCity(), result.getLocalised(Constants.CITY, Language));
+        assertNull(result.getLocalised(Constants.HOUSENUMBER, LANGUAGE));
+        Assertions.assertEquals(request.getStreet(), result.getLocalised(Constants.NAME, LANGUAGE));
+        Assertions.assertEquals(request.getCity(), result.getLocalised(Constants.CITY, LANGUAGE));
     }
 
     @Test
     void testWrongHouseNumberAndWrongStreet() {
-        var request = new StructuredPhotonRequest(Language);
-        request.setCountryCode(CountryCode);
-        request.setCity(City);
+        var request = new StructuredPhotonRequest(LANGUAGE);
+        request.setCountryCode(COUNTRY_CODE);
+        request.setCity(CITY);
         request.setStreet("does not exist");
         request.setHouseNumber("1");
         var result = search(request);
-        assertNull(result.getLocalised(Constants.HOUSENUMBER, Language));
-        assertNull(result.getLocalised(Constants.STREET, Language));
-        Assertions.assertEquals(request.getCity(), result.getLocalised(Constants.NAME, Language));
+        assertNull(result.getLocalised(Constants.HOUSENUMBER, LANGUAGE));
+        assertNull(result.getLocalised(Constants.STREET, LANGUAGE));
+        Assertions.assertEquals(request.getCity(), result.getLocalised(Constants.NAME, LANGUAGE));
     }
 
     @Test
     void testHouse() {
-        var request = new StructuredPhotonRequest(Language);
-        request.setCountryCode(CountryCode);
-        request.setCity(City);
-        request.setStreet(Street);
-        request.setHouseNumber(HouseNumber);
+        var request = new StructuredPhotonRequest(LANGUAGE);
+        request.setCountryCode(COUNTRY_CODE);
+        request.setCity(CITY);
+        request.setStreet(STREET);
+        request.setHouseNumber(HOUSE_NUMBER);
 
         var result = search(request);
-        Assertions.assertEquals(request.getCity(), result.getLocalised(Constants.CITY, Language));
-        Assertions.assertEquals(request.getStreet(), result.getLocalised(Constants.STREET, Language));
+        Assertions.assertEquals(request.getCity(), result.getLocalised(Constants.CITY, LANGUAGE));
+        Assertions.assertEquals(request.getStreet(), result.getLocalised(Constants.STREET, LANGUAGE));
         Assertions.assertEquals(request.getHouseNumber(), result.get(Constants.HOUSENUMBER));
     }
 
     private PhotonResult search(StructuredPhotonRequest request) {
-        StructuredSearchHandler queryHandler = getServer().createStructuredSearchHandler(new String[]{Language}, 1);
+        StructuredSearchHandler queryHandler = getServer().createStructuredSearchHandler(new String[]{LANGUAGE}, 1);
         var results = queryHandler.search(request);
 
         return results.get(0);
@@ -256,11 +256,11 @@ public class StructuredQueryTest extends ESBaseTester {
 
     private void addHamletHouse(Importer instance, int id, String houseNumber) {
         var hamletAddress = new HashMap<String, String>();
-        hamletAddress.put("city", City);
-        hamletAddress.put("suburb", Hamlet);
+        hamletAddress.put("city", CITY);
+        hamletAddress.put("suburb", HAMLET);
 
         var doc = new PhotonDoc(id, "R", id, "place", "house")
-                .countryCode(CountryCode)
+                .countryCode(COUNTRY_CODE)
                 .address(hamletAddress)
                 .houseNumber(houseNumber)
                 .importance(1.0)

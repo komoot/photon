@@ -27,7 +27,7 @@ public class IndexMapping {
     }
 
     public IndexMapping addLanguages(String[] languages) {
-        List<String> name_collectors = new ArrayList<>();
+        List<String> nameCollectors = new ArrayList<>();
         for (var lang: languages) {
             mappings.properties("collector." + lang,
                     b -> b.text(p -> p.index(true)
@@ -54,12 +54,12 @@ public class IndexMapping {
                             .copyTo("collector." + lang, "collector.base")));
 
             //add language-specific collector to default for name
-            name_collectors.add("name." + lang);
+            nameCollectors.add("name." + lang);
         }
 
-        name_collectors.add("collector.default");
-        name_collectors.add("collector.base");
-        mappings.properties("name.default", b -> b.text(p -> p.index(false).copyTo(name_collectors)));
+        nameCollectors.add("collector.default");
+        nameCollectors.add("collector.base");
+        mappings.properties("name.default", b -> b.text(p -> p.index(false).copyTo(nameCollectors)));
 
         return this;
     }

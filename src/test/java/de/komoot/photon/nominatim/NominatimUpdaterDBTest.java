@@ -54,7 +54,7 @@ class NominatimUpdaterDBTest {
         final long place_id = 47836;
         (new PhotonUpdateRow("placex", place_id, "DELETE")).add(jdbc);
 
-        updater.add_existing(place_id, 0);
+        updater.addExisting(place_id, 0);
 
         connector.update();
         updater.assertFinishCalled();
@@ -84,7 +84,7 @@ class NominatimUpdaterDBTest {
         final long place_id = 887;
         (new PhotonUpdateRow("placex", place_id, "DELETE")).add(jdbc);
 
-        updater.add_existing(place_id, 0, 1, 2, 3);
+        updater.addExisting(place_id, 0, 1, 2, 3);
 
         connector.update();
         updater.assertFinishCalled();
@@ -103,7 +103,7 @@ class NominatimUpdaterDBTest {
         // Pretending to have two documents for the place in question to check that
         // the algorithm stops at the first.
         // In practise, a rankAddress<30 document cannot have duplicates.
-        updater.add_existing(place.getPlaceId(), 0, 1);
+        updater.addExisting(place.getPlaceId(), 0, 1);
 
         connector.update();
         updater.assertFinishCalled();
@@ -119,7 +119,7 @@ class NominatimUpdaterDBTest {
         PlacexTestRow place = new PlacexTestRow("building", "yes").housenumber(23).rankAddress(30).add(jdbc);
         (new PhotonUpdateRow("placex", place.getPlaceId(), "UPDATE")).add(jdbc);
 
-        updater.add_existing(place.getPlaceId(), 0);
+        updater.addExisting(place.getPlaceId(), 0);
 
         connector.update();
         updater.assertFinishCalled();
@@ -135,7 +135,7 @@ class NominatimUpdaterDBTest {
         PlacexTestRow place = new PlacexTestRow("building", "yes").addr("housenumber", "1;2a;3").rankAddress(30).add(jdbc);
         (new PhotonUpdateRow("placex", place.getPlaceId(), "UPDATE")).add(jdbc);
 
-        updater.add_existing(place.getPlaceId(), 0);
+        updater.addExisting(place.getPlaceId(), 0);
 
         connector.update();
         updater.assertFinishCalled();
@@ -153,7 +153,7 @@ class NominatimUpdaterDBTest {
         PlacexTestRow place = new PlacexTestRow("building", "yes").addr("housenumber", "1;2a;3").rankAddress(30).add(jdbc);
         (new PhotonUpdateRow("placex", place.getPlaceId(), "UPDATE")).add(jdbc);
 
-        updater.add_existing(place.getPlaceId(), 0, 1, 2);
+        updater.addExisting(place.getPlaceId(), 0, 1, 2);
 
         connector.update();
         updater.assertFinishCalled();
@@ -171,7 +171,7 @@ class NominatimUpdaterDBTest {
         PlacexTestRow place = new PlacexTestRow("building", "yes").addr("housenumber", "1").rankAddress(30).add(jdbc);
         (new PhotonUpdateRow("placex", place.getPlaceId(), "UPDATE")).add(jdbc);
 
-        updater.add_existing(place.getPlaceId(), 0, 1, 2);
+        updater.addExisting(place.getPlaceId(), 0, 1, 2);
 
         connector.update();
         updater.assertFinishCalled();
@@ -210,7 +210,7 @@ class NominatimUpdaterDBTest {
                 new OsmlineTestRow().number(6, 8, 1).parent(street).geom("LINESTRING(0 0, 0 1)").add(jdbc);
         (new PhotonUpdateRow("location_property_osmline", osmline.getPlaceId(), "UPDATE")).add(jdbc);
 
-        updater.add_existing(osmline.getPlaceId(), 0, 1, 2);
+        updater.addExisting(osmline.getPlaceId(), 0, 1, 2);
 
         connector.update();
         updater.assertFinishCalled();
@@ -231,7 +231,7 @@ class NominatimUpdaterDBTest {
                 new OsmlineTestRow().number(6, 8, 1).parent(street).geom("LINESTRING(0 0, 0 1)").add(jdbc);
         (new PhotonUpdateRow("location_property_osmline", osmline.getPlaceId(), "UPDATE")).add(jdbc);
 
-        updater.add_existing(osmline.getPlaceId(), 0);
+        updater.addExisting(osmline.getPlaceId(), 0);
 
         connector.update();
         updater.assertFinishCalled();
@@ -252,7 +252,7 @@ class NominatimUpdaterDBTest {
                 new OsmlineTestRow().number(6, 8, 1).parent(street).geom("LINESTRING(0 0, 0 1)").add(jdbc);
         (new PhotonUpdateRow("location_property_osmline", osmline.getPlaceId(), "UPDATE")).add(jdbc);
 
-        updater.add_existing(osmline.getPlaceId(), 0, 1, 2, 3, 4);
+        updater.addExisting(osmline.getPlaceId(), 0, 1, 2, 3, 4);
 
         connector.update();
         updater.assertFinishCalled();

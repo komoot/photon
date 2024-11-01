@@ -13,7 +13,7 @@ public class OpenSearchResult implements PhotonResult {
     private final Map<String, Object> infos;
     private final Map<String, Map<String, String>> localeTags;
 
-    OpenSearchResult(double extent[], double[] coordinates, Map<String, Object> infos, Map<String, Map<String, String>> localeTags) {
+    OpenSearchResult(double[] extent, double[] coordinates, Map<String, Object> infos, Map<String, Map<String, String>> localeTags) {
         this.extent = extent;
         this.coordinates = coordinates;
         this.infos = infos;

@@ -17,8 +17,8 @@ class NominatimResult {
     private PhotonDoc doc;
     private Map<String, Point> housenumbers;
 
-    private final Pattern HOUSENUMBER_CHECK = Pattern.compile("(\\A|.*,)[^\\d,]{3,}(,.*|\\Z)");
-    private final Pattern HOUSENUMBER_SPLIT = Pattern.compile("\\s*[;,]\\s*");
+    private static final Pattern HOUSENUMBER_CHECK = Pattern.compile("(\\A|.*,)[^\\d,]{3,}(,.*|\\Z)");
+    private static final Pattern HOUSENUMBER_SPLIT = Pattern.compile("\\s*[;,]\\s*");
 
     public NominatimResult(PhotonDoc baseobj) {
         doc = baseobj;

@@ -40,10 +40,10 @@ public class CollectingUpdater implements Updater {
     public void finish() { ++finishCalled; }
 
 
-    public void add_existing(long place_id, int ... object_id)
+    public void addExisting(long placeId, int ... objectId)
     {
-        for (int o: object_id) {
-            existing.add(Map.entry(o, place_id));
+        for (int o: objectId) {
+            existing.add(Map.entry(o, placeId));
         }
     }
 
@@ -62,29 +62,29 @@ public class CollectingUpdater implements Updater {
 
 
     public void assertHasCreated(long id) {
-        int object_id = -1;
+        int objectId = -1;
         for (Map.Entry<Integer, PhotonDoc> outdoc : created) {
             if (outdoc.getValue().getPlaceId() == id) {
-                assertEquals(-1, object_id, "Row is contained multiple times");
-                object_id = outdoc.getKey();
+                assertEquals(-1, objectId, "Row is contained multiple times");
+                objectId = outdoc.getKey();
             }
         }
 
-        assertTrue(object_id >= 0, "Row not found");
-        assertEquals(0, object_id, "Row inserted with a non-zero object id");
+        assertTrue(objectId >= 0, "Row not found");
+        assertEquals(0, objectId, "Row inserted with a non-zero object id");
     }
 
     public void assertHasCreated(long id, String housenumber) {
-        int object_id = -1;
+        int objectId = -1;
         for (Map.Entry<Integer, PhotonDoc> outdoc : created) {
             PhotonDoc doc = outdoc.getValue();
             if (doc.getPlaceId() == id && housenumber.equals(doc.getHouseNumber())) {
-                assertEquals(-1, object_id, "Row is contained multiple times");
-                object_id = outdoc.getKey();
+                assertEquals(-1, objectId, "Row is contained multiple times");
+                objectId = outdoc.getKey();
             }
         }
 
-        assertTrue(object_id >= 0, "Row not found");
+        assertTrue(objectId >= 0, "Row not found");
     }
 
     public void assertHasDeleted(long id) {

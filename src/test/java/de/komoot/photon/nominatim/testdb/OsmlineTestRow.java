@@ -3,7 +3,7 @@ package de.komoot.photon.nominatim.testdb;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 public class OsmlineTestRow {
-    private static long place_id_sequence = 100000;
+    private static long placeIdSequence = 100000;
 
     private Long placeId;
     private Long parentPlaceId;
@@ -15,7 +15,7 @@ public class OsmlineTestRow {
     private String lineGeo;
 
     public OsmlineTestRow() {
-        placeId = place_id_sequence++;
+        placeId = placeIdSequence++;
         lineGeo = "LINESTRING(0 0, 0.1 0.1, 0 0.2)";
     }
 

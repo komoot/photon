@@ -23,7 +23,7 @@ public class Server {
 
     protected OpenSearchClient client;
     private OpenSearchRunner runner = null;
-    final protected String dataDirectory;
+    protected final String dataDirectory;
 
     public Server(String mainDirectory) {
         dataDirectory = new File(mainDirectory, "photon_data").getAbsolutePath();

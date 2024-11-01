@@ -15,8 +15,8 @@ import java.util.Map;
 import java.util.Set;
 
 public class PhotonDocSerializer extends StdSerializer<PhotonDoc> {
-    final private String[] languages;
-    final private String[] extraTags;
+    private final String[] languages;
+    private final String[] extraTags;
 
     public PhotonDocSerializer(String[] languages, String[] extraTags) {
         super(PhotonDoc.class);

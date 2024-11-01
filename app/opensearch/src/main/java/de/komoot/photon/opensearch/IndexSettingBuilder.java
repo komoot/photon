@@ -18,7 +18,7 @@ import java.util.Set;
 public class IndexSettingBuilder {
     private IndexSettingsAnalysis.Builder settings = new IndexSettingsAnalysis.Builder();
     private int numShards = 1;
-    private Set<String> extra_filters = new HashSet<>();
+    private Set<String> extraFilters = new HashSet<>();
 
     public IndexSettingBuilder setShards(Integer numShards) {
         this.numShards = numShards == null ? 1 : numShards;
@@ -108,7 +108,7 @@ public class IndexSettingBuilder {
                                 return s;
                             })));
 
-            extra_filters.add(filterName);
+            extraFilters.add(filterName);
         }
     }
 
@@ -141,7 +141,7 @@ public class IndexSettingBuilder {
                     d.charFilter("punctuationgreedy")
                             .tokenizer("standard")
                             .filter("lowercase");
-                    for (var filter : extra_filters) {
+                    for (var filter : extraFilters) {
                         d.filter(filter);
                     }
                     d.filter("german_normalization", "asciifolding");
@@ -166,7 +166,7 @@ public class IndexSettingBuilder {
                 f -> f.custom(d -> {
                     d.tokenizer("whitespace")
                             .filter("lowercase");
-                    if (extra_filters.contains("classification_synonyms")) {
+                    if (extraFilters.contains("classification_synonyms")) {
                         d.filter("classification_synonyms");
                     }
 
