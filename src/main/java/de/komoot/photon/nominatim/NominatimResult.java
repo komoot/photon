@@ -111,7 +111,7 @@ class NominatimResult {
         LengthIndexedLine line = new LengthIndexedLine(geom);
         double si = line.getStartIndex();
         double ei = line.getEndIndex();
-        double lstep = (ei - si) / (double) (last - first);
+        double lstep = (ei - si) / (last - first);
 
         // leave out first and last, they have a distinct OSM node that is already indexed
         long step = 2;
@@ -156,7 +156,7 @@ class NominatimResult {
             LengthIndexedLine line = new LengthIndexedLine(geom);
             double si = line.getStartIndex();
             double ei = line.getEndIndex();
-            double lstep = (ei - si) / (double) (last - first);
+            double lstep = (ei - si) / (last - first);
 
             GeometryFactory fac = geom.getFactory();
             for (long num = 0; first + num <= last; num += step) {
