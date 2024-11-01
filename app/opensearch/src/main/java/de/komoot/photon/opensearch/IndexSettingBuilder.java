@@ -1,5 +1,6 @@
 package de.komoot.photon.opensearch;
 
+import de.komoot.photon.UsageException;
 import de.komoot.photon.Utils;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -18,7 +19,7 @@ import java.util.Set;
 public class IndexSettingBuilder {
     private IndexSettingsAnalysis.Builder settings = new IndexSettingsAnalysis.Builder();
     private int numShards = 1;
-    private Set<String> extra_filters = new HashSet<>();
+    private Set<String> extraFilters = new HashSet<>();
 
     public IndexSettingBuilder setShards(Integer numShards) {
         this.numShards = numShards == null ? 1 : numShards;
@@ -78,7 +79,7 @@ public class IndexSettingBuilder {
                 for (int j = 0; j < jsonTerms.length(); j++) {
                     String term = jsonTerms.getString(j).toLowerCase().trim();
                     if (term.indexOf(' ') >= 0) {
-                        throw new RuntimeException("Syntax error in synonym file: only single word classification terms allowed.");
+                        throw new UsageException("Syntax error in synonym file: only single word classification terms allowed.");
                     }
 
                     if (term.length() > 1) {
@@ -108,7 +109,7 @@ public class IndexSettingBuilder {
                                 return s;
                             })));
 
-            extra_filters.add(filterName);
+            extraFilters.add(filterName);
         }
     }
 
@@ -141,7 +142,7 @@ public class IndexSettingBuilder {
                     d.charFilter("punctuationgreedy")
                             .tokenizer("standard")
                             .filter("lowercase");
-                    for (var filter : extra_filters) {
+                    for (var filter : extraFilters) {
                         d.filter(filter);
                     }
                     d.filter("german_normalization", "asciifolding");
@@ -166,7 +167,7 @@ public class IndexSettingBuilder {
                 f -> f.custom(d -> {
                     d.tokenizer("whitespace")
                             .filter("lowercase");
-                    if (extra_filters.contains("classification_synonyms")) {
+                    if (extraFilters.contains("classification_synonyms")) {
                         d.filter("classification_synonyms");
                     }
 

@@ -27,6 +27,16 @@ public class App {
     public static void main(String[] rawArgs) throws Exception {
         CommandLineArgs args = parseCommandLine(rawArgs);
 
+        try {
+            runPhoton(args);
+        } catch (UsageException e) {
+            LOGGER.error(e.getMessage());
+            LOGGER.error("Exiting.");
+            System.exit(2);
+        }
+    }
+
+    private static void runPhoton(CommandLineArgs args) throws IOException {
         if (args.getJsonDump() != null) {
             startJsonDump(args);
             return;
@@ -102,7 +112,7 @@ public class App {
             nominatimConnector.readEntireDatabase(args.getCountryCodes());
             LOGGER.info("Json dump was created: {}", filename);
         } catch (FileNotFoundException e) {
-            LOGGER.error("Cannot create dump", e);
+            throw new UsageException("Cannot create dump: " + e.getMessage());
         }
     }
 
@@ -117,7 +127,7 @@ public class App {
         try {
             dbProperties = esServer.recreateIndex(args.getLanguages(), importDate, args.getSupportStructuredQueries()); // clear out previous data
         } catch (IOException e) {
-            throw new RuntimeException("Cannot setup index, elastic search config files not readable", e);
+            throw new UsageException("Cannot setup index, elastic search config files not readable");
         }
 
         LOGGER.info("Starting import from nominatim to photon with languages: {}", String.join(",", dbProperties.getLanguages()));
@@ -142,7 +152,7 @@ public class App {
             dbProperties.setImportDate(importDate);
             esServer.saveToDatabase(dbProperties);
         } catch (IOException e) {
-            throw new RuntimeException("Cannot setup index, elastic search config files not readable", e);
+            throw new UsageException("Cannot setup index, elastic search config files not readable");
         }
     }
 
@@ -208,7 +218,7 @@ public class App {
             // setup update API
             final NominatimUpdater nominatimUpdater = setupNominatimUpdater(args, server);
             if (!nominatimUpdater.isSetUpForUpdates()) {
-                throw new RuntimeException("Update API enabled, but Nominatim database is not prepared. Run -nominatim-update-init-for first.");
+                throw new UsageException("Update API enabled, but Nominatim database is not prepared. Run -nominatim-update-init-for first.");
             }
             get("/nominatim-update/status", (Request request, Response response) -> {
                if (nominatimUpdater.isBusy()) {

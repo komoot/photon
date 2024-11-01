@@ -5,6 +5,8 @@ import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -109,11 +111,17 @@ class ApiIntegrationTest extends ESBaseTester {
         }
     }
 
-    @Test
-    void testSearchForBerlin() throws Exception {
+    @ParameterizedTest
+    @CsvSource({
+            "city, /api?q=berlin&limit=1",                                    // basic search
+            "town, /api?q=berlin&limit=1&lat=52.54714&lon=13.39026&zoom=16",  // search with location bias
+            "city, /api?q=berlin&limit=1&lat=52.54714&lon=13.39026&zoom=12&location_bias_scale=0.6",  // search with large location bias
+            "city, /reverse/?lon=13.38886&lat=52.51704" // basic reverse
+    })
+    void testApi(String osmValue, String url) throws Exception {
         App.main(new String[]{"-cluster", TEST_CLUSTER_NAME, "-listen-port", Integer.toString(LISTEN_PORT), "-transport-addresses", "127.0.0.1"});
         awaitInitialization();
-        HttpURLConnection connection = (HttpURLConnection) new URL("http://127.0.0.1:" + port() + "/api?q=berlin&limit=1").openConnection();
+        HttpURLConnection connection = (HttpURLConnection) new URL("http://127.0.0.1:" + port() + url).openConnection();
         JSONObject json = new JSONObject(
                 new BufferedReader(new InputStreamReader(connection.getInputStream())).lines().collect(Collectors.joining("\n")));
         JSONArray features = json.getJSONArray("features");
@@ -122,74 +130,13 @@ class ApiIntegrationTest extends ESBaseTester {
         JSONObject properties = feature.getJSONObject("properties");
         assertEquals("W", properties.getString("osm_type"));
         assertEquals("place", properties.getString("osm_key"));
-        assertEquals("city", properties.getString("osm_value"));
+        assertEquals(osmValue, properties.getString("osm_value"));
         assertEquals("berlin", properties.getString("name"));
     }
 
-    /**
-     * Search with location bias (this should give the last generated object which is roughly 2km away from the first)
-     */
-    @Test
-    void testApiWithLocationBias() throws Exception {
-        App.main(new String[]{"-cluster", TEST_CLUSTER_NAME, "-listen-port", Integer.toString(LISTEN_PORT), "-transport-addresses", "127.0.0.1"});
-        awaitInitialization();
-        HttpURLConnection connection = (HttpURLConnection) new URL("http://127.0.0.1:" + port() + "/api?q=berlin&limit=1&lat=52.54714&lon=13.39026&zoom=16")
-                .openConnection();
-        JSONObject json = new JSONObject(
-                new BufferedReader(new InputStreamReader(connection.getInputStream())).lines().collect(Collectors.joining("\n")));
-        JSONArray features = json.getJSONArray("features");
-        assertEquals(1, features.length());
-        JSONObject feature = features.getJSONObject(0);
-        JSONObject properties = feature.getJSONObject("properties");
-        assertEquals("W", properties.getString("osm_type"));
-        assertEquals("place", properties.getString("osm_key"));
-        assertEquals("town", properties.getString("osm_value"));
-        assertEquals("berlin", properties.getString("name"));
-    }
-
-    /**
-     * Search with large location bias
-     */
-    @Test
-    void testApiWithLargerLocationBias() throws Exception {
-        App.main(new String[]{"-cluster", TEST_CLUSTER_NAME, "-listen-port", Integer.toString(LISTEN_PORT), "-transport-addresses", "127.0.0.1"});
-        awaitInitialization();
-        HttpURLConnection connection = (HttpURLConnection) new URL("http://127.0.0.1:" + port() + "/api?q=berlin&limit=1&lat=52.54714&lon=13.39026&zoom=12&location_bias_scale=0.6")
-                .openConnection();
-        JSONObject json = new JSONObject(
-                new BufferedReader(new InputStreamReader(connection.getInputStream())).lines().collect(Collectors.joining("\n")));
-        JSONArray features = json.getJSONArray("features");
-        assertEquals(1, features.length());
-        JSONObject feature = features.getJSONObject(0);
-        JSONObject properties = feature.getJSONObject("properties");
-        assertEquals("W", properties.getString("osm_type"));
-        assertEquals("place", properties.getString("osm_key"));
-        assertEquals("city", properties.getString("osm_value"));
-        assertEquals("berlin", properties.getString("name"));
-    }
-
-    /**
-     * Reverse geocode test
-     */
-    @Test
-    void testApiReverse() throws Exception {
-        App.main(new String[]{"-cluster", TEST_CLUSTER_NAME, "-listen-port", Integer.toString(LISTEN_PORT), "-transport-addresses", "127.0.0.1"});
-        awaitInitialization();
-        HttpURLConnection connection = (HttpURLConnection) new URL("http://127.0.0.1:" + port() + "/reverse/?lon=13.38886&lat=52.51704").openConnection();
-        JSONObject json = new JSONObject(
-                new BufferedReader(new InputStreamReader(connection.getInputStream())).lines().collect(Collectors.joining("\n")));
-        JSONArray features = json.getJSONArray("features");
-        assertEquals(1, features.length());
-        JSONObject feature = features.getJSONObject(0);
-        JSONObject properties = feature.getJSONObject("properties");
-        assertEquals("W", properties.getString("osm_type"));
-        assertEquals("place", properties.getString("osm_key"));
-        assertEquals("city", properties.getString("osm_value"));
-        assertEquals("berlin", properties.getString("name"));
-    }
 
     @Test
-    public void testApiStatus() throws Exception {
+    void testApiStatus() throws Exception {
         App.main(new String[]{"-cluster", TEST_CLUSTER_NAME, "-listen-port", Integer.toString(LISTEN_PORT), "-transport-addresses", "127.0.0.1"});
         awaitInitialization();
         DatabaseProperties prop = new DatabaseProperties();

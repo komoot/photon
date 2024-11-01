@@ -77,3 +77,11 @@ tasks.named('test') {
 test {
     systemProperty "sun.net.http.allowRestrictedHeaders", "true"
 }
+
+
+jacocoTestReport {
+    reports {
+        xml.required = true
+        html.required = false
+    }
+}

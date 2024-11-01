@@ -11,12 +11,12 @@ import java.util.List;
 import java.util.Set;
 
 public class ReverseQueryBuilder {
-    final private double radius;
-    final private Point location;
-    final private String queryStringFilter;
-    final private Set<String> layerFilter;
+    private final double radius;
+    private final Point location;
+    private final String queryStringFilter;
+    private final Set<String> layerFilter;
 
-    final private OsmTagFilter osmTagFilter = new OsmTagFilter();
+    private final OsmTagFilter osmTagFilter = new OsmTagFilter();
 
     public ReverseQueryBuilder(Point location, double radius, String queryStringFilter, Set<String> layerFilter) {
         this.radius = radius;

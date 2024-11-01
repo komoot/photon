@@ -23,7 +23,7 @@ public class Server {
 
     protected OpenSearchClient client;
     private OpenSearchRunner runner = null;
-    final protected String dataDirectory;
+    protected final String dataDirectory;
 
     public Server(String mainDirectory) {
         dataDirectory = new File(mainDirectory, "photon_data").getAbsolutePath();
@@ -145,13 +145,13 @@ public class Server {
                 DBPropertyEntry.class);
 
         if (!dbEntry.found()) {
-            throw new RuntimeException("Cannot access property record. Database too old?");
+            throw new UsageException("Cannot access property record. Database too old?");
         }
 
         if (!DatabaseProperties.DATABASE_VERSION.equals(dbEntry.source().databaseVersion)) {
             LOGGER.error("Database has incompatible version '{}'. Expected: {}",
                          dbEntry.source().databaseVersion, DatabaseProperties.DATABASE_VERSION);
-            throw new RuntimeException("Incompatible database.");
+            throw new UsageException("Incompatible database.");
         }
 
         dbProperties.setLanguages(dbEntry.source().languages);

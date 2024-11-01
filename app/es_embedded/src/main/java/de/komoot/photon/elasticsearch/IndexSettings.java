@@ -1,6 +1,7 @@
 package de.komoot.photon.elasticsearch;
 
 import de.komoot.photon.Utils;
+import de.komoot.photon.UsageException;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.xcontent.XContentType;
 import org.json.JSONArray;
@@ -96,7 +97,7 @@ public class IndexSettings {
                 for (int j = 0; j < jsonTerms.length(); j++) {
                     String term = jsonTerms.getString(j).toLowerCase().trim();
                     if (term.indexOf(' ') >= 0) {
-                        throw new RuntimeException("Syntax error in synonym file: only single word classification terms allowed.");
+                        throw new UsageException("Syntax error in synonym file: only single word classification terms allowed.");
                     }
 
                     if (term.length() > 1) {
@@ -122,7 +123,7 @@ public class IndexSettings {
             // Create a filter for the synonyms.
             JSONObject filters = (JSONObject) settings.optQuery("/analysis/filter");
             if (filters == null) {
-                throw new RuntimeException("Analyser update: cannot find filter definition");
+                throw new UsageException("Analyser update: cannot find filter definition");
             }
             filters.put(filterName, new JSONObject().put("type", "synonym").put("synonyms", synonyms));
 
@@ -177,7 +178,7 @@ public class IndexSettings {
         JSONObject parent = (JSONObject) settings.optQuery(jsonPointer);
         JSONArray array = parent == null ? null : parent.optJSONArray(field);
         if (array == null) {
-            throw new RuntimeException("Analyser update: cannot find JSON array at" + jsonPointer);
+            throw new UsageException("Analyser update: cannot find JSON array at" + jsonPointer);
         }
 
         // We can't just insert items, so build a new array instead.
@@ -192,7 +193,7 @@ public class IndexSettings {
         }
 
         if (!done) {
-            throw new RuntimeException("Analyser update: cannot find position string " + positionString);
+            throw new UsageException("Analyser update: cannot find position string " + positionString);
         }
 
         parent.put(field, newArray);

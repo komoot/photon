@@ -21,7 +21,7 @@ public class ESBaseTester {
     protected Path dataDirectory;
 
     public static final String TEST_CLUSTER_NAME = "photon-test";
-    protected static GeometryFactory FACTORY = new GeometryFactory(new PrecisionModel(), 4326);
+    protected static final GeometryFactory FACTORY = new GeometryFactory(new PrecisionModel(), 4326);
 
     private ElasticTestServer server;
 
@@ -52,8 +52,8 @@ public class ESBaseTester {
      *
      * @throws IOException
      */
-    public void setUpES(Path test_directory, String... languages) throws IOException {
-        server = new ElasticTestServer(test_directory.toString());
+    public void setUpES(Path testDirectory, String... languages) throws IOException {
+        server = new ElasticTestServer(testDirectory.toString());
         server.start(TEST_CLUSTER_NAME, new String[]{});
         server.recreateIndex(languages, new Date(), false);
         refresh();

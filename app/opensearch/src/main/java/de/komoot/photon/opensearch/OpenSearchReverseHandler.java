@@ -15,8 +15,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class OpenSearchReverseHandler implements ReverseHandler {
-    final private OpenSearchClient client;
-    final private String queryTimeout;
+    private final OpenSearchClient client;
+    private final String queryTimeout;
 
     public OpenSearchReverseHandler(OpenSearchClient client, int queryTimeoutSec) {
         this.client = client;
@@ -52,7 +52,8 @@ public class OpenSearchReverseHandler implements ReverseHandler {
                 s.index(PhotonIndex.NAME)
                         .searchType(SearchType.QueryThenFetch)
                         .query(query)
-                        .size(limit);
+                        .size(limit)
+                        .timeout(queryTimeout);
 
                 if (location != null) {
                     s.sort(sq -> sq
