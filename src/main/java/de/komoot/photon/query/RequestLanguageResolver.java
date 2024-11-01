@@ -58,7 +58,8 @@ public class RequestLanguageResolver {
         try {
             List<Locale.LanguageRange> languages = Locale.LanguageRange.parse(acceptLanguageHeader);
             return Locale.lookupTag(languages, supportedLanguages);
-        } catch (Throwable e) {
+        } catch (IllegalArgumentException e) {
+            // ignore
         }
 
         return null;
