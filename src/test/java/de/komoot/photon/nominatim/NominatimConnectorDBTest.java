@@ -337,7 +337,7 @@ class NominatimConnectorDBTest {
     }
 
     @Test
-    public void testGetImportDate() {
+    void testGetImportDate() {
         Date importDate = connector.getLastImportDate();
         assertNull(importDate);
         

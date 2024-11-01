@@ -1,5 +1,7 @@
 package de.komoot.photon.nominatim;
 
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.locationtech.jts.io.ParseException;
 import org.locationtech.jts.io.WKTReader;
 import de.komoot.photon.PhotonDoc;
@@ -76,27 +78,16 @@ class NominatimResultTest {
         assertDocWithHousenumbers(Arrays.asList("34", "50b", "4"), res.getDocsWithHousenumber());
     }
 
-    @Test
-    void testLongHousenumber() {
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "987987誰も住んでいないスーパーマーケット誰も住んでいないスーパーマーケット誰も住んでいないスーパーマーケット誰も住んでいないスーパーマーケット誰も住んでいないスーパーマーケット誰も住んでいないスーパーマーケット誰も住んでいないスーパーマーケット誰も住んでいないスーパーマーケット誰も住んでいないスーパーマー",
+            "something bad",
+            "14, portsmith"
+    })
+    void testLongHousenumber(String houseNumber) {
         NominatimResult res = new NominatimResult(simpleDoc);
 
-        res.addHousenumbersFromString("987987誰も住んでいないスーパーマーケット誰も住んでいないスーパーマーケット誰も住んでいないスーパーマーケット誰も住んでいないスーパーマーケット誰も住んでいないスーパーマーケット誰も住んでいないスーパーマーケット誰も住んでいないスーパーマーケット誰も住んでいないスーパーマーケット誰も住んでいないスーパーマー");
-        assertNoHousenumber(res.getDocsWithHousenumber());
-    }
-
-    @Test
-    void testHousenumberWithNoNumber() {
-        NominatimResult res = new NominatimResult(simpleDoc);
-
-        res.addHousenumbersFromString("something bad");
-        assertNoHousenumber(res.getDocsWithHousenumber());
-    }
-
-    @Test
-    void testHousenumberWithNoNumberInPart() {
-        NominatimResult res = new NominatimResult(simpleDoc);
-
-        res.addHousenumbersFromString("14, portsmith");
+        res.addHousenumbersFromString(houseNumber);
         assertNoHousenumber(res.getDocsWithHousenumber());
     }
 
