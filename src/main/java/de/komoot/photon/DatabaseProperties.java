@@ -75,7 +75,7 @@ public class DatabaseProperties {
             }
 
             if (newLanguageList.isEmpty()) {
-                throw new RuntimeException("Language list '" + Arrays.toString(languageList) +
+                throw new UsageException("Language list '" + Arrays.toString(languageList) +
                         "' not compatible with languages in database(" + Arrays.toString(languages) + ")");
             }
 

@@ -62,7 +62,7 @@ public class Server {
         try {
             setupDirectories(new File(mainDirectory).toURI().toURL());
         } catch (Exception e) {
-            throw new RuntimeException("Can't create directories: " + mainDirectory, e);
+            throw new UsageException("Can't create directories: " + mainDirectory + ": " + e.getMessage());
         }
     }
 
@@ -104,7 +104,7 @@ public class Server {
                 esClient = esNode.client();
 
             } catch (NodeValidationException e) {
-                throw new RuntimeException("Error while starting elasticsearch server", e);
+                throw new UsageException("Error while starting elasticsearch server: " + e.getMessage());
             }
 
         }
@@ -130,7 +130,7 @@ public class Server {
 
             esClient.close();
         } catch (IOException e) {
-            throw new RuntimeException("Error during elasticsearch server shutdown", e);
+            LOGGER.info("Error during elasticsearch server shutdown", e);
         }
     }
 
@@ -257,13 +257,13 @@ public class Server {
         Map<String, String> properties = (Map<String, String>) response.getSource().get(BASE_FIELD);
 
         if (properties == null) {
-            throw new RuntimeException("Found database properties but no '" + BASE_FIELD +"' field. Database corrupt?");
+            throw new UsageException("Found database properties but no '" + BASE_FIELD +"' field. Database corrupt?");
         }
 
         String version = properties.getOrDefault(FIELD_VERSION, "");
         if (!DatabaseProperties.DATABASE_VERSION.equals(version)) {
             LOGGER.error("Database has incompatible version '{}'. Expected: {}", version, DatabaseProperties.DATABASE_VERSION);
-            throw new RuntimeException("Incompatible database.");
+            throw new UsageException("Incompatible database.");
         }
 
         String langString = properties.get(FIELD_LANGUAGES);
