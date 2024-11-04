@@ -19,8 +19,7 @@ class ServerTest extends ESBaseTester {
         prop.setImportDate(now);
         getServer().saveToDatabase(prop);
 
-        prop = new DatabaseProperties();
-        getServer().loadFromDatabase(prop);
+        prop = getServer().loadFromDatabase();
 
         assertArrayEquals(new String[]{"en", "de", "fr"}, prop.getLanguages());
         assertEquals(now, prop.getImportDate());

@@ -206,8 +206,7 @@ public class Server {
         // Load the settings from the database to make sure it is at the right
         // version. If the version is wrong, we should not be messing with the
         // index.
-        DatabaseProperties dbProperties = new DatabaseProperties();
-        loadFromDatabase(dbProperties);
+        DatabaseProperties dbProperties = loadFromDatabase();
 
         loadIndexSettings().setSynonymFile(synonymFile).updateIndex(esClient, PhotonIndex.NAME);
 
@@ -257,12 +256,13 @@ public class Server {
      * Currently does nothing when the property entry is missing. Later versions with a higher
      * database version will then fail.
      */
-    public void loadFromDatabase(DatabaseProperties dbProperties) {
+    public DatabaseProperties loadFromDatabase() {
+        DatabaseProperties dbProperties = new DatabaseProperties();
         GetResponse response = esClient.prepareGet(PhotonIndex.NAME, PhotonIndex.TYPE, PROPERTY_DOCUMENT_ID).execute().actionGet();
 
         // We are currently at the database version where versioning was introduced.
         if (!response.isExists()) {
-            return;
+            throw new UsageException("Cannot find database properties. Your database version is too old. Please reimport.");
         }
 
         Map<String, String> properties = (Map<String, String>) response.getSource().get(BASE_FIELD);
@@ -283,6 +283,8 @@ public class Server {
 
         String importDateString = properties.get(FIELD_IMPORT_DATE);
         dbProperties.setImportDate(importDateString == null ? null : Date.from(Instant.parse(importDateString)));
+
+        return dbProperties;
     }
 
     public Importer createImporter(String[] languages, String[] extraTags) {

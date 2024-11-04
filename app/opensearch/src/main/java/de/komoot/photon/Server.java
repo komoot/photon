@@ -129,8 +129,7 @@ public class Server {
     }
 
     public void updateIndexSettings(String synonymFile) throws IOException {
-        var dbProperties = new DatabaseProperties();
-        loadFromDatabase(dbProperties);
+        var dbProperties = loadFromDatabase();
 
         (new IndexSettingBuilder()).setSynonymFile(synonymFile).updateIndex(client, PhotonIndex.NAME);
 
@@ -149,7 +148,8 @@ public class Server {
                         );
     }
 
-    public void loadFromDatabase(DatabaseProperties dbProperties) throws IOException {
+    public DatabaseProperties loadFromDatabase() throws IOException {
+        DatabaseProperties dbProperties = new DatabaseProperties();
         var dbEntry = client.get(r -> r
                 .index(PhotonIndex.NAME)
                 .id(PhotonIndex.PROPERTY_DOCUMENT_ID),
@@ -168,6 +168,8 @@ public class Server {
         dbProperties.setLanguages(dbEntry.source().languages);
         dbProperties.setImportDate(dbEntry.source().importDate);
         dbProperties.setSupportStructuredQueries(dbEntry.source().supportStructuredQueries);
+
+        return dbProperties;
     }
 
     public Importer createImporter(String[] languages, String[] extraTags) {
