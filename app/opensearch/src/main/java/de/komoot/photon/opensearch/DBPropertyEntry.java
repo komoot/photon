@@ -12,8 +12,8 @@ public class DBPropertyEntry {
 
     public DBPropertyEntry() {}
 
-    public DBPropertyEntry(DatabaseProperties props) {
-        databaseVersion = DatabaseProperties.DATABASE_VERSION;
+    public DBPropertyEntry(DatabaseProperties props, String databaseVersion) {
+        this.databaseVersion = databaseVersion;
         importDate = props.getImportDate();
         languages = props.getLanguages();
         supportStructuredQueries = props.getSupportStructuredQueries();

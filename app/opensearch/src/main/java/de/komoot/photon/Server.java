@@ -19,6 +19,17 @@ import java.io.IOException;
 import java.util.Date;
 
 public class Server {
+    /**
+     * Database version created by new imports with the current code.
+     *
+     * Format must be: major.minor.patch-dev
+     *
+     * Increase to next to be released version when the database layout
+     * changes in an incompatible way. If it is already at the next released
+     * version, increase the dev version.
+     */
+    public static final String DATABASE_VERSION = "0.3.6-1";
+
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(Server.class);
 
     protected OpenSearchClient client;
@@ -134,7 +145,7 @@ public class Server {
         client.index(r -> r
                         .index(PhotonIndex.NAME)
                         .id(PhotonIndex.PROPERTY_DOCUMENT_ID)
-                        .document(new DBPropertyEntry(dbProperties))
+                        .document(new DBPropertyEntry(dbProperties, DATABASE_VERSION))
                         );
     }
 
@@ -148,9 +159,9 @@ public class Server {
             throw new UsageException("Cannot access property record. Database too old?");
         }
 
-        if (!DatabaseProperties.DATABASE_VERSION.equals(dbEntry.source().databaseVersion)) {
+        if (!DATABASE_VERSION.equals(dbEntry.source().databaseVersion)) {
             LOGGER.error("Database has incompatible version '{}'. Expected: {}",
-                         dbEntry.source().databaseVersion, DatabaseProperties.DATABASE_VERSION);
+                         dbEntry.source().databaseVersion, DATABASE_VERSION);
             throw new UsageException("Incompatible database.");
         }
 
