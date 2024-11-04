@@ -119,10 +119,7 @@ public class Server {
 
         (new IndexMapping(supportStructuredQueries)).addLanguages(languages).putMapping(client, PhotonIndex.NAME);
 
-        var dbProperties = new DatabaseProperties()
-                .setLanguages(languages)
-                .setSupportStructuredQueries(supportStructuredQueries)
-                .setImportDate(importDate);
+        var dbProperties = new DatabaseProperties(languages, importDate, supportStructuredQueries);
         saveToDatabase(dbProperties);
 
         return dbProperties;
@@ -149,7 +146,6 @@ public class Server {
     }
 
     public DatabaseProperties loadFromDatabase() throws IOException {
-        DatabaseProperties dbProperties = new DatabaseProperties();
         var dbEntry = client.get(r -> r
                 .index(PhotonIndex.NAME)
                 .id(PhotonIndex.PROPERTY_DOCUMENT_ID),
@@ -165,11 +161,9 @@ public class Server {
             throw new UsageException("Incompatible database.");
         }
 
-        dbProperties.setLanguages(dbEntry.source().languages);
-        dbProperties.setImportDate(dbEntry.source().importDate);
-        dbProperties.setSupportStructuredQueries(dbEntry.source().supportStructuredQueries);
-
-        return dbProperties;
+        return new DatabaseProperties(dbEntry.source().languages,
+                                      dbEntry.source().importDate,
+                                      dbEntry.source().supportStructuredQueries);
     }
 
     public Importer createImporter(String[] languages, String[] extraTags) {

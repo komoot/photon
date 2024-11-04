@@ -8,18 +8,21 @@ import java.util.*;
  * The server is responsible for making the data persistent in the Photon database.
  */
 public class DatabaseProperties {
-    private String[] languages = null;
-
-    /**
-     * The OSM data date
-     */
+    private String[] languages;
     private Date importDate;
+    private final boolean supportStructuredQueries;
 
-    private boolean supportStructuredQueries;
+    public DatabaseProperties(String[] languages, Date importDate, boolean supportStructuredQueries) {
+        this.languages = languages;
+        this.importDate = importDate;
+        this.supportStructuredQueries = supportStructuredQueries;
+    }
 
     /**
      * Return the list of languages for which the database is configured.
-     * @return
+     * If no list was set, then the default is returned.
+     *
+     * @return List of supported languages.
      */
     public String[] getLanguages() {
         if (languages == null) {
@@ -27,18 +30,6 @@ public class DatabaseProperties {
         }
 
         return languages;
-    }
-
-    /**
-     * Replace the language list with the given list.
-     *
-     * @param languages Array of two-letter language codes.
-     *
-     * @return This object for function chaining.
-     */
-    public DatabaseProperties setLanguages(String[] languages) {
-        this.languages = languages;
-        return this;
     }
 
     /**
@@ -72,21 +63,16 @@ public class DatabaseProperties {
         }
     }
 
+     public void setImportDate(Date importDate) {
+        this.importDate = importDate;
+    }
+
+
     public Date getImportDate() {
         return this.importDate;
     }
 
-    public DatabaseProperties setImportDate(Date importDate) {
-        this.importDate = importDate;
-        return this;
-    }
-
     public boolean getSupportStructuredQueries() {
         return supportStructuredQueries;
-    }
-
-    public DatabaseProperties setSupportStructuredQueries(boolean supportStructuredQueries) {
-        this.supportStructuredQueries = supportStructuredQueries;
-        return this;
     }
 }

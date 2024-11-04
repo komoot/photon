@@ -184,9 +184,7 @@ public class Server {
 
         createAndPutIndexMapping(languages, supportStructuredQueries);
 
-        DatabaseProperties dbProperties = new DatabaseProperties()
-            .setLanguages(languages)
-            .setImportDate(importDate);
+        DatabaseProperties dbProperties = new DatabaseProperties(languages, importDate, false);
         saveToDatabase(dbProperties);
 
         return dbProperties;
@@ -257,7 +255,6 @@ public class Server {
      * database version will then fail.
      */
     public DatabaseProperties loadFromDatabase() {
-        DatabaseProperties dbProperties = new DatabaseProperties();
         GetResponse response = esClient.prepareGet(PhotonIndex.NAME, PhotonIndex.TYPE, PROPERTY_DOCUMENT_ID).execute().actionGet();
 
         // We are currently at the database version where versioning was introduced.
@@ -279,12 +276,11 @@ public class Server {
         }
 
         String langString = properties.get(FIELD_LANGUAGES);
-        dbProperties.setLanguages(langString == null ? null : langString.split(","));
-
         String importDateString = properties.get(FIELD_IMPORT_DATE);
-        dbProperties.setImportDate(importDateString == null ? null : Date.from(Instant.parse(importDateString)));
 
-        return dbProperties;
+        return new DatabaseProperties(langString == null ? null : langString.split(","),
+                                      importDateString == null ? null : Date.from(Instant.parse(importDateString)),
+                                      false);
     }
 
     public Importer createImporter(String[] languages, String[] extraTags) {

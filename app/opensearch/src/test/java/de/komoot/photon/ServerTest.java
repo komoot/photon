@@ -13,10 +13,10 @@ class ServerTest extends ESBaseTester {
     void testSaveAndLoadFromDatabase() throws IOException {
         setUpES();
 
-        DatabaseProperties prop = new DatabaseProperties();
-        prop.setLanguages(new String[]{"en", "de", "fr"});
         Date now = new Date();
-        prop.setImportDate(now);
+        DatabaseProperties prop = new DatabaseProperties(new String[]{"en", "de", "fr"},
+                                                         now,
+                                   false);
         getServer().saveToDatabase(prop);
 
         prop = getServer().loadFromDatabase();
