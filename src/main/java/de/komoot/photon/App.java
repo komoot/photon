@@ -121,14 +121,17 @@ public class App {
      * Read all data from a Nominatim database and import it into a Photon database.
      */
     private static void startNominatimImport(CommandLineArgs args, Server esServer) {
-        DatabaseProperties dbProperties;
-        NominatimConnector nominatimConnector = new NominatimConnector(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
+        final var nominatimConnector = new NominatimConnector(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
         Date importDate = nominatimConnector.getLastImportDate();
+
+        DatabaseProperties dbProperties;
         try {
             dbProperties = esServer.recreateIndex(args.getLanguages(), importDate, args.getSupportStructuredQueries()); // clear out previous data
         } catch (IOException e) {
             throw new UsageException("Cannot setup index, elastic search config files not readable");
         }
+        LOGGER.info("Preparing Nominatim database for export.");
+        nominatimConnector.prepareDatabase();
 
         LOGGER.info("Starting import from nominatim to photon with languages: {}", String.join(",", dbProperties.getLanguages()));
         nominatimConnector.setImporter(esServer.createImporter(dbProperties.getLanguages(), args.getExtraTags()));

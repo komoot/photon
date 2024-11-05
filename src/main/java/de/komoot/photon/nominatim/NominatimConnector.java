@@ -92,7 +92,7 @@ public class NominatimConnector {
     }
 
     public NominatimConnector(String host, int port, String database, String username, String password, DBDataAdapter dataAdapter) {
-        BasicDataSource dataSource = buildDataSource(host, port, database, username, password, false);
+        BasicDataSource dataSource = buildDataSource(host, port, database, username, password, true);
 
         template = new JdbcTemplate(dataSource);
         template.setFetchSize(100000);
@@ -332,5 +332,22 @@ public class NominatimConnector {
 
     public DBDataAdapter getDataAdaptor() {
         return dbutils;
+    }
+
+    /**
+     * Prepare the database for export.
+     *
+     * This function ensures that the proper index are available and if
+     * not will create them. This may take a while.
+     */
+    public void prepareDatabase() {
+        Integer indexRowNum = template.queryForObject(
+                "SELECT count(*) FROM pg_indexes WHERE tablename = 'placex' AND indexdef LIKE '%(country_code)'",
+                Integer.class);
+
+        if (indexRowNum == null || indexRowNum == 0) {
+            LOGGER.info("Creating index over countries.");
+            template.execute("CREATE INDEX ON placex (country_code)");
+        }
     }
 }
