@@ -81,6 +81,7 @@ public class NominatimUpdater {
     public void update() {
         if (updateLock.tryLock()) {
             try {
+                exporter.loadCountryNames();
                 updateFromPlacex();
                 updateFromInterpolations();
                 updater.finish();

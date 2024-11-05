@@ -57,7 +57,9 @@ class NominatimConnectorDBTest {
         PlacexTestRow place = new PlacexTestRow("amenity", "cafe").name("SpotHU").country("hu").add(jdbc);
         new PlacexTestRow("amenity", "cafe").name("SpotDE").country("de").add(jdbc);
         new PlacexTestRow("amenity", "cafe").name("SpotUS").country("us").add(jdbc);
-        connector.readEntireDatabase("uk", "hu", "nl");
+        connector.readCountry("uk");
+        connector.readCountry("hu");
+        connector.readCountry("nl");
 
         assertEquals(1, importer.size());
         importer.assertContains(place);
