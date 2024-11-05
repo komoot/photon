@@ -14,6 +14,9 @@ import java.util.List;
 @Parameters(parametersValidators = CorsMutuallyExclusiveValidator.class)
 public class CommandLineArgs {
 
+    @Parameter(names = "-j", description = "Number of threads to use for import.")
+    private int threads = 1;
+
     @Parameter(names = "-structured", description = "Enable support for structured queries.")
     private boolean supportStructuredQueries = false;
 
@@ -105,6 +108,10 @@ public class CommandLineArgs {
 
     public String[] getLanguages() {
         return getLanguages(true);
+    }
+
+    public int getThreads() {
+        return Integer.min(10, Integer.max(0, threads));
     }
 
     public String getCluster() {

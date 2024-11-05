@@ -16,7 +16,7 @@ public class ImportThread {
 
     private static final int PROGRESS_INTERVAL = 50000;
     private static final NominatimResult FINAL_DOCUMENT = new NominatimResult(new PhotonDoc(0, null, 0, null, null));
-    private final BlockingQueue<NominatimResult> documents = new LinkedBlockingDeque<>(20);
+    private final BlockingQueue<NominatimResult> documents = new LinkedBlockingDeque<>(100);
     private final AtomicLong counter = new AtomicLong();
     private final Importer importer;
     private final Thread thread;
@@ -70,7 +70,8 @@ public class ImportThread {
                 Thread.currentThread().interrupt();
             }
         }
-        LOGGER.info("Finished import of {} photon documents.", counter.longValue());
+        LOGGER.info("Finished import of {} photon documents. (Total processing time: {}s)",
+                    counter.longValue(), (System.currentTimeMillis() - startMillis)/1000);
     }
 
     private class ImportRunnable implements Runnable {

@@ -15,8 +15,8 @@ import spark.Response;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Date;
+import java.util.*;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import static spark.Spark.*;
 
@@ -109,9 +109,8 @@ public class App {
         try {
             final String filename = args.getJsonDump();
             final JsonDumper jsonDumper = new JsonDumper(filename, args.getLanguages(), args.getExtraTags());
-            final NominatimConnector nominatimConnector = new NominatimConnector(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
 
-            importFromDatabase(nominatimConnector, jsonDumper, args.getCountryCodes());
+            importFromDatabase(args, jsonDumper);
             LOGGER.info("Json dump was created: {}", filename);
         } catch (FileNotFoundException e) {
             throw new UsageException("Cannot create dump: " + e.getMessage());
@@ -123,29 +122,33 @@ public class App {
      * Read all data from a Nominatim database and import it into a Photon database.
      */
     private static void startNominatimImport(CommandLineArgs args, Server esServer) {
-        final var nominatimConnector = new NominatimConnector(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
-        final Date importDate = nominatimConnector.getLastImportDate();
-
-        String[] languages;
-        try {
-            // Clear out previous data.
-            var dbProperties = esServer.recreateIndex(args.getLanguages(), importDate, args.getSupportStructuredQueries());
-            languages = dbProperties.getLanguages();
-        } catch (IOException e) {
-            throw new UsageException("Cannot setup index, elastic search config files not readable");
-        }
+        final var languages = initDatabase(args, esServer);
 
         LOGGER.info("Starting import from nominatim to photon with languages: {}", String.join(",", languages));
-        importFromDatabase(
-                nominatimConnector,
-                esServer.createImporter(languages, args.getExtraTags()),
-                args.getCountryCodes());
+        importFromDatabase(args, esServer.createImporter(languages, args.getExtraTags()));
 
         LOGGER.info("Imported data from nominatim to photon with languages: {}", String.join(",", languages));
     }
 
-    private static void importFromDatabase(NominatimConnector connector, Importer importer, String[] countries) {
+    private static String[] initDatabase(CommandLineArgs args, Server esServer) {
+        final var nominatimConnector = new NominatimConnector(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
+        final Date importDate = nominatimConnector.getLastImportDate();
+
+        try {
+            // Clear out previous data.
+            var dbProperties = esServer.recreateIndex(args.getLanguages(), importDate, args.getSupportStructuredQueries());
+            return dbProperties.getLanguages();
+        } catch (IOException e) {
+            throw new UsageException("Cannot setup index, elastic search config files not readable");
+        }
+    }
+
+    private static void importFromDatabase(CommandLineArgs args, Importer importer) {
+        final var connector = new NominatimConnector(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
         connector.prepareDatabase();
+        connector.loadCountryNames();
+
+        String[] countries = args.getCountryCodes();
 
         if (countries == null || countries.length == 0) {
             countries = connector.getCountriesFromDatabase();
@@ -153,17 +156,60 @@ public class App {
             countries = Arrays.stream(countries).map(String::trim).filter(s -> !s.isBlank()).toArray(String[]::new);
         }
 
+        final int numThreads = args.getThreads();
         ImportThread importThread = new ImportThread(importer);
 
         try {
-            for (var countryCode : countries) {
-                connector.readCountry(countryCode, importThread);
+
+            if (numThreads == 1) {
+                for (var country : countries) {
+                    connector.readCountry(country, importThread);
+                }
+            } else {
+                final Queue<String> todolist = new ConcurrentLinkedQueue<>(List.of(countries));
+
+                final List<Thread> readerThreads = new ArrayList<>(numThreads);
+
+                for (int i = 0; i < numThreads; ++i) {
+                    final NominatimConnector threadConnector;
+                    if (i > 0) {
+                        threadConnector = new NominatimConnector(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
+                        threadConnector.loadCountryNames();
+                    } else {
+                        threadConnector = connector;
+                    }
+                    final int threadno = i;
+                    Runnable runner = () -> {
+                        String nextCc = todolist.poll();
+                        while (nextCc != null) {
+                            LOGGER.info("Thread {}: reading country '{}'", threadno, nextCc);
+                            threadConnector.readCountry(nextCc, importThread);
+                            nextCc = todolist.poll();
+                        }
+                    };
+                    Thread thread = new Thread(runner);
+                    thread.start();
+                    readerThreads.add(thread);
+                }
+                readerThreads.forEach(t -> {
+                    while (true) {
+                        try {
+                            t.join();
+                            break;
+                        } catch (InterruptedException e) {
+                            LOGGER.warn("Thread interrupted:", e);
+                            // Restore interrupted state.
+                            Thread.currentThread().interrupt();
+                        }
+                    }
+                });
             }
         } finally {
             importThread.finish();
         }
 
     }
+
 
     private static void startNominatimUpdateInit(CommandLineArgs args) {
         NominatimUpdater nominatimUpdater = new NominatimUpdater(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());

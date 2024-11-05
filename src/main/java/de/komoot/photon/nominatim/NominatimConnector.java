@@ -236,7 +236,7 @@ public class NominatimConnector {
     public void readCountry(String countryCode, ImportThread importThread) {
         // Make sure, country names are available.
         loadCountryNames();
-        if (countryCode != null && !countryNames.containsKey(countryCode)) {
+        if ("".equals(countryCode) && !countryNames.containsKey(countryCode)) {
             LOGGER.warn("Unknown country code {}. Skipping.", countryCode);
             return;
         }
@@ -259,7 +259,7 @@ public class NominatimConnector {
             }
         };
 
-        if (countryCode == null) {
+        if ("".equals(countryCode)) {
             template.query(SELECT_COLS_PLACEX + " FROM placex " +
                     " WHERE linked_place_id IS NULL AND centroid IS NOT NULL AND country_code is null" +
                     " ORDER BY geometry_sector, parent_place_id; ", placeMapper);
@@ -336,7 +336,7 @@ public class NominatimConnector {
     public String[] getCountriesFromDatabase() {
         loadCountryNames();
         String[] countries = new String[countryNames.keySet().size() + 1];
-        countries[0] = null;
+        countries[0] = "";
 
         int i = 1;
         for (var country: countryNames.keySet()) {
