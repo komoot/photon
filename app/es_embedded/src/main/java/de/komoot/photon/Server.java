@@ -37,6 +37,17 @@ import java.util.Map;
  * Helper class to start/stop ElasticSearch node and get ElasticSearch clients.
  */
 public class Server {
+    /**
+     * Database version created by new imports with the current code.
+     *
+     * Format must be: major.minor.patch-dev
+     *
+     * Increase to next to be released version when the database layout
+     * changes in an incompatible way. If it is already at the next released
+     * version, increase the dev version.
+     */
+    public static final String DATABASE_VERSION = "0.3.6-1";
+
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(Server.class);
 
     public static final String PROPERTY_DOCUMENT_ID = "DATABASE_PROPERTIES";
@@ -173,9 +184,7 @@ public class Server {
 
         createAndPutIndexMapping(languages, supportStructuredQueries);
 
-        DatabaseProperties dbProperties = new DatabaseProperties()
-            .setLanguages(languages)
-            .setImportDate(importDate);
+        DatabaseProperties dbProperties = new DatabaseProperties(languages, importDate, false);
         saveToDatabase(dbProperties);
 
         return dbProperties;
@@ -195,8 +204,7 @@ public class Server {
         // Load the settings from the database to make sure it is at the right
         // version. If the version is wrong, we should not be messing with the
         // index.
-        DatabaseProperties dbProperties = new DatabaseProperties();
-        loadFromDatabase(dbProperties);
+        DatabaseProperties dbProperties = loadFromDatabase();
 
         loadIndexSettings().setSynonymFile(synonymFile).updateIndex(esClient, PhotonIndex.NAME);
 
@@ -228,7 +236,7 @@ public class Server {
      */
     public void saveToDatabase(DatabaseProperties dbProperties) throws IOException  {
         final XContentBuilder builder = XContentFactory.jsonBuilder().startObject().startObject(BASE_FIELD)
-                        .field(FIELD_VERSION, DatabaseProperties.DATABASE_VERSION)
+                        .field(FIELD_VERSION, DATABASE_VERSION)
                         .field(FIELD_LANGUAGES, String.join(",", dbProperties.getLanguages()))
                         .field(FIELD_IMPORT_DATE, dbProperties.getImportDate() instanceof Date ? dbProperties.getImportDate().toInstant() : null)
                         .endObject().endObject();
@@ -246,12 +254,12 @@ public class Server {
      * Currently does nothing when the property entry is missing. Later versions with a higher
      * database version will then fail.
      */
-    public void loadFromDatabase(DatabaseProperties dbProperties) {
+    public DatabaseProperties loadFromDatabase() {
         GetResponse response = esClient.prepareGet(PhotonIndex.NAME, PhotonIndex.TYPE, PROPERTY_DOCUMENT_ID).execute().actionGet();
 
         // We are currently at the database version where versioning was introduced.
         if (!response.isExists()) {
-            return;
+            throw new UsageException("Cannot find database properties. Your database version is too old. Please reimport.");
         }
 
         Map<String, String> properties = (Map<String, String>) response.getSource().get(BASE_FIELD);
@@ -261,16 +269,18 @@ public class Server {
         }
 
         String version = properties.getOrDefault(FIELD_VERSION, "");
-        if (!DatabaseProperties.DATABASE_VERSION.equals(version)) {
-            LOGGER.error("Database has incompatible version '{}'. Expected: {}", version, DatabaseProperties.DATABASE_VERSION);
+        if (!DATABASE_VERSION.equals(version)) {
+            LOGGER.error("Database has incompatible version '{}'. Expected: {}",
+                         version, DATABASE_VERSION);
             throw new UsageException("Incompatible database.");
         }
 
         String langString = properties.get(FIELD_LANGUAGES);
-        dbProperties.setLanguages(langString == null ? null : langString.split(","));
-
         String importDateString = properties.get(FIELD_IMPORT_DATE);
-        dbProperties.setImportDate(importDateString == null ? null : Date.from(Instant.parse(importDateString)));
+
+        return new DatabaseProperties(langString == null ? null : langString.split(","),
+                                      importDateString == null ? null : Date.from(Instant.parse(importDateString)),
+                                      false);
     }
 
     public Importer createImporter(String[] languages, String[] extraTags) {

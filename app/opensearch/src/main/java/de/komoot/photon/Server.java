@@ -19,6 +19,17 @@ import java.io.IOException;
 import java.util.Date;
 
 public class Server {
+    /**
+     * Database version created by new imports with the current code.
+     *
+     * Format must be: major.minor.patch-dev
+     *
+     * Increase to next to be released version when the database layout
+     * changes in an incompatible way. If it is already at the next released
+     * version, increase the dev version.
+     */
+    public static final String DATABASE_VERSION = "0.3.6-1";
+
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(Server.class);
 
     protected OpenSearchClient client;
@@ -108,18 +119,14 @@ public class Server {
 
         (new IndexMapping(supportStructuredQueries)).addLanguages(languages).putMapping(client, PhotonIndex.NAME);
 
-        var dbProperties = new DatabaseProperties()
-                .setLanguages(languages)
-                .setSupportStructuredQueries(supportStructuredQueries)
-                .setImportDate(importDate);
+        var dbProperties = new DatabaseProperties(languages, importDate, supportStructuredQueries);
         saveToDatabase(dbProperties);
 
         return dbProperties;
     }
 
     public void updateIndexSettings(String synonymFile) throws IOException {
-        var dbProperties = new DatabaseProperties();
-        loadFromDatabase(dbProperties);
+        var dbProperties = loadFromDatabase();
 
         (new IndexSettingBuilder()).setSynonymFile(synonymFile).updateIndex(client, PhotonIndex.NAME);
 
@@ -134,11 +141,11 @@ public class Server {
         client.index(r -> r
                         .index(PhotonIndex.NAME)
                         .id(PhotonIndex.PROPERTY_DOCUMENT_ID)
-                        .document(new DBPropertyEntry(dbProperties))
+                        .document(new DBPropertyEntry(dbProperties, DATABASE_VERSION))
                         );
     }
 
-    public void loadFromDatabase(DatabaseProperties dbProperties) throws IOException {
+    public DatabaseProperties loadFromDatabase() throws IOException {
         var dbEntry = client.get(r -> r
                 .index(PhotonIndex.NAME)
                 .id(PhotonIndex.PROPERTY_DOCUMENT_ID),
@@ -148,15 +155,15 @@ public class Server {
             throw new UsageException("Cannot access property record. Database too old?");
         }
 
-        if (!DatabaseProperties.DATABASE_VERSION.equals(dbEntry.source().databaseVersion)) {
+        if (!DATABASE_VERSION.equals(dbEntry.source().databaseVersion)) {
             LOGGER.error("Database has incompatible version '{}'. Expected: {}",
-                         dbEntry.source().databaseVersion, DatabaseProperties.DATABASE_VERSION);
+                         dbEntry.source().databaseVersion, DATABASE_VERSION);
             throw new UsageException("Incompatible database.");
         }
 
-        dbProperties.setLanguages(dbEntry.source().languages);
-        dbProperties.setImportDate(dbEntry.source().importDate);
-        dbProperties.setSupportStructuredQueries(dbEntry.source().supportStructuredQueries);
+        return new DatabaseProperties(dbEntry.source().languages,
+                                      dbEntry.source().importDate,
+                                      dbEntry.source().supportStructuredQueries);
     }
 
     public Importer createImporter(String[] languages, String[] extraTags) {

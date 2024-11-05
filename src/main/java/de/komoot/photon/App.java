@@ -145,9 +145,8 @@ public class App {
     private static void startNominatimUpdate(NominatimUpdater nominatimUpdater, Server esServer)  {
         nominatimUpdater.update();
 
-        DatabaseProperties dbProperties = new DatabaseProperties();
         try {
-            esServer.loadFromDatabase(dbProperties);
+            DatabaseProperties dbProperties = esServer.loadFromDatabase();
             Date importDate = nominatimUpdater.getLastImportDate();
             dbProperties.setImportDate(importDate);
             esServer.saveToDatabase(dbProperties);
@@ -162,8 +161,7 @@ public class App {
      */
     private static NominatimUpdater setupNominatimUpdater(CommandLineArgs args, Server server)throws IOException {
         // Get database properties and ensure that the version is compatible.
-        DatabaseProperties dbProperties = new DatabaseProperties();
-        server.loadFromDatabase(dbProperties);
+        DatabaseProperties dbProperties = server.loadFromDatabase();
 
         NominatimUpdater nominatimUpdater = new NominatimUpdater(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
         nominatimUpdater.setUpdater(server.createUpdater(dbProperties.getLanguages(), args.getExtraTags()));
@@ -175,8 +173,7 @@ public class App {
      */
     private static void startApi(CommandLineArgs args, Server server) throws IOException {
         // Get database properties and ensure that the version is compatible.
-        DatabaseProperties dbProperties = new DatabaseProperties();
-        server.loadFromDatabase(dbProperties);
+        DatabaseProperties dbProperties = server.loadFromDatabase();
         if (args.getLanguages(false).length > 0) {
             dbProperties.restrictLanguages(args.getLanguages());
         }
