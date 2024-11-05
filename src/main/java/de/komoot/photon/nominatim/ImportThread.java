@@ -11,7 +11,7 @@ import java.util.concurrent.atomic.AtomicLong;
 /**
  * Worker thread for bulk importing data from a Nominatim database.
  */
-class ImportThread {
+public class ImportThread {
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(ImportThread.class);
 
     private static final int PROGRESS_INTERVAL = 50000;
