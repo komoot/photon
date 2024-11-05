@@ -15,6 +15,7 @@ import spark.Response;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Date;
 
 import static spark.Spark.*;
@@ -146,17 +147,17 @@ public class App {
     private static void importFromDatabase(NominatimConnector connector, Importer importer, String[] countries) {
         connector.prepareDatabase();
 
+        if (countries == null || countries.length == 0) {
+            countries = connector.getCountriesFromDatabase();
+        } else {
+            countries = Arrays.stream(countries).map(String::trim).filter(s -> !s.isBlank()).toArray(String[]::new);
+        }
+
         ImportThread importThread = new ImportThread(importer);
 
         try {
-            if (countries != null && countries.length > 0) {
-                for (var countryCode : countries) {
-                    if (!countryCode.isBlank()) {
-                        connector.readCountry(countryCode.strip(), importThread);
-                    }
-                }
-            } else {
-                connector.readEntireDatabase(importThread);
+            for (var countryCode : countries) {
+                connector.readCountry(countryCode, importThread);
             }
         } finally {
             importThread.finish();
