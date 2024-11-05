@@ -109,7 +109,15 @@ public class App {
             final JsonDumper jsonDumper = new JsonDumper(filename, args.getLanguages(), args.getExtraTags());
             NominatimConnector nominatimConnector = new NominatimConnector(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
             nominatimConnector.setImporter(jsonDumper);
-            nominatimConnector.readEntireDatabase(args.getCountryCodes());
+            if (args.getCountryCodes().length > 0) {
+                for (var countryCode: args.getCountryCodes()) {
+                    if (!countryCode.isBlank()) {
+                        nominatimConnector.readCountry(countryCode.strip());
+                    }
+                }
+            } else {
+                nominatimConnector.readEntireDatabase();
+            }
             LOGGER.info("Json dump was created: {}", filename);
         } catch (FileNotFoundException e) {
             throw new UsageException("Cannot create dump: " + e.getMessage());
@@ -135,7 +143,15 @@ public class App {
 
         LOGGER.info("Starting import from nominatim to photon with languages: {}", String.join(",", dbProperties.getLanguages()));
         nominatimConnector.setImporter(esServer.createImporter(dbProperties.getLanguages(), args.getExtraTags()));
-        nominatimConnector.readEntireDatabase(args.getCountryCodes());
+        if (args.getCountryCodes().length > 0) {
+            for (var countryCode: args.getCountryCodes()) {
+                if (!countryCode.isBlank()) {
+                    nominatimConnector.readCountry(countryCode.strip());
+                }
+            }
+        } else {
+            nominatimConnector.readEntireDatabase();
+        }
 
         LOGGER.info("Imported data from nominatim to photon with languages: {}", String.join(",", dbProperties.getLanguages()));
     }

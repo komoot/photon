@@ -8,7 +8,10 @@ import de.komoot.photon.nominatim.model.AddressType;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.slf4j.Logger;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -17,6 +20,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
 
 /**
  * Importer for data from a Mominatim database.
@@ -69,7 +73,7 @@ public class NominatimConnector {
             // Add address last, so it takes precedence.
             doc.address(address);
 
-            doc.setCountry(getCountryNames(rs.getString("country_code")));
+            doc.setCountry(countryNames.get(rs.getString("country_code")));
 
             NominatimResult result = new NominatimResult(doc);
             result.addHousenumbersFromAddress(address);
@@ -114,7 +118,7 @@ public class NominatimConnector {
 
                 completePlace(doc);
 
-                doc.setCountry(getCountryNames(rs.getString("country_code")));
+                doc.setCountry(countryNames.get(rs.getString("country_code")));
 
                 NominatimResult result = new NominatimResult(doc);
                 result.addHouseNumbersFromInterpolation(rs.getLong("startnumber"), rs.getLong("endnumber"),
@@ -136,7 +140,7 @@ public class NominatimConnector {
 
                 completePlace(doc);
 
-                doc.setCountry(getCountryNames(rs.getString("country_code")));
+                doc.setCountry(countryNames.get(rs.getString("country_code")));
 
                 NominatimResult result = new NominatimResult(doc);
                 result.addHouseNumbersFromInterpolation(rs.getLong("startnumber"), rs.getLong("endnumber"),
@@ -160,16 +164,15 @@ public class NominatimConnector {
         return dataSource;
     }
 
-    private Map<String, String> getCountryNames(String countrycode) {
+    public void loadCountryNames() {
         if (countryNames == null) {
             countryNames = new HashMap<>();
             template.query("SELECT country_code, name FROM country_name", rs -> {
                 countryNames.put(rs.getString("country_code"), dbutils.getMap(rs, "name"));
             });
         }
-
-        return countryNames.get(countrycode);
     }
+
 
     public void setImporter(Importer importer) {
         this.importer = importer;
@@ -239,58 +242,68 @@ public class NominatimConnector {
         return terms;
     }
 
-    static String convertCountryCode(String... countryCodes) {
-        String countryCodeStr = "";
-        for (String cc : countryCodes) {
-            if (cc.isEmpty())
-                continue;
-            if (cc.length() != 2)
-                throw new IllegalArgumentException("country code invalid " + cc);
-            if (!countryCodeStr.isEmpty())
-                countryCodeStr += ",";
-            countryCodeStr += "'" + cc.toLowerCase() + "'";
-        }
-        return countryCodeStr;
-    }
-
     /**
      * Parse every relevant row in placex, create a corresponding document and call the {@link #importer} for each document.
      */
-    public void readEntireDatabase(String... countryCodes) {
-        String andCountryCodeStr = "";
-        String countryCodeStr = convertCountryCode(countryCodes);
-        if (!countryCodeStr.isEmpty()) {
-            andCountryCodeStr = "AND country_code in (" + countryCodeStr + ")";
+    public void readEntireDatabase() {
+        // Make sure, country names are available.
+        loadCountryNames();
+        for (var countryCode: countryNames.keySet()) {
+            readCountry(countryCode);
+        }
+        // Import all places not connected to a country.
+        readCountry(null);
+    }
+
+    public void readCountry(String countryCode) {
+        // Make sure, country names are available.
+        loadCountryNames();
+        if (countryCode != null && !countryNames.containsKey(countryCode)) {
+            LOGGER.warn("Unknown country code {}. Skipping.", countryCode);
+            return;
         }
 
-        LOGGER.info("Start importing documents from nominatim ({})", countryCodeStr.isEmpty() ? "global" : countryCodeStr);
+        LOGGER.info("Importing places for country {}.", countryCode);
 
-        ImportThread importThread = new ImportThread(importer);
+        final ImportThread importThread = new ImportThread(importer);
 
-        try {
-            template.query(SELECT_COLS_PLACEX + " FROM placex " +
-                    " WHERE linked_place_id IS NULL AND centroid IS NOT NULL " + andCountryCodeStr +
-                    " ORDER BY geometry_sector, parent_place_id; ", rs -> {
-                // turns a placex row into a photon document that gathers all de-normalised information
+        final RowCallbackHandler placeMapper = rs -> {
                 NominatimResult docs = placeRowMapper.mapRow(rs, 0);
                 assert (docs != null);
 
                 if (docs.isUsefulForIndex()) {
                     importThread.addDocument(docs);
                 }
-            });
+            };
 
-            template.query(selectOsmlineSql + " FROM location_property_osmline " +
-                    "WHERE startnumber is not null " +
-                    andCountryCodeStr +
-                    " ORDER BY geometry_sector, parent_place_id; ", rs -> {
+        final RowCallbackHandler osmlineMapper = rs -> {
                 NominatimResult docs = osmlineRowMapper.mapRow(rs, 0);
                 assert (docs != null);
 
                 if (docs.isUsefulForIndex()) {
                     importThread.addDocument(docs);
                 }
-            });
+            };
+
+        try {
+            if (countryCode == null) {
+                template.query(SELECT_COLS_PLACEX + " FROM placex " +
+                        " WHERE linked_place_id IS NULL AND centroid IS NOT NULL AND country_code is null" +
+                        " ORDER BY geometry_sector, parent_place_id; ", placeMapper);
+
+                template.query(selectOsmlineSql + " FROM location_property_osmline " +
+                        "WHERE startnumber is not null AND country_code is null " +
+                        " ORDER BY geometry_sector, parent_place_id; ", osmlineMapper);
+            } else {
+                template.query(SELECT_COLS_PLACEX + " FROM placex " +
+                        " WHERE linked_place_id IS NULL AND centroid IS NOT NULL AND country_code = ?" +
+                        " ORDER BY geometry_sector, parent_place_id; ", placeMapper, countryCode);
+
+                template.query(selectOsmlineSql + " FROM location_property_osmline " +
+                        "WHERE startnumber is not null AND country_code = ?" +
+                        " ORDER BY geometry_sector, parent_place_id; ", osmlineMapper, countryCode);
+
+            }
 
         } finally {
             importThread.finish();

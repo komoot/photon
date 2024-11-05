@@ -63,6 +63,12 @@ CREATE TABLE country_name (
 
 INSERT INTO country_name
     VALUES ('de', JSON '{"name" : "Deutschland", "name:en" : "Germany"}', 'de', 2);
+INSERT INTO country_name
+    VALUES ('us', JSON '{"name" : "USA", "name:en" : "United States"}', 'en', 1);
+INSERT INTO country_name
+    VALUES ('hu', JSON '{"name" : "Magyarország", "name:en" : "Hungary"}', 'hu', 12);
+INSERT INTO country_name
+    VALUES ('nl', JSON '{"name" : "Nederland", "name:en" : "Netherlands"}', null, 2);
 
 
 CREATE TABLE photon_updates (
