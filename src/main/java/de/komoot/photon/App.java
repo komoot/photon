@@ -2,6 +2,7 @@ package de.komoot.photon;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
+import de.komoot.photon.nominatim.ImportThread;
 import de.komoot.photon.nominatim.NominatimConnector;
 import de.komoot.photon.nominatim.NominatimUpdater;
 import de.komoot.photon.searcher.ReverseHandler;
@@ -107,17 +108,9 @@ public class App {
         try {
             final String filename = args.getJsonDump();
             final JsonDumper jsonDumper = new JsonDumper(filename, args.getLanguages(), args.getExtraTags());
-            NominatimConnector nominatimConnector = new NominatimConnector(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
-            nominatimConnector.setImporter(jsonDumper);
-            if (args.getCountryCodes().length > 0) {
-                for (var countryCode: args.getCountryCodes()) {
-                    if (!countryCode.isBlank()) {
-                        nominatimConnector.readCountry(countryCode.strip());
-                    }
-                }
-            } else {
-                nominatimConnector.readEntireDatabase();
-            }
+            final NominatimConnector nominatimConnector = new NominatimConnector(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
+
+            importFromDatabase(nominatimConnector, jsonDumper, args.getCountryCodes());
             LOGGER.info("Json dump was created: {}", filename);
         } catch (FileNotFoundException e) {
             throw new UsageException("Cannot create dump: " + e.getMessage());
@@ -130,30 +123,45 @@ public class App {
      */
     private static void startNominatimImport(CommandLineArgs args, Server esServer) {
         final var nominatimConnector = new NominatimConnector(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
-        Date importDate = nominatimConnector.getLastImportDate();
+        final Date importDate = nominatimConnector.getLastImportDate();
 
-        DatabaseProperties dbProperties;
+        String[] languages;
         try {
-            dbProperties = esServer.recreateIndex(args.getLanguages(), importDate, args.getSupportStructuredQueries()); // clear out previous data
+            // Clear out previous data.
+            var dbProperties = esServer.recreateIndex(args.getLanguages(), importDate, args.getSupportStructuredQueries());
+            languages = dbProperties.getLanguages();
         } catch (IOException e) {
             throw new UsageException("Cannot setup index, elastic search config files not readable");
         }
-        LOGGER.info("Preparing Nominatim database for export.");
-        nominatimConnector.prepareDatabase();
 
-        LOGGER.info("Starting import from nominatim to photon with languages: {}", String.join(",", dbProperties.getLanguages()));
-        nominatimConnector.setImporter(esServer.createImporter(dbProperties.getLanguages(), args.getExtraTags()));
-        if (args.getCountryCodes().length > 0) {
-            for (var countryCode: args.getCountryCodes()) {
-                if (!countryCode.isBlank()) {
-                    nominatimConnector.readCountry(countryCode.strip());
+        LOGGER.info("Starting import from nominatim to photon with languages: {}", String.join(",", languages));
+        importFromDatabase(
+                nominatimConnector,
+                esServer.createImporter(languages, args.getExtraTags()),
+                args.getCountryCodes());
+
+        LOGGER.info("Imported data from nominatim to photon with languages: {}", String.join(",", languages));
+    }
+
+    private static void importFromDatabase(NominatimConnector connector, Importer importer, String[] countries) {
+        connector.prepareDatabase();
+
+        ImportThread importThread = new ImportThread(importer);
+
+        try {
+            if (countries != null && countries.length > 0) {
+                for (var countryCode : countries) {
+                    if (!countryCode.isBlank()) {
+                        connector.readCountry(countryCode.strip(), importThread);
+                    }
                 }
+            } else {
+                connector.readEntireDatabase(importThread);
             }
-        } else {
-            nominatimConnector.readEntireDatabase();
+        } finally {
+            importThread.finish();
         }
 
-        LOGGER.info("Imported data from nominatim to photon with languages: {}", String.join(",", dbProperties.getLanguages()));
     }
 
     private static void startNominatimUpdateInit(CommandLineArgs args) {

@@ -1,29 +1,21 @@
 package de.komoot.photon.nominatim;
 
-import org.locationtech.jts.geom.Geometry;
-import de.komoot.photon.Importer;
 import de.komoot.photon.PhotonDoc;
 import de.komoot.photon.nominatim.model.AddressRow;
 import de.komoot.photon.nominatim.model.AddressType;
 import org.apache.commons.dbcp2.BasicDataSource;
+import org.locationtech.jts.geom.Geometry;
 import org.slf4j.Logger;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.Callable;
+import java.util.*;
 
 /**
- * Importer for data from a Mominatim database.
+ * Importer for data from a Nominatim database.
  */
 public class NominatimConnector {
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(NominatimConnector.class);
@@ -42,7 +34,6 @@ public class NominatimConnector {
      */
     private final RowMapper<NominatimResult> osmlineRowMapper;
     private final String selectOsmlineSql;
-    private Importer importer;
 
 
     /**
@@ -174,10 +165,6 @@ public class NominatimConnector {
     }
 
 
-    public void setImporter(Importer importer) {
-        this.importer = importer;
-    }
-
     public List<PhotonDoc> getByPlaceId(long placeId) {
         List<NominatimResult> result = template.query(SELECT_COLS_PLACEX + " FROM placex WHERE place_id = ? and indexed_status = 0",
                                                          placeRowMapper, placeId);
@@ -243,29 +230,26 @@ public class NominatimConnector {
     }
 
     /**
-     * Parse every relevant row in placex, create a corresponding document and call the {@link #importer} for each document.
+     * Parse every relevant row in placex and location_osmline
+     * country by country. Also imports place from county-less places.
      */
-    public void readEntireDatabase() {
+    public void readEntireDatabase(ImportThread importThread) {
         // Make sure, country names are available.
         loadCountryNames();
         for (var countryCode: countryNames.keySet()) {
-            readCountry(countryCode);
+            readCountry(countryCode, importThread);
         }
         // Import all places not connected to a country.
-        readCountry(null);
+        readCountry(null, importThread);
     }
 
-    public void readCountry(String countryCode) {
+    public void readCountry(String countryCode, ImportThread importThread) {
         // Make sure, country names are available.
         loadCountryNames();
         if (countryCode != null && !countryNames.containsKey(countryCode)) {
             LOGGER.warn("Unknown country code {}. Skipping.", countryCode);
             return;
         }
-
-        LOGGER.info("Importing places for country {}.", countryCode);
-
-        final ImportThread importThread = new ImportThread(importer);
 
         final RowCallbackHandler placeMapper = rs -> {
                 NominatimResult docs = placeRowMapper.mapRow(rs, 0);
@@ -277,36 +261,31 @@ public class NominatimConnector {
             };
 
         final RowCallbackHandler osmlineMapper = rs -> {
-                NominatimResult docs = osmlineRowMapper.mapRow(rs, 0);
-                assert (docs != null);
+            NominatimResult docs = osmlineRowMapper.mapRow(rs, 0);
+            assert (docs != null);
 
-                if (docs.isUsefulForIndex()) {
-                    importThread.addDocument(docs);
-                }
-            };
-
-        try {
-            if (countryCode == null) {
-                template.query(SELECT_COLS_PLACEX + " FROM placex " +
-                        " WHERE linked_place_id IS NULL AND centroid IS NOT NULL AND country_code is null" +
-                        " ORDER BY geometry_sector, parent_place_id; ", placeMapper);
-
-                template.query(selectOsmlineSql + " FROM location_property_osmline " +
-                        "WHERE startnumber is not null AND country_code is null " +
-                        " ORDER BY geometry_sector, parent_place_id; ", osmlineMapper);
-            } else {
-                template.query(SELECT_COLS_PLACEX + " FROM placex " +
-                        " WHERE linked_place_id IS NULL AND centroid IS NOT NULL AND country_code = ?" +
-                        " ORDER BY geometry_sector, parent_place_id; ", placeMapper, countryCode);
-
-                template.query(selectOsmlineSql + " FROM location_property_osmline " +
-                        "WHERE startnumber is not null AND country_code = ?" +
-                        " ORDER BY geometry_sector, parent_place_id; ", osmlineMapper, countryCode);
-
+            if (docs.isUsefulForIndex()) {
+                importThread.addDocument(docs);
             }
+        };
 
-        } finally {
-            importThread.finish();
+        if (countryCode == null) {
+            template.query(SELECT_COLS_PLACEX + " FROM placex " +
+                    " WHERE linked_place_id IS NULL AND centroid IS NOT NULL AND country_code is null" +
+                    " ORDER BY geometry_sector, parent_place_id; ", placeMapper);
+
+            template.query(selectOsmlineSql + " FROM location_property_osmline " +
+                    "WHERE startnumber is not null AND country_code is null " +
+                    " ORDER BY geometry_sector, parent_place_id; ", osmlineMapper);
+        } else {
+            template.query(SELECT_COLS_PLACEX + " FROM placex " +
+                    " WHERE linked_place_id IS NULL AND centroid IS NOT NULL AND country_code = ?" +
+                    " ORDER BY geometry_sector, parent_place_id; ", placeMapper, countryCode);
+
+            template.query(selectOsmlineSql + " FROM location_property_osmline " +
+                    "WHERE startnumber is not null AND country_code = ?" +
+                    " ORDER BY geometry_sector, parent_place_id; ", osmlineMapper, countryCode);
+
         }
     }
 
