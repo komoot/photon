@@ -45,7 +45,9 @@ class NominatimConnectorDBTest {
     private void readEntireDatabase() {
         ImportThread importThread = new ImportThread(importer);
         try {
-            connector.readEntireDatabase(importThread);
+            for (var country: connector.getCountriesFromDatabase()) {
+                connector.readCountry(country, importThread);
+            }
         } finally {
             importThread.finish();
         }

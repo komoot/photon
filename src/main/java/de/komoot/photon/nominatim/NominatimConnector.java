@@ -231,18 +231,8 @@ public class NominatimConnector {
 
     /**
      * Parse every relevant row in placex and location_osmline
-     * country by country. Also imports place from county-less places.
+     * for the given country. Also imports place from county-less places.
      */
-    public void readEntireDatabase(ImportThread importThread) {
-        // Make sure, country names are available.
-        loadCountryNames();
-        for (var countryCode: countryNames.keySet()) {
-            readCountry(countryCode, importThread);
-        }
-        // Import all places not connected to a country.
-        readCountry(null, importThread);
-    }
-
     public void readCountry(String countryCode, ImportThread importThread) {
         // Make sure, country names are available.
         loadCountryNames();
@@ -341,5 +331,18 @@ public class NominatimConnector {
             LOGGER.info("Creating index over countries.");
             template.execute("CREATE INDEX ON placex (country_code)");
         }
+    }
+
+    public String[] getCountriesFromDatabase() {
+        loadCountryNames();
+        String[] countries = new String[countryNames.keySet().size() + 1];
+        countries[0] = null;
+
+        int i = 1;
+        for (var country: countryNames.keySet()) {
+            countries[i++] = country;
+        }
+
+        return countries;
     }
 }
