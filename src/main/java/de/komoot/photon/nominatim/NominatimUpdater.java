@@ -89,7 +89,7 @@ public class NominatimUpdater extends NominatimConnector {
 
             Map<String, String> address = dbutils.getMap(rs, "address");
 
-            completePlace(doc);
+            doc.completePlace(getAddresses(doc));
             // Add address last, so it takes precedence.
             doc.address(address);
 
@@ -104,7 +104,7 @@ public class NominatimUpdater extends NominatimConnector {
         osmlineToNominatimResult = (rs, rownum) -> {
             PhotonDoc doc = osmlineRowMapper.mapRow(rs, rownum);
 
-            completePlace(doc);
+            doc.completePlace(getAddresses(doc));
             doc.setCountry(countryNames.get(rs.getString("country_code")));
 
             Geometry geometry = dbutils.extractGeometry(rs, "linegeo");
@@ -272,25 +272,6 @@ public class NominatimUpdater extends NominatimConnector {
         return result.isEmpty() ? null : result.get(0).getDocsWithHousenumber();
     }
 
-    /**
-     * Query Nominatim's address hierarchy to complete photon doc with missing data (like country, city, street, ...)
-     *
-     * @param doc
-     */
-    private void completePlace(PhotonDoc doc) {
-        final List<AddressRow> addresses = getAddresses(doc);
-        final AddressType doctype = doc.getAddressType();
-        for (AddressRow address : addresses) {
-            AddressType atype = address.getAddressType();
-
-            if (atype != null
-                    && (atype == doctype || !doc.setAddressPartIfNew(atype, address.getName()))
-                    && address.isUsefulForContext()) {
-                // no specifically handled item, check if useful for context
-                doc.getContext().add(address.getName());
-            }
-        }
-    }
 
     List<AddressRow> getAddresses(PhotonDoc doc) {
         RowMapper<AddressRow> rowMapper = (rs, rowNum) -> new AddressRow(

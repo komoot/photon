@@ -1,5 +1,6 @@
 package de.komoot.photon;
 
+import de.komoot.photon.nominatim.model.AddressRow;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Point;
@@ -239,6 +240,23 @@ public class PhotonDoc {
      */
     public boolean setAddressPartIfNew(AddressType addressType, Map<String, String> names) {
         return addressParts.computeIfAbsent(addressType, k -> names) == names;
+    }
+
+    /**
+     * Complete address data from a list of address rows.
+     */
+    public void completePlace(List<AddressRow> addresses) {
+        final AddressType doctype = getAddressType();
+        for (AddressRow address : addresses) {
+            final AddressType atype = address.getAddressType();
+
+            if (atype != null
+                    && (atype == doctype || !setAddressPartIfNew(atype, address.getName()))
+                    && address.isUsefulForContext()) {
+                // no specifically handled item, check if useful for context
+                getContext().add(address.getName());
+            }
+        }
     }
 
     public void setCountry(Map<String, String> names) {

@@ -74,8 +74,7 @@ public class NominatimImporter extends NominatimConnector {
 
                     assert (doc != null);
 
-                    final var addressPlaces = addressCache.getAddressList(rs.getString("addresslines"));
-                    completePlace(doc, addressPlaces);
+                    doc.completePlace(addressCache.getAddressList(rs.getString("addresslines")));
                     doc.address(address); // take precedence over computed address
                     doc.setCountry(cnames);
 
@@ -116,7 +115,7 @@ public class NominatimImporter extends NominatimConnector {
                                 rs.getString("parent_type"),
                                 rs.getInt("parent_rank_address")));
                     }
-                    completePlace(doc, addressPlaces);
+                    doc.completePlace(addressPlaces);
                     doc.address(address); // take precedence over computed address
                     doc.setCountry(cnames);
 
@@ -152,7 +151,7 @@ public class NominatimImporter extends NominatimConnector {
                                 rs.getString("parent_type"),
                                 rs.getInt("parent_rank_address")));
                     }
-                    completePlace(doc, addressPlaces);
+                    doc.completePlace(addressPlaces);
 
                     doc.setCountry(cnames);
 
@@ -175,24 +174,6 @@ public class NominatimImporter extends NominatimConnector {
 
     }
 
-    /**
-     * Query Nominatim's address hierarchy to complete photon doc with missing data (like country, city, street, ...)
-     *
-     * @param doc
-     */
-    private void completePlace(PhotonDoc doc, List<AddressRow> addresses) {
-        final AddressType doctype = doc.getAddressType();
-        for (AddressRow address : addresses) {
-            AddressType atype = address.getAddressType();
-
-            if (atype != null
-                    && (atype == doctype || !doc.setAddressPartIfNew(atype, address.getName()))
-                    && address.isUsefulForContext()) {
-                // no specifically handled item, check if useful for context
-                doc.getContext().add(address.getName());
-            }
-        }
-    }
 
     /**
      * Prepare the database for export.
