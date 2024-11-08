@@ -1,10 +1,7 @@
 package de.komoot.photon.nominatim;
 
 import de.komoot.photon.PhotonDoc;
-import de.komoot.photon.nominatim.model.AddressRow;
-import de.komoot.photon.nominatim.model.AddressType;
-import de.komoot.photon.nominatim.model.OsmlineRowMapper;
-import de.komoot.photon.nominatim.model.PlaceRowMapper;
+import de.komoot.photon.nominatim.model.*;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.locationtech.jts.geom.Geometry;
 import org.slf4j.Logger;
@@ -14,6 +11,7 @@ import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.*;
 
 /**
@@ -94,29 +92,49 @@ public class NominatimImporter extends NominatimConnector {
             return;
         }
 
+        final String countrySQL;
+        final Object[] sqlArgs;
+        final int[] sqlArgTypes;
+        if ("".equals(countryCode)) {
+            countrySQL = "country_code is null";
+            sqlArgs = new Object[0];
+            sqlArgTypes = new int[0];
+        } else {
+            countrySQL = "country_code = ?";
+            sqlArgs = new Object[]{countryCode};
+            sqlArgTypes = new int[]{Types.VARCHAR};
+        }
+
         final PlaceRowMapper placeRowMapper = new PlaceRowMapper(dbutils);
-        final RowCallbackHandler placeMapper = rs -> {
-                final PhotonDoc doc = placeRowMapper.mapRow(rs, 0);
-                assert (doc != null);
+        template.query(SELECT_COLS_PLACEX + " FROM placex " +
+                " WHERE linked_place_id IS NULL AND centroid IS NOT NULL AND " + countrySQL +
+                " ORDER BY geometry_sector, parent_place_id",
+                sqlArgs, sqlArgTypes, rs -> {
+                    final PhotonDoc doc = placeRowMapper.mapRow(rs, 0);
+                    assert (doc != null);
 
-                final Map<String, String> address = dbutils.getMap(rs, "address");
+                    final Map<String, String> address = dbutils.getMap(rs, "address");
 
 
-                completePlace(doc);
-                // Add address last, so it takes precedence.
-                doc.address(address);
+                    completePlace(doc);
+                    // Add address last, so it takes precedence.
+                    doc.address(address);
 
-                doc.setCountry(cnames);
+                    doc.setCountry(cnames);
 
-                var result = NominatimResult.fromAddress(doc, address);
+                    var result = NominatimResult.fromAddress(doc, address);
 
-                if (result.isUsefulForIndex()) {
-                    importThread.addDocument(result);
-                }
-            };
+                    if (result.isUsefulForIndex()) {
+                        importThread.addDocument(result);
+                    }
+                });
 
         final OsmlineRowMapper osmlineRowMapper = new OsmlineRowMapper();
-        final RowCallbackHandler osmlineMapper = rs -> {
+        template.query((hasNewStyleInterpolation ? SELECT_OSMLINE_NEW_STYLE : SELECT_OSMLINE_OLD_STYLE) +
+                " FROM location_property_osmline" +
+                " WHERE startnumber is not null AND " + countrySQL +
+                " ORDER BY geometry_sector, parent_place_id",
+                sqlArgs, sqlArgTypes, rs -> {
             final PhotonDoc doc = osmlineRowMapper.mapRow(rs, 0);
 
             completePlace(doc);
@@ -137,28 +155,8 @@ public class NominatimImporter extends NominatimConnector {
             if (docs.isUsefulForIndex()) {
                 importThread.addDocument(docs);
             }
-        };
+        });
 
-        if ("".equals(countryCode)) {
-            template.query(SELECT_COLS_PLACEX + " FROM placex " +
-                    " WHERE linked_place_id IS NULL AND centroid IS NOT NULL AND country_code is null" +
-                    " ORDER BY geometry_sector, parent_place_id; ", placeMapper);
-
-            template.query((hasNewStyleInterpolation ? SELECT_OSMLINE_NEW_STYLE : SELECT_OSMLINE_OLD_STYLE) +
-                    " FROM location_property_osmline" +
-                    " WHERE startnumber is not null AND country_code is null" +
-                    " ORDER BY geometry_sector, parent_place_id; ", osmlineMapper);
-        } else {
-            template.query(SELECT_COLS_PLACEX + " FROM placex " +
-                    " WHERE linked_place_id IS NULL AND centroid IS NOT NULL AND country_code = ?" +
-                    " ORDER BY geometry_sector, parent_place_id; ", placeMapper, countryCode);
-
-            template.query((hasNewStyleInterpolation ? SELECT_OSMLINE_NEW_STYLE : SELECT_OSMLINE_OLD_STYLE) +
-                    " FROM location_property_osmline" +
-                    " WHERE startnumber is not null AND country_code = ?" +
-                    " ORDER BY geometry_sector, parent_place_id; ", osmlineMapper, countryCode);
-
-        }
     }
 
     /**
