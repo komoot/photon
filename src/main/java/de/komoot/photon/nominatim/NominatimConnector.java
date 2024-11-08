@@ -3,6 +3,7 @@ package de.komoot.photon.nominatim;
 import de.komoot.photon.PhotonDoc;
 import de.komoot.photon.nominatim.model.AddressRow;
 import de.komoot.photon.nominatim.model.AddressType;
+import de.komoot.photon.nominatim.model.PlaceRowMapper;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.locationtech.jts.geom.Geometry;
 import org.slf4j.Logger;
@@ -40,38 +41,7 @@ public class NominatimConnector {
      * Maps a placex row in nominatim to a photon doc.
      * Some attributes are still missing and can be derived by connected address items.
      */
-    private final RowMapper<NominatimResult> placeRowMapper = new RowMapper<>() {
-        @Override
-        public NominatimResult mapRow(ResultSet rs, int rowNum) throws SQLException {
-            Map<String, String> address = dbutils.getMap(rs, "address");
-            PhotonDoc doc = new PhotonDoc(rs.getLong("place_id"),
-                                          rs.getString("osm_type"), rs.getLong("osm_id"),
-                                          rs.getString("class"), rs.getString("type"))
-                    .names(dbutils.getMap(rs, "name"))
-                    .extraTags(dbutils.getMap(rs, "extratags"))
-                    .bbox(dbutils.extractGeometry(rs, "bbox"))
-                    .parentPlaceId(rs.getLong("parent_place_id"))
-                    .countryCode(rs.getString("country_code"))
-                    .centroid(dbutils.extractGeometry(rs, "centroid"))
-                    .linkedPlaceId(rs.getLong("linked_place_id"))
-                    .rankAddress(rs.getInt("rank_address"))
-                    .postcode(rs.getString("postcode"));
-
-            double importance = rs.getDouble("importance");
-            doc.importance(rs.wasNull() ? (0.75 - rs.getInt("rank_search") / 40d) : importance);
-
-            completePlace(doc);
-            // Add address last, so it takes precedence.
-            doc.address(address);
-
-            doc.setCountry(countryNames.get(rs.getString("country_code")));
-
-            NominatimResult result = new NominatimResult(doc);
-            result.addHousenumbersFromAddress(address);
-
-            return result;
-        }
-    };
+    private final RowMapper<NominatimResult> placeToNominatimResult;
 
     /**
      * Construct a new importer.
@@ -93,6 +63,25 @@ public class NominatimConnector {
         template.setFetchSize(100000);
 
         dbutils = dataAdapter;
+
+        final var placeRowMapper = new PlaceRowMapper(dbutils);
+        placeToNominatimResult = (rs, rowNum) -> {
+            PhotonDoc doc = placeRowMapper.mapRow(rs, rowNum);
+            assert (doc != null);
+
+            Map<String, String> address = dbutils.getMap(rs, "address");
+
+            completePlace(doc);
+            // Add address last, so it takes precedence.
+            doc.address(address);
+
+            doc.setCountry(countryNames.get(rs.getString("country_code")));
+
+            NominatimResult result = new NominatimResult(doc);
+            result.addHousenumbersFromAddress(address);
+
+            return result;
+        };
 
         // Setup handling of interpolation table. There are two different formats depending on the Nominatim version.
         if (dbutils.hasColumn(template, "location_property_osmline", "step")) {
@@ -158,6 +147,8 @@ public class NominatimConnector {
     public void loadCountryNames() {
         if (countryNames == null) {
             countryNames = new HashMap<>();
+            // Default for places outside any country.
+            countryNames.put("", new HashMap<>());
             template.query("SELECT country_code, name FROM country_name", rs -> {
                 countryNames.put(rs.getString("country_code"), dbutils.getMap(rs, "name"));
             });
@@ -166,8 +157,9 @@ public class NominatimConnector {
 
 
     public List<PhotonDoc> getByPlaceId(long placeId) {
-        List<NominatimResult> result = template.query(SELECT_COLS_PLACEX + " FROM placex WHERE place_id = ? and indexed_status = 0",
-                                                         placeRowMapper, placeId);
+        List<NominatimResult> result = template.query(
+                SELECT_COLS_PLACEX + " FROM placex WHERE place_id = ? and indexed_status = 0",
+                placeToNominatimResult, placeId);
 
         return result.isEmpty() ? null : result.get(0).getDocsWithHousenumber();
     }
@@ -236,17 +228,31 @@ public class NominatimConnector {
     public void readCountry(String countryCode, ImportThread importThread) {
         // Make sure, country names are available.
         loadCountryNames();
-        if ("".equals(countryCode) && !countryNames.containsKey(countryCode)) {
+        final var cnames = countryNames.get(countryCode);
+        if (cnames == null) {
             LOGGER.warn("Unknown country code {}. Skipping.", countryCode);
             return;
         }
 
+        final PlaceRowMapper placeRowMapper = new PlaceRowMapper(dbutils);
         final RowCallbackHandler placeMapper = rs -> {
-                NominatimResult docs = placeRowMapper.mapRow(rs, 0);
-                assert (docs != null);
+                final PhotonDoc doc = placeRowMapper.mapRow(rs, 0);
+                assert (doc != null);
 
-                if (docs.isUsefulForIndex()) {
-                    importThread.addDocument(docs);
+                final Map<String, String> address = dbutils.getMap(rs, "address");
+
+
+                completePlace(doc);
+                // Add address last, so it takes precedence.
+                doc.address(address);
+
+                doc.setCountry(cnames);
+
+                NominatimResult result = new NominatimResult(doc);
+                result.addHousenumbersFromAddress(address);
+
+                if (result.isUsefulForIndex()) {
+                    importThread.addDocument(result);
                 }
             };
 
@@ -335,14 +341,7 @@ public class NominatimConnector {
 
     public String[] getCountriesFromDatabase() {
         loadCountryNames();
-        String[] countries = new String[countryNames.keySet().size() + 1];
-        countries[0] = "";
 
-        int i = 1;
-        for (var country: countryNames.keySet()) {
-            countries[i++] = country;
-        }
-
-        return countries;
+        return countryNames.keySet().toArray(new String[0]);
     }
 }
