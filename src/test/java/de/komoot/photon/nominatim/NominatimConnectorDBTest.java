@@ -22,7 +22,7 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
 class NominatimConnectorDBTest {
     private EmbeddedDatabase db;
-    private NominatimConnector connector;
+    private NominatimImporter connector;
     private CollectingImporter importer;
     private JdbcTemplate jdbc;
 
@@ -35,11 +35,11 @@ class NominatimConnectorDBTest {
                 .build();
 
 
-        connector = new NominatimConnector(null, 0, null, null, null, new H2DataAdapter());
+        connector = new NominatimImporter(null, 0, null, null, null, new H2DataAdapter());
         importer = new CollectingImporter();
 
         jdbc = new JdbcTemplate(db);
-        ReflectionTestUtil.setFieldValue(connector, "template", jdbc);
+        ReflectionTestUtil.setFieldValue(connector, NominatimConnector.class, "template", jdbc);
     }
 
     private void readEntireDatabase() {

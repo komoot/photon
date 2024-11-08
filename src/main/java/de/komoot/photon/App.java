@@ -3,7 +3,7 @@ package de.komoot.photon;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
 import de.komoot.photon.nominatim.ImportThread;
-import de.komoot.photon.nominatim.NominatimConnector;
+import de.komoot.photon.nominatim.NominatimImporter;
 import de.komoot.photon.nominatim.NominatimUpdater;
 import de.komoot.photon.searcher.ReverseHandler;
 import de.komoot.photon.searcher.SearchHandler;
@@ -131,7 +131,7 @@ public class App {
     }
 
     private static String[] initDatabase(CommandLineArgs args, Server esServer) {
-        final var nominatimConnector = new NominatimConnector(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
+        final var nominatimConnector = new NominatimImporter(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
         final Date importDate = nominatimConnector.getLastImportDate();
 
         try {
@@ -144,7 +144,7 @@ public class App {
     }
 
     private static void importFromDatabase(CommandLineArgs args, Importer importer) {
-        final var connector = new NominatimConnector(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
+        final var connector = new NominatimImporter(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
         connector.prepareDatabase();
         connector.loadCountryNames();
 
@@ -171,9 +171,9 @@ public class App {
                 final List<Thread> readerThreads = new ArrayList<>(numThreads);
 
                 for (int i = 0; i < numThreads; ++i) {
-                    final NominatimConnector threadConnector;
+                    final NominatimImporter threadConnector;
                     if (i > 0) {
-                        threadConnector = new NominatimConnector(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
+                        threadConnector = new NominatimImporter(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
                         threadConnector.loadCountryNames();
                     } else {
                         threadConnector = connector;

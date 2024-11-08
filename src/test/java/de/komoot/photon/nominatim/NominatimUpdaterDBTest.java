@@ -31,8 +31,7 @@ class NominatimUpdaterDBTest {
         connector.setUpdater(updater);
 
         jdbc = new JdbcTemplate(db);
-        ReflectionTestUtil.setFieldValue(connector, "template", jdbc);
-        ReflectionTestUtil.setFieldValue(connector, "exporter", "template", jdbc);
+        ReflectionTestUtil.setFieldValue(connector, NominatimConnector.class, "template", jdbc);
     }
 
     @Test
