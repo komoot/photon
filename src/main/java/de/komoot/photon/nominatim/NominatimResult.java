@@ -5,7 +5,6 @@ import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.linearref.LengthIndexedLine;
-import org.slf4j.Logger;
 
 import java.util.*;
 import java.util.regex.Pattern;

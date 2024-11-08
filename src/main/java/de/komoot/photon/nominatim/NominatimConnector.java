@@ -3,6 +3,7 @@ package de.komoot.photon.nominatim;
 import de.komoot.photon.PhotonDoc;
 import de.komoot.photon.nominatim.model.AddressRow;
 import de.komoot.photon.nominatim.model.AddressType;
+import de.komoot.photon.nominatim.model.OsmlineRowMapper;
 import de.komoot.photon.nominatim.model.PlaceRowMapper;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.locationtech.jts.geom.Geometry;
@@ -82,47 +83,28 @@ public class NominatimConnector {
             return NominatimResult.fromAddress(doc, address);
         };
 
-        hasNewStyleInterpolation = dbutils.hasColumn(template, "location_property_osmline", "step");
         // Setup handling of interpolation table. There are two different formats depending on the Nominatim version.
-        if (hasNewStyleInterpolation) {
-            // new-style interpolations
-            osmlineToNominatimResult = (rs, rownum) -> {
-                Geometry geometry = dbutils.extractGeometry(rs, "linegeo");
+        // new-style interpolations
+        hasNewStyleInterpolation = dbutils.hasColumn(template, "location_property_osmline", "step");
+        final OsmlineRowMapper osmlineRowMapper = new OsmlineRowMapper();
+        osmlineToNominatimResult = (rs, rownum) -> {
+            PhotonDoc doc = osmlineRowMapper.mapRow(rs, rownum);
 
-                PhotonDoc doc = new PhotonDoc(rs.getLong("place_id"), "W", rs.getLong("osm_id"),
-                        "place", "house_number")
-                        .parentPlaceId(rs.getLong("parent_place_id"))
-                        .countryCode(rs.getString("country_code"))
-                        .postcode(rs.getString("postcode"));
+            completePlace(doc);
+            doc.setCountry(countryNames.get(rs.getString("country_code")));
 
-                completePlace(doc);
+            Geometry geometry = dbutils.extractGeometry(rs, "linegeo");
 
-                doc.setCountry(countryNames.get(rs.getString("country_code")));
-
+            if (hasNewStyleInterpolation) {
                 return NominatimResult.fromInterpolation(
                         doc, rs.getLong("startnumber"), rs.getLong("endnumber"),
                         rs.getLong("step"), geometry);
-            };
-        } else {
-            // old-style interpolations
-            osmlineToNominatimResult = (rs, rownum) -> {
-                Geometry geometry = dbutils.extractGeometry(rs, "linegeo");
+            }
 
-                PhotonDoc doc = new PhotonDoc(rs.getLong("place_id"), "W", rs.getLong("osm_id"),
-                        "place", "house_number")
-                        .parentPlaceId(rs.getLong("parent_place_id"))
-                        .countryCode(rs.getString("country_code"))
-                        .postcode(rs.getString("postcode"));
-
-                completePlace(doc);
-
-                doc.setCountry(countryNames.get(rs.getString("country_code")));
-
-                return NominatimResult.fromInterpolation(
-                        doc, rs.getLong("startnumber"), rs.getLong("endnumber"),
-                        rs.getString("interpolationtype"), geometry);
-            };
-        }
+            return NominatimResult.fromInterpolation(
+                    doc, rs.getLong("startnumber"), rs.getLong("endnumber"),
+                    rs.getString("interpolationtype"), geometry);
+        };
     }
 
 
@@ -250,9 +232,24 @@ public class NominatimConnector {
                 }
             };
 
+        final OsmlineRowMapper osmlineRowMapper = new OsmlineRowMapper();
         final RowCallbackHandler osmlineMapper = rs -> {
-            NominatimResult docs = osmlineToNominatimResult.mapRow(rs, 0);
-            assert (docs != null);
+            final PhotonDoc doc = osmlineRowMapper.mapRow(rs, 0);
+
+            completePlace(doc);
+            doc.setCountry(cnames);
+
+            final Geometry geometry = dbutils.extractGeometry(rs, "linegeo");
+            final NominatimResult docs;
+            if (hasNewStyleInterpolation) {
+                docs = NominatimResult.fromInterpolation(
+                        doc, rs.getLong("startnumber"), rs.getLong("endnumber"),
+                        rs.getLong("step"), geometry);
+            } else {
+                docs = NominatimResult.fromInterpolation(
+                        doc, rs.getLong("startnumber"), rs.getLong("endnumber"),
+                        rs.getString("interpolationtype"), geometry);
+            }
 
             if (docs.isUsefulForIndex()) {
                 importThread.addDocument(docs);
