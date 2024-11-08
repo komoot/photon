@@ -37,4 +37,14 @@ public class AddressRow {
     public Map<String, String> getName() {
         return this.name;
     }
+
+    @Override
+    public String toString() {
+        return "AddressRow{" +
+                "name=" + name.getOrDefault("name", "?") +
+                ", osmKey='" + osmKey + '\'' +
+                ", osmValue='" + osmValue + '\'' +
+                ", rankAddress=" + rankAddress +
+                '}';
+    }
 }

@@ -58,4 +58,9 @@ public class PostgisDataAdapter implements DBDataAdapter {
     public String deleteReturning(String deleteSQL, String columns) {
         return deleteSQL + " RETURNING " + columns;
     }
+
+    @Override
+    public String jsonArrayFromSelect(String valueSQL, String fromSQL) {
+        return "(SELECT json_agg(val) FROM (SELECT " + valueSQL + " as val " + fromSQL + ") xxx)";
+    }
 }

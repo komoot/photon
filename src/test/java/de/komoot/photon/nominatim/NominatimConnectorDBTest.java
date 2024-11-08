@@ -98,11 +98,11 @@ class NominatimConnectorDBTest {
         PlacexTestRow place = PlacexTestRow.make_street("Burg").add(jdbc);
 
         place.addAddresslines(jdbc,
-                new PlacexTestRow("place", "neighbourhood").name("Le Coin").rankAddress(24).add(jdbc),
-                new PlacexTestRow("place", "suburb").name("Crampton").rankAddress(20).add(jdbc),
-                new PlacexTestRow("place", "city").name("Grand Junction").rankAddress(16).add(jdbc),
-                new PlacexTestRow("place", "county").name("Lost County").rankAddress(12).add(jdbc),
-                new PlacexTestRow("place", "state").name("Le Havre").rankAddress(8).add(jdbc));
+                new PlacexTestRow("place", "neighbourhood").name("Le Coin").ranks(24).add(jdbc),
+                new PlacexTestRow("place", "suburb").name("Crampton").ranks(20).add(jdbc),
+                new PlacexTestRow("place", "city").name("Grand Junction").ranks(16).add(jdbc),
+                new PlacexTestRow("place", "county").name("Lost County").ranks(12).add(jdbc),
+                new PlacexTestRow("place", "state").name("Le Havre").ranks(8).add(jdbc));
 
         readEntireDatabase();
 
@@ -123,8 +123,8 @@ class NominatimConnectorDBTest {
         PlacexTestRow place = new PlacexTestRow("natural", "water").name("Lake Tee").rankAddress(0).rankSearch(20).add(jdbc);
 
         place.addAddresslines(jdbc,
-                new PlacexTestRow("place", "county").name("Lost County").rankAddress(12).add(jdbc),
-                new PlacexTestRow("place", "state").name("Le Havre").rankAddress(8).add(jdbc));
+                new PlacexTestRow("place", "county").name("Lost County").ranks(12).add(jdbc),
+                new PlacexTestRow("place", "state").name("Le Havre").ranks(8).add(jdbc));
 
         readEntireDatabase();
 
@@ -142,7 +142,7 @@ class NominatimConnectorDBTest {
         PlacexTestRow parent = PlacexTestRow.make_street("Burg").add(jdbc);
 
         parent.addAddresslines(jdbc,
-                new PlacexTestRow("place", "city").name("Grand Junction").rankAddress(16).add(jdbc));
+                new PlacexTestRow("place", "city").name("Grand Junction").ranks(16).add(jdbc));
 
         PlacexTestRow place = new PlacexTestRow("place", "house").name("House").parent(parent).add(jdbc);
 
@@ -224,11 +224,11 @@ class NominatimConnectorDBTest {
     @Test
     void testAddressMappingDuplicate() {
         PlacexTestRow place = PlacexTestRow.make_street("Main Street").add(jdbc);
-        PlacexTestRow munip = new PlacexTestRow("place", "municipality").name("Gemeinde").rankAddress(14).add(jdbc);
+        PlacexTestRow munip = new PlacexTestRow("place", "municipality").name("Gemeinde").ranks(14).add(jdbc);
 
         place.addAddresslines(jdbc,
                 munip,
-                new PlacexTestRow("place", "village").name("Dorf").rankAddress(16).add(jdbc));
+                new PlacexTestRow("place", "village").name("Dorf").ranks(16).add(jdbc));
 
         readEntireDatabase();
 
@@ -245,8 +245,8 @@ class NominatimConnectorDBTest {
      */
     @Test
     void testAddressMappingAvoidSameTypeAsPlace() {
-        PlacexTestRow village = new PlacexTestRow("place", "village").name("Dorf").rankAddress(16).add(jdbc);
-        PlacexTestRow munip = new PlacexTestRow("place", "municipality").name("Gemeinde").rankAddress(14).add(jdbc);
+        PlacexTestRow village = new PlacexTestRow("place", "village").name("Dorf").ranks(16).add(jdbc);
+        PlacexTestRow munip = new PlacexTestRow("place", "municipality").name("Gemeinde").ranks(14).add(jdbc);
 
         village.addAddresslines(jdbc, munip);
 

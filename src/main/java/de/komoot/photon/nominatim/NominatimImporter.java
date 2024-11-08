@@ -2,27 +2,18 @@ package de.komoot.photon.nominatim;
 
 import de.komoot.photon.PhotonDoc;
 import de.komoot.photon.nominatim.model.*;
-import org.apache.commons.dbcp2.BasicDataSource;
 import org.locationtech.jts.geom.Geometry;
 import org.slf4j.Logger;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowCallbackHandler;
-import org.springframework.jdbc.core.RowMapper;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Types;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Importer for data from a Nominatim database.
  */
 public class NominatimImporter extends NominatimConnector {
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(NominatimImporter.class);
-
-    // One-item cache for address lookup. Speeds up rank 30 processing.
-    private long parentPlaceId = -1;
-    private List<AddressRow> parentTerms = null;
 
     public NominatimImporter(String host, int port, String database, String username, String password) {
         this(host, port, database, username, password, new PostgisDataAdapter());
@@ -32,52 +23,6 @@ public class NominatimImporter extends NominatimConnector {
         super(host, port, database, username, password, dataAdapter);
     }
 
-
-    List<AddressRow> getAddresses(PhotonDoc doc) {
-        RowMapper<AddressRow> rowMapper = (rs, rowNum) -> new AddressRow(
-                dbutils.getMap(rs, "name"),
-                rs.getString("class"),
-                rs.getString("type"),
-                rs.getInt("rank_address")
-        );
-
-        AddressType atype = doc.getAddressType();
-
-        if (atype == null || atype == AddressType.COUNTRY) {
-            return Collections.emptyList();
-        }
-
-        List<AddressRow> terms = null;
-
-        if (atype == AddressType.HOUSE) {
-            long placeId = doc.getParentPlaceId();
-            if (placeId != parentPlaceId) {
-                parentTerms = template.query(SELECT_COLS_ADDRESS
-                                + " FROM placex p, place_addressline pa"
-                                + " WHERE p.place_id = pa.address_place_id and pa.place_id = ?"
-                                + " and pa.cached_rank_address > 4 and pa.address_place_id != ? and pa.isaddress"
-                                + " ORDER BY rank_address desc, fromarea desc, distance asc, rank_search desc",
-                        rowMapper, placeId, placeId);
-
-                // need to add the term for the parent place ID itself
-                parentTerms.addAll(0, template.query(SELECT_COLS_ADDRESS + " FROM placex p WHERE p.place_id = ?",
-                        rowMapper, placeId));
-                parentPlaceId = placeId;
-            }
-            terms = parentTerms;
-
-        } else {
-            long placeId = doc.getPlaceId();
-            terms = template.query(SELECT_COLS_ADDRESS
-                            + " FROM placex p, place_addressline pa"
-                            + " WHERE p.place_id = pa.address_place_id and pa.place_id = ?"
-                            + " and pa.cached_rank_address > 4 and pa.address_place_id != ? and pa.isaddress"
-                            + " ORDER BY rank_address desc, fromarea desc, distance asc, rank_search desc",
-                    rowMapper, placeId, placeId);
-        }
-
-        return terms;
-    }
 
     /**
      * Parse every relevant row in placex and location_osmline
@@ -105,21 +50,74 @@ public class NominatimImporter extends NominatimConnector {
             sqlArgTypes = new int[]{Types.VARCHAR};
         }
 
+        NominatimAddressCache addressCache = new NominatimAddressCache();
+        addressCache.loadCountryAddresses(template, dbutils, countryCode);
+
         final PlaceRowMapper placeRowMapper = new PlaceRowMapper(dbutils);
-        template.query(SELECT_COLS_PLACEX + " FROM placex " +
-                " WHERE linked_place_id IS NULL AND centroid IS NOT NULL AND " + countrySQL +
-                " ORDER BY geometry_sector, parent_place_id",
+        // First read ranks below 30, independent places
+        template.query(
+                "SELECT place_id, osm_type, osm_id, class, type, name, postcode," +
+                        "       address, extratags, ST_Envelope(geometry) AS bbox, parent_place_id," +
+                        "       linked_place_id, rank_address, rank_search, importance, country_code, centroid," +
+                        dbutils.jsonArrayFromSelect(
+                                "address_place_id",
+                                "FROM place_addressline pa " +
+                                        " WHERE pa.place_id = p.place_id AND isaddress" +
+                                        " ORDER BY cached_rank_address DESC") + " as addresslines" +
+                        " FROM placex p" +
+                        " WHERE linked_place_id IS NULL AND centroid IS NOT NULL AND " + countrySQL +
+                        " AND rank_search < 30" +
+                        " ORDER BY geometry_sector, parent_place_id",
                 sqlArgs, sqlArgTypes, rs -> {
                     final PhotonDoc doc = placeRowMapper.mapRow(rs, 0);
-                    assert (doc != null);
-
                     final Map<String, String> address = dbutils.getMap(rs, "address");
 
+                    assert (doc != null);
 
-                    completePlace(doc);
-                    // Add address last, so it takes precedence.
-                    doc.address(address);
+                    final var addressPlaces = addressCache.getAddressList(rs.getString("addresslines"));
+                    completePlace(doc, addressPlaces);
+                    doc.address(address); // take precedence over computed address
+                    doc.setCountry(cnames);
 
+                    var result = NominatimResult.fromAddress(doc, address);
+
+                    if (result.isUsefulForIndex()) {
+                        importThread.addDocument(result);
+                    }
+                });
+
+        // Next get all POIs/housenumbers.
+        template.query(
+                "SELECT p.place_id, p.osm_type, p.osm_id, p.class, p.type, p.name, p.postcode," +
+                        "       p.address, p.extratags, ST_Envelope(p.geometry) AS bbox, p.parent_place_id," +
+                        "       p.linked_place_id, p.rank_address, p.rank_search, p.importance, p.country_code, p.centroid," +
+                        "       parent.class as parent_class, parent.type as parent_type," +
+                        "       parent.rank_address as parent_rank_address, parent.name as parent_name, " +
+                        dbutils.jsonArrayFromSelect(
+                                "address_place_id",
+                                "FROM place_addressline pa " +
+                                        " WHERE pa.place_id IN (p.place_id, coalesce(p.parent_place_id, p.place_id)) AND isaddress" +
+                                        " ORDER BY cached_rank_address DESC, pa.place_id = p.place_id DESC") + " as addresslines" +
+                        " FROM placex p LEFT JOIN placex parent ON p.parent_place_id = parent.place_id" +
+                        " WHERE p.linked_place_id IS NULL AND p.centroid IS NOT NULL AND p." + countrySQL +
+                        " AND p.rank_search = 30 " +
+                        " ORDER BY p.geometry_sector",
+                sqlArgs, sqlArgTypes, rs -> {
+                    final PhotonDoc doc = placeRowMapper.mapRow(rs, 0);
+                    final Map<String, String> address = dbutils.getMap(rs, "address");
+
+                    assert (doc != null);
+
+                    final var addressPlaces = addressCache.getAddressList(rs.getString("addresslines"));
+                    if (rs.getString("parent_class") != null) {
+                        addressPlaces.add(0, new AddressRow(
+                                dbutils.getMap(rs, "parent_name"),
+                                rs.getString("parent_class"),
+                                rs.getString("parent_type"),
+                                rs.getInt("parent_rank_address")));
+                    }
+                    completePlace(doc, addressPlaces);
+                    doc.address(address); // take precedence over computed address
                     doc.setCountry(cnames);
 
                     var result = NominatimResult.fromAddress(doc, address);
@@ -130,32 +128,50 @@ public class NominatimImporter extends NominatimConnector {
                 });
 
         final OsmlineRowMapper osmlineRowMapper = new OsmlineRowMapper();
-        template.query((hasNewStyleInterpolation ? SELECT_OSMLINE_NEW_STYLE : SELECT_OSMLINE_OLD_STYLE) +
-                " FROM location_property_osmline" +
-                " WHERE startnumber is not null AND " + countrySQL +
-                " ORDER BY geometry_sector, parent_place_id",
+        template.query(
+                "SELECT p.place_id, p.osm_id, p.parent_place_id, p.startnumber, p.endnumber, p.postcode, p.country_code, p.linegeo," +
+                        (hasNewStyleInterpolation ? " p.step," : " p.interpolationtype,") +
+                        "       parent.class as parent_class, parent.type as parent_type," +
+                        "       parent.rank_address as parent_rank_address, parent.name as parent_name, " +
+                        dbutils.jsonArrayFromSelect(
+                                "address_place_id",
+                                "FROM place_addressline pa " +
+                                        " WHERE pa.place_id IN (p.place_id, coalesce(p.parent_place_id, p.place_id)) AND isaddress" +
+                                        " ORDER BY cached_rank_address DESC, pa.place_id = p.place_id DESC") + " as addresslines" +
+                        " FROM location_property_osmline p LEFT JOIN placex parent ON p.parent_place_id = parent.place_id" +
+                        " WHERE startnumber is not null AND p." + countrySQL +
+                        " ORDER BY p.geometry_sector, p.parent_place_id",
                 sqlArgs, sqlArgTypes, rs -> {
-            final PhotonDoc doc = osmlineRowMapper.mapRow(rs, 0);
+                    final PhotonDoc doc = osmlineRowMapper.mapRow(rs, 0);
 
-            completePlace(doc);
-            doc.setCountry(cnames);
+                    final var addressPlaces = addressCache.getAddressList(rs.getString("addresslines"));
+                    if (rs.getString("parent_class") != null) {
+                        addressPlaces.add(0, new AddressRow(
+                                dbutils.getMap(rs, "parent_name"),
+                                rs.getString("parent_class"),
+                                rs.getString("parent_type"),
+                                rs.getInt("parent_rank_address")));
+                    }
+                    completePlace(doc, addressPlaces);
 
-            final Geometry geometry = dbutils.extractGeometry(rs, "linegeo");
-            final NominatimResult docs;
-            if (hasNewStyleInterpolation) {
-                docs = NominatimResult.fromInterpolation(
-                        doc, rs.getLong("startnumber"), rs.getLong("endnumber"),
-                        rs.getLong("step"), geometry);
-            } else {
-                docs = NominatimResult.fromInterpolation(
-                        doc, rs.getLong("startnumber"), rs.getLong("endnumber"),
-                        rs.getString("interpolationtype"), geometry);
-            }
+                    doc.setCountry(cnames);
 
-            if (docs.isUsefulForIndex()) {
-                importThread.addDocument(docs);
-            }
-        });
+                    final Geometry geometry = dbutils.extractGeometry(rs, "linegeo");
+                    final NominatimResult docs;
+                    if (hasNewStyleInterpolation) {
+                        docs = NominatimResult.fromInterpolation(
+                                doc, rs.getLong("startnumber"), rs.getLong("endnumber"),
+                                rs.getLong("step"), geometry);
+                    } else {
+                        docs = NominatimResult.fromInterpolation(
+                                doc, rs.getLong("startnumber"), rs.getLong("endnumber"),
+                                rs.getString("interpolationtype"), geometry);
+                    }
+
+                    if (docs.isUsefulForIndex()) {
+                        importThread.addDocument(docs);
+                    }
+                });
 
     }
 
@@ -164,8 +180,7 @@ public class NominatimImporter extends NominatimConnector {
      *
      * @param doc
      */
-    private void completePlace(PhotonDoc doc) {
-        final List<AddressRow> addresses = getAddresses(doc);
+    private void completePlace(PhotonDoc doc, List<AddressRow> addresses) {
         final AddressType doctype = doc.getAddressType();
         for (AddressRow address : addresses) {
             AddressType atype = address.getAddressType();

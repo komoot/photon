@@ -15,11 +15,6 @@ import java.util.Map;
  * Base class for workers connecting to a Nominatim database
  */
 public class NominatimConnector {
-    protected static final String SELECT_COLS_PLACEX = "SELECT place_id, osm_type, osm_id, class, type, name, postcode, address, extratags, ST_Envelope(geometry) AS bbox, parent_place_id, linked_place_id, rank_address, rank_search, importance, country_code, centroid";
-    protected static final String SELECT_COLS_ADDRESS = "SELECT p.name, p.class, p.type, p.rank_address";
-    protected static final String SELECT_OSMLINE_OLD_STYLE = "SELECT place_id, osm_id, parent_place_id, startnumber, endnumber, interpolationtype, postcode, country_code, linegeo";
-    protected static final String SELECT_OSMLINE_NEW_STYLE = "SELECT place_id, osm_id, parent_place_id, startnumber, endnumber, step, postcode, country_code, linegeo";
-
     protected final DBDataAdapter dbutils;
     protected final JdbcTemplate template;
     protected Map<String, Map<String, String>> countryNames;
