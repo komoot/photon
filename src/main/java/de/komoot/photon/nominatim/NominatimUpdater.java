@@ -5,6 +5,8 @@ import de.komoot.photon.Updater;
 import de.komoot.photon.nominatim.model.*;
 import org.locationtech.jts.geom.Geometry;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 
 import java.util.*;
 import java.util.concurrent.locks.ReentrantLock;
@@ -138,8 +140,13 @@ public class NominatimUpdater extends NominatimConnector {
 
     public void initUpdates(String updateUser) {
         LOGGER.info("Creating tracking tables");
-        template.execute(TRIGGER_SQL);
-        template.execute("GRANT SELECT, DELETE ON photon_updates TO \"" + updateUser + '"');
+        txTemplate.execute(new TransactionCallbackWithoutResult() {
+            @Override
+            protected void doInTransactionWithoutResult(TransactionStatus status) {
+                template.execute(TRIGGER_SQL);
+                template.execute("GRANT SELECT, DELETE ON photon_updates TO \"" + updateUser + '"');
+            }
+        });
     }
 
     public void update() {
@@ -230,28 +237,30 @@ public class NominatimUpdater extends NominatimConnector {
     }
 
     private List<UpdateRow> getPlaces(String table) {
-        List<UpdateRow> results = template.query(dbutils.deleteReturning(
-                "DELETE FROM photon_updates WHERE rel = ?", "place_id, operation, indexed_date"),
-                (rs, rowNum) -> {
-                    boolean isDelete = "DELETE".equals(rs.getString("operation"));
-                    return new UpdateRow(rs.getLong("place_id"), isDelete, rs.getTimestamp("indexed_date"));
-                }, table);
+        return txTemplate.execute(status -> {
+            List<UpdateRow> results = template.query(dbutils.deleteReturning(
+                            "DELETE FROM photon_updates WHERE rel = ?", "place_id, operation, indexed_date"),
+                    (rs, rowNum) -> {
+                        boolean isDelete = "DELETE".equals(rs.getString("operation"));
+                        return new UpdateRow(rs.getLong("place_id"), isDelete, rs.getTimestamp("indexed_date"));
+                    }, table);
 
-        // For each place only keep the newest item.
-        // Order doesn't really matter because updates of each place are independent now.
-        results.sort(Comparator.comparing(UpdateRow::getPlaceId).thenComparing(
-                     Comparator.comparing(UpdateRow::getUpdateDate).reversed()));
+            // For each place only keep the newest item.
+            // Order doesn't really matter because updates of each place are independent now.
+            results.sort(Comparator.comparing(UpdateRow::getPlaceId).thenComparing(
+                    Comparator.comparing(UpdateRow::getUpdateDate).reversed()));
 
-        ArrayList<UpdateRow> todo = new ArrayList<>();
-        long prevId = -1;
-        for (UpdateRow row: results) {
-            if (row.getPlaceId() != prevId) {
-                prevId = row.getPlaceId();
-                todo.add(row);
+            ArrayList<UpdateRow> todo = new ArrayList<>();
+            long prevId = -1;
+            for (UpdateRow row : results) {
+                if (row.getPlaceId() != prevId) {
+                    prevId = row.getPlaceId();
+                    todo.add(row);
+                }
             }
-        }
 
-        return todo;
+            return todo;
+        });
     }
 
 

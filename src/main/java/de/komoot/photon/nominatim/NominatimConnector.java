@@ -3,6 +3,8 @@ package de.komoot.photon.nominatim;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -17,6 +19,7 @@ import java.util.Map;
 public class NominatimConnector {
     protected final DBDataAdapter dbutils;
     protected final JdbcTemplate template;
+    protected final TransactionTemplate txTemplate;
     protected Map<String, Map<String, String>> countryNames;
     protected final boolean hasNewStyleInterpolation;
 
@@ -28,7 +31,11 @@ public class NominatimConnector {
         if (password != null) {
             dataSource.setPassword(password);
         }
-        dataSource.setDefaultAutoCommit(true);
+
+        // Keep disabled or server-side cursors won't work.
+        dataSource.setDefaultAutoCommit(false);
+
+        txTemplate = new TransactionTemplate(new DataSourceTransactionManager(dataSource));
 
         template = new JdbcTemplate(dataSource);
         template.setFetchSize(100000);

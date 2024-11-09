@@ -16,15 +16,18 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.util.Date;
 
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
+import org.springframework.transaction.support.TransactionTemplate;
 
 class NominatimConnectorDBTest {
     private EmbeddedDatabase db;
     private NominatimImporter connector;
     private CollectingImporter importer;
     private JdbcTemplate jdbc;
+    private TransactionTemplate txTemplate;
 
     @BeforeEach
     void setup() {
@@ -39,7 +42,9 @@ class NominatimConnectorDBTest {
         importer = new CollectingImporter();
 
         jdbc = new JdbcTemplate(db);
+        txTemplate = new TransactionTemplate(new DataSourceTransactionManager(db));
         ReflectionTestUtil.setFieldValue(connector, NominatimConnector.class, "template", jdbc);
+        ReflectionTestUtil.setFieldValue(connector, NominatimConnector.class, "txTemplate", txTemplate);
     }
 
     private void readEntireDatabase() {

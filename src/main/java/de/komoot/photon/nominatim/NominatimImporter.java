@@ -1,12 +1,14 @@
 package de.komoot.photon.nominatim;
 
 import de.komoot.photon.PhotonDoc;
-import de.komoot.photon.nominatim.model.*;
+import de.komoot.photon.nominatim.model.AddressRow;
+import de.komoot.photon.nominatim.model.NominatimAddressCache;
+import de.komoot.photon.nominatim.model.OsmlineRowMapper;
+import de.komoot.photon.nominatim.model.PlaceRowMapper;
 import org.locationtech.jts.geom.Geometry;
 import org.slf4j.Logger;
 
 import java.sql.Types;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -182,14 +184,18 @@ public class NominatimImporter extends NominatimConnector {
      * not will create them. This may take a while.
      */
     public void prepareDatabase() {
-        Integer indexRowNum = template.queryForObject(
-                "SELECT count(*) FROM pg_indexes WHERE tablename = 'placex' AND indexdef LIKE '%(country_code)'",
-                Integer.class);
+        txTemplate.execute(status -> {
+            Integer indexRowNum = template.queryForObject(
+                    "SELECT count(*) FROM pg_indexes WHERE tablename = 'placex' AND indexdef LIKE '%(country_code)'",
+                    Integer.class);
 
-        if (indexRowNum == null || indexRowNum == 0) {
-            LOGGER.info("Creating index over countries.");
-            template.execute("CREATE INDEX ON placex (country_code)");
-        }
+            if (indexRowNum == null || indexRowNum == 0) {
+                LOGGER.info("Creating index over countries.");
+                template.execute("CREATE INDEX ON placex (country_code)");
+            }
+
+            return 0;
+        });
     }
 
     public String[] getCountriesFromDatabase() {
