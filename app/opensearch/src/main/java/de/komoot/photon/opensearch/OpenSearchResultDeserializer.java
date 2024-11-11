@@ -40,8 +40,10 @@ public class OpenSearchResultDeserializer extends StdDeserializer<OpenSearchResu
                 tags.put(key, value.asText());
             } else if (value.isInt()) {
                 tags.put(entry.getKey(), value.asInt());
-            } else if (value.isBigInteger()) {
+            } else if (value.isLong()) {
                 tags.put(entry.getKey(), value.asLong());
+            } else if (value.isFloatingPointNumber()) {
+                tags.put(entry.getKey(), value.asDouble());
             } else if (value.isObject()) {
                 Map<String, String> vtags = new HashMap<>();
                 var subfields = value.fields();
