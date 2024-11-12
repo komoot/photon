@@ -4,6 +4,7 @@ import de.komoot.photon.Constants;
 import de.komoot.photon.searcher.PhotonResult;
 import org.elasticsearch.search.SearchHit;
 import org.slf4j.Logger;
+import org.json.JSONObject;
 
 import java.util.List;
 import java.util.Map;
@@ -82,5 +83,10 @@ public class ElasticResult implements PhotonResult {
     @Override
     public double getScore() {
         return result.getScore();
+    }
+
+    @Override
+    public JSONObject getRawData() {
+        return new JSONObject();
     }
 }

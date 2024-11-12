@@ -44,7 +44,7 @@ public class OpenSearchSearchHandler implements SearchHandler {
 
     @Override
     public String dumpQuery(PhotonRequest photonRequest) {
-        return "{}";
+        return null;
     }
 
     private SearchQueryBuilder buildQuery(PhotonRequest request, boolean lenient) {
