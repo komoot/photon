@@ -1,6 +1,8 @@
 package de.komoot.photon.opensearch;
 
 import de.komoot.photon.searcher.PhotonResult;
+import jakarta.json.JsonArray;
+import org.json.JSONObject;
 
 import java.util.Map;
 
@@ -68,5 +70,13 @@ public class OpenSearchResult implements PhotonResult {
     @Override
     public double getScore() {
         return score;
+    }
+
+    @Override
+    public JSONObject getRawData() {
+        return new JSONObject()
+                .put("infos", new JSONObject(infos))
+                .put("localeTags", new JSONObject(localeTags))
+                .put("score", score);
     }
 }
