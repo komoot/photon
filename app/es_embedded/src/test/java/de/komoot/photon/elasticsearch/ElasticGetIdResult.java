@@ -3,6 +3,7 @@ package de.komoot.photon.elasticsearch;
 import de.komoot.photon.searcher.PhotonResult;
 import org.apache.commons.lang3.NotImplementedException;
 import org.elasticsearch.action.get.GetResponse;
+import org.json.JSONObject;
 
 import java.util.Map;
 
@@ -40,6 +41,11 @@ public class ElasticGetIdResult implements PhotonResult {
 
     @Override
     public double getScore() {
+        throw new NotImplementedException();
+    }
+
+    @Override
+    public JSONObject getRawData() {
         throw new NotImplementedException();
     }
 }
