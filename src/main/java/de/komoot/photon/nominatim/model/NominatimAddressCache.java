@@ -21,12 +21,12 @@ public class NominatimAddressCache {
             "SELECT place_id, name, class, type, rank_address FROM placex" +
             " WHERE rank_address between 5 and 25 AND linked_place_id is null";
 
-    private final Map<Integer, AddressRow> addresses = new HashMap<>();
+    private final Map<Long, AddressRow> addresses = new HashMap<>();
 
     public void loadCountryAddresses(JdbcTemplate template, DBDataAdapter dbutils, String countryCode) {
         final RowCallbackHandler rowMapper = (rs) -> {
             addresses.put(
-                    rs.getInt("place_id"),
+                    rs.getLong("place_id"),
                     new AddressRow(
                             dbutils.getMap(rs, "name"),
                             rs.getString("class"),
@@ -52,7 +52,7 @@ public class NominatimAddressCache {
         if (addressline != null && !addressline.isBlank()) {
             JSONArray addressPlaces = new JSONArray(addressline);
             for (int i = 0; i < addressPlaces.length(); ++i) {
-                Integer place_id = addressPlaces.optInt(i);
+                Long place_id = addressPlaces.optLong(i);
                 if (place_id != null) {
                     AddressRow row = addresses.get(place_id);
                     if (row != null) {
