@@ -218,17 +218,27 @@ public class PhotonDoc {
     private void extractAddress(Map<String, String> address, AddressType addressType, String addressFieldName) {
         String field = address.get(addressFieldName);
 
-        if (field != null) {
-            Map<String, String> map = addressParts.computeIfAbsent(addressType, k -> new HashMap<>());
+        if (field == null) {
+            return;
+        }
 
+        Map<String, String> map = addressParts.get(addressType);
+        if (map == null) {
+            map = new HashMap<>();
+            map.put("name", field);
+            addressParts.put(addressType, map);
+        } else {
             String existingName = map.get("name");
             if (!field.equals(existingName)) {
+                // Make a copy of the original name map because the map is reused for other addresses.
+                map = new HashMap<>(map);
                 LOGGER.debug("Replacing {} name '{}' with '{}' for osmId #{}", addressFieldName, existingName, field, osmId);
                 // we keep the former name in the context as it might be helpful when looking up typos
                 if (!Objects.isNull(existingName)) {
                     context.add(Collections.singletonMap("formerName", existingName));
                 }
                 map.put("name", field);
+                addressParts.put(addressType, map);
             }
         }
     }

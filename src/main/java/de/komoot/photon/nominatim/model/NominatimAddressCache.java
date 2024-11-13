@@ -28,7 +28,7 @@ public class NominatimAddressCache {
             addresses.put(
                     rs.getLong("place_id"),
                     new AddressRow(
-                            dbutils.getMap(rs, "name"),
+                            Map.copyOf(dbutils.getMap(rs, "name")),
                             rs.getString("class"),
                             rs.getString("type"),
                             rs.getInt("rank_address")
