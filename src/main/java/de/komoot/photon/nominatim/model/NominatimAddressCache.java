@@ -24,16 +24,16 @@ public class NominatimAddressCache {
     private final Map<Long, AddressRow> addresses = new HashMap<>();
 
     public void loadCountryAddresses(JdbcTemplate template, DBDataAdapter dbutils, String countryCode) {
-        final RowCallbackHandler rowMapper = (rs) -> {
-            addresses.put(
-                    rs.getLong("place_id"),
-                    new AddressRow(
-                            Map.copyOf(dbutils.getMap(rs, "name")),
-                            rs.getString("class"),
-                            rs.getString("type"),
-                            rs.getInt("rank_address")
-                    ));
-        };
+        final RowCallbackHandler rowMapper = rs ->
+                addresses.put(
+                        rs.getLong("place_id"),
+                        new AddressRow(
+                                Map.copyOf(dbutils.getMap(rs, "name")),
+                                rs.getString("class"),
+                                rs.getString("type"),
+                                rs.getInt("rank_address")
+                        ));
+
 
         if (countryCode == null) {
             template.query(BASE_COUNTRY_QUERY + " AND country_code is null", rowMapper);
@@ -52,9 +52,9 @@ public class NominatimAddressCache {
         if (addressline != null && !addressline.isBlank()) {
             JSONArray addressPlaces = new JSONArray(addressline);
             for (int i = 0; i < addressPlaces.length(); ++i) {
-                Long place_id = addressPlaces.optLong(i);
-                if (place_id != null) {
-                    AddressRow row = addresses.get(place_id);
+                Long placeId = addressPlaces.optLong(i);
+                if (placeId != null) {
+                    AddressRow row = addresses.get(placeId);
                     if (row != null) {
                         outlist.add(row);
                     }
