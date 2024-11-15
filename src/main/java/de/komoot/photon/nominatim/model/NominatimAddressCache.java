@@ -35,7 +35,7 @@ public class NominatimAddressCache {
                         ));
 
 
-        if (countryCode == null) {
+        if ("".equals(countryCode)) {
             template.query(BASE_COUNTRY_QUERY + " AND country_code is null", rowMapper);
         } else {
             template.query(BASE_COUNTRY_QUERY + " AND country_code = ?", rowMapper, countryCode);
