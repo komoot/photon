@@ -11,12 +11,12 @@ import java.util.concurrent.atomic.AtomicLong;
 /**
  * Worker thread for bulk importing data from a Nominatim database.
  */
-class ImportThread {
+public class ImportThread {
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(ImportThread.class);
 
     private static final int PROGRESS_INTERVAL = 50000;
-    private static final NominatimResult FINAL_DOCUMENT = new NominatimResult(new PhotonDoc(0, null, 0, null, null));
-    private final BlockingQueue<NominatimResult> documents = new LinkedBlockingDeque<>(20);
+    private static final NominatimResult FINAL_DOCUMENT = NominatimResult.fromAddress(new PhotonDoc(0, null, 0, null, null), null);
+    private final BlockingQueue<NominatimResult> documents = new LinkedBlockingDeque<>(100);
     private final AtomicLong counter = new AtomicLong();
     private final Importer importer;
     private final Thread thread;
@@ -70,7 +70,8 @@ class ImportThread {
                 Thread.currentThread().interrupt();
             }
         }
-        LOGGER.info("Finished import of {} photon documents.", counter.longValue());
+        LOGGER.info("Finished import of {} photon documents. (Total processing time: {}s)",
+                    counter.longValue(), (System.currentTimeMillis() - startMillis)/1000);
     }
 
     private class ImportRunnable implements Runnable {

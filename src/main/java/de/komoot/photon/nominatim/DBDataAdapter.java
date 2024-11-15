@@ -30,4 +30,9 @@ public interface DBDataAdapter {
      * Wrap a DELETE statement with a RETURNING clause.
      */
     String deleteReturning(String deleteSQL, String columns);
+
+    /**
+     * Wrap function to create a json array from a SELECT.
+     */
+    String jsonArrayFromSelect(String valueSQL, String fromSQL);
 }

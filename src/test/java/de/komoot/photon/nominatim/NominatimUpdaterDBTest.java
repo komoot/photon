@@ -5,9 +5,11 @@ import de.komoot.photon.nominatim.testdb.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -16,6 +18,7 @@ class NominatimUpdaterDBTest {
     private NominatimUpdater connector;
     private CollectingUpdater updater;
     private JdbcTemplate jdbc;
+    private TransactionTemplate txTemplate;
 
     @BeforeEach
     void setup() {
@@ -31,8 +34,9 @@ class NominatimUpdaterDBTest {
         connector.setUpdater(updater);
 
         jdbc = new JdbcTemplate(db);
-        ReflectionTestUtil.setFieldValue(connector, "template", jdbc);
-        ReflectionTestUtil.setFieldValue(connector, "exporter", "template", jdbc);
+        txTemplate = new TransactionTemplate(new DataSourceTransactionManager(db));
+        ReflectionTestUtil.setFieldValue(connector, NominatimConnector.class, "template", jdbc);
+        ReflectionTestUtil.setFieldValue(connector, NominatimConnector.class, "txTemplate", txTemplate);
     }
 
     @Test

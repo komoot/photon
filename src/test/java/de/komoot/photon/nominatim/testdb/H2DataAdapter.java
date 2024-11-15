@@ -45,4 +45,8 @@ public class H2DataAdapter implements DBDataAdapter {
         return "SELECT " + columns + " FROM OLD TABLE (" + deleteSQL + ")";
     }
 
+    @Override
+    public String jsonArrayFromSelect(String valueSQL, String fromSQL) {
+        return "json_array((SELECT " + valueSQL + " " + fromSQL + ") FORMAT JSON)";
+    }
 }

@@ -104,6 +104,12 @@ public class PlacexTestRow {
         return this;
     }
 
+    public PlacexTestRow ranks(int rank) {
+        this.rankAddress = rank;
+        this.rankSearch = rank;
+        return this;
+    }
+
     public PlacexTestRow parent(PlacexTestRow row) {
         this.parentPlaceId = row.getPlaceId();
         return this;

@@ -1,154 +1,29 @@
 package de.komoot.photon.nominatim;
 
-import org.locationtech.jts.geom.Geometry;
-import de.komoot.photon.Importer;
-import de.komoot.photon.PhotonDoc;
-import de.komoot.photon.nominatim.model.AddressRow;
-import de.komoot.photon.nominatim.model.AddressType;
 import org.apache.commons.dbcp2.BasicDataSource;
-import org.slf4j.Logger;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
- * Importer for data from a Mominatim database.
+ * Base class for workers connecting to a Nominatim database
  */
 public class NominatimConnector {
-    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(NominatimConnector.class);
+    protected final DBDataAdapter dbutils;
+    protected final JdbcTemplate template;
+    protected final TransactionTemplate txTemplate;
+    protected Map<String, Map<String, String>> countryNames;
+    protected final boolean hasNewStyleInterpolation;
 
-    private static final String SELECT_COLS_PLACEX = "SELECT place_id, osm_type, osm_id, class, type, name, postcode, address, extratags, ST_Envelope(geometry) AS bbox, parent_place_id, linked_place_id, rank_address, rank_search, importance, country_code, centroid";
-    private static final String SELECT_COLS_ADDRESS = "SELECT p.name, p.class, p.type, p.rank_address";
-
-    private final DBDataAdapter dbutils;
-    private final JdbcTemplate template;
-    private Map<String, Map<String, String>> countryNames;
-
-    /**
-     * Map a row from location_property_osmline (address interpolation lines) to a photon doc.
-     * This may be old-style interpolation (using interpolationtype) or
-     * new-style interpolation (using step).
-     */
-    private final RowMapper<NominatimResult> osmlineRowMapper;
-    private final String selectOsmlineSql;
-    private Importer importer;
-
-
-    /**
-     * Maps a placex row in nominatim to a photon doc.
-     * Some attributes are still missing and can be derived by connected address items.
-     */
-    private final RowMapper<NominatimResult> placeRowMapper = new RowMapper<>() {
-        @Override
-        public NominatimResult mapRow(ResultSet rs, int rowNum) throws SQLException {
-            Map<String, String> address = dbutils.getMap(rs, "address");
-            PhotonDoc doc = new PhotonDoc(rs.getLong("place_id"),
-                                          rs.getString("osm_type"), rs.getLong("osm_id"),
-                                          rs.getString("class"), rs.getString("type"))
-                    .names(dbutils.getMap(rs, "name"))
-                    .extraTags(dbutils.getMap(rs, "extratags"))
-                    .bbox(dbutils.extractGeometry(rs, "bbox"))
-                    .parentPlaceId(rs.getLong("parent_place_id"))
-                    .countryCode(rs.getString("country_code"))
-                    .centroid(dbutils.extractGeometry(rs, "centroid"))
-                    .linkedPlaceId(rs.getLong("linked_place_id"))
-                    .rankAddress(rs.getInt("rank_address"))
-                    .postcode(rs.getString("postcode"));
-
-            double importance = rs.getDouble("importance");
-            doc.importance(rs.wasNull() ? (0.75 - rs.getInt("rank_search") / 40d) : importance);
-
-            completePlace(doc);
-            // Add address last, so it takes precedence.
-            doc.address(address);
-
-            doc.setCountry(getCountryNames(rs.getString("country_code")));
-
-            NominatimResult result = new NominatimResult(doc);
-            result.addHousenumbersFromAddress(address);
-
-            return result;
-        }
-    };
-
-    /**
-     * Construct a new importer.
-     *
-     * @param host     database host
-     * @param port     database port
-     * @param database database name
-     * @param username db username
-     * @param password db username's password
-     */
-    public NominatimConnector(String host, int port, String database, String username, String password) {
-        this(host, port, database, username, password, new PostgisDataAdapter());
-    }
-
-    public NominatimConnector(String host, int port, String database, String username, String password, DBDataAdapter dataAdapter) {
-        BasicDataSource dataSource = buildDataSource(host, port, database, username, password, false);
-
-        template = new JdbcTemplate(dataSource);
-        template.setFetchSize(100000);
-
-        dbutils = dataAdapter;
-
-        // Setup handling of interpolation table. There are two different formats depending on the Nominatim version.
-        if (dbutils.hasColumn(template, "location_property_osmline", "step")) {
-            // new-style interpolations
-            selectOsmlineSql = "SELECT place_id, osm_id, parent_place_id, startnumber, endnumber, step, postcode, country_code, linegeo";
-            osmlineRowMapper = (rs, rownum) -> {
-                Geometry geometry = dbutils.extractGeometry(rs, "linegeo");
-
-                PhotonDoc doc = new PhotonDoc(rs.getLong("place_id"), "W", rs.getLong("osm_id"),
-                        "place", "house_number")
-                        .parentPlaceId(rs.getLong("parent_place_id"))
-                        .countryCode(rs.getString("country_code"))
-                        .postcode(rs.getString("postcode"));
-
-                completePlace(doc);
-
-                doc.setCountry(getCountryNames(rs.getString("country_code")));
-
-                NominatimResult result = new NominatimResult(doc);
-                result.addHouseNumbersFromInterpolation(rs.getLong("startnumber"), rs.getLong("endnumber"),
-                        rs.getLong("step"), geometry);
-
-                return result;
-            };
-        } else {
-            // old-style interpolations
-            selectOsmlineSql = "SELECT place_id, osm_id, parent_place_id, startnumber, endnumber, interpolationtype, postcode, country_code, linegeo";
-            osmlineRowMapper = (rs, rownum) -> {
-                Geometry geometry = dbutils.extractGeometry(rs, "linegeo");
-
-                PhotonDoc doc = new PhotonDoc(rs.getLong("place_id"), "W", rs.getLong("osm_id"),
-                        "place", "house_number")
-                        .parentPlaceId(rs.getLong("parent_place_id"))
-                        .countryCode(rs.getString("country_code"))
-                        .postcode(rs.getString("postcode"));
-
-                completePlace(doc);
-
-                doc.setCountry(getCountryNames(rs.getString("country_code")));
-
-                NominatimResult result = new NominatimResult(doc);
-                result.addHouseNumbersFromInterpolation(rs.getLong("startnumber"), rs.getLong("endnumber"),
-                        rs.getString("interpolationtype"), geometry);
-
-                return result;
-            };
-        }
-    }
-
-
-    static BasicDataSource buildDataSource(String host, int port, String database, String username, String password, boolean autocommit) {
+    protected NominatimConnector(String host, int port, String database, String username, String password, DBDataAdapter dataAdapter) {
         BasicDataSource dataSource = new BasicDataSource();
 
         dataSource.setUrl(String.format("jdbc:postgresql://%s:%d/%s", host, port, database));
@@ -156,145 +31,17 @@ public class NominatimConnector {
         if (password != null) {
             dataSource.setPassword(password);
         }
-        dataSource.setDefaultAutoCommit(autocommit);
-        return dataSource;
-    }
 
-    private Map<String, String> getCountryNames(String countrycode) {
-        if (countryNames == null) {
-            countryNames = new HashMap<>();
-            template.query("SELECT country_code, name FROM country_name", rs -> {
-                countryNames.put(rs.getString("country_code"), dbutils.getMap(rs, "name"));
-            });
-        }
+        // Keep disabled or server-side cursors won't work.
+        dataSource.setDefaultAutoCommit(false);
 
-        return countryNames.get(countrycode);
-    }
+        txTemplate = new TransactionTemplate(new DataSourceTransactionManager(dataSource));
 
-    public void setImporter(Importer importer) {
-        this.importer = importer;
-    }
+        template = new JdbcTemplate(dataSource);
+        template.setFetchSize(100000);
 
-    public List<PhotonDoc> getByPlaceId(long placeId) {
-        List<NominatimResult> result = template.query(SELECT_COLS_PLACEX + " FROM placex WHERE place_id = ? and indexed_status = 0",
-                                                         placeRowMapper, placeId);
-
-        return result.isEmpty() ? null : result.get(0).getDocsWithHousenumber();
-    }
-
-    public List<PhotonDoc> getInterpolationsByPlaceId(long placeId) {
-        List<NominatimResult> result = template.query(selectOsmlineSql
-                                                          + " FROM location_property_osmline WHERE place_id = ? and indexed_status = 0",
-                                                          osmlineRowMapper, placeId);
-
-        return result.isEmpty() ? null : result.get(0).getDocsWithHousenumber();
-    }
-
-    private long parentPlaceId = -1;
-    private List<AddressRow> parentTerms = null;
-
-    List<AddressRow> getAddresses(PhotonDoc doc) {
-        RowMapper<AddressRow> rowMapper = (rs, rowNum) -> new AddressRow(
-                dbutils.getMap(rs, "name"),
-                rs.getString("class"),
-                rs.getString("type"),
-                rs.getInt("rank_address")
-        );
-
-        AddressType atype = doc.getAddressType();
-
-        if (atype == null || atype == AddressType.COUNTRY) {
-            return Collections.emptyList();
-        }
-
-        List<AddressRow> terms = null;
-
-        if (atype == AddressType.HOUSE) {
-            long placeId = doc.getParentPlaceId();
-            if (placeId != parentPlaceId) {
-                parentTerms = template.query(SELECT_COLS_ADDRESS
-                                + " FROM placex p, place_addressline pa"
-                                + " WHERE p.place_id = pa.address_place_id and pa.place_id = ?"
-                                + " and pa.cached_rank_address > 4 and pa.address_place_id != ? and pa.isaddress"
-                                + " ORDER BY rank_address desc, fromarea desc, distance asc, rank_search desc",
-                        rowMapper, placeId, placeId);
-
-                // need to add the term for the parent place ID itself
-                parentTerms.addAll(0, template.query(SELECT_COLS_ADDRESS + " FROM placex p WHERE p.place_id = ?",
-                        rowMapper, placeId));
-                parentPlaceId = placeId;
-            }
-            terms = parentTerms;
-
-        } else {
-            long placeId = doc.getPlaceId();
-            terms = template.query(SELECT_COLS_ADDRESS
-                            + " FROM placex p, place_addressline pa"
-                            + " WHERE p.place_id = pa.address_place_id and pa.place_id = ?"
-                            + " and pa.cached_rank_address > 4 and pa.address_place_id != ? and pa.isaddress"
-                            + " ORDER BY rank_address desc, fromarea desc, distance asc, rank_search desc",
-                    rowMapper, placeId, placeId);
-        }
-
-        return terms;
-    }
-
-    static String convertCountryCode(String... countryCodes) {
-        String countryCodeStr = "";
-        for (String cc : countryCodes) {
-            if (cc.isEmpty())
-                continue;
-            if (cc.length() != 2)
-                throw new IllegalArgumentException("country code invalid " + cc);
-            if (!countryCodeStr.isEmpty())
-                countryCodeStr += ",";
-            countryCodeStr += "'" + cc.toLowerCase() + "'";
-        }
-        return countryCodeStr;
-    }
-
-    /**
-     * Parse every relevant row in placex, create a corresponding document and call the {@link #importer} for each document.
-     */
-    public void readEntireDatabase(String... countryCodes) {
-        String andCountryCodeStr = "";
-        String countryCodeStr = convertCountryCode(countryCodes);
-        if (!countryCodeStr.isEmpty()) {
-            andCountryCodeStr = "AND country_code in (" + countryCodeStr + ")";
-        }
-
-        LOGGER.info("Start importing documents from nominatim ({})", countryCodeStr.isEmpty() ? "global" : countryCodeStr);
-
-        ImportThread importThread = new ImportThread(importer);
-
-        try {
-            template.query(SELECT_COLS_PLACEX + " FROM placex " +
-                    " WHERE linked_place_id IS NULL AND centroid IS NOT NULL " + andCountryCodeStr +
-                    " ORDER BY geometry_sector, parent_place_id; ", rs -> {
-                // turns a placex row into a photon document that gathers all de-normalised information
-                NominatimResult docs = placeRowMapper.mapRow(rs, 0);
-                assert (docs != null);
-
-                if (docs.isUsefulForIndex()) {
-                    importThread.addDocument(docs);
-                }
-            });
-
-            template.query(selectOsmlineSql + " FROM location_property_osmline " +
-                    "WHERE startnumber is not null " +
-                    andCountryCodeStr +
-                    " ORDER BY geometry_sector, parent_place_id; ", rs -> {
-                NominatimResult docs = osmlineRowMapper.mapRow(rs, 0);
-                assert (docs != null);
-
-                if (docs.isUsefulForIndex()) {
-                    importThread.addDocument(docs);
-                }
-            });
-
-        } finally {
-            importThread.finish();
-        }
+        dbutils = dataAdapter;
+        hasNewStyleInterpolation = dbutils.hasColumn(template, "location_property_osmline", "step");
     }
 
     public Date getLastImportDate() {
@@ -310,27 +57,15 @@ public class NominatimConnector {
         return importDates.get(0);
     }
 
-    /**
-     * Query Nominatim's address hierarchy to complete photon doc with missing data (like country, city, street, ...)
-     *
-     * @param doc
-     */
-    private void completePlace(PhotonDoc doc) {
-        final List<AddressRow> addresses = getAddresses(doc);
-        final AddressType doctype = doc.getAddressType();
-        for (AddressRow address : addresses) {
-            AddressType atype = address.getAddressType();
-
-            if (atype != null
-                    && (atype == doctype || !doc.setAddressPartIfNew(atype, address.getName()))
-                    && address.isUsefulForContext()) {
-                // no specifically handled item, check if useful for context
-                doc.getContext().add(address.getName());
-            }
+    public void loadCountryNames() {
+        if (countryNames == null) {
+            countryNames = new HashMap<>();
+            // Default for places outside any country.
+            countryNames.put("", new HashMap<>());
+            template.query("SELECT country_code, name FROM country_name", rs -> {
+                countryNames.put(rs.getString("country_code"), dbutils.getMap(rs, "name"));
+            });
         }
     }
 
-    public DBDataAdapter getDataAdaptor() {
-        return dbutils;
-    }
 }
