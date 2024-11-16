@@ -276,8 +276,8 @@ public class App {
 
         if (dbProperties.getSupportStructuredQueries()) {
             StructuredSearchHandler structured = server.createStructuredSearchHandler(langs, args.getQueryTimeout());
-            get("structured", new StructuredSearchRequestHandler("structured", structured, langs, args.getDefaultLanguage(), args.getMaxResults()));
-            get("structured/", new StructuredSearchRequestHandler("structured/", structured, langs, args.getDefaultLanguage(), args.getMaxResults()));
+            get("structured", new StructuredSearchRequestHandler("structured", structured, langs, args.getDefaultLanguage(), args.getMaxResults(), dbProperties.getSupportPolygons()));
+            get("structured/", new StructuredSearchRequestHandler("structured/", structured, langs, args.getDefaultLanguage(), args.getMaxResults(), dbProperties.getSupportPolygons()));
         }
 
         ReverseHandler reverseHandler = server.createReverseHandler(args.getQueryTimeout());

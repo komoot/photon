@@ -17,12 +17,14 @@ import static spark.Spark.halt;
 public class StructuredSearchRequestHandler extends RouteImpl {
     private final PhotonRequestFactory photonRequestFactory;
     private final StructuredSearchHandler requestHandler;
+    private final boolean supportPolygons;
 
-    StructuredSearchRequestHandler(String path, StructuredSearchHandler dbHandler, String[] languages, String defaultLanguage, int maxResults) {
+    StructuredSearchRequestHandler(String path, StructuredSearchHandler dbHandler, String[] languages, String defaultLanguage, int maxResults, boolean supportPolygons) {
         super(path);
         List<String> supportedLanguages = Arrays.asList(languages);
         this.photonRequestFactory = new PhotonRequestFactory(supportedLanguages, defaultLanguage, maxResults);
         this.requestHandler = dbHandler;
+        this.supportPolygons = supportPolygons;
     }
 
     @Override
@@ -36,6 +38,12 @@ public class StructuredSearchRequestHandler extends RouteImpl {
             throw halt(e.getHttpStatus(), json.toString());
         }
 
+        if (!supportPolygons && (photonRequest.isPolygonRequest() && photonRequest.getReturnPolygon())) {
+            JSONObject json = new JSONObject();
+            json.put("message", "You're requesting a polygon, but polygons are not imported!");
+            throw halt(400, json.toString());
+        }
+
         List<PhotonResult> results = requestHandler.search(photonRequest);
 
         // Further filtering
@@ -45,6 +53,7 @@ public class StructuredSearchRequestHandler extends RouteImpl {
         if (results.size() > photonRequest.getLimit()) {
             results = results.subList(0, photonRequest.getLimit());
         }
+
 
         String debugInfo = null;
      /*   if (photonRequest.getDebug()) {

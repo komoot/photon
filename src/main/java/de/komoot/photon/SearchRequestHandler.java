@@ -43,6 +43,12 @@ public class SearchRequestHandler extends RouteImpl {
             throw halt(e.getHttpStatus(), json.toString());
         }
 
+        if (!supportPolygons && (photonRequest.isPolygonRequest() && photonRequest.getReturnPolygon())) {
+            JSONObject json = new JSONObject();
+            json.put("message", "You're requesting a polygon, but polygons are not imported!");
+            throw halt(400, json.toString());
+        }
+
         List<PhotonResult> results = requestHandler.search(photonRequest);
 
         // Further filtering
@@ -58,15 +64,6 @@ public class SearchRequestHandler extends RouteImpl {
             debugInfo = requestHandler.dumpQuery(photonRequest);
         }
 
-        boolean returnPolygon = supportPolygons;
-        if (photonRequest.isPolygonRequest()) {
-            returnPolygon = photonRequest.getReturnPolygon();
-        }
-
-        if (!supportPolygons && (photonRequest.isPolygonRequest() && photonRequest.getReturnPolygon())) {
-            throw new BadRequestException(400, "You're requesting a polygon, but polygons are not imported!");
-        }
-
-        return new GeocodeJsonFormatter(photonRequest.getDebug(), photonRequest.getLanguage(), returnPolygon).convert(results, debugInfo);
+        return new GeocodeJsonFormatter(photonRequest.getDebug(), photonRequest.getLanguage(), photonRequest.getReturnPolygon()).convert(results, debugInfo);
     }
 }
