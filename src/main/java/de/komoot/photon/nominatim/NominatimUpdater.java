@@ -267,11 +267,13 @@ public class NominatimUpdater extends NominatimConnector {
 
 
     public List<PhotonDoc> getByPlaceId(long placeId) {
-        String query = SELECT_COLS_PLACEX + " FROM placex WHERE place_id = ? and indexed_status = 0";
+        String query = SELECT_COLS_PLACEX;
 
         if (useGeometryColumn) {
             query += ", geometry";
         }
+
+        query += " FROM placex WHERE place_id = ? and indexed_status = 0";
 
         List<NominatimResult> result = template.query(
                 query,

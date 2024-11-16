@@ -29,7 +29,7 @@ class NominatimUpdaterDBTest {
                 .build();
 
 
-        connector = new NominatimUpdater(null, 0, null, null, null, new H2DataAdapter(), true);
+        connector = new NominatimUpdater(null, 0, null, null, null, new H2DataAdapter(), false);
         updater = new CollectingUpdater();
         connector.setUpdater(updater);
 

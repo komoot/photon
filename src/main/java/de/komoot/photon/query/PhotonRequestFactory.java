@@ -114,7 +114,7 @@ public class PhotonRequestFactory {
 
         if (webRequest.queryParams("polygon") != null) {
             request.setPolygonRequest(true);
-            request.setReturnPolygon(parseBoolean(webRequest, webRequest.queryParams("polygon")));
+            request.setReturnPolygon(parseBoolean(webRequest, "polygon"));
         }
     }
 
@@ -157,11 +157,7 @@ public class PhotonRequestFactory {
         String value = webRequest.queryParams(param);
 
         if (value != null && !value.isEmpty()) {
-            try {
-                booleanVal = Boolean.valueOf(value);
-            } catch (NumberFormatException e) {
-                throw new BadRequestException(400, String.format("Invalid parameter '%s': must be a boolean", param));
-            }
+            booleanVal = Boolean.valueOf(value);
         }
 
         return booleanVal;
