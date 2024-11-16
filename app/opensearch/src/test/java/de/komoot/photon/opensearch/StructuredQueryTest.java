@@ -45,7 +45,7 @@ public class StructuredQueryTest extends ESBaseTester {
 
     @BeforeEach
     void setUp() throws Exception {
-        setUpES(instanceTestDirectory, LANGUAGE, "de", "fr");
+        setUpES(instanceTestDirectory, false, LANGUAGE, "de", "fr");
         Importer instance = makeImporter();
 
         var country = new PhotonDoc(0, "R", 0, "place", "country")

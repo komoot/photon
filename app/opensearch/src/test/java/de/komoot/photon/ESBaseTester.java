@@ -45,13 +45,17 @@ public class ESBaseTester {
     }
 
     public void setUpES() throws IOException {
-        setUpES(dataDirectory, "en");
+        setUpES(dataDirectory, false,"en");
     }
 
-    public void setUpES(Path testDirectory, String... languages) throws IOException {
+    public void setUpESWithPolygons() throws IOException {
+        setUpES(dataDirectory, true,"en");
+    }
+
+    public void setUpES(Path testDirectory, boolean supportPolygons, String... languages) throws IOException {
         server = new OpenSearchTestServer(testDirectory.toString());
         server.startTestServer(TEST_CLUSTER_NAME);
-        server.recreateIndex(languages, new Date(), true, true);
+        server.recreateIndex(languages, new Date(), true, supportPolygons);
         server.refreshIndexes();
     }
 
