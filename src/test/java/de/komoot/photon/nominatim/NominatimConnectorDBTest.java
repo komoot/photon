@@ -16,15 +16,18 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.util.Date;
 
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
+import org.springframework.transaction.support.TransactionTemplate;
 
 class NominatimConnectorDBTest {
     private EmbeddedDatabase db;
-    private NominatimConnector connector;
+    private NominatimImporter connector;
     private CollectingImporter importer;
     private JdbcTemplate jdbc;
+    private TransactionTemplate txTemplate;
 
     @BeforeEach
     void setup() {
@@ -35,18 +38,31 @@ class NominatimConnectorDBTest {
                 .build();
 
 
-        connector = new NominatimConnector(null, 0, null, null, null, new H2DataAdapter(), true);
+        connector = new NominatimImporter(null, 0, null, null, null, new H2DataAdapter(), true);
         importer = new CollectingImporter();
-        connector.setImporter(importer);
 
         jdbc = new JdbcTemplate(db);
-        ReflectionTestUtil.setFieldValue(connector, "template", jdbc);
+        txTemplate = new TransactionTemplate(new DataSourceTransactionManager(db));
+        ReflectionTestUtil.setFieldValue(connector, NominatimConnector.class, "template", jdbc);
+        ReflectionTestUtil.setFieldValue(connector, NominatimConnector.class, "txTemplate", txTemplate);
+    }
+
+    private void readEntireDatabase() {
+        ImportThread importThread = new ImportThread(importer);
+        try {
+            for (var country: connector.getCountriesFromDatabase()) {
+                connector.readCountry(country, importThread);
+            }
+        } finally {
+            importThread.finish();
+        }
+
     }
 
     @Test
     void testSimpleNodeImport() throws ParseException {
         PlacexTestRow place = new PlacexTestRow("amenity", "cafe").name("Spot").add(jdbc);
-        connector.readEntireDatabase();
+        readEntireDatabase();
 
         assertEquals(1, importer.size());
         importer.assertContains(place);
@@ -57,7 +73,15 @@ class NominatimConnectorDBTest {
         PlacexTestRow place = new PlacexTestRow("amenity", "cafe").name("SpotHU").country("hu").add(jdbc);
         new PlacexTestRow("amenity", "cafe").name("SpotDE").country("de").add(jdbc);
         new PlacexTestRow("amenity", "cafe").name("SpotUS").country("us").add(jdbc);
-        connector.readEntireDatabase("uk", "hu", "nl");
+
+        ImportThread importThread = new ImportThread(importer);
+        try {
+            connector.readCountry("uk", importThread);
+            connector.readCountry("hu", importThread);
+            connector.readCountry("nl", importThread);
+        } finally {
+            importThread.finish();
+        }
 
         assertEquals(1, importer.size());
         importer.assertContains(place);
@@ -68,7 +92,7 @@ class NominatimConnectorDBTest {
         PlacexTestRow place1 = new PlacexTestRow("amenity", "cafe").name("Spot").rankSearch(10).add(jdbc);
         PlacexTestRow place2 = new PlacexTestRow("amenity", "cafe").name("Spot").importance(0.3).add(jdbc);
 
-        connector.readEntireDatabase();
+        readEntireDatabase();
 
         assertEquals(0.5, importer.get(place1.getPlaceId()).getImportance(), 0.00001);
         assertEquals(0.3, importer.get(place2.getPlaceId()).getImportance(), 0.00001);
@@ -79,13 +103,13 @@ class NominatimConnectorDBTest {
         PlacexTestRow place = PlacexTestRow.make_street("Burg").add(jdbc);
 
         place.addAddresslines(jdbc,
-                new PlacexTestRow("place", "neighbourhood").name("Le Coin").rankAddress(24).add(jdbc),
-                new PlacexTestRow("place", "suburb").name("Crampton").rankAddress(20).add(jdbc),
-                new PlacexTestRow("place", "city").name("Grand Junction").rankAddress(16).add(jdbc),
-                new PlacexTestRow("place", "county").name("Lost County").rankAddress(12).add(jdbc),
-                new PlacexTestRow("place", "state").name("Le Havre").rankAddress(8).add(jdbc));
+                new PlacexTestRow("place", "neighbourhood").name("Le Coin").ranks(24).add(jdbc),
+                new PlacexTestRow("place", "suburb").name("Crampton").ranks(20).add(jdbc),
+                new PlacexTestRow("place", "city").name("Grand Junction").ranks(16).add(jdbc),
+                new PlacexTestRow("place", "county").name("Lost County").ranks(12).add(jdbc),
+                new PlacexTestRow("place", "state").name("Le Havre").ranks(8).add(jdbc));
 
-        connector.readEntireDatabase();
+        readEntireDatabase();
 
         assertEquals(6, importer.size());
         importer.assertContains(place);
@@ -104,10 +128,10 @@ class NominatimConnectorDBTest {
         PlacexTestRow place = new PlacexTestRow("natural", "water").name("Lake Tee").rankAddress(0).rankSearch(20).add(jdbc);
 
         place.addAddresslines(jdbc,
-                new PlacexTestRow("place", "county").name("Lost County").rankAddress(12).add(jdbc),
-                new PlacexTestRow("place", "state").name("Le Havre").rankAddress(8).add(jdbc));
+                new PlacexTestRow("place", "county").name("Lost County").ranks(12).add(jdbc),
+                new PlacexTestRow("place", "state").name("Le Havre").ranks(8).add(jdbc));
 
-        connector.readEntireDatabase();
+        readEntireDatabase();
 
         assertEquals(3, importer.size());
         importer.assertContains(place);
@@ -123,11 +147,11 @@ class NominatimConnectorDBTest {
         PlacexTestRow parent = PlacexTestRow.make_street("Burg").add(jdbc);
 
         parent.addAddresslines(jdbc,
-                new PlacexTestRow("place", "city").name("Grand Junction").rankAddress(16).add(jdbc));
+                new PlacexTestRow("place", "city").name("Grand Junction").ranks(16).add(jdbc));
 
         PlacexTestRow place = new PlacexTestRow("place", "house").name("House").parent(parent).add(jdbc);
 
-        connector.readEntireDatabase();
+        readEntireDatabase();
 
         assertEquals(3, importer.size());
         importer.assertContains(place);
@@ -149,7 +173,7 @@ class NominatimConnectorDBTest {
         OsmlineTestRow osmline =
                 new OsmlineTestRow().number(45, 45, 1).parent(street).geom("POINT(45 23)").add(jdbc);
 
-        connector.readEntireDatabase();
+        readEntireDatabase();
 
         assertEquals(2, importer.size());
 
@@ -169,7 +193,7 @@ class NominatimConnectorDBTest {
         OsmlineTestRow osmline =
                 new OsmlineTestRow().number(1, 11, 1).parent(street).geom("LINESTRING(0 0, 0 1)").add(jdbc);
 
-        connector.readEntireDatabase();
+        readEntireDatabase();
 
         assertEquals(12, importer.size());
 
@@ -187,7 +211,7 @@ class NominatimConnectorDBTest {
         OsmlineTestRow osmline =
                 new OsmlineTestRow().number(10, 20, 2).parent(street).geom("LINESTRING(0 0, 0 1)").add(jdbc);
 
-        connector.readEntireDatabase();
+        readEntireDatabase();
 
         assertEquals(7, importer.size());
 
@@ -205,13 +229,13 @@ class NominatimConnectorDBTest {
     @Test
     void testAddressMappingDuplicate() {
         PlacexTestRow place = PlacexTestRow.make_street("Main Street").add(jdbc);
-        PlacexTestRow munip = new PlacexTestRow("place", "municipality").name("Gemeinde").rankAddress(14).add(jdbc);
+        PlacexTestRow munip = new PlacexTestRow("place", "municipality").name("Gemeinde").ranks(14).add(jdbc);
 
         place.addAddresslines(jdbc,
                 munip,
-                new PlacexTestRow("place", "village").name("Dorf").rankAddress(16).add(jdbc));
+                new PlacexTestRow("place", "village").name("Dorf").ranks(16).add(jdbc));
 
-        connector.readEntireDatabase();
+        readEntireDatabase();
 
         assertEquals(3, importer.size());
 
@@ -226,12 +250,12 @@ class NominatimConnectorDBTest {
      */
     @Test
     void testAddressMappingAvoidSameTypeAsPlace() {
-        PlacexTestRow village = new PlacexTestRow("place", "village").name("Dorf").rankAddress(16).add(jdbc);
-        PlacexTestRow munip = new PlacexTestRow("place", "municipality").name("Gemeinde").rankAddress(14).add(jdbc);
+        PlacexTestRow village = new PlacexTestRow("place", "village").name("Dorf").ranks(16).add(jdbc);
+        PlacexTestRow munip = new PlacexTestRow("place", "municipality").name("Gemeinde").ranks(14).add(jdbc);
 
         village.addAddresslines(jdbc, munip);
 
-        connector.readEntireDatabase();
+        readEntireDatabase();
 
         assertEquals(2, importer.size());
 
@@ -249,7 +273,7 @@ class NominatimConnectorDBTest {
         PlacexTestRow parent = PlacexTestRow.make_street("Main St").add(jdbc);
         PlacexTestRow place = new PlacexTestRow("building", "yes").addr("housenumber", "123").parent(parent).add(jdbc);
 
-        connector.readEntireDatabase();
+        readEntireDatabase();
 
         assertEquals(2, importer.size());
 
@@ -265,7 +289,7 @@ class NominatimConnectorDBTest {
         PlacexTestRow parent = PlacexTestRow.make_street("Main St").add(jdbc);
         PlacexTestRow place = new PlacexTestRow("building", "yes").addr("housenumber", "1;2a;3").parent(parent).add(jdbc);
 
-        connector.readEntireDatabase();
+        readEntireDatabase();
 
         assertEquals(4, importer.size());
 
@@ -285,7 +309,7 @@ class NominatimConnectorDBTest {
                 .addr("conscriptionnumber", "99521")
                 .parent(parent).add(jdbc);
 
-        connector.readEntireDatabase();
+        readEntireDatabase();
 
         assertEquals(3, importer.size());
 
@@ -298,9 +322,9 @@ class NominatimConnectorDBTest {
     @Test
     void testUnnamedObjectWithOutHousenumber() {
         PlacexTestRow parent = PlacexTestRow.make_street("Main St").add(jdbc);
-        PlacexTestRow place = new PlacexTestRow("building", "yes").parent(parent).add(jdbc);
+        new PlacexTestRow("building", "yes").parent(parent).add(jdbc);
 
-        connector.readEntireDatabase();
+        readEntireDatabase();
 
         assertEquals(1, importer.size());
 
@@ -313,9 +337,9 @@ class NominatimConnectorDBTest {
     @Test
     void testInterpolationLines() {
         PlacexTestRow parent = PlacexTestRow.make_street("Main St").add(jdbc);
-        PlacexTestRow place = new PlacexTestRow("place", "houses").name("something").parent(parent).add(jdbc);
+        new PlacexTestRow("place", "houses").name("something").parent(parent).add(jdbc);
 
-        connector.readEntireDatabase();
+        readEntireDatabase();
 
         assertEquals(1, importer.size());
 
@@ -329,23 +353,23 @@ class NominatimConnectorDBTest {
     void testNoCountry() {
         PlacexTestRow place = new PlacexTestRow("building", "yes").name("Building").country(null).add(jdbc);
 
-        connector.readEntireDatabase();
+        readEntireDatabase();
 
         assertEquals(1, importer.size());
 
         assertNull(importer.get(place).getCountryCode());
     }
-    
+
     @Test
     void testGeometry() {
-        PlacexTestRow place = new PlacexTestRow("building", "yes").name("Oosterbroek Zuivel").country("nl").add(jdbc);
-        connector.readEntireDatabase();
+        PlacexTestRow place = new PlacexTestRow("building", "yes").name("Oosterbroek Zuivel").country("de").add(jdbc);
+        readEntireDatabase();
         assertEquals(1, importer.size());
         assertNotNull(importer.get(place).getGeometry());
     }
 
     @Test
-    public void testGetImportDate() {
+    void testGetImportDate() {
         Date importDate = connector.getLastImportDate();
         assertNull(importDate);
         

@@ -49,11 +49,16 @@ public class GeocodeJsonFormatter implements ResultFormatter {
         out.put("type", "FeatureCollection")
            .put("features", features);
 
-        if (debugInfo != null) {
-            out.put("properties", new JSONObject().put("debug", new JSONObject(debugInfo)));
-        }
-
         if (addDebugInfo) {
+            final JSONObject extraProps = new JSONObject();
+            if (debugInfo != null) {
+                extraProps.put("debug", new JSONObject(debugInfo));
+            }
+            final JSONArray rawResults = new JSONArray();
+            results.forEach(res -> rawResults.put(res.getRawData()));
+            extraProps.put("raw_data", rawResults);
+            out.put("properties", extraProps);
+
             return out.toString(4);
         }
 
@@ -62,10 +67,6 @@ public class GeocodeJsonFormatter implements ResultFormatter {
 
     private JSONObject getResultProperties(PhotonResult result) {
         JSONObject props = new JSONObject();
-        if (addDebugInfo) {
-            props.put("score", result.getScore());
-            put(props,"importance", result.get("importance"));
-        }
 
         for (String key : KEYS_LANG_UNSPEC) {
             put(props, key, result.get(key));

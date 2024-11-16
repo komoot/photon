@@ -21,7 +21,7 @@ import static org.junit.jupiter.params.provider.Arguments.arguments;
  */
 class PhotonRequestFactoryTest {
 
-    private Request createRequestWithQueryParams(String... queryParams) throws BadRequestException {
+    private Request createRequestWithQueryParams(String... queryParams) {
         Request mockRequest = Mockito.mock(Request.class);
 
         Set<String> keys = new HashSet<>();
@@ -118,7 +118,7 @@ class PhotonRequestFactoryTest {
 
     @ParameterizedTest
     @MethodSource("badParamsProvider")
-    void testBadParameters(List<String> queryParams, String expectedMessageFragment) throws BadRequestException {
+    void testBadParameters(List<String> queryParams, String expectedMessageFragment) {
         Request mockRequest = createRequestWithQueryParams(queryParams.toArray(new String[0]));
 
         BadRequestException exception = assertThrows(BadRequestException.class,
@@ -164,12 +164,11 @@ class PhotonRequestFactoryTest {
     }
 
     @Test
-    void testBadTagFilters() throws BadRequestException {
+    void testBadTagFilters() {
         Request mockRequest = createRequestWithQueryParams("q", "new york");
         requestWithOsmFilters(mockRequest, "good", "bad:bad:bad");
 
-        BadRequestException exception = assertThrows(BadRequestException.class,
-                () -> createPhotonRequest(mockRequest));
+        assertThrows(BadRequestException.class, () -> createPhotonRequest(mockRequest));
     }
 
     @Test
@@ -199,7 +198,7 @@ class PhotonRequestFactoryTest {
     }
 
     @Test
-    void testWithBadLayerFilters() throws Exception {
+    void testWithBadLayerFilters() {
         Request mockRequest = createRequestWithQueryParams("q", "new york");
         requestWithLayers(mockRequest, "city", "bad");
 

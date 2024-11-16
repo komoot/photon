@@ -132,7 +132,7 @@ Discover more of photon's features with its usage `java -jar photon-*.jar -h`. T
 
 -cors-any             Enable cross-site resource sharing for any origin (default CORS not supported)
 
--cors-origin          Enable cross-site resource sharing for the specified origin (default CORS not supported)
+-cors-origin          Enable cross-site resource sharing for the specified origins, comma separated (default CORS not supported)
 
 -enable-update-api    Enable the additional endpoint /nominatim-update, which allows to trigger updates
                       from a nominatim database
@@ -249,6 +249,13 @@ http://localhost:2322/api?q=berlin&lon=10&lat=52&zoom=12&location_bias_scale=0.1
 
 ```
 http://localhost:2322/reverse?lon=10&lat=52
+```
+
+An optional radius parameter can be used to specify a value in kilometers
+to reverse geocode within. The value has to be greater than 0 and lower than 5000.
+
+```
+http://localhost:2322/reverse?lon=10&lat=52&radius=10
 ```
 
 #### Adapt Number of Results
@@ -371,6 +378,10 @@ Example above will return both cities and localities.
   ]
 }
 ```
+
+### Structured queries
+
+The OpenSeach based version of photon has opt-in support for structured queries. See [docs/structured.md](docs/structured.md) for details. Please note that structured queries are disabled for photon.komoot.io. 
 
 ### Related Projects
 

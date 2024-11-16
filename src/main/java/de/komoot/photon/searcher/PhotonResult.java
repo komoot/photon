@@ -1,5 +1,7 @@
 package de.komoot.photon.searcher;
 
+import org.json.JSONObject;
+
 import java.util.Map;
 
 /**
@@ -27,4 +29,5 @@ public interface PhotonResult {
 
     double getScore();
 
+    JSONObject getRawData();
 }

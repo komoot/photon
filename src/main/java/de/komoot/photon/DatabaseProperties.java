@@ -8,31 +8,28 @@ import java.util.*;
  * The server is responsible for making the data persistent in the Photon database.
  */
 public class DatabaseProperties {
-    /**
-     * Database version created by new imports with the current code.
-     *
-     * Format must be: major.minor.patch-dev
-     *
-     * Increase to next to be released version when the database layout
-     * changes in an incompatible way. If it is already at the next released
-     * version, increase the dev version.
-     */
-    public static final String DATABASE_VERSION = "0.3.6-1";
-
-    private String[] languages = null;
-
-    /**
-     * The OSM data date
-     */
+    private String[] languages;
     private Date importDate;
-
     private boolean supportStructuredQueries;
-
     private boolean supportPolygons;
+
+    public DatabaseProperties(String[] languages, Date importDate, boolean supportStructuredQueries, boolean supportPolygons) {
+        this.languages = languages;
+        this.importDate = importDate;
+        this.supportStructuredQueries = supportStructuredQueries;
+        this.supportPolygons = supportPolygons;
+    }
+
+    public DatabaseProperties() {
+
+    }
+
 
     /**
      * Return the list of languages for which the database is configured.
-     * @return
+     * If no list was set, then the default is returned.
+     *
+     * @return List of supported languages.
      */
     public String[] getLanguages() {
         if (languages == null) {
@@ -77,7 +74,7 @@ public class DatabaseProperties {
             }
 
             if (newLanguageList.isEmpty()) {
-                throw new RuntimeException("Language list '" + Arrays.toString(languageList) +
+                throw new UsageException("Language list '" + Arrays.toString(languageList) +
                         "' not compatible with languages in database(" + Arrays.toString(languages) + ")");
             }
 

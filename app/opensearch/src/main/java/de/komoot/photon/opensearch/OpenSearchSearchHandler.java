@@ -13,9 +13,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class OpenSearchSearchHandler implements SearchHandler {
-    final private OpenSearchClient client;
-    final private String[] supportedLanguages;
-    final private String queryTimeout;
+    private final OpenSearchClient client;
+    private final String[] supportedLanguages;
+    private final String queryTimeout;
 
     public OpenSearchSearchHandler(OpenSearchClient client, String[] supportedLanguages, int queryTimeout) {
         this.client = client;
@@ -44,7 +44,7 @@ public class OpenSearchSearchHandler implements SearchHandler {
 
     @Override
     public String dumpQuery(PhotonRequest photonRequest) {
-        return "{}";
+        return null;
     }
 
     private SearchQueryBuilder buildQuery(PhotonRequest request, boolean lenient) {

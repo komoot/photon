@@ -1,5 +1,7 @@
 package de.komoot.photon.nominatim;
 
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.locationtech.jts.io.ParseException;
 import org.locationtech.jts.io.WKTReader;
 import de.komoot.photon.PhotonDoc;
@@ -45,130 +47,111 @@ class NominatimResultTest {
         assertSame(simpleDoc, docs.get(0));
     }
 
+    private Map<String, String> housenumberAddress(String housenumber) {
+        Map<String, String> address = new HashMap<>(1);
+        address.put("housenumber", housenumber);
+        return address;
+    }
+
     @Test
     void testIsUsefulForIndex() {
         assertFalse(simpleDoc.isUsefulForIndex());
-        assertFalse(new NominatimResult(simpleDoc).isUsefulForIndex());
+        assertFalse(NominatimResult.fromAddress(simpleDoc, null).isUsefulForIndex());
     }
 
     @Test
     void testGetDocsWithHousenumber() {
-        List<PhotonDoc> docs = new NominatimResult(simpleDoc).getDocsWithHousenumber();
+        List<PhotonDoc> docs = NominatimResult.fromAddress(simpleDoc, null).getDocsWithHousenumber();
         assertSimpleOnly(docs);
     }
 
     @Test
     void testAddHousenumbersFromStringSimple() {
-        NominatimResult res = new NominatimResult(simpleDoc);
-        res.addHousenumbersFromString("34");
+        NominatimResult res = NominatimResult.fromAddress(simpleDoc, housenumberAddress("34"));
 
         assertDocWithHousenumbers(Arrays.asList("34"), res.getDocsWithHousenumber());
     }
 
     @Test
     void testAddHousenumbersFromStringList() {
-        NominatimResult res = new NominatimResult(simpleDoc);
-        res.addHousenumbersFromString("34; 50b");
+        NominatimResult res = NominatimResult.fromAddress(simpleDoc, housenumberAddress("34; 50b"));
 
         assertDocWithHousenumbers(Arrays.asList("34", "50b"), res.getDocsWithHousenumber());
 
-        res.addHousenumbersFromString("4;");
-        assertDocWithHousenumbers(Arrays.asList("34", "50b", "4"), res.getDocsWithHousenumber());
+        res = NominatimResult.fromAddress(simpleDoc, housenumberAddress("4;"));
+        assertDocWithHousenumbers(Arrays.asList("4"), res.getDocsWithHousenumber());
     }
 
-    @Test
-    void testLongHousenumber() {
-        NominatimResult res = new NominatimResult(simpleDoc);
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "987987誰も住んでいないスーパーマーケット誰も住んでいないスーパーマーケット誰も住んでいないスーパーマーケット誰も住んでいないスーパーマーケット誰も住んでいないスーパーマーケット誰も住んでいないスーパーマーケット誰も住んでいないスーパーマーケット誰も住んでいないスーパーマーケット誰も住んでいないスーパーマー",
+            "something bad",
+            "14, portsmith"
+    })
+    void testLongHousenumber(String houseNumber) {
+        NominatimResult res = NominatimResult.fromAddress(simpleDoc, housenumberAddress(houseNumber));
 
-        res.addHousenumbersFromString("987987誰も住んでいないスーパーマーケット誰も住んでいないスーパーマーケット誰も住んでいないスーパーマーケット誰も住んでいないスーパーマーケット誰も住んでいないスーパーマーケット誰も住んでいないスーパーマーケット誰も住んでいないスーパーマーケット誰も住んでいないスーパーマーケット誰も住んでいないスーパーマー");
-        assertNoHousenumber(res.getDocsWithHousenumber());
-    }
-
-    @Test
-    void testHousenumberWithNoNumber() {
-        NominatimResult res = new NominatimResult(simpleDoc);
-
-        res.addHousenumbersFromString("something bad");
-        assertNoHousenumber(res.getDocsWithHousenumber());
-    }
-
-    @Test
-    void testHousenumberWithNoNumberInPart() {
-        NominatimResult res = new NominatimResult(simpleDoc);
-
-        res.addHousenumbersFromString("14, portsmith");
         assertNoHousenumber(res.getDocsWithHousenumber());
     }
 
     @Test
     void testAddHouseNumbersFromInterpolationBad() throws ParseException {
-        NominatimResult res = new NominatimResult(simpleDoc);
-
         WKTReader reader = new WKTReader();
-        res.addHouseNumbersFromInterpolation(34, 33, "odd",
+        NominatimResult res = NominatimResult.fromInterpolation(simpleDoc, 34, 33, "odd",
                                               reader.read("LINESTRING(0.0 0.0 ,0.0 0.1)"));
         assertSimpleOnly(res.getDocsWithHousenumber());
 
-        res.addHouseNumbersFromInterpolation(1, 10000, "odd",
+        res = NominatimResult.fromInterpolation(simpleDoc, 1, 10000, "odd",
                 reader.read("LINESTRING(0.0 0.0 ,0.0 0.1)"));
         assertSimpleOnly(res.getDocsWithHousenumber());
     }
 
     @Test
     void testAddHouseNumbersFromInterpolationOdd() throws ParseException {
-        NominatimResult res = new NominatimResult(simpleDoc);
-
         WKTReader reader = new WKTReader();
-
-        res.addHouseNumbersFromInterpolation(1, 5, "odd",
+        NominatimResult res = NominatimResult.fromInterpolation(simpleDoc, 1, 5, "odd",
                 reader.read("LINESTRING(0.0 0.0 ,0.0 0.1)"));
         assertDocWithHousenumbers(Arrays.asList("3"), res.getDocsWithHousenumber());
-        res.addHouseNumbersFromInterpolation(10, 13, "odd",
+        res = NominatimResult.fromInterpolation(simpleDoc, 10, 13, "odd",
                 reader.read("LINESTRING(0.0 0.0 ,0.0 0.1)"));
-        assertDocWithHousenumbers(Arrays.asList("3", "11"), res.getDocsWithHousenumber());
+        assertDocWithHousenumbers(Arrays.asList("11"), res.getDocsWithHousenumber());
 
-        res.addHouseNumbersFromInterpolation(101, 106, "odd",
+        res = NominatimResult.fromInterpolation(simpleDoc, 101, 106, "odd",
                 reader.read("LINESTRING(0.0 0.0 ,0.0 0.1)"));
-        assertDocWithHousenumbers(Arrays.asList("3", "11", "103", "105"), res.getDocsWithHousenumber());
+        assertDocWithHousenumbers(Arrays.asList("103", "105"), res.getDocsWithHousenumber());
 
     }
 
     @Test
     void testAddHouseNumbersFromInterpolationEven() throws ParseException {
-        NominatimResult res = new NominatimResult(simpleDoc);
-
         WKTReader reader = new WKTReader();
-
-        res.addHouseNumbersFromInterpolation(1, 5, "even",
+        NominatimResult res = NominatimResult.fromInterpolation(simpleDoc, 1, 5, "even",
                 reader.read("LINESTRING(0.0 0.0 ,0.0 0.1)"));
         assertDocWithHousenumbers(Arrays.asList("2", "4"), res.getDocsWithHousenumber());
 
-        res.addHouseNumbersFromInterpolation(10, 16, "even",
+        res= NominatimResult.fromInterpolation(simpleDoc, 10, 16, "even",
                 reader.read("LINESTRING(0.0 0.0 ,0.0 0.1)"));
-        assertDocWithHousenumbers(Arrays.asList("2", "4", "12", "14"), res.getDocsWithHousenumber());
+        assertDocWithHousenumbers(Arrays.asList("12", "14"), res.getDocsWithHousenumber());
 
-        res.addHouseNumbersFromInterpolation(51, 52, "even",
+        res= NominatimResult.fromInterpolation(simpleDoc, 51, 52, "even",
                 reader.read("LINESTRING(0.0 0.0 ,0.0 0.1)"));
-        assertDocWithHousenumbers(Arrays.asList("2", "4", "12", "14"), res.getDocsWithHousenumber());
+        assertSimpleOnly(res.getDocsWithHousenumber());
     }
 
     @Test
     void testAddHouseNumbersFromInterpolationAll() throws ParseException {
-        NominatimResult res = new NominatimResult(simpleDoc);
-
         WKTReader reader = new WKTReader();
-
-        res.addHouseNumbersFromInterpolation(1, 3, "",
+        NominatimResult res = NominatimResult.fromInterpolation(simpleDoc, 1, 3, "",
                 reader.read("LINESTRING(0.0 0.0 ,0.0 0.1)"));
         assertDocWithHousenumbers(Arrays.asList("2"), res.getDocsWithHousenumber());
 
-        res.addHouseNumbersFromInterpolation(22, 22, null,
+        res = NominatimResult.fromInterpolation(simpleDoc, 22, 22, null,
                 reader.read("LINESTRING(0.0 0.0 ,0.0 0.1)"));
-        assertDocWithHousenumbers(Arrays.asList("2"), res.getDocsWithHousenumber());
+        assertSimpleOnly(res.getDocsWithHousenumber());
 
-        res.addHouseNumbersFromInterpolation(100, 106, "all",
+        res = NominatimResult.fromInterpolation(simpleDoc, 100, 106, "all",
                 reader.read("LINESTRING(0.0 0.0 ,0.0 0.1)"));
-        assertDocWithHousenumbers(Arrays.asList("2", "101", "102", "103", "104", "105"), res.getDocsWithHousenumber());
+        assertDocWithHousenumbers(Arrays.asList("101", "102", "103", "104", "105"), res.getDocsWithHousenumber());
     }
 
 }

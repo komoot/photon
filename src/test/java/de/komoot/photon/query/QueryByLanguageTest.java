@@ -81,14 +81,14 @@ class QueryByLanguageTest extends ESBaseTester {
     void queryAddressPartsLanguages(AddressType addressType) throws IOException {
         Importer instance = setup("en", "de");
 
-        Map<String, String> address_names = new HashMap<>();
-        address_names.put("name", "original");
-        address_names.put("name:de", "Deutsch");
+        Map<String, String> addressNames = new HashMap<>();
+        addressNames.put("name", "original");
+        addressNames.put("name:de", "Deutsch");
 
         PhotonDoc doc = new PhotonDoc(45, "N", 3, "place", "house")
                 .names(Collections.singletonMap("name", "here"));
 
-        doc.setAddressPartIfNew(addressType, address_names);
+        doc.setAddressPartIfNew(addressType, addressNames);
 
         instance.add(doc, 0);
         instance.finish();

@@ -1,10 +1,10 @@
 package de.komoot.photon.nominatim;
 
+import de.komoot.photon.PhotonDoc;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.linearref.LengthIndexedLine;
-import de.komoot.photon.PhotonDoc;
 
 import java.util.*;
 import java.util.regex.Pattern;
@@ -17,10 +17,10 @@ class NominatimResult {
     private PhotonDoc doc;
     private Map<String, Point> housenumbers;
 
-    private final Pattern HOUSENUMBER_CHECK = Pattern.compile("(\\A|.*,)[^\\d,]{3,}(,.*|\\Z)");
-    private final Pattern HOUSENUMBER_SPLIT = Pattern.compile("\\s*[;,]\\s*");
+    private static final Pattern HOUSENUMBER_CHECK = Pattern.compile("(\\A|.*,)[^\\d,]{3,}(,.*|\\Z)");
+    private static final Pattern HOUSENUMBER_SPLIT = Pattern.compile("\\s*[;,]\\s*");
 
-    public NominatimResult(PhotonDoc baseobj) {
+    private NominatimResult(PhotonDoc baseobj) {
         doc = baseobj;
         housenumbers = null;
     }
@@ -58,7 +58,7 @@ class NominatimResult {
      *
      * @param str House number string. May be null, in which case nothing is added.
      */
-    public void addHousenumbersFromString(String str) {
+    private void addHousenumbersFromString(String str) {
         if (str == null || str.isEmpty())
             return;
 
@@ -68,9 +68,6 @@ class NominatimResult {
             return;
         }
 
-        if (housenumbers == null)
-            housenumbers = new HashMap<>();
-
         String[] parts = HOUSENUMBER_SPLIT.split(str);
         for (String part : parts) {
             String h = part.trim();
@@ -79,14 +76,17 @@ class NominatimResult {
         }
     }
 
-    public void addHousenumbersFromAddress(Map<String, String> address) {
-        if (address == null) {
-            return;
+    public static NominatimResult fromAddress(PhotonDoc doc, Map<String, String> address) {
+        NominatimResult result = new NominatimResult(doc);
+
+        if (address != null) {
+            result.housenumbers = new HashMap<>();
+            result.addHousenumbersFromString(address.get("housenumber"));
+            result.addHousenumbersFromString(address.get("streetnumber"));
+            result.addHousenumbersFromString(address.get("conscriptionnumber"));
         }
 
-        addHousenumbersFromString(address.get("housenumber"));
-        addHousenumbersFromString(address.get("streetnumber"));
-        addHousenumbersFromString(address.get("conscriptionnumber"));
+        return result;
     }
 
     /**
@@ -101,35 +101,36 @@ class NominatimResult {
      * @param interpoltype Kind of interpolation (odd, even or all).
      * @param geom Geometry of the interpolation line.
      */
-    public void addHouseNumbersFromInterpolation(long first, long last, String interpoltype, Geometry geom) {
-        if (last <= first || (last - first) > 1000)
-            return;
+    public static NominatimResult fromInterpolation(PhotonDoc doc, long first, long last, String interpoltype, Geometry geom) {
+        NominatimResult result = new NominatimResult(doc);
+        if (last > first && (last - first) < 1000) {
+            result.housenumbers = new HashMap<>();
 
-        if (housenumbers == null)
-            housenumbers = new HashMap<>();
+            LengthIndexedLine line = new LengthIndexedLine(geom);
+            double si = line.getStartIndex();
+            double ei = line.getEndIndex();
+            double lstep = (ei - si) / (last - first);
 
-        LengthIndexedLine line = new LengthIndexedLine(geom);
-        double si = line.getStartIndex();
-        double ei = line.getEndIndex();
-        double lstep = (ei - si) / (double) (last - first);
+            // leave out first and last, they have a distinct OSM node that is already indexed
+            long step = 2;
+            long num = 1;
+            if (interpoltype.equals("odd")) {
+                if (first % 2 == 1)
+                    ++num;
+            } else if (interpoltype.equals("even")) {
+                if (first % 2 == 0)
+                    ++num;
+            } else {
+                step = 1;
+            }
 
-        // leave out first and last, they have a distinct OSM node that is already indexed
-        long step = 2;
-        long num = 1;
-        if (interpoltype.equals("odd")) {
-            if (first % 2 == 1)
-                ++num;
-        } else if (interpoltype.equals("even")) {
-            if (first % 2 == 0)
-                ++num;
-        } else {
-            step = 1;
+            GeometryFactory fac = geom.getFactory();
+            for (; first + num < last; num += step) {
+                result.housenumbers.put(String.valueOf(num + first), fac.createPoint(line.extractPoint(si + lstep * num)));
+            }
         }
 
-        GeometryFactory fac = geom.getFactory();
-        for (; first + num < last; num += step) {
-            housenumbers.put(String.valueOf(num + first), fac.createPoint(line.extractPoint(si + lstep * num)));
-        }
+        return result;
     }
 
     /**
@@ -143,25 +144,27 @@ class NominatimResult {
      * @param step Gap to leave between each interpolated house number.
      * @param geom Geometry of the interpolation line.
      */
-    public void addHouseNumbersFromInterpolation(long first, long last, long step, Geometry geom) {
-         if (last < first || (last - first) > 1000)
-            return;
+    public static NominatimResult fromInterpolation(PhotonDoc doc, long first, long last, long step, Geometry geom) {
+        NominatimResult result = new NominatimResult(doc);
+        if (last >= first && (last - first) < 1000) {
+            result.housenumbers = new HashMap<>();
 
-        if (housenumbers == null)
-            housenumbers = new HashMap<>();
+            if (last == first) {
+                result.housenumbers.put(String.valueOf(first), geom.getCentroid());
+            } else {
+                LengthIndexedLine line = new LengthIndexedLine(geom);
+                double si = line.getStartIndex();
+                double ei = line.getEndIndex();
+                double lstep = (ei - si) / (last - first);
 
-        if (last == first) {
-            housenumbers.put(String.valueOf(first), geom.getCentroid());
-        } else {
-            LengthIndexedLine line = new LengthIndexedLine(geom);
-            double si = line.getStartIndex();
-            double ei = line.getEndIndex();
-            double lstep = (ei - si) / (double) (last - first);
-
-            GeometryFactory fac = geom.getFactory();
-            for (long num = 0; first + num <= last; num += step) {
-                housenumbers.put(String.valueOf(num + first), fac.createPoint(line.extractPoint(si + lstep * num)));
+                GeometryFactory fac = geom.getFactory();
+                for (long num = 0; first + num <= last; num += step) {
+                    result.housenumbers.put(String.valueOf(num + first), fac.createPoint(line.extractPoint(si + lstep * num)));
+                }
             }
+
         }
+
+        return result;
     }
 }

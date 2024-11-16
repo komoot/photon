@@ -5,9 +5,11 @@ import de.komoot.photon.nominatim.testdb.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -16,6 +18,7 @@ class NominatimUpdaterDBTest {
     private NominatimUpdater connector;
     private CollectingUpdater updater;
     private JdbcTemplate jdbc;
+    private TransactionTemplate txTemplate;
 
     @BeforeEach
     void setup() {
@@ -26,13 +29,14 @@ class NominatimUpdaterDBTest {
                 .build();
 
 
-        connector = new NominatimUpdater(null, 0, null, null, null, new H2DataAdapter(), false);
+        connector = new NominatimUpdater(null, 0, null, null, null, new H2DataAdapter(), true);
         updater = new CollectingUpdater();
         connector.setUpdater(updater);
 
         jdbc = new JdbcTemplate(db);
-        ReflectionTestUtil.setFieldValue(connector, "template", jdbc);
-        ReflectionTestUtil.setFieldValue(connector, "exporter", "template", jdbc);
+        txTemplate = new TransactionTemplate(new DataSourceTransactionManager(db));
+        ReflectionTestUtil.setFieldValue(connector, NominatimConnector.class, "template", jdbc);
+        ReflectionTestUtil.setFieldValue(connector, NominatimConnector.class, "txTemplate", txTemplate);
     }
 
     @Test
@@ -54,7 +58,7 @@ class NominatimUpdaterDBTest {
         final long place_id = 47836;
         (new PhotonUpdateRow("placex", place_id, "DELETE")).add(jdbc);
 
-        updater.add_existing(place_id, 0);
+        updater.addExisting(place_id, 0);
 
         connector.update();
         updater.assertFinishCalled();
@@ -84,7 +88,7 @@ class NominatimUpdaterDBTest {
         final long place_id = 887;
         (new PhotonUpdateRow("placex", place_id, "DELETE")).add(jdbc);
 
-        updater.add_existing(place_id, 0, 1, 2, 3);
+        updater.addExisting(place_id, 0, 1, 2, 3);
 
         connector.update();
         updater.assertFinishCalled();
@@ -103,7 +107,7 @@ class NominatimUpdaterDBTest {
         // Pretending to have two documents for the place in question to check that
         // the algorithm stops at the first.
         // In practise, a rankAddress<30 document cannot have duplicates.
-        updater.add_existing(place.getPlaceId(), 0, 1);
+        updater.addExisting(place.getPlaceId(), 0, 1);
 
         connector.update();
         updater.assertFinishCalled();
@@ -119,7 +123,7 @@ class NominatimUpdaterDBTest {
         PlacexTestRow place = new PlacexTestRow("building", "yes").housenumber(23).rankAddress(30).add(jdbc);
         (new PhotonUpdateRow("placex", place.getPlaceId(), "UPDATE")).add(jdbc);
 
-        updater.add_existing(place.getPlaceId(), 0);
+        updater.addExisting(place.getPlaceId(), 0);
 
         connector.update();
         updater.assertFinishCalled();
@@ -135,7 +139,7 @@ class NominatimUpdaterDBTest {
         PlacexTestRow place = new PlacexTestRow("building", "yes").addr("housenumber", "1;2a;3").rankAddress(30).add(jdbc);
         (new PhotonUpdateRow("placex", place.getPlaceId(), "UPDATE")).add(jdbc);
 
-        updater.add_existing(place.getPlaceId(), 0);
+        updater.addExisting(place.getPlaceId(), 0);
 
         connector.update();
         updater.assertFinishCalled();
@@ -153,7 +157,7 @@ class NominatimUpdaterDBTest {
         PlacexTestRow place = new PlacexTestRow("building", "yes").addr("housenumber", "1;2a;3").rankAddress(30).add(jdbc);
         (new PhotonUpdateRow("placex", place.getPlaceId(), "UPDATE")).add(jdbc);
 
-        updater.add_existing(place.getPlaceId(), 0, 1, 2);
+        updater.addExisting(place.getPlaceId(), 0, 1, 2);
 
         connector.update();
         updater.assertFinishCalled();
@@ -171,7 +175,7 @@ class NominatimUpdaterDBTest {
         PlacexTestRow place = new PlacexTestRow("building", "yes").addr("housenumber", "1").rankAddress(30).add(jdbc);
         (new PhotonUpdateRow("placex", place.getPlaceId(), "UPDATE")).add(jdbc);
 
-        updater.add_existing(place.getPlaceId(), 0, 1, 2);
+        updater.addExisting(place.getPlaceId(), 0, 1, 2);
 
         connector.update();
         updater.assertFinishCalled();
@@ -210,7 +214,7 @@ class NominatimUpdaterDBTest {
                 new OsmlineTestRow().number(6, 8, 1).parent(street).geom("LINESTRING(0 0, 0 1)").add(jdbc);
         (new PhotonUpdateRow("location_property_osmline", osmline.getPlaceId(), "UPDATE")).add(jdbc);
 
-        updater.add_existing(osmline.getPlaceId(), 0, 1, 2);
+        updater.addExisting(osmline.getPlaceId(), 0, 1, 2);
 
         connector.update();
         updater.assertFinishCalled();
@@ -231,7 +235,7 @@ class NominatimUpdaterDBTest {
                 new OsmlineTestRow().number(6, 8, 1).parent(street).geom("LINESTRING(0 0, 0 1)").add(jdbc);
         (new PhotonUpdateRow("location_property_osmline", osmline.getPlaceId(), "UPDATE")).add(jdbc);
 
-        updater.add_existing(osmline.getPlaceId(), 0);
+        updater.addExisting(osmline.getPlaceId(), 0);
 
         connector.update();
         updater.assertFinishCalled();
@@ -252,7 +256,7 @@ class NominatimUpdaterDBTest {
                 new OsmlineTestRow().number(6, 8, 1).parent(street).geom("LINESTRING(0 0, 0 1)").add(jdbc);
         (new PhotonUpdateRow("location_property_osmline", osmline.getPlaceId(), "UPDATE")).add(jdbc);
 
-        updater.add_existing(osmline.getPlaceId(), 0, 1, 2, 3, 4);
+        updater.addExisting(osmline.getPlaceId(), 0, 1, 2, 3, 4);
 
         connector.update();
         updater.assertFinishCalled();

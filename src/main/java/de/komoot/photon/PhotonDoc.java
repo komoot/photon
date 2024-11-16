@@ -1,5 +1,6 @@
     package de.komoot.photon;
 
+import de.komoot.photon.nominatim.model.AddressRow;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Point;
@@ -177,7 +178,7 @@ public class PhotonDoc {
         return makeUid(placeId, objectId);
     }
 
-    static public String makeUid(long placeId, int objectId) {
+    public static String makeUid(long placeId, int objectId) {
         if (objectId <= 0)
             return String.valueOf(placeId);
 
@@ -234,17 +235,27 @@ public class PhotonDoc {
     private void extractAddress(Map<String, String> address, AddressType addressType, String addressFieldName) {
         String field = address.get(addressFieldName);
 
-        if (field != null) {
-            Map<String, String> map = addressParts.computeIfAbsent(addressType, k -> new HashMap<>());
+        if (field == null) {
+            return;
+        }
 
+        Map<String, String> map = addressParts.get(addressType);
+        if (map == null) {
+            map = new HashMap<>();
+            map.put("name", field);
+            addressParts.put(addressType, map);
+        } else {
             String existingName = map.get("name");
             if (!field.equals(existingName)) {
+                // Make a copy of the original name map because the map is reused for other addresses.
+                map = new HashMap<>(map);
                 LOGGER.debug("Replacing {} name '{}' with '{}' for osmId #{}", addressFieldName, existingName, field, osmId);
                 // we keep the former name in the context as it might be helpful when looking up typos
                 if (!Objects.isNull(existingName)) {
                     context.add(Collections.singletonMap("formerName", existingName));
                 }
                 map.put("name", field);
+                addressParts.put(addressType, map);
             }
         }
     }
@@ -256,6 +267,23 @@ public class PhotonDoc {
      */
     public boolean setAddressPartIfNew(AddressType addressType, Map<String, String> names) {
         return addressParts.computeIfAbsent(addressType, k -> names) == names;
+    }
+
+    /**
+     * Complete address data from a list of address rows.
+     */
+    public void completePlace(List<AddressRow> addresses) {
+        final AddressType doctype = getAddressType();
+        for (AddressRow address : addresses) {
+            final AddressType atype = address.getAddressType();
+
+            if (atype != null
+                    && (atype == doctype || !setAddressPartIfNew(atype, address.getName()))
+                    && address.isUsefulForContext()) {
+                // no specifically handled item, check if useful for context
+                getContext().add(address.getName());
+            }
+        }
     }
 
     public void setCountry(Map<String, String> names) {

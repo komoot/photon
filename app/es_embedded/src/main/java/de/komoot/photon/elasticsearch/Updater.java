@@ -1,7 +1,6 @@
 package de.komoot.photon.elasticsearch;
 
 import de.komoot.photon.PhotonDoc;
-import de.komoot.photon.Utils;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.client.Client;

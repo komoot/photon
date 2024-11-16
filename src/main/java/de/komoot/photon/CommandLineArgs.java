@@ -1,83 +1,90 @@
 package de.komoot.photon;
 
 import com.beust.jcommander.Parameter;
-import de.komoot.photon.utils.StringArrayConverter;
+import com.beust.jcommander.Parameters;
+import de.komoot.photon.utils.CorsMutuallyExclusiveValidator;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Command Line Arguments parsed by {@link com.beust.jcommander.JCommander} and used to start photon.
  */
+@Parameters(parametersValidators = CorsMutuallyExclusiveValidator.class)
 public class CommandLineArgs {
 
-    @Parameter(names = "-structured", description = "Enable support for structured queries")
+    @Parameter(names = "-j", description = "Number of threads to use for import.")
+    private int threads = 1;
+
+    @Parameter(names = "-structured", description = "Enable support for structured queries.")
     private boolean supportStructuredQueries = false;
 
-    @Parameter(names = "-cluster", description = "Name of ElasticSearch cluster to put the server into")
+    @Parameter(names = "-cluster", description = "Name of ElasticSearch cluster to put the server into.")
     private String cluster = "photon";
 
-    @Parameter(names = "-transport-addresses", description = "Comma-separated list of addresses of external ElasticSearch nodes the client can connect to (default is an empty string which forces an internal node to start)", converter = StringArrayConverter.class)
-    private String[] transportAddresses = new String[]{};
+    @Parameter(names = "-transport-addresses", description = "Comma-separated list of addresses of external ElasticSearch nodes the client can connect to. An empty list (the default) forces an internal node to start.")
+    private List<String> transportAddresses = new ArrayList<>();
 
-    @Parameter(names = "-nominatim-import", description = "Import nominatim database into photon (this will delete previous index)")
+    @Parameter(names = "-nominatim-import", description = "Import nominatim database into photon (deleting the previous index).")
     private boolean nominatimImport = false;
 
-    @Parameter(names = "-nominatim-update-init-for", description = "Set up tracking of updates in the Nominatim database for the given user and exit")
+    @Parameter(names = "-nominatim-update-init-for", description = "Set up tracking of updates in the Nominatim database for the given user and exit.")
     private String nominatimUpdateInit = null;
 
-    @Parameter(names = "-nominatim-update", description = "Fetch updates from nominatim database into photon and exit (updates the index only without offering an API)")
+    @Parameter(names = "-nominatim-update", description = "Fetch updates from nominatim database into photon and exit (updates the index only without offering an API).")
     private boolean nominatimUpdate = false;
 
-    @Parameter(names = "-languages", description = "[import-only] Comma-separated list of languages for which names should be imported (default is 'en,fr,de,it')", converter = StringArrayConverter.class)
-    private String[] languages = new String[]{};
+    @Parameter(names = "-languages", description = "Comma-separated list of languages to use. On import sets the name translations to use (default: de,en,fr,it). When running, the languages to be searched may be further restricted.")
+    private List<String> languages = new ArrayList<>();
 
-    @Parameter(names = "-default-language", description = "Language to return results in when no explicit language is chosen by the user")
+    @Parameter(names = "-default-language", description = "Language to return results in when no explicit language is chosen by the user.")
     private String defaultLanguage = "default";
 
-    @Parameter(names = "-country-codes", description = "[import-only] Comma-separated list of country codes for countries the importer should import, comma separated (default is empty which imports the full database)", converter = StringArrayConverter.class)
-    private String[] countryCodes = new String[]{};
+    @Parameter(names = "-country-codes", description = "[import-only] Comma-separated list of country codes for countries the importer should import, comma separated. An empty list means the full database is imported.")
+    private List<String> countryCodes = new ArrayList<>();
 
-    @Parameter(names = "-extra-tags", description = "Comma-separated list of additional tags to save for each place (default: None)", converter = StringArrayConverter.class)
-    private String[] extraTags = new String[]{};
+    @Parameter(names = "-extra-tags", description = "Comma-separated list of additional tags to save for each place.")
+    private List<String> extraTags = new ArrayList<>();
 
-    @Parameter(names = "-synonym-file", description = "File with synonym and classification terms")
+    @Parameter(names = "-synonym-file", description = "File with synonym and classification terms.")
     private String synonymFile = null;
 
     @Parameter(names = "-query-timeout", description = "Time after which to cancel queries to the ES database (in seconds).")
     private int queryTimeout = 7;
 
-    @Parameter(names = "-json", description = "Read from nominatim database and dump it to the given file in a json-like format (useful for developing)")
+    @Parameter(names = "-json", description = "Read from nominatim database and dump it to the given file in a json-like format (useful for developing).")
     private String jsonDump = null;
 
-    @Parameter(names = "-host", description = "Hostname of the PostgreSQL database")
+    @Parameter(names = "-host", description = "Hostname of the PostgreSQL database.")
     private String host = "127.0.0.1";
 
-    @Parameter(names = "-port", description = "Port of the PostgreSQL database")
+    @Parameter(names = "-port", description = "Port of the PostgreSQL database.")
     private Integer port = 5432;
 
-    @Parameter(names = "-database", description = "Database name of the Nominatim database")
+    @Parameter(names = "-database", description = "Database name of the Nominatim database.")
     private String database = "nominatim";
 
-    @Parameter(names = "-user", description = "Username in the PostgreSQL database")
+    @Parameter(names = "-user", description = "Username in the PostgreSQL database.")
     private String user = "nominatim";
 
-    @Parameter(names = "-password", description = "Password for the PostgreSQL database")
+    @Parameter(names = "-password", description = "Password for the PostgreSQL database.")
     private String password = null;
 
-    @Parameter(names = "-data-dir", description = "Photon data directory")
+    @Parameter(names = "-data-dir", description = "Photon data directory.")
     private String dataDirectory = new File(".").getAbsolutePath();
 
-    @Parameter(names = "-listen-port", description = "Port for the Photon server to listen to")
+    @Parameter(names = "-listen-port", description = "Port for the Photon server to listen to.")
     private int listenPort = 2322;
 
-    @Parameter(names = "-listen-ip", description = "Address for the Photon server to listen to")
+    @Parameter(names = "-listen-ip", description = "Address for the Photon server to listen to.")
     private String listenIp = "0.0.0.0";
 
-    @Parameter(names = "-cors-any", description = "Enable cross-site resource sharing for any origin")
+    @Parameter(names = "-cors-any", description = "Enable cross-site resource sharing for any origin.")
     private boolean corsAnyOrigin = false;
     
-    @Parameter(names = "-cors-origin", description = "Enable cross-site resource sharing for the specified origin")
-    private String corsOrigin = null;
+    @Parameter(names = "-cors-origin", description = "Comma-separated list of origins for which to enable cross-site resource sharing.")
+    private List<String> corsOrigin = new ArrayList<>();
 
     @Parameter(names = "-enable-update-api", description = "Enable the additional endpoint /nominatim-update, which allows to trigger updates from a nominatim database")
     private boolean enableUpdateApi = false;
@@ -95,15 +102,19 @@ public class CommandLineArgs {
     private boolean importGeometryColumn = false;
 
     public String[] getLanguages(boolean useDefaultIfEmpty) {
-        if (useDefaultIfEmpty && languages.length == 0) {
+        if (useDefaultIfEmpty && languages.isEmpty()) {
             return new String[]{"en", "de", "fr", "it"};
         }
 
-        return languages;
+        return languages.toArray(new String[0]);
     }
 
     public String[] getLanguages() {
         return getLanguages(true);
+    }
+
+    public int getThreads() {
+        return Integer.min(10, Integer.max(0, threads));
     }
 
     public String getCluster() {
@@ -111,7 +122,7 @@ public class CommandLineArgs {
     }
 
     public String[] getTransportAddresses() {
-        return this.transportAddresses;
+        return this.transportAddresses.toArray(new String[0]);
     }
 
     public boolean isNominatimImport() {
@@ -131,11 +142,11 @@ public class CommandLineArgs {
     }
 
     public String[] getCountryCodes() {
-        return this.countryCodes;
+        return this.countryCodes.toArray(new String[0]);
     }
 
     public String[] getExtraTags() {
-        return this.extraTags;
+        return this.extraTags.toArray(new String[0]);
     }
 
     public String getSynonymFile() {
@@ -186,8 +197,8 @@ public class CommandLineArgs {
         return this.corsAnyOrigin;
     }
 
-    public String getCorsOrigin() {
-        return this.corsOrigin;
+    public String[] getCorsOrigin() {
+        return this.corsOrigin.toArray(new String[0]);
     }
 
     public boolean isEnableUpdateApi() {

@@ -27,7 +27,7 @@ public class StructuredSearchRequestHandler extends RouteImpl {
 
     @Override
     public String handle(Request request, Response response) {
-        StructuredPhotonRequest photonRequest = null;
+        StructuredPhotonRequest photonRequest;
         try {
             photonRequest = photonRequestFactory.createStructured(request);
         } catch (BadRequestException e) {

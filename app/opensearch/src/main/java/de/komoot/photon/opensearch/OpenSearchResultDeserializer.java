@@ -1,6 +1,5 @@
 package de.komoot.photon.opensearch;
 
-import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -21,10 +20,9 @@ public class OpenSearchResultDeserializer extends StdDeserializer<OpenSearchResu
     }
 
     @Override
-    public OpenSearchResult deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JacksonException {
+    public OpenSearchResult deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
         final var node = (ObjectNode) p.getCodec().readTree(p);
 
-        final var importanceNode = node.get("importance");
         final double[] extent = extractExtent((ObjectNode) node.get("extent"));
         final double[] coordinates = extractCoordinate((ObjectNode) node.get("coordinate"));
 
@@ -40,8 +38,10 @@ public class OpenSearchResultDeserializer extends StdDeserializer<OpenSearchResu
                 tags.put(key, value.asText());
             } else if (value.isInt()) {
                 tags.put(entry.getKey(), value.asInt());
-            } else if (value.isBigInteger()) {
+            } else if (value.isLong()) {
                 tags.put(entry.getKey(), value.asLong());
+            } else if (value.isFloatingPointNumber()) {
+                tags.put(entry.getKey(), value.asDouble());
             } else if (value.isObject()) {
                 Map<String, String> vtags = new HashMap<>();
                 var subfields = value.fields();

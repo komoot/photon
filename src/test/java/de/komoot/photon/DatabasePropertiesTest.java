@@ -1,7 +1,5 @@
 package de.komoot.photon;
 
-import de.komoot.photon.DatabaseProperties;
-import de.komoot.photon.ESBaseTester;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -18,16 +16,11 @@ class DatabasePropertiesTest extends ESBaseTester {
      */
     @Test
     void testSetLanguages() {
-        DatabaseProperties prop = new DatabaseProperties();
+        var now = new Date();
+        DatabaseProperties prop = new DatabaseProperties(new String[]{"en", "bg", "de"}, now, false, false);
 
-        prop.setLanguages(new String[]{"en", "bg", "de"});
-        Date now = new Date();
-        prop.setImportDate(now);
         assertArrayEquals(new String[]{"en", "bg", "de"}, prop.getLanguages());
         assertEquals(now, prop.getImportDate());
-
-        prop.setLanguages(new String[]{"ru"});
-        assertArrayEquals(new String[]{"ru"}, prop.getLanguages());
     }
 
     /**
@@ -35,7 +28,7 @@ class DatabasePropertiesTest extends ESBaseTester {
      */
     @Test
     void testRestrictLanguagesUnsetLanguages() {
-        DatabaseProperties prop = new DatabaseProperties();
+        DatabaseProperties prop = new DatabaseProperties(null, null, false, false);
         prop.restrictLanguages(new String[]{"en", "bg", "de"});
 
         assertArrayEquals(new String[]{"en", "bg", "de"}, prop.getLanguages());
@@ -47,8 +40,7 @@ class DatabasePropertiesTest extends ESBaseTester {
      */
     @Test
     void testRestrictLanguagesAlreadySet() {
-        DatabaseProperties prop = new DatabaseProperties();
-        prop.setLanguages(new String[]{"en", "de", "fr"});
+        DatabaseProperties prop = new DatabaseProperties(new String[]{"en", "de", "fr"}, null, false, false);
 
         prop.restrictLanguages(new String[]{"cn", "de", "en", "es"});
 

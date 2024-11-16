@@ -78,7 +78,7 @@ public class OsmTagFilter {
         excludeTagQueryBuilder.should(query);
     }
 
-    static private Query makeTermsQuery(String field, String term) {
+    private static Query makeTermsQuery(String field, String term) {
         return TermsQuery.of(q -> q
                 .field(field)
                 .terms(t -> t.value(Collections.singletonList(FieldValue.of(term))))).toQuery();

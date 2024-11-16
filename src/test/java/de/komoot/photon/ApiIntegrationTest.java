@@ -5,11 +5,14 @@ import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -72,53 +75,53 @@ class ApiIntegrationTest extends ESBaseTester {
         assertEquals("www.poole.ch", connection.getHeaderField("Access-Control-Allow-Origin"));
     }
 
-    @Test
-    void testSearchForBerlin() throws Exception {
-        App.main(new String[]{"-cluster", TEST_CLUSTER_NAME, "-listen-port", Integer.toString(LISTEN_PORT), "-transport-addresses", "127.0.0.1"});
-        awaitInitialization();
-        HttpURLConnection connection = (HttpURLConnection) new URL("http://127.0.0.1:" + port() + "/api?q=berlin&limit=1").openConnection();
-        JSONObject json = new JSONObject(
-                new BufferedReader(new InputStreamReader(connection.getInputStream())).lines().collect(Collectors.joining("\n")));
-        JSONArray features = json.getJSONArray("features");
-        assertEquals(1, features.length());
-        JSONObject feature = features.getJSONObject(0);
-        JSONObject properties = feature.getJSONObject("properties");
-        assertEquals("W", properties.getString("osm_type"));
-        assertEquals("place", properties.getString("osm_key"));
-        assertEquals("city", properties.getString("osm_value"));
-        assertEquals("berlin", properties.getString("name"));
-    }
-
-    /**
-     * Search with location bias (this should give the last generated object which is roughly 2km away from the first)
+    /*
+     * Test that the Access-Control-Allow-Origin header is set to the matching domain
      */
     @Test
-    void testApiWithLocationBias() throws Exception {
-        App.main(new String[]{"-cluster", TEST_CLUSTER_NAME, "-listen-port", Integer.toString(LISTEN_PORT), "-transport-addresses", "127.0.0.1"});
+    void testCorsOriginIsSetToMatchingDomain() throws Exception {
+        App.main(new String[]{"-cluster", TEST_CLUSTER_NAME, "-listen-port", Integer.toString(LISTEN_PORT), "-transport-addresses", "127.0.0.1",
+                "-cors-origin", "www.poole.ch,alt.poole.ch"});
         awaitInitialization();
-        HttpURLConnection connection = (HttpURLConnection) new URL("http://127.0.0.1:" + port() + "/api?q=berlin&limit=1&lat=52.54714&lon=13.39026&zoom=16")
-                .openConnection();
-        JSONObject json = new JSONObject(
-                new BufferedReader(new InputStreamReader(connection.getInputStream())).lines().collect(Collectors.joining("\n")));
-        JSONArray features = json.getJSONArray("features");
-        assertEquals(1, features.length());
-        JSONObject feature = features.getJSONObject(0);
-        JSONObject properties = feature.getJSONObject("properties");
-        assertEquals("W", properties.getString("osm_type"));
-        assertEquals("place", properties.getString("osm_key"));
-        assertEquals("town", properties.getString("osm_value"));
-        assertEquals("berlin", properties.getString("name"));
+        String[] origins = {"www.poole.ch", "alt.poole.ch"};
+        for (String origin: origins) {
+            URLConnection urlConnection = new URL("http://127.0.0.1:" + port() + "/api?q=berlin").openConnection();
+
+            HttpURLConnection connection = (HttpURLConnection) urlConnection;
+            connection.setRequestProperty("Origin", origin);
+            assertEquals(origin, connection.getRequestProperty("Origin"));
+            assertEquals(origin, connection.getHeaderField("Access-Control-Allow-Origin"));
+        }
     }
 
-    /**
-     * Search with large location bias
+    /*
+     * Test that the Access-Control-Allow-Origin header does not return mismatching origins
      */
     @Test
-    void testApiWithLargerLocationBias() throws Exception {
+    void testMismatchedCorsOriginsAreBlock() throws Exception {
+        App.main(new String[]{"-cluster", TEST_CLUSTER_NAME, "-listen-port", Integer.toString(LISTEN_PORT), "-transport-addresses", "127.0.0.1",
+                "-cors-origin", "www.poole.ch,alt.poole.ch"});
+        awaitInitialization();
+        String[] origins = {"www.randomsite.com", "www.arbitrary.com"};
+        for (String origin: origins) {
+            URLConnection urlConnection = new URL("http://127.0.0.1:" + port() + "/api?q=berlin").openConnection();
+            urlConnection.setRequestProperty("Origin", origin);
+            HttpURLConnection connection = (HttpURLConnection) urlConnection;
+            assertEquals("www.poole.ch", connection.getHeaderField("Access-Control-Allow-Origin"));
+        }
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "city, /api?q=berlin&limit=1",                                    // basic search
+            "town, /api?q=berlin&limit=1&lat=52.54714&lon=13.39026&zoom=16",  // search with location bias
+            "city, /api?q=berlin&limit=1&lat=52.54714&lon=13.39026&zoom=12&location_bias_scale=0.6",  // search with large location bias
+            "city, /reverse/?lon=13.38886&lat=52.51704" // basic reverse
+    })
+    void testApi(String osmValue, String url) throws Exception {
         App.main(new String[]{"-cluster", TEST_CLUSTER_NAME, "-listen-port", Integer.toString(LISTEN_PORT), "-transport-addresses", "127.0.0.1"});
         awaitInitialization();
-        HttpURLConnection connection = (HttpURLConnection) new URL("http://127.0.0.1:" + port() + "/api?q=berlin&limit=1&lat=52.54714&lon=13.39026&zoom=12&location_bias_scale=0.6")
-                .openConnection();
+        HttpURLConnection connection = (HttpURLConnection) new URL("http://127.0.0.1:" + port() + url).openConnection();
         JSONObject json = new JSONObject(
                 new BufferedReader(new InputStreamReader(connection.getInputStream())).lines().collect(Collectors.joining("\n")));
         JSONArray features = json.getJSONArray("features");
@@ -127,36 +130,16 @@ class ApiIntegrationTest extends ESBaseTester {
         JSONObject properties = feature.getJSONObject("properties");
         assertEquals("W", properties.getString("osm_type"));
         assertEquals("place", properties.getString("osm_key"));
-        assertEquals("city", properties.getString("osm_value"));
+        assertEquals(osmValue, properties.getString("osm_value"));
         assertEquals("berlin", properties.getString("name"));
     }
 
-    /**
-     * Reverse geocode test
-     */
-    @Test
-    void testApiReverse() throws Exception {
-        App.main(new String[]{"-cluster", TEST_CLUSTER_NAME, "-listen-port", Integer.toString(LISTEN_PORT), "-transport-addresses", "127.0.0.1"});
-        awaitInitialization();
-        HttpURLConnection connection = (HttpURLConnection) new URL("http://127.0.0.1:" + port() + "/reverse/?lon=13.38886&lat=52.51704").openConnection();
-        JSONObject json = new JSONObject(
-                new BufferedReader(new InputStreamReader(connection.getInputStream())).lines().collect(Collectors.joining("\n")));
-        JSONArray features = json.getJSONArray("features");
-        assertEquals(1, features.length());
-        JSONObject feature = features.getJSONObject(0);
-        JSONObject properties = feature.getJSONObject("properties");
-        assertEquals("W", properties.getString("osm_type"));
-        assertEquals("place", properties.getString("osm_key"));
-        assertEquals("city", properties.getString("osm_value"));
-        assertEquals("berlin", properties.getString("name"));
-    }
 
     @Test
-    public void testApiStatus() throws Exception {
+    void testApiStatus() throws Exception {
         App.main(new String[]{"-cluster", TEST_CLUSTER_NAME, "-listen-port", Integer.toString(LISTEN_PORT), "-transport-addresses", "127.0.0.1"});
         awaitInitialization();
-        DatabaseProperties prop = new DatabaseProperties();
-        getServer().loadFromDatabase(prop);
+        DatabaseProperties prop = getServer().loadFromDatabase();
         HttpURLConnection connection = (HttpURLConnection) new URL("http://127.0.0.1:" + port() + "/status").openConnection();
         JSONObject json = new JSONObject(
                 new BufferedReader(new InputStreamReader(connection.getInputStream())).lines().collect(Collectors.joining("\n")));

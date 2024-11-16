@@ -1,8 +1,5 @@
 package de.komoot.photon;
 
-import de.komoot.photon.DatabaseProperties;
-import de.komoot.photon.Importer;
-import de.komoot.photon.Updater;
 import de.komoot.photon.searcher.StructuredSearchHandler;
 import de.komoot.photon.searcher.ReverseHandler;
 import de.komoot.photon.searcher.SearchHandler;
@@ -40,6 +37,17 @@ import java.util.Map;
  * Helper class to start/stop ElasticSearch node and get ElasticSearch clients.
  */
 public class Server {
+    /**
+     * Database version created by new imports with the current code.
+     *
+     * Format must be: major.minor.patch-dev
+     *
+     * Increase to next to be released version when the database layout
+     * changes in an incompatible way. If it is already at the next released
+     * version, increase the dev version.
+     */
+    public static final String DATABASE_VERSION = "0.3.6-1";
+
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(Server.class);
 
     public static final String PROPERTY_DOCUMENT_ID = "DATABASE_PROPERTIES";
@@ -66,7 +74,7 @@ public class Server {
         try {
             setupDirectories(new File(mainDirectory).toURI().toURL());
         } catch (Exception e) {
-            throw new RuntimeException("Can't create directories: " + mainDirectory, e);
+            throw new UsageException("Can't create directories: " + mainDirectory + ": " + e.getMessage());
         }
     }
 
@@ -108,7 +116,7 @@ public class Server {
                 esClient = esNode.client();
 
             } catch (NodeValidationException e) {
-                throw new RuntimeException("Error while starting elasticsearch server", e);
+                throw new UsageException("Error while starting elasticsearch server: " + e.getMessage());
             }
 
         }
@@ -134,7 +142,7 @@ public class Server {
 
             esClient.close();
         } catch (IOException e) {
-            throw new RuntimeException("Error during elasticsearch server shutdown", e);
+            LOGGER.info("Error during elasticsearch server shutdown", e);
         }
     }
 
@@ -201,8 +209,7 @@ public class Server {
         // Load the settings from the database to make sure it is at the right
         // version. If the version is wrong, we should not be messing with the
         // index.
-        DatabaseProperties dbProperties = new DatabaseProperties();
-        loadFromDatabase(dbProperties);
+        DatabaseProperties dbProperties = loadFromDatabase();
 
         loadIndexSettings().setSynonymFile(synonymFile).updateIndex(esClient, PhotonIndex.NAME);
 
@@ -234,7 +241,7 @@ public class Server {
      */
     public void saveToDatabase(DatabaseProperties dbProperties) throws IOException  {
         final XContentBuilder builder = XContentFactory.jsonBuilder().startObject().startObject(BASE_FIELD)
-                        .field(FIELD_VERSION, DatabaseProperties.DATABASE_VERSION)
+                        .field(FIELD_VERSION, DATABASE_VERSION)
                         .field(FIELD_LANGUAGES, String.join(",", dbProperties.getLanguages()))
                         .field(FIELD_IMPORT_DATE, dbProperties.getImportDate() instanceof Date ? dbProperties.getImportDate().toInstant() : null)
                         .field(FIELD_SUPPORT_POLYGONS, Boolean.toString(dbProperties.getSupportPolygons()))
@@ -253,34 +260,37 @@ public class Server {
      * Currently does nothing when the property entry is missing. Later versions with a higher
      * database version will then fail.
      */
-    public void loadFromDatabase(DatabaseProperties dbProperties) {
+    public DatabaseProperties loadFromDatabase() {
         GetResponse response = esClient.prepareGet(PhotonIndex.NAME, PhotonIndex.TYPE, PROPERTY_DOCUMENT_ID).execute().actionGet();
 
         // We are currently at the database version where versioning was introduced.
         if (!response.isExists()) {
-            return;
+            throw new UsageException("Cannot find database properties. Your database version is too old. Please reimport.");
         }
 
         Map<String, String> properties = (Map<String, String>) response.getSource().get(BASE_FIELD);
 
         if (properties == null) {
-            throw new RuntimeException("Found database properties but no '" + BASE_FIELD +"' field. Database corrupt?");
+            throw new UsageException("Found database properties but no '" + BASE_FIELD +"' field. Database corrupt?");
         }
 
         String version = properties.getOrDefault(FIELD_VERSION, "");
-        if (!DatabaseProperties.DATABASE_VERSION.equals(version)) {
-            LOGGER.error("Database has incompatible version '{}'. Expected: {}", version, DatabaseProperties.DATABASE_VERSION);
-            throw new RuntimeException("Incompatible database.");
+        if (!DATABASE_VERSION.equals(version)) {
+            LOGGER.error("Database has incompatible version '{}'. Expected: {}",
+                         version, DATABASE_VERSION);
+            throw new UsageException("Incompatible database.");
         }
 
         String langString = properties.get(FIELD_LANGUAGES);
-        dbProperties.setLanguages(langString == null ? null : langString.split(","));
 
         String importDateString = properties.get(FIELD_IMPORT_DATE);
-        dbProperties.setImportDate(importDateString == null ? null : Date.from(Instant.parse(importDateString)));
 
         String supportPolygons = properties.get(FIELD_SUPPORT_POLYGONS);
-        dbProperties.setSupportPolygons(supportPolygons == null ? null : Boolean.parseBoolean(supportPolygons));
+
+        return new DatabaseProperties(langString == null ? null : langString.split(","),
+                importDateString == null ? null : Date.from(Instant.parse(importDateString)),
+                false,
+                supportPolygons == null ? null : Boolean.parseBoolean(supportPolygons));
     }
 
     public Importer createImporter(String[] languages, String[] extraTags) {

@@ -19,8 +19,7 @@ public class StatusRequestHandler extends RouteImpl {
 
     @Override
     public String handle(Request request, Response response) throws IOException {
-        DatabaseProperties dbProperties = new DatabaseProperties();
-        server.loadFromDatabase(dbProperties);
+        DatabaseProperties dbProperties = server.loadFromDatabase();
         String importDateStr = null;
         if (dbProperties.getImportDate() instanceof Date) {
             importDateStr = dbProperties.getImportDate().toInstant().toString();

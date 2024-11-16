@@ -86,10 +86,8 @@ class RequestLanguageTest {
 
     private void validateNotSupported(String queryLang, String acceptHeader) {
         Request req = buildRequest(queryLang, acceptHeader);
-        try {
+        assertThrows(BadRequestException.class, () -> {
             languageResolver.resolveRequestedLanguage(req);
-            fail("Language " + queryLang + " is not supported");
-        } catch (BadRequestException ignored) {
-        }
+        });
     }
 }

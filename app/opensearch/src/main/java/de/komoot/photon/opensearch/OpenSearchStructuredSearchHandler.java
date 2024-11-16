@@ -1,16 +1,12 @@
 package de.komoot.photon.opensearch;
 
-import de.komoot.photon.*;
 import de.komoot.photon.searcher.StructuredSearchHandler;
 import de.komoot.photon.searcher.PhotonResult;
 import de.komoot.photon.query.StructuredPhotonRequest;
-import org.opensearch.client.json.jackson.JacksonJsonpGenerator;
 import org.opensearch.client.opensearch.OpenSearchClient;
 import org.opensearch.client.opensearch._types.SearchType;
 import org.opensearch.client.opensearch._types.query_dsl.Query;
 import org.opensearch.client.opensearch.core.SearchResponse;
-import org.opensearch.client.opensearch.core.explain.ExplanationDetail;
-import org.opensearch.common.util.iterable.Iterables;
 
 import java.util.ArrayList;
 import java.util.List;

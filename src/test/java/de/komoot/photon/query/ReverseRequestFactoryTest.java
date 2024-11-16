@@ -75,7 +75,7 @@ class ReverseRequestFactoryTest {
     }
 
     @Test
-    void testWithBadLocation() throws Exception {
+    void testWithBadLocation(){
         Request mockRequest = Mockito.mock(Request.class);
         Mockito.when(mockRequest.queryParams("lon")).thenReturn("bad");
         Mockito.when(mockRequest.queryParams("lat")).thenReturn("bad");
@@ -85,7 +85,7 @@ class ReverseRequestFactoryTest {
     }
 
 
-    private void testWithHighLowLongitude(Boolean high) throws Exception {
+    private void testWithHighLowLongitude(Boolean high) {
         Request mockRequest = createRequestWithLongitudeLatitude((high) ? 180.01 : -180.01, 0.0);
         assertBadRequest(mockRequest, "invalid search term 'lon', expected number >= -180.0 and <= 180.0");
         Mockito.verify(mockRequest, Mockito.times(1)).queryParams("lon");
@@ -93,16 +93,16 @@ class ReverseRequestFactoryTest {
     }
 
     @Test
-    void testWithHighLongitude() throws Exception {
+    void testWithHighLongitude() {
         testWithHighLowLongitude(true);
     }
 
     @Test
-    void testWithLowLongitude() throws Exception {
+    void testWithLowLongitude() {
         testWithHighLowLongitude(false);
     }
 
-    private void testWithHighLowLatitude(Boolean high) throws Exception {
+    private void testWithHighLowLatitude(Boolean high) {
         Request mockRequest = createRequestWithLongitudeLatitude(0.0, (high) ? 90.01 : -90.01);
         assertBadRequest(mockRequest, "invalid search term 'lat', expected number >= -90.0 and <= 90.0");
         Mockito.verify(mockRequest, Mockito.times(1)).queryParams("lon");
@@ -110,17 +110,17 @@ class ReverseRequestFactoryTest {
     }
 
     @Test
-    void testWithHighLatitude() throws Exception {
+    void testWithHighLatitude() {
         testWithHighLowLatitude(true);
     }
 
     @Test
-    void testWithLowLatitude() throws Exception {
+    void testWithLowLatitude() {
         testWithHighLowLatitude(false);
     }
 
     @Test
-    void testWithNoLocation() throws Exception {
+    void testWithNoLocation() {
         Request mockRequest = Mockito.mock(Request.class);
         Mockito.when(mockRequest.queryParams("lon")).thenReturn("");
         Mockito.when(mockRequest.queryParams("lat")).thenReturn("");
@@ -129,7 +129,7 @@ class ReverseRequestFactoryTest {
         Mockito.verify(mockRequest, Mockito.times(1)).queryParams("lat");
     }
 
-    private void testWithBadParam(String paramName, String paramValue, String expectedMessage) throws Exception {
+    private void testWithBadParam(String paramName, String paramValue, String expectedMessage)  {
         Request mockRequest = createRequestWithLongitudeLatitude(-87d, 41d);
         Mockito.when(mockRequest.queryParams(paramName)).thenReturn(paramValue);
         assertBadRequest(mockRequest, expectedMessage);
@@ -137,17 +137,17 @@ class ReverseRequestFactoryTest {
     }
 
     @Test
-    void testWithNegativeRadius() throws Exception {
+    void testWithNegativeRadius() {
         testWithBadParam("radius", "-10.0", "Invalid search term 'radius', expected a strictly positive number.");
     }
 
     @Test
-    void testWithZeroRadius() throws Exception {
+    void testWithZeroRadius() {
         testWithBadParam("radius", "0.0", "Invalid search term 'radius', expected a strictly positive number.");
     }
 
     @Test
-    void testWithBadRadius() throws Exception {
+    void testWithBadRadius() {
         testWithBadParam("radius", "bad", "Invalid search term 'radius', expected a number.");
     }
 
@@ -162,17 +162,17 @@ class ReverseRequestFactoryTest {
     }
 
     @Test
-    void testWithNegativeLimit() throws Exception {
+    void testWithNegativeLimit() {
         testWithBadParam("limit", "-1", "Invalid search term 'limit', expected a strictly positive integer.");
     }
 
     @Test
-    void testWithZeroLimit() throws Exception {
+    void testWithZeroLimit() {
         testWithBadParam("limit", "0", "Invalid search term 'limit', expected a strictly positive integer.");
     }
 
     @Test
-    void testWithBadLimit() throws Exception {
+    void testWithBadLimit() {
         testWithBadParam("limit", "bad", "Invalid search term 'limit', expected an integer.");
     }
 

@@ -1,6 +1,7 @@
 package de.komoot.photon.opensearch;
 
 import de.komoot.photon.searcher.PhotonResult;
+import org.json.JSONObject;
 
 import java.util.Map;
 
@@ -13,7 +14,7 @@ public class OpenSearchResult implements PhotonResult {
     private final Map<String, Object> infos;
     private final Map<String, Map<String, String>> localeTags;
 
-    OpenSearchResult(double extent[], double[] coordinates, Map<String, Object> infos, Map<String, Map<String, String>> localeTags) {
+    OpenSearchResult(double[] extent, double[] coordinates, Map<String, Object> infos, Map<String, Map<String, String>> localeTags) {
         this.extent = extent;
         this.coordinates = coordinates;
         this.infos = infos;
@@ -68,5 +69,13 @@ public class OpenSearchResult implements PhotonResult {
     @Override
     public double getScore() {
         return score;
+    }
+
+    @Override
+    public JSONObject getRawData() {
+        return new JSONObject()
+                .put("infos", new JSONObject(infos))
+                .put("localeTags", new JSONObject(localeTags))
+                .put("score", score);
     }
 }

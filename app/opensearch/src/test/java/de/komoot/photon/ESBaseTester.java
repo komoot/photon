@@ -17,7 +17,7 @@ import java.util.Date;
 
 public class ESBaseTester {
     public static final String TEST_CLUSTER_NAME = "photon-test";
-    protected static GeometryFactory FACTORY = new GeometryFactory(new PrecisionModel(), 4326);
+    protected static final GeometryFactory FACTORY = new GeometryFactory(new PrecisionModel(), 4326);
 
     @TempDir
     protected Path dataDirectory;
@@ -48,8 +48,8 @@ public class ESBaseTester {
         setUpES(dataDirectory, "en");
     }
 
-    public void setUpES(Path test_directory, String... languages) throws IOException {
-        server = new OpenSearchTestServer(test_directory.toString());
+    public void setUpES(Path testDirectory, String... languages) throws IOException {
+        server = new OpenSearchTestServer(testDirectory.toString());
         server.startTestServer(TEST_CLUSTER_NAME);
         server.recreateIndex(languages, new Date(), true, true);
         server.refreshIndexes();

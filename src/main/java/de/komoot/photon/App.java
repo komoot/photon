@@ -2,7 +2,8 @@ package de.komoot.photon;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
-import de.komoot.photon.nominatim.NominatimConnector;
+import de.komoot.photon.nominatim.ImportThread;
+import de.komoot.photon.nominatim.NominatimImporter;
 import de.komoot.photon.nominatim.NominatimUpdater;
 import de.komoot.photon.searcher.ReverseHandler;
 import de.komoot.photon.searcher.SearchHandler;
@@ -14,7 +15,8 @@ import spark.Response;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Date;
+import java.util.*;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import static spark.Spark.*;
 
@@ -27,6 +29,16 @@ public class App {
     public static void main(String[] rawArgs) throws Exception {
         CommandLineArgs args = parseCommandLine(rawArgs);
 
+        try {
+            runPhoton(args);
+        } catch (UsageException e) {
+            LOGGER.error(e.getMessage());
+            LOGGER.error("Exiting.");
+            System.exit(2);
+        }
+    }
+
+    private static void runPhoton(CommandLineArgs args) throws IOException {
         if (args.getJsonDump() != null) {
             startJsonDump(args);
             return;
@@ -74,11 +86,6 @@ public class App {
         final JCommander jCommander = new JCommander(args);
         try {
             jCommander.parse(rawArgs);
-
-            // Cors arguments are mutually exclusive.
-            if (args.isCorsAnyOrigin() && args.getCorsOrigin() != null) {
-                throw new ParameterException("Use only one cors configuration type");
-            }
         } catch (ParameterException e) {
             LOGGER.warn("Could not start photon: {}", e.getMessage());
             jCommander.usage();
@@ -102,12 +109,11 @@ public class App {
         try {
             final String filename = args.getJsonDump();
             final JsonDumper jsonDumper = new JsonDumper(filename, args.getLanguages(), args.getExtraTags());
-            NominatimConnector nominatimConnector = new NominatimConnector(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword(), args.getImportGeometryColumn());
-            nominatimConnector.setImporter(jsonDumper);
-            nominatimConnector.readEntireDatabase(args.getCountryCodes());
+
+            importFromDatabase(args, jsonDumper);
             LOGGER.info("Json dump was created: {}", filename);
         } catch (FileNotFoundException e) {
-            LOGGER.error("Cannot create dump", e);
+            throw new UsageException("Cannot create dump: " + e.getMessage());
         }
     }
 
@@ -116,25 +122,94 @@ public class App {
      * Read all data from a Nominatim database and import it into a Photon database.
      */
     private static void startNominatimImport(CommandLineArgs args, Server esServer) {
-        DatabaseProperties dbProperties;
-        NominatimConnector nominatimConnector = new NominatimConnector(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword(), args.getImportGeometryColumn());
-        Date importDate = nominatimConnector.getLastImportDate();
-        LOGGER.info("Starting import with the following settings: " +
-                "\n Languages: {} \n Import Date: {} \n Support Structured Queries: {} \n Support Polygons: {}",
-                args.getLanguages(), importDate, args.getSupportStructuredQueries(), args.getImportGeometryColumn());
+        final var languages = initDatabase(args, esServer);
+
+        LOGGER.info("Starting import from nominatim to photon with languages: {}", String.join(",", languages));
+        importFromDatabase(args, esServer.createImporter(languages, args.getExtraTags()));
+
+        LOGGER.info("Imported data from nominatim to photon with languages: {}", String.join(",", languages));
+    }
+
+    private static String[] initDatabase(CommandLineArgs args, Server esServer) {
+        final var nominatimConnector = new NominatimImporter(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword(), args.getImportGeometryColumn());
+        final Date importDate = nominatimConnector.getLastImportDate();
 
         try {
-            dbProperties = esServer.recreateIndex(args.getLanguages(), importDate, args.getSupportStructuredQueries(), args.getImportGeometryColumn()); // clear out previous data
+            // Clear out previous data.
+            var dbProperties = esServer.recreateIndex(args.getLanguages(), importDate, args.getSupportStructuredQueries(), args.getImportGeometryColumn()); // clear out previous data
+            return dbProperties.getLanguages();
         } catch (IOException e) {
-            throw new RuntimeException("Cannot setup index, elastic search config files not readable", e);
+            throw new UsageException("Cannot setup index, elastic search config files not readable");
+        }
+    }
+
+    private static void importFromDatabase(CommandLineArgs args, Importer importer) {
+        final var connector = new NominatimImporter(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword(), args.getImportGeometryColumn());
+        connector.prepareDatabase();
+        connector.loadCountryNames();
+
+        String[] countries = args.getCountryCodes();
+
+        if (countries == null || countries.length == 0) {
+            countries = connector.getCountriesFromDatabase();
+        } else {
+            countries = Arrays.stream(countries).map(String::trim).filter(s -> !s.isBlank()).toArray(String[]::new);
         }
 
-        LOGGER.info("Starting import from nominatim to photon with languages: {}", String.join(",", dbProperties.getLanguages()));
-        nominatimConnector.setImporter(esServer.createImporter(dbProperties.getLanguages(), args.getExtraTags()));
-        nominatimConnector.readEntireDatabase(args.getCountryCodes());
+        final int numThreads = args.getThreads();
+        ImportThread importThread = new ImportThread(importer);
 
-        LOGGER.info("Imported data from nominatim to photon with languages: {}", String.join(",", dbProperties.getLanguages()));
+        try {
+
+            if (numThreads == 1) {
+                for (var country : countries) {
+                    connector.readCountry(country, importThread);
+                }
+            } else {
+                final Queue<String> todolist = new ConcurrentLinkedQueue<>(List.of(countries));
+
+                final List<Thread> readerThreads = new ArrayList<>(numThreads);
+
+                for (int i = 0; i < numThreads; ++i) {
+                    final NominatimImporter threadConnector;
+                    if (i > 0) {
+                        threadConnector = new NominatimImporter(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword(), args.getImportGeometryColumn());
+                        threadConnector.loadCountryNames();
+                    } else {
+                        threadConnector = connector;
+                    }
+                    final int threadno = i;
+                    Runnable runner = () -> {
+                        String nextCc = todolist.poll();
+                        while (nextCc != null) {
+                            LOGGER.info("Thread {}: reading country '{}'", threadno, nextCc);
+                            threadConnector.readCountry(nextCc, importThread);
+                            nextCc = todolist.poll();
+                        }
+                    };
+                    Thread thread = new Thread(runner);
+                    thread.start();
+                    readerThreads.add(thread);
+                }
+                readerThreads.forEach(t -> {
+                    while (true) {
+                        try {
+                            t.join();
+                            break;
+                        } catch (InterruptedException e) {
+                            LOGGER.warn("Thread interrupted:", e);
+                            // Restore interrupted state.
+                            Thread.currentThread().interrupt();
+                        }
+                    }
+                });
+            }
+        } finally {
+            importThread.finish();
+        }
+
     }
+
 
     private static void startNominatimUpdateInit(CommandLineArgs args) {
         NominatimUpdater nominatimUpdater = new NominatimUpdater(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword(), args.getImportGeometryColumn());
@@ -144,14 +219,13 @@ public class App {
     private static void startNominatimUpdate(NominatimUpdater nominatimUpdater, Server esServer)  {
         nominatimUpdater.update();
 
-        DatabaseProperties dbProperties = new DatabaseProperties();
         try {
-            esServer.loadFromDatabase(dbProperties);
+            DatabaseProperties dbProperties = esServer.loadFromDatabase();
             Date importDate = nominatimUpdater.getLastImportDate();
             dbProperties.setImportDate(importDate);
             esServer.saveToDatabase(dbProperties);
         } catch (IOException e) {
-            throw new RuntimeException("Cannot setup index, elastic search config files not readable", e);
+            throw new UsageException("Cannot setup index, elastic search config files not readable");
         }
     }
 
@@ -161,8 +235,7 @@ public class App {
      */
     private static NominatimUpdater setupNominatimUpdater(CommandLineArgs args, Server server)throws IOException {
         // Get database properties and ensure that the version is compatible.
-        DatabaseProperties dbProperties = new DatabaseProperties();
-        server.loadFromDatabase(dbProperties);
+        DatabaseProperties dbProperties = server.loadFromDatabase();
 
         NominatimUpdater nominatimUpdater = new NominatimUpdater(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword(), args.getImportGeometryColumn());
         nominatimUpdater.setUpdater(server.createUpdater(dbProperties.getLanguages(), args.getExtraTags()));
@@ -174,8 +247,7 @@ public class App {
      */
     private static void startApi(CommandLineArgs args, Server server) throws IOException {
         // Get database properties and ensure that the version is compatible.
-        DatabaseProperties dbProperties = new DatabaseProperties();
-        server.loadFromDatabase(dbProperties);
+        DatabaseProperties dbProperties = server.loadFromDatabase();
         if (args.getLanguages(false).length > 0) {
             dbProperties.restrictLanguages(args.getLanguages());
         }
@@ -187,8 +259,8 @@ public class App {
         port(args.getListenPort());
         ipAddress(args.getListenIp());
 
-        String allowedOrigin = args.isCorsAnyOrigin() ? "*" : args.getCorsOrigin();
-        if (allowedOrigin != null) {
+        String[] allowedOrigin = args.isCorsAnyOrigin() ? new String[]{ "*" } : args.getCorsOrigin();
+        if (allowedOrigin.length > 0) {
             CorsFilter.enableCORS(allowedOrigin, "get", "*");
         } else {
             // Set Json content type. In the other case already set by enableCors.
@@ -221,7 +293,7 @@ public class App {
             // setup update API
             final NominatimUpdater nominatimUpdater = setupNominatimUpdater(args, server);
             if (!nominatimUpdater.isSetUpForUpdates()) {
-                throw new RuntimeException("Update API enabled, but Nominatim database is not prepared. Run -nominatim-update-init-for first.");
+                throw new UsageException("Update API enabled, but Nominatim database is not prepared. Run -nominatim-update-init-for first.");
             }
             get("/nominatim-update/status", (Request request, Response response) -> {
                if (nominatimUpdater.isBusy()) {

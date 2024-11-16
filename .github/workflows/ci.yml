@@ -32,16 +32,16 @@ jobs:
 
   import:
     name: Import OSM data from Nominatim into Photon
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Java 11
+      - name: Setup Java 21
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: 11
+          java-version: 21
           cache: 'gradle'
 
       - name: Compile project
@@ -50,7 +50,6 @@ jobs:
       - uses: actions/checkout@v4
         with:
           repository: osm-search/Nominatim
-          submodules: true
           path: Nominatim
 
       - name: Get Date
@@ -64,19 +63,18 @@ jobs:
                monaco-latest.osm.pbf
             key: nominatim-test-data-${{ env.cache_key }}
 
-      - name: Install prerequisits
+      - name: Install prerequisites
         run: |
           sudo apt-get update -qq
-          sudo apt-get install -y -qq libboost-system-dev libboost-filesystem-dev libexpat1-dev zlib1g-dev libbz2-dev libpq-dev libproj-dev liblua5.3-dev lua5.3 python3-psycopg2 python3-pyosmium python3-dotenv python3-psutil python3-jinja2 python3-icu python3-datrie postgresql-14-postgis-3 postgresql-client-14 postgresql-14 postgresql-14-postgis-3-scripts nlohmann-json3-dev
-          pip3 install sqlalchemy GeoAlchemy2 psycopg
+          sudo apt-get install -y -qq osm2pgsql postgresql-postgis virtualenv pkg-config libicu-dev
         shell: bash
 
       - name: Setup database
         run: |
-            echo 'fsync = off' | sudo tee /etc/postgresql/14/main/conf.d/local.conf
-            echo 'synchronous_commit = off' | sudo tee -a /etc/postgresql/14/main/conf.d/local.conf
-            echo 'full_page_writes = off' | sudo tee -a /etc/postgresql/14/main/conf.d/local.conf
-            echo 'shared_buffers = 512MB' | sudo tee -a /etc/postgresql/14/main/conf.d/local.conf
+            echo 'fsync = off' | sudo tee /etc/postgresql/16/main/conf.d/local.conf
+            echo 'synchronous_commit = off' | sudo tee -a /etc/postgresql/16/main/conf.d/local.conf
+            echo 'full_page_writes = off' | sudo tee -a /etc/postgresql/16/main/conf.d/local.conf
+            echo 'shared_buffers = 512MB' | sudo tee -a /etc/postgresql/16/main/conf.d/local.conf
             sudo systemctl start postgresql
             sudo -u postgres createuser -S www-data
             sudo -u postgres createuser -s runner
@@ -93,8 +91,11 @@ jobs:
         shell: bash
 
       - name: Build Nominatim
-        run: mkdir nomin-build && cd nomin-build && cmake -DBUILD_MODULE=off ../Nominatim && make -j2 && sudo make install
+        run: |
+            virtualenv ~/venv
+            ~/venv/bin/pip install packaging/nominatim-db
         shell: bash
+        working-directory: Nominatim
 
       - name: Prepare import environment
         run: |
@@ -106,9 +107,8 @@ jobs:
 
       - name: Import Nominatim
         run: |
-          export NOMINATIM_TOKENIZER=icu
-          nominatim import --osm-file ../monaco-latest.osm.pbf --reverse-only
-          nominatim admin --check-database
+          ~/venv/bin/nominatim import --osm-file ../monaco-latest.osm.pbf --reverse-only
+          ~/venv/bin/nominatim admin --check-database
         shell: bash
         working-directory: data-env
 
@@ -120,8 +120,9 @@ jobs:
 
       - name: Update Nominatim
         run: |
-          nominatim replication --init
-          nominatim replication --once
+          ~/venv/bin/pip install osmium
+          ~/venv/bin/nominatim replication --init
+          ~/venv/bin/nominatim replication --once
         shell: bash
         working-directory: data-env
         env:
