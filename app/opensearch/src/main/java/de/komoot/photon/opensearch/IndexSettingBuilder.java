@@ -39,10 +39,13 @@ public class IndexSettingBuilder {
         addDefaultSettings();
 
         client.indices().close(req -> req.index(indexName));
-        client.indices().putSettings(req -> req
-                .index(indexName)
-                .settings(s -> s.analysis(settings.build())));
-        client.indices().open(req -> req.index(indexName));
+        try {
+            client.indices().putSettings(req -> req
+                    .index(indexName)
+                    .settings(s -> s.analysis(settings.build())));
+        } finally {
+            client.indices().open(req -> req.index(indexName));
+        }
     }
 
     public IndexSettingBuilder setSynonymFile(String synonymFile) throws IOException {

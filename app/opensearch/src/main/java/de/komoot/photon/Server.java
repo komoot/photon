@@ -11,6 +11,7 @@ import org.codelibs.opensearch.runner.OpenSearchRunner;
 import org.opensearch.client.json.jackson.JacksonJsonpMapper;
 import org.opensearch.client.opensearch.OpenSearchClient;
 import org.opensearch.client.opensearch._types.HealthStatus;
+import org.opensearch.client.opensearch._types.OpenSearchException;
 import org.opensearch.client.transport.httpclient5.ApacheHttpClient5TransportBuilder;
 import org.slf4j.Logger;
 
@@ -118,10 +119,17 @@ public class Server {
     }
 
     public void updateIndexSettings(String synonymFile) throws IOException {
+        // This ensures we are on the right version. Do not mess with the
+        // database if the version does not fit.
         var dbProperties = new DatabaseProperties();
         loadFromDatabase(dbProperties);
 
-        (new IndexSettingBuilder()).setSynonymFile(synonymFile).updateIndex(client, PhotonIndex.NAME);
+        try {
+            (new IndexSettingBuilder()).setSynonymFile(synonymFile).updateIndex(client, PhotonIndex.NAME);
+        } catch (OpenSearchException ex) {
+            client.shutdown();
+            throw new RuntimeException("Could not install synonyms: " + ex.getMessage());
+        }
 
         if (dbProperties.getLanguages() != null) {
             (new IndexMapping(dbProperties.getSupportStructuredQueries()))
