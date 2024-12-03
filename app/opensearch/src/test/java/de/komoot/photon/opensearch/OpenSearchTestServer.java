@@ -34,7 +34,12 @@ public class OpenSearchTestServer extends Server {
                 settingsBuilder.put("cluster.search.request.slowlog.threshold.trace", "0ms");
 
             }
-            }).build(OpenSearchRunner.newConfigs().basePath(instanceDir).clusterName(clusterName).numOfNode(1).baseHttpPort(9200));
+            }).build(OpenSearchRunner.newConfigs()
+                .basePath(instanceDir)
+                .clusterName(clusterName)
+                .numOfNode(1)
+                .baseHttpPort(9200)
+                .moduleTypes(OPENSEARCH_MODULES));
 
         // wait for yellow status
         runner.ensureYellow();
