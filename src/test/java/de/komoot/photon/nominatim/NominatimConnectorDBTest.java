@@ -38,7 +38,7 @@ class NominatimConnectorDBTest {
                 .build();
 
 
-        connector = new NominatimImporter(null, 0, null, null, null, new H2DataAdapter());
+        connector = new NominatimImporter(null, 0, null, null, null, new H2DataAdapter(), true);
         importer = new CollectingImporter();
 
         jdbc = new JdbcTemplate(db);
@@ -358,6 +358,14 @@ class NominatimConnectorDBTest {
         assertEquals(1, importer.size());
 
         assertNull(importer.get(place).getCountryCode());
+    }
+
+    @Test
+    void testGeometry() {
+        PlacexTestRow place = new PlacexTestRow("building", "yes").name("Oosterbroek Zuivel").country("de").add(jdbc);
+        readEntireDatabase();
+        assertEquals(1, importer.size());
+        assertNotNull(importer.get(place).getGeometry());
     }
 
     @Test

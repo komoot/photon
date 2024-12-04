@@ -1,6 +1,8 @@
 package de.komoot.photon;
 
+import de.komoot.photon.opensearch.Importer;
 import de.komoot.photon.opensearch.OpenSearchTestServer;
+import de.komoot.photon.opensearch.Updater;
 import de.komoot.photon.searcher.PhotonResult;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.io.TempDir;
@@ -43,34 +45,38 @@ public class ESBaseTester {
     }
 
     public void setUpES() throws IOException {
-        setUpES(dataDirectory, "en");
+        setUpES(dataDirectory, false,"en");
     }
 
-    public void setUpES(Path testDirectory, String... languages) throws IOException {
+    public void setUpESWithPolygons() throws IOException {
+        setUpES(dataDirectory, true,"en");
+    }
+
+    public void setUpES(Path testDirectory, boolean supportPolygons, String... languages) throws IOException {
         server = new OpenSearchTestServer(testDirectory.toString());
         server.startTestServer(TEST_CLUSTER_NAME);
-        server.recreateIndex(languages, new Date(), true);
+        server.recreateIndex(languages, new Date(), true, supportPolygons);
         server.refreshIndexes();
     }
 
     protected Importer makeImporter() {
-        return server.createImporter(new String[]{"en"}, new String[]{});
+        return (Importer) server.createImporter(new String[]{"en"}, new String[]{});
     }
 
     protected Importer makeImporterWithExtra(String... extraTags) {
-        return server.createImporter(new String[]{"en"}, extraTags);
+        return (Importer) server.createImporter(new String[]{"en"}, extraTags);
     }
 
     protected Importer makeImporterWithLanguages(String... languages) {
-        return server.createImporter(languages, new String[]{});
+        return (Importer) server.createImporter(languages, new String[]{});
     }
 
     protected Updater makeUpdater() {
-        return server.createUpdater(new String[]{"en"}, new String[]{});
+        return (Updater) server.createUpdater(new String[]{"en"}, new String[]{});
     }
 
     protected Updater makeUpdaterWithExtra(String... extraTags) {
-        return server.createUpdater(new String[]{"en"}, extraTags);
+        return (Updater) server.createUpdater(new String[]{"en"}, extraTags);
     }
 
     protected Server getServer() {
