@@ -33,6 +33,10 @@ public class Server {
 
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(Server.class);
 
+    public static final String OPENSEARCH_MODULES =
+            "org.opensearch.transport.Netty4Plugin,"
+            + "org.opensearch.analysis.common.CommonAnalysisPlugin";
+
     protected OpenSearchClient client;
     private OpenSearchRunner runner = null;
     protected final String dataDirectory;
@@ -78,7 +82,12 @@ public class Server {
             settingsBuilder.put("discovery.type", "single-node");
             settingsBuilder.putList("discovery.seed_hosts", "127.0.0.1:9201");
             settingsBuilder.put("indices.query.bool.max_clause_count", "30000");
-        }).build(OpenSearchRunner.newConfigs().basePath(dataDirectory).clusterName(clusterName).numOfNode(1));
+        }).build(OpenSearchRunner.newConfigs()
+                .basePath(dataDirectory)
+                .clusterName(clusterName)
+                .numOfNode(1)
+                .moduleTypes(OPENSEARCH_MODULES)
+        );
 
         runner.ensureYellow();
 
