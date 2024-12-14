@@ -34,6 +34,10 @@ public class ElasticGetIdResult implements PhotonResult {
         throw new NotImplementedException();
     }
 
+    public double[][] getGeometry() {
+        throw new NotImplementedException();
+    }
+
     @Override
     public double[] getExtent() {
         throw new NotImplementedException();

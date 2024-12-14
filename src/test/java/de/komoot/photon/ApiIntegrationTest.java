@@ -146,4 +146,25 @@ class ApiIntegrationTest extends ESBaseTester {
         assertEquals("Ok", json.getString("status"));
         assertEquals(prop.getImportDate().toInstant().toString(), json.getString("import_date"));
     }
+
+    @Test
+    void testSearchAndGetPolygon() throws Exception {
+        App.main(new String[]{"-cluster", TEST_CLUSTER_NAME, "-listen-port", Integer.toString(LISTEN_PORT), "-transport-addresses", "127.0.0.1"});
+        awaitInitialization();
+        HttpURLConnection connection = (HttpURLConnection) new URL("http://127.0.0.1:" + port() + "/api?q=berlin&limit=1").openConnection();
+        JSONObject json = new JSONObject(
+                new BufferedReader(new InputStreamReader(connection.getInputStream())).lines().collect(Collectors.joining("\n")));
+        JSONArray features = json.getJSONArray("features");
+        assertEquals(1, features.length());
+        JSONObject feature = features.getJSONObject(0);
+
+        JSONObject geometry = feature.getJSONObject("geometry");
+        assertEquals("Polygon", geometry.getString("type"));
+
+        JSONObject properties = feature.getJSONObject("properties");
+        assertEquals("W", properties.getString("osm_type"));
+        assertEquals("place", properties.getString("osm_key"));
+        assertEquals("city", properties.getString("osm_value"));
+        assertEquals("berlin", properties.getString("name"));
+    }
 }

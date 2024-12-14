@@ -19,7 +19,7 @@ public class PhotonRequestFactory {
     private final int maxResults;
 
     private static final HashSet<String> REQUEST_QUERY_PARAMS = new HashSet<>(Arrays.asList("lang", "q", "lon", "lat",
-            "limit", "osm_tag", "location_bias_scale", "bbox", "debug", "zoom", "layer"));
+            "limit", "osm_tag", "location_bias_scale", "bbox", "debug", "zoom", "layer", "polygon"));
 
     private static final HashSet<String> STRUCTURED_ADDRESS_FIELDS = new HashSet<>(Arrays.asList("countrycode", "state", "county", "city",
             "postcode", "district", "housenumber", "street"));
@@ -58,6 +58,7 @@ public class PhotonRequestFactory {
         result.setDistrict(webRequest.queryParams("district"));
         result.setStreet(webRequest.queryParams("street"));
         result.setHouseNumber(webRequest.queryParams("housenumber"));
+
 
         addCommonParameters(webRequest, result);
 
@@ -110,6 +111,11 @@ public class PhotonRequestFactory {
         if (layerFiltersQueryMap.hasValue()) {
             request.setLayerFilter(layerParamValidator.validate(layerFiltersQueryMap.values()));
         }
+
+        if (webRequest.queryParams("polygon") != null) {
+            request.setPolygonRequest(true);
+            request.setReturnPolygon(parseBoolean(webRequest, "polygon"));
+        }
     }
 
     private Integer parseInt(Request webRequest, String param) throws BadRequestException {
@@ -144,5 +150,16 @@ public class PhotonRequestFactory {
         }
 
         return outVal;
+    }
+
+    private Boolean parseBoolean(Request webRequest, String param) throws BadRequestException {
+        Boolean booleanVal = null;
+        String value = webRequest.queryParams(param);
+
+        if (value != null && !value.isEmpty()) {
+            booleanVal = Boolean.valueOf(value);
+        }
+
+        return booleanVal;
     }
 }

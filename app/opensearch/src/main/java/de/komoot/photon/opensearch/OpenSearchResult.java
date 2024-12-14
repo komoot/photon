@@ -11,14 +11,16 @@ public class OpenSearchResult implements PhotonResult {
     private double score = 0.0;
     private final double[] extent;
     private final double[] coordinates;
+    private final double[][] geometry;
     private final Map<String, Object> infos;
     private final Map<String, Map<String, String>> localeTags;
 
-    OpenSearchResult(double[] extent, double[] coordinates, Map<String, Object> infos, Map<String, Map<String, String>> localeTags) {
+    OpenSearchResult(double[] extent, double[] coordinates, Map<String, Object> infos, Map<String, Map<String, String>> localeTags, double[][] geometry) {
         this.extent = extent;
         this.coordinates = coordinates;
         this.infos = infos;
         this.localeTags = localeTags;
+        this.geometry = geometry;
     }
 
     public OpenSearchResult setScore(double score) {
@@ -59,6 +61,10 @@ public class OpenSearchResult implements PhotonResult {
     @Override
     public double[] getCoordinates() {
         return coordinates;
+    }
+
+    public double[][] getGeometry() {
+        return geometry;
     }
 
     @Override
