@@ -3,6 +3,7 @@ package de.komoot.photon.opensearch;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -28,6 +29,7 @@ public class OpenSearchResultDeserializer extends StdDeserializer<OpenSearchResu
 
         final Map<String, Object> tags = new HashMap<>();
         final Map<String, Map<String, String>> localeTags = new HashMap<>();
+        double[][] geometry = extractGeometry((ObjectNode) node.get("geometry"));
 
         var fields = node.fields();
         while (fields.hasNext()) {
@@ -55,7 +57,7 @@ public class OpenSearchResultDeserializer extends StdDeserializer<OpenSearchResu
             }
         }
 
-        return new OpenSearchResult(extent, coordinates, tags, localeTags);
+        return new OpenSearchResult(extent, coordinates, tags, localeTags, geometry);
     }
 
     private double[] extractExtent(ObjectNode node) {
@@ -79,4 +81,17 @@ public class OpenSearchResultDeserializer extends StdDeserializer<OpenSearchResu
         return new double[]{node.get(Constants.LON).doubleValue(), node.get(Constants.LAT).doubleValue()};
     }
 
+    private double[][] extractGeometry(ObjectNode node) {
+        if (node == null) {
+            return PhotonResult.INVALID_GEOMETRY;
+        }
+
+        double[][] coordinates = new double[node.get("coordinates").get(0).size()][];
+        for(int i=0; i<node.get("coordinates").get(0).size(); i++) {
+            double[] coordinate = new double[] {node.get("coordinates").get(0).get(i).get(0).doubleValue(), node.get("coordinates").get(0).get(i).get(1).doubleValue()};
+            coordinates[i] = coordinate;
+        }
+
+        return coordinates;
+    }
 }

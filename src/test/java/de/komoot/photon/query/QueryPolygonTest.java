@@ -10,13 +10,10 @@ import org.locationtech.jts.io.ParseException;
 import org.locationtech.jts.io.WKTReader;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
@@ -53,6 +50,12 @@ class QueryPolygonTest extends ESBaseTester {
         instance.add(createDoc("name", "Muffle Flu"), 0);
         instance.finish();
         refresh();
-        assertNotNull(search("muffle flu").get(0).get("geometry"));
+        List<PhotonResult> s = search("muffle flu");
+
+        if (s.get(0).getClass().getName().equals("de.komoot.photon.opensearch.OpenSearchResult")) {
+            assertNotNull(s.get(0).getGeometry());
+        } else {
+            assertNotNull(s.get(0).get("geometry"));
+        }
     }
 }

@@ -28,11 +28,19 @@ public class GeocodeJsonFormatter implements ResultFormatter {
         final JSONArray features = new JSONArray(results.size());
 
         for (PhotonResult result : results) {
-            if (useGeometryColumn && result.get("geometry") != null) {
-                features.put(new JSONObject()
-                        .put("type", "Feature")
-                        .put("properties", getResultProperties(result))
-                        .put("geometry", result.get("geometry")));
+            if (useGeometryColumn && (result.get("geometry") != null || result.getGeometry() != null)) {
+                if (result.get("geometry") != null) {
+                    features.put(new JSONObject()
+                            .put("type", "Feature")
+                            .put("properties", getResultProperties(result))
+                            .put("geometry", result.get("geometry")));
+                } else {
+                    var geom = new JSONObject().put("type", "Polygon").put("coordinates", result.getGeometry());
+                    features.put(new JSONObject()
+                            .put("type", "Feature")
+                            .put("properties", getResultProperties(result))
+                            .put("geometry", geom));
+                }
             } else {
                 final double[] coordinates = result.getCoordinates();
 

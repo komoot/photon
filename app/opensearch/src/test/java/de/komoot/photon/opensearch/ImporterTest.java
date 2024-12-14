@@ -6,6 +6,8 @@ import de.komoot.photon.PhotonDoc;
 import de.komoot.photon.searcher.PhotonResult;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.locationtech.jts.io.ParseException;
+import org.locationtech.jts.io.WKTReader;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -18,14 +20,14 @@ class ImporterTest extends ESBaseTester {
 
     @BeforeEach
     public void setUp() throws IOException {
-        setUpES();
+        setUpESWithPolygons();
     }
 
     @Test
-    void testAddSimpleDoc() {
+    void testAddSimpleDoc() throws ParseException {
         Importer instance = makeImporterWithExtra("");
 
-        instance.add(new PhotonDoc(1234, "N", 1000, "place", "city")
+        instance.add(new PhotonDoc(1234, "N", 1000, "place", "city", new WKTReader().read("POLYGON ((1 1, 1 2, 2 1, 1 1))"))
                 .extraTags(Collections.singletonMap("maxspeed", "100")), 0);
         instance.finish();
 

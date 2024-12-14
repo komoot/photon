@@ -6,6 +6,7 @@ import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Point;
 import de.komoot.photon.nominatim.model.AddressType;
 import org.locationtech.jts.geom.Polygon;
+import org.locationtech.spatial4j.shape.ShapeFactory;
 import org.slf4j.Logger;
 
 import java.util.*;
@@ -357,6 +358,7 @@ public class PhotonDoc {
     public Point getCentroid() {
         return this.centroid;
     }
+
     public Geometry getGeometry() {
         return this.geometry;
     }

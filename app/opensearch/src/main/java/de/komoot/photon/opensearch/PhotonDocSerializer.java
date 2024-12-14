@@ -6,10 +6,12 @@ import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import de.komoot.photon.Constants;
 import de.komoot.photon.PhotonDoc;
 import de.komoot.photon.Utils;
+import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.io.geojson.GeoJsonWriter;
 
 import java.io.IOException;
+import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -50,8 +52,37 @@ public class PhotonDocSerializer extends StdSerializer<PhotonDoc> {
         }
 
         if (value.getGeometry() != null) {
-            GeoJsonWriter g = new GeoJsonWriter();
-            gen.writeObjectField("geometry", g.write(value.getGeometry()));
+//            gen.writeStringField("geometry", g.write(value.getGeometry()));
+
+            gen.writeObjectFieldStart("geometry");
+                gen.writeStringField("type", "Polygon");
+
+            gen.writeArrayFieldStart("coordinates");
+
+            gen.writeStartArray();
+
+            for (Coordinate c: value.getGeometry().getCoordinates()) {
+                gen.writeStartArray();
+                gen.writeNumber(c.x);
+                gen.writeNumber(c.y);
+                gen.writeEndArray();
+            }
+            gen.writeEndArray();
+
+//            gen.writeStartArray();
+//            gen.writeNumber(bbox.getMaxX());
+//            gen.writeNumber(bbox.getMinY());
+//            gen.writeEndArray();
+
+            gen.writeEndArray();
+            gen.writeEndObject();
+
+//                gen.writeObjectFieldStart("crs");
+//                gen.writeStringField("type", "name");
+//                gen.writeObjectFieldStart("properties");
+//                gen.writeStringField("name", "EPSG:0");
+//                gen.writeEndObject();
+//            gen.writeEndObject();
         }
 
         if (value.getHouseNumber() != null) {

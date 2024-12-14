@@ -9,11 +9,14 @@ import org.junit.jupiter.api.io.TempDir;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.PrecisionModel;
+import org.locationtech.jts.io.ParseException;
+import org.locationtech.jts.io.WKTReader;
 
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.Date;
+
 
 public class ESBaseTester {
     public static final String TEST_CLUSTER_NAME = "photon-test";
@@ -24,11 +27,12 @@ public class ESBaseTester {
 
     private OpenSearchTestServer server;
 
-    protected PhotonDoc createDoc(double lon, double lat, int id, int osmId, String key, String value) {
+    protected PhotonDoc createDoc(double lon, double lat, int id, int osmId, String key, String value) throws ParseException {
         final var location = FACTORY.createPoint(new Coordinate(lon, lat));
         return new PhotonDoc(id, "W", osmId, key, value)
                 .names(Collections.singletonMap("name", "berlin"))
-                .centroid(location);
+                .centroid(location)
+                .geometry(new WKTReader().read("POLYGON ((6.4440619 52.1969454, 6.4441094 52.1969158, 6.4441408 52.1969347, 6.4441138 52.1969516, 6.4440933 52.1969643, 6.4440619 52.1969454))"));
     }
 
     @AfterEach
