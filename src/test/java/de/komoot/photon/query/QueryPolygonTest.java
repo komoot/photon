@@ -6,6 +6,8 @@ import de.komoot.photon.PhotonDoc;
 import de.komoot.photon.searcher.PhotonResult;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.io.ParseException;
 import org.locationtech.jts.io.WKTReader;
 
@@ -36,7 +38,7 @@ class QueryPolygonTest extends ESBaseTester {
         }
 
         ++testDocId;
-        return new PhotonDoc(testDocId, "N", testDocId, "place", "city", new WKTReader().read("POLYGON ((1 1, 1 2, 2 1, 1 1))")).names(nameMap);
+        return new PhotonDoc(testDocId, "N", testDocId, "place", "city").names(nameMap);
     }
 
     private List<PhotonResult> search(String query) {
@@ -47,7 +49,26 @@ class QueryPolygonTest extends ESBaseTester {
     @Test
     void testSearchGetPolygon() throws IOException, ParseException {
         Importer instance = makeImporter();
-        instance.add(createDoc("name", "Muffle Flu"), 0);
+        Point location = FACTORY.createPoint(new Coordinate(1.0, 2.34));
+        PhotonDoc doc = createDoc("name", "Muffle Flu").geometry(new WKTReader().read("POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))")).centroid(location);
+        instance.add(doc, 0);
+        instance.finish();
+        refresh();
+        List<PhotonResult> s = search("muffle flu");
+
+        if (s.get(0).getClass().getName().equals("de.komoot.photon.opensearch.OpenSearchResult")) {
+            assertNotNull(s.get(0).getGeometry());
+        } else {
+            assertNotNull(s.get(0).get("geometry"));
+        }
+    }
+
+    @Test
+    void testSearchGetLineString() throws IOException, ParseException {
+        Importer instance = makeImporter();
+        Point location = FACTORY.createPoint(new Coordinate(1.0, 2.34));
+        PhotonDoc doc = createDoc("name", "Muffle Flu").geometry(new WKTReader().read("LINESTRING (30 10, 10 30, 40 40)")).centroid(location);
+        instance.add(doc, 0);
         instance.finish();
         refresh();
         List<PhotonResult> s = search("muffle flu");

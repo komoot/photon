@@ -26,6 +26,8 @@ public interface PhotonResult {
 
     double[] getCoordinates();
 
+    GeometryType getGeometryType();
+
     double[][] getGeometry();
 
     double[] getExtent();

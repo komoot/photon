@@ -52,14 +52,14 @@ public class PhotonDocSerializer extends StdSerializer<PhotonDoc> {
         }
 
         if (value.getGeometry() != null) {
-//            gen.writeStringField("geometry", g.write(value.getGeometry()));
-
             gen.writeObjectFieldStart("geometry");
-                gen.writeStringField("type", "Polygon");
+            gen.writeStringField("type", value.getGeometry().getGeometryType());
 
             gen.writeArrayFieldStart("coordinates");
 
-            gen.writeStartArray();
+            if (value.getGeometry().getGeometryType().equals("Polygon")) {
+                gen.writeStartArray();
+            }
 
             for (Coordinate c: value.getGeometry().getCoordinates()) {
                 gen.writeStartArray();
@@ -67,22 +67,12 @@ public class PhotonDocSerializer extends StdSerializer<PhotonDoc> {
                 gen.writeNumber(c.y);
                 gen.writeEndArray();
             }
-            gen.writeEndArray();
+            if (value.getGeometry().getGeometryType().equals("Polygon")) {
+                gen.writeEndArray();
+            }
 
-//            gen.writeStartArray();
-//            gen.writeNumber(bbox.getMaxX());
-//            gen.writeNumber(bbox.getMinY());
-//            gen.writeEndArray();
-
-            gen.writeEndArray();
-            gen.writeEndObject();
-
-//                gen.writeObjectFieldStart("crs");
-//                gen.writeStringField("type", "name");
-//                gen.writeObjectFieldStart("properties");
-//                gen.writeStringField("name", "EPSG:0");
-//                gen.writeEndObject();
-//            gen.writeEndObject();
+            gen.writeEndArray(); // end 'coordinates'
+            gen.writeEndObject(); // end 'geometry'
         }
 
         if (value.getHouseNumber() != null) {

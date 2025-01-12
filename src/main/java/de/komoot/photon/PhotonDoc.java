@@ -5,8 +5,6 @@ import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Point;
 import de.komoot.photon.nominatim.model.AddressType;
-import org.locationtech.jts.geom.Polygon;
-import org.locationtech.spatial4j.shape.ShapeFactory;
 import org.slf4j.Logger;
 
 import java.util.*;

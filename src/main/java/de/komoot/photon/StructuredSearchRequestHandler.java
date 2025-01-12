@@ -22,7 +22,7 @@ public class StructuredSearchRequestHandler extends RouteImpl {
     StructuredSearchRequestHandler(String path, StructuredSearchHandler dbHandler, String[] languages, String defaultLanguage, int maxResults, boolean supportPolygons) {
         super(path);
         List<String> supportedLanguages = Arrays.asList(languages);
-        this.photonRequestFactory = new PhotonRequestFactory(supportedLanguages, defaultLanguage, maxResults);
+        this.photonRequestFactory = new PhotonRequestFactory(supportedLanguages, defaultLanguage, maxResults, supportPolygons);
         this.requestHandler = dbHandler;
         this.supportPolygons = supportPolygons;
     }
@@ -38,7 +38,7 @@ public class StructuredSearchRequestHandler extends RouteImpl {
             throw halt(e.getHttpStatus(), json.toString());
         }
 
-        if (!supportPolygons && (photonRequest.isPolygonRequest() && photonRequest.getReturnPolygon())) {
+        if (!supportPolygons && photonRequest.getReturnPolygon()) {
             JSONObject json = new JSONObject();
             json.put("message", "You're requesting a polygon, but polygons are not imported!");
             throw halt(400, json.toString());

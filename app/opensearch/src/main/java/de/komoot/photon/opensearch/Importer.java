@@ -4,6 +4,8 @@ import de.komoot.photon.PhotonDoc;
 import org.opensearch.client.opensearch.OpenSearchClient;
 import org.opensearch.client.opensearch._types.Time;
 import org.opensearch.client.opensearch.core.BulkRequest;
+import org.opensearch.client.opensearch.core.bulk.BulkOperation;
+import org.opensearch.client.opensearch.core.bulk.BulkResponseItem;
 import org.slf4j.Logger;
 
 import java.io.IOException;

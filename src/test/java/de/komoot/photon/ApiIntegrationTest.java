@@ -7,12 +7,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.locationtech.jts.io.WKTReader;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Collections;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -26,10 +28,11 @@ class ApiIntegrationTest extends ESBaseTester {
 
     @BeforeEach
     void setUp() throws Exception {
-        setUpES();
+        setUpESWithPolygons();
         Importer instance = makeImporter();
         instance.add(createDoc(13.38886, 52.51704, 1000, 1000, "place", "city").importance(0.6), 0);
         instance.add(createDoc(13.39026, 52.54714, 1001, 1001, "place", "town").importance(0.3), 0);
+        instance.add(createDoc(13.39026, 52.54714, 1002, 1002, "place", "city").importance(0.3).names(Collections.singletonMap("name", "linestring")).geometry(new WKTReader().read("LINESTRING (30 10, 10 30, 40 40)")), 0);
         instance.finish();
         refresh();
     }
@@ -166,5 +169,27 @@ class ApiIntegrationTest extends ESBaseTester {
         assertEquals("place", properties.getString("osm_key"));
         assertEquals("city", properties.getString("osm_value"));
         assertEquals("berlin", properties.getString("name"));
+    }
+
+    @Test
+    void testSearchAndGetLineString() throws Exception {
+        App.main(new String[]{"-cluster", TEST_CLUSTER_NAME, "-listen-port", Integer.toString(LISTEN_PORT), "-transport-addresses", "127.0.0.1"});
+        awaitInitialization();
+        HttpURLConnection connection = (HttpURLConnection) new URL("http://127.0.0.1:" + port() + "/api?q=linestring&limit=1").openConnection();
+        JSONObject json = new JSONObject(
+                new BufferedReader(new InputStreamReader(connection.getInputStream())).lines().collect(Collectors.joining("\n")));
+        JSONArray features = json.getJSONArray("features");
+        assertEquals(1, features.length());
+        JSONObject feature = features.getJSONObject(0);
+
+        JSONObject geometry = feature.getJSONObject("geometry");
+        assertEquals("LineString", geometry.getString("type"));
+        assertEquals("[[30,10],[10,30],[40,40]]", geometry.getJSONArray("coordinates").toString());
+
+        JSONObject properties = feature.getJSONObject("properties");
+        assertEquals("W", properties.getString("osm_type"));
+        assertEquals("place", properties.getString("osm_key"));
+        assertEquals("city", properties.getString("osm_value"));
+        assertEquals("linestring", properties.getString("name"));
     }
 }

@@ -35,7 +35,7 @@ public class GeocodeJsonFormatter implements ResultFormatter {
                             .put("properties", getResultProperties(result))
                             .put("geometry", result.get("geometry")));
                 } else {
-                    var geom = new JSONObject().put("type", "Polygon").put("coordinates", result.getGeometry());
+                    var geom = new JSONObject().put("type", result.getGeometryType().getName()).put("coordinates", result.getGeometry());
                     features.put(new JSONObject()
                             .put("type", "Feature")
                             .put("properties", getResultProperties(result))

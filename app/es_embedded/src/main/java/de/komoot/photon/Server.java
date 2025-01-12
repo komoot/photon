@@ -290,7 +290,7 @@ public class Server {
         return new DatabaseProperties(langString == null ? null : langString.split(","),
                 importDateString == null ? null : Date.from(Instant.parse(importDateString)),
                 false,
-                supportPolygons == null ? null : Boolean.parseBoolean(supportPolygons));
+                Boolean.parseBoolean(supportPolygons));
     }
 
     public Importer createImporter(String[] languages, String[] extraTags) {

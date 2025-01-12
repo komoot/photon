@@ -2,7 +2,6 @@ package de.komoot.photon;
 
 import de.komoot.photon.opensearch.Importer;
 import de.komoot.photon.opensearch.OpenSearchTestServer;
-import de.komoot.photon.opensearch.Updater;
 import de.komoot.photon.searcher.PhotonResult;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.io.TempDir;
@@ -49,11 +48,11 @@ public class ESBaseTester {
     }
 
     public void setUpES() throws IOException {
-        setUpES(dataDirectory, false,"en");
+        setUpES(dataDirectory, false, "en");
     }
 
     public void setUpESWithPolygons() throws IOException {
-        setUpES(dataDirectory, true,"en");
+        setUpES(dataDirectory, true, "en");
     }
 
     public void setUpES(Path testDirectory, boolean supportPolygons, String... languages) throws IOException {

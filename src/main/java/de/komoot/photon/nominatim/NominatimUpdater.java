@@ -78,8 +78,8 @@ public class NominatimUpdater extends NominatimConnector {
     private boolean useGeometryColumn;
 
 
-    public NominatimUpdater(String host, int port, String database, String username, String passwordboolean, boolean useGeometryColumn) {
-        this(host, port, database, username, passwordboolean, new PostgisDataAdapter(), useGeometryColumn);
+    public NominatimUpdater(String host, int port, String database, String username, String password, boolean useGeometryColumn) {
+        this(host, port, database, username, password, new PostgisDataAdapter(), useGeometryColumn);
     }
 
     public NominatimUpdater(String host, int port, String database, String username, String password, DBDataAdapter dataAdapter, boolean useGeometryColumn) {
