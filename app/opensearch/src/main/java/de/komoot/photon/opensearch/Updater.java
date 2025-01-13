@@ -25,7 +25,10 @@ public class Updater implements de.komoot.photon.Updater {
                         .index(PhotonIndex.NAME)
                         .id(doc.getUid(objectId))
                         .document(doc)));
-        ++todoDocuments;
+
+        if (++todoDocuments > 10000) {
+            updateDocuments();
+        }
     }
 
     @Override
@@ -34,7 +37,10 @@ public class Updater implements de.komoot.photon.Updater {
                 .delete(d -> d
                         .index(PhotonIndex.NAME)
                         .id(PhotonDoc.makeUid(docId, objectId))));
-        ++todoDocuments;
+
+        if (++todoDocuments > 10000) {
+            updateDocuments();
+        }
     }
 
     @Override
@@ -58,21 +64,19 @@ public class Updater implements de.komoot.photon.Updater {
     }
 
     private void updateDocuments() {
-        if (todoDocuments == 0) {
-            return;
-        }
+        if (todoDocuments > 0) {
+            try {
+                var response = client.bulk(bulkRequest.build());
 
-        try {
-            var response = client.bulk(bulkRequest.build());
-
-            if (response.errors()) {
-                LOGGER.error("Errors during bulk update.");
+                if (response.errors()) {
+                    LOGGER.error("Errors during bulk update.");
+                }
+            } catch (IOException e) {
+                LOGGER.error("IO error during bulk update", e);
             }
-        } catch (IOException e) {
-            LOGGER.error("IO error during bulk update", e);
-        }
 
-        bulkRequest = new BulkRequest.Builder();
-        todoDocuments = 0;
+            bulkRequest = new BulkRequest.Builder();
+            todoDocuments = 0;
+        }
     }
 }
