@@ -4,6 +4,7 @@ import de.komoot.photon.searcher.StructuredSearchHandler;
 import de.komoot.photon.searcher.ReverseHandler;
 import de.komoot.photon.searcher.SearchHandler;
 import de.komoot.photon.elasticsearch.*;
+
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.TransportClient;
@@ -13,6 +14,7 @@ import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
 import org.elasticsearch.index.IndexNotFoundException;
 import org.elasticsearch.node.InternalSettingsPreparer;
+import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.node.Node;
 import org.elasticsearch.node.NodeValidationException;
 import org.elasticsearch.plugins.Plugin;
@@ -123,11 +125,11 @@ public class Server {
     }
 
     public void waitForReady() {
-        esClient.admin().cluster().prepareHealth().setWaitForYellowStatus().get();
+        esClient.admin().cluster().prepareHealth().setWaitForYellowStatus().setTimeout(TimeValue.timeValueMinutes(5)).get();
     }
 
     public void refreshIndexes() {
-        esClient.admin().cluster().prepareHealth().setWaitForYellowStatus().get();
+        esClient.admin().cluster().prepareHealth().setWaitForYellowStatus().setTimeout(TimeValue.timeValueMinutes(5)).get();
         esClient.admin().indices().prepareRefresh(PhotonIndex.NAME).get();
     }
 
