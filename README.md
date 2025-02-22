@@ -70,7 +70,11 @@ experimental. To build the OpenSearch version run:
 The final jar can be found in `target/photon-opensearch-<VERSION>.jar`.
 
 Indexes produced by this version are not compatible with the ElasticSearch
-version. There are no prebuilt indexes available. You need to create your
+version. The [experimental extracts](https://download1.graphhopper.com/public/experimental/)
+from the Graphhopper download server are built from the OpenSearch version.
+They are currently also usable with the latest photon-opensearch release.
+The extracts only contain the basic database. If you want extended features
+like 'structured search' which needs extra indexes, you need to create your
 own export from a Nominatim database. See 'Customized Search Data' below.
 
 ### Usage
