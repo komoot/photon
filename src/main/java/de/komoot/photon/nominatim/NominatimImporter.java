@@ -101,7 +101,7 @@ public class NominatimImporter extends NominatimConnector {
                 "       parent.rank_address as parent_rank_address, parent.name as parent_name, ";
 
         if (useGeometryColumn) {
-            query += "p.geometry, ";
+            query += "p.geometry as geometry, ";
         }
         template.query(
                  query +

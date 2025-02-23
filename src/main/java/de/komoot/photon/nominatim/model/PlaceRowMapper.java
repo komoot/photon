@@ -43,7 +43,11 @@ public class PlaceRowMapper implements RowMapper<PhotonDoc> {
                 .postcode(rs.getString("postcode"));
 
         if (useGeometryColumn) {
-            doc.geometry(dbutils.extractGeometry(rs, "geometry"));
+            try {
+                doc.geometry(dbutils.extractGeometry(rs, "geometry"));
+            } catch (IllegalArgumentException e) {
+                System.out.println("Could not get Geometry: " + e);
+            }
         }
 
         double importance = rs.getDouble("importance");

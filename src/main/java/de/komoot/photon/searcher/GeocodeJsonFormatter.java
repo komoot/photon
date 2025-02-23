@@ -34,12 +34,15 @@ public class GeocodeJsonFormatter implements ResultFormatter {
                             .put("type", "Feature")
                             .put("properties", getResultProperties(result))
                             .put("geometry", result.get("geometry")));
-                } else {
-                    var geom = new JSONObject().put("type", result.getGeometryType().getName()).put("coordinates", result.getGeometry());
+                }
+                else {
+                    // We need to un-escape the JSON String first
+                    JSONObject jsonObject = new JSONObject(result.getGeometry());
+
                     features.put(new JSONObject()
                             .put("type", "Feature")
                             .put("properties", getResultProperties(result))
-                            .put("geometry", geom));
+                            .put("geometry", jsonObject));
                 }
             } else {
                 final double[] coordinates = result.getCoordinates();

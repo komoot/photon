@@ -27,7 +27,7 @@ class ImporterTest extends ESBaseTester {
     void testAddSimpleDoc() throws ParseException {
         Importer instance = makeImporterWithExtra("");
 
-        instance.add(new PhotonDoc(1234, "N", 1000, "place", "city", new WKTReader().read("POLYGON ((1 1, 1 2, 2 1, 1 1))"))
+        instance.add(new PhotonDoc(1234, "N", 1000, "place", "city", new WKTReader().read("MULTIPOLYGON (((6.111933 51.2659309, 6.1119417 51.2659247, 6.1119554 51.2659249, 6.1119868 51.2659432, 6.111964 51.2659591, 6.1119333 51.2659391, 6.111933 51.2659309)))"))
                 .extraTags(Collections.singletonMap("maxspeed", "100")), 0);
         instance.finish();
 

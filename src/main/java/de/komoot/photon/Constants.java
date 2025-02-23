@@ -24,4 +24,5 @@ public class Constants {
     public static final String OSM_VALUE = "osm_value";
     public static final String OBJECT_TYPE = "type";
     public static final String CLASSIFICATION = "classification";
+    public static final String GEOMETRY = "geometry";
 }

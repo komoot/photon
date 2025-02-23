@@ -360,4 +360,29 @@ public class PhotonDoc {
     public Geometry getGeometry() {
         return this.geometry;
     }
+
+    @Override
+    public String toString() {
+        return "PhotonDoc{" +
+                "placeId=" + placeId +
+                ", osmType='" + osmType + '\'' +
+                ", osmId=" + osmId +
+                ", tagKey='" + tagKey + '\'' +
+                ", tagValue='" + tagValue + '\'' +
+                ", name=" + name +
+                ", postcode='" + postcode + '\'' +
+                ", extratags=" + extratags +
+                ", bbox=" + bbox +
+                ", parentPlaceId=" + parentPlaceId +
+                ", importance=" + importance +
+                ", countryCode='" + countryCode + '\'' +
+                ", linkedPlaceId=" + linkedPlaceId +
+                ", rankAddress=" + rankAddress +
+                ", addressParts=" + addressParts +
+                ", context=" + context +
+                ", houseNumber='" + houseNumber + '\'' +
+                ", centroid=" + centroid +
+                ", geometry=" + geometry +
+                '}';
+    }
 }

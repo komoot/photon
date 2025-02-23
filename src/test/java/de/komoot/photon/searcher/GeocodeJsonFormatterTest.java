@@ -51,7 +51,7 @@ class GeocodeJsonFormatterTest {
         for (int i = 0; i < features.length(); i++) {
             JSONObject feature = features.getJSONObject(i);
             assertEquals("Feature", feature.getString("type"));
-            assertEquals("Polygon", feature.getJSONObject("geometry").getString("type"));
+            assertEquals("MultiPolygon", feature.getJSONObject("geometry").getString("type"));
             assertEquals("leisure", feature.getJSONObject("properties").getString(Constants.OSM_KEY));
             assertEquals("park", feature.getJSONObject("properties").getString(Constants.OSM_VALUE));
         }
@@ -76,9 +76,7 @@ class GeocodeJsonFormatterTest {
                 .putLocalized(Constants.NAME, "en", name)
                 .put(Constants.OSM_KEY, osmKey)
                 .put(Constants.OSM_VALUE, osmValue)
-                .put("geometry", new JSONObject()
-                        .put("type", "Polygon")
-                        .put("coordinates", new double[][]{{100.0, 0.0}, {101.0, 0.0}, {101.0, 1.0}, {100.0, 1.0}, {100.0, 0.0}}));
+                .put(Constants.GEOMETRY, new JSONObject("{\"type\":\"MultiPolygon\",\"coordinates\":[[[[-100.0,40.0],[-100.0,45.0],[-90.0,45.0],[-90.0,40.0],[-100.0,40.0]]],[[[-80.0,35.0],[-80.0,40.0],[-70.0,40.0],[-70.0,35.0],[-80.0,35.0]]]]}"));
     }
 
 }

@@ -1,6 +1,5 @@
 package de.komoot.photon.opensearch;
 
-import de.komoot.photon.searcher.GeometryType;
 import de.komoot.photon.searcher.PhotonResult;
 import org.json.JSONObject;
 
@@ -12,18 +11,16 @@ public class OpenSearchResult implements PhotonResult {
     private double score = 0.0;
     private final double[] extent;
     private final double[] coordinates;
-    private final double[][] geometry;
-    private final GeometryType geometryType;
+    private final String geometry;
     private final Map<String, Object> infos;
     private final Map<String, Map<String, String>> localeTags;
 
-    OpenSearchResult(double[] extent, double[] coordinates, Map<String, Object> infos, Map<String, Map<String, String>> localeTags, double[][] geometry, GeometryType geometryType) {
+    OpenSearchResult(double[] extent, double[] coordinates, Map<String, Object> infos, Map<String, Map<String, String>> localeTags, String geometry) {
         this.extent = extent;
         this.coordinates = coordinates;
         this.infos = infos;
         this.localeTags = localeTags;
         this.geometry = geometry;
-        this.geometryType = geometryType;
     }
 
     public OpenSearchResult setScore(double score) {
@@ -66,12 +63,7 @@ public class OpenSearchResult implements PhotonResult {
         return coordinates;
     }
 
-    @Override
-    public GeometryType getGeometryType() {
-        return geometryType;
-    }
-
-    public double[][] getGeometry() {
+    public String getGeometry() {
         return geometry;
     }
 

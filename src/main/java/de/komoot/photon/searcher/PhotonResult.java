@@ -9,7 +9,6 @@ import java.util.Map;
  */
 public interface PhotonResult {
     final double[] INVALID_COORDINATES = new double[]{0, 0};
-    final double[][] INVALID_GEOMETRY = new double[][]{{0, 0}};
 
     /**
      * Get the value for the given field.
@@ -26,9 +25,7 @@ public interface PhotonResult {
 
     double[] getCoordinates();
 
-    GeometryType getGeometryType();
-
-    double[][] getGeometry();
+    String getGeometry();
 
     double[] getExtent();
 

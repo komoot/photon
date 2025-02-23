@@ -6,12 +6,10 @@ import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import de.komoot.photon.Constants;
 import de.komoot.photon.PhotonDoc;
 import de.komoot.photon.Utils;
-import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.io.geojson.GeoJsonWriter;
 
 import java.io.IOException;
-import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -51,28 +49,13 @@ public class PhotonDocSerializer extends StdSerializer<PhotonDoc> {
             gen.writeEndObject();
         }
 
-        if (value.getGeometry() != null) {
-            gen.writeObjectFieldStart("geometry");
-            gen.writeStringField("type", value.getGeometry().getGeometryType());
+        if (value.getGeometry() != null && !value.getGeometry().getGeometryType().equals("Point")) {
+            // Convert JTS Geometry to GeoJSON
+            GeoJsonWriter geoJsonWriter = new GeoJsonWriter();
+            String geoJson = geoJsonWriter.write(value.getGeometry());
 
-            gen.writeArrayFieldStart("coordinates");
-
-            if (value.getGeometry().getGeometryType().equals("Polygon")) {
-                gen.writeStartArray();
-            }
-
-            for (Coordinate c: value.getGeometry().getCoordinates()) {
-                gen.writeStartArray();
-                gen.writeNumber(c.x);
-                gen.writeNumber(c.y);
-                gen.writeEndArray();
-            }
-            if (value.getGeometry().getGeometryType().equals("Polygon")) {
-                gen.writeEndArray();
-            }
-
-            gen.writeEndArray(); // end 'coordinates'
-            gen.writeEndObject(); // end 'geometry'
+            gen.writeFieldName("geometry");
+            gen.writeRawValue(geoJson);
         }
 
         if (value.getHouseNumber() != null) {
@@ -109,7 +92,7 @@ public class PhotonDocSerializer extends StdSerializer<PhotonDoc> {
         gen.writeEndObject();
     }
 
-        private void writeName(JsonGenerator gen, PhotonDoc doc, String[] languages) throws IOException {
+    private void writeName(JsonGenerator gen, PhotonDoc doc, String[] languages) throws IOException {
         Map<String, String> fNames = new HashMap<>();
 
         doc.copyName(fNames, "default", "name");

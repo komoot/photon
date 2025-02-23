@@ -1,6 +1,5 @@
 package de.komoot.photon.elasticsearch;
 
-import de.komoot.photon.searcher.GeometryType;
 import de.komoot.photon.searcher.PhotonResult;
 import org.apache.commons.lang3.NotImplementedException;
 import org.elasticsearch.action.get.GetResponse;
@@ -35,12 +34,7 @@ public class ElasticGetIdResult implements PhotonResult {
         throw new NotImplementedException();
     }
 
-    @Override
-    public GeometryType getGeometryType() {
-        throw new NotImplementedException();
-    }
-
-    public double[][] getGeometry() {
+    public String getGeometry() {
         throw new NotImplementedException();
     }
 

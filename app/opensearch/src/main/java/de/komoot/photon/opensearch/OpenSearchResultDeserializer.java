@@ -7,7 +7,6 @@ import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import de.komoot.photon.Constants;
-import de.komoot.photon.searcher.GeometryType;
 import de.komoot.photon.searcher.PhotonResult;
 
 import java.io.IOException;
@@ -30,17 +29,9 @@ public class OpenSearchResultDeserializer extends StdDeserializer<OpenSearchResu
         final Map<String, Object> tags = new HashMap<>();
         final Map<String, Map<String, String>> localeTags = new HashMap<>();
 
-        double[][] geometry = new double[0][];
-        GeometryType geometryType = GeometryType.UNKNOWN;
-
-        if (node.get("geometry") != null && node.get("geometry").get("type") != null) {
-            if (node.get("geometry").get("type").asText().equals("Polygon")) {
-                geometry = extractPolygon((ObjectNode) node.get("geometry"));
-                geometryType = GeometryType.POLYGON;
-            } else if (node.get("geometry").get("type").asText().equals("LineString")) {
-                geometry = extractLineString((ObjectNode) node.get("geometry"));
-                geometryType = GeometryType.LINESTRING;
-            }
+        String geometry = null;
+        if (node.get("geometry") != null) {
+            geometry = node.get("geometry").toString();
         }
 
         var fields = node.fields();
@@ -69,7 +60,7 @@ public class OpenSearchResultDeserializer extends StdDeserializer<OpenSearchResu
             }
         }
 
-        return new OpenSearchResult(extent, coordinates, tags, localeTags, geometry, geometryType);
+        return new OpenSearchResult(extent, coordinates, tags, localeTags, geometry);
     }
 
     private double[] extractExtent(ObjectNode node) {
@@ -91,33 +82,5 @@ public class OpenSearchResultDeserializer extends StdDeserializer<OpenSearchResu
         }
 
         return new double[]{node.get(Constants.LON).doubleValue(), node.get(Constants.LAT).doubleValue()};
-    }
-
-    private double[][] extractPolygon(ObjectNode node) {
-        if (node == null) {
-            return PhotonResult.INVALID_GEOMETRY;
-        }
-
-        double[][] coordinates = new double[node.get("coordinates").get(0).size()][];
-        for(int i=0; i<node.get("coordinates").get(0).size(); i++) {
-            double[] coordinate = new double[] {node.get("coordinates").get(0).get(i).get(0).doubleValue(), node.get("coordinates").get(0).get(i).get(1).doubleValue()};
-            coordinates[i] = coordinate;
-        }
-
-        return coordinates;
-    }
-
-    private double[][] extractLineString(ObjectNode node) {
-        if (node == null) {
-            return PhotonResult.INVALID_GEOMETRY;
-        }
-
-        double[][] coordinates = new double[node.get("coordinates").size()][];
-        for(int i=0; i<node.get("coordinates").size(); i++) {
-            double[] coordinate = new double[] {node.get("coordinates").get(i).get(0).doubleValue(), node.get("coordinates").get(i).get(1).doubleValue()};
-            coordinates[i] = coordinate;
-        }
-
-        return coordinates;
     }
 }

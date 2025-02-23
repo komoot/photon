@@ -1,7 +1,6 @@
 package de.komoot.photon.elasticsearch;
 
 import de.komoot.photon.Constants;
-import de.komoot.photon.searcher.GeometryType;
 import de.komoot.photon.searcher.PhotonResult;
 import org.elasticsearch.search.SearchHit;
 import org.slf4j.Logger;
@@ -68,18 +67,8 @@ public class ElasticResult implements PhotonResult {
     }
 
     @Override
-    public GeometryType getGeometryType() {
-        final Map<String, Object> geometry = (Map<String, Object>) result.getSource().get("geometry");
-
-        return GeometryType.valueOf((String) geometry.get("type"));
-    }
-
-    @Override
-    public double[][] getGeometry() {
-        final Map<String, Object> geometry = (Map<String, Object>) result.getSource().get("geometry");
-        final List<List<Double>> coords = (List<List<Double>>) geometry.get("coordinates");
-
-        return null;
+    public String getGeometry() {
+        return (String) result.getSource().get("geometry");
     }
 
     @Override

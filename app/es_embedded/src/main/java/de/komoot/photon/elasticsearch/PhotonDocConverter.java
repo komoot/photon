@@ -4,16 +4,12 @@ import de.komoot.photon.Constants;
 import de.komoot.photon.PhotonDoc;
 import de.komoot.photon.nominatim.model.AddressType;
 
-import org.elasticsearch.common.xcontent.NamedXContentRegistry;
-import org.elasticsearch.common.xcontent.XContentBuilder;
-import org.elasticsearch.common.xcontent.XContentFactory;
-import org.elasticsearch.common.xcontent.XContentParser;
+import org.elasticsearch.common.xcontent.*;
 import org.elasticsearch.common.xcontent.json.JsonXContent;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.io.geojson.GeoJsonWriter;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -46,7 +42,7 @@ public class PhotonDocConverter {
 
         if (doc.getGeometry() != null) {
             GeoJsonWriter g = new GeoJsonWriter();
-            
+
             XContentParser parser = JsonXContent
                 .jsonXContent
                 .createParser(NamedXContentRegistry.EMPTY, g.write(doc.getGeometry()));

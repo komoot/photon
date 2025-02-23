@@ -9,8 +9,7 @@ public class MockPhotonResult implements PhotonResult {
 
     final Map<String, Object> data = new HashMap<>();
     final double[] coordinates = new double[]{42, 21};
-    final double[][] geometry = {{6.4440619,52.1969454},{6.4441094,52.1969158},{6.4441408,52.1969347},{6.4441138,52.1969516},{6.4440933,52.1969643},{6.4440619,52.1969454}};
-    final GeometryType geometryType = GeometryType.POLYGON;
+    final String geometry = "{\"type\":\"MultiPolygon\",\"coordinates\":[[[[-100.0,40.0],[-100.0,45.0],[-90.0,45.0],[-90.0,40.0],[-100.0,40.0]]],[[[-80.0,35.0],[-80.0,40.0],[-70.0,40.0],[-70.0,35.0],[-80.0,35.0]]]]}";
     final double[] extent = new double[]{0, 1, 2, 3};
     final Map<String, String> localized = new HashMap<>();
 
@@ -35,13 +34,8 @@ public class MockPhotonResult implements PhotonResult {
     }
 
     @Override
-    public double[][] getGeometry() {
+    public String getGeometry() {
         return geometry;
-    }
-
-    @Override
-    public GeometryType getGeometryType() {
-        return geometryType;
     }
 
     @Override
