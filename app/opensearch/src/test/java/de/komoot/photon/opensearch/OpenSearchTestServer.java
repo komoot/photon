@@ -38,8 +38,7 @@ public class OpenSearchTestServer extends Server {
                 .basePath(instanceDir)
                 .clusterName(clusterName)
                 .numOfNode(1)
-                .baseHttpPort(9200)
-                .moduleTypes(OPENSEARCH_MODULES));
+                .baseHttpPort(9200));
 
         // wait for yellow status
         runner.ensureYellow();

@@ -15,10 +15,12 @@ public class GeocodeJsonFormatter implements ResultFormatter {
 
     private final boolean addDebugInfo;
     private final String language;
+    private final boolean useGeometryColumn;
 
-    public GeocodeJsonFormatter(boolean addDebugInfo, String language) {
+    public GeocodeJsonFormatter(boolean addDebugInfo, String language, boolean useGeometryColumn) {
         this.addDebugInfo = addDebugInfo;
         this.language = language;
+        this.useGeometryColumn = useGeometryColumn;
     }
 
     @Override
@@ -26,14 +28,32 @@ public class GeocodeJsonFormatter implements ResultFormatter {
         final JSONArray features = new JSONArray(results.size());
 
         for (PhotonResult result : results) {
-            final double[] coordinates = result.getCoordinates();
+            if (useGeometryColumn && (result.get("geometry") != null || result.getGeometry() != null)) {
+                if (result.get("geometry") != null) {
+                    features.put(new JSONObject()
+                            .put("type", "Feature")
+                            .put("properties", getResultProperties(result))
+                            .put("geometry", result.get("geometry")));
+                }
+                else {
+                    // We need to un-escape the JSON String first
+                    JSONObject jsonObject = new JSONObject(result.getGeometry());
 
-            features.put(new JSONObject()
+                    features.put(new JSONObject()
+                            .put("type", "Feature")
+                            .put("properties", getResultProperties(result))
+                            .put("geometry", jsonObject));
+                }
+            } else {
+                final double[] coordinates = result.getCoordinates();
+
+                features.put(new JSONObject()
                         .put("type", "Feature")
                         .put("properties", getResultProperties(result))
                         .put("geometry", new JSONObject()
                                 .put("type", "Point")
                                 .put("coordinates", coordinates)));
+            }
         }
 
         final JSONObject out = new JSONObject();

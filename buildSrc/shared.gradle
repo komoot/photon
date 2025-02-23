@@ -13,6 +13,8 @@ application {
 java {
     sourceCompatibility = JavaVersion.VERSION_11
     targetCompatibility = JavaVersion.VERSION_11
+    compileJava.options.encoding = "UTF-8"
+    compileTestJava.options.encoding = "UTF-8"
 }
 
 repositories {
@@ -52,6 +54,7 @@ dependencies {
         exclude(module: 'commons-logging')
     }
     implementation 'org.locationtech.jts:jts-core:1.20.0'
+    implementation 'org.locationtech.jts.io:jts-io-common:1.20.0'
     implementation 'com.sparkjava:spark-core:2.9.4'
     implementation 'net.postgis:postgis-jdbc:2024.1.0'
     implementation 'org.json:json:20240303'

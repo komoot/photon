@@ -4,6 +4,8 @@ import de.komoot.photon.PhotonDoc;
 import org.opensearch.client.opensearch.OpenSearchClient;
 import org.opensearch.client.opensearch._types.Time;
 import org.opensearch.client.opensearch.core.BulkRequest;
+import org.opensearch.client.opensearch.core.bulk.BulkOperation;
+import org.opensearch.client.opensearch.core.bulk.BulkResponseItem;
 import org.slf4j.Logger;
 
 import java.io.IOException;
@@ -54,7 +56,14 @@ public class Importer implements de.komoot.photon.Importer {
             var response = client.bulk(bulkRequest.build());
 
             if (response.errors()) {
-                LOGGER.error("Error during bulk import.");
+                for (BulkResponseItem bri: response.items()) {
+                    LOGGER.error("Error during bulk import.");
+                    if (bri.error() != null) {
+                        LOGGER.error(bri.error().reason());
+                        LOGGER.error(bri.error().type());
+                        LOGGER.error(bri.error().stackTrace());
+                    }
+                }
             }
         } catch (IOException e) {
             LOGGER.error("Error during bulk import", e);

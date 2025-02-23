@@ -37,6 +37,7 @@ public class PostgisDataAdapter implements DBDataAdapter {
                 return new WKTReader().read(sb.toString());
             } catch (ParseException e) {
                 // ignore
+                System.out.println(e);
             }
         }
 

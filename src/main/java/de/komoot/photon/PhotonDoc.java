@@ -1,4 +1,4 @@
-package de.komoot.photon;
+    package de.komoot.photon;
 
 import de.komoot.photon.nominatim.model.AddressRow;
 import org.locationtech.jts.geom.Envelope;
@@ -35,6 +35,7 @@ public class PhotonDoc {
     private Set<Map<String, String>> context = new HashSet<>();
     private String houseNumber = null;
     private Point centroid = null;
+    private Geometry geometry = null;
 
     public PhotonDoc(long placeId, String osmType, long osmId, String tagKey, String tagValue) {
         this.placeId = placeId;
@@ -42,6 +43,15 @@ public class PhotonDoc {
         this.osmId = osmId;
         this.tagKey = tagKey;
         this.tagValue = tagValue;
+    }
+
+    public PhotonDoc(long placeId, String osmType, long osmId, String tagKey, String tagValue, Geometry geometry) {
+        this.placeId = placeId;
+        this.osmType = osmType;
+        this.osmId = osmId;
+        this.tagKey = tagKey;
+        this.tagValue = tagValue;
+        this.geometry = geometry;
     }
 
     public PhotonDoc(PhotonDoc other) {
@@ -63,6 +73,7 @@ public class PhotonDoc {
         this.rankAddress = other.rankAddress;
         this.addressParts = other.addressParts;
         this.context = other.context;
+        this.geometry = other.geometry;
     }
 
     public PhotonDoc names(Map<String, String> names) {
@@ -84,6 +95,11 @@ public class PhotonDoc {
 
     public PhotonDoc centroid(Geometry centroid) {
         this.centroid = (Point) centroid;
+        return this;
+    }
+
+    public PhotonDoc geometry(Geometry polygon) {
+        this.geometry = (Geometry) polygon;
         return this;
     }
 
@@ -339,5 +355,34 @@ public class PhotonDoc {
 
     public Point getCentroid() {
         return this.centroid;
+    }
+
+    public Geometry getGeometry() {
+        return this.geometry;
+    }
+
+    @Override
+    public String toString() {
+        return "PhotonDoc{" +
+                "placeId=" + placeId +
+                ", osmType='" + osmType + '\'' +
+                ", osmId=" + osmId +
+                ", tagKey='" + tagKey + '\'' +
+                ", tagValue='" + tagValue + '\'' +
+                ", name=" + name +
+                ", postcode='" + postcode + '\'' +
+                ", extratags=" + extratags +
+                ", bbox=" + bbox +
+                ", parentPlaceId=" + parentPlaceId +
+                ", importance=" + importance +
+                ", countryCode='" + countryCode + '\'' +
+                ", linkedPlaceId=" + linkedPlaceId +
+                ", rankAddress=" + rankAddress +
+                ", addressParts=" + addressParts +
+                ", context=" + context +
+                ", houseNumber='" + houseNumber + '\'' +
+                ", centroid=" + centroid +
+                ", geometry=" + geometry +
+                '}';
     }
 }

@@ -29,6 +29,11 @@ public class OpenSearchResultDeserializer extends StdDeserializer<OpenSearchResu
         final Map<String, Object> tags = new HashMap<>();
         final Map<String, Map<String, String>> localeTags = new HashMap<>();
 
+        String geometry = null;
+        if (node.get("geometry") != null) {
+            geometry = node.get("geometry").toString();
+        }
+
         var fields = node.fields();
         while (fields.hasNext()) {
             final var entry = fields.next();
@@ -55,7 +60,7 @@ public class OpenSearchResultDeserializer extends StdDeserializer<OpenSearchResu
             }
         }
 
-        return new OpenSearchResult(extent, coordinates, tags, localeTags);
+        return new OpenSearchResult(extent, coordinates, tags, localeTags, geometry);
     }
 
     private double[] extractExtent(ObjectNode node) {
@@ -78,5 +83,4 @@ public class OpenSearchResultDeserializer extends StdDeserializer<OpenSearchResu
 
         return new double[]{node.get(Constants.LON).doubleValue(), node.get(Constants.LAT).doubleValue()};
     }
-
 }

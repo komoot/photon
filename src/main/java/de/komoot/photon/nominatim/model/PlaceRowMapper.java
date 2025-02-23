@@ -16,9 +16,15 @@ import java.sql.SQLException;
 public class PlaceRowMapper implements RowMapper<PhotonDoc> {
 
     private final DBDataAdapter dbutils;
+    private boolean useGeometryColumn;
 
     public PlaceRowMapper(DBDataAdapter dbutils) {
         this.dbutils = dbutils;
+    }
+
+    public PlaceRowMapper(DBDataAdapter dbutils, boolean useGeometryColumn) {
+        this.dbutils = dbutils;
+        this.useGeometryColumn = useGeometryColumn;
     }
 
     @Override
@@ -35,6 +41,14 @@ public class PlaceRowMapper implements RowMapper<PhotonDoc> {
                 .linkedPlaceId(rs.getLong("linked_place_id"))
                 .rankAddress(rs.getInt("rank_address"))
                 .postcode(rs.getString("postcode"));
+
+        if (useGeometryColumn) {
+            try {
+                doc.geometry(dbutils.extractGeometry(rs, "geometry"));
+            } catch (IllegalArgumentException e) {
+                System.out.println("Could not get Geometry: " + e);
+            }
+        }
 
         double importance = rs.getDouble("importance");
         doc.importance(rs.wasNull() ? (0.75 - rs.getInt("rank_search") / 40d) : importance);

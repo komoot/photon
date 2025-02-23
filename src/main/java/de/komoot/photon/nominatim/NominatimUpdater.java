@@ -75,16 +75,18 @@ public class NominatimUpdater extends NominatimConnector {
     // One-item cache for address terms. Speeds up processing of rank 30 objects.
     private long parentPlaceId = -1;
     private List<AddressRow> parentTerms = null;
+    private boolean useGeometryColumn;
 
 
-    public NominatimUpdater(String host, int port, String database, String username, String password) {
-        this(host, port, database, username, password, new PostgisDataAdapter());
+    public NominatimUpdater(String host, int port, String database, String username, String password, boolean useGeometryColumn) {
+        this(host, port, database, username, password, new PostgisDataAdapter(), useGeometryColumn);
     }
 
-    public NominatimUpdater(String host, int port, String database, String username, String password, DBDataAdapter dataAdapter) {
-        super(host, port, database, username, password, dataAdapter);
+    public NominatimUpdater(String host, int port, String database, String username, String password, DBDataAdapter dataAdapter, boolean useGeometryColumn) {
+        super(host, port, database, username, password, dataAdapter, useGeometryColumn);
 
-        final var placeRowMapper = new PlaceRowMapper(dbutils);
+        final var placeRowMapper = new PlaceRowMapper(dbutils, useGeometryColumn);
+
         placeToNominatimResult = (rs, rowNum) -> {
             PhotonDoc doc = placeRowMapper.mapRow(rs, rowNum);
             assert (doc != null);
@@ -265,8 +267,16 @@ public class NominatimUpdater extends NominatimConnector {
 
 
     public List<PhotonDoc> getByPlaceId(long placeId) {
+        String query = SELECT_COLS_PLACEX;
+
+        if (useGeometryColumn) {
+            query += ", geometry";
+        }
+
+        query += " FROM placex WHERE place_id = ? and indexed_status = 0";
+
         List<NominatimResult> result = template.query(
-                SELECT_COLS_PLACEX + " FROM placex WHERE place_id = ? and indexed_status = 0",
+                query,
                 placeToNominatimResult, placeId);
 
         return result.isEmpty() ? null : result.get(0).getDocsWithHousenumber();

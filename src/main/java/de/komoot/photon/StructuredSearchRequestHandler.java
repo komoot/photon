@@ -17,12 +17,14 @@ import static spark.Spark.halt;
 public class StructuredSearchRequestHandler extends RouteImpl {
     private final PhotonRequestFactory photonRequestFactory;
     private final StructuredSearchHandler requestHandler;
+    private final boolean supportPolygons;
 
-    StructuredSearchRequestHandler(String path, StructuredSearchHandler dbHandler, String[] languages, String defaultLanguage, int maxResults) {
+    StructuredSearchRequestHandler(String path, StructuredSearchHandler dbHandler, String[] languages, String defaultLanguage, int maxResults, boolean supportPolygons) {
         super(path);
         List<String> supportedLanguages = Arrays.asList(languages);
-        this.photonRequestFactory = new PhotonRequestFactory(supportedLanguages, defaultLanguage, maxResults);
+        this.photonRequestFactory = new PhotonRequestFactory(supportedLanguages, defaultLanguage, maxResults, supportPolygons);
         this.requestHandler = dbHandler;
+        this.supportPolygons = supportPolygons;
     }
 
     @Override
@@ -36,6 +38,12 @@ public class StructuredSearchRequestHandler extends RouteImpl {
             throw halt(e.getHttpStatus(), json.toString());
         }
 
+        if (!supportPolygons && photonRequest.getReturnPolygon()) {
+            JSONObject json = new JSONObject();
+            json.put("message", "You're requesting a polygon, but polygons are not imported!");
+            throw halt(400, json.toString());
+        }
+
         List<PhotonResult> results = requestHandler.search(photonRequest);
 
         // Further filtering
@@ -46,7 +54,12 @@ public class StructuredSearchRequestHandler extends RouteImpl {
             results = results.subList(0, photonRequest.getLimit());
         }
 
+
         String debugInfo = null;
-        return new GeocodeJsonFormatter(photonRequest.getDebug(), photonRequest.getLanguage()).convert(results, debugInfo);
+     /*   if (photonRequest.getDebug()) {
+            debugInfo = requestHandler.dumpQuery(photonRequest);
+        }
+ */
+        return new GeocodeJsonFormatter(photonRequest.getDebug(), photonRequest.getLanguage(), photonRequest.getReturnPolygon()).convert(results, debugInfo);
     }
 }
