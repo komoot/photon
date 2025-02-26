@@ -23,6 +23,7 @@ public class PlacexTestRow {
     private Integer rankAddress = 30;
     private Integer rankSearch = 30;
     private String centroid;
+    private String postcode;
     private String countryCode = "us";
     private Double importance = null;
 
@@ -115,12 +116,17 @@ public class PlacexTestRow {
         return this;
     }
 
+    public PlacexTestRow postcode(String postcode) {
+        this.postcode = postcode;
+        return this;
+    }
+
     public PlacexTestRow add(JdbcTemplate jdbc) {
         jdbc.update("INSERT INTO placex (place_id, parent_place_id, osm_type, osm_id, class, type, rank_search, rank_address,"
-                        + " centroid, name, country_code, importance, address, indexed_status)"
-                        + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ? FORMAT JSON, ?, ?, ? FORMAT JSON, 0)",
+                        + " centroid, name, country_code, importance, address, postcode, indexed_status)"
+                        + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ? FORMAT JSON, ?, ?, ? FORMAT JSON, ?, 0)",
                 placeId, parentPlaceId, osmType, osmId, key, value, rankSearch, rankAddress, centroid,
-                asJson(names), countryCode, importance, asJson(address));
+                asJson(names), countryCode, importance, asJson(address), postcode);
 
         return this;
     }
