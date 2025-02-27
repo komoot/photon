@@ -25,6 +25,10 @@ public class JsonDumper implements Importer {
         mapper.registerModule(module);
 
         generator = mapper.getFactory().createGenerator(new File(filename), JsonEncoding.UTF8);
+        generator.writeStartObject();
+        generator.writeObjectField("id", "Photon Dump Header");
+        generator.writeObjectField("version", PhotonDocSerializer.FORMAT_VERSION);
+        generator.writeEndObject();
     }
 
     @Override

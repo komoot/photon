@@ -15,6 +15,10 @@ import java.util.Map;
 import java.util.Set;
 
 public class PhotonDocSerializer extends StdSerializer<PhotonDoc> {
+    // Versioning of the json output format produced. This version appears
+    // in JSON dumps and allows to track changes.
+    public static final String FORMAT_VERSION = "1.0.0";
+
     private final String[] languages;
     private final String[] extraTags;
 
