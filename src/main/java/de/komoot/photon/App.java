@@ -13,7 +13,6 @@ import org.slf4j.Logger;
 import spark.Request;
 import spark.Response;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -112,7 +111,7 @@ public class App {
 
             importFromDatabase(args, jsonDumper);
             LOGGER.info("Json dump was created: {}", filename);
-        } catch (FileNotFoundException e) {
+        } catch (IOException e) {
             throw new UsageException("Cannot create dump: " + e.getMessage());
         }
     }
