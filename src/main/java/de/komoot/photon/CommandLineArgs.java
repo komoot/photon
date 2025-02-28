@@ -53,7 +53,7 @@ public class CommandLineArgs {
     @Parameter(names = "-query-timeout", description = "Time after which to cancel queries to the ES database (in seconds).")
     private int queryTimeout = 7;
 
-    @Parameter(names = "-json", description = "Read from nominatim database and dump it to the given file in a json-like format (useful for developing).")
+    @Parameter(names = "-json", description = "Read from nominatim database and dump it to the given file in a json-like format (use '-' for dumping to stdout).")
     private String jsonDump = null;
 
     @Parameter(names = "-host", description = "Hostname of the PostgreSQL database.")
