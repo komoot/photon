@@ -212,18 +212,18 @@ class PhotonRequestFactoryTest {
     }
 
     @Test
-    void testWithPolygon() throws Exception {
+    void testWithGeometry() throws Exception {
         Request mockRequest = createRequestWithQueryParams("q", "berlin");
         PhotonRequest photonRequest = createPhotonRequest(mockRequest);
 
-        assertTrue(photonRequest.getReturnPolygon());
+        assertTrue(photonRequest.getReturnGeometry());
     }
 
     @Test
-    void testWithoutPolygon() throws Exception {
-        Request mockRequest = createRequestWithQueryParams("q", "berlin", "polygon", "false");
+    void testWithoutGeometry() throws Exception {
+        Request mockRequest = createRequestWithQueryParams("q", "berlin", "geometry", "false");
         PhotonRequest photonRequest = createPhotonRequest(mockRequest);
 
-        assertFalse(photonRequest.getReturnPolygon());
+        assertFalse(photonRequest.getReturnGeometry());
     }
 }

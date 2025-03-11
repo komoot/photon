@@ -9,7 +9,7 @@ public class DBPropertyEntry {
     public Date importDate;
     public String[] languages;
     public boolean supportStructuredQueries;
-    public boolean supportPolygons;
+    public boolean supportGeometries;
 
     public DBPropertyEntry() {}
 
@@ -18,6 +18,6 @@ public class DBPropertyEntry {
         importDate = props.getImportDate();
         languages = props.getLanguages();
         supportStructuredQueries = props.getSupportStructuredQueries();
-        supportPolygons = props.getSupportPolygons();
+        supportGeometries = props.getSupportGeometries();
     }
 }

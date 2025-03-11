@@ -53,6 +53,6 @@ public class ReverseSearchRequestHandler extends RouteImpl {
             debugInfo = requestHandler.dumpQuery(photonRequest);
         }
 
-        return new GeocodeJsonFormatter(false, photonRequest.getLanguage(), photonRequest.getPolygon()).convert(results, debugInfo);
+        return new GeocodeJsonFormatter(false, photonRequest.getLanguage(), photonRequest.getGeometry()).convert(results, debugInfo);
     }
 }

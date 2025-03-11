@@ -98,7 +98,7 @@ public class CommandLineArgs {
     @Parameter(names = "-max-reverse-results", description = "The maximum possible 'limit' parameter for reverse geocoding searches")
     private int maxReverseResults = 50;
 
-    @Parameter(names = "-import-geometry-column", description = "[import-only] Add the 'geometry' column from Nominatim on import (i.e. add Polygons for cities, countries etc.). WARNING: This will increase the Elasticsearch Index size! (~575GB for Planet)")
+    @Parameter(names = "-import-geometry-column", description = "[import-only] Add the 'geometry' column from Nominatim on import (i.e. add Polygons/Linestrings/Multipolygons etc. for cities, countries etc.). WARNING: This will increase the Elasticsearch Index size! (~575GB for Planet)")
     private boolean importGeometryColumn = false;
 
     public String[] getLanguages(boolean useDefaultIfEmpty) {

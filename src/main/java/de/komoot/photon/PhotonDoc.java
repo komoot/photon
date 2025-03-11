@@ -98,8 +98,8 @@ public class PhotonDoc {
         return this;
     }
 
-    public PhotonDoc geometry(Geometry polygon) {
-        this.geometry = (Geometry) polygon;
+    public PhotonDoc geometry(Geometry geometry) {
+        this.geometry = (Geometry) geometry;
         return this;
     }
 

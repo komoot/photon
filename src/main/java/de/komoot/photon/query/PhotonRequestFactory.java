@@ -17,10 +17,10 @@ public class PhotonRequestFactory {
     private final BoundingBoxParamConverter bboxParamConverter;
     private final LayerParamValidator layerParamValidator;
     private final int maxResults;
-    private final boolean supportPolygons;
+    private final boolean supportGeometries;
 
     private static final HashSet<String> REQUEST_QUERY_PARAMS = new HashSet<>(Arrays.asList("lang", "q", "lon", "lat",
-            "limit", "osm_tag", "location_bias_scale", "bbox", "debug", "zoom", "layer", "polygon"));
+            "limit", "osm_tag", "location_bias_scale", "bbox", "debug", "zoom", "layer", "geometry"));
 
     private static final HashSet<String> STRUCTURED_ADDRESS_FIELDS = new HashSet<>(Arrays.asList("countrycode", "state", "county", "city",
             "postcode", "district", "housenumber", "street"));
@@ -29,12 +29,12 @@ public class PhotonRequestFactory {
             "countrycode", "state", "county", "city", "postcode", "district", "housenumber", "street"));
 
 
-    public PhotonRequestFactory(List<String> supportedLanguages, String defaultLanguage, int maxResults, boolean supportPolygons) {
+    public PhotonRequestFactory(List<String> supportedLanguages, String defaultLanguage, int maxResults, boolean supportGeometries) {
         this.languageResolver = new RequestLanguageResolver(supportedLanguages, defaultLanguage);
         this.bboxParamConverter = new BoundingBoxParamConverter();
         this.layerParamValidator = new LayerParamValidator();
         this.maxResults = maxResults;
-        this.supportPolygons = supportPolygons;
+        this.supportGeometries = supportGeometries;
     }
 
     public StructuredPhotonRequest createStructured(Request webRequest) throws BadRequestException {
@@ -114,12 +114,12 @@ public class PhotonRequestFactory {
             request.setLayerFilter(layerParamValidator.validate(layerFiltersQueryMap.values()));
         }
 
-        // If the database supports polygons, return them by default.
-        request.setReturnPolygon(supportPolygons);
+        // If the database supports geometries, return them by default.
+        request.setReturnGeometry(supportGeometries);
 
-        // Check if the user explicitly doesn't want a polygon.
-        if (webRequest.queryParams("polygon") != null) {
-            request.setReturnPolygon(parseBoolean(webRequest, "polygon"));
+        // Check if the user explicitly doesn't want a geometry.
+        if (webRequest.queryParams("geometry") != null) {
+            request.setReturnGeometry(parseBoolean(webRequest, "geometry"));
         }
     }
 

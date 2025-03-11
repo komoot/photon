@@ -50,7 +50,7 @@ public class ESBaseTester {
         setUpES(dataDirectory, false,"en");
     }
 
-    public void setUpESWithPolygons() throws IOException {
+    public void setUpESWithGeometry() throws IOException {
         setUpES(dataDirectory, true,"en");
     }
     /**
@@ -58,10 +58,10 @@ public class ESBaseTester {
      *
      * @throws IOException
      */
-    public void setUpES(Path testDirectory, boolean supportPolygons, String... languages) throws IOException {
+    public void setUpES(Path testDirectory, boolean supportGeometries, String... languages) throws IOException {
         server = new ElasticTestServer(testDirectory.toString());
         server.start(TEST_CLUSTER_NAME, new String[]{});
-        server.recreateIndex(languages, new Date(), false, supportPolygons);
+        server.recreateIndex(languages, new Date(), false, supportGeometries);
         refresh();
     }
 

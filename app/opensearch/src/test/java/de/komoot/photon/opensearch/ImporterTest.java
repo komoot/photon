@@ -20,7 +20,7 @@ class ImporterTest extends ESBaseTester {
 
     @BeforeEach
     public void setUp() throws IOException {
-        setUpESWithPolygons();
+        setUpESWithGeometry();
     }
 
     @Test

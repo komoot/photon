@@ -11,13 +11,13 @@ public class DatabaseProperties {
     private String[] languages;
     private Date importDate;
     private boolean supportStructuredQueries;
-    private boolean supportPolygons;
+    private boolean supportGeometries;
 
-    public DatabaseProperties(String[] languages, Date importDate, boolean supportStructuredQueries, boolean supportPolygons) {
+    public DatabaseProperties(String[] languages, Date importDate, boolean supportStructuredQueries, boolean supportGeometries) {
         this.languages = languages;
         this.importDate = importDate;
         this.supportStructuredQueries = supportStructuredQueries;
-        this.supportPolygons = supportPolygons;
+        this.supportGeometries = supportGeometries;
     }
 
     public DatabaseProperties() {
@@ -100,12 +100,12 @@ public class DatabaseProperties {
         return this;
     }
 
-    public boolean getSupportPolygons() {
-        return supportPolygons;
+    public boolean getSupportGeometries() {
+        return supportGeometries;
     }
 
-    public DatabaseProperties setSupportPolygons(boolean supportPolygons) {
-        this.supportPolygons = supportPolygons;
+    public DatabaseProperties setSupportGeometries(boolean supportGeometries) {
+        this.supportGeometries = supportGeometries;
         return this;
     }
 
@@ -115,7 +115,7 @@ public class DatabaseProperties {
                 "languages=" + Arrays.toString(languages) +
                 ", importDate=" + importDate +
                 ", supportStructuredQueries=" + supportStructuredQueries +
-                ", supportPolygons=" + supportPolygons +
+                ", supportGeometries=" + supportGeometries +
                 '}';
     }
 }

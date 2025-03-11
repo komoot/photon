@@ -28,7 +28,7 @@ class ApiIntegrationTest extends ESBaseTester {
 
     @BeforeEach
     void setUp() throws Exception {
-        setUpESWithPolygons();
+        setUpESWithGeometry();
         Importer instance = makeImporter();
         instance.add(createDoc(13.38886, 52.51704, 1000, 1000, "place", "city").importance(0.6), 0);
         instance.add(createDoc(13.39026, 52.54714, 1001, 1001, "place", "town").importance(0.3), 0);
@@ -151,7 +151,7 @@ class ApiIntegrationTest extends ESBaseTester {
     }
 
     @Test
-    void testSearchAndGetPolygon() throws Exception {
+    void testSearchAndGetGeometry() throws Exception {
         App.main(new String[]{"-cluster", TEST_CLUSTER_NAME, "-listen-port", Integer.toString(LISTEN_PORT), "-transport-addresses", "127.0.0.1"});
         awaitInitialization();
         HttpURLConnection connection = (HttpURLConnection) new URL("http://127.0.0.1:" + port() + "/api?q=berlin&limit=1").openConnection();

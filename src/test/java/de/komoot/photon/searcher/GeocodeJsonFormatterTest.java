@@ -35,15 +35,15 @@ class GeocodeJsonFormatterTest {
     }
 
     @Test
-    void testConvertPolygonToGeojson() {
+    void testConvertGeometryToGeojson() {
         GeocodeJsonFormatter formatter = new GeocodeJsonFormatter(false, "en", true);
 
-        List<PhotonResult> allPolygonResults = new ArrayList<>();
-        allPolygonResults.add(createDummyPolygonResult("99999", "Park Foo", "leisure", "park"));
-        allPolygonResults.add(createDummyPolygonResult("88888", "Bar Park", "leisure", "park"));
+        List<PhotonResult> allResults = new ArrayList<>();
+        allResults.add(createDummyGeometryResult("99999", "Park Foo", "leisure", "park"));
+        allResults.add(createDummyGeometryResult("88888", "Bar Park", "leisure", "park"));
 
-        // Test Polygon
-        String geojsonString = formatter.convert(allPolygonResults, null);
+        // Test Geometry
+        String geojsonString = formatter.convert(allResults, null);
         JSONObject jsonObj = new JSONObject(geojsonString);
         assertEquals("FeatureCollection", jsonObj.getString("type"));
         JSONArray features = jsonObj.getJSONArray("features");
@@ -69,8 +69,8 @@ class GeocodeJsonFormatterTest {
                     .put("coordinates", new double[]{42, 21}));
     }
 
-    private PhotonResult createDummyPolygonResult(String postCode, String name, String osmKey,
-                                                String osmValue) {
+    private PhotonResult createDummyGeometryResult(String postCode, String name, String osmKey,
+                                                   String osmValue) {
         return new MockPhotonResult()
                 .put(Constants.POSTCODE, postCode)
                 .putLocalized(Constants.NAME, "en", name)

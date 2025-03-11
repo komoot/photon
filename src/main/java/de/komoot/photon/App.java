@@ -253,8 +253,8 @@ public class App {
         }
 
         LOGGER.info("Starting API with the following settings: " +
-                        "\n Languages: {} \n Import Date: {} \n Support Structured Queries: {} \n Support Polygons: {}",
-                dbProperties.getLanguages(), dbProperties.getImportDate(), dbProperties.getSupportStructuredQueries(), dbProperties.getSupportPolygons());
+                        "\n Languages: {} \n Import Date: {} \n Support Structured Queries: {} \n Support Geometries: {}",
+                dbProperties.getLanguages(), dbProperties.getImportDate(), dbProperties.getSupportStructuredQueries(), dbProperties.getSupportGeometries());
 
         port(args.getListenPort());
         ipAddress(args.getListenIp());
@@ -271,13 +271,13 @@ public class App {
         String[] langs = dbProperties.getLanguages();
 
         SearchHandler searchHandler = server.createSearchHandler(langs, args.getQueryTimeout());
-        get("api", new SearchRequestHandler("api", searchHandler, langs, args.getDefaultLanguage(), args.getMaxResults(), dbProperties.getSupportPolygons()));
-        get("api/", new SearchRequestHandler("api/", searchHandler, langs, args.getDefaultLanguage(), args.getMaxResults(), dbProperties.getSupportPolygons()));
+        get("api", new SearchRequestHandler("api", searchHandler, langs, args.getDefaultLanguage(), args.getMaxResults(), dbProperties.getSupportGeometries()));
+        get("api/", new SearchRequestHandler("api/", searchHandler, langs, args.getDefaultLanguage(), args.getMaxResults(), dbProperties.getSupportGeometries()));
 
         if (dbProperties.getSupportStructuredQueries()) {
             StructuredSearchHandler structured = server.createStructuredSearchHandler(langs, args.getQueryTimeout());
-            get("structured", new StructuredSearchRequestHandler("structured", structured, langs, args.getDefaultLanguage(), args.getMaxResults(), dbProperties.getSupportPolygons()));
-            get("structured/", new StructuredSearchRequestHandler("structured/", structured, langs, args.getDefaultLanguage(), args.getMaxResults(), dbProperties.getSupportPolygons()));
+            get("structured", new StructuredSearchRequestHandler("structured", structured, langs, args.getDefaultLanguage(), args.getMaxResults(), dbProperties.getSupportGeometries()));
+            get("structured/", new StructuredSearchRequestHandler("structured/", structured, langs, args.getDefaultLanguage(), args.getMaxResults(), dbProperties.getSupportGeometries()));
         }
 
         ReverseHandler reverseHandler = server.createReverseHandler(args.getQueryTimeout());

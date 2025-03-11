@@ -22,12 +22,12 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  * Tests that the database backend produces queries which can find all
  * expected results. These tests do not check relevance.
  */
-class QueryPolygonTest extends ESBaseTester {
+class QueryGeometryTest extends ESBaseTester {
     private int testDocId = 10000;
 
     @BeforeEach
     void setup() throws IOException {
-        setUpESWithPolygons();
+        setUpESWithGeometry();
     }
 
     private PhotonDoc createDoc(String... names) throws ParseException {
