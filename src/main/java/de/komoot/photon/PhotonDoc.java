@@ -111,11 +111,7 @@ public class PhotonDoc {
             extractAddress(address, AddressType.COUNTY, "county");
             extractAddress(address, AddressType.STATE, "state");
 
-            String addressPostCode = address.get("postcode");
-            if (addressPostCode != null && !addressPostCode.equals(postcode)) {
-                LOGGER.debug("Replacing postcode {} with {} for osmId #{}", postcode, addressPostCode, osmId);
-                postcode = addressPostCode;
-            }
+            postcode = address.getOrDefault("postcode", postcode);
         }
         return this;
     }
@@ -218,9 +214,6 @@ public class PhotonDoc {
      *
      * @param addressType The type of address field to fill.
      * @param addressFieldName The name of the address tag to use (without the 'addr:' prefix).
-     *
-     * @return 'existingField' potentially with the name field replaced. If existingField was null and
-     *         the address field could be found, then a new map with the address as single entry is returned.
      */
     private void extractAddress(Map<String, String> address, AddressType addressType, String addressFieldName) {
         String field = address.get(addressFieldName);
@@ -265,13 +258,17 @@ public class PhotonDoc {
     public void completePlace(List<AddressRow> addresses) {
         final AddressType doctype = getAddressType();
         for (AddressRow address : addresses) {
-            final AddressType atype = address.getAddressType();
+            if (address.isPostcode()) {
+                this.postcode = address.getName().getOrDefault("ref", this.postcode);
+            } else {
+                final AddressType atype = address.getAddressType();
 
-            if (atype != null
-                    && (atype == doctype || !setAddressPartIfNew(atype, address.getName()))
-                    && address.isUsefulForContext()) {
-                // no specifically handled item, check if useful for context
-                getContext().add(address.getName());
+                if (atype != null
+                        && (atype == doctype || !setAddressPartIfNew(atype, address.getName()))
+                        && address.isUsefulForContext()) {
+                    // no specifically handled item, check if useful for context
+                    getContext().add(address.getName());
+                }
             }
         }
     }

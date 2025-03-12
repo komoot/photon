@@ -368,6 +368,59 @@ class NominatimConnectorDBTest {
         assertNotNull(importer.get(place).getGeometry());
     }
 
+    void testUsePostcodeFromPlacex() {
+        PlacexTestRow parent = PlacexTestRow.make_street("Main St").add(jdbc);
+        PlacexTestRow place = new PlacexTestRow("building", "yes")
+                .addr("housenumber", "34")
+                .postcode("AA 44XH")
+                .parent(parent).add(jdbc);
+
+        readEntireDatabase();
+
+        PhotonDoc result = importer.get(place);
+
+        assertEquals("AA 44XH", result.getPostcode());
+    }
+
+    @Test
+    void testPreferPostcodeFromPostcodeRelations() {
+        PlacexTestRow parent = PlacexTestRow.make_street("Main St").add(jdbc);
+        PlacexTestRow place = new PlacexTestRow("building", "yes")
+                .addr("housenumber", "34")
+                .postcode("XXX")
+                .parent(parent).add(jdbc);
+        PlacexTestRow postcode = new PlacexTestRow("boundary", "postal_code")
+                .name("ref", "1234XZ").ranks(11).add(jdbc);
+
+        parent.addAddresslines(jdbc, postcode);
+
+        readEntireDatabase();
+
+        PhotonDoc result = importer.get(place);
+
+        assertEquals("1234XZ", result.getPostcode());
+    }
+
+    @Test
+    void testPreferPostcodeFromAddress() {
+        PlacexTestRow parent = PlacexTestRow.make_street("Main St").add(jdbc);
+        PlacexTestRow place = new PlacexTestRow("building", "yes")
+                .addr("housenumber", "34")
+                .addr("postcode", "45-234")
+                .postcode("XXX")
+                .parent(parent).add(jdbc);
+        PlacexTestRow postcode = new PlacexTestRow("boundary", "postal_code")
+                .name("ref", "1234XZ").ranks(11).add(jdbc);
+
+        parent.addAddresslines(jdbc, postcode);
+
+        readEntireDatabase();
+
+        PhotonDoc result = importer.get(place);
+
+        assertEquals("45-234", result.getPostcode());
+    }
+
     @Test
     void testGetImportDate() {
         Date importDate = connector.getLastImportDate();
