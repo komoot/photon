@@ -45,15 +45,6 @@ public class PhotonDoc {
         this.tagValue = tagValue;
     }
 
-    public PhotonDoc(long placeId, String osmType, long osmId, String tagKey, String tagValue, Geometry geometry) {
-        this.placeId = placeId;
-        this.osmType = osmType;
-        this.osmId = osmId;
-        this.tagKey = tagKey;
-        this.tagValue = tagValue;
-        this.geometry = geometry;
-    }
-
     public PhotonDoc(PhotonDoc other) {
         this.placeId = other.placeId;
         this.osmType = other.osmType;
