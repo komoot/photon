@@ -34,7 +34,10 @@ public class PostgisDataAdapter implements DBDataAdapter {
             try {
                 StringBuffer sb = new StringBuffer();
                 wkt.getGeometry().outerWKT(sb);
-                return new WKTReader().read(sb.toString());
+
+                Geometry geometry = new WKTReader().read(sb.toString());
+                geometry.setSRID(4326);
+                return geometry;
             } catch (ParseException e) {
                 // ignore
                 System.out.println(e);
