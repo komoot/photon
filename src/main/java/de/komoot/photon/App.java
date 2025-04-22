@@ -107,7 +107,12 @@ public class App {
     private static void startJsonDump(CommandLineArgs args) {
         try {
             final String filename = args.getJsonDump();
-            final JsonDumper jsonDumper = new JsonDumper(filename, args.getLanguages(), args.getExtraTags());
+            final JsonDumper jsonDumper = new JsonDumper(filename, args.getLanguages());
+
+            final var connector = new NominatimImporter(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword(), args.getImportGeometryColumn());
+
+            //jsonDumper.writeHeader(connector.getLastImportDate(),
+            //                       connector.loadCountryNames());
 
             importFromDatabase(args, jsonDumper);
             LOGGER.info("Json dump was created: {}", filename);
