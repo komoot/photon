@@ -160,7 +160,7 @@ public class NominatimConnector {
         return dataSource;
     }
 
-    private Map<String, String> getCountryNames(String countrycode) {
+    public Map<String, String> getCountryNames(String countrycode) {
         if (countryNames == null) {
             countryNames = new HashMap<>();
             template.query("SELECT country_code, name FROM country_name", rs -> {

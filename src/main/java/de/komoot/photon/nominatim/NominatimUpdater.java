@@ -46,14 +46,14 @@ public class NominatimUpdater {
             + "   EXECUTE FUNCTION photon_update_func()";
 
     private final JdbcTemplate       template;
-    private final NominatimConnector exporter;
+    protected final NominatimConnector exporter;
 
-    private Updater updater;
+    protected Updater updater;
 
     /**
      * Lock to prevent thread from updating concurrently.
      */
-    private ReentrantLock updateLock = new ReentrantLock();
+    protected ReentrantLock updateLock = new ReentrantLock();
 
     public Date getLastImportDate() {
         return exporter.getLastImportDate();

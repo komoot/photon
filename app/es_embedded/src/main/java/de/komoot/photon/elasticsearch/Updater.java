@@ -57,6 +57,10 @@ public class Updater implements de.komoot.photon.Updater {
         return String.format("%d.%d", docId, objectId);
     }
 
+    public void delete(String id) {
+        this.bulkRequest.add(this.esClient.prepareDelete(PhotonIndex.NAME, PhotonIndex.TYPE, id));
+    }
+
     private void updateDocuments() {
         if (this.bulkRequest.numberOfActions() == 0) {
             LOGGER.warn("Update empty");
@@ -67,5 +71,17 @@ public class Updater implements de.komoot.photon.Updater {
             LOGGER.error("Error while bulk update: {}", bulkResponse.buildFailureMessage());
         }
         this.bulkRequest = this.esClient.prepareBulk();
+    }
+
+    public void cleanManualRecords(String prefix) {
+        int i = 0;
+        while (true) {
+            String id = prefix + ":" + String.valueOf(i++);
+            final boolean exists = this.esClient.get(this.esClient.prepareGet(PhotonIndex.NAME, PhotonIndex.TYPE, id).request()).actionGet().isExists();
+            if (exists)
+                this.delete(id);
+            else
+                break;
+        }
     }
 }

@@ -4,6 +4,7 @@ import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
 import de.komoot.photon.nominatim.NominatimConnector;
 import de.komoot.photon.nominatim.NominatimUpdater;
+import de.komoot.photon.nominatim.FMNominatimUpdater;
 import de.komoot.photon.searcher.ReverseHandler;
 import de.komoot.photon.searcher.SearchHandler;
 import de.komoot.photon.searcher.StructuredSearchHandler;
@@ -17,6 +18,7 @@ import java.io.IOException;
 import java.util.Date;
 
 import static spark.Spark.*;
+import org.json.JSONArray;
 
 /**
  * Main Photon application.
@@ -155,7 +157,7 @@ public class App {
         DatabaseProperties dbProperties = new DatabaseProperties();
         server.loadFromDatabase(dbProperties);
 
-        NominatimUpdater nominatimUpdater = new NominatimUpdater(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
+        NominatimUpdater nominatimUpdater = new FMNominatimUpdater(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
         nominatimUpdater.setUpdater(server.createUpdater(dbProperties.getLanguages(), args.getExtraTags()));
         return nominatimUpdater;
     }
@@ -221,6 +223,19 @@ public class App {
                 new Thread(()-> App.startNominatimUpdate(nominatimUpdater, server)).start();
                 return "\"nominatim update started (more information in console output) ...\"";
             });
+
+            post("/upload-manual-records", (Request request, Response response) -> {
+                JSONArray addresses = new JSONArray(request.body());
+                int index = Integer.parseInt(request.queryParamOrDefault("index", "0"));
+                String prefix = request.queryParams("prefix");
+
+                if (((FMNominatimUpdater) nominatimUpdater).updateManualRecords(prefix, addresses, index, index == 0)) {
+                    response.status(200);
+                } else {
+                    response.status(500);
+                }
+                return response;
+        });
         }
     }
 }
