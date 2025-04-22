@@ -6,12 +6,13 @@
 					"punctuationgreedy",
 					"remove_ws_hnr_suffix"
 				],
-				"tokenizer": "edge_ngram",
+				"tokenizer": "keyword",
 				"filter": [
 					"preserving_word_delimiter",
 					"lowercase",
 					"german_normalization",
 					"asciifolding",
+					"edge_ngram_filter",
 					"unique"
 				]
 			},
@@ -97,9 +98,15 @@
 				"min": "2",
 				"type": "length"
 			},
-			"preserving_word_delimiter": { 
-				"type": "word_delimiter",
-				"preserve_original": "true"
+			"preserving_word_delimiter": {
+				"type": "word_delimiter_graph",
+				"preserve_original": "true",
+				"catenate_all": "true"
+			},
+			"edge_ngram_filter": {
+				"type": "edge_ngram",
+				"min_gram": 1,
+				"max_gram": 100
 			}
 		}
 	}
