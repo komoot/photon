@@ -18,6 +18,13 @@
 						"copy_to": [
 							"collector.default"
 						]
+					},
+					"alt_name": {
+						"type": "text",
+						"index": false,
+						"copy_to": [
+							"collector.default"
+						]
 					}
 				}
 			},

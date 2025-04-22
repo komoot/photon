@@ -75,6 +75,10 @@ public class IndexMapping {
                 JSONObject defaultObject = nameProperties.optJSONObject("default");
                 JSONArray copyToArray = defaultObject.optJSONArray("copy_to");
                 copyToArray.put("name." + lang);
+
+                JSONObject altObject = nameProperties.optJSONObject("alt");
+                JSONArray altCopyToArray = altObject.optJSONArray("copy_to");
+                altCopyToArray.put("name." + lang);
             }
 
             // add language-specific collector

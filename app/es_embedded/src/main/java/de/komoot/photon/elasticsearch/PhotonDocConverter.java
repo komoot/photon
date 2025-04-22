@@ -52,6 +52,7 @@ public class PhotonDocConverter {
             Map<String, String> fNames = new HashMap<>();
 
             doc.copyAddressName(fNames, "default", entry, "name");
+            doc.copyAddressName(fNames, "alt_name", entry, "alt_name");
 
             for (String language : languages) {
                 doc.copyAddressName(fNames, language, entry, "name:" + language);
@@ -63,6 +64,7 @@ public class PhotonDocConverter {
         String countryCode = doc.getCountryCode();
         if (countryCode != null)
             builder.field(Constants.COUNTRYCODE, countryCode);
+
         writeContext(builder, doc.getContext(), languages);
         writeExtraTags(builder, doc.getExtratags(), extraTags);
         writeExtent(builder, doc.getBbox());
