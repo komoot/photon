@@ -25,7 +25,7 @@ public class NominatimConnector {
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(NominatimConnector.class);
 
     private static final String SELECT_COLS_PLACEX = "SELECT place_id, osm_type, osm_id, class, type, name, postcode, address, extratags, ST_Envelope(geometry) AS bbox, parent_place_id, linked_place_id, rank_address, rank_search, importance, country_code, centroid";
-    private static final String SELECT_COLS_ADDRESS = "SELECT p.name, p.class, p.type, p.rank_address";
+    private static final String SELECT_COLS_ADDRESS = "SELECT p.name, p.class, p.type, p.rank_address, p.admin_level";
 
     private final DBDataAdapter dbutils;
     private final JdbcTemplate template;
@@ -198,7 +198,9 @@ public class NominatimConnector {
                 dbutils.getMap(rs, "name"),
                 rs.getString("class"),
                 rs.getString("type"),
-                rs.getInt("rank_address")
+                rs.getInt("rank_address"),
+                rs.getInt("admin_level"),
+                doc.getCountryCode()
         );
 
         AddressType atype = doc.getAddressType();
@@ -318,12 +320,23 @@ public class NominatimConnector {
     private void completePlace(PhotonDoc doc) {
         final List<AddressRow> addresses = getAddresses(doc);
         final AddressType doctype = doc.getAddressType();
+        Boolean dutchRank16City = false;
         for (AddressRow address : addresses) {
             AddressType atype = address.getAddressType();
+
+            if ("BE".equals(doc.getCountryCode()) && address.rankAddress == 20) continue;
+            if ("NL".equals(doc.getCountryCode()) && address.rankAddress == 16) {
+                dutchRank16City = true;
+            };
 
             if (atype != null
                     && (atype == doctype || !doc.setAddressPartIfNew(atype, address.getName()))
                     && address.isUsefulForContext()) {
+
+                if ("NL".equals(doc.getCountryCode()) && address.rankAddress == 14 && dutchRank16City) { // Dit is de gemeente, skip deze als de plaats al gezet is. e.g.: Bij Bennekom geen Ede indexeren in de context
+                    continue;
+                }
+
                 // no specifically handled item, check if useful for context
                 doc.getContext().add(address.getName());
             }
