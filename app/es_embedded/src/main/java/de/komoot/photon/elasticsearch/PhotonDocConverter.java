@@ -76,7 +76,7 @@ public class PhotonDocConverter {
         String countryCode = doc.getCountryCode();
         if (countryCode != null)
             builder.field(Constants.COUNTRYCODE, countryCode);
-        writeContext(builder, doc.getContext(), languages);
+        writeContext(builder, doc.getContextByLanguage(languages));
         writeExtraTags(builder, doc.getExtratags(), extraTags);
         writeExtent(builder, doc.getBbox());
 
@@ -151,24 +151,10 @@ public class PhotonDocConverter {
         builder.endObject();
     }
 
-    protected static void writeContext(XContentBuilder builder, Set<Map<String, String>> contexts, String[] languages) throws IOException {
-        final Map<String, Set<String>> multimap = new HashMap<>();
-
-        for (Map<String, String> context : contexts) {
-            if (context.get("name") != null) {
-                multimap.computeIfAbsent("default", k -> new HashSet<>()).add(context.get("name"));
-            }
-
-            for (String language : languages) {
-                if (context.get("name:" + language) != null) {
-                    multimap.computeIfAbsent("default", k -> new HashSet<>()).add(context.get("name:" + language));
-                }
-            }
-        }
-
-        if (!multimap.isEmpty()) {
+    protected static void writeContext(XContentBuilder builder, Map<String, Set<String>> contexts) throws IOException {
+        if (!contexts.isEmpty()) {
             builder.startObject("context");
-            for (Map.Entry<String, Set<String>> entry : multimap.entrySet()) {
+            for (Map.Entry<String, Set<String>> entry : contexts.entrySet()) {
                 builder.field(entry.getKey(), String.join(", ", entry.getValue()));
             }
             builder.endObject();

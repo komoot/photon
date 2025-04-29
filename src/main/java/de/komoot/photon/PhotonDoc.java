@@ -235,7 +235,7 @@ public class PhotonDoc {
                 LOGGER.debug("Replacing {} name '{}' with '{}' for osmId #{}", addressFieldName, existingName, field, osmId);
                 // we keep the former name in the context as it might be helpful when looking up typos
                 if (!Objects.isNull(existingName)) {
-                    context.add(Collections.singletonMap("formerName", existingName));
+                    context.add(Collections.singletonMap("name", existingName));
                 }
                 map.put("name", field);
                 addressParts.put(addressType, map);
@@ -271,6 +271,26 @@ public class PhotonDoc {
                 }
             }
         }
+    }
+
+    public Map<String, Set<String>> getContextByLanguage(String[] languages) {
+        final Map<String, Set<String>> multimap = new HashMap<>();
+
+        for (Map<String, String> cmap : context) {
+            String locName = cmap.get("name");
+            if (locName != null) {
+                multimap.computeIfAbsent("default", k -> new HashSet<>()).add(locName);
+            }
+
+            for (String language : languages) {
+                locName = cmap.get("name:" + language);
+                if (locName != null) {
+                    multimap.computeIfAbsent(language, k -> new HashSet<>()).add(locName);
+                }
+            }
+        }
+
+        return multimap;
     }
 
     public void setCountry(Map<String, String> names) {
