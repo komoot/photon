@@ -89,7 +89,7 @@ public class PhotonDocSerializer extends StdSerializer<PhotonDoc> {
             gen.writeStringField(Constants.COUNTRYCODE, countryCode);
         }
 
-        writeContext(gen, value.getContext());
+        writeContext(gen, value.getContextByLanguage(languages));
         writeExtraTags(gen, value.getExtratags());
         writeExtent(gen, value.getBbox());
 
@@ -115,24 +115,10 @@ public class PhotonDocSerializer extends StdSerializer<PhotonDoc> {
         gen.writeObjectField("name", fNames);
     }
 
-    private void writeContext(JsonGenerator gen, Set<Map<String, String>> contexts) throws IOException {
-        final Map<String, Set<String>> multimap = new HashMap<>();
-
-        for (Map<String, String> context : contexts) {
-            if (context.get("name") != null) {
-                multimap.computeIfAbsent("default", k -> new HashSet<>()).add(context.get("name"));
-            }
-
-            for (String language : languages) {
-                if (context.get("name:" + language) != null) {
-                    multimap.computeIfAbsent("default", k -> new HashSet<>()).add(context.get("name:" + language));
-                }
-            }
-        }
-
-        if (!multimap.isEmpty()) {
+    private void writeContext(JsonGenerator gen, Map<String, Set<String>> contexts) throws IOException {
+        if (!contexts.isEmpty()) {
             gen.writeObjectFieldStart("context");
-            for (Map.Entry<String, Set<String>> entry : multimap.entrySet()) {
+            for (Map.Entry<String, Set<String>> entry : contexts.entrySet()) {
                 gen.writeStringField(entry.getKey(), String.join(", ", entry.getValue()));
             }
             gen.writeEndObject();
