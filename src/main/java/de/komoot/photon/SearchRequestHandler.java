@@ -20,16 +20,18 @@ import static spark.Spark.halt;
 public class SearchRequestHandler extends RouteImpl {
     private final PhotonRequestFactory photonRequestFactory;
     private final SearchHandler requestHandler;
+    private final boolean supportGeometries;
 
-    SearchRequestHandler(String path, SearchHandler dbHandler, String[] languages, String defaultLanguage, int maxResults) {
+    SearchRequestHandler(String path, SearchHandler dbHandler, String[] languages, String defaultLanguage, int maxResults, boolean supportGeometries) {
         super(path);
         List<String> supportedLanguages = Arrays.asList(languages);
-        this.photonRequestFactory = new PhotonRequestFactory(supportedLanguages, defaultLanguage, maxResults);
+        this.photonRequestFactory = new PhotonRequestFactory(supportedLanguages, defaultLanguage, maxResults, supportGeometries);
         this.requestHandler = dbHandler;
+        this.supportGeometries = supportGeometries;
     }
 
     @Override
-    public String handle(Request request, Response response) {
+    public String handle(Request request, Response response) throws BadRequestException {
         PhotonRequest photonRequest = null;
         try {
             photonRequest = photonRequestFactory.create(request);
@@ -37,6 +39,12 @@ public class SearchRequestHandler extends RouteImpl {
             JSONObject json = new JSONObject();
             json.put("message", e.getMessage());
             throw halt(e.getHttpStatus(), json.toString());
+        }
+
+        if (!supportGeometries && photonRequest.getReturnGeometry()) {
+            JSONObject json = new JSONObject();
+            json.put("message", "You're explicitly requesting a geometry, but geometries are not imported!");
+            throw halt(400, json.toString());
         }
 
         List<PhotonResult> results = requestHandler.search(photonRequest);
@@ -54,6 +62,6 @@ public class SearchRequestHandler extends RouteImpl {
             debugInfo = requestHandler.dumpQuery(photonRequest);
         }
 
-        return new GeocodeJsonFormatter(photonRequest.getDebug(), photonRequest.getLanguage()).convert(results, debugInfo);
+        return new GeocodeJsonFormatter(photonRequest.getDebug(), photonRequest.getLanguage(), photonRequest.getReturnGeometry()).convert(results, debugInfo);
     }
 }

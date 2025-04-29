@@ -24,6 +24,9 @@ public interface PhotonResult {
     Map<String, String> getMap(String key);
 
     double[] getCoordinates();
+
+    String getGeometry();
+
     double[] getExtent();
 
     double getScore();

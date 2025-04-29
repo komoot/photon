@@ -7,6 +7,7 @@ import de.komoot.photon.Constants;
 import de.komoot.photon.PhotonDoc;
 import de.komoot.photon.Utils;
 import org.locationtech.jts.geom.Envelope;
+import org.locationtech.jts.io.geojson.GeoJsonWriter;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -52,6 +53,15 @@ public class PhotonDocSerializer extends StdSerializer<PhotonDoc> {
             gen.writeEndObject();
         }
 
+        if (value.getGeometry() != null && !value.getGeometry().getGeometryType().equals("Point")) {
+            // Convert JTS Geometry to GeoJSON
+            GeoJsonWriter geoJsonWriter = new GeoJsonWriter();
+            String geoJson = geoJsonWriter.write(value.getGeometry());
+
+            gen.writeFieldName("geometry");
+            gen.writeRawValue(geoJson);
+        }
+
         if (value.getHouseNumber() != null) {
             gen.writeStringField("housenumber", value.getHouseNumber());
         }
@@ -86,7 +96,7 @@ public class PhotonDocSerializer extends StdSerializer<PhotonDoc> {
         gen.writeEndObject();
     }
 
-        private void writeName(JsonGenerator gen, PhotonDoc doc, String[] languages) throws IOException {
+    private void writeName(JsonGenerator gen, PhotonDoc doc, String[] languages) throws IOException {
         Map<String, String> fNames = new HashMap<>();
 
         doc.copyName(fNames, "default", "name");

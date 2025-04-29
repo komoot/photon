@@ -16,7 +16,7 @@ class ServerTest extends ESBaseTester {
         setUpES();
 
         Date now = new Date();
-        DatabaseProperties prop = new DatabaseProperties(new String[]{"en", "de", "fr"}, now, false);
+        DatabaseProperties prop = new DatabaseProperties(new String[]{"en", "de", "fr"}, now, false, false);
         getServer().saveToDatabase(prop);
 
         prop = getServer().loadFromDatabase();

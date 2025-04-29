@@ -17,12 +17,12 @@ import java.util.Map;
 public class NominatimImporter extends NominatimConnector {
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(NominatimImporter.class);
 
-    public NominatimImporter(String host, int port, String database, String username, String password) {
-        this(host, port, database, username, password, new PostgisDataAdapter());
+    public NominatimImporter(String host, int port, String database, String username, String password, boolean useGeometryColumn) {
+        this(host, port, database, username, password, new PostgisDataAdapter(), useGeometryColumn);
     }
 
-    public NominatimImporter(String host, int port, String database, String username, String password, DBDataAdapter dataAdapter) {
-        super(host, port, database, username, password, dataAdapter);
+    public NominatimImporter(String host, int port, String database, String username, String password, DBDataAdapter dataAdapter, boolean useGeometryColumn) {
+        super(host, port, database, username, password, dataAdapter, useGeometryColumn);
     }
 
 
@@ -55,12 +55,18 @@ public class NominatimImporter extends NominatimConnector {
         NominatimAddressCache addressCache = new NominatimAddressCache();
         addressCache.loadCountryAddresses(template, dbutils, countryCode);
 
-        final PlaceRowMapper placeRowMapper = new PlaceRowMapper(dbutils);
+        final PlaceRowMapper placeRowMapper = new PlaceRowMapper(dbutils, useGeometryColumn);
+        String query = "SELECT place_id, osm_type, osm_id, class, type, name, postcode," +
+                "       address, extratags, ST_Envelope(geometry) AS bbox, parent_place_id," +
+                "       linked_place_id, rank_address, rank_search, importance, country_code, centroid, ";
+
+        if (useGeometryColumn) {
+            query += "geometry,";
+        }
+
         // First read ranks below 30, independent places
         template.query(
-                "SELECT place_id, osm_type, osm_id, class, type, name, postcode," +
-                        "       address, extratags, ST_Envelope(geometry) AS bbox, parent_place_id," +
-                        "       linked_place_id, rank_address, rank_search, importance, country_code, centroid," +
+                query +
                         dbutils.jsonArrayFromSelect(
                                 "address_place_id",
                                 "FROM place_addressline pa " +
@@ -88,12 +94,17 @@ public class NominatimImporter extends NominatimConnector {
                 });
 
         // Next get all POIs/housenumbers.
+        query = "SELECT p.place_id, p.osm_type, p.osm_id, p.class, p.type, p.name, p.postcode," +
+                "       p.address, p.extratags, ST_Envelope(p.geometry) AS bbox, p.parent_place_id," +
+                "       p.linked_place_id, p.rank_address, p.rank_search, p.importance, p.country_code, p.centroid, " +
+                "       parent.class as parent_class, parent.type as parent_type," +
+                "       parent.rank_address as parent_rank_address, parent.name as parent_name, ";
+
+        if (useGeometryColumn) {
+            query += "p.geometry as geometry, ";
+        }
         template.query(
-                "SELECT p.place_id, p.osm_type, p.osm_id, p.class, p.type, p.name, p.postcode," +
-                        "       p.address, p.extratags, ST_Envelope(p.geometry) AS bbox, p.parent_place_id," +
-                        "       p.linked_place_id, p.rank_address, p.rank_search, p.importance, p.country_code, p.centroid," +
-                        "       parent.class as parent_class, parent.type as parent_type," +
-                        "       parent.rank_address as parent_rank_address, parent.name as parent_name, " +
+                 query +
                         dbutils.jsonArrayFromSelect(
                                 "address_place_id",
                                 "FROM place_addressline pa " +

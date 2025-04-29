@@ -67,6 +67,11 @@ public class ElasticResult implements PhotonResult {
     }
 
     @Override
+    public String getGeometry() {
+        return (String) result.getSource().get("geometry");
+    }
+
+    @Override
     public double[] getExtent() {
         final Map<String, Object> extent = (Map<String, Object>) result.getSource().get("extent");
         if (extent == null) {

@@ -10,13 +10,20 @@ import java.util.*;
 public class DatabaseProperties {
     private String[] languages;
     private Date importDate;
-    private final boolean supportStructuredQueries;
+    private boolean supportStructuredQueries;
+    private boolean supportGeometries;
 
-    public DatabaseProperties(String[] languages, Date importDate, boolean supportStructuredQueries) {
+    public DatabaseProperties(String[] languages, Date importDate, boolean supportStructuredQueries, boolean supportGeometries) {
         this.languages = languages;
         this.importDate = importDate;
         this.supportStructuredQueries = supportStructuredQueries;
+        this.supportGeometries = supportGeometries;
     }
+
+    public DatabaseProperties() {
+
+    }
+
 
     /**
      * Return the list of languages for which the database is configured.
@@ -30,6 +37,18 @@ public class DatabaseProperties {
         }
 
         return languages;
+    }
+
+    /**
+     * Replace the language list with the given list.
+     *
+     * @param languages Array of two-letter language codes.
+     *
+     * @return This object for function chaining.
+     */
+    public DatabaseProperties setLanguages(String[] languages) {
+        this.languages = languages;
+        return this;
     }
 
     /**
@@ -63,16 +82,40 @@ public class DatabaseProperties {
         }
     }
 
-     public void setImportDate(Date importDate) {
-        this.importDate = importDate;
-    }
-
-
     public Date getImportDate() {
         return this.importDate;
     }
 
+    public DatabaseProperties setImportDate(Date importDate) {
+        this.importDate = importDate;
+        return this;
+    }
+
     public boolean getSupportStructuredQueries() {
         return supportStructuredQueries;
+    }
+
+    public DatabaseProperties setSupportStructuredQueries(boolean supportStructuredQueries) {
+        this.supportStructuredQueries = supportStructuredQueries;
+        return this;
+    }
+
+    public boolean getSupportGeometries() {
+        return supportGeometries;
+    }
+
+    public DatabaseProperties setSupportGeometries(boolean supportGeometries) {
+        this.supportGeometries = supportGeometries;
+        return this;
+    }
+
+    @Override
+    public String toString() {
+        return "DatabaseProperties{" +
+                "languages=" + Arrays.toString(languages) +
+                ", importDate=" + importDate +
+                ", supportStructuredQueries=" + supportStructuredQueries +
+                ", supportGeometries=" + supportGeometries +
+                '}';
     }
 }

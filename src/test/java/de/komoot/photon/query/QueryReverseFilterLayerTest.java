@@ -28,7 +28,7 @@ class QueryReverseFilterLayerTest extends ESBaseTester {
 
     @BeforeAll
     void setup() throws IOException {
-        setUpES(instanceTestDirectory, "en");
+        setUpES(instanceTestDirectory, false,"en");
 
         Importer instance = makeImporter();
 
@@ -52,7 +52,7 @@ class QueryReverseFilterLayerTest extends ESBaseTester {
         Point pt = FACTORY.createPoint(new Coordinate(10, 10));
 
         Set<String> layerSet = Arrays.stream(layers).collect(Collectors.toSet());
-        ReverseRequest request = new ReverseRequest(pt, "en", 1.0, "", 10, true, layerSet, false);
+        ReverseRequest request = new ReverseRequest(pt, "en", 1.0, "", 10, true, layerSet, false, false);
 
         return getServer().createReverseHandler(1).reverse(request);
     }

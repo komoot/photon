@@ -44,7 +44,7 @@ class ElasticResultTest  extends ESBaseTester {
 
     @BeforeAll
     void setUp() throws Exception {
-        setUpES(instanceTestDirectory, "en", "de", "fr", "it");
+        setUpES(instanceTestDirectory, false, "en", "de", "fr", "it");
         Importer instance = getServer().createImporter(new String[]{"en", "de", "fr", "it"},
                  new String[]{"population",  "capital"});
 

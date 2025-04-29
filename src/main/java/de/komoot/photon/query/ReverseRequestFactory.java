@@ -16,7 +16,7 @@ import java.util.Set;
 public class ReverseRequestFactory {
 
     private static final HashSet<String> REQUEST_QUERY_PARAMS = new HashSet<>(Arrays.asList("lang", "lon", "lat", "radius",
-            "query_string_filter", "distance_sort", "limit", "layer", "osm_tag", "debug"));
+            "query_string_filter", "distance_sort", "limit", "layer", "osm_tag", "debug", "geometry"));
     private static final LocationParamConverter mandatoryLocationParamConverter = new LocationParamConverter(true);
 
     private final RequestLanguageResolver languageResolver;
@@ -86,7 +86,7 @@ public class ReverseRequestFactory {
         }
 
         String queryStringFilter = webRequest.queryParams("query_string_filter");
-        ReverseRequest request = new ReverseRequest(location, language, radius, queryStringFilter, limit, locationDistanceSort, layerFilter, enableDebug);
+        ReverseRequest request = new ReverseRequest(location, language, radius, queryStringFilter, limit, locationDistanceSort, layerFilter, enableDebug, Boolean.parseBoolean(webRequest.queryParams("geometry")));
 
         QueryParamsMap tagFiltersQueryMap = webRequest.queryMap("osm_tag");
         if (tagFiltersQueryMap.hasValue()) {

@@ -36,7 +36,7 @@ class QueryFilterTagValueTest extends ESBaseTester {
 
     @BeforeAll
     void setUp() throws Exception {
-        setUpES(instanceTestDirectory, "en", "de", "fr");
+        setUpES(instanceTestDirectory, false, "en", "de", "fr");
         Importer instance = makeImporter();
         double lon = 13.38886;
         double lat = 52.51704;

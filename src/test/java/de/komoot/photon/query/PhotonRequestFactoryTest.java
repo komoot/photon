@@ -56,7 +56,7 @@ class PhotonRequestFactoryTest {
     }
 
     private PhotonRequest createPhotonRequest(Request mockRequest) throws BadRequestException {
-        PhotonRequestFactory factory = new PhotonRequestFactory(Collections.singletonList("en"), "en", 10);
+        PhotonRequestFactory factory = new PhotonRequestFactory(Collections.singletonList("en"), "en", 10, true);
         return factory.create(mockRequest);
     }
 
@@ -209,5 +209,21 @@ class PhotonRequestFactoryTest {
 
         assertTrue(exception.getMessage().contains(expectedMessageFragment),
                 String.format("Error message doesn not contain '%s': %s", expectedMessageFragment, exception.getMessage()));
+    }
+
+    @Test
+    void testWithGeometry() throws Exception {
+        Request mockRequest = createRequestWithQueryParams("q", "berlin");
+        PhotonRequest photonRequest = createPhotonRequest(mockRequest);
+
+        assertTrue(photonRequest.getReturnGeometry());
+    }
+
+    @Test
+    void testWithoutGeometry() throws Exception {
+        Request mockRequest = createRequestWithQueryParams("q", "berlin", "geometry", "false");
+        PhotonRequest photonRequest = createPhotonRequest(mockRequest);
+
+        assertFalse(photonRequest.getReturnGeometry());
     }
 }

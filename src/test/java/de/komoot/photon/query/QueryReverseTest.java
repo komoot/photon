@@ -12,6 +12,7 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.locationtech.jts.io.ParseException;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -26,8 +27,8 @@ class QueryReverseTest extends ESBaseTester {
     private static Path instanceTestDirectory;
 
     @BeforeAll
-    void setup() throws IOException {
-        setUpES(instanceTestDirectory, "en");
+    void setup() throws IOException, ParseException {
+        setUpES(instanceTestDirectory, false, "en");
 
         Importer instance = makeImporter();
         instance.add(createDoc(10,10, 100, 100, "place", "house"), 0);
@@ -48,7 +49,7 @@ class QueryReverseTest extends ESBaseTester {
         Point pt = FACTORY.createPoint(new Coordinate(lon, lat));
 
         return getServer().createReverseHandler(1).reverse(
-            new ReverseRequest(pt, "en", radius, "", limit, true, new HashSet<>(), false)
+            new ReverseRequest(pt, "en", radius, "", limit, true, new HashSet<>(), false, false)
         );
     }
 

@@ -130,12 +130,12 @@ public class App {
     }
 
     private static String[] initDatabase(CommandLineArgs args, Server esServer) {
-        final var nominatimConnector = new NominatimImporter(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
+        final var nominatimConnector = new NominatimImporter(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword(), args.getImportGeometryColumn());
         final Date importDate = nominatimConnector.getLastImportDate();
 
         try {
             // Clear out previous data.
-            var dbProperties = esServer.recreateIndex(args.getLanguages(), importDate, args.getSupportStructuredQueries());
+            var dbProperties = esServer.recreateIndex(args.getLanguages(), importDate, args.getSupportStructuredQueries(), args.getImportGeometryColumn()); // clear out previous data
             return dbProperties.getLanguages();
         } catch (IOException e) {
             throw new UsageException("Cannot setup index, elastic search config files not readable");
@@ -143,7 +143,7 @@ public class App {
     }
 
     private static void importFromDatabase(CommandLineArgs args, Importer importer) {
-        final var connector = new NominatimImporter(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
+        final var connector = new NominatimImporter(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword(), args.getImportGeometryColumn());
         connector.prepareDatabase();
         connector.loadCountryNames();
 
@@ -172,7 +172,7 @@ public class App {
                 for (int i = 0; i < numThreads; ++i) {
                     final NominatimImporter threadConnector;
                     if (i > 0) {
-                        threadConnector = new NominatimImporter(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
+                        threadConnector = new NominatimImporter(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword(), args.getImportGeometryColumn());
                         threadConnector.loadCountryNames();
                     } else {
                         threadConnector = connector;
@@ -211,7 +211,7 @@ public class App {
 
 
     private static void startNominatimUpdateInit(CommandLineArgs args) {
-        NominatimUpdater nominatimUpdater = new NominatimUpdater(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
+        NominatimUpdater nominatimUpdater = new NominatimUpdater(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword(), args.getImportGeometryColumn());
         nominatimUpdater.initUpdates(args.getNominatimUpdateInit());
     }
 
@@ -236,7 +236,7 @@ public class App {
         // Get database properties and ensure that the version is compatible.
         DatabaseProperties dbProperties = server.loadFromDatabase();
 
-        NominatimUpdater nominatimUpdater = new NominatimUpdater(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword());
+        NominatimUpdater nominatimUpdater = new NominatimUpdater(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword(), args.getImportGeometryColumn());
         nominatimUpdater.setUpdater(server.createUpdater(dbProperties.getLanguages(), args.getExtraTags()));
         return nominatimUpdater;
     }
@@ -250,6 +250,10 @@ public class App {
         if (args.getLanguages(false).length > 0) {
             dbProperties.restrictLanguages(args.getLanguages());
         }
+
+        LOGGER.info("Starting API with the following settings: " +
+                        "\n Languages: {} \n Import Date: {} \n Support Structured Queries: {} \n Support Geometries: {}",
+                dbProperties.getLanguages(), dbProperties.getImportDate(), dbProperties.getSupportStructuredQueries(), dbProperties.getSupportGeometries());
 
         port(args.getListenPort());
         ipAddress(args.getListenIp());
@@ -266,13 +270,13 @@ public class App {
         String[] langs = dbProperties.getLanguages();
 
         SearchHandler searchHandler = server.createSearchHandler(langs, args.getQueryTimeout());
-        get("api", new SearchRequestHandler("api", searchHandler, langs, args.getDefaultLanguage(), args.getMaxResults()));
-        get("api/", new SearchRequestHandler("api/", searchHandler, langs, args.getDefaultLanguage(), args.getMaxResults()));
+        get("api", new SearchRequestHandler("api", searchHandler, langs, args.getDefaultLanguage(), args.getMaxResults(), dbProperties.getSupportGeometries()));
+        get("api/", new SearchRequestHandler("api/", searchHandler, langs, args.getDefaultLanguage(), args.getMaxResults(), dbProperties.getSupportGeometries()));
 
         if (dbProperties.getSupportStructuredQueries()) {
             StructuredSearchHandler structured = server.createStructuredSearchHandler(langs, args.getQueryTimeout());
-            get("structured", new StructuredSearchRequestHandler("structured", structured, langs, args.getDefaultLanguage(), args.getMaxResults()));
-            get("structured/", new StructuredSearchRequestHandler("structured/", structured, langs, args.getDefaultLanguage(), args.getMaxResults()));
+            get("structured", new StructuredSearchRequestHandler("structured", structured, langs, args.getDefaultLanguage(), args.getMaxResults(), dbProperties.getSupportGeometries()));
+            get("structured/", new StructuredSearchRequestHandler("structured/", structured, langs, args.getDefaultLanguage(), args.getMaxResults(), dbProperties.getSupportGeometries()));
         }
 
         ReverseHandler reverseHandler = server.createReverseHandler(args.getQueryTimeout());

@@ -56,6 +56,7 @@ public class Server {
     private static final String FIELD_VERSION = "database_version";
     private static final String FIELD_LANGUAGES = "indexed_languages";
     private static final String FIELD_IMPORT_DATE = "import_date";
+    private static final String FIELD_SUPPORT_GEOMETRIES = "support_geometries";
 
     private Node esNode;
 
@@ -177,14 +178,18 @@ public class Server {
 
     }
 
-    public DatabaseProperties recreateIndex(String[] languages, Date importDate, boolean supportStructuredQueries) throws IOException {
+    public DatabaseProperties recreateIndex(String[] languages, Date importDate, boolean supportStructuredQueries, boolean supportGeometries) throws IOException {
         deleteIndex();
 
         loadIndexSettings().createIndex(esClient, PhotonIndex.NAME);
 
         createAndPutIndexMapping(languages, supportStructuredQueries);
 
-        DatabaseProperties dbProperties = new DatabaseProperties(languages, importDate, false);
+        DatabaseProperties dbProperties = new DatabaseProperties()
+            .setLanguages(languages)
+            .setImportDate(importDate)
+            .setSupportGeometries(supportGeometries);
+
         saveToDatabase(dbProperties);
 
         return dbProperties;
@@ -239,6 +244,7 @@ public class Server {
                         .field(FIELD_VERSION, DATABASE_VERSION)
                         .field(FIELD_LANGUAGES, String.join(",", dbProperties.getLanguages()))
                         .field(FIELD_IMPORT_DATE, dbProperties.getImportDate() instanceof Date ? dbProperties.getImportDate().toInstant() : null)
+                        .field(FIELD_SUPPORT_GEOMETRIES, Boolean.toString(dbProperties.getSupportGeometries()))
                         .endObject().endObject();
 
         esClient.prepareIndex(PhotonIndex.NAME, PhotonIndex.TYPE).
@@ -276,11 +282,15 @@ public class Server {
         }
 
         String langString = properties.get(FIELD_LANGUAGES);
+
         String importDateString = properties.get(FIELD_IMPORT_DATE);
 
+        String supportGeometries = properties.get(FIELD_SUPPORT_GEOMETRIES);
+
         return new DatabaseProperties(langString == null ? null : langString.split(","),
-                                      importDateString == null ? null : Date.from(Instant.parse(importDateString)),
-                                      false);
+                importDateString == null ? null : Date.from(Instant.parse(importDateString)),
+                false,
+                Boolean.parseBoolean(supportGeometries));
     }
 
     public Importer createImporter(String[] languages, String[] extraTags) {

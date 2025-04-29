@@ -22,8 +22,9 @@ public class NominatimConnector {
     protected final TransactionTemplate txTemplate;
     protected Map<String, Map<String, String>> countryNames;
     protected final boolean hasNewStyleInterpolation;
+    protected boolean useGeometryColumn;
 
-    protected NominatimConnector(String host, int port, String database, String username, String password, DBDataAdapter dataAdapter) {
+    protected NominatimConnector(String host, int port, String database, String username, String password, DBDataAdapter dataAdapter, boolean useGeometryColumn) {
         BasicDataSource dataSource = new BasicDataSource();
 
         dataSource.setUrl(String.format("jdbc:postgresql://%s:%d/%s", host, port, database));
@@ -42,6 +43,7 @@ public class NominatimConnector {
 
         dbutils = dataAdapter;
         hasNewStyleInterpolation = dbutils.hasColumn(template, "location_property_osmline", "step");
+        this.useGeometryColumn = useGeometryColumn;
     }
 
     public Date getLastImportDate() {

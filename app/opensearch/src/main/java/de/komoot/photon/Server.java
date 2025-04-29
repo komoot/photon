@@ -33,9 +33,11 @@ public class Server {
 
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(Server.class);
 
-    public static final String OPENSEARCH_MODULES =
-            "org.opensearch.transport.Netty4Plugin,"
-            + "org.opensearch.analysis.common.CommonAnalysisPlugin";
+//    public static final String OPENSEARCH_MODULES =
+//            "org.opensearch.transport.Netty4Plugin,"
+//            + "org.opensearch.analysis.common.CommonAnalysisPlugin,"
+//            + "org.opensearch.geo.GeoModulePlugin,"
+//            + "org.opensearch.geospatial.plugin.GeospatialPlugin";
 
     protected OpenSearchClient client;
     private OpenSearchRunner runner = null;
@@ -86,7 +88,6 @@ public class Server {
                 .basePath(dataDirectory)
                 .clusterName(clusterName)
                 .numOfNode(1)
-                .moduleTypes(OPENSEARCH_MODULES)
         );
 
         runner.ensureYellow();
@@ -119,7 +120,7 @@ public class Server {
         }
     }
 
-    public DatabaseProperties recreateIndex(String[] languages, Date importDate, boolean supportStructuredQueries) throws IOException {
+    public DatabaseProperties recreateIndex(String[] languages, Date importDate, boolean supportStructuredQueries, boolean supportGeometries) throws IOException {
         // delete any existing data
         if (client.indices().exists(e -> e.index(PhotonIndex.NAME)).value()) {
             client.indices().delete(d -> d.index(PhotonIndex.NAME));
@@ -129,7 +130,7 @@ public class Server {
 
         (new IndexMapping(supportStructuredQueries)).addLanguages(languages).putMapping(client, PhotonIndex.NAME);
 
-        var dbProperties = new DatabaseProperties(languages, importDate, supportStructuredQueries);
+        var dbProperties = new DatabaseProperties(languages, importDate, supportStructuredQueries, supportGeometries);
         saveToDatabase(dbProperties);
 
         return dbProperties;
@@ -180,7 +181,8 @@ public class Server {
 
         return new DatabaseProperties(dbEntry.source().languages,
                                       dbEntry.source().importDate,
-                                      dbEntry.source().supportStructuredQueries);
+                                      dbEntry.source().supportStructuredQueries,
+                                      dbEntry.source().supportGeometries);
     }
 
     public Importer createImporter(String[] languages, String[] extraTags) {
