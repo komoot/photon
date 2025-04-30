@@ -31,7 +31,7 @@ class UpdaterTest extends ESBaseTester {
 
         names.put("name:en", "Enfoo");
         Updater updater = makeUpdater();
-        updater.create(doc, 0);
+        updater.addOrUpdate(List.of(doc));
         updater.finish();
         refresh();
 
@@ -58,7 +58,7 @@ class UpdaterTest extends ESBaseTester {
 
         names.remove("name");
         Updater updater = makeUpdater();
-        updater.create(doc, 0);
+        updater.addOrUpdate(List.of(doc));
         updater.finish();
         refresh();
 
@@ -89,7 +89,7 @@ class UpdaterTest extends ESBaseTester {
 
         doc.extraTags(Collections.singletonMap("website", "http://site.foo"));
         Updater updater = makeUpdaterWithExtra("website");
-        updater.create(doc, 0);
+        updater.addOrUpdate(List.of(doc));
         updater.finish();
         refresh();
 
@@ -116,31 +116,11 @@ class UpdaterTest extends ESBaseTester {
         assertNotNull(getById("4432.1"));
 
         Updater updater = makeUpdaterWithExtra("website");
-        updater.delete(4432L, 1);
+        updater.delete(4432L);
         updater.finish();
         refresh();
 
         assertNotNull(getById("4432"));
         assertNull(getById("4432.1"));
-    }
-
-    @Test
-    void checkExistence() throws IOException {
-        setUpES();
-        Importer instance = makeImporterWithExtra("website");
-        instance.add(List.of(
-                new PhotonDoc(4432, "N", 100, "building", "yes").houseNumber("34"),
-                new PhotonDoc(4432, "N", 100, "building", "yes").houseNumber("35")));
-        instance.finish();
-        refresh();
-
-        Updater updater = makeUpdaterWithExtra("website");
-        assertTrue(updater.exists(4432L, 0));
-        assertTrue(updater.exists(4432L, 1));
-        assertFalse(updater.exists(4432L, 2));
-        assertFalse(updater.exists(4433L, 0));
-        assertFalse(updater.exists(4433L, 1));
-        updater.finish();
-        refresh();
     }
 }

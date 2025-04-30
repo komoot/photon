@@ -58,8 +58,6 @@ class NominatimUpdaterDBTest {
         final long place_id = 47836;
         (new PhotonUpdateRow("placex", place_id, "DELETE")).add(jdbc);
 
-        updater.addExisting(place_id, 0);
-
         connector.update();
         updater.assertFinishCalled();
 
@@ -88,26 +86,19 @@ class NominatimUpdaterDBTest {
         final long place_id = 887;
         (new PhotonUpdateRow("placex", place_id, "DELETE")).add(jdbc);
 
-        updater.addExisting(place_id, 0, 1, 2, 3);
-
         connector.update();
         updater.assertFinishCalled();
 
-        assertEquals(4, updater.numDeleted());
+        assertEquals(1, updater.numDeleted());
         assertEquals(0, updater.numCreated());
 
-        updater.assertHasDeleted(place_id, 4);
+        updater.assertHasDeleted(place_id);
     }
 
     @Test
     void testUpdateLowerRanks() {
         PlacexTestRow place = new PlacexTestRow("place", "city").name("Town").rankAddress(12).add(jdbc);
         (new PhotonUpdateRow("placex", place.getPlaceId(), "UPDATE")).add(jdbc);
-
-        // Pretending to have two documents for the place in question to check that
-        // the algorithm stops at the first.
-        // In practise, a rankAddress<30 document cannot have duplicates.
-        updater.addExisting(place.getPlaceId(), 0, 1);
 
         connector.update();
         updater.assertFinishCalled();
@@ -123,8 +114,6 @@ class NominatimUpdaterDBTest {
         PlacexTestRow place = new PlacexTestRow("building", "yes").housenumber(23).rankAddress(30).add(jdbc);
         (new PhotonUpdateRow("placex", place.getPlaceId(), "UPDATE")).add(jdbc);
 
-        updater.addExisting(place.getPlaceId(), 0);
-
         connector.update();
         updater.assertFinishCalled();
 
@@ -138,8 +127,6 @@ class NominatimUpdaterDBTest {
     void testUpdateRank30MoreHousenumbers() {
         PlacexTestRow place = new PlacexTestRow("building", "yes").addr("housenumber", "1;2a;3").rankAddress(30).add(jdbc);
         (new PhotonUpdateRow("placex", place.getPlaceId(), "UPDATE")).add(jdbc);
-
-        updater.addExisting(place.getPlaceId(), 0);
 
         connector.update();
         updater.assertFinishCalled();
@@ -157,8 +144,6 @@ class NominatimUpdaterDBTest {
         PlacexTestRow place = new PlacexTestRow("building", "yes").addr("housenumber", "1;2a;3").rankAddress(30).add(jdbc);
         (new PhotonUpdateRow("placex", place.getPlaceId(), "UPDATE")).add(jdbc);
 
-        updater.addExisting(place.getPlaceId(), 0, 1, 2);
-
         connector.update();
         updater.assertFinishCalled();
 
@@ -175,16 +160,13 @@ class NominatimUpdaterDBTest {
         PlacexTestRow place = new PlacexTestRow("building", "yes").addr("housenumber", "1").rankAddress(30).add(jdbc);
         (new PhotonUpdateRow("placex", place.getPlaceId(), "UPDATE")).add(jdbc);
 
-        updater.addExisting(place.getPlaceId(), 0, 1, 2);
-
         connector.update();
         updater.assertFinishCalled();
 
-        assertEquals(2, updater.numDeleted());
+        assertEquals(0, updater.numDeleted());
         assertEquals(1, updater.numCreated());
 
         updater.assertHasCreated(place.getPlaceId(), "1");
-        updater.assertHasDeleted(place.getPlaceId(), 2);
     }
 
     @Test
@@ -214,8 +196,6 @@ class NominatimUpdaterDBTest {
                 new OsmlineTestRow().number(6, 8, 1).parent(street).geom("LINESTRING(0 0, 0 1)").add(jdbc);
         (new PhotonUpdateRow("location_property_osmline", osmline.getPlaceId(), "UPDATE")).add(jdbc);
 
-        updater.addExisting(osmline.getPlaceId(), 0, 1, 2);
-
         connector.update();
         updater.assertFinishCalled();
 
@@ -234,8 +214,6 @@ class NominatimUpdaterDBTest {
         OsmlineTestRow osmline =
                 new OsmlineTestRow().number(6, 8, 1).parent(street).geom("LINESTRING(0 0, 0 1)").add(jdbc);
         (new PhotonUpdateRow("location_property_osmline", osmline.getPlaceId(), "UPDATE")).add(jdbc);
-
-        updater.addExisting(osmline.getPlaceId(), 0);
 
         connector.update();
         updater.assertFinishCalled();
@@ -256,18 +234,15 @@ class NominatimUpdaterDBTest {
                 new OsmlineTestRow().number(6, 8, 1).parent(street).geom("LINESTRING(0 0, 0 1)").add(jdbc);
         (new PhotonUpdateRow("location_property_osmline", osmline.getPlaceId(), "UPDATE")).add(jdbc);
 
-        updater.addExisting(osmline.getPlaceId(), 0, 1, 2, 3, 4);
-
         connector.update();
         updater.assertFinishCalled();
 
-        assertEquals(2, updater.numDeleted());
+        assertEquals(0, updater.numDeleted());
         assertEquals(3, updater.numCreated());
 
         updater.assertHasCreated(osmline.getPlaceId(), "6");
         updater.assertHasCreated(osmline.getPlaceId(), "7");
         updater.assertHasCreated(osmline.getPlaceId(), "8");
-        updater.assertHasDeleted(osmline.getPlaceId(), 2);
     }
 
     @Test

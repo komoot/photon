@@ -11,42 +11,25 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class CollectingUpdater implements Updater {
     private List<Map.Entry<Integer, PhotonDoc>> created = new ArrayList<>();
-    private List<Map.Entry<Integer, Long>> deleted = new ArrayList<>();
-    private List<Map.Entry<Integer, Long>> existing = new ArrayList<>();
+    private List<Long> deleted = new ArrayList<>();
     private int finishCalled = 0;
 
     @Override
-    public void create(PhotonDoc doc, int objectId) {
-        created.add(Map.entry(objectId, doc));
-    }
-
-    @Override
-    public void delete(long docId, int objectId) {
-        deleted.add(Map.entry(objectId, docId));
-    }
-
-    @Override
-    public boolean exists(long docId, int objectId) {
-        for (Map.Entry<Integer, Long> entry: existing) {
-            if (entry.getKey() == objectId && docId == entry.getValue()) {
-                return true;
-            }
+    public void addOrUpdate(Iterable<PhotonDoc> docs)
+    {
+        int objectId = 0;
+        for (var doc: docs) {
+            created.add(Map.entry(objectId, doc));
         }
+    }
 
-        return false;
+    @Override
+    public void delete(long docId) {
+        deleted.add(docId);
     }
 
     @Override
     public void finish() { ++finishCalled; }
-
-
-    public void addExisting(long placeId, int ... objectId)
-    {
-        for (int o: objectId) {
-            existing.add(Map.entry(o, placeId));
-        }
-    }
-
 
     public void assertFinishCalled() {
         assertEquals(1, finishCalled);
@@ -59,7 +42,6 @@ public class CollectingUpdater implements Updater {
     public int numCreated() {
         return created.size();
     }
-
 
     public void assertHasCreated(long id) {
         int objectId = -1;
@@ -88,18 +70,7 @@ public class CollectingUpdater implements Updater {
     }
 
     public void assertHasDeleted(long id) {
-        assertHasDeleted(id, 1);
-    }
-
-    public void assertHasDeleted(long id, int num) {
-        int numFound = 0;
-        for (Map.Entry<Integer, Long> outdoc : deleted) {
-            if (outdoc.getValue() == id) {
-                ++numFound;
-            }
-        }
-
-        assertEquals(num, numFound);
+        assertTrue(deleted.contains(id));
     }
 
 }

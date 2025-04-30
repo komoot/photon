@@ -171,33 +171,21 @@ public class NominatimUpdater extends NominatimConnector {
         LOGGER.info("Starting place updates");
         int updatedPlaces = 0;
         int deletedPlaces = 0;
+
         for (UpdateRow place : getPlaces("placex")) {
             long placeId = place.getPlaceId();
-            int objectId = -1;
-            boolean checkForMultidoc = true;
 
             if (!place.isToDelete()) {
                 final List<PhotonDoc> updatedDocs = getByPlaceId(placeId);
                 if (updatedDocs != null && !updatedDocs.isEmpty() && updatedDocs.get(0).isUsefulForIndex()) {
-                    checkForMultidoc = updatedDocs.get(0).getRankAddress() == 30;
                     ++updatedPlaces;
-                    for (PhotonDoc updatedDoc : updatedDocs) {
-                            updater.create(updatedDoc, ++objectId);
-                    }
+                    updater.addOrUpdate(updatedDocs);
+                    continue;
                 }
             }
 
-            if (objectId < 0) {
-                ++deletedPlaces;
-                updater.delete(placeId, 0);
-                objectId = 0;
-            }
-
-            if (checkForMultidoc) {
-                while (updater.exists(placeId, ++objectId)) {
-                    updater.delete(placeId, objectId);
-                }
-            }
+            ++deletedPlaces;
+            updater.delete(placeId);
         }
 
         LOGGER.info("{} places created or updated, {} deleted", updatedPlaces, deletedPlaces);
@@ -214,25 +202,18 @@ public class NominatimUpdater extends NominatimConnector {
         int deletedInterpolations = 0;
         for (UpdateRow place : getPlaces("location_property_osmline")) {
             long placeId = place.getPlaceId();
-            int objectId = -1;
 
             if (!place.isToDelete()) {
                 final List<PhotonDoc> updatedDocs = getInterpolationsByPlaceId(placeId);
                 if (updatedDocs != null) {
                     ++updatedInterpolations;
-                    for (PhotonDoc updatedDoc : updatedDocs) {
-                        updater.create(updatedDoc, ++objectId);
-                    }
+                    updater.addOrUpdate(updatedDocs);
+                    continue;
                 }
             }
 
-            if (objectId < 0) {
-                ++deletedInterpolations;
-            }
-
-            while (updater.exists(placeId, ++objectId)) {
-                updater.delete(placeId, objectId);
-            }
+            ++deletedInterpolations;
+            updater.delete(placeId);
         }
 
         LOGGER.info("{} interpolations created or updated, {} deleted", updatedInterpolations, deletedInterpolations);
