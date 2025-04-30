@@ -4,6 +4,7 @@ import de.komoot.photon.Importer;
 import de.komoot.photon.PhotonDoc;
 import org.slf4j.Logger;
 
+import java.util.Collections;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.atomic.AtomicLong;
@@ -15,8 +16,8 @@ public class ImportThread {
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(ImportThread.class);
 
     private static final int PROGRESS_INTERVAL = 50000;
-    private static final NominatimResult FINAL_DOCUMENT = NominatimResult.fromAddress(new PhotonDoc(0, null, 0, null, null), null);
-    private final BlockingQueue<NominatimResult> documents = new LinkedBlockingDeque<>(100);
+    private static final Iterable<PhotonDoc> FINAL_DOCUMENT = Collections.EMPTY_LIST;
+    private final BlockingQueue<Iterable<PhotonDoc>> documents = new LinkedBlockingDeque<>(100);
     private final AtomicLong counter = new AtomicLong();
     private final Importer importer;
     private final Thread thread;
@@ -34,8 +35,11 @@ public class ImportThread {
      *
      * @param docs Fully filled nominatim document.
      */
-    public void addDocument(NominatimResult docs) {
-        assert docs != null;
+    public void addDocument(Iterable<PhotonDoc> docs) {
+        if (docs == null || !docs.iterator().hasNext()) {
+            return;
+        }
+
         while (true) {
             try {
                 documents.put(docs);
@@ -80,12 +84,12 @@ public class ImportThread {
         public void run() {
             while (true) {
                 try {
-                    NominatimResult docs = documents.take();
-                    if (docs == FINAL_DOCUMENT) {
+                    final var docs = documents.take();
+                    if (!docs.iterator().hasNext()) {
                         break;
                     }
                     int objectId = 0;
-                    for (PhotonDoc doc : docs.getDocsWithHousenumber()) {
+                    for (PhotonDoc doc : docs) {
                         importer.add(doc, objectId++);
                     }
                 } catch (InterruptedException e) {

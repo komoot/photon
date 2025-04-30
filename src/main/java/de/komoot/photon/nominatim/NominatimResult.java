@@ -7,13 +7,14 @@ import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.linearref.LengthIndexedLine;
 
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
 /**
  * A Nominatim result consisting of the basic PhotonDoc for the object
  * and a map of attached house numbers together with their respective positions.
  */
-class NominatimResult {
+class NominatimResult implements Iterable<PhotonDoc> {
     private PhotonDoc doc;
     private Map<String, Point> housenumbers;
 
@@ -166,5 +167,10 @@ class NominatimResult {
         }
 
         return result;
+    }
+
+    @Override
+    public Iterator<PhotonDoc> iterator() {
+        return getDocsWithHousenumber().iterator();
     }
 }
