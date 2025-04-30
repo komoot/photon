@@ -2,6 +2,8 @@ package de.komoot.photon;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
+import de.komoot.photon.json.JsonDumper;
+import de.komoot.photon.json.JsonReader;
 import de.komoot.photon.nominatim.ImportThread;
 import de.komoot.photon.nominatim.NominatimImporter;
 import de.komoot.photon.nominatim.NominatimUpdater;
@@ -13,6 +15,7 @@ import org.slf4j.Logger;
 import spark.Request;
 import spark.Response;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -111,10 +114,15 @@ public class App {
 
             final var connector = new NominatimImporter(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword(), args.getImportGeometryColumn());
 
-            //jsonDumper.writeHeader(connector.getLastImportDate(),
-            //                       connector.loadCountryNames());
+            jsonDumper.writeHeader(connector.getLastImportDate(),
+                                   connector.loadCountryNames());
 
-            importFromDatabase(args, jsonDumper);
+            final var importThread = new ImportThread(jsonDumper);
+            try {
+                importFromDatabase(args, importThread);
+            } finally {
+                importThread.finish();
+            }
             LOGGER.info("Json dump was created: {}", filename);
         } catch (IOException e) {
             throw new UsageException("Cannot create dump: " + e.getMessage());
@@ -126,28 +134,40 @@ public class App {
      * Read all data from a Nominatim database and import it into a Photon database.
      */
     private static void startNominatimImport(CommandLineArgs args, Server esServer) {
-        final var languages = initDatabase(args, esServer);
-
-        LOGGER.info("Starting import from nominatim to photon with languages: {}", String.join(",", languages));
-        importFromDatabase(args, esServer.createImporter(languages, args.getExtraTags()));
-
-        LOGGER.info("Imported data from nominatim to photon with languages: {}", String.join(",", languages));
-    }
-
-    private static String[] initDatabase(CommandLineArgs args, Server esServer) {
-        final var nominatimConnector = new NominatimImporter(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword(), args.getImportGeometryColumn());
-        final Date importDate = nominatimConnector.getLastImportDate();
+        final var languages = args.getLanguages();
+        DatabaseProperties dbProperties;
 
         try {
-            // Clear out previous data.
-            var dbProperties = esServer.recreateIndex(args.getLanguages(), importDate, args.getSupportStructuredQueries(), args.getImportGeometryColumn()); // clear out previous data
-            return dbProperties.getLanguages();
-        } catch (IOException e) {
-            throw new UsageException("Cannot setup index, elastic search config files not readable");
+            LOGGER.info("Reinitializing database index with languages {}.", String.join(",", languages));
+            dbProperties = esServer.recreateIndex(args.getLanguages(), null, args.getSupportStructuredQueries(), args.getImportGeometryColumn());
+        } catch (IOException ex) {
+            LOGGER.error("Cannot initialize database", ex);
+            return;
         }
+
+        final var importThread = new ImportThread(esServer.createImporter(languages, args.getExtraTags()));
+
+        try {
+            Date importDate;
+            if (args.getImportFile() == null) {
+                importDate = importFromDatabase(args, importThread);
+            } else {
+                importDate = importFromFile(args, importThread);
+            }
+            dbProperties.setImportDate(importDate);
+            esServer.saveToDatabase(dbProperties);
+        } catch (IOException ex) {
+            LOGGER.error("IO error while importing", ex);
+            return;
+        } finally {
+            importThread.finish();
+        }
+
+        LOGGER.info("Database has been successfully set up with the following properties:\n{}", dbProperties);
     }
 
-    private static void importFromDatabase(CommandLineArgs args, Importer importer) {
+    private static Date importFromDatabase(CommandLineArgs args, ImportThread importThread) {
+        LOGGER.info("Connecting to database {} at {}:{}", args.getDatabase(), args.getHost(), args.getPort());
         final var connector = new NominatimImporter(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword(), args.getImportGeometryColumn());
         connector.prepareDatabase();
         connector.loadCountryNames();
@@ -161,57 +181,67 @@ public class App {
         }
 
         final int numThreads = args.getThreads();
-        ImportThread importThread = new ImportThread(importer);
 
-        try {
-
-            if (numThreads == 1) {
-                for (var country : countries) {
-                    connector.readCountry(country, importThread);
-                }
-            } else {
-                final Queue<String> todolist = new ConcurrentLinkedQueue<>(List.of(countries));
-
-                final List<Thread> readerThreads = new ArrayList<>(numThreads);
-
-                for (int i = 0; i < numThreads; ++i) {
-                    final NominatimImporter threadConnector;
-                    if (i > 0) {
-                        threadConnector = new NominatimImporter(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword(), args.getImportGeometryColumn());
-                        threadConnector.loadCountryNames();
-                    } else {
-                        threadConnector = connector;
-                    }
-                    final int threadno = i;
-                    Runnable runner = () -> {
-                        String nextCc = todolist.poll();
-                        while (nextCc != null) {
-                            LOGGER.info("Thread {}: reading country '{}'", threadno, nextCc);
-                            threadConnector.readCountry(nextCc, importThread);
-                            nextCc = todolist.poll();
-                        }
-                    };
-                    Thread thread = new Thread(runner);
-                    thread.start();
-                    readerThreads.add(thread);
-                }
-                readerThreads.forEach(t -> {
-                    while (true) {
-                        try {
-                            t.join();
-                            break;
-                        } catch (InterruptedException e) {
-                            LOGGER.warn("Thread interrupted:", e);
-                            // Restore interrupted state.
-                            Thread.currentThread().interrupt();
-                        }
-                    }
-                });
+        if (numThreads == 1) {
+            for (var country : countries) {
+                connector.readCountry(country, importThread);
             }
-        } finally {
-            importThread.finish();
+        } else {
+            final Queue<String> todolist = new ConcurrentLinkedQueue<>(List.of(countries));
+
+            final List<Thread> readerThreads = new ArrayList<>(numThreads);
+
+            for (int i = 0; i < numThreads; ++i) {
+                final NominatimImporter threadConnector;
+                if (i > 0) {
+                    threadConnector = new NominatimImporter(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword(), args.getImportGeometryColumn());
+                    threadConnector.loadCountryNames();
+                } else {
+                    threadConnector = connector;
+                }
+                final int threadno = i;
+                Runnable runner = () -> {
+                    String nextCc = todolist.poll();
+                    while (nextCc != null) {
+                        LOGGER.info("Thread {}: reading country '{}'", threadno, nextCc);
+                        threadConnector.readCountry(nextCc, importThread);
+                        nextCc = todolist.poll();
+                    }
+                };
+                Thread thread = new Thread(runner);
+                thread.start();
+                readerThreads.add(thread);
+            }
+            readerThreads.forEach(t -> {
+                while (true) {
+                    try {
+                        t.join();
+                        break;
+                    } catch (InterruptedException e) {
+                        LOGGER.warn("Thread interrupted:", e);
+                        // Restore interrupted state.
+                        Thread.currentThread().interrupt();
+                    }
+                }
+            });
+        }
+        return connector.getLastImportDate();
+    }
+
+    private static Date importFromFile(CommandLineArgs args, ImportThread importerThread) throws IOException {
+        JsonReader reader;
+        if ("-".equals(args.getImportFile())) {
+            reader = new JsonReader(System.in);
+        } else {
+            reader = new JsonReader(new File(args.getImportFile()));
         }
 
+        reader.readHeader();
+        final var importDate = reader.getImportDate();
+
+        reader.readFile(importerThread);
+
+        return importDate;
     }
 
 

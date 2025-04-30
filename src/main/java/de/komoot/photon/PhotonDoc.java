@@ -15,11 +15,11 @@ import java.util.*;
 public class PhotonDoc {
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(PhotonDoc.class);
 
-    private final long placeId;
-    private final String osmType;
-    private final long osmId;
-    private String tagKey;
-    private String tagValue;
+    private long placeId = -1;
+    private String osmType = null;
+    private long osmId = -1;
+    private String tagKey = null;
+    private String tagValue = null;
 
     private Map<String, String> name = Collections.emptyMap();
     private String postcode = null;
@@ -36,6 +36,8 @@ public class PhotonDoc {
     private String houseNumber = null;
     private Point centroid = null;
     private Geometry geometry = null;
+
+    public PhotonDoc() {}
 
     public PhotonDoc(long placeId, String osmType, long osmId, String tagKey, String tagValue) {
         this.placeId = placeId;
@@ -65,6 +67,31 @@ public class PhotonDoc {
         this.addressParts = other.addressParts;
         this.context = other.context;
         this.geometry = other.geometry;
+    }
+
+    public PhotonDoc placeId(long placeId) {
+        this.placeId = placeId;
+        return this;
+    }
+
+    public PhotonDoc osmType(String osmType) {
+        this.osmType = osmType;
+        return this;
+    }
+
+    public PhotonDoc osmId(long osmId) {
+        this.osmId = osmId;
+        return this;
+    }
+
+    public PhotonDoc tagKey(String tagKey) {
+        this.tagKey = tagKey;
+        return this;
+    }
+
+    public PhotonDoc tagValue(String tagValue) {
+        this.tagValue = tagValue;
+        return this;
     }
 
     public PhotonDoc names(Map<String, String> names) {

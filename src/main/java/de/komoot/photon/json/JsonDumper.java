@@ -1,9 +1,12 @@
-package de.komoot.photon;
+package de.komoot.photon.json;
 
 import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import de.komoot.photon.Importer;
+import de.komoot.photon.PhotonDoc;
+import de.komoot.photon.Server;
 import de.komoot.photon.nominatim.model.AddressType;
 import org.locationtech.jts.io.geojson.GeoJsonWriter;
 import org.slf4j.Logger;
@@ -57,9 +60,9 @@ public class JsonDumper implements Importer {
     }
 
     public void writeHeader(Date importDate, Map<String, Map<String, String>> countryNames) throws IOException {
-        writeStartDocument("Nominatim Dump File Header");
+        writeStartDocument(NominatimDumpHeader.DOCUMENT_TYPE);
 
-        writer.writeStringField("version", "1.0.0");
+        writer.writeStringField("version", NominatimDumpHeader.EXPECTED_VERSION);
         writer.writeStringField("generator", "photon");
         writer.writeStringField("database_version", Server.DATABASE_VERSION);
         writer.writeObjectField("data_timestamp", importDate);

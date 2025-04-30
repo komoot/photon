@@ -56,6 +56,9 @@ public class CommandLineArgs {
     @Parameter(names = "-json", description = "Read from nominatim database and dump it to the given file in a json-like format (use '-' for dumping to stdout).")
     private String jsonDump = null;
 
+    @Parameter(names = "-import-file", description = "Import data from the given json file.")
+    private String importFile = null;
+
     @Parameter(names = "-host", description = "Hostname of the PostgreSQL database.")
     private String host = "127.0.0.1";
 
@@ -160,6 +163,8 @@ public class CommandLineArgs {
     public String getJsonDump() {
         return this.jsonDump;
     }
+
+    public String getImportFile() { return this.importFile; }
 
     public String getHost() {
         return this.host;
