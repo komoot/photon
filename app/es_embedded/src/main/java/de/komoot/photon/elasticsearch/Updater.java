@@ -53,9 +53,7 @@ public class Updater implements de.komoot.photon.Updater {
             }
         }
 
-        if (objectId > 0) {
-            deleteSubset(placeID, objectId);
-        }
+        deleteSubset(placeID, objectId);
 
         if (bulkRequest.numberOfActions() > 10000) {
             updateDocuments();

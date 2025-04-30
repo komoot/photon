@@ -160,10 +160,6 @@ public class PhotonDoc {
         return this;
     }
 
-    public String getUid(int objectId) {
-        return makeUid(placeId, objectId);
-    }
-
     public static String makeUid(long placeId, int objectId) {
         if (objectId <= 0)
             return String.valueOf(placeId);
@@ -250,6 +246,11 @@ public class PhotonDoc {
      */
     public boolean setAddressPartIfNew(AddressType addressType, Map<String, String> names) {
         return addressParts.computeIfAbsent(addressType, k -> names) == names;
+    }
+
+    public PhotonDoc replaceAddress(Map<AddressType, Map<String, String>> addressParts) {
+        this.addressParts = addressParts;
+        return this;
     }
 
     /**

@@ -36,9 +36,7 @@ public class Updater implements de.komoot.photon.Updater {
             }
         }
 
-        if (objectId > 0) {
-            deleteSubset(placeID, objectId);
-        }
+        deleteSubset(placeID, objectId);
     }
 
     public void delete(long placeId) {

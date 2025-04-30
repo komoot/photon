@@ -1,11 +1,12 @@
 package de.komoot.photon.nominatim;
 
 import de.komoot.photon.PhotonDoc;
+import de.komoot.photon.PhotonDocAddressSet;
+import de.komoot.photon.PhotonDocInterpolationSet;
 import de.komoot.photon.nominatim.model.AddressRow;
 import de.komoot.photon.nominatim.model.NominatimAddressCache;
 import de.komoot.photon.nominatim.model.OsmlineRowMapper;
 import de.komoot.photon.nominatim.model.PlaceRowMapper;
-import org.locationtech.jts.geom.Geometry;
 import org.slf4j.Logger;
 
 import java.sql.Types;
@@ -86,11 +87,7 @@ public class NominatimImporter extends NominatimConnector {
                     doc.address(address); // take precedence over computed address
                     doc.setCountry(cnames);
 
-                    var result = NominatimResult.fromAddress(doc, address);
-
-                    if (result.isUsefulForIndex()) {
-                        importThread.addDocument(result);
-                    }
+                    importThread.addDocument(new PhotonDocAddressSet(doc, address));
                 });
 
         // Next get all POIs/housenumbers.
@@ -132,11 +129,7 @@ public class NominatimImporter extends NominatimConnector {
                     doc.address(address); // take precedence over computed address
                     doc.setCountry(cnames);
 
-                    var result = NominatimResult.fromAddress(doc, address);
-
-                    if (result.isUsefulForIndex()) {
-                        importThread.addDocument(result);
-                    }
+                    importThread.addDocument(new PhotonDocAddressSet(doc, address));
                 });
 
         final OsmlineRowMapper osmlineRowMapper = new OsmlineRowMapper();
@@ -168,14 +161,13 @@ public class NominatimImporter extends NominatimConnector {
 
                     doc.setCountry(cnames);
 
-                    final Geometry geometry = dbutils.extractGeometry(rs, "linegeo");
-                    final NominatimResult docs = NominatimResult.fromInterpolation(
-                                doc, rs.getLong("startnumber"), rs.getLong("endnumber"),
-                                rs.getLong("step"), geometry);
-
-                    if (docs.isUsefulForIndex()) {
-                        importThread.addDocument(docs);
-                    }
+                    importThread.addDocument(new PhotonDocInterpolationSet(
+                            doc,
+                            rs.getLong("startnumber"),
+                            rs.getLong("endnumber"),
+                            rs.getLong("step"),
+                            dbutils.extractGeometry(rs, "linegeo")
+                    ));
                 });
 
     }
