@@ -142,7 +142,7 @@ public class NominatimImporter extends NominatimConnector {
         final OsmlineRowMapper osmlineRowMapper = new OsmlineRowMapper();
         template.query(
                 "SELECT p.place_id, p.osm_id, p.parent_place_id, p.startnumber, p.endnumber, p.postcode, p.country_code, p.linegeo," +
-                        (hasNewStyleInterpolation ? " p.step," : " p.interpolationtype,") +
+                        " p.step," +
                         "       parent.class as parent_class, parent.type as parent_type," +
                         "       parent.rank_address as parent_rank_address, parent.name as parent_name, " +
                         dbutils.jsonArrayFromSelect(
@@ -169,16 +169,9 @@ public class NominatimImporter extends NominatimConnector {
                     doc.setCountry(cnames);
 
                     final Geometry geometry = dbutils.extractGeometry(rs, "linegeo");
-                    final NominatimResult docs;
-                    if (hasNewStyleInterpolation) {
-                        docs = NominatimResult.fromInterpolation(
+                    final NominatimResult docs = NominatimResult.fromInterpolation(
                                 doc, rs.getLong("startnumber"), rs.getLong("endnumber"),
                                 rs.getLong("step"), geometry);
-                    } else {
-                        docs = NominatimResult.fromInterpolation(
-                                doc, rs.getLong("startnumber"), rs.getLong("endnumber"),
-                                rs.getString("interpolationtype"), geometry);
-                    }
 
                     if (docs.isUsefulForIndex()) {
                         importThread.addDocument(docs);
