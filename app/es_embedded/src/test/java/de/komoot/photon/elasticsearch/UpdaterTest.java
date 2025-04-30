@@ -8,9 +8,7 @@ import de.komoot.photon.searcher.PhotonResult;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -24,7 +22,7 @@ class UpdaterTest extends ESBaseTester {
 
         setUpES();
         Importer instance = makeImporter();
-        instance.add(doc, 0);
+        instance.add(List.of(doc));
         instance.finish();
         refresh();
 
@@ -51,7 +49,7 @@ class UpdaterTest extends ESBaseTester {
 
         setUpES();
         Importer instance = makeImporter();
-        instance.add(doc, 0);
+        instance.add(List.of(doc));
         instance.finish();
         refresh();
 
@@ -77,7 +75,7 @@ class UpdaterTest extends ESBaseTester {
 
         setUpES();
         Importer instance = makeImporterWithExtra("website");
-        instance.add(doc, 0);
+        instance.add(List.of(doc));
         instance.finish();
         refresh();
 
@@ -105,8 +103,9 @@ class UpdaterTest extends ESBaseTester {
     void deleteDoc() throws IOException {
         setUpES();
         Importer instance = makeImporterWithExtra("website");
-        instance.add(new PhotonDoc(4432, "N", 100, "building", "yes").houseNumber("34"), 0);
-        instance.add(new PhotonDoc(4432, "N", 100, "building", "yes").houseNumber("35"), 1);
+        instance.add(List.of(
+                new PhotonDoc(4432, "N", 100, "building", "yes").houseNumber("34"),
+                new PhotonDoc(4432, "N", 100, "building", "yes").houseNumber("35")));
         instance.finish();
         refresh();
 
@@ -126,8 +125,9 @@ class UpdaterTest extends ESBaseTester {
     void checkExistence() throws IOException {
         setUpES();
         Importer instance = makeImporterWithExtra("website");
-        instance.add(new PhotonDoc(4432, "N", 100, "building", "yes").houseNumber("34"), 0);
-        instance.add(new PhotonDoc(4432, "N", 100, "building", "yes").houseNumber("35"), 1);
+        instance.add(List.of(
+                new PhotonDoc(4432, "N", 100, "building", "yes").houseNumber("34"),
+                new PhotonDoc(4432, "N", 100, "building", "yes").houseNumber("35")));
         instance.finish();
         refresh();
 

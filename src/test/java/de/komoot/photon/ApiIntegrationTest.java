@@ -15,6 +15,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -30,9 +31,9 @@ class ApiIntegrationTest extends ESBaseTester {
     void setUp() throws Exception {
         setUpESWithGeometry();
         Importer instance = makeImporter();
-        instance.add(createDoc(13.38886, 52.51704, 1000, 1000, "place", "city").importance(0.6), 0);
-        instance.add(createDoc(13.39026, 52.54714, 1001, 1001, "place", "town").importance(0.3), 0);
-        instance.add(createDoc(13.39026, 52.54714, 1002, 1002, "place", "city").importance(0.3).names(Collections.singletonMap("name", "linestring")).geometry(new WKTReader().read("LINESTRING (30 10, 10 30, 40 40)")), 0);
+        instance.add(List.of(createDoc(13.38886, 52.51704, 1000, 1000, "place", "city").importance(0.6)));
+        instance.add(List.of(createDoc(13.39026, 52.54714, 1001, 1001, "place", "town").importance(0.3)));
+        instance.add(List.of(createDoc(13.39026, 52.54714, 1002, 1002, "place", "city").importance(0.3).names(Collections.singletonMap("name", "linestring")).geometry(new WKTReader().read("LINESTRING (30 10, 10 30, 40 40)"))));
         instance.finish();
         refresh();
     }

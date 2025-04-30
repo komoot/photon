@@ -88,10 +88,7 @@ public class ImportThread {
                     if (!docs.iterator().hasNext()) {
                         break;
                     }
-                    int objectId = 0;
-                    for (PhotonDoc doc : docs) {
-                        importer.add(doc, objectId++);
-                    }
+                    importer.add(docs);
                 } catch (InterruptedException e) {
                     LOGGER.info("Interrupted exception", e);
                     // Restore interrupted state.

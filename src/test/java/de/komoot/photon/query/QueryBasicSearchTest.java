@@ -46,7 +46,7 @@ class QueryBasicSearchTest extends ESBaseTester {
     @Test
     void testSearchByDefaultName() throws IOException {
         Importer instance = makeImporter();
-        instance.add(createDoc("name", "Muffle Flu"), 0);
+        instance.add(List.of(createDoc("name", "Muffle Flu")));
         instance.finish();
         refresh();
 
@@ -63,7 +63,7 @@ class QueryBasicSearchTest extends ESBaseTester {
     @Test
     void testSearchNameSkipTerms() throws IOException {
         Importer instance = makeImporter();
-        instance.add(createDoc("name", "Hunted House Hotel"), 0);
+        instance.add(List.of(createDoc("name", "Hunted House Hotel")));
         instance.finish();
         refresh();
 
@@ -78,9 +78,10 @@ class QueryBasicSearchTest extends ESBaseTester {
     @Test
     void testSearchByAlternativeNames() throws IOException {
         Importer instance = makeImporter();
-        instance.add(createDoc("name", "original", "alt_name", "alt", "old_name", "older", "int_name", "int",
+        instance.add(List.of(
+                createDoc("name", "original", "alt_name", "alt", "old_name", "older", "int_name", "int",
                                "loc_name", "local", "reg_name", "regional", "addr:housename", "house",
-                               "other_name", "other"), 0);
+                               "other_name", "other")));
         instance.finish();
         refresh();
 
@@ -107,7 +108,7 @@ class QueryBasicSearchTest extends ESBaseTester {
         address.put("state", "Estado");
 
         Importer instance = makeImporter();
-        instance.add(createDoc("name", "Castillo").address(address), 0);
+        instance.add(List.of(createDoc("name", "Castillo").address(address)));
         instance.finish();
         refresh();
 
@@ -124,7 +125,9 @@ class QueryBasicSearchTest extends ESBaseTester {
     @Test
     void testSearchMustContainANameTerm() throws IOException {
         Importer instance = makeImporter();
-        instance.add(createDoc("name", "Palermo").address(Collections.singletonMap("state", "Sicilia")), 0);
+        instance.add(List.of(
+                createDoc("name", "Palermo")
+                        .address(Collections.singletonMap("state", "Sicilia"))));
         instance.finish();
         refresh();
 
@@ -141,7 +144,10 @@ class QueryBasicSearchTest extends ESBaseTester {
     @Test
     void testSearchWithHousenumberNamed() throws IOException {
         Importer instance = makeImporter();
-        instance.add(createDoc("name", "Edeka").houseNumber("5").address(Collections.singletonMap("street", "Hauptstrasse")), 0);
+        instance.add(List.of(
+                createDoc("name", "Edeka")
+                        .houseNumber("5")
+                        .address(Collections.singletonMap("street", "Hauptstrasse"))));
         instance.finish();
         refresh();
 
@@ -156,7 +162,10 @@ class QueryBasicSearchTest extends ESBaseTester {
     @Test
     void testSearchWithHousenumberUnnamed() throws IOException {
         Importer instance = makeImporter();
-        instance.add(createDoc().houseNumber("5").address(Collections.singletonMap("street", "Hauptstrasse")), 0);
+        instance.add(List.of(
+                createDoc()
+                        .houseNumber("5")
+                        .address(Collections.singletonMap("street", "Hauptstrasse"))));
         instance.finish();
         refresh();
 

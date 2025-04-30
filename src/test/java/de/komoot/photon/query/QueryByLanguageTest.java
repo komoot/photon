@@ -48,7 +48,8 @@ class QueryByLanguageTest extends ESBaseTester {
     void queryNonStandardLanguages() throws IOException {
         Importer instance = setup("en", "fi");
 
-        instance.add(createDoc("name", "original", "name:fi", "finish", "name:ru", "russian"), 0);
+        instance.add(List.of(
+                createDoc("name", "original", "name:fi", "finish", "name:ru", "russian")));
 
         instance.finish();
         refresh();
@@ -66,14 +67,14 @@ class QueryByLanguageTest extends ESBaseTester {
     @Test
     void queryAltNames() throws IOException {
         Importer instance = setup("de");
-        instance.add(createDoc("name", "simple", "alt_name", "ancient", "name:de", "einfach"), 0);
+        instance.add(List.of(
+                createDoc("name", "simple", "alt_name", "ancient", "name:de", "einfach")));
         instance.finish();
         refresh();
 
         assertEquals(1, search("simple", "de").size());
         assertEquals(1, search("einfach", "de").size());
         assertEquals(1, search("ancient", "de").size());
-
     }
 
     @ParameterizedTest
@@ -90,7 +91,7 @@ class QueryByLanguageTest extends ESBaseTester {
 
         doc.setAddressPartIfNew(addressType, addressNames);
 
-        instance.add(doc, 0);
+        instance.add(List.of(doc));
         instance.finish();
         refresh();
 
@@ -102,7 +103,8 @@ class QueryByLanguageTest extends ESBaseTester {
     @ValueSource(strings = {"default", "de", "en"})
     void queryAltNamesFuzzy(String lang) throws IOException {
         Importer instance = setup("de", "en");
-        instance.add(createDoc("name", "simple", "alt_name", "ancient", "name:de", "einfach"), 0);
+        instance.add(List.of(
+                createDoc("name", "simple", "alt_name", "ancient", "name:de", "einfach")));
         instance.finish();
         refresh();
 
@@ -110,6 +112,5 @@ class QueryByLanguageTest extends ESBaseTester {
         assertEquals(1, search("einfah", lang).size());
         assertEquals(1, search("anciemt", lang).size());
         assertEquals(0, search("sinister", lang).size());
-
     }
 }

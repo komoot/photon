@@ -36,14 +36,22 @@ public class JsonDumper implements Importer {
     }
 
     @Override
-    public void add(PhotonDoc doc, int objectId) {
-        try {
-            generator.writeStartObject();
-            generator.writeObjectField("id", doc.getUid(objectId));
-            generator.writeObjectField("document", doc);
-            generator.writeEndObject();
-        } catch (IOException e) {
-            LOGGER.error("Error writing json file", e);
+    public void add(Iterable<PhotonDoc> docs) {
+        long placeID = 0;
+        int objectId = 0;
+        for (var doc : docs) {
+            if (objectId == 0) {
+                placeID = doc.getPlaceId();
+            }
+            final String uid = PhotonDoc.makeUid(placeID, objectId++);
+            try {
+                generator.writeStartObject();
+                generator.writeObjectField("id", uid);
+                generator.writeObjectField("document", doc);
+                generator.writeEndObject();
+            } catch (IOException e) {
+                LOGGER.error("Error writing json file", e);
+            }
         }
 
     }

@@ -49,11 +49,11 @@ class QueryReverseFilterTagValueTest extends ESBaseTester {
             String key = TAGS[i];
             String value = TAGS[++i];
             PhotonDoc doc = this.createDoc(lon, lat, i, i, key, value);
-            instance.add(doc, 0);
+            instance.add(List.of(doc));
             lon += 0.00004;
             lat += 0.00006;
             doc = this.createDoc(lon, lat, i + 1, i + 1, key, value);
-            instance.add(doc, 0);
+            instance.add(List.of(doc));
             lon += 0.00004;
             lat += 0.00006;
         }

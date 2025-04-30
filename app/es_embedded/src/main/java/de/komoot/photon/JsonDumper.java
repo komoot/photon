@@ -24,12 +24,14 @@ public class JsonDumper implements Importer {
     }
 
     @Override
-    public void add(PhotonDoc doc, int objectId) {
-        try {
-            writer.println("{\"index\": {}}");
-            writer.println(PhotonDocConverter.convert(doc, languages, extraTags).string());
-        } catch (IOException e) {
-            LOGGER.error("Error writing json file", e);
+    public void add(Iterable<PhotonDoc> docs) {
+        for (var doc : docs) {
+           try {
+                writer.println("{\"index\": {}}");
+                writer.println(PhotonDocConverter.convert(doc, languages, extraTags).string());
+            } catch (IOException e) {
+                LOGGER.error("Error writing json file", e);
+            }
         }
     }
 

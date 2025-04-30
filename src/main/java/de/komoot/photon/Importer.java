@@ -5,9 +5,12 @@ package de.komoot.photon;
  */
 public interface Importer {
     /**
-     * Add a new document to the Photon database.
+     * Add a new set of document to the Photon database.
+     *
+     * The document set must have been created from the same base document
+     * and each document must have the same place ID.
      */
-    public void add(PhotonDoc doc, int objectId);
+    public void add(Iterable<PhotonDoc> docs);
 
     /**
      * Finish up the import.

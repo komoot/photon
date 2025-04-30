@@ -50,10 +50,10 @@ class ApiLanguagesTest extends ESBaseTester {
     private void importPlaces(String... languages) throws Exception {
         setUpES(dataDirectory, false, languages);
         Importer instance = makeImporterWithLanguages(languages);
-        instance.add(createDoc(1000, "place", "city",
-                "name:en", "thething", "name:fr", "letruc", "name:ch", "dasding"), 0);
-        instance.add(createDoc(1001, "place", "town",
-                "name:ch", "thething", "name:fr", "letruc", "name:en", "dasding"), 0);
+        instance.add(List.of(createDoc(1000, "place", "city",
+                "name:en", "thething", "name:fr", "letruc", "name:ch", "dasding")));
+        instance.add(List.of(createDoc(1001, "place", "town",
+                "name:ch", "thething", "name:fr", "letruc", "name:en", "dasding")));
         instance.finish();
         refresh();
     }
