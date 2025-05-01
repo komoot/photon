@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.komoot.photon.PhotonDoc;
 import de.komoot.photon.UsageException;
 import de.komoot.photon.nominatim.ImportThread;
 import org.slf4j.Logger;
@@ -11,7 +12,9 @@ import org.slf4j.Logger;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class JsonReader {
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(JsonReader.class);
@@ -61,8 +64,18 @@ public class JsonReader {
         String docType = readStartDocument();
         while (docType != null) {
             if (NominatimPlaceDocument.DOCUMENT_TYPE.equals(docType)) {
-                NominatimPlaceDocument doc = parser.readValueAs(NominatimPlaceDocument.class);
-                importThread.addDocument(doc.asNominatimResult());
+                if (parser.isExpectedStartObjectToken()) {
+                    importThread.addDocument(parser.readValueAs(NominatimPlaceDocument.class).asMultiAddressDocs());
+                } else if (parser.isExpectedStartArrayToken()) {
+                    List<PhotonDoc> docs = new ArrayList<>();
+                    while (parser.nextToken() != JsonToken.END_ARRAY) {
+                        docs.add(parser.readValueAs(NominatimPlaceDocument.class).asSimpleDoc());
+                    }
+                    importThread.addDocument(docs);
+                } else {
+                    LOGGER.error("place document must contain object or an array of objects at {}", parser.currentLocation());
+                    throw new UsageException("Invalid json file.");
+                }
             } else {
                 LOGGER.warn("Unknown document type '{}'. Ignored.", docType);
                 parser.skipChildren();
@@ -89,7 +102,7 @@ public class JsonReader {
         final String documentType = parser.nextTextValue();
 
         while (parser.nextToken() != JsonToken.END_OBJECT) {
-            if ("properties".equals(parser.currentName())) {
+            if ("content".equals(parser.currentName())) {
                 parser.nextToken();
                 return documentType;
             } else {

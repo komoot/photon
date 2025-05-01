@@ -41,13 +41,27 @@ public class JsonDumper implements Importer {
     }
 
     @Override
-    public void add(PhotonDoc doc, int objectId) {
-        try {
-            writeNominatimDocument(doc, objectId);
-        } catch (IOException e) {
-            LOGGER.error("Could not write document {}.{}", doc.getPlaceId(), objectId, e);
+    public void add(Iterable<PhotonDoc> docs) {
+        final var it = docs.iterator();
+
+        if (!it.hasNext()) {
+            return;
         }
 
+        try {
+            writeStartDocument(NominatimPlaceDocument.DOCUMENT_TYPE);
+
+            // always write as an array to indicate that addresses are already expanded
+            writer.writeStartArray();
+            while (it.hasNext()) {
+                writeNominatimDocument(it.next());
+            }
+            writer.writeEndArray();
+
+            writeEndDocument();
+        } catch (IOException e) {
+            LOGGER.error("Could not write document {}", docs.iterator().next().getPlaceId(), e);
+        }
     }
 
     @Override
@@ -62,7 +76,8 @@ public class JsonDumper implements Importer {
     public void writeHeader(Date importDate, Map<String, Map<String, String>> countryNames) throws IOException {
         writeStartDocument(NominatimDumpHeader.DOCUMENT_TYPE);
 
-        writer.writeStringField("version", NominatimDumpHeader.EXPECTED_VERSION);
+        writer.writeStartObject();
+writer.writeStringField("version", NominatimDumpHeader.EXPECTED_VERSION);
         writer.writeStringField("generator", "photon");
         writer.writeStringField("database_version", Server.DATABASE_VERSION);
         writer.writeObjectField("data_timestamp", importDate);
@@ -78,13 +93,13 @@ public class JsonDumper implements Importer {
         }
         writer.writeEndObject();
 
+        writer.writeEndObject();
         writeEndDocument();
     }
 
-    public void writeNominatimDocument(PhotonDoc doc, int objectId) throws IOException {
-        writeStartDocument("place");
-
-        writer.writeStringField("uid", doc.getUid(objectId));
+    public void writeNominatimDocument(PhotonDoc doc) throws IOException {
+        writer.writeStartObject();
+        writer.writeNumberField("place_id", doc.getPlaceId());
         writer.writeStringField("osm_type", doc.getOsmType());
         writer.writeNumberField("osm_id", doc.getOsmId());
         writer.writeStringField("tag_key", doc.getTagKey());
@@ -159,19 +174,16 @@ public class JsonDumper implements Importer {
             writer.writeNumber(bbox.getMinY());
             writer.writeEndArray();
         }
-
-        writeEndDocument();
-
+        writer.writeEndObject();
     }
 
     private void writeStartDocument(String type) throws IOException {
         writer.writeStartObject();
         writer.writeStringField("type", type);
-        writer.writeObjectFieldStart("properties");
+        writer.writeFieldName("content");
     }
 
     private void writeEndDocument() throws IOException {
-        writer.writeEndObject();
         writer.writeEndObject();
         writer.writeRaw('\n');
     }
