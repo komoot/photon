@@ -13,8 +13,6 @@ import java.util.*;
  * Denormalized document with all information needed for saving in the Photon database.
  */
 public class PhotonDoc {
-    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(PhotonDoc.class);
-
     private long placeId = -1;
     private String osmType = null;
     private long osmId = -1;
@@ -117,7 +115,7 @@ public class PhotonDoc {
     }
 
     public PhotonDoc geometry(Geometry geometry) {
-        this.geometry = (Geometry) geometry;
+        this.geometry = geometry;
         return this;
     }
 
@@ -255,7 +253,6 @@ public class PhotonDoc {
             if (!field.equals(existingName)) {
                 // Make a copy of the original name map because the map is reused for other addresses.
                 map = new HashMap<>(map);
-                LOGGER.debug("Replacing {} name '{}' with '{}' for osmId #{}", addressFieldName, existingName, field, osmId);
                 // we keep the former name in the context as it might be helpful when looking up typos
                 if (!Objects.isNull(existingName)) {
                     context.add(Collections.singletonMap("name", existingName));

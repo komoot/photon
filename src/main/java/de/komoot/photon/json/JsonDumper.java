@@ -162,8 +162,11 @@ writer.writeStringField("version", NominatimDumpHeader.EXPECTED_VERSION);
 
         writer.writeStringField("country_code", doc.getCountryCode().toLowerCase());
 
-        writer.writeFieldName("centroid");
-        writer.writeRawValue(geojsonWriter.write(doc.getCentroid()));
+        final var coords = doc.getCentroid().getCoordinate();
+        writer.writeArrayFieldStart("centroid");
+        writer.writeNumber(coords.x);
+        writer.writeNumber(coords.y);
+        writer.writeEndArray();
 
         final var bbox = doc.getBbox();
         if (bbox != null) {

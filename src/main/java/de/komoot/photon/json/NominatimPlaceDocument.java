@@ -1,17 +1,28 @@
 package de.komoot.photon.json;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.JsonNode;
 import de.komoot.photon.PhotonDoc;
 import de.komoot.photon.PhotonDocAddressSet;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.PrecisionModel;
+import org.locationtech.jts.io.ParseException;
+import org.locationtech.jts.io.geojson.GeoJsonReader;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
 
 public class NominatimPlaceDocument {
     public static final String DOCUMENT_TYPE = "place";
 
-    private PhotonDoc doc = new PhotonDoc();
+    private final PhotonDoc doc = new PhotonDoc();
     private Map<String, String> address = Collections.emptyMap();
+
+    private static final GeometryFactory factory = new GeometryFactory(new PrecisionModel(0.00000001), 4326);
+    private static final GeoJsonReader jsonReader = new GeoJsonReader();
 
     public PhotonDoc asSimpleDoc() {
         return doc; // TODO do we need to merge address at this point?
@@ -24,5 +35,94 @@ public class NominatimPlaceDocument {
     @JsonProperty("place_id")
     void setPlaceId(long placeId) {
         doc.placeId(placeId);
+    }
+
+    @JsonProperty("osm_type")
+    void setOsmType(String osmType) {
+        doc.osmType(osmType);
+    }
+
+    @JsonProperty("osm_id")
+    void setOsmId(long osmId) {
+        doc.osmId(osmId);
+    }
+
+    @JsonProperty("tag_key")
+    void setTagKey(String tagKey) {
+        doc.tagKey(tagKey);
+    }
+
+    @JsonProperty("tag_value")
+    void setTagValue(String tagValue) {
+        doc.tagValue(tagValue);
+    }
+
+    @JsonProperty("rank_address")
+    void setRankAddress(int rankAddress) {
+        doc.rankAddress(rankAddress);
+    }
+
+    @JsonProperty("importance")
+    void setImportance(double importance) {
+        doc.importance(importance);
+    }
+
+    @JsonProperty("parent_place_id")
+    void setParentPlaceId(long parentPlaceId) {
+        doc.parentPlaceId(parentPlaceId);
+    }
+
+    @JsonProperty("name")
+    void setNames(Map<String, String> names) {
+        doc.names(names);
+    }
+
+    @JsonProperty("housenumber")
+    void setHousenumber(String housenumber) {
+        doc.houseNumber(housenumber);
+    }
+
+    @JsonProperty("address")
+    void setAddress(Map<String, String> address) {
+        this.address = address;
+    }
+
+    @JsonProperty("extratags")
+    void setExtratags(Map<String, String> extratags) {
+        doc.extraTags(extratags);
+    }
+
+    @JsonProperty("postcode")
+    void setPostcode(String postcode) {
+        doc.postcode(postcode);
+    }
+
+    @JsonProperty("country_code")
+    void setCountryCode(String countryCode) {
+        doc.countryCode(countryCode);
+    }
+
+    @JsonProperty("centroid")
+    void setCentroid(double[] coordinates) throws IOException {
+        if (coordinates.length != 2) {
+            throw new IOException("Invalid centroid. Must be an array of two doubles.");
+        }
+        doc.centroid(factory.createPoint(new Coordinate(coordinates[0], coordinates[1])));
+    }
+
+    @JsonProperty("bbox")
+    void setBbox(double[] coordinates) throws IOException {
+        if (coordinates.length != 4) {
+            throw new IOException("Invalid bbox. Must be an array of four doubles.");
+        }
+        doc.bbox(factory.createMultiPoint(new Point[]{
+                factory.createPoint(new Coordinate(coordinates[0], coordinates[1])),
+                factory.createPoint(new Coordinate(coordinates[2], coordinates[3]))
+        }));
+    }
+
+    @JsonProperty("geometry")
+    void setGeometry(JsonNode geojson) throws ParseException {
+        doc.geometry(jsonReader.read(geojson.toString()));
     }
 }

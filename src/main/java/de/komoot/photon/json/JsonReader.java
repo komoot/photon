@@ -88,9 +88,13 @@ public class JsonReader {
     }
 
     private String readStartDocument() throws IOException {
-        if (!parser.isExpectedStartObjectToken()) {
-            LOGGER.info("End of file at token {}, position {}", parser.currentToken(), parser.currentLocation());
+        if (!parser.hasCurrentToken()) {
             return null;
+        }
+
+        if (!parser.isExpectedStartObjectToken()) {
+            LOGGER.error("Invalid document start. Got token {} at {}", parser.currentToken(), parser.currentLocation());
+            throw new UsageException("Invalid dump file.");
         }
 
         final String fieldName = parser.nextFieldName();
