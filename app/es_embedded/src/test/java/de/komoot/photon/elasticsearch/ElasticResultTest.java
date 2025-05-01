@@ -16,9 +16,7 @@ import org.junit.jupiter.api.io.TempDir;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -48,20 +46,23 @@ class ElasticResultTest  extends ESBaseTester {
         Importer instance = getServer().createImporter(new String[]{"en", "de", "fr", "it"},
                  new String[]{"population",  "capital"});
 
-        instance.add(createDoc(45.2, -7.45, 123, 1123, "place", "city")
-                .names(makeMap("name", "München", "name:it", "Monacco", "name:en", "Munich"))
-                .address(Collections.singletonMap("state", "Bavaria"))
-                .countryCode("de")
-                .extraTags(makeMap("population", "many", "capital", "yes", "maxage", "99")), 0);
-        instance.add(createDoc(0, 0, 99, 11999, "place", "locality")
-                .names(makeMap("name", "null island")), 0);
-        instance.add(createDoc(-179, 1.0001, 923, 1923, "place", "house")
-                .houseNumber("34")
-                .bbox(FACTORY.createMultiPoint(new Coordinate[]{new Coordinate(-179.5, 1.0),
-                        new Coordinate(-178.5, 1.1)}))
-                .address(makeMap("street", "Hauptstr", "city", "Hamburg")), 0);
-        instance.add(new PhotonDoc(42, "N", 42, "place", "hamlet")
-                .names(makeMap("name", "nowhere")), 0);
+        instance.add(List.of(
+                createDoc(45.2, -7.45, 123, 1123, "place", "city")
+                        .names(makeMap("name", "München", "name:it", "Monacco", "name:en", "Munich"))
+                        .address(Collections.singletonMap("state", "Bavaria"))
+                        .countryCode("de")
+                        .extraTags(makeMap("population", "many", "capital", "yes", "maxage", "99"))));
+        instance.add(List.of(
+                createDoc(0, 0, 99, 11999, "place", "locality")
+                        .names(makeMap("name", "null island"))));
+        instance.add(List.of(
+                createDoc(-179, 1.0001, 923, 1923, "place", "house")
+                        .houseNumber("34")
+                        .bbox(FACTORY.createMultiPoint(new Coordinate[]{new Coordinate(-179.5, 1.0), new Coordinate(-178.5, 1.1)}))
+                        .address(makeMap("street", "Hauptstr", "city", "Hamburg"))));
+        instance.add(List.of(
+                new PhotonDoc(42, "N", 42, "place", "hamlet")
+                        .names(makeMap("name", "nowhere"))));
 
         instance.finish();
         refresh();

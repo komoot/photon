@@ -51,7 +51,7 @@ class QueryGeometryTest extends ESBaseTester {
         Importer instance = makeImporter();
         Point location = FACTORY.createPoint(new Coordinate(1.0, 2.34));
         PhotonDoc doc = createDoc("name", "Muffle Flu").geometry(new WKTReader().read("POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))")).centroid(location);
-        instance.add(doc, 0);
+        instance.add(List.of(doc));
         instance.finish();
         refresh();
         List<PhotonResult> s = search("muffle flu");
@@ -68,7 +68,7 @@ class QueryGeometryTest extends ESBaseTester {
         Importer instance = makeImporter();
         Point location = FACTORY.createPoint(new Coordinate(1.0, 2.34));
         PhotonDoc doc = createDoc("name", "Muffle Flu").geometry(new WKTReader().read("LINESTRING (30 10, 10 30, 40 40)")).centroid(location);
-        instance.add(doc, 0);
+        instance.add(List.of(doc));
         instance.finish();
         refresh();
         List<PhotonResult> s = search("muffle flu");

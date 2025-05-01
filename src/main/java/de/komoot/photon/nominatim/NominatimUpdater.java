@@ -1,6 +1,8 @@
 package de.komoot.photon.nominatim;
 
 import de.komoot.photon.PhotonDoc;
+import de.komoot.photon.PhotonDocAddressSet;
+import de.komoot.photon.PhotonDocInterpolationSet;
 import de.komoot.photon.Updater;
 import de.komoot.photon.nominatim.model.*;
 import org.locationtech.jts.geom.Geometry;
@@ -19,8 +21,7 @@ public class NominatimUpdater extends NominatimConnector {
 
     private static final String SELECT_COLS_PLACEX = "SELECT place_id, osm_type, osm_id, class, type, name, postcode, address, extratags, ST_Envelope(geometry) AS bbox, parent_place_id, linked_place_id, rank_address, rank_search, importance, country_code, centroid";
     private static final String SELECT_COLS_ADDRESS = "SELECT p.name, p.class, p.type, p.rank_address";
-    private static final String SELECT_OSMLINE_OLD_STYLE = "SELECT place_id, osm_id, parent_place_id, startnumber, endnumber, interpolationtype, postcode, country_code, linegeo";
-    private static final String SELECT_OSMLINE_NEW_STYLE = "SELECT place_id, osm_id, parent_place_id, startnumber, endnumber, step, postcode, country_code, linegeo";
+    private static final String SELECT_OSMLINE = "SELECT place_id, osm_id, parent_place_id, startnumber, endnumber, step, postcode, country_code, linegeo";
 
     private static final String TRIGGER_SQL =
             "DROP TABLE IF EXISTS photon_updates;"
@@ -53,17 +54,15 @@ public class NominatimUpdater extends NominatimConnector {
 
     /**
      * Map a row from location_property_osmline (address interpolation lines) to a photon doc.
-     * This may be old-style interpolation (using interpolationtype) or
-     * new-style interpolation (using step).
      */
-    private final RowMapper<NominatimResult> osmlineToNominatimResult;
+    private final RowMapper<Iterable<PhotonDoc>> osmlineToNominatimResult;
 
 
     /**
      * Maps a placex row in nominatim to a photon doc.
      * Some attributes are still missing and can be derived by connected address items.
      */
-    private final RowMapper<NominatimResult> placeToNominatimResult;
+    private final RowMapper<Iterable<PhotonDoc>> placeToNominatimResult;
 
 
     /**
@@ -99,7 +98,7 @@ public class NominatimUpdater extends NominatimConnector {
 
             doc.setCountry(countryNames.get(rs.getString("country_code")));
 
-            return NominatimResult.fromAddress(doc, address);
+            return new PhotonDocAddressSet(doc, address);
         };
 
         // Setup handling of interpolation table. There are two different formats depending on the Nominatim version.
@@ -113,19 +112,11 @@ public class NominatimUpdater extends NominatimConnector {
 
             Geometry geometry = dbutils.extractGeometry(rs, "linegeo");
 
-            if (hasNewStyleInterpolation) {
-                return NominatimResult.fromInterpolation(
-                        doc, rs.getLong("startnumber"), rs.getLong("endnumber"),
-                        rs.getLong("step"), geometry);
-            }
-
-            return NominatimResult.fromInterpolation(
+            return new PhotonDocInterpolationSet(
                     doc, rs.getLong("startnumber"), rs.getLong("endnumber"),
-                    rs.getString("interpolationtype"), geometry);
+                    rs.getLong("step"), geometry);
         };
     }
-
-
 
     public boolean isBusy() {
         return updateLock.isLocked();
@@ -171,33 +162,18 @@ public class NominatimUpdater extends NominatimConnector {
         LOGGER.info("Starting place updates");
         int updatedPlaces = 0;
         int deletedPlaces = 0;
+
         for (UpdateRow place : getPlaces("placex")) {
             long placeId = place.getPlaceId();
-            int objectId = -1;
-            boolean checkForMultidoc = true;
 
-            if (!place.isToDelete()) {
-                final List<PhotonDoc> updatedDocs = getByPlaceId(placeId);
-                if (updatedDocs != null && !updatedDocs.isEmpty() && updatedDocs.get(0).isUsefulForIndex()) {
-                    checkForMultidoc = updatedDocs.get(0).getRankAddress() == 30;
-                    ++updatedPlaces;
-                    for (PhotonDoc updatedDoc : updatedDocs) {
-                            updater.create(updatedDoc, ++objectId);
-                    }
-                }
-            }
-
-            if (objectId < 0) {
+            if (place.isToDelete()) {
                 ++deletedPlaces;
-                updater.delete(placeId, 0);
-                objectId = 0;
+                updater.delete(placeId);
+            } else {
+                updater.addOrUpdate(getByPlaceId(placeId));
+                ++updatedPlaces;
             }
 
-            if (checkForMultidoc) {
-                while (updater.exists(placeId, ++objectId)) {
-                    updater.delete(placeId, objectId);
-                }
-            }
         }
 
         LOGGER.info("{} places created or updated, {} deleted", updatedPlaces, deletedPlaces);
@@ -214,25 +190,15 @@ public class NominatimUpdater extends NominatimConnector {
         int deletedInterpolations = 0;
         for (UpdateRow place : getPlaces("location_property_osmline")) {
             long placeId = place.getPlaceId();
-            int objectId = -1;
 
-            if (!place.isToDelete()) {
-                final List<PhotonDoc> updatedDocs = getInterpolationsByPlaceId(placeId);
-                if (updatedDocs != null) {
-                    ++updatedInterpolations;
-                    for (PhotonDoc updatedDoc : updatedDocs) {
-                        updater.create(updatedDoc, ++objectId);
-                    }
-                }
-            }
-
-            if (objectId < 0) {
+            if (place.isToDelete()) {
                 ++deletedInterpolations;
+                updater.delete(placeId);
+            } else {
+                updater.addOrUpdate(getInterpolationsByPlaceId(placeId));
+                ++updatedInterpolations;
             }
 
-            while (updater.exists(placeId, ++objectId)) {
-                updater.delete(placeId, objectId);
-            }
         }
 
         LOGGER.info("{} interpolations created or updated, {} deleted", updatedInterpolations, deletedInterpolations);
@@ -266,7 +232,7 @@ public class NominatimUpdater extends NominatimConnector {
     }
 
 
-    public List<PhotonDoc> getByPlaceId(long placeId) {
+    public Iterable<PhotonDoc> getByPlaceId(long placeId) {
         String query = SELECT_COLS_PLACEX;
 
         if (useGeometryColumn) {
@@ -275,20 +241,20 @@ public class NominatimUpdater extends NominatimConnector {
 
         query += " FROM placex WHERE place_id = ? and indexed_status = 0";
 
-        List<NominatimResult> result = template.query(
+        var result = template.query(
                 query,
                 placeToNominatimResult, placeId);
 
-        return result.isEmpty() ? null : result.get(0).getDocsWithHousenumber();
+        return result.isEmpty() ? Collections.EMPTY_LIST : result.get(0);
     }
 
-    public List<PhotonDoc> getInterpolationsByPlaceId(long placeId) {
-        List<NominatimResult> result = template.query(
-                (hasNewStyleInterpolation ? SELECT_OSMLINE_NEW_STYLE : SELECT_OSMLINE_OLD_STYLE)
+    public Iterable<PhotonDoc> getInterpolationsByPlaceId(long placeId) {
+        var result = template.query(
+                SELECT_OSMLINE
                         + " FROM location_property_osmline WHERE place_id = ? and indexed_status = 0",
                 osmlineToNominatimResult, placeId);
 
-        return result.isEmpty() ? null : result.get(0).getDocsWithHousenumber();
+        return result.isEmpty() ? Collections.EMPTY_LIST : result.get(0);
     }
 
 

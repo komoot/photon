@@ -14,6 +14,7 @@ import org.junit.jupiter.api.io.TempDir;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -97,15 +98,15 @@ public class StructuredQueryTest extends ESBaseTester {
                 .importance(1.0)
                 .rankAddress(getRank(AddressType.HOUSE));
 
-        instance.add(country, 0);
-        instance.add(city, 1);
-        instance.add(suburb, 2);
-        instance.add(street, 3);
-        instance.add(house, 4);
+        instance.add(List.of(country));
+        instance.add(List.of(city));
+        instance.add(List.of(suburb));
+        instance.add(List.of(street));
+        instance.add(List.of(house));
         addHamletHouse(instance, 5, "1");
         addHamletHouse(instance, 6, "2");
         addHamletHouse(instance, 7, "3");
-        instance.add(busStop, 8);
+        instance.add(List.of(busStop));
         instance.finish();
         refresh();
     }
@@ -266,6 +267,6 @@ public class StructuredQueryTest extends ESBaseTester {
                 .importance(1.0)
                 .rankAddress(getRank(AddressType.HOUSE));
 
-        instance.add(doc, id);
+        instance.add(List.of(doc));
     }
 }

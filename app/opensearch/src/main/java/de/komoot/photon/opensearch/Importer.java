@@ -4,7 +4,6 @@ import de.komoot.photon.PhotonDoc;
 import org.opensearch.client.opensearch.OpenSearchClient;
 import org.opensearch.client.opensearch._types.Time;
 import org.opensearch.client.opensearch.core.BulkRequest;
-import org.opensearch.client.opensearch.core.bulk.BulkOperation;
 import org.opensearch.client.opensearch.core.bulk.BulkResponseItem;
 import org.slf4j.Logger;
 
@@ -23,16 +22,21 @@ public class Importer implements de.komoot.photon.Importer {
     }
 
     @Override
-    public void add(PhotonDoc doc, int objectId) {
-        bulkRequest.operations(op -> op
-                .index(i -> i
-                        .index(PhotonIndex.NAME)
-                        .id(doc.getUid(objectId))
-                        .document(doc)));
-        ++todoDocuments;
+    public void add(Iterable<PhotonDoc> docs) {
+        long placeID = 0;
+        int objectId = 0;
+        for (var doc : docs) {
+            if (objectId == 0) {
+                placeID = doc.getPlaceId();
+            }
+            final String uuid = PhotonDoc.makeUid(placeID, objectId++);
+            bulkRequest.operations(op -> op
+                    .index(i -> i.index(PhotonIndex.NAME).id(uuid).document(doc)));
+            ++todoDocuments;
 
-        if (todoDocuments % 10000 == 0) {
-            saveDocuments();
+            if (todoDocuments % 10000 == 0) {
+                saveDocuments();
+            }
         }
     }
 

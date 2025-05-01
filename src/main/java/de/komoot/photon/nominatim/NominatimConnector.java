@@ -21,7 +21,6 @@ public class NominatimConnector {
     protected final JdbcTemplate template;
     protected final TransactionTemplate txTemplate;
     protected Map<String, Map<String, String>> countryNames;
-    protected final boolean hasNewStyleInterpolation;
     protected boolean useGeometryColumn;
 
     protected NominatimConnector(String host, int port, String database, String username, String password, DBDataAdapter dataAdapter, boolean useGeometryColumn) {
@@ -42,7 +41,6 @@ public class NominatimConnector {
         template.setFetchSize(100000);
 
         dbutils = dataAdapter;
-        hasNewStyleInterpolation = dbutils.hasColumn(template, "location_property_osmline", "step");
         this.useGeometryColumn = useGeometryColumn;
     }
 

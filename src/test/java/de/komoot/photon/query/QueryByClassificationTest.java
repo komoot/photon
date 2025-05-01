@@ -70,7 +70,7 @@ class QueryByClassificationTest extends ESBaseTester {
     @Test
     void testQueryByClassificationString() throws IOException {
         Importer instance = makeImporter();
-        instance.add(createDoc("amenity", "restaurant", "curliflower"), 0);
+        instance.add(List.of(createDoc("amenity", "restaurant", "curliflower")));
         instance.finish();
         refresh();
 
@@ -91,7 +91,7 @@ class QueryByClassificationTest extends ESBaseTester {
     @Test
     void testQueryByClassificationSynonym() throws IOException {
         Importer instance = makeImporter();
-        instance.add(createDoc("amenity", "restaurant", "curliflower"), 0);
+        instance.add(List.of(createDoc("amenity", "restaurant", "curliflower")));
         instance.finish();
         refresh();
 
@@ -111,8 +111,8 @@ class QueryByClassificationTest extends ESBaseTester {
     @Test
     void testSynonymDoNotInterfereWithWords() throws IOException {
         Importer instance = makeImporter();
-        instance.add(createDoc("amenity", "restaurant", "airport"), 0);
-        instance.add(createDoc("aeroway", "terminal", "Houston"), 0);
+        instance.add(List.of(createDoc("amenity", "restaurant", "airport")));
+        instance.add(List.of(createDoc("aeroway", "terminal", "Houston")));
         instance.finish();
         refresh();
 
@@ -131,8 +131,8 @@ class QueryByClassificationTest extends ESBaseTester {
     @Test
     void testSameSynonymForDifferentTags() throws IOException {
         Importer instance = makeImporter();
-        instance.add(createDoc("railway", "halt", "Newtown"), 0);
-        instance.add(createDoc("railway", "station", "King's Cross"), 0);
+        instance.add(List.of(createDoc("railway", "halt", "Newtown")));
+        instance.add(List.of(createDoc("railway", "station", "King's Cross")));
         instance.finish();
         refresh();
 

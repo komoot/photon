@@ -29,18 +29,26 @@ public class Importer implements de.komoot.photon.Importer {
     }
 
     @Override
-    public void add(PhotonDoc doc, int objectId) {
-        String uid = doc.getUid(objectId);
-        try {
-            this.bulkRequest.add(this.esClient.prepareIndex(PhotonIndex.NAME, PhotonIndex.TYPE).
-                    setSource(PhotonDocConverter.convert(doc, languages, extraTags)).setId(uid));
-        } catch (IOException e) {
-            LOGGER.error("Could not bulk add document {}", uid, e);
-            return;
-        }
-        this.documentCount += 1;
-        if (this.documentCount > 0 && this.documentCount % 10000 == 0) {
-            this.saveDocuments();
+    public void add(Iterable<PhotonDoc> docs) {
+        long placeID = 0;
+        int objectId = 0;
+        for (var doc : docs) {
+            if (objectId == 0) {
+                placeID = doc.getPlaceId();
+            }
+            final String uid = PhotonDoc.makeUid(placeID, objectId++);
+            try {
+                bulkRequest.add(esClient.prepareIndex(PhotonIndex.NAME, PhotonIndex.TYPE).
+                        setSource(PhotonDocConverter.convert(doc, languages, extraTags)).setId(uid));
+            } catch (IOException e) {
+                LOGGER.error("Could not bulk add document {}", uid, e);
+                return;
+            }
+            ++documentCount;
+
+            if (documentCount % 10000 == 0) {
+                saveDocuments();
+            }
         }
     }
 

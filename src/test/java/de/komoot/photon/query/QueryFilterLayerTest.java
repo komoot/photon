@@ -33,7 +33,7 @@ class QueryFilterLayerTest extends ESBaseTester {
 
         int[] docRanks = {10, 13, 14, 22}; // state, city * 2, locality
         for (int rank : docRanks) {
-            instance.add(createDoc(++id, rank), 0);
+            instance.add(List.of(createDoc(++id, rank)));
         }
 
         instance.finish();

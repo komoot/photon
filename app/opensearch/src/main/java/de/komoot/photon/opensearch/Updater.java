@@ -18,33 +18,46 @@ public class Updater implements de.komoot.photon.Updater {
         this.client = client;
     }
 
-    @Override
-    public void create(PhotonDoc doc, int objectId) {
-        bulkRequest.operations(op -> op
-                .index(i -> i
-                        .index(PhotonIndex.NAME)
-                        .id(doc.getUid(objectId))
-                        .document(doc)));
+    public void addOrUpdate(Iterable<PhotonDoc> docs) {
+        long placeID = 0;
+        int objectId = 0;
 
-        if (++todoDocuments > 10000) {
-            updateDocuments();
+        for (var doc: docs) {
+            if (objectId == 0) {
+                placeID = doc.getPlaceId();
+            }
+            final String uid = PhotonDoc.makeUid(placeID, objectId++);
+
+            bulkRequest.operations(op -> op
+                    .index(i -> i.index(PhotonIndex.NAME).id(uid).document(doc)));
+
+            if (++todoDocuments > 10000) {
+                updateDocuments();
+            }
+        }
+
+        deleteSubset(placeID, objectId);
+    }
+
+    public void delete(long placeId) {
+        deleteSubset(placeId, 0);
+    }
+
+    private void deleteSubset(long docId, int fromObjectId) {
+        int objectId = fromObjectId;
+
+        while (exists(docId, objectId++)) {
+            final String uid = PhotonDoc.makeUid(docId, objectId);
+            bulkRequest.operations(op -> op
+                    .delete(d -> d.index(PhotonIndex.NAME).id(uid)));
+
+            if (++todoDocuments > 10000) {
+                updateDocuments();
+            }
         }
     }
 
-    @Override
-    public void delete(long docId, int objectId) {
-        bulkRequest.operations(op -> op
-                .delete(d -> d
-                        .index(PhotonIndex.NAME)
-                        .id(PhotonDoc.makeUid(docId, objectId))));
-
-        if (++todoDocuments > 10000) {
-            updateDocuments();
-        }
-    }
-
-    @Override
-    public boolean exists(long docId, int objectId) {
+    private boolean exists(long docId, int objectId) {
         try {
             return client.exists(e -> e.index(PhotonIndex.NAME).id(PhotonDoc.makeUid(docId, objectId))).value();
         } catch (IOException e) {

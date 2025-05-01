@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -27,9 +28,9 @@ class ImporterTest extends ESBaseTester {
     void testAddSimpleDoc() throws ParseException {
         Importer instance = makeImporterWithExtra("");
 
-        instance.add(new PhotonDoc(1234, "N", 1000, "place", "city")
+        instance.add(List.of(new PhotonDoc(1234, "N", 1000, "place", "city")
                 .geometry(new WKTReader().read("MULTIPOLYGON (((6.111933 51.2659309, 6.1119417 51.2659247, 6.1119554 51.2659249, 6.1119868 51.2659432, 6.111964 51.2659591, 6.1119333 51.2659391, 6.111933 51.2659309)))"))
-                .extraTags(Collections.singletonMap("maxspeed", "100")), 0);
+                .extraTags(Collections.singletonMap("maxspeed", "100"))));
         instance.finish();
         refresh();
 
@@ -49,8 +50,9 @@ class ImporterTest extends ESBaseTester {
     void testAddHousenumberMultiDoc() {
         Importer instance = makeImporterWithExtra("");
 
-        instance.add(new PhotonDoc(4432, "N", 100, "building", "yes").houseNumber("34"), 0);
-        instance.add(new PhotonDoc(4432, "N", 100, "building", "yes").houseNumber("35"), 1);
+        instance.add(List.of(
+                new PhotonDoc(4432, "N", 100, "building", "yes").houseNumber("34"),
+                new PhotonDoc(4432, "N", 100, "building", "yes").houseNumber("35")));
         instance.finish();
         refresh();
 
@@ -84,9 +86,10 @@ class ImporterTest extends ESBaseTester {
         extratags.put("maxspeed", "100 mph");
         extratags.put("source", "survey");
 
-        instance.add(new PhotonDoc(1234, "N", 1000, "place", "city").extraTags(extratags), 0);
-        instance.add(new PhotonDoc(1235, "N", 1001, "place", "city")
-                .extraTags(Collections.singletonMap("wikidata", "100")), 0);
+        instance.add(List.of(new PhotonDoc(1234, "N", 1000, "place", "city").extraTags(extratags)));
+        instance.add(List.of(
+                new PhotonDoc(1235, "N", 1001, "place", "city")
+                        .extraTags(Collections.singletonMap("wikidata", "100"))));
         instance.finish();
         refresh();
 
