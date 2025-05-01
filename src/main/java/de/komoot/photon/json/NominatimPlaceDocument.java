@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 import de.komoot.photon.PhotonDoc;
 import de.komoot.photon.PhotonDocAddressSet;
+import de.komoot.photon.nominatim.model.AddressRow;
 import de.komoot.photon.nominatim.model.AddressType;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
@@ -13,14 +14,15 @@ import org.locationtech.jts.io.ParseException;
 import org.locationtech.jts.io.geojson.GeoJsonReader;
 
 import java.io.IOException;
-import java.util.Collections;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class NominatimPlaceDocument {
     public static final String DOCUMENT_TYPE = "Place";
 
     private final PhotonDoc doc = new PhotonDoc();
     private Map<String, String> address = Collections.emptyMap();
+    private AddressLine[] addressLines = null;
 
     private static final GeometryFactory factory = new GeometryFactory(new PrecisionModel(10000000), 4326);
     private static final GeoJsonReader jsonReader = new GeoJsonReader();
@@ -127,5 +129,21 @@ public class NominatimPlaceDocument {
     @JsonProperty("geometry")
     void setGeometry(JsonNode geojson) throws ParseException {
         doc.geometry(jsonReader.read(geojson.toString()));
+    }
+
+    @JsonProperty("addresslines")
+    void setAddressLines(AddressLine[] addressLines) {
+        this.addressLines = addressLines;
+    }
+
+    public void completeAddressLines(Map<Long, AddressRow> addressCache) {
+        if (addressLines != null) {
+            doc.completePlace(
+                Arrays.stream(addressLines)
+                        .filter(l -> l.isAddress)
+                        .map(l -> addressCache.get(l.placeId))
+                        .filter(l -> l != null)
+                        .collect(Collectors.toUnmodifiableList()));
+       }
     }
 }

@@ -81,6 +81,7 @@ writer.writeStringField("version", NominatimDumpHeader.EXPECTED_VERSION);
         writer.writeStringField("generator", "photon");
         writer.writeStringField("database_version", Server.DATABASE_VERSION);
         writer.writeObjectField("data_timestamp", importDate);
+        writer.writeObjectField("features", new NominatimDumpFileFeatures());
         writer.writeEndObject();
         writeEndDocument();
 

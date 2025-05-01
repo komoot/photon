@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.komoot.photon.PhotonDoc;
 import de.komoot.photon.UsageException;
 import de.komoot.photon.nominatim.ImportThread;
+import de.komoot.photon.nominatim.model.AddressRow;
 import org.slf4j.Logger;
 
 import java.io.File;
@@ -20,6 +21,7 @@ public class JsonReader {
     private final JsonParser parser;
     private NominatimDumpHeader header = null;
     private Map<String, Map<String, String>> countryNames = new HashMap<>();
+    private Map<Long, AddressRow> addressCache = new HashMap<>();
 
     public JsonReader(File inputFile) throws IOException {
         parser = configureObjectMapper().createParser(inputFile);
@@ -61,15 +63,16 @@ public class JsonReader {
 
     public void readFile(ImportThread importThread) throws IOException {
         String docType = readStartDocument();
+        String currentCountry = "NONE";
         while (docType != null) {
             if (NominatimPlaceDocument.DOCUMENT_TYPE.equals(docType)) {
                 Iterable<PhotonDoc> docs;
                 if (parser.isExpectedStartObjectToken()) {
-                    docs = parser.readValueAs(NominatimPlaceDocument.class).asMultiAddressDocs();
+                    docs = parsePlaceDocument().asMultiAddressDocs();
                 } else if (parser.isExpectedStartArrayToken()) {
                     docs = new ArrayList<>();
                     while (parser.nextToken() != JsonToken.END_ARRAY) {
-                        ((List) docs).add(parser.readValueAs(NominatimPlaceDocument.class).asSimpleDoc());
+                        ((List) docs).add(parsePlaceDocument().asSimpleDoc());
                     }
                 } else {
                     LOGGER.error("Place document must contain object or an array of objects at {}", parser.currentLocation());
@@ -84,6 +87,23 @@ public class JsonReader {
                             var names = countryNames.get(doc.getCountryCode());
                             if (names != null) {
                                 doc.setCountry(names);
+                            }
+                        }
+
+                        if (!it.hasNext()) {
+                            if (header.isSortedByCountry() &&
+                                    doc.getCountryCode() != null && !currentCountry.equals(doc.getCountryCode())) {
+                                addressCache.clear();
+                                currentCountry = doc.getCountryCode();
+                            }
+                            if (header.hasAddressLines()
+                                    && doc.getRankAddress() > 0 && doc.getRankAddress() < 28
+                                    && !doc.getName().isEmpty()) {
+                                addressCache.put(
+                                        doc.getPlaceId(),
+                                        new AddressRow(
+                                                doc.getName(), doc.getTagKey(), doc.getTagValue(),
+                                                doc.getRankAddress()));
                             }
                         }
                     }
@@ -107,6 +127,13 @@ public class JsonReader {
             readEndDocument();
             docType = readStartDocument();
         }
+    }
+
+    private NominatimPlaceDocument parsePlaceDocument() throws IOException {
+        final var doc = parser.readValueAs(NominatimPlaceDocument.class);
+
+        doc.completeAddressLines(addressCache);
+        return doc;
     }
 
     private String readStartDocument() throws IOException {

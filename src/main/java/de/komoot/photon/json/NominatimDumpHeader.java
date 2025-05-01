@@ -17,6 +17,7 @@ public class NominatimDumpHeader {
 
     private String generator;
     private Date dataTimestamp;
+    private NominatimDumpFileFeatures features;
     private Map<String, String> extraProperties = new HashMap<>();
 
     void setVersion(String version) {
@@ -36,6 +37,9 @@ public class NominatimDumpHeader {
         dataTimestamp = timestamp;
     }
 
+    @JsonProperty("features")
+    void setFeatures(NominatimDumpFileFeatures features) { this.features = features; }
+
     public Date getDataTimestamp() {
         return dataTimestamp;
     }
@@ -44,4 +48,13 @@ public class NominatimDumpHeader {
     void setExtraProperties(String key, String value) {
         extraProperties.put(key, value);
     }
+
+    public boolean isSortedByCountry() {
+        return features == null ? false : features.isSortedByCountry;
+    }
+
+    public boolean hasAddressLines() {
+        return features == null ? true : features.hasAddressLines;
+    }
+
 }
