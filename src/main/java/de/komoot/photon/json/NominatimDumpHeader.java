@@ -12,16 +12,14 @@ import java.util.Map;
 public class NominatimDumpHeader {
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(NominatimDumpHeader.class);
 
-    public static final String DOCUMENT_TYPE = "Nominatim Dump File Header";
+    public static final String DOCUMENT_TYPE = "NominatimDumpFile";
     public static final String EXPECTED_VERSION = "0.1.0";
 
     private String generator;
     private Date dataTimestamp;
     private Map<String, String> extraProperties = new HashMap<>();
 
-    private CountryMap countryInfo = new CountryMap();
-
-        void setVersion(String version) {
+    void setVersion(String version) {
         if (!EXPECTED_VERSION.equals(version)) {
             LOGGER.error("Dump file header has version '{}'. Expect version '{}'",
                          version, EXPECTED_VERSION);
@@ -45,14 +43,5 @@ public class NominatimDumpHeader {
     @JsonAnySetter
     void setExtraProperties(String key, String value) {
         extraProperties.put(key, value);
-    }
-
-    @JsonProperty("country_info")
-    void setCountryInfo(CountryMap countryInfo) {
-        this.countryInfo = countryInfo;
-    }
-
-    public CountryMap getCountryInfo() {
-        return countryInfo;
     }
 }

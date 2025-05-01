@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 import de.komoot.photon.PhotonDoc;
 import de.komoot.photon.PhotonDocAddressSet;
+import de.komoot.photon.nominatim.model.AddressType;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
@@ -16,19 +17,21 @@ import java.util.Collections;
 import java.util.Map;
 
 public class NominatimPlaceDocument {
-    public static final String DOCUMENT_TYPE = "place";
+    public static final String DOCUMENT_TYPE = "Place";
 
     private final PhotonDoc doc = new PhotonDoc();
     private Map<String, String> address = Collections.emptyMap();
 
-    private static final GeometryFactory factory = new GeometryFactory(new PrecisionModel(0.00000001), 4326);
+    private static final GeometryFactory factory = new GeometryFactory(new PrecisionModel(10000000), 4326);
     private static final GeoJsonReader jsonReader = new GeoJsonReader();
 
     public PhotonDoc asSimpleDoc() {
-        return doc; // TODO do we need to merge address at this point?
+        doc.address(address);
+        return doc;
     }
 
     public Iterable<PhotonDoc> asMultiAddressDocs() {
+        doc.address(address);
         return new PhotonDocAddressSet(doc, address);
     }
 

@@ -12,15 +12,14 @@ import org.slf4j.Logger;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 public class JsonReader {
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(JsonReader.class);
 
     private final JsonParser parser;
     private NominatimDumpHeader header = null;
+    private Map<String, Map<String, String>> countryNames = new HashMap<>();
 
     public JsonReader(File inputFile) throws IOException {
         parser = configureObjectMapper().createParser(inputFile);
@@ -64,17 +63,41 @@ public class JsonReader {
         String docType = readStartDocument();
         while (docType != null) {
             if (NominatimPlaceDocument.DOCUMENT_TYPE.equals(docType)) {
+                Iterable<PhotonDoc> docs;
                 if (parser.isExpectedStartObjectToken()) {
-                    importThread.addDocument(parser.readValueAs(NominatimPlaceDocument.class).asMultiAddressDocs());
+                    docs = parser.readValueAs(NominatimPlaceDocument.class).asMultiAddressDocs();
                 } else if (parser.isExpectedStartArrayToken()) {
-                    List<PhotonDoc> docs = new ArrayList<>();
+                    docs = new ArrayList<>();
                     while (parser.nextToken() != JsonToken.END_ARRAY) {
-                        docs.add(parser.readValueAs(NominatimPlaceDocument.class).asSimpleDoc());
+                        ((List) docs).add(parser.readValueAs(NominatimPlaceDocument.class).asSimpleDoc());
                     }
-                    importThread.addDocument(docs);
                 } else {
-                    LOGGER.error("place document must contain object or an array of objects at {}", parser.currentLocation());
+                    LOGGER.error("Place document must contain object or an array of objects at {}", parser.currentLocation());
                     throw new UsageException("Invalid json file.");
+                }
+
+                var it = docs.iterator();
+                if (it.hasNext()) {
+                    while (it.hasNext()) {
+                        var doc = it.next();
+                        if (doc.getCountryCode() != null) {
+                            var names = countryNames.get(doc.getCountryCode());
+                            if (names != null) {
+                                doc.setCountry(names);
+                            }
+                        }
+                    }
+
+                    importThread.addDocument(docs);
+                }
+            } else if (CountryInfo.DOCUMENT_TYPE.equals(docType)) {
+                if (!parser.isExpectedStartArrayToken()) {
+                    LOGGER.error("CountryInfo document must contain an array of objects at {}", parser.currentLocation());
+                    throw new UsageException("Invalid json file.");
+                }
+                while (parser.nextToken() != JsonToken.END_ARRAY) {
+                    var cinfo = parser.readValueAs(CountryInfo.class);
+                    countryNames.put(cinfo.getCountryCode().toUpperCase(), cinfo.getName());
                 }
             } else {
                 LOGGER.warn("Unknown document type '{}'. Ignored.", docType);
@@ -84,7 +107,6 @@ public class JsonReader {
             readEndDocument();
             docType = readStartDocument();
         }
-
     }
 
     private String readStartDocument() throws IOException {

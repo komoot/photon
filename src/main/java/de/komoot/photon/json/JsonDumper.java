@@ -81,20 +81,23 @@ writer.writeStringField("version", NominatimDumpHeader.EXPECTED_VERSION);
         writer.writeStringField("generator", "photon");
         writer.writeStringField("database_version", Server.DATABASE_VERSION);
         writer.writeObjectField("data_timestamp", importDate);
+        writer.writeEndObject();
+        writeEndDocument();
 
         // country data
-        writer.writeObjectFieldStart("country_info");
+        writeStartDocument(CountryInfo.DOCUMENT_TYPE);
+        writer.writeStartArray();
         for (var e : countryNames.entrySet()) {
             if (!e.getKey().isBlank()) {
-                writer.writeObjectFieldStart(e.getKey());
-                writer.writeObjectField("names", e.getValue());
+                writer.writeStartObject();
+                writer.writeObjectField("country_code", e.getKey());
+                writer.writeObjectField("name", e.getValue());
                 writer.writeEndObject();
             }
         }
-        writer.writeEndObject();
-
-        writer.writeEndObject();
+        writer.writeEndArray();
         writeEndDocument();
+
     }
 
     public void writeNominatimDocument(PhotonDoc doc) throws IOException {

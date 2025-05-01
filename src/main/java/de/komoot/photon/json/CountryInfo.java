@@ -1,18 +1,32 @@
 package de.komoot.photon.json;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.Collections;
 import java.util.Map;
 
 public class CountryInfo {
+    public static final String DOCUMENT_TYPE = "CountryInfo";
 
-    private Map<String, String> names = Collections.emptyMap();
+    private String countryCode;
 
-    void setNames(Map<String, String> names) {
-        this.names = names;
+    private Map<String, String> name = Collections.emptyMap();
+
+    @JsonProperty("name")
+    public void setName(Map<String, String> names) {
+        this.name = names;
     }
 
-    public Map<String, String> getNames() {
-        return names;
+    @JsonProperty("country_code")
+    public void setCountryCode(String countryCode) {
+        this.countryCode = countryCode;
     }
 
+    public Map<String, String> getName() {
+        return name;
+    }
+
+    public String getCountryCode() {
+        return countryCode;
+    }
 }
