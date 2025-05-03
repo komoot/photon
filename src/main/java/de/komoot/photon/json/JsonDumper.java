@@ -104,8 +104,8 @@ writer.writeStringField("version", NominatimDumpHeader.EXPECTED_VERSION);
     public void writeNominatimDocument(PhotonDoc doc) throws IOException {
         writer.writeStartObject();
         writer.writeNumberField("place_id", doc.getPlaceId());
-        writer.writeStringField("osm_type", doc.getOsmType());
-        writer.writeNumberField("osm_id", doc.getOsmId());
+        writer.writeStringField("object_type", doc.getOsmType());
+        writer.writeNumberField("object_id", doc.getOsmId());
         writer.writeStringField("tag_key", doc.getTagKey());
         writer.writeStringField("tag_value", doc.getTagValue());
         writer.writeNumberField("rank_address", doc.getRankAddress());

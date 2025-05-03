@@ -42,12 +42,12 @@ public class NominatimPlaceDocument {
         doc.placeId(placeId);
     }
 
-    @JsonProperty("osm_type")
+    @JsonProperty("object_type")
     void setOsmType(String osmType) {
         doc.osmType(osmType);
     }
 
-    @JsonProperty("osm_id")
+    @JsonProperty("object_id")
     void setOsmId(long osmId) {
         doc.osmId(osmId);
     }
