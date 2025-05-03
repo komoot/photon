@@ -46,7 +46,6 @@ public class PhotonDoc {
     private long parentPlaceId = 0; // 0 if unset
     private double importance = 0;
     private String countryCode = null;
-    private long linkedPlaceId = 0; // 0 if unset
     private int rankAddress = 30;
     private Integer adminLevel = null;
 
@@ -81,7 +80,6 @@ public class PhotonDoc {
         this.importance = other.importance;
         this.countryCode = other.countryCode;
         this.centroid = other.centroid;
-        this.linkedPlaceId = other.linkedPlaceId;
         this.rankAddress = other.rankAddress;
         this.addressParts = other.addressParts;
         this.context = other.context;
@@ -224,11 +222,6 @@ public class PhotonDoc {
         return this;
     }
 
-    public PhotonDoc linkedPlaceId(long linkedPlaceId) {
-        this.linkedPlaceId = linkedPlaceId;
-        return this;
-    }
-
     public PhotonDoc rankAddress(int rank) {
         this.rankAddress = rank;
         return this;
@@ -282,10 +275,6 @@ public class PhotonDoc {
     }
 
     public boolean isUsefulForIndex() {
-        if ("place".equals(tagKey) && "houses".equals(tagValue)) return false;
-
-        if (linkedPlaceId > 0) return false;
-
         return houseNumber != null || !name.isEmpty();
     }
     
@@ -439,7 +428,6 @@ public class PhotonDoc {
                 ", parentPlaceId=" + parentPlaceId +
                 ", importance=" + importance +
                 ", countryCode='" + countryCode + '\'' +
-                ", linkedPlaceId=" + linkedPlaceId +
                 ", rankAddress=" + rankAddress +
                 ", addressParts=" + addressParts +
                 ", context=" + context +

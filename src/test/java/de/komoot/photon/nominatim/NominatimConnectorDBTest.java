@@ -332,21 +332,6 @@ class NominatimConnectorDBTest {
     }
 
     /**
-     * Interpolation lines in placex are ignored.
-     */
-    @Test
-    void testInterpolationLines() {
-        PlacexTestRow parent = PlacexTestRow.make_street("Main St").add(jdbc);
-        new PlacexTestRow("place", "houses").name("something").parent(parent).add(jdbc);
-
-        readEntireDatabase();
-
-        assertEquals(1, importer.size());
-
-        importer.get(parent);
-    }
-
-    /**
      * Places without a country can be imported.
      */
     @Test
