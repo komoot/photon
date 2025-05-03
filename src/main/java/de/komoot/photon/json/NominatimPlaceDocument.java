@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import de.komoot.photon.PhotonDoc;
 import de.komoot.photon.PhotonDocAddressSet;
 import de.komoot.photon.nominatim.model.AddressRow;
-import de.komoot.photon.nominatim.model.AddressType;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
@@ -142,7 +141,9 @@ public class NominatimPlaceDocument {
 
     @JsonProperty("geometry")
     void setGeometry(JsonNode geojson) throws ParseException {
-        doc.geometry(jsonReader.read(geojson.toString()));
+        final var geometry = jsonReader.read(geojson.toString());
+        doc.geometry(geometry);
+        doc.bbox(geometry.getEnvelope());
     }
 
     @JsonProperty("addresslines")

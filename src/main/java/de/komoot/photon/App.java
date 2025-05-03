@@ -236,6 +236,8 @@ public class App {
             reader = new JsonReader(new File(args.getImportFile()));
         }
 
+        reader.setUseFullGeometries(args.getImportGeometryColumn());
+
         reader.readHeader();
         final var importDate = reader.getImportDate();
 

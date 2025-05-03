@@ -167,7 +167,9 @@ writer.writeStringField("version", NominatimDumpHeader.EXPECTED_VERSION);
             writer.writeStringField("postcode", doc.getPostcode());
         }
 
-        writer.writeStringField("country_code", doc.getCountryCode().toLowerCase());
+        if (doc.getCountryCode() != null) {
+            writer.writeStringField("country_code", doc.getCountryCode().toLowerCase());
+        }
 
         final var coords = doc.getCentroid().getCoordinate();
         writer.writeArrayFieldStart("centroid");

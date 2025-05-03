@@ -23,6 +23,8 @@ public class JsonReader {
     private Map<String, Map<String, String>> countryNames = new HashMap<>();
     private Map<Long, AddressRow> addressCache = new HashMap<>();
 
+    private boolean useFullGeometries = false;
+
     public JsonReader(File inputFile) throws IOException {
         parser = configureObjectMapper().createParser(inputFile);
         parser.nextToken();
@@ -38,6 +40,10 @@ public class JsonReader {
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
         return mapper;
+    }
+
+    public void setUseFullGeometries(boolean enable) {
+        useFullGeometries = enable;
     }
 
     public void readHeader() throws IOException {
@@ -88,6 +94,10 @@ public class JsonReader {
                             if (names != null) {
                                 doc.setCountry(names);
                             }
+                        }
+
+                        if (!useFullGeometries) {
+                            doc.geometry(null);
                         }
 
                         if (!it.hasNext()) {
