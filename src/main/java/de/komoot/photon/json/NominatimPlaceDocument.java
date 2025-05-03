@@ -2,6 +2,7 @@ package de.komoot.photon.json;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
+import de.komoot.photon.ConfigExtraTags;
 import de.komoot.photon.PhotonDoc;
 import de.komoot.photon.PhotonDocAddressSet;
 import de.komoot.photon.nominatim.model.AddressRow;
@@ -160,5 +161,13 @@ public class NominatimPlaceDocument {
                         .filter(l -> l != null)
                         .collect(Collectors.toUnmodifiableList()));
        }
+    }
+
+    public void disableGeometries() {
+        doc.geometry(null);
+    }
+
+    public void filterExtraTags(ConfigExtraTags extraTags) {
+        doc.extraTags(extraTags.filterExtraTags(doc.getExtratags()));
     }
 }

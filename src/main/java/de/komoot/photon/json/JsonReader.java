@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.komoot.photon.ConfigExtraTags;
 import de.komoot.photon.PhotonDoc;
 import de.komoot.photon.UsageException;
 import de.komoot.photon.nominatim.ImportThread;
@@ -24,6 +25,7 @@ public class JsonReader {
     private Map<Long, AddressRow> addressCache = new HashMap<>();
 
     private boolean useFullGeometries = false;
+    private ConfigExtraTags extraTags = new ConfigExtraTags();
 
     public JsonReader(File inputFile) throws IOException {
         parser = configureObjectMapper().createParser(inputFile);
@@ -44,6 +46,10 @@ public class JsonReader {
 
     public void setUseFullGeometries(boolean enable) {
         useFullGeometries = enable;
+    }
+
+    public void setExtraTags(ConfigExtraTags extraTags) {
+        this.extraTags = extraTags;
     }
 
     public void readHeader() throws IOException {
@@ -96,10 +102,6 @@ public class JsonReader {
                             }
                         }
 
-                        if (!useFullGeometries) {
-                            doc.geometry(null);
-                        }
-
                         if (!it.hasNext()) {
                             if (header.isSortedByCountry() &&
                                     doc.getCountryCode() != null && !currentCountry.equals(doc.getCountryCode())) {
@@ -141,6 +143,13 @@ public class JsonReader {
 
     private NominatimPlaceDocument parsePlaceDocument() throws IOException {
         final var doc = parser.readValueAs(NominatimPlaceDocument.class);
+
+
+        if (!useFullGeometries) {
+            doc.disableGeometries();
+        }
+
+        doc.filterExtraTags(extraTags);
 
         doc.completeAddressLines(addressCache);
         return doc;

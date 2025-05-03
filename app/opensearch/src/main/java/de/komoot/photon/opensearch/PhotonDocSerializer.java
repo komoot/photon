@@ -3,6 +3,7 @@ package de.komoot.photon.opensearch;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
+import de.komoot.photon.ConfigExtraTags;
 import de.komoot.photon.Constants;
 import de.komoot.photon.PhotonDoc;
 import de.komoot.photon.Utils;
@@ -21,9 +22,9 @@ public class PhotonDocSerializer extends StdSerializer<PhotonDoc> {
     public static final String FORMAT_VERSION = "1.0.0";
 
     private final String[] languages;
-    private final String[] extraTags;
+    private final ConfigExtraTags extraTags;
 
-    public PhotonDocSerializer(String[] languages, String[] extraTags) {
+    public PhotonDocSerializer(String[] languages, ConfigExtraTags extraTags) {
         super(PhotonDoc.class);
         this.languages = languages;
         this.extraTags = extraTags;
@@ -90,7 +91,7 @@ public class PhotonDocSerializer extends StdSerializer<PhotonDoc> {
         }
 
         writeContext(gen, value.getContextByLanguage(languages));
-        writeExtraTags(gen, value.getExtratags());
+        extraTags.writeFilteredExtraTags(gen, "extra", value.getExtratags());
         writeExtent(gen, value.getBbox());
 
         gen.writeEndObject();
@@ -121,25 +122,6 @@ public class PhotonDocSerializer extends StdSerializer<PhotonDoc> {
             for (Map.Entry<String, Set<String>> entry : contexts.entrySet()) {
                 gen.writeStringField(entry.getKey(), String.join(", ", entry.getValue()));
             }
-            gen.writeEndObject();
-        }
-    }
-
-    private void writeExtraTags(JsonGenerator gen, Map<String, String> docTags) throws IOException {
-        boolean foundTag = false;
-
-        for (String tag: extraTags) {
-            String value = docTags.get(tag);
-            if (value != null) {
-                if (!foundTag) {
-                    gen.writeObjectFieldStart("extra");
-                    foundTag = true;
-                }
-                gen.writeStringField(tag, value);
-            }
-        }
-
-        if (foundTag) {
             gen.writeEndObject();
         }
     }

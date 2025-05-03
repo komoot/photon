@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import de.komoot.photon.ConfigExtraTags;
 import de.komoot.photon.Importer;
 import de.komoot.photon.PhotonDoc;
 import de.komoot.photon.Server;
@@ -21,12 +22,14 @@ public class JsonDumper implements Importer {
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(JsonDumper.class);
 
     private final String[] languages;
+    private final ConfigExtraTags extraTags;
 
     private final JsonGenerator writer;
     private final GeoJsonWriter geojsonWriter = new GeoJsonWriter();
 
-    public JsonDumper(String filename, String[] languages) throws IOException {
+    public JsonDumper(String filename, String[] languages, ConfigExtraTags extraTags) throws IOException {
         this.languages = languages;
+        this.extraTags = extraTags;
 
         final var mapper = new ObjectMapper();
         mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
@@ -144,12 +147,12 @@ writer.writeStringField("version", NominatimDumpHeader.EXPECTED_VERSION);
             int i = 1;
             if ("default".equals(entry.getKey())) {
                 for (var name : entry.getValue()) {
-                    addressNames.put(String.format("context%d", i), name);
+                    addressNames.put(String.format("other%d", i), name);
                     ++i;
                 }
             } else {
                 for (var name : entry.getValue()) {
-                    addressNames.put(String.format("context%d:%s", i, entry.getKey()), name);
+                    addressNames.put(String.format("other%d:%s", i, entry.getKey()), name);
                     ++i;
                 }
             }
@@ -159,9 +162,7 @@ writer.writeStringField("version", NominatimDumpHeader.EXPECTED_VERSION);
             writer.writeObjectField("address", addressNames);
         }
 
-        if (!doc.getExtratags().isEmpty()) {
-            writer.writeObjectField("extratags", doc.getExtratags());
-        }
+        extraTags.writeFilteredExtraTags(writer, "extra", doc.getExtratags());
 
         if (doc.getPostcode() != null) {
             writer.writeStringField("postcode", doc.getPostcode());

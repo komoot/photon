@@ -148,8 +148,8 @@ public class CommandLineArgs {
         return this.countryCodes.toArray(new String[0]);
     }
 
-    public String[] getExtraTags() {
-        return this.extraTags.toArray(new String[0]);
+    public ConfigExtraTags getExtraTags() {
+        return new ConfigExtraTags(this.extraTags);
     }
 
     public String getSynonymFile() {

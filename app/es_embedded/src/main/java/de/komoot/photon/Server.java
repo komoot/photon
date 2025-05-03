@@ -3,6 +3,7 @@ package de.komoot.photon;
 import de.komoot.photon.searcher.StructuredSearchHandler;
 import de.komoot.photon.searcher.ReverseHandler;
 import de.komoot.photon.searcher.SearchHandler;
+import de.komoot.photon.ConfigExtraTags;
 import de.komoot.photon.elasticsearch.*;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.client.Client;
@@ -293,11 +294,11 @@ public class Server {
                 Boolean.parseBoolean(supportGeometries));
     }
 
-    public Importer createImporter(String[] languages, String[] extraTags) {
+    public Importer createImporter(String[] languages, ConfigExtraTags extraTags) {
         return new de.komoot.photon.elasticsearch.Importer(esClient, languages, extraTags);
     }
 
-    public Updater createUpdater(String[] languages, String[] extraTags) {
+    public Updater createUpdater(String[] languages, ConfigExtraTags extraTags) {
         return new de.komoot.photon.elasticsearch.Updater(esClient, languages, extraTags);
     }
 

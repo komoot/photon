@@ -2,6 +2,7 @@ package de.komoot.photon.elasticsearch;
 
 import de.komoot.photon.Constants;
 import de.komoot.photon.PhotonDoc;
+import de.komoot.photon.ConfigExtraTags;
 import de.komoot.photon.nominatim.model.AddressType;
 
 import org.elasticsearch.common.xcontent.*;
@@ -18,7 +19,7 @@ import java.util.Set;
 import static de.komoot.photon.Utils.buildClassificationString;
 
 public class PhotonDocConverter {
-    public static XContentBuilder convert(PhotonDoc doc, String[] languages, String[] extraTags) throws IOException {
+    public static XContentBuilder convert(PhotonDoc doc, String[] languages, ConfigExtraTags extraTags) throws IOException {
         final AddressType atype = doc.getAddressType();
         XContentBuilder builder = XContentFactory.jsonBuilder().startObject()
                 .field(Constants.OSM_ID, doc.getOsmId())
@@ -77,7 +78,7 @@ public class PhotonDocConverter {
         if (countryCode != null)
             builder.field(Constants.COUNTRYCODE, countryCode);
         writeContext(builder, doc.getContextByLanguage(languages));
-        writeExtraTags(builder, doc.getExtratags(), extraTags);
+        writeExtraTags(builder, extraTags.filterExtraTags(doc.getExtratags()));
         writeExtent(builder, doc.getBbox());
 
         builder.endObject();
@@ -86,21 +87,12 @@ public class PhotonDocConverter {
         return builder;
     }
 
-    private static void writeExtraTags(XContentBuilder builder, Map<String, String> docTags, String[] extraTags) throws IOException {
-        boolean foundTag = false;
-
-        for (String tag : extraTags) {
-            String value = docTags.get(tag);
-            if (value != null) {
-                if (!foundTag) {
-                    builder.startObject("extra");
-                    foundTag = true;
-                }
-                builder.field(tag, value);
+    private static void writeExtraTags(XContentBuilder builder, Map<String, String> extraTags) throws IOException {
+        if (extraTags.size() > 0) {
+            builder.startObject("extra");
+            for (var entry : extraTags.entrySet()) {
+                builder.field(entry.getKey(), entry.getValue());
             }
-        }
-
-        if (foundTag) {
             builder.endObject();
         }
     }

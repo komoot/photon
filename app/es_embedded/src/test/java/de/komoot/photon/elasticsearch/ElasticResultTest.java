@@ -5,6 +5,7 @@ import org.locationtech.jts.geom.Point;
 import de.komoot.photon.ESBaseTester;
 import de.komoot.photon.Importer;
 import de.komoot.photon.PhotonDoc;
+import de.komoot.photon.ConfigExtraTags;
 import de.komoot.photon.query.PhotonRequest;
 import de.komoot.photon.searcher.PhotonResult;
 import de.komoot.photon.searcher.SearchHandler;
@@ -44,7 +45,7 @@ class ElasticResultTest  extends ESBaseTester {
     void setUp() throws Exception {
         setUpES(instanceTestDirectory, false, "en", "de", "fr", "it");
         Importer instance = getServer().createImporter(new String[]{"en", "de", "fr", "it"},
-                 new String[]{"population",  "capital"});
+                 new ConfigExtraTags(List.of("population",  "capital")));
 
         instance.add(List.of(
                 createDoc(45.2, -7.45, 123, 1123, "place", "city")

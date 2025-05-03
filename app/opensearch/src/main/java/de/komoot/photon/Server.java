@@ -185,12 +185,12 @@ public class Server {
                                       dbEntry.source().supportGeometries);
     }
 
-    public Importer createImporter(String[] languages, String[] extraTags) {
+    public Importer createImporter(String[] languages, ConfigExtraTags extraTags) {
         registerPhotonDocSerializer(languages, extraTags);
         return new de.komoot.photon.opensearch.Importer(client);
     }
 
-    public Updater createUpdater(String[] languages, String[] extraTags) {
+    public Updater createUpdater(String[] languages, ConfigExtraTags extraTags) {
         registerPhotonDocSerializer(languages, extraTags);
         return new de.komoot.photon.opensearch.Updater(client);
     }
@@ -207,7 +207,7 @@ public class Server {
         return new OpenSearchReverseHandler(client, queryTimeoutSec);
     }
 
-    private void registerPhotonDocSerializer(String[] languages, String[] extraTags) {
+    private void registerPhotonDocSerializer(String[] languages, ConfigExtraTags extraTags) {
         final var module = new SimpleModule("PhotonDocSerializer",
                 new Version(1, 0, 0, null, null, null));
         module.addSerializer(PhotonDoc.class, new PhotonDocSerializer(languages, extraTags));

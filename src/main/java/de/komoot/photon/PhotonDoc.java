@@ -13,24 +13,24 @@ import java.util.*;
  */
 public class PhotonDoc {
     private static final List<Map.Entry<AddressType, String>> ADDRESS_TYPE_TAG_MAP = List.of(
-            new AbstractMap.SimpleImmutableEntry<>(AddressType.STREET, "street"),
-            new AbstractMap.SimpleImmutableEntry<>(AddressType.CITY, "city"),
-            new AbstractMap.SimpleImmutableEntry<>(AddressType.DISTRICT, "suburb"),
-            new AbstractMap.SimpleImmutableEntry<>(AddressType.LOCALITY, "neighbourhood"),
-            new AbstractMap.SimpleImmutableEntry<>(AddressType.COUNTY, "county"),
-            new AbstractMap.SimpleImmutableEntry<>(AddressType.STATE, "state"),
-            new AbstractMap.SimpleImmutableEntry<>(AddressType.STATE, "province"),
-            new AbstractMap.SimpleImmutableEntry<>(AddressType.OTHER, "other"),
-            new AbstractMap.SimpleImmutableEntry<>(AddressType.OTHER, "district"),
-            new AbstractMap.SimpleImmutableEntry<>(AddressType.OTHER, "hamlet"),
-            new AbstractMap.SimpleImmutableEntry<>(AddressType.OTHER, "subdistrict"),
-            new AbstractMap.SimpleImmutableEntry<>(AddressType.OTHER, "municipality"),
-            new AbstractMap.SimpleImmutableEntry<>(AddressType.OTHER, "region"),
-            new AbstractMap.SimpleImmutableEntry<>(AddressType.OTHER, "ward"),
-            new AbstractMap.SimpleImmutableEntry<>(AddressType.OTHER, "village"),
-            new AbstractMap.SimpleImmutableEntry<>(AddressType.OTHER, "subward"),
-            new AbstractMap.SimpleImmutableEntry<>(AddressType.OTHER, "block"),
-            new AbstractMap.SimpleImmutableEntry<>(AddressType.OTHER, "quarter")
+            Map.entry(AddressType.STREET, "street"),
+            Map.entry(AddressType.CITY, "city"),
+            Map.entry(AddressType.DISTRICT, "suburb"),
+            Map.entry(AddressType.LOCALITY, "neighbourhood"),
+            Map.entry(AddressType.COUNTY, "county"),
+            Map.entry(AddressType.STATE, "state"),
+            Map.entry(AddressType.STATE, "province"),
+            Map.entry(AddressType.OTHER, "other"),
+            Map.entry(AddressType.OTHER, "district"),
+            Map.entry(AddressType.OTHER, "hamlet"),
+            Map.entry(AddressType.OTHER, "subdistrict"),
+            Map.entry(AddressType.OTHER, "municipality"),
+            Map.entry(AddressType.OTHER, "region"),
+            Map.entry(AddressType.OTHER, "ward"),
+            Map.entry(AddressType.OTHER, "village"),
+            Map.entry(AddressType.OTHER, "subward"),
+            Map.entry(AddressType.OTHER, "block"),
+            Map.entry(AddressType.OTHER, "quarter")
             );
 
     private long placeId = -1;
@@ -161,10 +161,11 @@ public class PhotonDoc {
                             .findFirst();
                     if (match.isPresent()) {
                         var atype = match.get().getKey();
-                        var newKey = "name" + key.substring(match.get().getValue().length());
                         if (atype == AddressType.OTHER) {
-                            context.add(Map.of(newKey, entry.getValue()));
+                            final String[] parts = key.split(":");
+                            context.add(Map.of(parts.length == 1 ? "name" : ("name:" + parts[parts.length - 1]), entry.getValue()));
                         } else {
+                            var newKey = "name" + key.substring(match.get().getValue().length());
                             overlay.computeIfAbsent(atype, k -> new HashMap<>()).put(newKey, entry.getValue());
                         }
                     }

@@ -110,7 +110,7 @@ public class App {
     private static void startJsonDump(CommandLineArgs args) {
         try {
             final String filename = args.getJsonDump();
-            final JsonDumper jsonDumper = new JsonDumper(filename, args.getLanguages());
+            final JsonDumper jsonDumper = new JsonDumper(filename, args.getLanguages(), args.getExtraTags());
 
             final var connector = new NominatimImporter(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword(), args.getImportGeometryColumn());
 
@@ -237,6 +237,7 @@ public class App {
         }
 
         reader.setUseFullGeometries(args.getImportGeometryColumn());
+        reader.setExtraTags(args.getExtraTags());
 
         reader.readHeader();
         final var importDate = reader.getImportDate();
