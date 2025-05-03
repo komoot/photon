@@ -106,8 +106,11 @@ writer.writeStringField("version", NominatimDumpHeader.EXPECTED_VERSION);
         writer.writeNumberField("place_id", doc.getPlaceId());
         writer.writeStringField("object_type", doc.getOsmType());
         writer.writeNumberField("object_id", doc.getOsmId());
-        writer.writeStringField("tag_key", doc.getTagKey());
-        writer.writeStringField("tag_value", doc.getTagValue());
+
+        writer.writeArrayFieldStart("categories");
+        writer.writeString(String.format("osm.%s.%s", doc.getTagKey(), doc.getTagValue()));
+        writer.writeEndArray();
+
         writer.writeNumberField("rank_address", doc.getRankAddress());
         writer.writeNumberField("importance", doc.getImportance());
 

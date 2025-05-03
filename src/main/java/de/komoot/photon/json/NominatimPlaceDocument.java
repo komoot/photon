@@ -52,6 +52,20 @@ public class NominatimPlaceDocument {
         doc.osmId(osmId);
     }
 
+    @JsonProperty("categories")
+    void setCategories(String[] categories) {
+        for (var cat : categories) {
+            if (cat.startsWith("osm.")) {
+                String[] parts = cat.split("\\.");
+                doc.tagKey(parts[1]);
+                doc.tagValue(parts.length > 2 ? parts[2] : "yes");
+            }
+            return;
+        }
+        doc.tagKey("place");
+        doc.tagValue("yes");
+    }
+
     @JsonProperty("tag_key")
     void setTagKey(String tagKey) {
         doc.tagKey(tagKey);
