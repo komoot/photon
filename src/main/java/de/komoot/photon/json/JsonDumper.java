@@ -115,13 +115,16 @@ writer.writeStringField("version", NominatimDumpHeader.EXPECTED_VERSION);
         writer.writeEndArray();
 
         writer.writeNumberField("rank_address", doc.getRankAddress());
+
+        if (doc.getAdminLevel() != null) {
+            writer.writeNumberField("admin_level", doc.getAdminLevel());
+        }
+
         writer.writeNumberField("importance", doc.getImportance());
 
         if (doc.getRankAddress() > 28) {
             writer.writeNumberField("parent_place_id", doc.getParentPlaceId());
         }
-
-        // TODO: admin_level
 
         if (!doc.getName().isEmpty())
         writer.writeObjectField("name", doc.getName());
@@ -187,6 +190,13 @@ writer.writeStringField("version", NominatimDumpHeader.EXPECTED_VERSION);
             writer.writeNumber(bbox.getMinY());
             writer.writeEndArray();
         }
+
+        final var geom = doc.getGeometry();
+        if (geom != null) {
+            writer.writeFieldName("geometry");
+            writer.writeRawValue(geojsonWriter.write(geom));
+        }
+
         writer.writeEndObject();
     }
 

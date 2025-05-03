@@ -48,6 +48,7 @@ public class PhotonDoc {
     private String countryCode = null;
     private long linkedPlaceId = 0; // 0 if unset
     private int rankAddress = 30;
+    private Integer adminLevel = null;
 
     private Map<AddressType, Map<String, String>> addressParts = new EnumMap<>(AddressType.class);
     private Set<Map<String, String>> context = new HashSet<>();
@@ -233,6 +234,11 @@ public class PhotonDoc {
         return this;
     }
 
+    public PhotonDoc adminLevel(int level) {
+        this.adminLevel = (level < 1 || level >= 15) ? null : level;
+        return this;
+    }
+
     public PhotonDoc postcode(String postcode) {
         this.postcode = postcode;
         return this;
@@ -392,6 +398,10 @@ public class PhotonDoc {
 
     public int getRankAddress() {
         return this.rankAddress;
+    }
+
+    public Integer getAdminLevel() {
+        return this.adminLevel;
     }
 
     public Map<AddressType, Map<String, String>> getAddressParts() {

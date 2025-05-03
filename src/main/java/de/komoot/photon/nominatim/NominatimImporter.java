@@ -57,7 +57,7 @@ public class NominatimImporter extends NominatimConnector {
         addressCache.loadCountryAddresses(template, dbutils, countryCode);
 
         final PlaceRowMapper placeRowMapper = new PlaceRowMapper(dbutils, useGeometryColumn);
-        String query = "SELECT place_id, osm_type, osm_id, class, type, name, postcode," +
+        String query = "SELECT place_id, osm_type, osm_id, class, type, name, postcode, admin_level," +
                 "       address, extratags, ST_Envelope(geometry) AS bbox, parent_place_id," +
                 "       linked_place_id, rank_address, rank_search, importance, country_code, centroid, ";
 
@@ -91,7 +91,7 @@ public class NominatimImporter extends NominatimConnector {
                 });
 
         // Next get all POIs/housenumbers.
-        query = "SELECT p.place_id, p.osm_type, p.osm_id, p.class, p.type, p.name, p.postcode," +
+        query = "SELECT p.place_id, p.osm_type, p.osm_id, p.class, p.type, p.name, p.postcode, p.admin_level," +
                 "       p.address, p.extratags, ST_Envelope(p.geometry) AS bbox, p.parent_place_id," +
                 "       p.linked_place_id, p.rank_address, p.rank_search, p.importance, p.country_code, p.centroid, " +
                 "       parent.class as parent_class, parent.type as parent_type," +

@@ -81,6 +81,9 @@ public class NominatimPlaceDocument {
         doc.rankAddress(rankAddress);
     }
 
+    @JsonProperty("admin_level")
+    void setAdminLevel(int adminLevel) { doc.adminLevel(adminLevel); }
+
     @JsonProperty("importance")
     void setImportance(double importance) {
         doc.importance(importance);
