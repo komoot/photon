@@ -84,7 +84,10 @@ public class JsonReader {
                 } else if (parser.isExpectedStartArrayToken()) {
                     docs = new ArrayList<>();
                     while (parser.nextToken() != JsonToken.END_ARRAY) {
-                        ((List) docs).add(parsePlaceDocument().asSimpleDoc());
+                        final var doc = parsePlaceDocument().asSimpleDoc();
+                        if (doc.isUsefulForIndex()) {
+                            ((List) docs).add(doc);
+                        }
                     }
                 } else {
                     LOGGER.error("Place document must contain object or an array of objects at {}", parser.currentLocation());
