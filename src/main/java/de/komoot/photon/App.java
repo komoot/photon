@@ -238,6 +238,7 @@ public class App {
 
         reader.setUseFullGeometries(args.getImportGeometryColumn());
         reader.setExtraTags(args.getExtraTags());
+        reader.setCountryFilter(args.getCountryCodes());
 
         reader.readHeader();
         final var importDate = reader.getImportDate();

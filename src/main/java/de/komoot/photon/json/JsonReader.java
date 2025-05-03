@@ -26,6 +26,7 @@ public class JsonReader {
 
     private boolean useFullGeometries = false;
     private ConfigExtraTags extraTags = new ConfigExtraTags();
+    private String[] countryFilter = null;
 
     public JsonReader(File inputFile) throws IOException {
         parser = configureObjectMapper().createParser(inputFile);
@@ -50,6 +51,15 @@ public class JsonReader {
 
     public void setExtraTags(ConfigExtraTags extraTags) {
         this.extraTags = extraTags;
+    }
+
+    public void setCountryFilter(String[] countries) {
+        if (countries == null || countries.length == 0) {
+            this.countryFilter = null;
+        } else {
+            this.countryFilter = Arrays.stream(countries).map(String::toUpperCase).toArray(String[]::new);
+            Arrays.sort(this.countryFilter);
+        };
     }
 
     public void readHeader() throws IOException {
@@ -80,12 +90,13 @@ public class JsonReader {
             if (NominatimPlaceDocument.DOCUMENT_TYPE.equals(docType)) {
                 Iterable<PhotonDoc> docs;
                 if (parser.isExpectedStartObjectToken()) {
-                    docs = parsePlaceDocument().asMultiAddressDocs();
+                    docs = parsePlaceDocument().asMultiAddressDocs(countryFilter);
                 } else if (parser.isExpectedStartArrayToken()) {
                     docs = new ArrayList<>();
                     while (parser.nextToken() != JsonToken.END_ARRAY) {
                         final var doc = parsePlaceDocument().asSimpleDoc();
-                        if (doc.isUsefulForIndex()) {
+                        if (doc.isUsefulForIndex()
+                                && (countryFilter == null || Arrays.binarySearch(countryFilter, doc.getCountryCode()) >= 0)) {
                             ((List) docs).add(doc);
                         }
                     }

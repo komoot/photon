@@ -32,7 +32,12 @@ public class NominatimPlaceDocument {
         return doc;
     }
 
-    public Iterable<PhotonDoc> asMultiAddressDocs() {
+    public Iterable<PhotonDoc> asMultiAddressDocs(String[] countryFilter) {
+        if (countryFilter != null
+                && (doc.getCountryCode() == null || Arrays.binarySearch(countryFilter, doc.getCountryCode()) < 0)) {
+            return List.of();
+        }
+
         doc.address(address);
         return new PhotonDocAddressSet(doc, address);
     }
