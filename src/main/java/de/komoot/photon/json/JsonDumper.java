@@ -136,11 +136,20 @@ writer.writeStringField("version", NominatimDumpHeader.EXPECTED_VERSION);
         final Map<String, String> addressNames = new HashMap<>();
         for (var entry : doc.getAddressParts().keySet()) {
             if (entry != AddressType.COUNTRY) {
-                doc.copyAddressName(addressNames, entry.getName(), entry, "name");
+                String baseKey;
+                if (entry == AddressType.LOCALITY) {
+                    baseKey = "neighbourhood";
+                } else if (entry == AddressType.DISTRICT) {
+                    baseKey = "suburb";
+                } else {
+                    baseKey = entry.getName();
+                }
+                doc.copyAddressName(addressNames, baseKey, entry, "name");
 
+                baseKey += ":";
                 for (String language : languages) {
                     doc.copyAddressName(
-                            addressNames, entry.getName() + ":" + language,
+                            addressNames, baseKey + language,
                             entry, "name:" + language);
                 }
             }

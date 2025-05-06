@@ -64,6 +64,8 @@ dependencies {
     testImplementation 'com.h2database:h2:2.3.232'
     testImplementation 'org.junit.jupiter:junit-jupiter'
     testImplementation 'org.mockito:mockito-core:5.14.2'
+    testImplementation 'org.assertj:assertj-core:3.27.2'
+    testImplementation 'net.javacrumbs.json-unit:json-unit-assertj:4.1.0'
 
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
