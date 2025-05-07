@@ -80,7 +80,7 @@ public class JsonDumper implements Importer {
         writeStartDocument(NominatimDumpHeader.DOCUMENT_TYPE);
 
         writer.writeStartObject();
-writer.writeStringField("version", NominatimDumpHeader.EXPECTED_VERSION);
+        writer.writeStringField("version", NominatimDumpHeader.EXPECTED_VERSION);
         writer.writeStringField("generator", "photon");
         writer.writeStringField("database_version", Server.DATABASE_VERSION);
         writer.writeObjectField("data_timestamp", importDate);
