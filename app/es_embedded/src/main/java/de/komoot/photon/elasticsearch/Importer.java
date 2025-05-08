@@ -1,6 +1,7 @@
 package de.komoot.photon.elasticsearch;
 
 import de.komoot.photon.PhotonDoc;
+import de.komoot.photon.ConfigExtraTags;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.client.Client;
@@ -19,9 +20,9 @@ public class Importer implements de.komoot.photon.Importer {
     private final Client esClient;
     private BulkRequestBuilder bulkRequest;
     private final String[] languages;
-    private final String[] extraTags;
+    private final ConfigExtraTags extraTags;
 
-    public Importer(Client esClient, String[] languages, String[] extraTags) {
+    public Importer(Client esClient, String[] languages, ConfigExtraTags extraTags) {
         this.esClient = esClient;
         this.bulkRequest = esClient.prepareBulk();
         this.languages = languages;

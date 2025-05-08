@@ -13,8 +13,10 @@ import org.locationtech.jts.io.WKTReader;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.stream.Collectors;
 
 
 public class ESBaseTester {
@@ -63,23 +65,24 @@ public class ESBaseTester {
     }
 
     protected Importer makeImporter() {
-        return (Importer) server.createImporter(new String[]{"en"}, new String[]{});
+        return (Importer) server.createImporter(new String[]{"en"}, new ConfigExtraTags());
     }
 
     protected Importer makeImporterWithExtra(String... extraTags) {
-        return (Importer) server.createImporter(new String[]{"en"}, extraTags);
+        return (Importer) server.createImporter(
+                new String[]{"en"}, new ConfigExtraTags(Arrays.stream(extraTags).collect(Collectors.toList())));
     }
 
     protected Importer makeImporterWithLanguages(String... languages) {
-        return (Importer) server.createImporter(languages, new String[]{});
+        return (Importer) server.createImporter(languages, new ConfigExtraTags());
     }
 
     protected Updater makeUpdater() {
-        return (Updater) server.createUpdater(new String[]{"en"}, new String[]{});
+        return (Updater) server.createUpdater(new String[]{"en"}, new ConfigExtraTags());
     }
 
     protected Updater makeUpdaterWithExtra(String... extraTags) {
-        return (Updater) server.createUpdater(new String[]{"en"}, extraTags);
+        return (Updater) server.createUpdater(new String[]{"en"}, new ConfigExtraTags(Arrays.stream(extraTags).collect(Collectors.toList())));
     }
 
     protected Server getServer() {

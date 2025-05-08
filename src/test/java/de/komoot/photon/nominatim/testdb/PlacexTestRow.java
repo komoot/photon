@@ -20,6 +20,7 @@ public class PlacexTestRow {
     private String value;
     private Map<String, String> names = new HashMap<>();
     private Map<String, String> address = new HashMap<>();
+    private Map<String, String> extraTags = new HashMap<>();
     private Integer rankAddress = 30;
     private Integer rankSearch = 30;
     private String centroid;
@@ -42,7 +43,7 @@ public class PlacexTestRow {
     }
 
     private static String asJson(Map<String, String> map) {
-        if (map == null) {
+        if (map == null || map.isEmpty()) {
             return null;
         }
 
@@ -66,6 +67,12 @@ public class PlacexTestRow {
         return this;
     }
 
+    public PlacexTestRow extraTag(String key, String name) {
+        extraTags.put(key, name);
+
+        return this;
+    }
+
     public PlacexTestRow osm(String type, long id) {
         osmType = type;
         osmId = id;
@@ -74,6 +81,11 @@ public class PlacexTestRow {
 
     public PlacexTestRow centroid(double x, double y) {
         centroid = "POINT(" + x + " " + y + ")";
+        return this;
+    }
+
+    public PlacexTestRow geometry(String geometry) {
+        this.geometry = geometry;
         return this;
     }
 
@@ -125,10 +137,10 @@ public class PlacexTestRow {
 
     public PlacexTestRow add(JdbcTemplate jdbc) {
         jdbc.update("INSERT INTO placex (place_id, parent_place_id, osm_type, osm_id, class, type, rank_search, rank_address,"
-                        + " centroid, geometry, name, country_code, importance, address, postcode, indexed_status)"
-                        + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? FORMAT JSON, ?, ?, ? FORMAT JSON, ?, 0)",
+                        + " centroid, geometry, name, extratags, country_code, importance, address, postcode, indexed_status)"
+                        + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? FORMAT JSON, ? FORMAT JSON, ?, ?, ? FORMAT JSON, ?, 0)",
                 placeId, parentPlaceId, osmType, osmId, key, value, rankSearch, rankAddress, centroid, geometry,
-                asJson(names), countryCode, importance, asJson(address), postcode);
+                asJson(names), asJson(extraTags), countryCode, importance, asJson(address), postcode);
         return this;
     }
 

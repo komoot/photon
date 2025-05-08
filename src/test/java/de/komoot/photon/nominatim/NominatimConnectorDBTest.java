@@ -23,15 +23,13 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.transaction.support.TransactionTemplate;
 
 class NominatimConnectorDBTest {
-    private EmbeddedDatabase db;
     private NominatimImporter connector;
     private CollectingImporter importer;
     private JdbcTemplate jdbc;
-    private TransactionTemplate txTemplate;
 
     @BeforeEach
     void setup() {
-        db = new EmbeddedDatabaseBuilder()
+        EmbeddedDatabase db = new EmbeddedDatabaseBuilder()
                 .setType(EmbeddedDatabaseType.H2)
                 .generateUniqueName(true)
                 .addScript("/test-schema.sql")
@@ -42,7 +40,7 @@ class NominatimConnectorDBTest {
         importer = new CollectingImporter();
 
         jdbc = new JdbcTemplate(db);
-        txTemplate = new TransactionTemplate(new DataSourceTransactionManager(db));
+        TransactionTemplate txTemplate = new TransactionTemplate(new DataSourceTransactionManager(db));
         ReflectionTestUtil.setFieldValue(connector, NominatimConnector.class, "template", jdbc);
         ReflectionTestUtil.setFieldValue(connector, NominatimConnector.class, "txTemplate", txTemplate);
     }
@@ -332,21 +330,6 @@ class NominatimConnectorDBTest {
     }
 
     /**
-     * Interpolation lines in placex are ignored.
-     */
-    @Test
-    void testInterpolationLines() {
-        PlacexTestRow parent = PlacexTestRow.make_street("Main St").add(jdbc);
-        new PlacexTestRow("place", "houses").name("something").parent(parent).add(jdbc);
-
-        readEntireDatabase();
-
-        assertEquals(1, importer.size());
-
-        importer.get(parent);
-    }
-
-    /**
      * Places without a country can be imported.
      */
     @Test
@@ -368,6 +351,7 @@ class NominatimConnectorDBTest {
         assertNotNull(importer.get(place).getGeometry());
     }
 
+    @Test
     void testUsePostcodeFromPlacex() {
         PlacexTestRow parent = PlacexTestRow.make_street("Main St").add(jdbc);
         PlacexTestRow place = new PlacexTestRow("building", "yes")

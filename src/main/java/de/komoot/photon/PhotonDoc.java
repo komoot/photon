@@ -5,7 +5,6 @@ import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Point;
 import de.komoot.photon.nominatim.model.AddressType;
-import org.slf4j.Logger;
 
 import java.util.*;
 
@@ -13,13 +12,32 @@ import java.util.*;
  * Denormalized document with all information needed for saving in the Photon database.
  */
 public class PhotonDoc {
-    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(PhotonDoc.class);
+    private static final List<Map.Entry<AddressType, String>> ADDRESS_TYPE_TAG_MAP = List.of(
+            Map.entry(AddressType.STREET, "street"),
+            Map.entry(AddressType.CITY, "city"),
+            Map.entry(AddressType.DISTRICT, "suburb"),
+            Map.entry(AddressType.LOCALITY, "neighbourhood"),
+            Map.entry(AddressType.COUNTY, "county"),
+            Map.entry(AddressType.STATE, "state"),
+            Map.entry(AddressType.STATE, "province"),
+            Map.entry(AddressType.OTHER, "other"),
+            Map.entry(AddressType.OTHER, "district"),
+            Map.entry(AddressType.OTHER, "hamlet"),
+            Map.entry(AddressType.OTHER, "subdistrict"),
+            Map.entry(AddressType.OTHER, "municipality"),
+            Map.entry(AddressType.OTHER, "region"),
+            Map.entry(AddressType.OTHER, "ward"),
+            Map.entry(AddressType.OTHER, "village"),
+            Map.entry(AddressType.OTHER, "subward"),
+            Map.entry(AddressType.OTHER, "block"),
+            Map.entry(AddressType.OTHER, "quarter")
+            );
 
-    private final long placeId;
-    private final String osmType;
-    private final long osmId;
-    private String tagKey;
-    private String tagValue;
+    private long placeId = -1;
+    private String osmType = null;
+    private long osmId = -1;
+    private String tagKey = null;
+    private String tagValue = null;
 
     private Map<String, String> name = Collections.emptyMap();
     private String postcode = null;
@@ -28,14 +46,16 @@ public class PhotonDoc {
     private long parentPlaceId = 0; // 0 if unset
     private double importance = 0;
     private String countryCode = null;
-    private long linkedPlaceId = 0; // 0 if unset
     private int rankAddress = 30;
+    private Integer adminLevel = null;
 
     private Map<AddressType, Map<String, String>> addressParts = new EnumMap<>(AddressType.class);
     private Set<Map<String, String>> context = new HashSet<>();
     private String houseNumber = null;
     private Point centroid = null;
     private Geometry geometry = null;
+
+    public PhotonDoc() {}
 
     public PhotonDoc(long placeId, String osmType, long osmId, String tagKey, String tagValue) {
         this.placeId = placeId;
@@ -60,11 +80,35 @@ public class PhotonDoc {
         this.importance = other.importance;
         this.countryCode = other.countryCode;
         this.centroid = other.centroid;
-        this.linkedPlaceId = other.linkedPlaceId;
         this.rankAddress = other.rankAddress;
         this.addressParts = other.addressParts;
         this.context = other.context;
         this.geometry = other.geometry;
+    }
+
+    public PhotonDoc placeId(long placeId) {
+        this.placeId = placeId;
+        return this;
+    }
+
+    public PhotonDoc osmType(String osmType) {
+        this.osmType = osmType;
+        return this;
+    }
+
+    public PhotonDoc osmId(long osmId) {
+        this.osmId = osmId;
+        return this;
+    }
+
+    public PhotonDoc tagKey(String tagKey) {
+        this.tagKey = tagKey;
+        return this;
+    }
+
+    public PhotonDoc tagValue(String tagValue) {
+        this.tagValue = tagValue;
+        return this;
     }
 
     public PhotonDoc names(Map<String, String> names) {
@@ -90,7 +134,7 @@ public class PhotonDoc {
     }
 
     public PhotonDoc geometry(Geometry geometry) {
-        this.geometry = (Geometry) geometry;
+        this.geometry = geometry;
         return this;
     }
 
@@ -101,18 +145,51 @@ public class PhotonDoc {
         return this;
     }
 
-
     public PhotonDoc address(Map<String, String> address) {
+        Map<AddressType, Map<String, String>> overlay = new EnumMap<>(AddressType.class);
         if (address != null) {
-            extractAddress(address, AddressType.STREET, "street");
-            extractAddress(address, AddressType.CITY, "city");
-            extractAddress(address, AddressType.DISTRICT, "suburb");
-            extractAddress(address, AddressType.LOCALITY, "neighbourhood");
-            extractAddress(address, AddressType.COUNTY, "county");
-            extractAddress(address, AddressType.STATE, "state");
+            for (var entry : address.entrySet()) {
+                final String key = entry.getKey();
 
-            postcode = address.getOrDefault("postcode", postcode);
+                if (key.equals("postcode")) {
+                    postcode = entry.getValue();
+                } else {
+                    var match = ADDRESS_TYPE_TAG_MAP
+                            .stream()
+                            .filter(e -> key.startsWith(e.getValue()))
+                            .findFirst();
+                    if (match.isPresent()) {
+                        var atype = match.get().getKey();
+                        if (atype == AddressType.OTHER) {
+                            final String[] parts = key.split(":");
+                            context.add(Map.of(parts.length == 1 ? "name" : ("name:" + parts[parts.length - 1]), entry.getValue()));
+                        } else {
+                            var newKey = "name" + key.substring(match.get().getValue().length());
+                            overlay.computeIfAbsent(atype, k -> new HashMap<>()).put(newKey, entry.getValue());
+                        }
+                    }
+                }
+            }
         }
+
+        for (var entry : overlay.entrySet()) {
+            final var atype = entry.getKey();
+            if (!setAddressPartIfNew(atype, entry.getValue())) {
+                final var origMap = addressParts.get(atype);
+                final var newMap = new HashMap<>(origMap);
+                for (var newEntry : entry.getValue().entrySet()) {
+                    final var oldValue = origMap.get(newEntry.getKey());
+                    if (oldValue == null) {
+                        newMap.put(newEntry.getKey(), newEntry.getValue());
+                    } else if (!newEntry.getValue().equals(oldValue)) {
+                        context.add(Map.of(newEntry.getKey(), oldValue));
+                        newMap.put(newEntry.getKey(), newEntry.getValue());
+                    }
+                }
+                addressParts.put(atype, newMap);
+            }
+        }
+
         return this;
     }
 
@@ -145,13 +222,13 @@ public class PhotonDoc {
         return this;
     }
 
-    public PhotonDoc linkedPlaceId(long linkedPlaceId) {
-        this.linkedPlaceId = linkedPlaceId;
+    public PhotonDoc rankAddress(int rank) {
+        this.rankAddress = rank;
         return this;
     }
 
-    public PhotonDoc rankAddress(int rank) {
-        this.rankAddress = rank;
+    public PhotonDoc adminLevel(int level) {
+        this.adminLevel = (level < 1 || level >= 15) ? null : level;
         return this;
     }
 
@@ -198,47 +275,9 @@ public class PhotonDoc {
     }
 
     public boolean isUsefulForIndex() {
-        if ("place".equals(tagKey) && "houses".equals(tagValue)) return false;
-
-        if (linkedPlaceId > 0) return false;
-
         return houseNumber != null || !name.isEmpty();
     }
     
-    /**
-     * Extract an address field from an address tag and replace the appropriate address field in the document.
-     *
-     * @param addressType The type of address field to fill.
-     * @param addressFieldName The name of the address tag to use (without the 'addr:' prefix).
-     */
-    private void extractAddress(Map<String, String> address, AddressType addressType, String addressFieldName) {
-        String field = address.get(addressFieldName);
-
-        if (field == null) {
-            return;
-        }
-
-        Map<String, String> map = addressParts.get(addressType);
-        if (map == null) {
-            map = new HashMap<>();
-            map.put("name", field);
-            addressParts.put(addressType, map);
-        } else {
-            String existingName = map.get("name");
-            if (!field.equals(existingName)) {
-                // Make a copy of the original name map because the map is reused for other addresses.
-                map = new HashMap<>(map);
-                LOGGER.debug("Replacing {} name '{}' with '{}' for osmId #{}", addressFieldName, existingName, field, osmId);
-                // we keep the former name in the context as it might be helpful when looking up typos
-                if (!Objects.isNull(existingName)) {
-                    context.add(Collections.singletonMap("name", existingName));
-                }
-                map.put("name", field);
-                addressParts.put(addressType, map);
-            }
-        }
-    }
-
     /**
      * Set names for the given address part if it is not already set.
      *
@@ -350,6 +389,10 @@ public class PhotonDoc {
         return this.rankAddress;
     }
 
+    public Integer getAdminLevel() {
+        return this.adminLevel;
+    }
+
     public Map<AddressType, Map<String, String>> getAddressParts() {
         return this.addressParts;
     }
@@ -385,7 +428,6 @@ public class PhotonDoc {
                 ", parentPlaceId=" + parentPlaceId +
                 ", importance=" + importance +
                 ", countryCode='" + countryCode + '\'' +
-                ", linkedPlaceId=" + linkedPlaceId +
                 ", rankAddress=" + rankAddress +
                 ", addressParts=" + addressParts +
                 ", context=" + context +

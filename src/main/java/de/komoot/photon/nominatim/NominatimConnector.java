@@ -57,7 +57,7 @@ public class NominatimConnector {
         return importDates.get(0);
     }
 
-    public void loadCountryNames() {
+    public Map<String, Map<String, String>> loadCountryNames() {
         if (countryNames == null) {
             countryNames = new HashMap<>();
             // Default for places outside any country.
@@ -66,6 +66,8 @@ public class NominatimConnector {
                 countryNames.put(rs.getString("country_code"), dbutils.getMap(rs, "name"));
             });
         }
+
+        return countryNames;
     }
 
 }

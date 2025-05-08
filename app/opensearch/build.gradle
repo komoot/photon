@@ -20,7 +20,6 @@ sourceSets {
 dependencies {
     implementation 'org.opensearch.client:opensearch-java:2.18.0'
     implementation 'org.apache.httpcomponents.client5:httpclient5:5.4.1'
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.18.2'
 
     implementation('org.codelibs.opensearch:opensearch-runner:2.18.0.1') {
         exclude(module: 'repository-url')

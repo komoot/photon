@@ -38,7 +38,6 @@ public class PlaceRowMapper implements RowMapper<PhotonDoc> {
                 .parentPlaceId(rs.getLong("parent_place_id"))
                 .countryCode(rs.getString("country_code"))
                 .centroid(dbutils.extractGeometry(rs, "centroid"))
-                .linkedPlaceId(rs.getLong("linked_place_id"))
                 .rankAddress(rs.getInt("rank_address"))
                 .postcode(rs.getString("postcode"));
 

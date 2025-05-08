@@ -12,8 +12,8 @@ import org.locationtech.jts.io.WKTReader;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Collections;
-import java.util.Date;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Start an ES server with some test data that then can be queried in tests that extend this class
@@ -66,23 +66,23 @@ public class ESBaseTester {
     }
 
     protected Importer makeImporter() {
-        return server.createImporter(new String[]{"en"}, new String[]{});
+        return server.createImporter(new String[]{"en"}, new ConfigExtraTags());
     }
 
     protected Importer makeImporterWithExtra(String... extraTags) {
-        return server.createImporter(new String[]{"en"}, extraTags);
+        return server.createImporter(new String[]{"en"}, new ConfigExtraTags(Arrays.stream(extraTags).collect(Collectors.toList())));
     }
 
     protected Importer makeImporterWithLanguages(String... languages) {
-        return server.createImporter(languages, new String[]{});
+        return server.createImporter(languages, new ConfigExtraTags());
     }
 
     protected Updater makeUpdater() {
-        return server.createUpdater(new String[]{"en"}, new String[]{});
+        return server.createUpdater(new String[]{"en"}, new ConfigExtraTags());
     }
 
     protected Updater makeUpdaterWithExtra(String... extraTags) {
-        return server.createUpdater(new String[]{"en"}, extraTags);
+        return server.createUpdater(new String[]{"en"}, new ConfigExtraTags(Arrays.stream(extraTags).collect(Collectors.toList())));
     }
 
     protected ElasticTestServer getServer() {

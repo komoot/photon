@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import java.util.Collections;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -43,7 +42,7 @@ class PhotonDocAddressSetTest {
 
     @Test
     void testEmptyAddressUselessDocument() {
-        var it = new PhotonDocAddressSet(baseDoc, Collections.EMPTY_MAP).iterator();
+        var it = new PhotonDocAddressSet(baseDoc, Map.of()).iterator();
 
         assertFalse(it.hasNext());
     }
@@ -51,7 +50,7 @@ class PhotonDocAddressSetTest {
     @Test
     void testEmptyAddressUsefulDocument() {
         var it = new PhotonDocAddressSet(baseDoc.names(Map.of("name", "foo")),
-                                                            Collections.EMPTY_MAP).iterator();
+                                                            Map.of()).iterator();
 
         assertSame(it.next(), baseDoc);
         assertFalse(it.hasNext());
