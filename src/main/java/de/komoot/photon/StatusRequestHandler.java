@@ -2,15 +2,17 @@ package de.komoot.photon;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.Map;
 
-import org.json.JSONObject;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import spark.Request;
 import spark.Response;
 import spark.RouteImpl;
 
 public class StatusRequestHandler extends RouteImpl {
-    private Server server;
+    private final Server server;
+    private final ObjectMapper mapper = new ObjectMapper();
 
     protected StatusRequestHandler(String path, Server server) {
         super(path);
@@ -25,11 +27,7 @@ public class StatusRequestHandler extends RouteImpl {
             importDateStr = dbProperties.getImportDate().toInstant().toString();
         }
         
-        final JSONObject out = new JSONObject();
-        out.put("status", "Ok");
-        out.put("import_date", importDateStr);
-
-        return out.toString();
+        return mapper.writeValueAsString(Map.of("status", "Ok", "import_date", importDateStr));
     }
     
 }
