@@ -7,8 +7,6 @@ import de.komoot.photon.App;
 import de.komoot.photon.ESBaseTester;
 import de.komoot.photon.Importer;
 import de.komoot.photon.PhotonDoc;
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
@@ -19,7 +17,7 @@ import java.net.URL;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static spark.Spark.*;
 
 class ApiLanguagesTest extends ESBaseTester {
@@ -73,17 +71,10 @@ class ApiLanguagesTest extends ESBaseTester {
         awaitInitialization();
     }
 
-    private JSONArray query(String q) throws Exception {
+    private String query(String q) throws Exception {
         HttpURLConnection connection =
                 (HttpURLConnection) new URL("http://127.0.0.1:" + port() + "/api?" + q).openConnection();
-        JSONObject json = new JSONObject(
-                new BufferedReader(new InputStreamReader(connection.getInputStream())).lines().collect(Collectors.joining("\n")));
-
-        return json.getJSONArray("features");
-    }
-
-    private int getOsmId(JSONArray results, int idx) {
-        return results.getJSONObject(idx).getJSONObject("properties").getInt("osm_id");
+        return new BufferedReader(new InputStreamReader(connection.getInputStream())).lines().collect(Collectors.joining("\n"));
     }
 
     @Test
@@ -91,11 +82,16 @@ class ApiLanguagesTest extends ESBaseTester {
         importPlaces("en");
         startAPI("");
 
-        JSONArray results = query("q=thething");
-        assertEquals(1, results.length());
-        assertEquals(1000, getOsmId(results, 0));
+        assertThatJson(query("q=thething")).isObject()
+                .node("features").isArray()
+                .hasSize(1)
+                .element(0).isObject()
+                .node("properties").isObject()
+                .containsEntry("osm_id", 1000);
 
-        assertEquals(0, query("q=letruc").length());
+        assertThatJson(query("q=letruc")).isObject()
+                .node("features").isArray()
+                .hasSize(0);
     }
 
     @Test
@@ -103,8 +99,9 @@ class ApiLanguagesTest extends ESBaseTester {
         importPlaces("en", "fr", "ch");
         startAPI("");
 
-        JSONArray results = query("q=thething");
-        assertEquals(2, results.length());
+        assertThatJson(query("q=thething")).isObject()
+                .node("features").isArray()
+                .hasSize(2);
     }
 
     @Test
@@ -112,8 +109,8 @@ class ApiLanguagesTest extends ESBaseTester {
         importPlaces("en", "fr", "ch");
         startAPI("en,fr");
 
-        JSONArray results = query("q=thething");
-        assertEquals(1, results.length());
+        assertThatJson(query("q=thething")).isObject()
+                .node("features").isArray()
+                .hasSize(1);
     }
-
 }

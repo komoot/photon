@@ -1,14 +1,13 @@
 package de.komoot.photon.query;
 
+import com.fasterxml.jackson.core.JsonEncoding;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import de.komoot.photon.*;
 import de.komoot.photon.searcher.PhotonResult;
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collections;
@@ -37,33 +36,22 @@ class QueryByClassificationTest extends ESBaseTester {
     }
 
     private void updateClassification(String key, String value, String... terms) throws IOException {
-        JSONArray jsonTerms = new JSONArray();
-        for (String term : terms) {
-            jsonTerms.put(term);
-        }
+        final var mapper = new ObjectMapper();
+        final var synonymPath = sharedTempDir.resolve("synonym.json");
 
-        JSONObject json = new JSONObject()
-                .put("classification_terms", new JSONArray()
-                        .put(new JSONObject()
-                                .put("key", key)
-                                .put("value", value)
-                                .put("terms", terms)
-                        ));
+        final var writer = mapper.createGenerator(synonymPath.toFile(), JsonEncoding.UTF8);
+        writer.writeStartObject();
+        writer.writeArrayFieldStart("classification_terms");
+        writer.writeStartObject();
+        writer.writeStringField("key", key);
+        writer.writeStringField("value", value);
+        writer.writeObjectField("terms", terms);
+        writer.writeEndObject();
+        writer.writeEndArray();
+        writer.writeEndObject();
+        writer.close();
 
-        Path synonymPath = sharedTempDir.resolve("synonym.json");
-        try {
-            FileWriter fw = new FileWriter(synonymPath.toFile());
-            fw.write(json.toString(3));
-            fw.close();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        try {
-            getServer().updateIndexSettings(synonymPath.toString());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
+        getServer().updateIndexSettings(synonymPath.toString());
         getServer().waitForReady();
     }
 
@@ -136,31 +124,27 @@ class QueryByClassificationTest extends ESBaseTester {
         instance.finish();
         refresh();
 
-        JSONObject json = new JSONObject()
-                .put("classification_terms", new JSONArray()
-                        .put(new JSONObject()
-                                .put("key", "railway")
-                                .put("value", "station")
-                                .put("terms", new JSONArray().put("Station"))
-                        ).put(new JSONObject()
-                                .put("key", "railway")
-                                .put("value", "halt")
-                                .put("terms", new JSONArray().put("Station").put("Stop"))
-                        ));
         Path synonymPath = sharedTempDir.resolve("synonym.json");
-        try {
-            FileWriter fw = new FileWriter(synonymPath.toFile());
-            fw.write(json.toString(3));
-            fw.close();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        try {
-            getServer().updateIndexSettings(synonymPath.toString());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
 
+        final var mapper = new ObjectMapper();
+        final var writer = mapper.createGenerator(synonymPath.toFile(), JsonEncoding.UTF8);
+        writer.writeStartObject();
+        writer.writeArrayFieldStart("classification_terms");
+        writer.writeStartObject();
+        writer.writeStringField("key", "railway");
+        writer.writeStringField("value", "station");
+        writer.writeObjectField("terms", List.of("Station"));
+        writer.writeEndObject();
+        writer.writeStartObject();
+        writer.writeStringField("key", "railway");
+        writer.writeStringField("value", "halt");
+        writer.writeObjectField("terms", List.of("Station", "Stop"));
+        writer.writeEndObject();
+        writer.writeEndArray();
+        writer.writeEndObject();
+        writer.close();
+
+        getServer().updateIndexSettings(synonymPath.toString());
         getServer().waitForReady();
 
         List<PhotonResult> result = search("Station newtown");
