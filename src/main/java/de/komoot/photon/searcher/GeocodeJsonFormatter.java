@@ -63,7 +63,7 @@ public class GeocodeJsonFormatter implements ResultFormatter {
             }
             if (withDebugInfo) {
                 final JSONArray rawResults = new JSONArray();
-                results.forEach(res -> rawResults.put(res.getRawData()));
+                results.forEach(res -> rawResults.put(new JSONObject(res.getRawData())));
                 extraProps.put("raw_data", rawResults);
             }
             out.put("properties", extraProps);

@@ -91,7 +91,7 @@ public class ElasticResult implements PhotonResult {
     }
 
     @Override
-    public JSONObject getRawData() {
-        return new JSONObject();
+    public Map<String, Object> getRawData() {
+        return Map.of();
     }
 }

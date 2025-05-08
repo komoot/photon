@@ -1,7 +1,5 @@
 package de.komoot.photon.searcher;
 
-import org.json.JSONObject;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -59,7 +57,7 @@ public class MockPhotonResult implements PhotonResult {
     }
 
     @Override
-    public JSONObject getRawData() {
-        return new JSONObject();
+    public Map<String, Object> getRawData() {
+        return Map.of();
     }
 }

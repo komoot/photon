@@ -78,10 +78,10 @@ public class OpenSearchResult implements PhotonResult {
     }
 
     @Override
-    public JSONObject getRawData() {
-        return new JSONObject()
-                .put("infos", new JSONObject(infos))
-                .put("localeTags", new JSONObject(localeTags))
-                .put("score", score);
+    public Map<String, Object> getRawData() {
+        return Map.of(
+                "score", score,
+                "infos", infos,
+                "localeTags", localeTags);
     }
 }
