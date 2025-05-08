@@ -14,13 +14,13 @@ class GeocodeJsonFormatterTest {
 
     @Test
     void testConvertPointToGeojson() {
-        GeocodeJsonFormatter formatter = new GeocodeJsonFormatter(false, "en", false);
+        GeocodeJsonFormatter formatter = new GeocodeJsonFormatter();
         List<PhotonResult> allPointResults = new ArrayList<>();
         allPointResults.add(createDummyPointResult("99999", "Park Foo", "leisure", "park"));
         allPointResults.add(createDummyPointResult("88888", "Bar Park", "leisure", "park"));
 
         // Test Points
-        String geojsonString = formatter.convert(allPointResults, null);
+        String geojsonString = formatter.convert(allPointResults, "en", false, false, null);
         JSONObject jsonObj = new JSONObject(geojsonString);
         assertEquals("FeatureCollection", jsonObj.getString("type"));
         JSONArray features = jsonObj.getJSONArray("features");
@@ -36,14 +36,14 @@ class GeocodeJsonFormatterTest {
 
     @Test
     void testConvertGeometryToGeojson() {
-        GeocodeJsonFormatter formatter = new GeocodeJsonFormatter(false, "en", true);
+        GeocodeJsonFormatter formatter = new GeocodeJsonFormatter();
 
         List<PhotonResult> allResults = new ArrayList<>();
         allResults.add(createDummyGeometryResult("99999", "Park Foo", "leisure", "park"));
         allResults.add(createDummyGeometryResult("88888", "Bar Park", "leisure", "park"));
 
         // Test Geometry
-        String geojsonString = formatter.convert(allResults, null);
+        String geojsonString = formatter.convert(allResults, "en", true, false, null);
         JSONObject jsonObj = new JSONObject(geojsonString);
         assertEquals("FeatureCollection", jsonObj.getString("type"));
         JSONArray features = jsonObj.getJSONArray("features");

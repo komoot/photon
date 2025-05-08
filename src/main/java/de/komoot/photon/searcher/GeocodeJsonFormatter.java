@@ -13,26 +13,22 @@ public class GeocodeJsonFormatter implements ResultFormatter {
     private static final String[] KEYS_LANG_UNSPEC = {Constants.OSM_TYPE, Constants.OSM_ID, Constants.OSM_KEY, Constants.OSM_VALUE, Constants.OBJECT_TYPE, Constants.POSTCODE, Constants.HOUSENUMBER, Constants.COUNTRYCODE};
     private static final String[] KEYS_LANG_SPEC = {Constants.NAME, Constants.COUNTRY, Constants.CITY, Constants.DISTRICT, Constants.LOCALITY, Constants.STREET, Constants.STATE, Constants.COUNTY};
 
-    private final boolean addDebugInfo;
-    private final String language;
-    private final boolean useGeometryColumn;
-
-    public GeocodeJsonFormatter(boolean addDebugInfo, String language, boolean useGeometryColumn) {
-        this.addDebugInfo = addDebugInfo;
-        this.language = language;
-        this.useGeometryColumn = useGeometryColumn;
+    @Override
+    public String formatError(String msg) {
+        return new JSONObject().put("message", msg).toString();
     }
 
     @Override
-    public String convert(List<PhotonResult> results, String debugInfo) {
+    public String convert(List<PhotonResult> results, String language,
+                          boolean withGeometry, boolean withDebugInfo, String queryDebugInfo) {
         final JSONArray features = new JSONArray(results.size());
 
         for (PhotonResult result : results) {
-            if (useGeometryColumn && (result.get("geometry") != null || result.getGeometry() != null)) {
+            if (withGeometry && (result.get("geometry") != null || result.getGeometry() != null)) {
                 if (result.get("geometry") != null) {
                     features.put(new JSONObject()
                             .put("type", "Feature")
-                            .put("properties", getResultProperties(result))
+                            .put("properties", getResultProperties(result, language))
                             .put("geometry", result.get("geometry")));
                 }
                 else {
@@ -41,7 +37,7 @@ public class GeocodeJsonFormatter implements ResultFormatter {
 
                     features.put(new JSONObject()
                             .put("type", "Feature")
-                            .put("properties", getResultProperties(result))
+                            .put("properties", getResultProperties(result, language))
                             .put("geometry", jsonObject));
                 }
             } else {
@@ -49,7 +45,7 @@ public class GeocodeJsonFormatter implements ResultFormatter {
 
                 features.put(new JSONObject()
                         .put("type", "Feature")
-                        .put("properties", getResultProperties(result))
+                        .put("properties", getResultProperties(result, language))
                         .put("geometry", new JSONObject()
                                 .put("type", "Point")
                                 .put("coordinates", coordinates)));
@@ -60,14 +56,16 @@ public class GeocodeJsonFormatter implements ResultFormatter {
         out.put("type", "FeatureCollection")
            .put("features", features);
 
-        if (addDebugInfo) {
+        if (withDebugInfo || queryDebugInfo != null) {
             final JSONObject extraProps = new JSONObject();
-            if (debugInfo != null) {
-                extraProps.put("debug", new JSONObject(debugInfo));
+            if (queryDebugInfo != null) {
+                extraProps.put("debug", new JSONObject(queryDebugInfo));
             }
-            final JSONArray rawResults = new JSONArray();
-            results.forEach(res -> rawResults.put(res.getRawData()));
-            extraProps.put("raw_data", rawResults);
+            if (withDebugInfo) {
+                final JSONArray rawResults = new JSONArray();
+                results.forEach(res -> rawResults.put(res.getRawData()));
+                extraProps.put("raw_data", rawResults);
+            }
             out.put("properties", extraProps);
 
             return out.toString(4);
@@ -76,7 +74,7 @@ public class GeocodeJsonFormatter implements ResultFormatter {
         return out.toString();
     }
 
-    private JSONObject getResultProperties(PhotonResult result) {
+    private JSONObject getResultProperties(PhotonResult result, String language) {
         JSONObject props = new JSONObject();
 
         for (String key : KEYS_LANG_UNSPEC) {
