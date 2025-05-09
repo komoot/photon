@@ -1,7 +1,6 @@
 package de.komoot.photon.opensearch;
 
 import de.komoot.photon.searcher.PhotonResult;
-import org.json.JSONObject;
 
 import java.util.Map;
 
