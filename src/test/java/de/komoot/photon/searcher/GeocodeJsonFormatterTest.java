@@ -1,60 +1,61 @@
 package de.komoot.photon.searcher;
 
 import de.komoot.photon.Constants;
-import org.json.JSONObject;
-import org.json.JSONArray;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 
 class GeocodeJsonFormatterTest {
 
     @Test
     void testConvertPointToGeojson() {
         GeocodeJsonFormatter formatter = new GeocodeJsonFormatter();
-        List<PhotonResult> allPointResults = new ArrayList<>();
-        allPointResults.add(createDummyPointResult("99999", "Park Foo", "leisure", "park"));
-        allPointResults.add(createDummyPointResult("88888", "Bar Park", "leisure", "park"));
 
-        // Test Points
+        final var allPointResults = List.of(
+            createDummyPointResult("99999", "Park Foo", "leisure", "park"),
+            createDummyPointResult("88888", "Bar Park", "amenity", "bar"));
+
         String geojsonString = formatter.convert(allPointResults, "en", false, false, null);
-        JSONObject jsonObj = new JSONObject(geojsonString);
-        assertEquals("FeatureCollection", jsonObj.getString("type"));
-        JSONArray features = jsonObj.getJSONArray("features");
-        assertEquals(2, features.length());
-        for (int i = 0; i < features.length(); i++) {
-            JSONObject feature = features.getJSONObject(i);
-            assertEquals("Feature", feature.getString("type"));
-            assertEquals("Point", feature.getJSONObject("geometry").getString("type"));
-            assertEquals("leisure", feature.getJSONObject("properties").getString(Constants.OSM_KEY));
-            assertEquals("park", feature.getJSONObject("properties").getString(Constants.OSM_VALUE));
+
+        var features = assertThatJson(geojsonString).isObject()
+                .containsEntry("type", "FeatureCollection")
+                .node("features").isArray().hasSize(2);
+
+        for (int i = 0; i < 2; ++i) {
+            features.element(i).isObject()
+                    .containsEntry("type", "Feature")
+                    .node("geometry").isObject()
+                    .containsEntry("type", "Point")
+                    .node("coordinates").isArray()
+                    .isEqualTo("[42.0, 21.0]");
         }
+
+        features.element(0).isObject().node("properties").isObject()
+                .containsEntry("osm_key", "leisure")
+                .containsEntry("osm_value", "park");
+        features.element(1).isObject().node("properties").isObject()
+                .containsEntry("osm_key", "amenity")
+                .containsEntry("osm_value", "bar");
     }
 
     @Test
     void testConvertGeometryToGeojson() {
         GeocodeJsonFormatter formatter = new GeocodeJsonFormatter();
 
-        List<PhotonResult> allResults = new ArrayList<>();
-        allResults.add(createDummyGeometryResult("99999", "Park Foo", "leisure", "park"));
-        allResults.add(createDummyGeometryResult("88888", "Bar Park", "leisure", "park"));
+        final var allResults = List.of(
+                createDummyGeometryResult("99999", "Park Foo", "leisure", "park"));
 
-        // Test Geometry
         String geojsonString = formatter.convert(allResults, "en", true, false, null);
-        JSONObject jsonObj = new JSONObject(geojsonString);
-        assertEquals("FeatureCollection", jsonObj.getString("type"));
-        JSONArray features = jsonObj.getJSONArray("features");
-        assertEquals(2, features.length());
-        for (int i = 0; i < features.length(); i++) {
-            JSONObject feature = features.getJSONObject(i);
-            assertEquals("Feature", feature.getString("type"));
-            assertEquals("MultiPolygon", feature.getJSONObject("geometry").getString("type"));
-            assertEquals("leisure", feature.getJSONObject("properties").getString(Constants.OSM_KEY));
-            assertEquals("park", feature.getJSONObject("properties").getString(Constants.OSM_VALUE));
-        }
+
+        assertThatJson(geojsonString).isObject()
+                .containsEntry("type", "FeatureCollection")
+                .node("features").isArray().hasSize(1)
+                .element(0).isObject()
+                .containsEntry("type", "Feature")
+                .node("geometry").isObject()
+                .containsEntry("type", "MultiPolygon");
     }
     
     private PhotonResult createDummyPointResult(String postCode, String name, String osmKey,
@@ -64,9 +65,7 @@ class GeocodeJsonFormatterTest {
                 .putLocalized(Constants.NAME, "en", name)
                 .put(Constants.OSM_KEY, osmKey)
                 .put(Constants.OSM_VALUE, osmValue)
-                .put("geometry", new JSONObject()
-                    .put("type", "Point")
-                    .put("coordinates", new double[]{42, 21}));
+                .putGeometry("{\"type\":\"Point\", \"coordinates\": [42, 21]}");
     }
 
     private PhotonResult createDummyGeometryResult(String postCode, String name, String osmKey,
@@ -75,8 +74,7 @@ class GeocodeJsonFormatterTest {
                 .put(Constants.POSTCODE, postCode)
                 .putLocalized(Constants.NAME, "en", name)
                 .put(Constants.OSM_KEY, osmKey)
-                .put(Constants.OSM_VALUE, osmValue)
-                .put(Constants.GEOMETRY, new JSONObject("{\"type\":\"MultiPolygon\",\"coordinates\":[[[[-100.0,40.0],[-100.0,45.0],[-90.0,45.0],[-90.0,40.0],[-100.0,40.0]]],[[[-80.0,35.0],[-80.0,40.0],[-70.0,40.0],[-70.0,35.0],[-80.0,35.0]]]]}"));
+                .put(Constants.OSM_VALUE, osmValue);
     }
 
 }
