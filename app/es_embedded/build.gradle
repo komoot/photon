@@ -35,6 +35,7 @@ dependencies {
     implementation('org.elasticsearch.client:transport:5.6.16') {
         exclude(module: 'commons-logging')
     }
+    implementation 'org.json:json:20240303'
 
     runtimePlugins 'org.codelibs.elasticsearch.module:lang-painless:5.6.16'
     runtimePlugins 'org.ow2.asm:asm-debug-all:5.1'

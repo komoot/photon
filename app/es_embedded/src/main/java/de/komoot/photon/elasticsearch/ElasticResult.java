@@ -1,5 +1,7 @@
 package de.komoot.photon.elasticsearch;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import de.komoot.photon.Constants;
 import de.komoot.photon.searcher.PhotonResult;
 import org.elasticsearch.search.SearchHit;
@@ -68,7 +70,17 @@ public class ElasticResult implements PhotonResult {
 
     @Override
     public String getGeometry() {
-        return (String) result.getSource().get("geometry");
+        final var source = result.getSource();
+
+        if (!source.containsKey("geometry")) {
+            return null;
+        }
+
+        try {
+            return new ObjectMapper().writeValueAsString(source.get("geometry"));
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
