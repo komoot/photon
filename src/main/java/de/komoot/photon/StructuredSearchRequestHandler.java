@@ -4,7 +4,6 @@ import de.komoot.photon.query.BadRequestException;
 import de.komoot.photon.query.PhotonRequestFactory;
 import de.komoot.photon.query.StructuredPhotonRequest;
 import de.komoot.photon.searcher.*;
-import org.json.JSONObject;
 import spark.Request;
 import spark.Response;
 import spark.RouteImpl;
@@ -17,6 +16,7 @@ import static spark.Spark.halt;
 public class StructuredSearchRequestHandler extends RouteImpl {
     private final PhotonRequestFactory photonRequestFactory;
     private final StructuredSearchHandler requestHandler;
+    private final ResultFormatter formatter = new GeocodeJsonFormatter();
     private final boolean supportGeometries;
 
     StructuredSearchRequestHandler(String path, StructuredSearchHandler dbHandler, String[] languages, String defaultLanguage, int maxResults, boolean supportGeometries) {
@@ -33,15 +33,11 @@ public class StructuredSearchRequestHandler extends RouteImpl {
         try {
             photonRequest = photonRequestFactory.createStructured(request);
         } catch (BadRequestException e) {
-            JSONObject json = new JSONObject();
-            json.put("message", e.getMessage());
-            throw halt(e.getHttpStatus(), json.toString());
+            throw halt(e.getHttpStatus(), formatter.formatError(e.getMessage()));
         }
 
         if (!supportGeometries && photonRequest.getReturnGeometry()) {
-            JSONObject json = new JSONObject();
-            json.put("message", "You're requesting a Geometry, but Geometries are not imported!");
-            throw halt(400, json.toString());
+            throw halt(400, formatter.formatError("You're requesting a Geometry, but Geometries are not imported!"));
         }
 
         List<PhotonResult> results = requestHandler.search(photonRequest);
@@ -54,12 +50,8 @@ public class StructuredSearchRequestHandler extends RouteImpl {
             results = results.subList(0, photonRequest.getLimit());
         }
 
-
-        String debugInfo = null;
-     /*   if (photonRequest.getDebug()) {
-            debugInfo = requestHandler.dumpQuery(photonRequest);
-        }
- */
-        return new GeocodeJsonFormatter(photonRequest.getDebug(), photonRequest.getLanguage(), photonRequest.getReturnGeometry()).convert(results, debugInfo);
+        return formatter.convert(
+                results, photonRequest.getLanguage(), photonRequest.getReturnGeometry(),
+                photonRequest.getDebug(), null);
     }
 }

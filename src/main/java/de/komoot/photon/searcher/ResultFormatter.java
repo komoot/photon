@@ -7,5 +7,8 @@ import java.util.List;
  */
 public interface ResultFormatter {
 
-    String convert(List<PhotonResult> results, String debugInfo);
+    String convert(List<PhotonResult> results, String language,
+                   boolean withGeometry, boolean withDebugInfo, String queryDebugInfo);
+
+    String formatError(String msg);
 }

@@ -5,8 +5,8 @@ import de.komoot.photon.query.ReverseRequest;
 import de.komoot.photon.query.ReverseRequestFactory;
 import de.komoot.photon.searcher.GeocodeJsonFormatter;
 import de.komoot.photon.searcher.PhotonResult;
+import de.komoot.photon.searcher.ResultFormatter;
 import de.komoot.photon.searcher.ReverseHandler;
-import org.json.JSONObject;
 import spark.Request;
 import spark.Response;
 import spark.RouteImpl;
@@ -22,6 +22,7 @@ import static spark.Spark.halt;
 public class ReverseSearchRequestHandler extends RouteImpl {
     private final ReverseRequestFactory reverseRequestFactory;
     private final ReverseHandler requestHandler;
+    private final ResultFormatter formatter = new GeocodeJsonFormatter();
 
     ReverseSearchRequestHandler(String path, ReverseHandler dbHandler, String[] languages, String defaultLanguage, int maxResults) {
         super(path);
@@ -32,13 +33,11 @@ public class ReverseSearchRequestHandler extends RouteImpl {
 
     @Override
     public String handle(Request request, Response response) {
-        ReverseRequest photonRequest = null;
+        ReverseRequest photonRequest;
         try {
             photonRequest = reverseRequestFactory.create(request);
         } catch (BadRequestException e) {
-            JSONObject json = new JSONObject();
-            json.put("message", e.getMessage());
-            throw halt(e.getHttpStatus(), json.toString());
+            throw halt(e.getHttpStatus(), formatter.formatError(e.getMessage()));
         }
 
         List<PhotonResult> results = requestHandler.reverse(photonRequest);
@@ -53,6 +52,8 @@ public class ReverseSearchRequestHandler extends RouteImpl {
             debugInfo = requestHandler.dumpQuery(photonRequest);
         }
 
-        return new GeocodeJsonFormatter(false, photonRequest.getLanguage(), photonRequest.getGeometry()).convert(results, debugInfo);
+        return formatter.convert(
+                results, photonRequest.getLanguage(), photonRequest.getGeometry(),
+                photonRequest.getDebug(), debugInfo);
     }
 }

@@ -1,15 +1,14 @@
 package de.komoot.photon.nominatim.model;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import de.komoot.photon.nominatim.DBDataAdapter;
-import org.json.JSONArray;
 import org.slf4j.Logger;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowCallbackHandler;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Container for caching information about address parts.
@@ -21,6 +20,7 @@ public class NominatimAddressCache {
             "SELECT place_id, name, class, type, rank_address FROM placex" +
             " WHERE rank_address between 5 and 25 AND linked_place_id is null";
 
+    private static final ObjectMapper objectMapper = new ObjectMapper();
     private final Map<Long, AddressRow> addresses = new HashMap<>();
 
     public void loadCountryAddresses(JdbcTemplate template, DBDataAdapter dbutils, String countryCode) {
@@ -47,21 +47,21 @@ public class NominatimAddressCache {
     }
 
     public List<AddressRow> getAddressList(String addressline) {
-        ArrayList<AddressRow> outlist = new ArrayList<>();
-
-        if (addressline != null && !addressline.isBlank()) {
-            JSONArray addressPlaces = new JSONArray(addressline);
-            for (int i = 0; i < addressPlaces.length(); ++i) {
-                Long placeId = addressPlaces.optLong(i);
-                if (placeId != null) {
-                    AddressRow row = addresses.get(placeId);
-                    if (row != null) {
-                        outlist.add(row);
-                    }
-                }
-            }
+        if (addressline == null || addressline.isBlank()) {
+            return new ArrayList<>();
         }
 
-        return outlist;
+        Long[] placeIDs;
+        try {
+            placeIDs = objectMapper.readValue(addressline, Long[].class);
+        } catch (JsonProcessingException e) {
+            LOGGER.error("Cannot parse database response.", e);
+            throw new RuntimeException("Parse error.");
+        }
+
+        return Arrays.stream(placeIDs)
+                .map(id -> addresses.get(id))
+                .filter(r -> r != null)
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 }

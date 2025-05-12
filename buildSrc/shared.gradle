@@ -57,7 +57,6 @@ dependencies {
     implementation 'org.locationtech.jts.io:jts-io-common:1.20.0'
     implementation 'com.sparkjava:spark-core:2.9.4'
     implementation 'net.postgis:postgis-jdbc:2024.1.0'
-    implementation 'org.json:json:20240303'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.18.2'
 
     testImplementation(platform("org.junit:junit-bom:5.11.3"))

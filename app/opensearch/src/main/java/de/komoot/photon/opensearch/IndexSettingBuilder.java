@@ -1,20 +1,16 @@
 package de.komoot.photon.opensearch;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import de.komoot.photon.ConfigClassificationTerm;
+import de.komoot.photon.ConfigSynonyms;
 import de.komoot.photon.UsageException;
-import de.komoot.photon.Utils;
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.json.JSONTokener;
 import org.opensearch.client.opensearch.OpenSearchClient;
 import org.opensearch.client.opensearch._types.analysis.TokenChar;
 import org.opensearch.client.opensearch.indices.IndexSettingsAnalysis;
 
-import java.io.FileReader;
+import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class IndexSettingBuilder {
     private IndexSettingsAnalysis.Builder settings = new IndexSettingsAnalysis.Builder();
@@ -51,66 +47,52 @@ public class IndexSettingBuilder {
 
     public IndexSettingBuilder setSynonymFile(String synonymFile) throws IOException {
         if (synonymFile != null) {
-            final var synonymConfig = new JSONObject(new JSONTokener(new FileReader(synonymFile)));
+            final var synonymConfig = new ObjectMapper().readValue(new File(synonymFile), ConfigSynonyms.class);
 
-            setSearchTimeSynonyms(synonymConfig.optJSONArray("search_synonyms"));
-            setClassificationTerms(synonymConfig.optJSONArray("classification_terms"));
+            if (synonymConfig.getSearchSynonyms() != null) {
+                insertSynonymFilter("extra_synonyms", synonymConfig.getSearchSynonyms());
+            }
+            if (synonymConfig.getClassificationTerms() != null) {
+                setClassificationTerms(synonymConfig.getClassificationTerms());
+            }
         }
         return this;
     }
 
-    private void setSearchTimeSynonyms(JSONArray synonyms) {
-        if (synonyms != null) {
-            insertSynonymFilter("extra_synonyms", synonyms);
-        }
-    }
-
-    private void setClassificationTerms(JSONArray terms) {
-        if (terms == null) {
-            return;
-        }
-
+    private void setClassificationTerms(ConfigClassificationTerm[] terms) {
         // Collect for each term in the list the possible classification expansions.
         Map<String, Set<String>> collector = new HashMap<>();
-        for (int i = 0; i < terms.length(); i++) {
-            JSONObject descr = terms.getJSONObject(i);
-
-            String classString = Utils.buildClassificationString(descr.getString("key"), descr.getString("value")).toLowerCase();
+        for (var term : terms) {
+            String classString = term.getClassificationString();
 
             if (classString != null) {
-                JSONArray jsonTerms = descr.getJSONArray("terms");
-                for (int j = 0; j < jsonTerms.length(); j++) {
-                    String term = jsonTerms.getString(j).toLowerCase().trim();
-                    if (term.indexOf(' ') >= 0) {
+                for (var repl : term.getTerms()) {
+                    String norm = repl.toLowerCase().trim();
+                    if (norm.indexOf(' ') >= 0) {
                         throw new UsageException("Syntax error in synonym file: only single word classification terms allowed.");
                     }
 
-                    if (term.length() > 1) {
-                        collector.computeIfAbsent(term, k -> new HashSet<>()).add(classString);
+                    if (norm.length() > 1) {
+                        collector.computeIfAbsent(norm, k -> new HashSet<>()).add(classString);
                     }
                 }
             }
         }
 
         // Create the final list of synonyms. A term can expand to any classificator or not at all.
-        JSONArray synonyms = new JSONArray();
+        List<String> synonyms = new ArrayList<>();
         collector.forEach((term, classificators) ->
-                synonyms.put(term + " => " + term + "," + String.join(",", classificators)));
+                synonyms.add(term + " => " + term + "," + String.join(",", classificators)));
 
         insertSynonymFilter("classification_synonyms", synonyms);
 
     }
 
-    private void insertSynonymFilter(String filterName, JSONArray synonyms) {
+    private void insertSynonymFilter(String filterName, List<String> synonyms) {
         if (!synonyms.isEmpty()) {
             settings.filter(filterName,
                     f -> f.definition(d -> d
-                            .synonymGraph(s -> {
-                                for (var ele : synonyms) {
-                                    s.synonyms(ele.toString());
-                                }
-                                return s;
-                            })));
+                            .synonymGraph(s -> s.synonyms(synonyms))));
 
             extraFilters.add(filterName);
         }

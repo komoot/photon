@@ -1,7 +1,5 @@
 package de.komoot.photon;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -10,6 +8,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.locationtech.jts.io.WKTReader;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -19,6 +18,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static spark.Spark.*;
 
 /**
@@ -42,6 +42,12 @@ class ApiIntegrationTest extends ESBaseTester {
     void shutdown() {
         stop();
         awaitStop();
+    }
+
+    private String readURL(String url) throws IOException {
+        HttpURLConnection connection = (HttpURLConnection) new URL("http://127.0.0.1:" + port() + url).openConnection();
+        return new BufferedReader(new InputStreamReader(connection.getInputStream()))
+                .lines().collect(Collectors.joining("\n"));
     }
 
     /**
@@ -125,17 +131,15 @@ class ApiIntegrationTest extends ESBaseTester {
     void testApi(String osmValue, String url) throws Exception {
         App.main(new String[]{"-cluster", TEST_CLUSTER_NAME, "-listen-port", Integer.toString(LISTEN_PORT), "-transport-addresses", "127.0.0.1"});
         awaitInitialization();
-        HttpURLConnection connection = (HttpURLConnection) new URL("http://127.0.0.1:" + port() + url).openConnection();
-        JSONObject json = new JSONObject(
-                new BufferedReader(new InputStreamReader(connection.getInputStream())).lines().collect(Collectors.joining("\n")));
-        JSONArray features = json.getJSONArray("features");
-        assertEquals(1, features.length());
-        JSONObject feature = features.getJSONObject(0);
-        JSONObject properties = feature.getJSONObject("properties");
-        assertEquals("W", properties.getString("osm_type"));
-        assertEquals("place", properties.getString("osm_key"));
-        assertEquals(osmValue, properties.getString("osm_value"));
-        assertEquals("berlin", properties.getString("name"));
+
+        assertThatJson(readURL(url)).isObject()
+                .node("features").isArray().hasSize(1)
+                .element(0).isObject()
+                .node("properties").isObject()
+                .containsEntry("osm_type", "W")
+                .containsEntry("osm_key", "place")
+                .containsEntry("osm_value", osmValue)
+                .containsEntry("name", "berlin");
     }
 
 
@@ -144,53 +148,54 @@ class ApiIntegrationTest extends ESBaseTester {
         App.main(new String[]{"-cluster", TEST_CLUSTER_NAME, "-listen-port", Integer.toString(LISTEN_PORT), "-transport-addresses", "127.0.0.1"});
         awaitInitialization();
         DatabaseProperties prop = getServer().loadFromDatabase();
-        HttpURLConnection connection = (HttpURLConnection) new URL("http://127.0.0.1:" + port() + "/status").openConnection();
-        JSONObject json = new JSONObject(
-                new BufferedReader(new InputStreamReader(connection.getInputStream())).lines().collect(Collectors.joining("\n")));
-        assertEquals("Ok", json.getString("status"));
-        assertEquals(prop.getImportDate().toInstant().toString(), json.getString("import_date"));
+
+        assertThatJson(readURL("/status")).isObject()
+                .containsEntry("status", "Ok")
+                .containsEntry("import_date", prop.getImportDate().toInstant().toString());
     }
 
     @Test
     void testSearchAndGetGeometry() throws Exception {
         App.main(new String[]{"-cluster", TEST_CLUSTER_NAME, "-listen-port", Integer.toString(LISTEN_PORT), "-transport-addresses", "127.0.0.1"});
         awaitInitialization();
-        HttpURLConnection connection = (HttpURLConnection) new URL("http://127.0.0.1:" + port() + "/api?q=berlin&limit=1").openConnection();
-        JSONObject json = new JSONObject(
-                new BufferedReader(new InputStreamReader(connection.getInputStream())).lines().collect(Collectors.joining("\n")));
-        JSONArray features = json.getJSONArray("features");
-        assertEquals(1, features.length());
-        JSONObject feature = features.getJSONObject(0);
 
-        JSONObject geometry = feature.getJSONObject("geometry");
-        assertEquals("Polygon", geometry.getString("type"));
+        var obj = assertThatJson(readURL("/api?q=berlin&limit=1"))
+                .isObject()
+                .containsEntry("type", "FeatureCollection")
+                .node("features").isArray().hasSize(1)
+                .element(0).isObject();
 
-        JSONObject properties = feature.getJSONObject("properties");
-        assertEquals("W", properties.getString("osm_type"));
-        assertEquals("place", properties.getString("osm_key"));
-        assertEquals("city", properties.getString("osm_value"));
-        assertEquals("berlin", properties.getString("name"));
+        obj.node("geometry").isObject()
+                .containsEntry("type", "Polygon");
+
+        obj.node("properties").isObject()
+                .containsEntry("osm_type", "W")
+                .containsEntry("osm_key", "place")
+                .containsEntry("osm_value", "city")
+                .containsEntry("name", "berlin");
+
     }
 
     @Test
     void testSearchAndGetLineString() throws Exception {
         App.main(new String[]{"-cluster", TEST_CLUSTER_NAME, "-listen-port", Integer.toString(LISTEN_PORT), "-transport-addresses", "127.0.0.1"});
         awaitInitialization();
-        HttpURLConnection connection = (HttpURLConnection) new URL("http://127.0.0.1:" + port() + "/api?q=linestring&limit=1").openConnection();
-        JSONObject json = new JSONObject(
-                new BufferedReader(new InputStreamReader(connection.getInputStream())).lines().collect(Collectors.joining("\n")));
-        JSONArray features = json.getJSONArray("features");
-        assertEquals(1, features.length());
-        JSONObject feature = features.getJSONObject(0);
 
-        JSONObject geometry = feature.getJSONObject("geometry");
-        assertEquals("LineString", geometry.getString("type"));
-        assertEquals("[[30,10],[10,30],[40,40]]", geometry.getJSONArray("coordinates").toString());
+        var obj = assertThatJson(readURL("/api?q=linestring&limit=1"))
+                .isObject()
+                .containsEntry("type", "FeatureCollection")
+                .node("features").isArray().hasSize(1)
+                .element(0).isObject();
 
-        JSONObject properties = feature.getJSONObject("properties");
-        assertEquals("W", properties.getString("osm_type"));
-        assertEquals("place", properties.getString("osm_key"));
-        assertEquals("city", properties.getString("osm_value"));
-        assertEquals("linestring", properties.getString("name"));
+        obj.node("geometry").isObject()
+           .containsEntry("type", "LineString")
+                .node("coordinates").isArray()
+                .containsExactly(List.of(30, 10), List.of(10, 30), List.of(40, 40));
+
+        obj.node("properties").isObject()
+                .containsEntry("osm_type", "W")
+                .containsEntry("osm_key", "place")
+                .containsEntry("osm_value", "city")
+                .containsEntry("name", "linestring");
     }
 }
