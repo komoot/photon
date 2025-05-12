@@ -58,31 +58,47 @@ public class ESBaseTester {
     }
 
     public void setUpES(Path testDirectory, boolean supportGeometries, String... languages) throws IOException {
+        final var dbProperties = new DatabaseProperties();
+        dbProperties.setLanguages(languages);
+        dbProperties.setImportDate(new Date());
+        dbProperties.setSupportGeometries(supportGeometries);
+        dbProperties.setSupportStructuredQueries(true);
         server = new OpenSearchTestServer(testDirectory.toString());
         server.startTestServer(TEST_CLUSTER_NAME);
-        server.recreateIndex(languages, new Date(), true, supportGeometries);
+        server.recreateIndex(dbProperties);
         server.refreshIndexes();
     }
 
     protected Importer makeImporter() {
-        return (Importer) server.createImporter(new String[]{"en"}, new ConfigExtraTags());
+        final var dbProperties = new DatabaseProperties();
+        dbProperties.setLanguages(new String[]{"en"});
+        return (Importer) server.createImporter(dbProperties);
     }
 
     protected Importer makeImporterWithExtra(String... extraTags) {
-        return (Importer) server.createImporter(
-                new String[]{"en"}, new ConfigExtraTags(Arrays.stream(extraTags).collect(Collectors.toList())));
+        final var dbProperties = new DatabaseProperties();
+        dbProperties.setLanguages(new String[]{"en"});
+        dbProperties.setExtraTags(Arrays.stream(extraTags).collect(Collectors.toList()));
+        return (Importer) server.createImporter(dbProperties);
     }
 
     protected Importer makeImporterWithLanguages(String... languages) {
-        return (Importer) server.createImporter(languages, new ConfigExtraTags());
+        final var dbProperties = new DatabaseProperties();
+        dbProperties.setLanguages(languages);
+        return (Importer) server.createImporter(dbProperties);
     }
 
     protected Updater makeUpdater() {
-        return (Updater) server.createUpdater(new String[]{"en"}, new ConfigExtraTags());
+        final var dbProperties = new DatabaseProperties();
+        dbProperties.setLanguages(new String[]{"en"});
+        return (Updater) server.createUpdater(dbProperties);
     }
 
     protected Updater makeUpdaterWithExtra(String... extraTags) {
-        return (Updater) server.createUpdater(new String[]{"en"}, new ConfigExtraTags(Arrays.stream(extraTags).collect(Collectors.toList())));
+        final var dbProperties = new DatabaseProperties();
+        dbProperties.setLanguages(new String[]{"en"});
+        dbProperties.setExtraTags(Arrays.stream(extraTags).collect(Collectors.toList()));
+        return (Updater) server.createUpdater(dbProperties);
     }
 
     protected Server getServer() {

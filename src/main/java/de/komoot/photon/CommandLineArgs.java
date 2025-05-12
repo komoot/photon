@@ -45,7 +45,7 @@ public class CommandLineArgs {
     private List<String> countryCodes = new ArrayList<>();
 
     @Parameter(names = "-extra-tags", description = "Comma-separated list of additional tags to save for each place.")
-    private List<String> extraTags = new ArrayList<>();
+    private List<String> extraTags = null;
 
     @Parameter(names = "-synonym-file", description = "File with synonym and classification terms.")
     private String synonymFile = null;
@@ -149,8 +149,10 @@ public class CommandLineArgs {
     }
 
     public ConfigExtraTags getExtraTags() {
-        return new ConfigExtraTags(this.extraTags);
+        return new ConfigExtraTags(extraTags == null? List.of() : extraTags);
     }
+
+    public boolean isExtraTagsSet() { return this.extraTags == null; }
 
     public String getSynonymFile() {
         return this.synonymFile;
@@ -236,7 +238,9 @@ public class CommandLineArgs {
         dbProps.setSupportGeometries(importGeometryColumn);
         dbProps.setSupportStructuredQueries(supportStructuredQueries);
 
-        dbProps.setExtraTags(extraTags);
+        if (extraTags != null) {
+            dbProps.setExtraTags(extraTags);
+        }
 
         return dbProps;
     }

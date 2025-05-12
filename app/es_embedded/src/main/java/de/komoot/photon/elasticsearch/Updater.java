@@ -1,5 +1,6 @@
 package de.komoot.photon.elasticsearch;
 
+import de.komoot.photon.DatabaseProperties;
 import de.komoot.photon.PhotonDoc;
 import de.komoot.photon.ConfigExtraTags;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
@@ -17,14 +18,12 @@ public class Updater implements de.komoot.photon.Updater {
 
     private final Client esClient;
     private BulkRequestBuilder bulkRequest;
-    private final String[] languages;
-    private final ConfigExtraTags extraTags;
+    private final DatabaseProperties dbProperties;
 
-    public Updater(Client esClient, String[] languages, ConfigExtraTags extraTags) {
+    public Updater(Client esClient, DatabaseProperties dbProperties) {
         this.esClient = esClient;
         this.bulkRequest = esClient.prepareBulk();
-        this.languages = languages;
-        this.extraTags = extraTags;
+        this.dbProperties = dbProperties;
     }
 
     @Override
@@ -47,7 +46,7 @@ public class Updater implements de.komoot.photon.Updater {
             try {
                 bulkRequest.add(
                         esClient.prepareIndex(PhotonIndex.NAME, PhotonIndex.TYPE)
-                                .setSource(PhotonDocConverter.convert(doc, languages, extraTags))
+                                .setSource(PhotonDocConverter.convert(doc, dbProperties))
                                 .setId(uid));
             } catch (IOException ex) {
                 LOGGER.error("Parse error in document {}: {}", placeID, ex);

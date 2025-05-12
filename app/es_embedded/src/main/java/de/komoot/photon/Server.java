@@ -179,21 +179,14 @@ public class Server {
 
     }
 
-    public DatabaseProperties recreateIndex(String[] languages, Date importDate, boolean supportStructuredQueries, boolean supportGeometries) throws IOException {
+    public void recreateIndex(DatabaseProperties dbProperties) throws IOException {
         deleteIndex();
 
         loadIndexSettings().createIndex(esClient, PhotonIndex.NAME);
 
-        createAndPutIndexMapping(languages, supportStructuredQueries);
-
-        DatabaseProperties dbProperties = new DatabaseProperties()
-            .setLanguages(languages)
-            .setImportDate(importDate)
-            .setSupportGeometries(supportGeometries);
+        createAndPutIndexMapping(dbProperties.getLanguages(), dbProperties.getSupportStructuredQueries());
 
         saveToDatabase(dbProperties);
-
-        return dbProperties;
     }
 
     private void createAndPutIndexMapping(String[] languages, boolean supportStructuredQueries)
@@ -289,12 +282,12 @@ public class Server {
         return dbProps;
     }
 
-    public Importer createImporter(String[] languages, ConfigExtraTags extraTags) {
-        return new de.komoot.photon.elasticsearch.Importer(esClient, languages, extraTags);
+    public Importer createImporter(DatabaseProperties dbProperties) {
+        return new de.komoot.photon.elasticsearch.Importer(esClient, dbProperties);
     }
 
-    public Updater createUpdater(String[] languages, ConfigExtraTags extraTags) {
-        return new de.komoot.photon.elasticsearch.Updater(esClient, languages, extraTags);
+    public Updater createUpdater(DatabaseProperties dbProperties) {
+        return new de.komoot.photon.elasticsearch.Updater(esClient, dbProperties);
     }
 
     public SearchHandler createSearchHandler(String[] languages, int queryTimeoutSec) {

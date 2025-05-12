@@ -125,6 +125,10 @@ public class DatabaseProperties {
         return extraTags;
     }
 
+    public void putConfigExtraTags(ConfigExtraTags extraTags) {
+        this.extraTags = extraTags;
+    }
+
     @Override
     public String toString() {
         return "DatabaseProperties{" +

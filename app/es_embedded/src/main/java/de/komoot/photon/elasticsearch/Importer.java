@@ -1,5 +1,6 @@
 package de.komoot.photon.elasticsearch;
 
+import de.komoot.photon.DatabaseProperties;
 import de.komoot.photon.PhotonDoc;
 import de.komoot.photon.ConfigExtraTags;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
@@ -19,14 +20,12 @@ public class Importer implements de.komoot.photon.Importer {
 
     private final Client esClient;
     private BulkRequestBuilder bulkRequest;
-    private final String[] languages;
-    private final ConfigExtraTags extraTags;
+    private final DatabaseProperties dbProperties;
 
-    public Importer(Client esClient, String[] languages, ConfigExtraTags extraTags) {
+    public Importer(Client esClient, DatabaseProperties dbProperties) {
         this.esClient = esClient;
         this.bulkRequest = esClient.prepareBulk();
-        this.languages = languages;
-        this.extraTags = extraTags;
+        this.dbProperties = dbProperties;
     }
 
     @Override
@@ -40,7 +39,7 @@ public class Importer implements de.komoot.photon.Importer {
             final String uid = PhotonDoc.makeUid(placeID, objectId++);
             try {
                 bulkRequest.add(esClient.prepareIndex(PhotonIndex.NAME, PhotonIndex.TYPE).
-                        setSource(PhotonDocConverter.convert(doc, languages, extraTags)).setId(uid));
+                        setSource(PhotonDocConverter.convert(doc, dbProperties)).setId(uid));
             } catch (IOException e) {
                 LOGGER.error("Could not bulk add document {}", uid, e);
                 return;
