@@ -1,5 +1,6 @@
 package de.komoot.photon.api;
 
+import org.junit.jupiter.api.io.TempDir;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Point;
 
@@ -14,6 +15,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -21,8 +23,10 @@ import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static spark.Spark.*;
 
 class ApiLanguagesTest extends ESBaseTester {
-
     private static final int LISTEN_PORT = 30234;
+
+    @TempDir
+    private Path dataDirectory;
 
     @AfterEach
     void shutdown() {
@@ -46,8 +50,9 @@ class ApiLanguagesTest extends ESBaseTester {
     }
 
     private void importPlaces(String... languages) throws Exception {
-        setUpES(dataDirectory, false, languages);
-        Importer instance = makeImporterWithLanguages(languages);
+        getProperties().setLanguages(languages);
+        setUpES(dataDirectory);
+        Importer instance = makeImporter();
         instance.add(List.of(createDoc(1000, "place", "city",
                 "name:en", "thething", "name:fr", "letruc", "name:ch", "dasding")));
         instance.add(List.of(createDoc(1001, "place", "town",

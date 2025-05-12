@@ -9,7 +9,7 @@ import java.util.Date;
 /**
  * Tests for the database-global property store.
  */
-class DatabasePropertiesTest extends ESBaseTester {
+class DatabasePropertiesTest {
 
     /**
      * setLanguages() overwrites the language settings.

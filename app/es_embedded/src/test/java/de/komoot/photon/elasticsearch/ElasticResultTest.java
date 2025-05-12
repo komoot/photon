@@ -21,9 +21,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class ElasticResultTest  extends ESBaseTester {
-    @TempDir
-    private static Path instanceTestDirectory;
-
     private Map<String, String> makeMap(String... kv) {
         Map<String, String> result = new HashMap<>();
         for (int i = 0; i < kv.length; i += 2) {
@@ -40,8 +37,8 @@ class ElasticResultTest  extends ESBaseTester {
 
 
     @BeforeAll
-    void setUp() throws Exception {
-        setUpES(instanceTestDirectory, false, "en", "de", "fr", "it");
+    void setUp(@TempDir Path dataDirectory) throws Exception {
+        setUpES(dataDirectory);
         final var dbProperties = new DatabaseProperties();
         dbProperties.setLanguages(new String[]{"en", "de", "fr", "it"});
         dbProperties.setExtraTags(List.of("population",  "capital"));

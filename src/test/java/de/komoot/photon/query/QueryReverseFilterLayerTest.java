@@ -23,12 +23,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class QueryReverseFilterLayerTest extends ESBaseTester {
-    @TempDir
-    private static Path instanceTestDirectory;
 
     @BeforeAll
-    void setup() throws IOException {
-        setUpES(instanceTestDirectory, false,"en");
+    void setup(@TempDir Path dataDirectory) throws IOException {
+        getProperties().setLanguages(new String[]{"en"});
+        setUpES(dataDirectory);
 
         Importer instance = makeImporter();
 

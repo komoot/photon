@@ -1,8 +1,10 @@
 package de.komoot.photon;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -10,8 +12,8 @@ import static org.junit.jupiter.api.Assertions.*;
 class ServerDatabasePropertiesTest extends ESBaseTester {
 
     @Test
-    void testSaveAndLoadFromDatabase() throws IOException {
-        setUpES();
+    void testSaveAndLoadFromDatabase(@TempDir Path dataDirectory) throws IOException {
+        setUpES(dataDirectory);
 
         final Date now = new Date();
 

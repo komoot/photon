@@ -6,26 +6,22 @@ import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.PrecisionModel;
 import de.komoot.photon.searcher.PhotonResult;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.io.TempDir;
 import org.locationtech.jts.io.ParseException;
 import org.locationtech.jts.io.WKTReader;
 
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Start an ES server with some test data that then can be queried in tests that extend this class
  */
 public class ESBaseTester {
-    @TempDir
-    protected Path dataDirectory;
-
     public static final String TEST_CLUSTER_NAME = "photon-test";
     protected static final GeometryFactory FACTORY = new GeometryFactory(new PrecisionModel(), 4326);
 
     private ElasticTestServer server;
+    final DatabaseProperties dbProperties = new DatabaseProperties();
 
     protected PhotonDoc createDoc(double lon, double lat, int id, int osmId, String key, String value) throws ParseException {
         Point location = FACTORY.createPoint(new Coordinate(lon, lat));
@@ -46,24 +42,7 @@ public class ESBaseTester {
         shutdownES();
     }
 
-    public void setUpES() throws IOException {
-        setUpES(dataDirectory, false,"en");
-    }
-
-    public void setUpESWithGeometry() throws IOException {
-        setUpES(dataDirectory, true,"en");
-    }
-    /**
-     * Setup the ES server
-     *
-     * @throws IOException
-     */
-    public void setUpES(Path testDirectory, boolean supportGeometries, String... languages) throws IOException {
-        final var dbProperties = new DatabaseProperties();
-        dbProperties.setLanguages(languages);
-        dbProperties.setSupportGeometries(supportGeometries);
-        dbProperties.setImportDate(new Date());
-
+    public void setUpES(Path testDirectory) throws IOException {
         server = new ElasticTestServer(testDirectory.toString());
         server.start(TEST_CLUSTER_NAME, new String[]{});
         server.recreateIndex(dbProperties);
@@ -71,34 +50,10 @@ public class ESBaseTester {
     }
 
     protected Importer makeImporter() {
-        final var dbProperties = new DatabaseProperties();
-        dbProperties.setLanguages(new String[]{"en"});
-        return server.createImporter(dbProperties);
-    }
-
-    protected Importer makeImporterWithExtra(String... extraTags) {
-        final var dbProperties = new DatabaseProperties();
-        dbProperties.setLanguages(new String[]{"en"});
-        dbProperties.setExtraTags(Arrays.stream(extraTags).collect(Collectors.toList()));
-        return server.createImporter(dbProperties);
-    }
-
-    protected Importer makeImporterWithLanguages(String... languages) {
-        final var dbProperties = new DatabaseProperties();
-        dbProperties.setLanguages(languages);
         return server.createImporter(dbProperties);
     }
 
     protected Updater makeUpdater() {
-        final var dbProperties = new DatabaseProperties();
-        dbProperties.setLanguages(new String[]{"en"});
-        return server.createUpdater(dbProperties);
-    }
-
-    protected Updater makeUpdaterWithExtra(String... extraTags) {
-        final var dbProperties = new DatabaseProperties();
-        dbProperties.setLanguages(new String[]{"en"});
-        dbProperties.setExtraTags(Arrays.stream(extraTags).collect(Collectors.toList()));
         return server.createUpdater(dbProperties);
     }
 
@@ -112,6 +67,10 @@ public class ESBaseTester {
 
     protected void refresh() {
         server.refresh();
+    }
+
+    protected DatabaseProperties getProperties() {
+        return dbProperties;
     }
 
     /**

@@ -17,13 +17,13 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class QueryByClassificationTest extends ESBaseTester {
     @TempDir
-    static Path sharedTempDir;
+    private Path sharedTempDir;
 
     private int testDocId = 10000;
 
     @BeforeEach
     void setup() throws IOException {
-        setUpES();
+        setUpES(sharedTempDir.resolve("db"));
     }
 
     private PhotonDoc createDoc(String key, String value, String name) {

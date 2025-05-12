@@ -1,8 +1,7 @@
 package de.komoot.photon;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.locationtech.jts.io.WKTReader;
@@ -13,7 +12,9 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.file.Path;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,12 +25,16 @@ import static spark.Spark.*;
 /**
  * These test connect photon to an already running ES node (setup in ESBaseTester) so that we can directly test the API
  */
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class ApiIntegrationTest extends ESBaseTester {
     private static final int LISTEN_PORT = 30234;
+    private static final Date TEST_DATE = new Date();
 
-    @BeforeEach
-    void setUp() throws Exception {
-        setUpESWithGeometry();
+    @BeforeAll
+    void setUp(@TempDir Path dataDirectory) throws Exception {
+        getProperties().setSupportGeometries(true);
+        getProperties().setImportDate(TEST_DATE);
+        setUpES(dataDirectory);
         Importer instance = makeImporter();
         instance.add(List.of(createDoc(13.38886, 52.51704, 1000, 1000, "place", "city").importance(0.6)));
         instance.add(List.of(createDoc(13.39026, 52.54714, 1001, 1001, "place", "town").importance(0.3)));
@@ -42,6 +47,12 @@ class ApiIntegrationTest extends ESBaseTester {
     void shutdown() {
         stop();
         awaitStop();
+    }
+
+    @AfterAll
+    @Override
+    public void tearDown() throws IOException {
+        super.tearDown();
     }
 
     private String readURL(String url) throws IOException {
@@ -147,11 +158,10 @@ class ApiIntegrationTest extends ESBaseTester {
     void testApiStatus() throws Exception {
         App.main(new String[]{"-cluster", TEST_CLUSTER_NAME, "-listen-port", Integer.toString(LISTEN_PORT), "-transport-addresses", "127.0.0.1"});
         awaitInitialization();
-        DatabaseProperties prop = getServer().loadFromDatabase();
 
         assertThatJson(readURL("/status")).isObject()
                 .containsEntry("status", "Ok")
-                .containsEntry("import_date", prop.getImportDate().toInstant().toString());
+                .containsEntry("import_date", TEST_DATE.toInstant().toString());
     }
 
     @Test
