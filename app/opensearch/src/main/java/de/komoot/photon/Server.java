@@ -130,7 +130,11 @@ public class Server {
 
         (new IndexMapping(supportStructuredQueries)).addLanguages(languages).putMapping(client, PhotonIndex.NAME);
 
-        var dbProperties = new DatabaseProperties(languages, importDate, supportStructuredQueries, supportGeometries);
+        var dbProperties = new DatabaseProperties();
+        dbProperties.setLanguages(languages);
+        dbProperties.setImportDate(importDate);
+        dbProperties.setSupportStructuredQueries(supportStructuredQueries);
+        dbProperties.setSupportGeometries(supportGeometries);
         saveToDatabase(dbProperties);
 
         return dbProperties;
@@ -159,7 +163,7 @@ public class Server {
         client.index(r -> r
                         .index(PhotonIndex.NAME)
                         .id(PhotonIndex.PROPERTY_DOCUMENT_ID)
-                        .document(new DBPropertyEntry(dbProperties, DATABASE_VERSION))
+                        .document(dbProperties)
                         );
     }
 
@@ -167,22 +171,13 @@ public class Server {
         var dbEntry = client.get(r -> r
                 .index(PhotonIndex.NAME)
                 .id(PhotonIndex.PROPERTY_DOCUMENT_ID),
-                DBPropertyEntry.class);
+                DatabaseProperties.class);
 
         if (!dbEntry.found()) {
             throw new UsageException("Cannot access property record. Database too old?");
         }
 
-        if (!DATABASE_VERSION.equals(dbEntry.source().databaseVersion)) {
-            LOGGER.error("Database has incompatible version '{}'. Expected: {}",
-                         dbEntry.source().databaseVersion, DATABASE_VERSION);
-            throw new UsageException("Incompatible database.");
-        }
-
-        return new DatabaseProperties(dbEntry.source().languages,
-                                      dbEntry.source().importDate,
-                                      dbEntry.source().supportStructuredQueries,
-                                      dbEntry.source().supportGeometries);
+        return dbEntry.source();
     }
 
     public Importer createImporter(String[] languages, ConfigExtraTags extraTags) {

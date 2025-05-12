@@ -17,7 +17,9 @@ class DatabasePropertiesTest extends ESBaseTester {
     @Test
     void testSetLanguages() {
         var now = new Date();
-        DatabaseProperties prop = new DatabaseProperties(new String[]{"en", "bg", "de"}, now, false, false);
+        DatabaseProperties prop = new DatabaseProperties();
+        prop.setLanguages(new String[]{"en", "bg", "de"});
+        prop.setImportDate(now);
 
         assertArrayEquals(new String[]{"en", "bg", "de"}, prop.getLanguages());
         assertEquals(now, prop.getImportDate());
@@ -28,7 +30,7 @@ class DatabasePropertiesTest extends ESBaseTester {
      */
     @Test
     void testRestrictLanguagesUnsetLanguages() {
-        DatabaseProperties prop = new DatabaseProperties(null, null, false, false);
+        DatabaseProperties prop = new DatabaseProperties();
         prop.restrictLanguages(new String[]{"en", "bg", "de"});
 
         assertArrayEquals(new String[]{"en", "bg", "de"}, prop.getLanguages());
@@ -40,7 +42,8 @@ class DatabasePropertiesTest extends ESBaseTester {
      */
     @Test
     void testRestrictLanguagesAlreadySet() {
-        DatabaseProperties prop = new DatabaseProperties(new String[]{"en", "de", "fr"}, null, false, false);
+        DatabaseProperties prop = new DatabaseProperties();
+        prop.setLanguages(new String[]{"en", "de", "fr"});
 
         prop.restrictLanguages(new String[]{"cn", "de", "en", "es"});
 

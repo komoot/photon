@@ -264,7 +264,6 @@ public class Server {
     public DatabaseProperties loadFromDatabase() {
         GetResponse response = esClient.prepareGet(PhotonIndex.NAME, PhotonIndex.TYPE, PROPERTY_DOCUMENT_ID).execute().actionGet();
 
-        // We are currently at the database version where versioning was introduced.
         if (!response.isExists()) {
             throw new UsageException("Cannot find database properties. Your database version is too old. Please reimport.");
         }
@@ -275,23 +274,19 @@ public class Server {
             throw new UsageException("Found database properties but no '" + BASE_FIELD +"' field. Database corrupt?");
         }
 
-        String version = properties.getOrDefault(FIELD_VERSION, "");
-        if (!DATABASE_VERSION.equals(version)) {
-            LOGGER.error("Database has incompatible version '{}'. Expected: {}",
-                         version, DATABASE_VERSION);
-            throw new UsageException("Incompatible database.");
-        }
+        final var dbProps = new DatabaseProperties();
 
-        String langString = properties.get(FIELD_LANGUAGES);
+        dbProps.setVersion(properties.get(FIELD_VERSION));
+
+        final String langString = properties.get(FIELD_LANGUAGES);
+        dbProps.setLanguages(langString == null ? null : langString.split(","));
 
         String importDateString = properties.get(FIELD_IMPORT_DATE);
+        dbProps.setImportDate(importDateString == null ? null : Date.from(Instant.parse(importDateString)));
 
-        String supportGeometries = properties.get(FIELD_SUPPORT_GEOMETRIES);
+        dbProps.setSupportGeometries(Boolean.parseBoolean(properties.get(FIELD_SUPPORT_GEOMETRIES)));
 
-        return new DatabaseProperties(langString == null ? null : langString.split(","),
-                importDateString == null ? null : Date.from(Instant.parse(importDateString)),
-                false,
-                Boolean.parseBoolean(supportGeometries));
+        return dbProps;
     }
 
     public Importer createImporter(String[] languages, ConfigExtraTags extraTags) {

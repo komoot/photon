@@ -1,6 +1,10 @@
 package de.komoot.photon;
 
+import org.slf4j.Logger;
+
 import java.util.*;
+
+import static de.komoot.photon.Server.DATABASE_VERSION;
 
 /**
  * Class collecting database global properties.
@@ -8,22 +12,24 @@ import java.util.*;
  * The server is responsible for making the data persistent in the Photon database.
  */
 public class DatabaseProperties {
-    private String[] languages;
+    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(DatabaseProperties.class);
+    private static final String[] DEFAULT_LANGAUGES = new String[]{"en", "de", "fr", "it"};
+    private String[] languages = DEFAULT_LANGAUGES;
     private Date importDate;
-    private boolean supportStructuredQueries;
-    private boolean supportGeometries;
+    private boolean supportStructuredQueries = false;
+    private boolean supportGeometries = false;
 
-    public DatabaseProperties(String[] languages, Date importDate, boolean supportStructuredQueries, boolean supportGeometries) {
-        this.languages = languages;
-        this.importDate = importDate;
-        this.supportStructuredQueries = supportStructuredQueries;
-        this.supportGeometries = supportGeometries;
+    public void setVersion(String version) {
+        if (!DATABASE_VERSION.equals(version)) {
+            LOGGER.error("Database has incompatible version '{}'. Expected: {}",
+                    version, DATABASE_VERSION);
+            throw new UsageException("Incompatible database.");
+        }
     }
 
-    public DatabaseProperties() {
-
+    public String getVersion() {
+        return DATABASE_VERSION;
     }
-
 
     /**
      * Return the list of languages for which the database is configured.
@@ -32,10 +38,6 @@ public class DatabaseProperties {
      * @return List of supported languages.
      */
     public String[] getLanguages() {
-        if (languages == null) {
-            return new String[]{"en", "de", "fr", "it"};
-        }
-
         return languages;
     }
 
@@ -47,7 +49,7 @@ public class DatabaseProperties {
      * @return This object for function chaining.
      */
     public DatabaseProperties setLanguages(String[] languages) {
-        this.languages = languages;
+        this.languages = languages == null ? DEFAULT_LANGAUGES : languages;
         return this;
     }
 
@@ -59,7 +61,7 @@ public class DatabaseProperties {
      * @param languageList Comma-separated list of two-letter language codes.
      */
     public void restrictLanguages(String[] languageList) {
-        if (languages == null) {
+        if (languages == DEFAULT_LANGAUGES) {
             // Special case for versions that did not yet have a language list set
             // in the database: Use the given list as is.
             languages = languageList;
