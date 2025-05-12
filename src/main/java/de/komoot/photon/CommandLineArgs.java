@@ -227,5 +227,18 @@ public class CommandLineArgs {
     public boolean getImportGeometryColumn() {
         return importGeometryColumn;
     }
+
+    public DatabaseProperties getDatabaseProperties() {
+        final var dbProps = new DatabaseProperties();
+        if (!languages.isEmpty()) {
+            dbProps.setLanguages(languages.toArray(new String[0]));
+        }
+        dbProps.setSupportGeometries(importGeometryColumn);
+        dbProps.setSupportStructuredQueries(supportStructuredQueries);
+
+        dbProps.setExtraTags(extraTags);
+
+        return dbProps;
+    }
 }
 

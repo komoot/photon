@@ -3,9 +3,11 @@ package de.komoot.photon;
 import com.fasterxml.jackson.core.JsonGenerator;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class ConfigExtraTags {
 
@@ -24,7 +26,7 @@ public class ConfigExtraTags {
 
     public void writeFilteredExtraTags(JsonGenerator writer, String fieldName, Map<String, String> sourceTags) throws IOException  {
          if (!sourceTags.isEmpty()) {
-            if (tags == null) {
+            if (allowAll) {
                 writer.writeObjectField(fieldName, sourceTags);
             } else if (tags.length > 0) {
                 boolean foundTag = false;
@@ -65,5 +67,13 @@ public class ConfigExtraTags {
         }
 
         return newMap;
+    }
+
+    public List<String> asConfigParam() {
+        if (allowAll) {
+            return List.of("ALL");
+        }
+
+        return Arrays.stream(tags).collect(Collectors.toList());
     }
 }

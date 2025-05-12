@@ -108,14 +108,15 @@ public class App {
      * Take nominatim data and dump it to a Json file.
      */
     private static void startJsonDump(CommandLineArgs args) {
+        final var dbProps = args.getDatabaseProperties();
+
         try {
+            final var connector = new NominatimImporter(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword(), false);
+            dbProps.setImportDate(connector.getLastImportDate());
+
             final String filename = args.getJsonDump();
-            final JsonDumper jsonDumper = new JsonDumper(filename, args.getLanguages(), args.getExtraTags());
-
-            final var connector = new NominatimImporter(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword(), args.getImportGeometryColumn());
-
-            jsonDumper.writeHeader(connector.getLastImportDate(),
-                                   connector.loadCountryNames());
+            final JsonDumper jsonDumper = new JsonDumper(filename, dbProps);
+            jsonDumper.writeHeader(connector.loadCountryNames());
 
             final var importThread = new ImportThread(jsonDumper);
             try {

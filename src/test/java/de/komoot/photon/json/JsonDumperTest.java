@@ -1,6 +1,6 @@
 package de.komoot.photon.json;
 
-import de.komoot.photon.ConfigExtraTags;
+import de.komoot.photon.DatabaseProperties;
 import de.komoot.photon.ReflectionTestUtil;
 import de.komoot.photon.nominatim.ImportThread;
 import de.komoot.photon.nominatim.NominatimConnector;
@@ -33,7 +33,7 @@ class JsonDumperTest {
     private TransactionTemplate txTemplate;
 
     private String[] configLanguages = new String[]{"en", "de"};
-    private ConfigExtraTags configExtraTags = new ConfigExtraTags();
+    private List<String> configExtraTags = List.of();
     private String[] configCountries = null;
     private boolean configGeometryColumn = false;
 
@@ -56,9 +56,12 @@ class JsonDumperTest {
 
         final var outCapture = new ByteArrayOutputStream();
 
+        final var dbProps = new DatabaseProperties();
+        dbProps.setLanguages(configLanguages);
+        dbProps.setExtraTags(configExtraTags);
         System.setOut(new PrintStream(outCapture));
         try {
-            JsonDumper dumper = new JsonDumper("-", configLanguages, configExtraTags);
+            JsonDumper dumper = new JsonDumper("-", dbProps);
             final var importThread = new ImportThread(dumper);
             try {
                 for (var country: configCountries == null ? connector.getCountriesFromDatabase() : configCountries) {
@@ -274,7 +277,7 @@ class JsonDumperTest {
                 .extraTag("maxspeed", "120")
                 .add(jdbc);
 
-        configExtraTags = new ConfigExtraTags(List.of("ALL"));
+        configExtraTags = List.of("ALL");
         var results = readEntireDatabase();
 
         assertThat(results).hasSize(1);
@@ -291,7 +294,7 @@ class JsonDumperTest {
                 .extraTag("maxspeed", "120")
                 .add(jdbc);
 
-        configExtraTags = new ConfigExtraTags(List.of("maxspeed", "surface"));
+        configExtraTags = List.of("maxspeed", "surface");
         var results = readEntireDatabase();
 
         assertThat(results).hasSize(1);

@@ -14,10 +14,12 @@ import static de.komoot.photon.Server.DATABASE_VERSION;
 public class DatabaseProperties {
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(DatabaseProperties.class);
     private static final String[] DEFAULT_LANGAUGES = new String[]{"en", "de", "fr", "it"};
+
     private String[] languages = DEFAULT_LANGAUGES;
     private Date importDate;
     private boolean supportStructuredQueries = false;
     private boolean supportGeometries = false;
+    private ConfigExtraTags extraTags = new ConfigExtraTags();
 
     public void setVersion(String version) {
         if (!DATABASE_VERSION.equals(version)) {
@@ -109,6 +111,18 @@ public class DatabaseProperties {
     public DatabaseProperties setSupportGeometries(boolean supportGeometries) {
         this.supportGeometries = supportGeometries;
         return this;
+    }
+
+    public void setExtraTags(List<String> extraTags) {
+        this.extraTags = new ConfigExtraTags(extraTags);
+    }
+
+    public List<String> getExtraTags() {
+        return extraTags.asConfigParam();
+    }
+
+    public ConfigExtraTags configExtraTags() {
+        return extraTags;
     }
 
     @Override
