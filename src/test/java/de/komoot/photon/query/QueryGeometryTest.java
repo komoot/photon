@@ -6,12 +6,14 @@ import de.komoot.photon.PhotonDoc;
 import de.komoot.photon.searcher.PhotonResult;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.io.ParseException;
 import org.locationtech.jts.io.WKTReader;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,11 +28,12 @@ class QueryGeometryTest extends ESBaseTester {
     private int testDocId = 10000;
 
     @BeforeEach
-    void setup() throws IOException {
-        setUpESWithGeometry();
+    void setup(@TempDir Path dataDirectory) throws IOException {
+        getProperties().setSupportGeometries(true);
+        setUpES(dataDirectory);
     }
 
-    private PhotonDoc createDoc(String... names) throws ParseException {
+    private PhotonDoc createDoc(String... names)  {
         Map<String, String> nameMap = new HashMap<>();
 
         for (int i = 0; i < names.length - 1; i += 2) {
@@ -56,11 +59,7 @@ class QueryGeometryTest extends ESBaseTester {
         refresh();
         List<PhotonResult> s = search("muffle flu");
 
-        if (s.get(0).getClass().getName().equals("de.komoot.photon.opensearch.OpenSearchResult")) {
-            assertNotNull(s.get(0).getGeometry());
-        } else {
-            assertNotNull(s.get(0).get("geometry"));
-        }
+        assertNotNull(s.get(0).getGeometry());
     }
 
     @Test
@@ -73,10 +72,6 @@ class QueryGeometryTest extends ESBaseTester {
         refresh();
         List<PhotonResult> s = search("muffle flu");
 
-        if (s.get(0).getClass().getName().equals("de.komoot.photon.opensearch.OpenSearchResult")) {
-            assertNotNull(s.get(0).getGeometry());
-        } else {
-            assertNotNull(s.get(0).get("geometry"));
-        }
+        assertNotNull(s.get(0).getGeometry());
     }
 }

@@ -4,10 +4,7 @@ import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import de.komoot.photon.ConfigExtraTags;
-import de.komoot.photon.Importer;
-import de.komoot.photon.PhotonDoc;
-import de.komoot.photon.Server;
+import de.komoot.photon.*;
 import de.komoot.photon.nominatim.model.AddressType;
 import org.locationtech.jts.io.geojson.GeoJsonWriter;
 import org.slf4j.Logger;
@@ -21,15 +18,13 @@ import java.util.Map;
 public class JsonDumper implements Importer {
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(JsonDumper.class);
 
-    private final String[] languages;
-    private final ConfigExtraTags extraTags;
+    private final DatabaseProperties dbProperties;
 
     private final JsonGenerator writer;
     private final GeoJsonWriter geojsonWriter = new GeoJsonWriter();
 
-    public JsonDumper(String filename, String[] languages, ConfigExtraTags extraTags) throws IOException {
-        this.languages = languages;
-        this.extraTags = extraTags;
+    public JsonDumper(String filename, DatabaseProperties dbProps) throws IOException {
+        this.dbProperties = dbProps;
 
         final var mapper = new ObjectMapper();
         mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
@@ -76,14 +71,14 @@ public class JsonDumper implements Importer {
         }
     }
 
-    public void writeHeader(Date importDate, Map<String, Map<String, String>> countryNames) throws IOException {
+    public void writeHeader(Map<String, Map<String, String>> countryNames) throws IOException {
         writeStartDocument(NominatimDumpHeader.DOCUMENT_TYPE);
 
         writer.writeStartObject();
         writer.writeStringField("version", NominatimDumpHeader.EXPECTED_VERSION);
         writer.writeStringField("generator", "photon");
         writer.writeStringField("database_version", Server.DATABASE_VERSION);
-        writer.writeObjectField("data_timestamp", importDate);
+        writer.writeObjectField("data_timestamp", dbProperties.getImportDate());
         writer.writeObjectField("features", new NominatimDumpFileFeatures());
         writer.writeEndObject();
         writeEndDocument();
@@ -147,7 +142,7 @@ public class JsonDumper implements Importer {
                 doc.copyAddressName(addressNames, baseKey, entry, "name");
 
                 baseKey += ":";
-                for (String language : languages) {
+                for (String language : dbProperties.getLanguages()) {
                     doc.copyAddressName(
                             addressNames, baseKey + language,
                             entry, "name:" + language);
@@ -155,7 +150,7 @@ public class JsonDumper implements Importer {
             }
         }
 
-        for (var entry : doc.getContextByLanguage(languages).entrySet()) {
+        for (var entry : doc.getContextByLanguage(dbProperties.getLanguages()).entrySet()) {
             int i = 1;
             if ("default".equals(entry.getKey())) {
                 for (var name : entry.getValue()) {
@@ -174,7 +169,7 @@ public class JsonDumper implements Importer {
             writer.writeObjectField("address", addressNames);
         }
 
-        extraTags.writeFilteredExtraTags(writer, "extra", doc.getExtratags());
+        dbProperties.configExtraTags().writeFilteredExtraTags(writer, "extra", doc.getExtratags());
 
         if (doc.getPostcode() != null) {
             writer.writeStringField("postcode", doc.getPostcode());

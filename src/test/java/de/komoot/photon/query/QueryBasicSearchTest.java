@@ -6,8 +6,10 @@ import de.komoot.photon.PhotonDoc;
 import de.komoot.photon.searcher.PhotonResult;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -23,8 +25,8 @@ class QueryBasicSearchTest extends ESBaseTester {
     private int testDocId = 10000;
 
     @BeforeEach
-    void setup() throws IOException {
-        setUpES();
+    void setup(@TempDir Path dataDirectory) throws IOException {
+        setUpES(dataDirectory);
     }
 
     private PhotonDoc createDoc(String... names) {

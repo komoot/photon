@@ -6,10 +6,12 @@ import de.komoot.photon.PhotonDoc;
 import de.komoot.photon.searcher.PhotonResult;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.locationtech.jts.io.ParseException;
 import org.locationtech.jts.io.WKTReader;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -20,13 +22,14 @@ import static org.junit.jupiter.api.Assertions.*;
 class ImporterTest extends ESBaseTester {
 
     @BeforeEach
-    public void setUp() throws IOException {
-        setUpESWithGeometry();
+    public void setUp(@TempDir Path dataDirectory) throws IOException {
+        getProperties().setSupportGeometries(true);
+        setUpES(dataDirectory);
     }
 
     @Test
     void testAddSimpleDoc() throws ParseException {
-        Importer instance = makeImporterWithExtra("");
+        Importer instance = makeImporter();
 
         instance.add(List.of(
                 new PhotonDoc(1234, "N", 1000, "place", "city")
@@ -48,7 +51,7 @@ class ImporterTest extends ESBaseTester {
 
     @Test
     void testAddHousenumberMultiDoc() {
-        Importer instance = makeImporterWithExtra("");
+        Importer instance = makeImporter();
 
         instance.add(List.of(
                 new PhotonDoc(4432, "N", 100, "building", "yes").houseNumber("34"),
@@ -78,7 +81,8 @@ class ImporterTest extends ESBaseTester {
 
     @Test
     void testSelectedExtraTagsCanBeIncluded() {
-        Importer instance = makeImporterWithExtra("maxspeed", "website");
+        getProperties().setExtraTags(List.of("maxspeed", "website"));
+        Importer instance = makeImporter();
 
         Map<String, String> extratags = new HashMap<>();
         extratags.put("website", "foo");

@@ -4,10 +4,7 @@ import de.komoot.photon.ESBaseTester;
 import de.komoot.photon.Importer;
 import de.komoot.photon.PhotonDoc;
 import de.komoot.photon.searcher.PhotonResult;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.io.TempDir;
 
 import java.io.IOException;
@@ -21,12 +18,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class QueryFilterLayerTest extends ESBaseTester {
-    @TempDir
-    private static Path instanceTestDirectory;
-
     @BeforeAll
-    void setUp() throws Exception {
-        setUpES(instanceTestDirectory, false, "en", "de", "fr");
+    void setUp(@TempDir Path dataDirectory) throws Exception {
+        setUpES(dataDirectory);
         Importer instance = makeImporter();
 
         int id = 0;
@@ -38,6 +32,12 @@ class QueryFilterLayerTest extends ESBaseTester {
 
         instance.finish();
         refresh();
+    }
+
+    @AfterAll
+    @Override
+    public void tearDown() throws IOException {
+        super.tearDown();
     }
 
     private PhotonDoc createDoc(int id, int rank) {
@@ -60,11 +60,5 @@ class QueryFilterLayerTest extends ESBaseTester {
         request.setLayerFilter(Arrays.stream(layers).collect(Collectors.toSet()));
 
         return getServer().createSearchHandler(new String[]{"en"}, 1).search(request);
-    }
-
-    @AfterAll
-    @Override
-    public void tearDown() throws IOException {
-        super.tearDown();
     }
 }

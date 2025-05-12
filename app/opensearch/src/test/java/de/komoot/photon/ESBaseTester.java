@@ -4,7 +4,6 @@ import de.komoot.photon.opensearch.Importer;
 import de.komoot.photon.opensearch.OpenSearchTestServer;
 import de.komoot.photon.searcher.PhotonResult;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.io.TempDir;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.PrecisionModel;
@@ -13,20 +12,15 @@ import org.locationtech.jts.io.WKTReader;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
-import java.util.stream.Collectors;
 
 
 public class ESBaseTester {
     public static final String TEST_CLUSTER_NAME = "photon-test";
     protected static final GeometryFactory FACTORY = new GeometryFactory(new PrecisionModel(), 4326);
 
-    @TempDir
-    protected Path dataDirectory;
-
     private OpenSearchTestServer server;
+    private final DatabaseProperties dbProperties = new DatabaseProperties();
 
     protected PhotonDoc createDoc(double lon, double lat, int id, int osmId, String key, String value) throws ParseException {
         final var location = FACTORY.createPoint(new Coordinate(lon, lat));
@@ -49,46 +43,29 @@ public class ESBaseTester {
         return server.getByID(id);
     }
 
-    public void setUpES() throws IOException {
-        setUpES(dataDirectory, false, "en");
-    }
-
-    public void setUpESWithGeometry() throws IOException {
-        setUpES(dataDirectory, true, "en");
-    }
-
-    public void setUpES(Path testDirectory, boolean supportGeometries, String... languages) throws IOException {
-        server = new OpenSearchTestServer(testDirectory.toString());
+    public void setUpES(Path dataDirectory) throws IOException {
+        server = new OpenSearchTestServer(dataDirectory.toString());
         server.startTestServer(TEST_CLUSTER_NAME);
-        server.recreateIndex(languages, new Date(), true, supportGeometries);
+        server.recreateIndex(dbProperties);
         server.refreshIndexes();
     }
 
     protected Importer makeImporter() {
-        return (Importer) server.createImporter(new String[]{"en"}, new ConfigExtraTags());
-    }
-
-    protected Importer makeImporterWithExtra(String... extraTags) {
-        return (Importer) server.createImporter(
-                new String[]{"en"}, new ConfigExtraTags(Arrays.stream(extraTags).collect(Collectors.toList())));
-    }
-
-    protected Importer makeImporterWithLanguages(String... languages) {
-        return (Importer) server.createImporter(languages, new ConfigExtraTags());
+        return (Importer) server.createImporter(dbProperties);
     }
 
     protected Updater makeUpdater() {
-        return (Updater) server.createUpdater(new String[]{"en"}, new ConfigExtraTags());
-    }
-
-    protected Updater makeUpdaterWithExtra(String... extraTags) {
-        return (Updater) server.createUpdater(new String[]{"en"}, new ConfigExtraTags(Arrays.stream(extraTags).collect(Collectors.toList())));
+        return (Updater) server.createUpdater(dbProperties);
     }
 
     protected Server getServer() {
         assert server != null;
 
         return server;
+    }
+
+    protected DatabaseProperties getProperties() {
+        return dbProperties;
     }
 
     protected void refresh() throws IOException {

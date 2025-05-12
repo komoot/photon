@@ -6,6 +6,7 @@ import de.komoot.photon.Importer;
 import de.komoot.photon.nominatim.model.AddressType;
 import de.komoot.photon.searcher.PhotonResult;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -14,6 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.*;
 
 /**
@@ -23,10 +25,14 @@ class QueryByLanguageTest extends ESBaseTester {
     private int testDocId = 10001;
     private String[] languageList;
 
+    @TempDir
+    private Path dataDirectory;
+
     private Importer setup(String... languages) throws IOException {
         languageList = languages;
-        setUpES(dataDirectory, false, languages);
-        return makeImporterWithLanguages(languages);
+        getProperties().setLanguages(languages);
+        setUpES(dataDirectory);
+        return makeImporter();
     }
 
     private PhotonDoc createDoc(String... names) {

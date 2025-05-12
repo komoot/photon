@@ -17,7 +17,6 @@ import org.slf4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Date;
 
 public class Server {
     /**
@@ -120,20 +119,19 @@ public class Server {
         }
     }
 
-    public DatabaseProperties recreateIndex(String[] languages, Date importDate, boolean supportStructuredQueries, boolean supportGeometries) throws IOException {
+    public void recreateIndex(DatabaseProperties dbProperties) throws IOException {
         // delete any existing data
         if (client.indices().exists(e -> e.index(PhotonIndex.NAME)).value()) {
             client.indices().delete(d -> d.index(PhotonIndex.NAME));
         }
 
-        (new IndexSettingBuilder()).setShards(5).createIndex(client, PhotonIndex.NAME);
+        new IndexSettingBuilder().setShards(5).createIndex(client, PhotonIndex.NAME);
 
-        (new IndexMapping(supportStructuredQueries)).addLanguages(languages).putMapping(client, PhotonIndex.NAME);
+        new IndexMapping(dbProperties.getSupportStructuredQueries())
+                .addLanguages(dbProperties.getLanguages())
+                .putMapping(client, PhotonIndex.NAME);
 
-        var dbProperties = new DatabaseProperties(languages, importDate, supportStructuredQueries, supportGeometries);
         saveToDatabase(dbProperties);
-
-        return dbProperties;
     }
 
     public void updateIndexSettings(String synonymFile) throws IOException {
@@ -159,7 +157,7 @@ public class Server {
         client.index(r -> r
                         .index(PhotonIndex.NAME)
                         .id(PhotonIndex.PROPERTY_DOCUMENT_ID)
-                        .document(new DBPropertyEntry(dbProperties, DATABASE_VERSION))
+                        .document(dbProperties)
                         );
     }
 
@@ -167,31 +165,22 @@ public class Server {
         var dbEntry = client.get(r -> r
                 .index(PhotonIndex.NAME)
                 .id(PhotonIndex.PROPERTY_DOCUMENT_ID),
-                DBPropertyEntry.class);
+                DatabaseProperties.class);
 
         if (!dbEntry.found()) {
             throw new UsageException("Cannot access property record. Database too old?");
         }
 
-        if (!DATABASE_VERSION.equals(dbEntry.source().databaseVersion)) {
-            LOGGER.error("Database has incompatible version '{}'. Expected: {}",
-                         dbEntry.source().databaseVersion, DATABASE_VERSION);
-            throw new UsageException("Incompatible database.");
-        }
-
-        return new DatabaseProperties(dbEntry.source().languages,
-                                      dbEntry.source().importDate,
-                                      dbEntry.source().supportStructuredQueries,
-                                      dbEntry.source().supportGeometries);
+        return dbEntry.source();
     }
 
-    public Importer createImporter(String[] languages, ConfigExtraTags extraTags) {
-        registerPhotonDocSerializer(languages, extraTags);
+    public Importer createImporter(DatabaseProperties dbProperties) {
+        registerPhotonDocSerializer(dbProperties);
         return new de.komoot.photon.opensearch.Importer(client);
     }
 
-    public Updater createUpdater(String[] languages, ConfigExtraTags extraTags) {
-        registerPhotonDocSerializer(languages, extraTags);
+    public Updater createUpdater(DatabaseProperties dbProperties) {
+        registerPhotonDocSerializer(dbProperties);
         return new de.komoot.photon.opensearch.Updater(client);
     }
 
@@ -207,10 +196,10 @@ public class Server {
         return new OpenSearchReverseHandler(client, queryTimeoutSec);
     }
 
-    private void registerPhotonDocSerializer(String[] languages, ConfigExtraTags extraTags) {
+    private void registerPhotonDocSerializer(DatabaseProperties dbProperties) {
         final var module = new SimpleModule("PhotonDocSerializer",
                 new Version(1, 0, 0, null, null, null));
-        module.addSerializer(PhotonDoc.class, new PhotonDocSerializer(languages, extraTags));
+        module.addSerializer(PhotonDoc.class, new PhotonDocSerializer(dbProperties));
 
         ((JacksonJsonpMapper) client._transport().jsonpMapper()).objectMapper().registerModule(module);
     }

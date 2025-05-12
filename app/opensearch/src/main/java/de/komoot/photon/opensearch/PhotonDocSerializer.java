@@ -3,31 +3,21 @@ package de.komoot.photon.opensearch;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
-import de.komoot.photon.ConfigExtraTags;
-import de.komoot.photon.Constants;
-import de.komoot.photon.PhotonDoc;
-import de.komoot.photon.Utils;
+import de.komoot.photon.*;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.io.geojson.GeoJsonWriter;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 public class PhotonDocSerializer extends StdSerializer<PhotonDoc> {
-    // Versioning of the json output format produced. This version appears
-    // in JSON dumps and allows to track changes.
-    public static final String FORMAT_VERSION = "1.0.0";
+    private final DatabaseProperties dbProperties;
 
-    private final String[] languages;
-    private final ConfigExtraTags extraTags;
-
-    public PhotonDocSerializer(String[] languages, ConfigExtraTags extraTags) {
+    public PhotonDocSerializer(DatabaseProperties dbProperties) {
         super(PhotonDoc.class);
-        this.languages = languages;
-        this.extraTags = extraTags;
+        this.dbProperties = dbProperties;
     }
 
     @Override
@@ -71,14 +61,14 @@ public class PhotonDocSerializer extends StdSerializer<PhotonDoc> {
             gen.writeStringField("postcode", value.getPostcode());
         }
 
-        writeName(gen, value, languages);
+        writeName(gen, value);
 
         for (var entry : value.getAddressParts().keySet()) {
             Map<String, String> fNames = new HashMap<>();
 
             value.copyAddressName(fNames, "default", entry, "name");
 
-            for (String language : languages) {
+            for (String language : dbProperties.getLanguages()) {
                 value.copyAddressName(fNames, language, entry, "name:" + language);
             }
 
@@ -90,19 +80,19 @@ public class PhotonDocSerializer extends StdSerializer<PhotonDoc> {
             gen.writeStringField(Constants.COUNTRYCODE, countryCode);
         }
 
-        writeContext(gen, value.getContextByLanguage(languages));
-        extraTags.writeFilteredExtraTags(gen, "extra", value.getExtratags());
+        writeContext(gen, value.getContextByLanguage(dbProperties.getLanguages()));
+        dbProperties.configExtraTags().writeFilteredExtraTags(gen, "extra", value.getExtratags());
         writeExtent(gen, value.getBbox());
 
         gen.writeEndObject();
     }
 
-    private void writeName(JsonGenerator gen, PhotonDoc doc, String[] languages) throws IOException {
+    private void writeName(JsonGenerator gen, PhotonDoc doc) throws IOException {
         Map<String, String> fNames = new HashMap<>();
 
         doc.copyName(fNames, "default", "name");
 
-        for (String language : languages) {
+        for (String language : dbProperties.getLanguages()) {
             doc.copyName(fNames, language, "name:" + language);
         }
 

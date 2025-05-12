@@ -1,6 +1,7 @@
 package de.komoot.photon.elasticsearch;
 
 import de.komoot.photon.Constants;
+import de.komoot.photon.DatabaseProperties;
 import de.komoot.photon.PhotonDoc;
 import de.komoot.photon.ConfigExtraTags;
 import de.komoot.photon.nominatim.model.AddressType;
@@ -12,14 +13,13 @@ import org.locationtech.jts.io.geojson.GeoJsonWriter;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 import static de.komoot.photon.Utils.buildClassificationString;
 
 public class PhotonDocConverter {
-    public static XContentBuilder convert(PhotonDoc doc, String[] languages, ConfigExtraTags extraTags) throws IOException {
+    public static XContentBuilder convert(PhotonDoc doc, DatabaseProperties dbProperties) throws IOException {
         final AddressType atype = doc.getAddressType();
         XContentBuilder builder = XContentFactory.jsonBuilder().startObject()
                 .field(Constants.OSM_ID, doc.getOsmId())
@@ -60,14 +60,14 @@ public class PhotonDocConverter {
             builder.field("postcode", doc.getPostcode());
         }
 
-        writeName(builder, doc, languages);
+        writeName(builder, doc, dbProperties.getLanguages());
 
         for (AddressType entry : doc.getAddressParts().keySet()) {
             Map<String, String> fNames = new HashMap<>();
 
             doc.copyAddressName(fNames, "default", entry, "name");
 
-            for (String language : languages) {
+            for (String language : dbProperties.getLanguages()) {
                 doc.copyAddressName(fNames, language, entry, "name:" + language);
             }
 
@@ -77,8 +77,8 @@ public class PhotonDocConverter {
         String countryCode = doc.getCountryCode();
         if (countryCode != null)
             builder.field(Constants.COUNTRYCODE, countryCode);
-        writeContext(builder, doc.getContextByLanguage(languages));
-        writeExtraTags(builder, extraTags.filterExtraTags(doc.getExtratags()));
+        writeContext(builder, doc.getContextByLanguage(dbProperties.getLanguages()));
+        writeExtraTags(builder, dbProperties.configExtraTags().filterExtraTags(doc.getExtratags()));
         writeExtent(builder, doc.getBbox());
 
         builder.endObject();

@@ -108,14 +108,15 @@ public class App {
      * Take nominatim data and dump it to a Json file.
      */
     private static void startJsonDump(CommandLineArgs args) {
+        final var dbProps = args.getDatabaseProperties();
+
         try {
+            final var connector = new NominatimImporter(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword(), false);
+            dbProps.setImportDate(connector.getLastImportDate());
+
             final String filename = args.getJsonDump();
-            final JsonDumper jsonDumper = new JsonDumper(filename, args.getLanguages(), args.getExtraTags());
-
-            final var connector = new NominatimImporter(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword(), args.getImportGeometryColumn());
-
-            jsonDumper.writeHeader(connector.getLastImportDate(),
-                                   connector.loadCountryNames());
+            final JsonDumper jsonDumper = new JsonDumper(filename, dbProps);
+            jsonDumper.writeHeader(connector.loadCountryNames());
 
             final var importThread = new ImportThread(jsonDumper);
             try {
@@ -134,18 +135,17 @@ public class App {
      * Read all data from a Nominatim database and import it into a Photon database.
      */
     private static void startNominatimImport(CommandLineArgs args, Server esServer) {
-        final var languages = args.getLanguages();
-        DatabaseProperties dbProperties;
+        final var dbProperties = args.getDatabaseProperties();
 
         try {
-            LOGGER.info("Reinitializing database index with languages {}.", String.join(",", languages));
-            dbProperties = esServer.recreateIndex(args.getLanguages(), null, args.getSupportStructuredQueries(), args.getImportGeometryColumn());
+            LOGGER.info("Reinitializing database index with languages {}.", String.join(",", dbProperties.getLanguages()));
+            esServer.recreateIndex(dbProperties);
         } catch (IOException ex) {
             LOGGER.error("Cannot initialize database", ex);
             return;
         }
 
-        final var importThread = new ImportThread(esServer.createImporter(languages, args.getExtraTags()));
+        final var importThread = new ImportThread(esServer.createImporter(dbProperties));
 
         try {
             Date importDate;
@@ -271,12 +271,16 @@ public class App {
     /**
      * Prepare Nominatim updater.
      */
-    private static NominatimUpdater setupNominatimUpdater(CommandLineArgs args, Server server)throws IOException {
+    private static NominatimUpdater setupNominatimUpdater(CommandLineArgs args, Server server) throws IOException {
         // Get database properties and ensure that the version is compatible.
         DatabaseProperties dbProperties = server.loadFromDatabase();
 
+        if (args.isExtraTagsSet()) {
+            dbProperties.putConfigExtraTags(args.getExtraTags());
+        }
+
         NominatimUpdater nominatimUpdater = new NominatimUpdater(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword(), args.getImportGeometryColumn());
-        nominatimUpdater.setUpdater(server.createUpdater(dbProperties.getLanguages(), args.getExtraTags()));
+        nominatimUpdater.setUpdater(server.createUpdater(dbProperties));
         return nominatimUpdater;
     }
 

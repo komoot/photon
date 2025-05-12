@@ -21,9 +21,6 @@ import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class QueryFilterTagValueTest extends ESBaseTester {
-    @TempDir
-    private static Path instanceTestDirectory;
-
     private static final String[] TAGS = new String[]{"tourism", "attraction",
                                                       "tourism", "hotel",
                                                       "tourism", "museum",
@@ -35,8 +32,8 @@ class QueryFilterTagValueTest extends ESBaseTester {
                                                       "railway", "station"};
 
     @BeforeAll
-    void setUp() throws Exception {
-        setUpES(instanceTestDirectory, false, "en", "de", "fr");
+    void setUp(@TempDir Path dataDirectory) throws Exception {
+        setUpES(dataDirectory);
         Importer instance = makeImporter();
         double lon = 13.38886;
         double lat = 52.51704;

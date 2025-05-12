@@ -1,5 +1,6 @@
 package de.komoot.photon.query;
 
+import org.junit.jupiter.api.io.TempDir;
 import org.locationtech.jts.geom.Coordinate;
 import de.komoot.photon.ESBaseTester;
 import de.komoot.photon.Importer;
@@ -11,6 +12,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,8 +26,8 @@ import static org.junit.jupiter.api.Assertions.*;
 class QueryRelevanceTest extends ESBaseTester {
 
     @BeforeEach
-    void setup() throws IOException {
-        setUpES();
+    void setup(@TempDir Path dataDirectory) throws IOException {
+        setUpES(dataDirectory);
     }
 
     private PhotonDoc createDoc(String key, String value, long id, String... names) {

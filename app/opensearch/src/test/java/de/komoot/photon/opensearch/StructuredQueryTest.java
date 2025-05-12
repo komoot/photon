@@ -11,6 +11,7 @@ import de.komoot.photon.searcher.StructuredSearchHandler;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.io.TempDir;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.HashMap;
@@ -31,9 +32,6 @@ public class StructuredQueryTest extends ESBaseTester {
     private static final String STREET = "Some street";
     public static final String DISTRICT_POST_CODE = "12346";
 
-    @TempDir
-    private static Path instanceTestDirectory;
-
     private static int getRank(AddressType type) {
         for (int i = 0; i < 50; ++i) {
             if (type.coversRank(i)) {
@@ -44,9 +42,11 @@ public class StructuredQueryTest extends ESBaseTester {
         return 99;
     }
 
-    @BeforeEach
-    void setUp() throws Exception {
-        setUpES(instanceTestDirectory, false, LANGUAGE, "de", "fr");
+    @BeforeAll
+    void setUp(@TempDir Path dataDirectory) throws Exception {
+        getProperties().setLanguages(new String[]{LANGUAGE, "de", "fr"});
+        getProperties().setSupportStructuredQueries(true);
+        setUpES(dataDirectory);
         Importer instance = makeImporter();
 
         var country = new PhotonDoc(0, "R", 0, "place", "country")
@@ -109,6 +109,12 @@ public class StructuredQueryTest extends ESBaseTester {
         instance.add(List.of(busStop));
         instance.finish();
         refresh();
+    }
+
+    @AfterAll
+    @Override
+    public void tearDown() throws IOException {
+        super.tearDown();
     }
 
     @Test

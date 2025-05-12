@@ -179,21 +179,14 @@ public class Server {
 
     }
 
-    public DatabaseProperties recreateIndex(String[] languages, Date importDate, boolean supportStructuredQueries, boolean supportGeometries) throws IOException {
+    public void recreateIndex(DatabaseProperties dbProperties) throws IOException {
         deleteIndex();
 
         loadIndexSettings().createIndex(esClient, PhotonIndex.NAME);
 
-        createAndPutIndexMapping(languages, supportStructuredQueries);
-
-        DatabaseProperties dbProperties = new DatabaseProperties()
-            .setLanguages(languages)
-            .setImportDate(importDate)
-            .setSupportGeometries(supportGeometries);
+        createAndPutIndexMapping(dbProperties.getLanguages(), dbProperties.getSupportStructuredQueries());
 
         saveToDatabase(dbProperties);
-
-        return dbProperties;
     }
 
     private void createAndPutIndexMapping(String[] languages, boolean supportStructuredQueries)
@@ -264,7 +257,6 @@ public class Server {
     public DatabaseProperties loadFromDatabase() {
         GetResponse response = esClient.prepareGet(PhotonIndex.NAME, PhotonIndex.TYPE, PROPERTY_DOCUMENT_ID).execute().actionGet();
 
-        // We are currently at the database version where versioning was introduced.
         if (!response.isExists()) {
             throw new UsageException("Cannot find database properties. Your database version is too old. Please reimport.");
         }
@@ -275,31 +267,27 @@ public class Server {
             throw new UsageException("Found database properties but no '" + BASE_FIELD +"' field. Database corrupt?");
         }
 
-        String version = properties.getOrDefault(FIELD_VERSION, "");
-        if (!DATABASE_VERSION.equals(version)) {
-            LOGGER.error("Database has incompatible version '{}'. Expected: {}",
-                         version, DATABASE_VERSION);
-            throw new UsageException("Incompatible database.");
-        }
+        final var dbProps = new DatabaseProperties();
 
-        String langString = properties.get(FIELD_LANGUAGES);
+        dbProps.setVersion(properties.get(FIELD_VERSION));
+
+        final String langString = properties.get(FIELD_LANGUAGES);
+        dbProps.setLanguages(langString == null ? null : langString.split(","));
 
         String importDateString = properties.get(FIELD_IMPORT_DATE);
+        dbProps.setImportDate(importDateString == null ? null : Date.from(Instant.parse(importDateString)));
 
-        String supportGeometries = properties.get(FIELD_SUPPORT_GEOMETRIES);
+        dbProps.setSupportGeometries(Boolean.parseBoolean(properties.get(FIELD_SUPPORT_GEOMETRIES)));
 
-        return new DatabaseProperties(langString == null ? null : langString.split(","),
-                importDateString == null ? null : Date.from(Instant.parse(importDateString)),
-                false,
-                Boolean.parseBoolean(supportGeometries));
+        return dbProps;
     }
 
-    public Importer createImporter(String[] languages, ConfigExtraTags extraTags) {
-        return new de.komoot.photon.elasticsearch.Importer(esClient, languages, extraTags);
+    public Importer createImporter(DatabaseProperties dbProperties) {
+        return new de.komoot.photon.elasticsearch.Importer(esClient, dbProperties);
     }
 
-    public Updater createUpdater(String[] languages, ConfigExtraTags extraTags) {
-        return new de.komoot.photon.elasticsearch.Updater(esClient, languages, extraTags);
+    public Updater createUpdater(DatabaseProperties dbProperties) {
+        return new de.komoot.photon.elasticsearch.Updater(esClient, dbProperties);
     }
 
     public SearchHandler createSearchHandler(String[] languages, int queryTimeoutSec) {

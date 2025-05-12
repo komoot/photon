@@ -23,12 +23,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class QueryReverseTest extends ESBaseTester {
-    @TempDir
-    private static Path instanceTestDirectory;
-
     @BeforeAll
-    void setup() throws IOException, ParseException {
-        setUpES(instanceTestDirectory, false, "en");
+    void setup(@TempDir Path dataDirectory) throws IOException, ParseException {
+        setUpES(dataDirectory);
 
         Importer instance = makeImporter();
         instance.add(List.of(createDoc(10,10, 100, 100, "place", "house")));

@@ -26,9 +26,6 @@ import org.locationtech.jts.io.ParseException;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class QueryReverseFilterTagValueTest extends ESBaseTester {
-    @TempDir
-    private static Path instanceTestDirectory;
-
     private static final String[] TAGS = new String[]{"tourism", "attraction",
                                                       "tourism", "hotel",
                                                       "tourism", "museum",
@@ -40,8 +37,8 @@ class QueryReverseFilterTagValueTest extends ESBaseTester {
                                                       "railway", "station"};
 
     @BeforeAll
-    void setup() throws IOException, ParseException {
-        setUpES(instanceTestDirectory, false, "en", "de", "fr");
+    void setup(@TempDir Path dataDirectory) throws IOException, ParseException {
+        setUpES(dataDirectory);
         Importer instance = makeImporter();
         double lon = 13.38886;
         double lat = 52.51704;
