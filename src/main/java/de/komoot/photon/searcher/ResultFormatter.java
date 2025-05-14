@@ -1,5 +1,6 @@
 package de.komoot.photon.searcher;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -8,7 +9,7 @@ import java.util.List;
 public interface ResultFormatter {
 
     String convert(List<PhotonResult> results, String language,
-                   boolean withGeometry, boolean withDebugInfo, String queryDebugInfo);
+                   boolean withGeometry, boolean withDebugInfo, String queryDebugInfo) throws IOException;
 
     String formatError(String msg);
 }

@@ -10,6 +10,9 @@ import de.komoot.photon.searcher.StreetDupesRemover;
 import spark.Request;
 import spark.Response;
 import spark.RouteImpl;
+import spark.Spark;
+
+import java.io.IOException;
 
 import static spark.Spark.halt;
 
@@ -54,8 +57,12 @@ public class GenericSearchHandler<T extends RequestBase> extends RouteImpl {
             debugInfo = requestHandler.dumpQuery(searchRequest);
         }
 
-        return formatter.convert(
-                results, searchRequest.getLanguage(), searchRequest.getReturnGeometry(),
-                searchRequest.getDebug(), debugInfo);
+        try {
+            return formatter.convert(
+                    results, searchRequest.getLanguage(), searchRequest.getReturnGeometry(),
+                    searchRequest.getDebug(), debugInfo);
+        } catch (IOException e) {
+            throw Spark.halt(400, "{\"message\": \"Error creating json.\"}");
+        }
     }
 }
