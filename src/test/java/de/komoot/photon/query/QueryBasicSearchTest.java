@@ -41,7 +41,7 @@ class QueryBasicSearchTest extends ESBaseTester {
     }
 
     private List<PhotonResult> search(String query) {
-        return getServer().createSearchHandler(new String[]{"en"}, 1).search(new PhotonRequest(query, "en"));
+        return getServer().createSearchHandler(new String[]{"en"}, 1).search(new SimpleSearchRequest(query, "en"));
     }
 
 

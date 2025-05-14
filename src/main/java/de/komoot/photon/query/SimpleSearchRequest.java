@@ -3,10 +3,10 @@ package de.komoot.photon.query;
 /**
  * Collection of query parameters for a search request.
  */
-public class PhotonRequest extends PhotonRequestBase {
+public class SimpleSearchRequest extends SearchRequestBase {
     private final String query;
 
-    public PhotonRequest(String query, String language) {
+    public SimpleSearchRequest(String query, String language) {
         super(language);
         this.query = query;
     }

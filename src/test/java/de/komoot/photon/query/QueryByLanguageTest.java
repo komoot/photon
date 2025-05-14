@@ -47,7 +47,7 @@ class QueryByLanguageTest extends ESBaseTester {
     }
 
     private List<PhotonResult> search(String query, String lang) {
-        return getServer().createSearchHandler(languageList, 1).search(new PhotonRequest(query, lang));
+        return getServer().createSearchHandler(languageList, 1).search(new SimpleSearchRequest(query, lang));
     }
 
     @Test

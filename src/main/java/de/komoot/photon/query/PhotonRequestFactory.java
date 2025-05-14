@@ -9,7 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 
 /**
- * Factory that creates a {@link PhotonRequest} from a {@link Request web request}
+ * Factory that creates a {@link SimpleSearchRequest} from a {@link Request web request}
  */
 public class PhotonRequestFactory {
     private final RequestLanguageResolver languageResolver;
@@ -37,7 +37,7 @@ public class PhotonRequestFactory {
         this.supportGeometries = supportGeometries;
     }
 
-    public StructuredPhotonRequest createStructured(Request webRequest) throws BadRequestException {
+    public StructuredSearchRequest createStructured(Request webRequest) throws BadRequestException {
         boolean hasAddressQueryParam = false;
         for (String queryParam : webRequest.queryParams()) {
             if (!STRUCTURED_REQUEST_QUERY_PARAMS.contains(queryParam))
@@ -51,7 +51,7 @@ public class PhotonRequestFactory {
         if (!hasAddressQueryParam)
             throw new BadRequestException(400, "at least one of the parameters " + STRUCTURED_ADDRESS_FIELDS + " is required.");
 
-        StructuredPhotonRequest result = new StructuredPhotonRequest(languageResolver.resolveRequestedLanguage(webRequest));
+        StructuredSearchRequest result = new StructuredSearchRequest(languageResolver.resolveRequestedLanguage(webRequest));
         result.setCountryCode(webRequest.queryParams("countrycode"));
         result.setState(webRequest.queryParams("state"));
         result.setCounty(webRequest.queryParams("county"));
@@ -67,7 +67,7 @@ public class PhotonRequestFactory {
         return result;
     }
 
-    public PhotonRequest create(Request webRequest) throws BadRequestException {
+    public SimpleSearchRequest create(Request webRequest) throws BadRequestException {
         for (String queryParam : webRequest.queryParams())
             if (!REQUEST_QUERY_PARAMS.contains(queryParam))
                 throw new BadRequestException(400, "unknown query parameter '" + queryParam + "'.  Allowed parameters are: " + REQUEST_QUERY_PARAMS);
@@ -77,14 +77,14 @@ public class PhotonRequestFactory {
             throw new BadRequestException(400, "missing search term 'q': /?q=berlin");
         }
 
-        PhotonRequest request = new PhotonRequest(query, languageResolver.resolveRequestedLanguage(webRequest));
+        SimpleSearchRequest request = new SimpleSearchRequest(query, languageResolver.resolveRequestedLanguage(webRequest));
 
         addCommonParameters(webRequest, request);
 
         return request;
     }
 
-    private void addCommonParameters(Request webRequest, PhotonRequestBase request) throws BadRequestException {
+    private void addCommonParameters(Request webRequest, SearchRequestBase request) throws BadRequestException {
         Integer limit = parseInt(webRequest, "limit");
         if (limit != null) {
             request.setLimit(Integer.max(Integer.min(limit, maxResults), 1));

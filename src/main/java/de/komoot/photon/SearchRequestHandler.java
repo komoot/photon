@@ -1,7 +1,7 @@
 package de.komoot.photon;
 
 import de.komoot.photon.query.BadRequestException;
-import de.komoot.photon.query.PhotonRequest;
+import de.komoot.photon.query.SimpleSearchRequest;
 import de.komoot.photon.query.PhotonRequestFactory;
 import de.komoot.photon.searcher.*;
 import spark.Request;
@@ -32,34 +32,34 @@ public class SearchRequestHandler extends RouteImpl {
 
     @Override
     public String handle(Request request, Response response) {
-        PhotonRequest photonRequest;
+        SimpleSearchRequest simpleSearchRequest;
         try {
-            photonRequest = photonRequestFactory.create(request);
+            simpleSearchRequest = photonRequestFactory.create(request);
         } catch (BadRequestException e) {
             throw halt(e.getHttpStatus(), formatter.formatError(e.getMessage()));
         }
 
-        if (!supportGeometries && photonRequest.getReturnGeometry()) {
+        if (!supportGeometries && simpleSearchRequest.getReturnGeometry()) {
             throw halt(400, formatter.formatError("You're explicitly requesting a geometry, but geometries are not imported!"));
         }
 
-        List<PhotonResult> results = requestHandler.search(photonRequest);
+        List<PhotonResult> results = requestHandler.search(simpleSearchRequest);
 
         // Further filtering
-        results = new StreetDupesRemover(photonRequest.getLanguage()).execute(results);
+        results = new StreetDupesRemover(simpleSearchRequest.getLanguage()).execute(results);
 
         // Restrict to the requested limit.
-        if (results.size() > photonRequest.getLimit()) {
-            results = results.subList(0, photonRequest.getLimit());
+        if (results.size() > simpleSearchRequest.getLimit()) {
+            results = results.subList(0, simpleSearchRequest.getLimit());
         }
 
         String debugInfo = null;
-        if (photonRequest.getDebug()) {
-            debugInfo = requestHandler.dumpQuery(photonRequest);
+        if (simpleSearchRequest.getDebug()) {
+            debugInfo = requestHandler.dumpQuery(simpleSearchRequest);
         }
 
         return formatter.convert(
-                results, photonRequest.getLanguage(), photonRequest.getReturnGeometry(),
-                photonRequest.getDebug(), debugInfo);
+                results, simpleSearchRequest.getLanguage(), simpleSearchRequest.getReturnGeometry(),
+                simpleSearchRequest.getDebug(), debugInfo);
     }
 }

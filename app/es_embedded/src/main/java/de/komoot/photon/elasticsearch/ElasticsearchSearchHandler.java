@@ -1,6 +1,6 @@
 package de.komoot.photon.elasticsearch;
 
-import de.komoot.photon.query.PhotonRequest;
+import de.komoot.photon.query.SimpleSearchRequest;
 import de.komoot.photon.searcher.PhotonResult;
 import de.komoot.photon.searcher.SearchHandler;
 import org.elasticsearch.action.search.SearchResponse;
@@ -29,7 +29,7 @@ public class ElasticsearchSearchHandler implements SearchHandler {
     }
 
     @Override
-    public List<PhotonResult> search(PhotonRequest photonRequest) {
+    public List<PhotonResult> search(SimpleSearchRequest photonRequest) {
         PhotonQueryBuilder queryBuilder = buildQuery(photonRequest, false);
 
         // for the case of deduplication we need a bit more results, #300
@@ -50,11 +50,11 @@ public class ElasticsearchSearchHandler implements SearchHandler {
         return ret;
     }
 
-    public String dumpQuery(PhotonRequest photonRequest) {
+    public String dumpQuery(SimpleSearchRequest photonRequest) {
         return buildQuery(photonRequest, lastLenient).buildQuery().toString();
     }
 
-   public PhotonQueryBuilder buildQuery(PhotonRequest photonRequest, boolean lenient) {
+   public PhotonQueryBuilder buildQuery(SimpleSearchRequest photonRequest, boolean lenient) {
        lastLenient = lenient;
         return PhotonQueryBuilder.
                 builder(photonRequest.getQuery(), photonRequest.getLanguage(), supportedLanguages, lenient).

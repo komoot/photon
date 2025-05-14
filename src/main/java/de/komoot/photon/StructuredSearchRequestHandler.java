@@ -2,7 +2,7 @@ package de.komoot.photon;
 
 import de.komoot.photon.query.BadRequestException;
 import de.komoot.photon.query.PhotonRequestFactory;
-import de.komoot.photon.query.StructuredPhotonRequest;
+import de.komoot.photon.query.StructuredSearchRequest;
 import de.komoot.photon.searcher.*;
 import spark.Request;
 import spark.Response;
@@ -29,7 +29,7 @@ public class StructuredSearchRequestHandler extends RouteImpl {
 
     @Override
     public String handle(Request request, Response response) {
-        StructuredPhotonRequest photonRequest;
+        StructuredSearchRequest photonRequest;
         try {
             photonRequest = photonRequestFactory.createStructured(request);
         } catch (BadRequestException e) {

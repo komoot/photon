@@ -9,7 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class PhotonRequestBase
+public class SearchRequestBase
 {
     private final String language;
     private int limit = 15;
@@ -23,7 +23,7 @@ public class PhotonRequestBase
     private final List<TagFilter> osmTagFilters = new ArrayList<>(1);
     private Set<String> layerFilters = new HashSet<>(1);
 
-    protected PhotonRequestBase(String language)
+    protected SearchRequestBase(String language)
     {
         this.language = language;
     }

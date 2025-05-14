@@ -19,7 +19,7 @@ import static org.junit.jupiter.params.provider.Arguments.arguments;
 /**
  * Tests for correct parsing of the query parameters into a PhotonRequest.
  */
-class PhotonRequestFactoryTest {
+class SimpleSearchRequestFactoryTest {
 
     private Request createRequestWithQueryParams(String... queryParams) {
         Request mockRequest = Mockito.mock(Request.class);
@@ -55,7 +55,7 @@ class PhotonRequestFactoryTest {
         Mockito.when(mockRequest.queryMap("layer")).thenReturn(mockQueryParamsMap);
     }
 
-    private PhotonRequest createPhotonRequest(Request mockRequest) throws BadRequestException {
+    private SimpleSearchRequest createPhotonRequest(Request mockRequest) throws BadRequestException {
         PhotonRequestFactory factory = new PhotonRequestFactory(Collections.singletonList("en"), "en", 10, true);
         return factory.create(mockRequest);
     }
@@ -63,57 +63,57 @@ class PhotonRequestFactoryTest {
     @Test
     void testWithLocationBiasAndLimit() throws Exception {
         Request mockRequest = createRequestWithQueryParams("q", "berlin", "lon", "-87", "lat", "41", "limit", "5");
-        PhotonRequest photonRequest = createPhotonRequest(mockRequest);
+        SimpleSearchRequest simpleSearchRequest = createPhotonRequest(mockRequest);
 
         assertAll("request",
-                () -> assertEquals("berlin", photonRequest.getQuery()),
-                () -> assertEquals(-87, photonRequest.getLocationForBias().getX(), 0),
-                () -> assertEquals(41, photonRequest.getLocationForBias().getY(), 0),
-                () -> assertEquals(5, photonRequest.getLimit())
+                () -> assertEquals("berlin", simpleSearchRequest.getQuery()),
+                () -> assertEquals(-87, simpleSearchRequest.getLocationForBias().getX(), 0),
+                () -> assertEquals(41, simpleSearchRequest.getLocationForBias().getY(), 0),
+                () -> assertEquals(5, simpleSearchRequest.getLimit())
         );
     }
 
     @Test
     void testWithEmptyLimit() throws Exception {
         Request mockRequest = createRequestWithQueryParams("q", "berlin", "limit", "");
-        PhotonRequest photonRequest = createPhotonRequest(mockRequest);
+        SimpleSearchRequest simpleSearchRequest = createPhotonRequest(mockRequest);
 
-        assertEquals(15, photonRequest.getLimit());
+        assertEquals(15, simpleSearchRequest.getLimit());
     }
 
     @Test
     void testWithoutLocationBias() throws Exception {
         Request mockRequest = createRequestWithQueryParams("q", "berlin");
-        PhotonRequest photonRequest = createPhotonRequest(mockRequest);
+        SimpleSearchRequest simpleSearchRequest = createPhotonRequest(mockRequest);
 
         assertAll("request",
-                () -> assertEquals("berlin", photonRequest.getQuery()),
-                () -> assertNull(photonRequest.getLocationForBias())
+                () -> assertEquals("berlin", simpleSearchRequest.getQuery()),
+                () -> assertNull(simpleSearchRequest.getLocationForBias())
         );
     }
 
     @Test
     void testInfiniteScale() throws Exception {
         Request mockRequest = createRequestWithQueryParams("q", "berlin", "location_bias_scale", "Infinity");
-        PhotonRequest photonRequest = createPhotonRequest(mockRequest);
+        SimpleSearchRequest simpleSearchRequest = createPhotonRequest(mockRequest);
 
-        assertEquals(1.0, photonRequest.getScaleForBias());
+        assertEquals(1.0, simpleSearchRequest.getScaleForBias());
     }
 
     @Test
     void testEmptyScale() throws Exception {
         Request mockRequest = createRequestWithQueryParams("q", "berlin", "location_bias_scale", "");
-        PhotonRequest photonRequest = createPhotonRequest(mockRequest);
+        SimpleSearchRequest simpleSearchRequest = createPhotonRequest(mockRequest);
 
-        assertEquals(0.2, photonRequest.getScaleForBias());
+        assertEquals(0.2, simpleSearchRequest.getScaleForBias());
     }
 
     @Test
     void testWithDebug() throws Exception {
         Request mockRequest = createRequestWithQueryParams("q", "berlin", "debug", "1");
-        PhotonRequest photonRequest = createPhotonRequest(mockRequest);
+        SimpleSearchRequest simpleSearchRequest = createPhotonRequest(mockRequest);
 
-        assertEquals(true, photonRequest.getDebug());
+        assertEquals(true, simpleSearchRequest.getDebug());
     }
 
     @ParameterizedTest
@@ -151,9 +151,9 @@ class PhotonRequestFactoryTest {
     void testTagFilters() throws Exception {
         Request mockRequest = createRequestWithQueryParams("q", "new york");
         requestWithOsmFilters(mockRequest, "foo", ":!bar");
-        PhotonRequest photonRequest = createPhotonRequest(mockRequest);
+        SimpleSearchRequest simpleSearchRequest = createPhotonRequest(mockRequest);
 
-        List<TagFilter> result = photonRequest.getOsmTagFilters();
+        List<TagFilter> result = simpleSearchRequest.getOsmTagFilters();
 
         assertEquals(2, result.size());
 
@@ -174,27 +174,27 @@ class PhotonRequestFactoryTest {
     @Test
     void testWithBboxFilter() throws Exception {
         Request mockRequest = createRequestWithQueryParams("q", "hanover", "bbox", "9.6,52.3,9.8,52.4");
-        PhotonRequest photonRequest = createPhotonRequest(mockRequest);
+        SimpleSearchRequest simpleSearchRequest = createPhotonRequest(mockRequest);
 
-        assertEquals(new Envelope(9.6, 9.8, 52.3, 52.4), photonRequest.getBbox());
+        assertEquals(new Envelope(9.6, 9.8, 52.3, 52.4), simpleSearchRequest.getBbox());
     }
 
     @Test
     void testWithLayerFilters() throws Exception {
         Request mockRequest = createRequestWithQueryParams("q", "new york");
         requestWithLayers(mockRequest, "city", "locality");
-        PhotonRequest photonRequest = createPhotonRequest(mockRequest);
+        SimpleSearchRequest simpleSearchRequest = createPhotonRequest(mockRequest);
 
-        assertEquals(new HashSet<>(Arrays.asList("city", "locality")), photonRequest.getLayerFilters());
+        assertEquals(new HashSet<>(Arrays.asList("city", "locality")), simpleSearchRequest.getLayerFilters());
     }
 
     @Test
     void testWithDuplicatedLayerFilters() throws Exception {
         Request mockRequest = createRequestWithQueryParams("q", "new york");
         requestWithLayers(mockRequest, "city", "locality", "city");
-        PhotonRequest photonRequest = createPhotonRequest(mockRequest);
+        SimpleSearchRequest simpleSearchRequest = createPhotonRequest(mockRequest);
 
-        assertEquals(new HashSet<>(Arrays.asList("city", "locality")), photonRequest.getLayerFilters());
+        assertEquals(new HashSet<>(Arrays.asList("city", "locality")), simpleSearchRequest.getLayerFilters());
     }
 
     @Test
@@ -214,16 +214,16 @@ class PhotonRequestFactoryTest {
     @Test
     void testWithGeometry() throws Exception {
         Request mockRequest = createRequestWithQueryParams("q", "berlin");
-        PhotonRequest photonRequest = createPhotonRequest(mockRequest);
+        SimpleSearchRequest simpleSearchRequest = createPhotonRequest(mockRequest);
 
-        assertTrue(photonRequest.getReturnGeometry());
+        assertTrue(simpleSearchRequest.getReturnGeometry());
     }
 
     @Test
     void testWithoutGeometry() throws Exception {
         Request mockRequest = createRequestWithQueryParams("q", "berlin", "geometry", "false");
-        PhotonRequest photonRequest = createPhotonRequest(mockRequest);
+        SimpleSearchRequest simpleSearchRequest = createPhotonRequest(mockRequest);
 
-        assertFalse(photonRequest.getReturnGeometry());
+        assertFalse(simpleSearchRequest.getReturnGeometry());
     }
 }

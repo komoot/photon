@@ -41,10 +41,10 @@ class QueryRelevanceTest extends ESBaseTester {
     }
 
     private List<PhotonResult> search(String query) {
-        return getServer().createSearchHandler(new String[]{"en"}, 1).search(new PhotonRequest(query, "en"));
+        return getServer().createSearchHandler(new String[]{"en"}, 1).search(new SimpleSearchRequest(query, "en"));
     }
 
-    private List<PhotonResult> search(PhotonRequest request) {
+    private List<PhotonResult> search(SimpleSearchRequest request) {
         return getServer().createSearchHandler(new String[]{"en"}, 1).search(request);
     }
 
@@ -129,9 +129,9 @@ class QueryRelevanceTest extends ESBaseTester {
         assertEquals(1000, results.get(0).get("osm_id"));
     }
 
-    private PhotonRequest createBiasedRequest()
+    private SimpleSearchRequest createBiasedRequest()
     {
-        PhotonRequest result = new PhotonRequest("ham", "en");
+        SimpleSearchRequest result = new SimpleSearchRequest("ham", "en");
         result.setLocationForBias(FACTORY.createPoint(new Coordinate(-9.9, -10)));
         return result;
     }

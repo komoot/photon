@@ -1,6 +1,6 @@
 package de.komoot.photon.searcher;
 
-import de.komoot.photon.query.PhotonRequest;
+import de.komoot.photon.query.SimpleSearchRequest;
 
 import java.util.List;
 
@@ -9,7 +9,7 @@ import java.util.List;
  */
 public interface SearchHandler {
 
-    List<PhotonResult> search(PhotonRequest photonRequest);
+    List<PhotonResult> search(SimpleSearchRequest simpleSearchRequest);
 
-    String dumpQuery(PhotonRequest photonRequest);
+    String dumpQuery(SimpleSearchRequest simpleSearchRequest);
 }

@@ -4,7 +4,7 @@ import de.komoot.photon.*;
 import de.komoot.photon.Importer;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Point;
-import de.komoot.photon.query.PhotonRequest;
+import de.komoot.photon.query.SimpleSearchRequest;
 import de.komoot.photon.searcher.PhotonResult;
 import de.komoot.photon.searcher.SearchHandler;
 import org.junit.jupiter.api.AfterAll;
@@ -75,7 +75,7 @@ class ElasticResultTest  extends ESBaseTester {
     private PhotonResult search(String query) {
         SearchHandler handler = getServer().createSearchHandler(new String[]{"en", "de", "it"}, 1);
 
-        return handler.search(new PhotonRequest(query, "default")).get(0);
+        return handler.search(new SimpleSearchRequest(query, "default")).get(0);
     }
 
 
