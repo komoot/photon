@@ -41,7 +41,10 @@ class QueryRelevanceTest extends ESBaseTester {
     }
 
     private List<PhotonResult> search(String query) {
-        return getServer().createSearchHandler(new String[]{"en"}, 1).search(new SimpleSearchRequest(query, "en"));
+        final var request = new SimpleSearchRequest();
+        request.setQuery(query);
+
+        return getServer().createSearchHandler(new String[]{"en"}, 1).search(request);
     }
 
     private List<PhotonResult> search(SimpleSearchRequest request) {
@@ -131,7 +134,8 @@ class QueryRelevanceTest extends ESBaseTester {
 
     private SimpleSearchRequest createBiasedRequest()
     {
-        SimpleSearchRequest result = new SimpleSearchRequest("ham", "en");
+        SimpleSearchRequest result = new SimpleSearchRequest();
+        result.setQuery("ham");
         result.setLocationForBias(FACTORY.createPoint(new Coordinate(-9.9, -10)));
         return result;
     }

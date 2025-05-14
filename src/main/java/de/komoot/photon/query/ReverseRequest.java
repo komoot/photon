@@ -2,53 +2,21 @@ package de.komoot.photon.query;
 
 import org.locationtech.jts.geom.Point;
 
-import de.komoot.photon.searcher.TagFilter;
-
-import java.io.Serializable;
-import java.util.*;
-
 /**
  * Collection of query parameters for a reverse request.
  */
-public class ReverseRequest implements Serializable {
-    private final Point location;
-    private final String language;
-    private final double radius;
-    private final int limit;
-    private final String queryStringFilter;
-    private final boolean locationDistanceSort;
-    private final Set<String> layerFilters;
-    private final List<TagFilter> osmTagFilters = new ArrayList<>(1);
-    private final boolean debug;
-    private final boolean geometry;
-
-    public ReverseRequest(Point location, String language, double radius, String queryStringFilter, int limit,
-                          boolean locationDistanceSort, Set<String> layerFilter, boolean debug, boolean geometry) {
-        this.location = location;
-        this.language = language;
-        this.radius = radius;
-        this.limit = limit;
-        this.queryStringFilter = queryStringFilter;
-        this.locationDistanceSort = locationDistanceSort;
-        this.layerFilters = layerFilter;
-        this.debug = debug;
-        this.geometry = geometry;
-    }
+public class ReverseRequest extends RequestBase {
+    private Point location;
+    private double radius = 1.0;
+    private String queryStringFilter;
+    private boolean locationDistanceSort = true;
 
     public Point getLocation() {
         return location;
     }
 
-    public String getLanguage() {
-        return language;
-    }
-
     public double getRadius() {
         return radius;
-    }
-
-    public int getLimit() {
-        return limit;
     }
 
     public String getQueryStringFilter() {
@@ -59,24 +27,23 @@ public class ReverseRequest implements Serializable {
         return locationDistanceSort;
     }
 
-    public Set<String> getLayerFilters() {
-        return layerFilters;
+    public void setLocation(Point location) {
+        this.location = location;
     }
 
-    public List<TagFilter> getOsmTagFilters() {
-        return osmTagFilters;
+    public void setRadius(Double radius) {
+        if (radius != null) {
+            this.radius = radius;
+        }
     }
 
-    public boolean getDebug() {
-        return debug;
+    public void setQueryStringFilter(String queryStringFilter) {
+        this.queryStringFilter = queryStringFilter;
     }
 
-    public boolean getGeometry() {
-        return geometry;
-    }
-
-    ReverseRequest addOsmTagFilter(TagFilter filter) {
-        osmTagFilters.add(filter);
-        return this;
+    public void setLocationDistanceSort(Boolean locationDistanceSort) {
+        if (locationDistanceSort != null) {
+            this.locationDistanceSort = locationDistanceSort;
+        }
     }
 }

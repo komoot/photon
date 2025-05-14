@@ -74,8 +74,10 @@ class ElasticResultTest  extends ESBaseTester {
 
     private PhotonResult search(String query) {
         SearchHandler handler = getServer().createSearchHandler(new String[]{"en", "de", "it"}, 1);
+        final var request = new SimpleSearchRequest();
+        request.setQuery(query);
 
-        return handler.search(new SimpleSearchRequest(query, "default")).get(0);
+        return handler.search(request).get(0);
     }
 
 

@@ -16,7 +16,6 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -48,10 +47,9 @@ class QueryReverseFilterLayerTest extends ESBaseTester {
     }
 
     private List<PhotonResult> reverse(String... layers) {
-        Point pt = FACTORY.createPoint(new Coordinate(10, 10));
-
-        Set<String> layerSet = Arrays.stream(layers).collect(Collectors.toSet());
-        ReverseRequest request = new ReverseRequest(pt, "en", 1.0, "", 10, true, layerSet, false, false);
+        ReverseRequest request = new ReverseRequest();
+        request.setLocation(FACTORY.createPoint(new Coordinate(10, 10)));
+        request.addLayerFilters(Arrays.stream(layers).collect(Collectors.toSet()));
 
         return getServer().createReverseHandler(1).reverse(request);
     }

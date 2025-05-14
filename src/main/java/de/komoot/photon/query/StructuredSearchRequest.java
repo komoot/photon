@@ -12,10 +12,6 @@ public class StructuredSearchRequest extends SearchRequestBase {
     private String street;
     private String houseNumber;
 
-    public StructuredSearchRequest(String language) {
-        super(language);
-    }
-
     public boolean getDebug() {
         return false;
     }

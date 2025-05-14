@@ -51,7 +51,8 @@ public class PhotonRequestFactory {
         if (!hasAddressQueryParam)
             throw new BadRequestException(400, "at least one of the parameters " + STRUCTURED_ADDRESS_FIELDS + " is required.");
 
-        StructuredSearchRequest result = new StructuredSearchRequest(languageResolver.resolveRequestedLanguage(webRequest));
+        StructuredSearchRequest result = new StructuredSearchRequest();
+        result.setLanguage(languageResolver.resolveRequestedLanguage(webRequest));
         result.setCountryCode(webRequest.queryParams("countrycode"));
         result.setState(webRequest.queryParams("state"));
         result.setCounty(webRequest.queryParams("county"));
@@ -77,7 +78,9 @@ public class PhotonRequestFactory {
             throw new BadRequestException(400, "missing search term 'q': /?q=berlin");
         }
 
-        SimpleSearchRequest request = new SimpleSearchRequest(query, languageResolver.resolveRequestedLanguage(webRequest));
+        SimpleSearchRequest request = new SimpleSearchRequest();
+        request.setQuery(query);
+        request.setLanguage(languageResolver.resolveRequestedLanguage(webRequest));
 
         addCommonParameters(webRequest, request);
 
@@ -85,17 +88,14 @@ public class PhotonRequestFactory {
     }
 
     private void addCommonParameters(Request webRequest, SearchRequestBase request) throws BadRequestException {
-        Integer limit = parseInt(webRequest, "limit");
-        if (limit != null) {
-            request.setLimit(Integer.max(Integer.min(limit, maxResults), 1));
-        }
+        request.setLimit(parseInt(webRequest, "limit"), maxResults);
         request.setLocationForBias(optionalLocationParamConverter.apply(webRequest));
         request.setBbox(bboxParamConverter.apply(webRequest));
         request.setScale(parseDouble(webRequest, "location_bias_scale"));
         request.setZoom(parseInt(webRequest, "zoom"));
 
         if (webRequest.queryParams("debug") != null) {
-            request.enableDebug();
+            request.setDebug(true);
         }
 
         QueryParamsMap tagFiltersQueryMap = webRequest.queryMap("osm_tag");
@@ -111,7 +111,7 @@ public class PhotonRequestFactory {
 
         QueryParamsMap layerFiltersQueryMap = webRequest.queryMap("layer");
         if (layerFiltersQueryMap.hasValue()) {
-            request.setLayerFilter(layerParamValidator.validate(layerFiltersQueryMap.values()));
+            request.addLayerFilters(layerParamValidator.validate(layerFiltersQueryMap.values()));
         }
 
         // If the database supports geometries, return them by default.

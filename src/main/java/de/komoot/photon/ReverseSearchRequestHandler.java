@@ -53,7 +53,7 @@ public class ReverseSearchRequestHandler extends RouteImpl {
         }
 
         return formatter.convert(
-                results, photonRequest.getLanguage(), photonRequest.getGeometry(),
+                results, photonRequest.getLanguage(), photonRequest.getReturnGeometry(),
                 photonRequest.getDebug(), debugInfo);
     }
 }

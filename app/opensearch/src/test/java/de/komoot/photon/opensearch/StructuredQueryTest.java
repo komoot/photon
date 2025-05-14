@@ -119,7 +119,7 @@ public class StructuredQueryTest extends ESBaseTester {
 
     @Test
     void findsDistrictFuzzy() {
-        var request = new StructuredSearchRequest(LANGUAGE);
+        var request = new StructuredSearchRequest();
         request.setCountryCode(COUNTRY_CODE);
         request.setDistrict(DISTRICT + DISTRICT.charAt(DISTRICT.length() - 1));
 
@@ -129,7 +129,7 @@ public class StructuredQueryTest extends ESBaseTester {
 
     @Test
     void findsDistrictByPostcode() {
-        var request = new StructuredSearchRequest(LANGUAGE);
+        var request = new StructuredSearchRequest();
         request.setCountryCode(COUNTRY_CODE);
         request.setCity(CITY);
         request.setPostCode(DISTRICT_POST_CODE);
@@ -140,7 +140,7 @@ public class StructuredQueryTest extends ESBaseTester {
 
     @Test
     void findsHouseNumberInHamletWithoutStreetName() {
-        var request = new StructuredSearchRequest(LANGUAGE);
+        var request = new StructuredSearchRequest();
         request.setDistrict(HAMLET);
         request.setHouseNumber("2");
 
@@ -153,7 +153,7 @@ public class StructuredQueryTest extends ESBaseTester {
 
     @Test
     void doesNotReturnBusStops() {
-        var request = new StructuredSearchRequest(LANGUAGE);
+        var request = new StructuredSearchRequest();
         request.setCountryCode(COUNTRY_CODE);
         request.setCity(CITY);
         request.setStreet(STREET);
@@ -167,7 +167,7 @@ public class StructuredQueryTest extends ESBaseTester {
 
     @Test
     void returnsOnlyCountryForCountryRequests() {
-        var request = new StructuredSearchRequest(LANGUAGE);
+        var request = new StructuredSearchRequest();
         request.setCountryCode(COUNTRY_CODE);
         StructuredSearchHandler queryHandler = getServer().createStructuredSearchHandler(new String[]{LANGUAGE}, 1);
         var results = queryHandler.search(request);
@@ -178,7 +178,7 @@ public class StructuredQueryTest extends ESBaseTester {
 
     @Test
     void doesNotReturnHousesForCityRequest() {
-        var request = new StructuredSearchRequest(LANGUAGE);
+        var request = new StructuredSearchRequest();
         request.setCountryCode(COUNTRY_CODE);
         request.setCity(CITY);
 
@@ -193,7 +193,7 @@ public class StructuredQueryTest extends ESBaseTester {
 
     @Test
     void testWrongStreet() {
-        var request = new StructuredSearchRequest(LANGUAGE);
+        var request = new StructuredSearchRequest();
         request.setCountryCode(COUNTRY_CODE);
         request.setCity(CITY);
         request.setStreet("totally wrong");
@@ -206,7 +206,7 @@ public class StructuredQueryTest extends ESBaseTester {
 
     @Test
     void testDistrictAsCity() {
-        var request = new StructuredSearchRequest(LANGUAGE);
+        var request = new StructuredSearchRequest();
         request.setCountryCode(COUNTRY_CODE);
         request.setCity(DISTRICT);
         var result = search(request);
@@ -216,7 +216,7 @@ public class StructuredQueryTest extends ESBaseTester {
 
     @Test
     void testWrongHouseNumber() {
-        var request = new StructuredSearchRequest(LANGUAGE);
+        var request = new StructuredSearchRequest();
         request.setCountryCode(COUNTRY_CODE);
         request.setCity(CITY);
         request.setStreet(STREET);
@@ -229,7 +229,7 @@ public class StructuredQueryTest extends ESBaseTester {
 
     @Test
     void testWrongHouseNumberAndWrongStreet() {
-        var request = new StructuredSearchRequest(LANGUAGE);
+        var request = new StructuredSearchRequest();
         request.setCountryCode(COUNTRY_CODE);
         request.setCity(CITY);
         request.setStreet("does not exist");
@@ -242,7 +242,7 @@ public class StructuredQueryTest extends ESBaseTester {
 
     @Test
     void testHouse() {
-        var request = new StructuredSearchRequest(LANGUAGE);
+        var request = new StructuredSearchRequest();
         request.setCountryCode(COUNTRY_CODE);
         request.setCity(CITY);
         request.setStreet(STREET);

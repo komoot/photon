@@ -32,7 +32,10 @@ class QueryByClassificationTest extends ESBaseTester {
     }
 
     private List<PhotonResult> search(String query) {
-        return getServer().createSearchHandler(new String[]{"en"}, 1).search(new SimpleSearchRequest(query, "en"));
+        final var request = new SimpleSearchRequest();
+        request.setQuery(query);
+
+        return getServer().createSearchHandler(new String[]{"en"}, 1).search(request);
     }
 
     private void updateClassification(String key, String value, String... terms) throws IOException {

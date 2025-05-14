@@ -15,7 +15,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.Point;
 
 import de.komoot.photon.ESBaseTester;
 import de.komoot.photon.Importer;
@@ -65,8 +64,10 @@ class QueryReverseFilterTagValueTest extends ESBaseTester {
     }
 
     private List<PhotonResult> reverseWithTags(String[] params) {
-        Point pt = FACTORY.createPoint(new Coordinate(13.38886, 52.51704));
-        ReverseRequest request = new ReverseRequest(pt, "en", 1.0, "", 50, true, new HashSet<>(), false, false);
+        ReverseRequest request = new ReverseRequest();
+        request.setLocation(FACTORY.createPoint(new Coordinate(13.38886, 52.51704)));
+        request.setLimit(50, 50);
+
         for (String param : params) {
             request.addOsmTagFilter(TagFilter.buildOsmTagFilter(param));
         }

@@ -55,9 +55,10 @@ class QueryFilterLayerTest extends ESBaseTester {
     }
 
     private List<PhotonResult> searchWithLayers(String... layers) {
-        SimpleSearchRequest request = new SimpleSearchRequest("berlin", "en");
-        request.setLimit(50);
-        request.setLayerFilter(Arrays.stream(layers).collect(Collectors.toSet()));
+        SimpleSearchRequest request = new SimpleSearchRequest();
+        request.setQuery("berlin");
+        request.setLimit(50, 50);
+        request.addLayerFilters(Arrays.stream(layers).collect(Collectors.toSet()));
 
         return getServer().createSearchHandler(new String[]{"en"}, 1).search(request);
     }

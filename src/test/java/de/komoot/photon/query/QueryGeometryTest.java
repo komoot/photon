@@ -45,7 +45,10 @@ class QueryGeometryTest extends ESBaseTester {
     }
 
     private List<PhotonResult> search(String query) {
-        return getServer().createSearchHandler(new String[]{"en"}, 1).search(new SimpleSearchRequest(query, "en"));
+        final var request = new SimpleSearchRequest();
+        request.setQuery(query);
+
+        return getServer().createSearchHandler(new String[]{"en"}, 1).search(request);
     }
 
 
