@@ -1,15 +1,15 @@
 package de.komoot.photon.searcher;
 
-import de.komoot.photon.query.SimpleSearchRequest;
+import de.komoot.photon.query.RequestBase;
 
 import java.util.List;
 
 /**
  * Interface for a handler of search geocoding requests.
  */
-public interface SearchHandler {
+public interface SearchHandler<T extends RequestBase> {
 
-    List<PhotonResult> search(SimpleSearchRequest simpleSearchRequest);
+    List<PhotonResult> search(T searchRequest);
 
-    String dumpQuery(SimpleSearchRequest simpleSearchRequest);
+    String dumpQuery(T searchRequest);
 }

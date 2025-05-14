@@ -16,7 +16,7 @@ import java.util.List;
 /**
  * Execute a forward lookup on a Elasticsearch database.
  */
-public class ElasticsearchSearchHandler implements SearchHandler {
+public class ElasticsearchSearchHandler implements SearchHandler<SimpleSearchRequest> {
     private final Client client;
     private final String[] supportedLanguages;
     private boolean lastLenient = false;

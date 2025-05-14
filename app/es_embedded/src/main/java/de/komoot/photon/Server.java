@@ -1,10 +1,10 @@
 package de.komoot.photon;
 
-import de.komoot.photon.searcher.StructuredSearchHandler;
-import de.komoot.photon.searcher.ReverseHandler;
-import de.komoot.photon.searcher.SearchHandler;
-import de.komoot.photon.ConfigExtraTags;
 import de.komoot.photon.elasticsearch.*;
+import de.komoot.photon.query.ReverseRequest;
+import de.komoot.photon.query.SimpleSearchRequest;
+import de.komoot.photon.query.StructuredSearchRequest;
+import de.komoot.photon.searcher.SearchHandler;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.TransportClient;
@@ -290,15 +290,15 @@ public class Server {
         return new de.komoot.photon.elasticsearch.Updater(esClient, dbProperties);
     }
 
-    public SearchHandler createSearchHandler(String[] languages, int queryTimeoutSec) {
+    public SearchHandler<SimpleSearchRequest> createSearchHandler(String[] languages, int queryTimeoutSec) {
         return new ElasticsearchSearchHandler(esClient, languages, queryTimeoutSec);
     }
 
-    public StructuredSearchHandler createStructuredSearchHandler(String[] languages, int queryTimeoutSec) {
+    public SearchHandler<StructuredSearchRequest> createStructuredSearchHandler(String[] languages, int queryTimeoutSec) {
         throw new UnsupportedOperationException("Structured queries are not supported for elasticsearch-based Photon. Consider to use OpenSearch.");
     }
 
-    public ReverseHandler createReverseHandler(int queryTimeoutSec) {
+    public SearchHandler<ReverseRequest> createReverseHandler(int queryTimeoutSec) {
         return new ElasticsearchReverseHandler(esClient, queryTimeoutSec);
     }
 }

@@ -7,7 +7,6 @@ import de.komoot.photon.Importer;
 import de.komoot.photon.PhotonDoc;
 import de.komoot.photon.nominatim.model.AddressType;
 import de.komoot.photon.searcher.PhotonResult;
-import de.komoot.photon.searcher.StructuredSearchHandler;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -144,7 +143,7 @@ public class StructuredQueryTest extends ESBaseTester {
         request.setDistrict(HAMLET);
         request.setHouseNumber("2");
 
-        StructuredSearchHandler queryHandler = getServer().createStructuredSearchHandler(new String[]{LANGUAGE}, 1);
+        var queryHandler = getServer().createStructuredSearchHandler(new String[]{LANGUAGE}, 1);
         var results = queryHandler.search(request);
         assertEquals(1, results.size());
         var result = results.get(0);
@@ -157,7 +156,7 @@ public class StructuredQueryTest extends ESBaseTester {
         request.setCountryCode(COUNTRY_CODE);
         request.setCity(CITY);
         request.setStreet(STREET);
-        StructuredSearchHandler queryHandler = getServer().createStructuredSearchHandler(new String[]{LANGUAGE}, 1);
+        var queryHandler = getServer().createStructuredSearchHandler(new String[]{LANGUAGE}, 1);
         var results = queryHandler.search(request);
         for (var result : results)
         {
@@ -169,7 +168,7 @@ public class StructuredQueryTest extends ESBaseTester {
     void returnsOnlyCountryForCountryRequests() {
         var request = new StructuredSearchRequest();
         request.setCountryCode(COUNTRY_CODE);
-        StructuredSearchHandler queryHandler = getServer().createStructuredSearchHandler(new String[]{LANGUAGE}, 1);
+        var queryHandler = getServer().createStructuredSearchHandler(new String[]{LANGUAGE}, 1);
         var results = queryHandler.search(request);
         assertEquals(1, results.size());
         var result = results.get(0);
@@ -182,7 +181,7 @@ public class StructuredQueryTest extends ESBaseTester {
         request.setCountryCode(COUNTRY_CODE);
         request.setCity(CITY);
 
-        StructuredSearchHandler queryHandler = getServer().createStructuredSearchHandler(new String[]{LANGUAGE}, 1);
+        var queryHandler = getServer().createStructuredSearchHandler(new String[]{LANGUAGE}, 1);
         var results = queryHandler.search(request);
 
         for (var result : results) {
@@ -255,7 +254,7 @@ public class StructuredQueryTest extends ESBaseTester {
     }
 
     private PhotonResult search(StructuredSearchRequest request) {
-        StructuredSearchHandler queryHandler = getServer().createStructuredSearchHandler(new String[]{LANGUAGE}, 1);
+        var queryHandler = getServer().createStructuredSearchHandler(new String[]{LANGUAGE}, 1);
         var results = queryHandler.search(request);
 
         return results.get(0);

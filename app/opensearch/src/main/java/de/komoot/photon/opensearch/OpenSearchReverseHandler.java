@@ -2,7 +2,7 @@ package de.komoot.photon.opensearch;
 
 import de.komoot.photon.query.ReverseRequest;
 import de.komoot.photon.searcher.PhotonResult;
-import de.komoot.photon.searcher.ReverseHandler;
+import de.komoot.photon.searcher.SearchHandler;
 import org.locationtech.jts.geom.Point;
 import org.opensearch.client.opensearch.OpenSearchClient;
 import org.opensearch.client.opensearch._types.SearchType;
@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class OpenSearchReverseHandler implements ReverseHandler {
+public class OpenSearchReverseHandler implements SearchHandler<ReverseRequest> {
     private final OpenSearchClient client;
     private final String queryTimeout;
 
@@ -24,7 +24,7 @@ public class OpenSearchReverseHandler implements ReverseHandler {
     }
 
     @Override
-    public List<PhotonResult> reverse(ReverseRequest request) {
+    public List<PhotonResult> search(ReverseRequest request) {
         final var queryBuilder = new ReverseQueryBuilder(request.getLocation(), request.getRadius(), request.getQueryStringFilter(), request.getLayerFilters())
                 .withOsmTagFilters(request.getOsmTagFilters());
 

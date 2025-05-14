@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class OpenSearchSearchHandler implements SearchHandler {
+public class OpenSearchSearchHandler implements SearchHandler<SimpleSearchRequest> {
     private final OpenSearchClient client;
     private final String[] supportedLanguages;
     private final String queryTimeout;

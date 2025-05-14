@@ -5,7 +5,7 @@ import spark.Request;
 import java.util.List;
 import java.util.Set;
 
-public class StructuredSearchRequestFactory extends SearchRequestFactoryBase {
+public class StructuredSearchRequestFactory extends SearchRequestFactoryBase implements RequestFactory<StructuredSearchRequest> {
     private static final Set<String> STRUCTURED_ADDRESS_FIELDS = Set.of("countrycode", "state", "county", "city",
             "postcode", "district", "housenumber", "street");
     private static final Set<String> STRUCTURED_REQUEST_QUERY_PARAMS = Set.of("lang", "limit",

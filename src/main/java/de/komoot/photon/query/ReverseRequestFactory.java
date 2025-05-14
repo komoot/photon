@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * Factory that creates a {@link ReverseRequest} from a {@link Request web request}
  */
-public class ReverseRequestFactory {
+public class ReverseRequestFactory implements RequestFactory<ReverseRequest> {
 
     private static final HashSet<String> REQUEST_QUERY_PARAMS = new HashSet<>(Arrays.asList("lang", "lon", "lat", "radius",
             "query_string_filter", "distance_sort", "limit", "layer", "osm_tag", "debug", "geometry"));

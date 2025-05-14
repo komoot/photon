@@ -51,7 +51,7 @@ class QueryReverseFilterLayerTest extends ESBaseTester {
         request.setLocation(FACTORY.createPoint(new Coordinate(10, 10)));
         request.addLayerFilters(Arrays.stream(layers).collect(Collectors.toSet()));
 
-        return getServer().createReverseHandler(1).reverse(request);
+        return getServer().createReverseHandler(1).search(request);
     }
 
     @Test

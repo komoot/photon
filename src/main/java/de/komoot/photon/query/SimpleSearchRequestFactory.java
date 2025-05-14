@@ -5,7 +5,7 @@ import spark.Request;
 import java.util.List;
 import java.util.Set;
 
-public class SimpleSearchRequestFactory extends SearchRequestFactoryBase {
+public class SimpleSearchRequestFactory extends SearchRequestFactoryBase implements RequestFactory<SimpleSearchRequest> {
     private static final Set<String> REQUEST_QUERY_PARAMS = Set.of("lang", "q", "lon", "lat",
             "limit", "osm_tag", "location_bias_scale", "bbox", "debug", "zoom", "layer", "geometry");
 

@@ -7,9 +7,7 @@ import de.komoot.photon.json.JsonReader;
 import de.komoot.photon.nominatim.ImportThread;
 import de.komoot.photon.nominatim.NominatimImporter;
 import de.komoot.photon.nominatim.NominatimUpdater;
-import de.komoot.photon.searcher.ReverseHandler;
-import de.komoot.photon.searcher.SearchHandler;
-import de.komoot.photon.searcher.StructuredSearchHandler;
+import de.komoot.photon.query.*;
 import de.komoot.photon.utils.CorsFilter;
 import org.slf4j.Logger;
 import spark.Request;
@@ -19,6 +17,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.stream.Collectors;
 
 import static spark.Spark.*;
 
@@ -311,23 +310,25 @@ public class App {
 
         // setup search API
         String[] langs = dbProperties.getLanguages();
+        List<String> langList = Arrays.stream(langs).collect(Collectors.toList());
 
-        SearchHandler searchHandler = server.createSearchHandler(langs, args.getQueryTimeout());
-        get("api", new SearchRequestHandler("api", searchHandler, langs, args.getDefaultLanguage(), args.getMaxResults(), dbProperties.getSupportGeometries()));
-        get("api/", new SearchRequestHandler("api/", searchHandler, langs, args.getDefaultLanguage(), args.getMaxResults(), dbProperties.getSupportGeometries()));
+        final var searchHandler = server.createSearchHandler(langs, args.getQueryTimeout());
+        final var searchRequestFactory = new SimpleSearchRequestFactory(langList, args.getDefaultLanguage(), args.getMaxResults(), dbProperties.getSupportGeometries());
+        get("api", new GenericSearchHandler<>("api", searchRequestFactory, searchHandler, dbProperties.getSupportGeometries()));
+        get("api/", new GenericSearchHandler<>("api/", searchRequestFactory, searchHandler, dbProperties.getSupportGeometries()));
 
         if (dbProperties.getSupportStructuredQueries()) {
-            StructuredSearchHandler structured = server.createStructuredSearchHandler(langs, args.getQueryTimeout());
-            get("structured", new StructuredSearchRequestHandler("structured", structured, langs, args.getDefaultLanguage(), args.getMaxResults(), dbProperties.getSupportGeometries()));
-            get("structured/", new StructuredSearchRequestHandler("structured/", structured, langs, args.getDefaultLanguage(), args.getMaxResults(), dbProperties.getSupportGeometries()));
+            final var structured = server.createStructuredSearchHandler(langs, args.getQueryTimeout());
+            final var structuredRequestFactory = new StructuredSearchRequestFactory(langList, args.getDefaultLanguage(), args.getMaxResults(), dbProperties.getSupportGeometries());
+            get("structured", new GenericSearchHandler<>("structured", structuredRequestFactory, structured, dbProperties.getSupportGeometries()));
+            get("structured/", new GenericSearchHandler<>("structured/", structuredRequestFactory, structured, dbProperties.getSupportGeometries()));
         }
 
-        ReverseHandler reverseHandler = server.createReverseHandler(args.getQueryTimeout());
-        get("reverse", new ReverseSearchRequestHandler("reverse", reverseHandler, dbProperties.getLanguages(),
-                args.getDefaultLanguage(), args.getMaxReverseResults()));
-        get("reverse/", new ReverseSearchRequestHandler("reverse/", reverseHandler, dbProperties.getLanguages(),
-                args.getDefaultLanguage(), args.getMaxReverseResults()));
-        
+        final var reverseHandler = server.createReverseHandler(args.getQueryTimeout());
+        final var reverseRequestFactory = new ReverseRequestFactory(langList, args.getDefaultLanguage(), args.getMaxReverseResults());
+        get("reverse", new GenericSearchHandler<>("reverse", reverseRequestFactory, reverseHandler, dbProperties.getSupportGeometries()));
+        get("reverse/", new GenericSearchHandler<>("reverse/", reverseRequestFactory, reverseHandler, dbProperties.getSupportGeometries()));
+
         get("status", new StatusRequestHandler("status", server));
         get("status/", new StatusRequestHandler("status/", server));
 
