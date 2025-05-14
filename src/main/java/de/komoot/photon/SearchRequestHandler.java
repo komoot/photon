@@ -2,7 +2,7 @@ package de.komoot.photon;
 
 import de.komoot.photon.query.BadRequestException;
 import de.komoot.photon.query.SimpleSearchRequest;
-import de.komoot.photon.query.PhotonRequestFactory;
+import de.komoot.photon.query.SimpleSearchRequestFactory;
 import de.komoot.photon.searcher.*;
 import spark.Request;
 import spark.Response;
@@ -17,7 +17,7 @@ import static spark.Spark.halt;
  * Webserver route for forward geocoding requests.
  */
 public class SearchRequestHandler extends RouteImpl {
-    private final PhotonRequestFactory photonRequestFactory;
+    private final SimpleSearchRequestFactory photonRequestFactory;
     private final SearchHandler requestHandler;
     private final ResultFormatter formatter = new GeocodeJsonFormatter();
     private final boolean supportGeometries;
@@ -25,7 +25,7 @@ public class SearchRequestHandler extends RouteImpl {
     SearchRequestHandler(String path, SearchHandler dbHandler, String[] languages, String defaultLanguage, int maxResults, boolean supportGeometries) {
         super(path);
         List<String> supportedLanguages = Arrays.asList(languages);
-        this.photonRequestFactory = new PhotonRequestFactory(supportedLanguages, defaultLanguage, maxResults, supportGeometries);
+        this.photonRequestFactory = new SimpleSearchRequestFactory(supportedLanguages, defaultLanguage, maxResults, supportGeometries);
         this.requestHandler = dbHandler;
         this.supportGeometries = supportGeometries;
     }

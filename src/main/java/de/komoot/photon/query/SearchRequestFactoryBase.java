@@ -4,14 +4,12 @@ import de.komoot.photon.searcher.TagFilter;
 import spark.QueryParamsMap;
 import spark.Request;
 
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 
 /**
  * Factory that creates a {@link SimpleSearchRequest} from a {@link Request web request}
  */
-public class PhotonRequestFactory {
+public class SearchRequestFactoryBase {
     private final RequestLanguageResolver languageResolver;
     private static final LocationParamConverter optionalLocationParamConverter = new LocationParamConverter(false);
     private final BoundingBoxParamConverter bboxParamConverter;
@@ -19,17 +17,7 @@ public class PhotonRequestFactory {
     private final int maxResults;
     private final boolean supportGeometries;
 
-    private static final HashSet<String> REQUEST_QUERY_PARAMS = new HashSet<>(Arrays.asList("lang", "q", "lon", "lat",
-            "limit", "osm_tag", "location_bias_scale", "bbox", "debug", "zoom", "layer", "geometry"));
-
-    private static final HashSet<String> STRUCTURED_ADDRESS_FIELDS = new HashSet<>(Arrays.asList("countrycode", "state", "county", "city",
-            "postcode", "district", "housenumber", "street"));
-    private static final HashSet<String> STRUCTURED_REQUEST_QUERY_PARAMS = new HashSet<>(Arrays.asList("lang", "limit",
-            "lon", "lat", "osm_tag", "location_bias_scale", "bbox", "debug", "zoom", "layer",
-            "countrycode", "state", "county", "city", "postcode", "district", "housenumber", "street"));
-
-
-    public PhotonRequestFactory(List<String> supportedLanguages, String defaultLanguage, int maxResults, boolean supportGeometries) {
+    protected SearchRequestFactoryBase(List<String> supportedLanguages, String defaultLanguage, int maxResults, boolean supportGeometries) {
         this.languageResolver = new RequestLanguageResolver(supportedLanguages, defaultLanguage);
         this.bboxParamConverter = new BoundingBoxParamConverter();
         this.layerParamValidator = new LayerParamValidator();
@@ -37,57 +25,8 @@ public class PhotonRequestFactory {
         this.supportGeometries = supportGeometries;
     }
 
-    public StructuredSearchRequest createStructured(Request webRequest) throws BadRequestException {
-        boolean hasAddressQueryParam = false;
-        for (String queryParam : webRequest.queryParams()) {
-            if (!STRUCTURED_REQUEST_QUERY_PARAMS.contains(queryParam))
-                throw new BadRequestException(400, "unknown query parameter '" + queryParam + "'.  Allowed parameters are: " + STRUCTURED_REQUEST_QUERY_PARAMS);
-
-            if (STRUCTURED_ADDRESS_FIELDS.contains(queryParam)) {
-                hasAddressQueryParam = true;
-            }
-        }
-
-        if (!hasAddressQueryParam)
-            throw new BadRequestException(400, "at least one of the parameters " + STRUCTURED_ADDRESS_FIELDS + " is required.");
-
-        StructuredSearchRequest result = new StructuredSearchRequest();
-        result.setLanguage(languageResolver.resolveRequestedLanguage(webRequest));
-        result.setCountryCode(webRequest.queryParams("countrycode"));
-        result.setState(webRequest.queryParams("state"));
-        result.setCounty(webRequest.queryParams("county"));
-        result.setCity(webRequest.queryParams("city"));
-        result.setPostCode(webRequest.queryParams("postcode"));
-        result.setDistrict(webRequest.queryParams("district"));
-        result.setStreet(webRequest.queryParams("street"));
-        result.setHouseNumber(webRequest.queryParams("housenumber"));
-
-
-        addCommonParameters(webRequest, result);
-
-        return result;
-    }
-
-    public SimpleSearchRequest create(Request webRequest) throws BadRequestException {
-        for (String queryParam : webRequest.queryParams())
-            if (!REQUEST_QUERY_PARAMS.contains(queryParam))
-                throw new BadRequestException(400, "unknown query parameter '" + queryParam + "'.  Allowed parameters are: " + REQUEST_QUERY_PARAMS);
-
-        String query = webRequest.queryParams("q");
-        if (query == null) {
-            throw new BadRequestException(400, "missing search term 'q': /?q=berlin");
-        }
-
-        SimpleSearchRequest request = new SimpleSearchRequest();
-        request.setQuery(query);
+    protected void addCommonParameters(Request webRequest, SearchRequestBase request) throws BadRequestException {
         request.setLanguage(languageResolver.resolveRequestedLanguage(webRequest));
-
-        addCommonParameters(webRequest, request);
-
-        return request;
-    }
-
-    private void addCommonParameters(Request webRequest, SearchRequestBase request) throws BadRequestException {
         request.setLimit(parseInt(webRequest, "limit"), maxResults);
         request.setLocationForBias(optionalLocationParamConverter.apply(webRequest));
         request.setBbox(bboxParamConverter.apply(webRequest));

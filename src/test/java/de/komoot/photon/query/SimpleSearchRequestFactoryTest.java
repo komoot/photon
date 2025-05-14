@@ -56,7 +56,7 @@ class SimpleSearchRequestFactoryTest {
     }
 
     private SimpleSearchRequest createPhotonRequest(Request mockRequest) throws BadRequestException {
-        PhotonRequestFactory factory = new PhotonRequestFactory(Collections.singletonList("en"), "en", 10, true);
+        final var factory = new SimpleSearchRequestFactory(Collections.singletonList("en"), "en", 10, true);
         return factory.create(mockRequest);
     }
 

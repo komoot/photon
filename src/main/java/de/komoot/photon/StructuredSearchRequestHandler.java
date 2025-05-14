@@ -1,8 +1,8 @@
 package de.komoot.photon;
 
 import de.komoot.photon.query.BadRequestException;
-import de.komoot.photon.query.PhotonRequestFactory;
 import de.komoot.photon.query.StructuredSearchRequest;
+import de.komoot.photon.query.StructuredSearchRequestFactory;
 import de.komoot.photon.searcher.*;
 import spark.Request;
 import spark.Response;
@@ -14,7 +14,7 @@ import java.util.List;
 import static spark.Spark.halt;
 
 public class StructuredSearchRequestHandler extends RouteImpl {
-    private final PhotonRequestFactory photonRequestFactory;
+    private final StructuredSearchRequestFactory photonRequestFactory;
     private final StructuredSearchHandler requestHandler;
     private final ResultFormatter formatter = new GeocodeJsonFormatter();
     private final boolean supportGeometries;
@@ -22,7 +22,7 @@ public class StructuredSearchRequestHandler extends RouteImpl {
     StructuredSearchRequestHandler(String path, StructuredSearchHandler dbHandler, String[] languages, String defaultLanguage, int maxResults, boolean supportGeometries) {
         super(path);
         List<String> supportedLanguages = Arrays.asList(languages);
-        this.photonRequestFactory = new PhotonRequestFactory(supportedLanguages, defaultLanguage, maxResults, supportGeometries);
+        this.photonRequestFactory = new StructuredSearchRequestFactory(supportedLanguages, defaultLanguage, maxResults, supportGeometries);
         this.requestHandler = dbHandler;
         this.supportGeometries = supportGeometries;
     }
@@ -31,7 +31,7 @@ public class StructuredSearchRequestHandler extends RouteImpl {
     public String handle(Request request, Response response) {
         StructuredSearchRequest photonRequest;
         try {
-            photonRequest = photonRequestFactory.createStructured(request);
+            photonRequest = photonRequestFactory.create(request);
         } catch (BadRequestException e) {
             throw halt(e.getHttpStatus(), formatter.formatError(e.getMessage()));
         }
