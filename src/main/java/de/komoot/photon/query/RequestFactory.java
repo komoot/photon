@@ -1,8 +1,8 @@
 package de.komoot.photon.query;
 
-import spark.Request;
+import io.javalin.http.Context;
 
 public interface RequestFactory<T extends RequestBase> {
 
-    T create(Request webRequest) throws BadRequestException;
+    T create(Context context);
 }

@@ -1,46 +1,32 @@
 package de.komoot.photon;
 
-import de.komoot.photon.query.BadRequestException;
 import de.komoot.photon.query.RequestBase;
 import de.komoot.photon.query.RequestFactory;
-import de.komoot.photon.searcher.GeocodeJsonFormatter;
 import de.komoot.photon.searcher.ResultFormatter;
 import de.komoot.photon.searcher.SearchHandler;
 import de.komoot.photon.searcher.StreetDupesRemover;
-import spark.Request;
-import spark.Response;
-import spark.RouteImpl;
-import spark.Spark;
+import io.javalin.http.ContentType;
+import io.javalin.http.Context;
+import io.javalin.http.Handler;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 
-import static spark.Spark.halt;
-
-public class GenericSearchHandler<T extends RequestBase> extends RouteImpl {
+public class GenericSearchHandler<T extends RequestBase> implements Handler {
     private final RequestFactory<T> requestFactory;
     private final SearchHandler<T> requestHandler;
-    private final ResultFormatter formatter = new GeocodeJsonFormatter();
-    private final boolean supportGeometries;
+    private final ResultFormatter formatter;
 
-    public GenericSearchHandler(String path, RequestFactory<T> requestFactory, SearchHandler<T> requestHandler, boolean supportGeometries) {
-        super(path);
+    public GenericSearchHandler(RequestFactory<T> requestFactory, SearchHandler<T> requestHandler,
+                                ResultFormatter formatter) {
         this.requestFactory = requestFactory;
         this.requestHandler = requestHandler;
-        this.supportGeometries = supportGeometries;
+        this.formatter = formatter;
     }
 
     @Override
-    public String handle(Request request, Response response) {
-        T searchRequest;
-        try {
-            searchRequest = requestFactory.create(request);
-        } catch (BadRequestException e) {
-            throw halt(e.getHttpStatus(), formatter.formatError(e.getMessage()));
-        }
-
-        if (!supportGeometries && searchRequest.getReturnGeometry()) {
-            throw halt(400, formatter.formatError("You're explicitly requesting a geometry, but geometries are not imported!"));
-        }
+    public void handle(@NotNull Context context) {
+        final T searchRequest = requestFactory.create(context);
 
         var results = requestHandler.search(searchRequest);
 
@@ -58,11 +44,14 @@ public class GenericSearchHandler<T extends RequestBase> extends RouteImpl {
         }
 
         try {
-            return formatter.convert(
-                    results, searchRequest.getLanguage(), searchRequest.getReturnGeometry(),
-                    searchRequest.getDebug(), debugInfo);
+            context.status(200)
+                    .result(formatter.convert(
+                            results, searchRequest.getLanguage(),
+                            searchRequest.getReturnGeometry(),
+                            searchRequest.getDebug(), debugInfo));
         } catch (IOException e) {
-            throw Spark.halt(400, "{\"message\": \"Error creating json.\"}");
+            context.status(400)
+                    .result("{\"message\": \"Error creating json.\"}");
         }
     }
 }

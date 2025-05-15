@@ -1,51 +1,47 @@
 package de.komoot.photon.query;
 
-import spark.Request;
+import io.javalin.http.Context;
 
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class StructuredSearchRequestFactory extends SearchRequestFactoryBase implements RequestFactory<StructuredSearchRequest> {
-    private static final Set<String> STRUCTURED_ADDRESS_FIELDS = Set.of("countrycode", "state", "county", "city",
+    private static final List<String> STRUCTURED_ADDRESS_FIELDS = List.of(
+            "countrycode", "state", "county", "city",
             "postcode", "district", "housenumber", "street");
-    private static final Set<String> STRUCTURED_REQUEST_QUERY_PARAMS = Set.of("lang", "limit",
-            "lon", "lat", "osm_tag", "location_bias_scale", "bbox", "debug", "zoom", "layer",
-            "countrycode", "state", "county", "city", "postcode", "district", "housenumber", "street");
-
+    private static final Set<String> STRUCTURED_SEARCH_PARAMETERS =
+            Stream.concat(SEARCH_PARAMETERS.stream(), STRUCTURED_ADDRESS_FIELDS.stream())
+                    .collect(Collectors.toSet());
 
 
     public StructuredSearchRequestFactory(List<String> supportedLanguages, String defaultLanguage, int maxResults, boolean supportGeometries) {
         super(supportedLanguages, defaultLanguage, maxResults, supportGeometries);
     }
 
-    public StructuredSearchRequest create(Request webRequest) throws BadRequestException {
-        boolean hasAddressQueryParam = false;
-        for (String queryParam : webRequest.queryParams()) {
-            if (!STRUCTURED_REQUEST_QUERY_PARAMS.contains(queryParam))
-                throw new BadRequestException(400, "unknown query parameter '" + queryParam + "'.  Allowed parameters are: " + STRUCTURED_REQUEST_QUERY_PARAMS);
+    public StructuredSearchRequest create(Context context) {
+        checkParams(context, STRUCTURED_SEARCH_PARAMETERS);
 
-            if (STRUCTURED_ADDRESS_FIELDS.contains(queryParam)) {
-                hasAddressQueryParam = true;
-            }
+        if (STRUCTURED_ADDRESS_FIELDS.stream()
+                .noneMatch(s -> context.queryParam(s) != null)) {
+            throw new BadRequestException(400, "at least one of the parameters "
+                    + STRUCTURED_ADDRESS_FIELDS + " is required.");
         }
 
-        if (!hasAddressQueryParam)
-            throw new BadRequestException(400, "at least one of the parameters " + STRUCTURED_ADDRESS_FIELDS + " is required.");
+        final var request = new StructuredSearchRequest();
 
-        StructuredSearchRequest result = new StructuredSearchRequest();
-        result.setCountryCode(webRequest.queryParams("countrycode"));
-        result.setState(webRequest.queryParams("state"));
-        result.setCounty(webRequest.queryParams("county"));
-        result.setCity(webRequest.queryParams("city"));
-        result.setPostCode(webRequest.queryParams("postcode"));
-        result.setDistrict(webRequest.queryParams("district"));
-        result.setStreet(webRequest.queryParams("street"));
-        result.setHouseNumber(webRequest.queryParams("housenumber"));
+        completeSearchRequest(request, context);
+        request.setCountryCode(context.queryParam("countrycode"));
+        request.setState(context.queryParam("state"));
+        request.setCounty(context.queryParam("county"));
+        request.setCity(context.queryParam("city"));
+        request.setPostCode(context.queryParam("postcode"));
+        request.setDistrict(context.queryParam("district"));
+        request.setStreet(context.queryParam("street"));
+        request.setHouseNumber(context.queryParam("housenumber"));
 
-
-        addCommonParameters(webRequest, result);
-
-        return result;
+        return request;
     }
 
 }

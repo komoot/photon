@@ -22,7 +22,8 @@ public class GeocodeJsonFormatter implements ResultFormatter {
     @Override
     public String formatError(String msg) {
         try {
-            return mapper.writeValueAsString(Map.of("message", msg));
+            return mapper.writeValueAsString(
+                    Map.of("message", msg == null ? "Unknown error." : msg));
         } catch (JsonProcessingException e) {
             return "{}";
         }

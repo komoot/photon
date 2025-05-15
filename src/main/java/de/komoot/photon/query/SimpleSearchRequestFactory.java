@@ -1,33 +1,28 @@
 package de.komoot.photon.query;
 
-import spark.Request;
+import io.javalin.http.Context;
 
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class SimpleSearchRequestFactory extends SearchRequestFactoryBase implements RequestFactory<SimpleSearchRequest> {
-    private static final Set<String> REQUEST_QUERY_PARAMS = Set.of("lang", "q", "lon", "lat",
-            "limit", "osm_tag", "location_bias_scale", "bbox", "debug", "zoom", "layer", "geometry");
-
+    private static final Set<String> FREE_SEARCH_PARAMETERS =
+            Stream.concat(SEARCH_PARAMETERS.stream(), Stream.of("q"))
+                    .collect(Collectors.toSet());
 
     public SimpleSearchRequestFactory(List<String> supportedLanguages, String defaultLanguage, int maxResults, boolean supportGeometries) {
         super(supportedLanguages, defaultLanguage, maxResults, supportGeometries);
     }
 
-    public SimpleSearchRequest create(Request webRequest) throws BadRequestException {
-        for (String queryParam : webRequest.queryParams())
-            if (!REQUEST_QUERY_PARAMS.contains(queryParam))
-                throw new BadRequestException(400, "unknown query parameter '" + queryParam + "'.  Allowed parameters are: " + REQUEST_QUERY_PARAMS);
+    public SimpleSearchRequest create(Context context) {
+        checkParams(context, FREE_SEARCH_PARAMETERS);
 
-        String query = webRequest.queryParams("q");
-        if (query == null) {
-            throw new BadRequestException(400, "missing search term 'q': /?q=berlin");
-        }
+        final var request = new SimpleSearchRequest();
 
-        SimpleSearchRequest request = new SimpleSearchRequest();
-        request.setQuery(query);
-
-        addCommonParameters(webRequest, request);
+        completeSearchRequest(request, context);
+        request.setQuery(context.queryParamAsClass("q", String.class).get());
 
         return request;
     }

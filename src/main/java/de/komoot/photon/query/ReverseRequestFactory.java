@@ -1,101 +1,32 @@
 package de.komoot.photon.query;
 
-import de.komoot.photon.searcher.TagFilter;
-import spark.QueryParamsMap;
-import spark.Request;
+import io.javalin.http.Context;
 
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-/**
- * Factory that creates a {@link ReverseRequest} from a {@link Request web request}
- */
-public class ReverseRequestFactory implements RequestFactory<ReverseRequest> {
+public class ReverseRequestFactory extends RequestFactoryBase implements RequestFactory<ReverseRequest> {
+    private static final Set<String> REVERSE_PARAMETERS =
+            Stream.concat(BASE_PARAMETERS.stream(),
+                            Stream.of("lat", "lon", "radius", "query_string_filter", "distance_sort"))
+                    .collect(Collectors.toSet());
 
-    private static final HashSet<String> REQUEST_QUERY_PARAMS = new HashSet<>(Arrays.asList("lang", "lon", "lat", "radius",
-            "query_string_filter", "distance_sort", "limit", "layer", "osm_tag", "debug", "geometry"));
-    private static final LocationParamConverter mandatoryLocationParamConverter = new LocationParamConverter(true);
-
-    private final RequestLanguageResolver languageResolver;
-    private final LayerParamValidator layerParamValidator;
-    private final int maxResults;
-
-    public ReverseRequestFactory(List<String> supportedLanguages, String defaultLanguage, int maxResults) {
-        this.languageResolver = new RequestLanguageResolver(supportedLanguages, defaultLanguage);
-        this.layerParamValidator = new LayerParamValidator();
-        this.maxResults = maxResults;
+    public ReverseRequestFactory(List<String> supportedLanguages, String defaultLanguage, int maxResults, boolean supportGeometries) {
+        super(supportedLanguages, defaultLanguage, maxResults, supportGeometries);
     }
 
-    public ReverseRequest create(Request webRequest) throws BadRequestException {
-        ReverseRequest request = new ReverseRequest();
+    public ReverseRequest create(Context context) {
+        checkParams(context, REVERSE_PARAMETERS);
 
-        for (String queryParam : webRequest.queryParams()) {
-            if (!REQUEST_QUERY_PARAMS.contains(queryParam))
-                throw new BadRequestException(400, "Unknown query parameter '" + queryParam + "'.  Allowed parameters are: " + REQUEST_QUERY_PARAMS);
-        }
+        final var request = new ReverseRequest();
 
-        request.setLanguage(languageResolver.resolveRequestedLanguage(webRequest));
-        request.setLocation(mandatoryLocationParamConverter.apply(webRequest));
-
-        String radiusParam = webRequest.queryParams("radius");
-        if (radiusParam != null) {
-            double radius = 1.0;
-            try {
-                radius = Double.parseDouble(radiusParam);
-            } catch (Exception nfe) {
-                throw new BadRequestException(400, "Invalid search term 'radius', expected a number.");
-            }
-            if (radius <= 0 || Double.isNaN(radius)) {
-                throw new BadRequestException(400, "Invalid search term 'radius', expected a strictly positive number.");
-            } else {
-                // limit search radius to 5000km
-                radius = Math.min(radius, 5000d);
-            }
-            request.setRadius(radius);
-        }
-
-        try {
-            request.setLocationDistanceSort(Boolean.parseBoolean(webRequest.queryParamOrDefault("distance_sort", "true")));
-        } catch (Exception nfe) {
-            throw new BadRequestException(400, "Invalid parameter 'distance_sort', can only be true or false");
-        }
-
-        String limitParam = webRequest.queryParams("limit");
-        if (limitParam != null) {
-            int limit = 1;
-            try {
-                limit = Integer.parseInt(limitParam);
-            } catch (Exception nfe) {
-                throw new BadRequestException(400, "Invalid search term 'limit', expected an integer.");
-            }
-            if (limit <= 0) {
-                throw new BadRequestException(400, "Invalid search term 'limit', expected a strictly positive integer.");
-            }
-
-            request.setLimit(limit, maxResults);
-        }
-
-        request.setDebug(webRequest.queryParams("debug") != null);
-
-        QueryParamsMap layerFiltersQueryMap = webRequest.queryMap("layer");
-        if (layerFiltersQueryMap.hasValue()) {
-            request.addLayerFilters(layerParamValidator.validate(layerFiltersQueryMap.values()));
-        }
-
-        request.setQueryStringFilter(webRequest.queryParams("query_string_filter"));
-        request.setReturnGeometry(Boolean.parseBoolean(webRequest.queryParams("geometry")));
-
-        QueryParamsMap tagFiltersQueryMap = webRequest.queryMap("osm_tag");
-        if (tagFiltersQueryMap.hasValue()) {
-            for (String filter : tagFiltersQueryMap.values()) {
-                TagFilter tagFilter = TagFilter.buildOsmTagFilter(filter);
-                if (tagFilter == null) {
-                    throw new BadRequestException(400, String.format("Invalid parameter 'osm_tag=%s': bad syntax for tag filter.", filter));
-                }
-                request.addOsmTagFilter(TagFilter.buildOsmTagFilter(filter));
-            }
-        }
+        completeBaseRequest(request, context);
+        request.setLocation(parseLatLon(context, true));
+        request.setRadius(context.queryParamAsClass("radius", Double.class).allowNullable().get());
+        request.setQueryStringFilter(context.queryParam("query_string_filter"));
+        request.setLocationDistanceSort(context.queryParamAsClass("distance_sort", Boolean.class).getOrDefault(false));
 
         return request;
     }

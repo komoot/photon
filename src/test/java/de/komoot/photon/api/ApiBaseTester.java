@@ -2,7 +2,6 @@ package de.komoot.photon.api;
 
 import de.komoot.photon.App;
 import de.komoot.photon.ESBaseTester;
-import org.junit.jupiter.api.AfterEach;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -14,7 +13,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThatIOException;
-import static spark.Spark.*;
 
 public class ApiBaseTester extends ESBaseTester {
     private static final int LISTEN_PORT = 30234;
@@ -27,7 +25,6 @@ public class ApiBaseTester extends ESBaseTester {
                 Arrays.stream(extraParams)).toArray(String[]::new);
 
         App.main(params);
-        awaitInitialization();
     }
 
     protected HttpURLConnection connect(String url) throws IOException {

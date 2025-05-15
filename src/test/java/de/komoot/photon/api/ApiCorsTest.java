@@ -15,6 +15,7 @@ import java.nio.file.Path;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatIOException;
 
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -52,6 +53,7 @@ public class ApiCorsTest extends ApiBaseTester {
         startAPI();
 
         var connection = connect(baseUrl);
+        connection.setRequestProperty("Origin", "http://example.com");
         connection.connect();
 
         assertThat(connection.getHeaderField("Access-Control-Allow-Origin"))
@@ -67,6 +69,7 @@ public class ApiCorsTest extends ApiBaseTester {
         startAPI("-cors-any");
 
         var connection = connect(baseUrl);
+        connection.setRequestProperty("Origin", "http://example.com");
         connection.connect();
 
         assertThat(connection.getHeaderField("Access-Control-Allow-Origin"))
@@ -81,11 +84,14 @@ public class ApiCorsTest extends ApiBaseTester {
     void testCorsOriginIsSetToSpecificDomain(String baseUrl) throws Exception {
         startAPI("-cors-origin", "www.poole.ch");
 
-        var connection = connect(baseUrl);
-        connection.connect();
+        for (var prefix : new String[]{"http", "https"}) {
+            var connection = connect(baseUrl);
+            connection.setRequestProperty("Origin", prefix + "://www.poole.ch");
+            connection.connect();
 
-        assertThat(connection.getHeaderField("Access-Control-Allow-Origin"))
-                .isEqualTo("www.poole.ch");
+            assertThat(connection.getHeaderField("Access-Control-Allow-Origin"))
+                    .isEqualTo(prefix + "://www.poole.ch");
+        }
     }
 
     /*
@@ -96,7 +102,7 @@ public class ApiCorsTest extends ApiBaseTester {
     void testCorsOriginIsSetToMatchingDomain(String baseUrl) throws Exception {
         startAPI("-cors-origin", "www.poole.ch,alt.poole.ch");
 
-        String[] origins = {"www.poole.ch", "alt.poole.ch"};
+        String[] origins = {"http://www.poole.ch", "https://alt.poole.ch"};
         for (String origin : origins) {
             var connection = connect(baseUrl);
             connection.setRequestProperty("Origin", origin);
@@ -116,10 +122,10 @@ public class ApiCorsTest extends ApiBaseTester {
         startAPI("-cors-origin", "www.poole.ch,alt.poole.ch");
 
         var connection = connect(baseUrl);
-        connection.setRequestProperty("Origin", "www.randomsite.com");
+        connection.setRequestProperty("Origin", "http://www.randomsite.com");
         connection.connect();
 
         assertThat(connection.getHeaderField("Access-Control-Allow-Origin"))
-                .isEqualTo("www.poole.ch");
+                .isNull();
     }
 }
