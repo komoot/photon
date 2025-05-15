@@ -26,6 +26,7 @@ import static spark.Spark.*;
  */
 public class App {
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(App.class);
+    private static Server esServer;
 
     public static void main(String[] rawArgs) throws Exception {
         CommandLineArgs args = parseCommandLine(rawArgs);
@@ -36,6 +37,15 @@ public class App {
             LOGGER.error(e.getMessage());
             LOGGER.error("Exiting.");
             System.exit(2);
+        }
+    }
+
+    public static void shutdown() {
+        stop();
+        awaitStop();
+        if (esServer != null) {
+            esServer.shutdown();
+            esServer = null;
         }
     }
 
@@ -51,7 +61,7 @@ public class App {
         }
 
         boolean shutdownES = false;
-        final Server esServer = new Server(args.getDataDirectory()).start(args.getCluster(), args.getTransportAddresses());
+        esServer = new Server(args.getDataDirectory()).start(args.getCluster(), args.getTransportAddresses());
         try {
             LOGGER.info("Make sure that the ES cluster is ready, this might take some time.");
             esServer.waitForReady();

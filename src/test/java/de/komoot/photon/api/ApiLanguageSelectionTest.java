@@ -1,8 +1,10 @@
 package de.komoot.photon.api;
 
+import de.komoot.photon.App;
 import de.komoot.photon.Importer;
 import net.javacrumbs.jsonunit.assertj.JsonMapAssert;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.io.TempDir;
@@ -44,6 +46,12 @@ public class ApiLanguageSelectionTest extends ApiBaseTester {
 
         instance.finish();
         refresh();
+    }
+
+
+    @AfterEach
+    void shutdown() {
+        App.shutdown();
     }
 
     @AfterAll

@@ -1,5 +1,7 @@
 package de.komoot.photon.api;
 
+import de.komoot.photon.App;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.io.TempDir;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Point;
@@ -16,6 +18,11 @@ import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 class ApiLanguagesTest extends ApiBaseTester {
     @TempDir
     private Path dataDirectory;
+
+    @AfterEach
+    void shutdown() {
+        App.shutdown();
+    }
 
     protected PhotonDoc createDoc(int id, String key, String value, String... names) {
         Point location = FACTORY.createPoint(new Coordinate(1.0, 2.34));

@@ -19,12 +19,6 @@ import static spark.Spark.*;
 public class ApiBaseTester extends ESBaseTester {
     private static final int LISTEN_PORT = 30234;
 
-    @AfterEach
-    void shutdown() {
-        stop();
-        awaitStop();
-    }
-
     protected void startAPI(String... extraParams) throws Exception {
         final String[] params = Stream.concat(
                 Stream.of("-cluster", TEST_CLUSTER_NAME,
