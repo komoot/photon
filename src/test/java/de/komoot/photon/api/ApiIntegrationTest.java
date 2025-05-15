@@ -1,33 +1,26 @@
-package de.komoot.photon;
+package de.komoot.photon.api;
 
+import de.komoot.photon.Importer;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.locationtech.jts.io.WKTReader;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLConnection;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
-import static spark.Spark.*;
 
 /**
  * These test connect photon to an already running ES node (setup in ESBaseTester) so that we can directly test the API
  */
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class ApiIntegrationTest extends ESBaseTester {
-    private static final int LISTEN_PORT = 30234;
+class ApiIntegrationTest extends ApiBaseTester {
     private static final Date TEST_DATE = new Date();
 
     @BeforeAll
@@ -43,22 +36,10 @@ class ApiIntegrationTest extends ESBaseTester {
         refresh();
     }
 
-    @AfterEach
-    void shutdown() {
-        stop();
-        awaitStop();
-    }
-
     @AfterAll
     @Override
     public void tearDown() throws IOException {
         super.tearDown();
-    }
-
-    private String readURL(String url) throws IOException {
-        HttpURLConnection connection = (HttpURLConnection) new URL("http://127.0.0.1:" + port() + url).openConnection();
-        return new BufferedReader(new InputStreamReader(connection.getInputStream()))
-                .lines().collect(Collectors.joining("\n"));
     }
 
     /**
@@ -66,10 +47,9 @@ class ApiIntegrationTest extends ESBaseTester {
      */
     @Test
     void testNoCors() throws Exception {
-        App.main(new String[]{"-cluster", TEST_CLUSTER_NAME, "-listen-port", Integer.toString(LISTEN_PORT), "-transport-addresses", "127.0.0.1"});
-        awaitInitialization();
-        HttpURLConnection connection = (HttpURLConnection) new URL("http://127.0.0.1:" + port() + "/api?q=berlin").openConnection();
-        assertNull(connection.getHeaderField("Access-Control-Allow-Origin"));
+        startAPI();
+
+        assertNull(connect("/api?q=berlin").getHeaderField("Access-Control-Allow-Origin"));
     }
 
     /**
@@ -77,10 +57,9 @@ class ApiIntegrationTest extends ESBaseTester {
      */
     @Test
     void testCorsAny() throws Exception {
-        App.main(new String[]{"-cluster", TEST_CLUSTER_NAME, "-listen-port", Integer.toString(LISTEN_PORT), "-transport-addresses", "127.0.0.1",
-                "-cors-any"});
-        awaitInitialization();
-        HttpURLConnection connection = (HttpURLConnection) new URL("http://127.0.0.1:" + port() + "/api?q=berlin").openConnection();
+        startAPI("-cors-any");
+
+        var connection = connect("/api?q=berlin");
         assertEquals("*", connection.getHeaderField("Access-Control-Allow-Origin"));
     }
 
@@ -89,10 +68,9 @@ class ApiIntegrationTest extends ESBaseTester {
      */
     @Test
     void testCorsOriginIsSetToSpecificDomain() throws Exception {
-        App.main(new String[]{"-cluster", TEST_CLUSTER_NAME, "-listen-port", Integer.toString(LISTEN_PORT), "-transport-addresses", "127.0.0.1",
-                "-cors-origin", "www.poole.ch"});
-        awaitInitialization();
-        HttpURLConnection connection = (HttpURLConnection) new URL("http://127.0.0.1:" + port() + "/api?q=berlin").openConnection();
+        startAPI("-cors-origin", "www.poole.ch");
+
+        var connection = connect("/api?q=berlin");
         assertEquals("www.poole.ch", connection.getHeaderField("Access-Control-Allow-Origin"));
     }
 
@@ -101,15 +79,14 @@ class ApiIntegrationTest extends ESBaseTester {
      */
     @Test
     void testCorsOriginIsSetToMatchingDomain() throws Exception {
-        App.main(new String[]{"-cluster", TEST_CLUSTER_NAME, "-listen-port", Integer.toString(LISTEN_PORT), "-transport-addresses", "127.0.0.1",
-                "-cors-origin", "www.poole.ch,alt.poole.ch"});
-        awaitInitialization();
+        startAPI("-cors-origin", "www.poole.ch,alt.poole.ch");
+
         String[] origins = {"www.poole.ch", "alt.poole.ch"};
         for (String origin: origins) {
-            URLConnection urlConnection = new URL("http://127.0.0.1:" + port() + "/api?q=berlin").openConnection();
-
-            HttpURLConnection connection = (HttpURLConnection) urlConnection;
+            var connection = connect("/api?q=berlin");
             connection.setRequestProperty("Origin", origin);
+            connection.connect();
+
             assertEquals(origin, connection.getRequestProperty("Origin"));
             assertEquals(origin, connection.getHeaderField("Access-Control-Allow-Origin"));
         }
@@ -120,14 +97,14 @@ class ApiIntegrationTest extends ESBaseTester {
      */
     @Test
     void testMismatchedCorsOriginsAreBlock() throws Exception {
-        App.main(new String[]{"-cluster", TEST_CLUSTER_NAME, "-listen-port", Integer.toString(LISTEN_PORT), "-transport-addresses", "127.0.0.1",
-                "-cors-origin", "www.poole.ch,alt.poole.ch"});
-        awaitInitialization();
+        startAPI("-cors-origin", "www.poole.ch,alt.poole.ch");
+
         String[] origins = {"www.randomsite.com", "www.arbitrary.com"};
         for (String origin: origins) {
-            URLConnection urlConnection = new URL("http://127.0.0.1:" + port() + "/api?q=berlin").openConnection();
-            urlConnection.setRequestProperty("Origin", origin);
-            HttpURLConnection connection = (HttpURLConnection) urlConnection;
+            var connection = connect("/api?q=berlin");
+            connection.setRequestProperty("Origin", origin);
+            connection.connect();
+
             assertEquals("www.poole.ch", connection.getHeaderField("Access-Control-Allow-Origin"));
         }
     }
@@ -140,8 +117,7 @@ class ApiIntegrationTest extends ESBaseTester {
             "city, /reverse/?lon=13.38886&lat=52.51704" // basic reverse
     })
     void testApi(String osmValue, String url) throws Exception {
-        App.main(new String[]{"-cluster", TEST_CLUSTER_NAME, "-listen-port", Integer.toString(LISTEN_PORT), "-transport-addresses", "127.0.0.1"});
-        awaitInitialization();
+        startAPI();
 
         assertThatJson(readURL(url)).isObject()
                 .node("features").isArray().hasSize(1)
@@ -156,8 +132,7 @@ class ApiIntegrationTest extends ESBaseTester {
 
     @Test
     void testApiStatus() throws Exception {
-        App.main(new String[]{"-cluster", TEST_CLUSTER_NAME, "-listen-port", Integer.toString(LISTEN_PORT), "-transport-addresses", "127.0.0.1"});
-        awaitInitialization();
+        startAPI();
 
         assertThatJson(readURL("/status")).isObject()
                 .containsEntry("status", "Ok")
@@ -166,8 +141,7 @@ class ApiIntegrationTest extends ESBaseTester {
 
     @Test
     void testSearchAndGetGeometry() throws Exception {
-        App.main(new String[]{"-cluster", TEST_CLUSTER_NAME, "-listen-port", Integer.toString(LISTEN_PORT), "-transport-addresses", "127.0.0.1"});
-        awaitInitialization();
+        startAPI();
 
         var obj = assertThatJson(readURL("/api?q=berlin&limit=1"))
                 .isObject()
@@ -188,8 +162,7 @@ class ApiIntegrationTest extends ESBaseTester {
 
     @Test
     void testSearchAndGetLineString() throws Exception {
-        App.main(new String[]{"-cluster", TEST_CLUSTER_NAME, "-listen-port", Integer.toString(LISTEN_PORT), "-transport-addresses", "127.0.0.1"});
-        awaitInitialization();
+        startAPI();
 
         var obj = assertThatJson(readURL("/api?q=linestring&limit=1"))
                 .isObject()
