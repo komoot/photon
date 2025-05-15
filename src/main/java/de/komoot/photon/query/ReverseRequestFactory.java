@@ -46,7 +46,7 @@ public class ReverseRequestFactory implements RequestFactory<ReverseRequest> {
             } catch (Exception nfe) {
                 throw new BadRequestException(400, "Invalid search term 'radius', expected a number.");
             }
-            if (radius <= 0) {
+            if (radius <= 0 || Double.isNaN(radius)) {
                 throw new BadRequestException(400, "Invalid search term 'radius', expected a strictly positive number.");
             } else {
                 // limit search radius to 5000km

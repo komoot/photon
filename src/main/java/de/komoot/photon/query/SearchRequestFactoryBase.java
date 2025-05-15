@@ -53,10 +53,6 @@ public class SearchRequestFactoryBase {
             request.addLayerFilters(layerParamValidator.validate(layerFiltersQueryMap.values()));
         }
 
-        // If the database supports geometries, return them by default.
-        request.setReturnGeometry(supportGeometries);
-
-        // Check if the user explicitly doesn't want a geometry.
         if (webRequest.queryParams("geometry") != null) {
             request.setReturnGeometry(parseBoolean(webRequest, "geometry"));
         }

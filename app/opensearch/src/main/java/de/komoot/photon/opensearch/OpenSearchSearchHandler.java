@@ -44,7 +44,7 @@ public class OpenSearchSearchHandler implements SearchHandler<SimpleSearchReques
 
     @Override
     public String dumpQuery(SimpleSearchRequest simpleSearchRequest) {
-        return null;
+        return "{}";
     }
 
     private SearchQueryBuilder buildQuery(SimpleSearchRequest request, boolean lenient) {

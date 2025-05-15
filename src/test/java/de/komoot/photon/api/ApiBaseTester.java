@@ -13,6 +13,7 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static org.assertj.core.api.Assertions.assertThatIOException;
 import static spark.Spark.*;
 
 public class ApiBaseTester extends ESBaseTester {
@@ -42,5 +43,12 @@ public class ApiBaseTester extends ESBaseTester {
     protected String readURL(String url) throws IOException {
         return new BufferedReader(new InputStreamReader(connect(url).getInputStream()))
                 .lines().collect(Collectors.joining("\n"));
+    }
+
+    protected void assertHttpError(String url, int expectedCode) {
+        assertThatIOException()
+                .isThrownBy(() -> readURL(url))
+                .withMessageContaining("response code: " + expectedCode);
+
     }
 }
