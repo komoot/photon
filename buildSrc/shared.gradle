@@ -48,7 +48,6 @@ dependencies {
     implementation 'org.slf4j:slf4j-api:2.0.16'
     implementation 'org.apache.logging.log4j:log4j-slf4j2-impl:2.24.1'
     implementation 'org.jcommander:jcommander:2.0'
-    implementation 'org.apache.commons:commons-lang3:3.17.0'
     implementation 'org.springframework:spring-jdbc:5.3.39'
     implementation ('org.apache.commons:commons-dbcp2:2.12.0') {
         exclude(module: 'commons-logging')
