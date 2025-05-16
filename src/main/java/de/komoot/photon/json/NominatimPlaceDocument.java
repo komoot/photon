@@ -64,8 +64,8 @@ public class NominatimPlaceDocument {
                 String[] parts = cat.split("\\.");
                 doc.tagKey(parts[1]);
                 doc.tagValue(parts.length > 2 ? parts[2] : "yes");
+                return;
             }
-            return;
         }
         doc.tagKey("place");
         doc.tagValue("yes");
