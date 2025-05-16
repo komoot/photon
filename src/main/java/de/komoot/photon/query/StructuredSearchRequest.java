@@ -10,10 +10,6 @@ public class StructuredSearchRequest extends SearchRequestBase {
     private String street;
     private String houseNumber;
 
-    public boolean getDebug() {
-        return false;
-    }
-
     public String getCounty() {
         return county;
     }

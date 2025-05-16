@@ -76,7 +76,6 @@ public class NominatimUpdater extends NominatimConnector {
     // One-item cache for address terms. Speeds up processing of rank 30 objects.
     private long parentPlaceId = -1;
     private List<AddressRow> parentTerms = null;
-    private boolean useGeometryColumn;
 
 
     public NominatimUpdater(String host, int port, String database, String username, String password, boolean useGeometryColumn) {

@@ -5,7 +5,6 @@ import de.komoot.photon.query.RequestFactory;
 import de.komoot.photon.searcher.ResultFormatter;
 import de.komoot.photon.searcher.SearchHandler;
 import de.komoot.photon.searcher.StreetDupesRemover;
-import io.javalin.http.ContentType;
 import io.javalin.http.Context;
 import io.javalin.http.Handler;
 import org.jetbrains.annotations.NotNull;

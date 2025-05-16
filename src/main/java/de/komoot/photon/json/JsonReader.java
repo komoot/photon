@@ -60,7 +60,7 @@ public class JsonReader {
         } else {
             this.countryFilter = Arrays.stream(countries).map(String::toUpperCase).toArray(String[]::new);
             Arrays.sort(this.countryFilter);
-        };
+        }
     }
 
     public void readHeader() throws IOException {
