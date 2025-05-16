@@ -33,69 +33,70 @@ public class GeocodeJsonFormatter implements ResultFormatter {
     public String convert(List<PhotonResult> results, String language,
                           boolean withGeometry, boolean withDebugInfo, String queryDebugInfo) throws IOException {
         final var writer = new StringWriter();
-        final var gen = mapper.createGenerator(writer);
 
-        if (withDebugInfo) {
-            gen.useDefaultPrettyPrinter();
-        }
+        try (var gen = mapper.createGenerator(writer)) {
+            if (withDebugInfo) {
+                gen.useDefaultPrettyPrinter();
+            }
 
-        gen.writeStartObject();
-        gen.writeStringField("type", "FeatureCollection");
-        gen.writeArrayFieldStart("features");
-
-        for (PhotonResult result : results) {
             gen.writeStartObject();
-            gen.writeStringField("type", "Feature");
+            gen.writeStringField("type", "FeatureCollection");
+            gen.writeArrayFieldStart("features");
 
-            gen.writeObjectFieldStart("properties");
+            for (PhotonResult result : results) {
+                gen.writeStartObject();
+                gen.writeStringField("type", "Feature");
 
-            for (String key : KEYS_LANG_UNSPEC) {
-                put(gen, key, result.get(key));
+                gen.writeObjectFieldStart("properties");
+
+                for (String key : KEYS_LANG_UNSPEC) {
+                    put(gen, key, result.get(key));
+                }
+
+                for (String key : KEYS_LANG_SPEC) {
+                    put(gen, key, result.getLocalised(key, language));
+                }
+
+                put(gen, "extent", result.getExtent());
+
+                put(gen, "extra", result.getMap("extra"));
+
+                gen.writeEndObject();
+
+                if (withGeometry && result.getGeometry() != null) {
+                    gen.writeFieldName("geometry");
+                    gen.writeRawValue(result.getGeometry());
+                } else {
+                    gen.writeObjectFieldStart("geometry");
+                    gen.writeStringField("type", "Point");
+                    gen.writeObjectField("coordinates", result.getCoordinates());
+                    gen.writeEndObject();
+                }
+
+                gen.writeEndObject();
             }
 
-            for (String key : KEYS_LANG_SPEC) {
-                put(gen, key, result.getLocalised(key, language));
-            }
+            gen.writeEndArray();
 
-            put(gen, "extent", result.getExtent());
-
-            put(gen, "extra", result.getMap("extra"));
-
-            gen.writeEndObject();
-
-            if (withGeometry && result.getGeometry() != null) {
-                gen.writeFieldName("geometry");
-                gen.writeRawValue(result.getGeometry());
-            } else {
-                gen.writeObjectFieldStart("geometry");
-                gen.writeStringField("type", "Point");
-                gen.writeObjectField("coordinates", result.getCoordinates());
+            if (withDebugInfo || queryDebugInfo != null) {
+                gen.writeObjectFieldStart("properties");
+                if (queryDebugInfo != null) {
+                    gen.writeFieldName("debug");
+                    gen.writeRawValue(queryDebugInfo);
+                }
+                if (withDebugInfo) {
+                    gen.writeArrayFieldStart("raw_data");
+                    for (var res : results) {
+                        gen.writePOJO(res.getRawData());
+                    }
+                    gen.writeEndArray();
+                }
                 gen.writeEndObject();
             }
 
             gen.writeEndObject();
         }
 
-        gen.writeEndArray();
-
-        if (withDebugInfo || queryDebugInfo != null) {
-            gen.writeObjectFieldStart("properties");
-            if (queryDebugInfo != null) {
-                gen.writeFieldName("debug");
-                gen.writeRawValue(queryDebugInfo);
-            }
-            if (withDebugInfo) {
-                gen.writeArrayFieldStart("raw_data");
-                for (var res : results) {
-                    gen.writePOJO(res.getRawData());
-                }
-                gen.writeEndArray();
-            }
-            gen.writeEndObject();
-        }
-
-        gen.writeEndObject();
-        gen.close();
         return writer.toString();
     }
 
