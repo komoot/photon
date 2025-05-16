@@ -21,7 +21,7 @@ public class DatabaseProperties {
     private boolean supportGeometries = false;
     private ConfigExtraTags extraTags = new ConfigExtraTags();
 
-    public void setVersion(String version) {
+    public void setDatabaseVersion(String version) {
         if (!DATABASE_VERSION.equals(version)) {
             LOGGER.error("Database has incompatible version '{}'. Expected: {}",
                     version, DATABASE_VERSION);
@@ -29,7 +29,7 @@ public class DatabaseProperties {
         }
     }
 
-    public String getVersion() {
+    public String getDatabaseVersion() {
         return DATABASE_VERSION;
     }
 

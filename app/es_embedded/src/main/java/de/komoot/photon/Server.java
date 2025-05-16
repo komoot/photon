@@ -269,7 +269,7 @@ public class Server {
 
         final var dbProps = new DatabaseProperties();
 
-        dbProps.setVersion(properties.get(FIELD_VERSION));
+        dbProps.setDatabaseVersion(properties.get(FIELD_VERSION));
 
         final String langString = properties.get(FIELD_LANGUAGES);
         dbProps.setLanguages(langString == null ? null : langString.split(","));
