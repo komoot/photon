@@ -58,7 +58,7 @@ public class ConfigExtraTags {
             return Map.of();
         }
 
-        final Map<String, String> newMap = new HashMap();
+        final Map<String, String> newMap = new HashMap<>();
         for (var key : tags) {
             final var value = sourceTags.get(key);
             if (value != null) {
