@@ -1,11 +1,12 @@
 package de.komoot.photon.elasticsearch;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.xcontent.XContentType;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
-import org.slf4j.Logger;
 
 import java.io.InputStream;
 
@@ -13,7 +14,7 @@ import java.io.InputStream;
  * ElasticSearch index mapping for the photon index.
  */
 public class IndexMapping {
-    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(IndexMapping.class);
+    private static final Logger LOGGER = LogManager.getLogger();
 
     private final JSONObject mappings;
 

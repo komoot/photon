@@ -8,13 +8,14 @@ import de.komoot.photon.query.SimpleSearchRequest;
 import de.komoot.photon.query.StructuredSearchRequest;
 import de.komoot.photon.searcher.SearchHandler;
 import org.apache.hc.core5.http.HttpHost;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codelibs.opensearch.runner.OpenSearchRunner;
 import org.opensearch.client.json.jackson.JacksonJsonpMapper;
 import org.opensearch.client.opensearch.OpenSearchClient;
 import org.opensearch.client.opensearch._types.HealthStatus;
 import org.opensearch.client.opensearch._types.OpenSearchException;
 import org.opensearch.client.transport.httpclient5.ApacheHttpClient5TransportBuilder;
-import org.slf4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,7 +32,7 @@ public class Server {
      */
     public static final String DATABASE_VERSION = "0.3.6-1";
 
-    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(Server.class);
+    private static final Logger LOGGER = LogManager.getLogger();
 
     protected OpenSearchClient client;
     private OpenSearchRunner runner = null;

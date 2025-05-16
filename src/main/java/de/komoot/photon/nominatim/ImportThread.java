@@ -2,7 +2,8 @@ package de.komoot.photon.nominatim;
 
 import de.komoot.photon.Importer;
 import de.komoot.photon.PhotonDoc;
-import org.slf4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.Collections;
 import java.util.concurrent.BlockingQueue;
@@ -13,7 +14,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * Worker thread for bulk importing data from a Nominatim database.
  */
 public class ImportThread {
-    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(ImportThread.class);
+    private static final Logger LOGGER = LogManager.getLogger();
 
     private static final int PROGRESS_INTERVAL = 50000;
     private static final Iterable<PhotonDoc> FINAL_DOCUMENT = Collections.EMPTY_LIST;

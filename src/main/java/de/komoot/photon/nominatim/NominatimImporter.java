@@ -7,7 +7,8 @@ import de.komoot.photon.nominatim.model.AddressRow;
 import de.komoot.photon.nominatim.model.NominatimAddressCache;
 import de.komoot.photon.nominatim.model.OsmlineRowMapper;
 import de.komoot.photon.nominatim.model.PlaceRowMapper;
-import org.slf4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.sql.Types;
 import java.util.Map;
@@ -16,7 +17,7 @@ import java.util.Map;
  * Importer for data from a Nominatim database.
  */
 public class NominatimImporter extends NominatimConnector {
-    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(NominatimImporter.class);
+    private static final Logger LOGGER = LogManager.getLogger();
 
     public NominatimImporter(String host, int port, String database, String username, String password, boolean useGeometryColumn) {
         this(host, port, database, username, password, new PostgisDataAdapter(), useGeometryColumn);

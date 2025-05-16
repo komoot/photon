@@ -9,7 +9,8 @@ import de.komoot.photon.PhotonDoc;
 import de.komoot.photon.UsageException;
 import de.komoot.photon.nominatim.ImportThread;
 import de.komoot.photon.nominatim.model.AddressRow;
-import org.slf4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,7 +18,7 @@ import java.io.InputStream;
 import java.util.*;
 
 public class JsonReader {
-    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(JsonReader.class);
+    private static final Logger LOGGER = LogManager.getLogger();
 
     private final JsonParser parser;
     private NominatimDumpHeader header = null;
