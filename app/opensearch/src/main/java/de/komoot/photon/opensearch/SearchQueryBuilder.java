@@ -1,7 +1,7 @@
 package de.komoot.photon.opensearch;
 
 import de.komoot.photon.searcher.TagFilter;
-import de.komoot.photon.query.StructuredPhotonRequest;
+import de.komoot.photon.query.StructuredSearchRequest;
 import de.komoot.photon.Constants;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Point;
@@ -142,7 +142,7 @@ public class SearchQueryBuilder {
                         .field(String.format("name.%s.raw", language))));
     }
 
-    public SearchQueryBuilder(StructuredPhotonRequest request, String language, String[] languages, boolean lenient)
+    public SearchQueryBuilder(StructuredSearchRequest request, String language, String[] languages, boolean lenient)
     {
         var hasSubStateField = request.hasCounty() || request.hasCityOrPostCode() || request.hasDistrict() || request.hasStreet();
         var query4QueryBuilder = new AddressQueryBuilder(lenient, language, languages)

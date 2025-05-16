@@ -1,37 +1,27 @@
 package de.komoot.photon.api;
 
+import de.komoot.photon.App;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.io.TempDir;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Point;
 
-import de.komoot.photon.App;
-import de.komoot.photon.ESBaseTester;
 import de.komoot.photon.Importer;
 import de.komoot.photon.PhotonDoc;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.nio.file.Path;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
-import static spark.Spark.*;
 
-class ApiLanguagesTest extends ESBaseTester {
-    private static final int LISTEN_PORT = 30234;
-
+class ApiLanguagesTest extends ApiBaseTester {
     @TempDir
     private Path dataDirectory;
 
     @AfterEach
     void shutdown() {
-        stop();
-        awaitStop();
+        App.shutdown();
     }
 
     protected PhotonDoc createDoc(int id, String key, String value, String... names) {
@@ -61,40 +51,19 @@ class ApiLanguagesTest extends ESBaseTester {
         refresh();
     }
 
-    private void startAPI(String languages) throws Exception {
-        List<String> params = new ArrayList<>(Arrays.asList("-cluster", TEST_CLUSTER_NAME,
-                "-listen-port", Integer.toString(LISTEN_PORT),
-                "-transport-addresses", "127.0.0.1",
-                "-cors-any"));
-
-        if (languages.length() > 0) {
-            params.add("-languages");
-            params.add(languages);
-        }
-
-        App.main(params.toArray(new String[0]));
-        awaitInitialization();
-    }
-
-    private String query(String q) throws Exception {
-        HttpURLConnection connection =
-                (HttpURLConnection) new URL("http://127.0.0.1:" + port() + "/api?" + q).openConnection();
-        return new BufferedReader(new InputStreamReader(connection.getInputStream())).lines().collect(Collectors.joining("\n"));
-    }
-
     @Test
     void testOnlyImportSelectedLanguages() throws Exception {
         importPlaces("en");
-        startAPI("");
+        startAPI();
 
-        assertThatJson(query("q=thething")).isObject()
+        assertThatJson(readURL("/api?q=thething")).isObject()
                 .node("features").isArray()
                 .hasSize(1)
                 .element(0).isObject()
                 .node("properties").isObject()
                 .containsEntry("osm_id", 1000);
 
-        assertThatJson(query("q=letruc")).isObject()
+        assertThatJson(readURL("/api?q=letruc")).isObject()
                 .node("features").isArray()
                 .hasSize(0);
     }
@@ -102,19 +71,19 @@ class ApiLanguagesTest extends ESBaseTester {
     @Test
     void testUseImportLanguagesWhenNoOtherIsGiven() throws Exception {
         importPlaces("en", "fr", "ch");
-        startAPI("");
+        startAPI();
 
-        assertThatJson(query("q=thething")).isObject()
+        assertThatJson(readURL("/api?q=thething")).isObject()
                 .node("features").isArray()
                 .hasSize(2);
     }
 
     @Test
-    void testUseCommandLineLangauges() throws Exception {
+    void testUseCommandLineLanguages() throws Exception {
         importPlaces("en", "fr", "ch");
-        startAPI("en,fr");
+        startAPI("-languages", "en,fr");
 
-        assertThatJson(query("q=thething")).isObject()
+        assertThatJson(readURL("/api?q=thething")).isObject()
                 .node("features").isArray()
                 .hasSize(1);
     }

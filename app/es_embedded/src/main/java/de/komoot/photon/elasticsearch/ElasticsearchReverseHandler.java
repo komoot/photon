@@ -1,9 +1,9 @@
 package de.komoot.photon.elasticsearch;
 
+import de.komoot.photon.searcher.SearchHandler;
 import org.locationtech.jts.geom.Point;
 import de.komoot.photon.query.ReverseRequest;
 import de.komoot.photon.searcher.PhotonResult;
-import de.komoot.photon.searcher.ReverseHandler;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
@@ -21,7 +21,7 @@ import java.util.List;
 /**
  * Execute a reverse lookup on a Elasticsearch database.
  */
-public class ElasticsearchReverseHandler implements ReverseHandler {
+public class ElasticsearchReverseHandler implements SearchHandler<ReverseRequest> {
     private Client client;
     private TimeValue queryTimeout;
 
@@ -31,7 +31,7 @@ public class ElasticsearchReverseHandler implements ReverseHandler {
     }
 
     @Override
-    public List<PhotonResult> reverse(ReverseRequest photonRequest) {
+    public List<PhotonResult> search(ReverseRequest photonRequest) {
         ReverseQueryBuilder queryBuilder = buildQuery(photonRequest);
         SearchResponse results = search(queryBuilder.buildQuery(), photonRequest.getLimit(), photonRequest.getLocation(),
                 photonRequest.getLocationDistanceSort());

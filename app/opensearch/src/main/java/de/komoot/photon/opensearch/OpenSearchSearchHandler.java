@@ -1,6 +1,6 @@
 package de.komoot.photon.opensearch;
 
-import de.komoot.photon.query.PhotonRequest;
+import de.komoot.photon.query.SimpleSearchRequest;
 import de.komoot.photon.searcher.PhotonResult;
 import de.komoot.photon.searcher.SearchHandler;
 import org.opensearch.client.opensearch.OpenSearchClient;
@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class OpenSearchSearchHandler implements SearchHandler {
+public class OpenSearchSearchHandler implements SearchHandler<SimpleSearchRequest> {
     private final OpenSearchClient client;
     private final String[] supportedLanguages;
     private final String queryTimeout;
@@ -24,7 +24,7 @@ public class OpenSearchSearchHandler implements SearchHandler {
     }
 
     @Override
-    public List<PhotonResult> search(PhotonRequest request) {
+    public List<PhotonResult> search(SimpleSearchRequest request) {
         final int limit = request.getLimit();
         final int extLimit = limit > 1 ? (int) Math.round(limit * 1.5) : 1;
 
@@ -43,11 +43,11 @@ public class OpenSearchSearchHandler implements SearchHandler {
     }
 
     @Override
-    public String dumpQuery(PhotonRequest photonRequest) {
-        return null;
+    public String dumpQuery(SimpleSearchRequest simpleSearchRequest) {
+        return "{}";
     }
 
-    private SearchQueryBuilder buildQuery(PhotonRequest request, boolean lenient) {
+    private SearchQueryBuilder buildQuery(SimpleSearchRequest request, boolean lenient) {
         return new SearchQueryBuilder(request.getQuery(), request.getLanguage(), supportedLanguages, lenient).
                 withOsmTagFilters(request.getOsmTagFilters()).
                 withLayerFilters(request.getLayerFilters()).

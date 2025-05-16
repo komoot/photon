@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.komoot.photon.Constants;
-import spark.Spark;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -23,7 +22,8 @@ public class GeocodeJsonFormatter implements ResultFormatter {
     @Override
     public String formatError(String msg) {
         try {
-            return mapper.writeValueAsString(Map.of("message", msg));
+            return mapper.writeValueAsString(
+                    Map.of("message", msg == null ? "Unknown error." : msg));
         } catch (JsonProcessingException e) {
             return "{}";
         }
@@ -31,76 +31,72 @@ public class GeocodeJsonFormatter implements ResultFormatter {
 
     @Override
     public String convert(List<PhotonResult> results, String language,
-                          boolean withGeometry, boolean withDebugInfo, String queryDebugInfo) {
-        try {
-            final var writer = new StringWriter();
-            final var gen = mapper.createGenerator(writer);
+                          boolean withGeometry, boolean withDebugInfo, String queryDebugInfo) throws IOException {
+        final var writer = new StringWriter();
+        final var gen = mapper.createGenerator(writer);
 
-            if (withDebugInfo) {
-                gen.useDefaultPrettyPrinter();
-            }
+        if (withDebugInfo) {
+            gen.useDefaultPrettyPrinter();
+        }
 
+        gen.writeStartObject();
+        gen.writeStringField("type", "FeatureCollection");
+        gen.writeArrayFieldStart("features");
+
+        for (PhotonResult result : results) {
             gen.writeStartObject();
-            gen.writeStringField("type", "FeatureCollection");
-            gen.writeArrayFieldStart("features");
+            gen.writeStringField("type", "Feature");
 
-            for (PhotonResult result : results) {
-                gen.writeStartObject();
-                gen.writeStringField("type", "Feature");
+            gen.writeObjectFieldStart("properties");
 
-                gen.writeObjectFieldStart("properties");
-
-                for (String key : KEYS_LANG_UNSPEC) {
-                    put(gen, key, result.get(key));
-                }
-
-                for (String key : KEYS_LANG_SPEC) {
-                    put(gen, key, result.getLocalised(key, language));
-                }
-
-                put(gen, "extent", result.getExtent());
-
-                put(gen, "extra", result.getMap("extra"));
-
-                gen.writeEndObject();
-
-                if (withGeometry && result.getGeometry() != null) {
-                    gen.writeFieldName("geometry");
-                    gen.writeRawValue(result.getGeometry());
-                } else {
-                    gen.writeObjectFieldStart("geometry");
-                    gen.writeStringField("type", "Point");
-                    gen.writeObjectField("coordinates",  result.getCoordinates());
-                    gen.writeEndObject();
-                }
-
-                gen.writeEndObject();
+            for (String key : KEYS_LANG_UNSPEC) {
+                put(gen, key, result.get(key));
             }
 
-            gen.writeEndArray();
+            for (String key : KEYS_LANG_SPEC) {
+                put(gen, key, result.getLocalised(key, language));
+            }
 
-            if (withDebugInfo || queryDebugInfo != null) {
-                gen.writeObjectFieldStart("properties");
-                if (queryDebugInfo != null) {
-                    gen.writeFieldName("debug");
-                    gen.writeRawValue(queryDebugInfo);
-                }
-                if (withDebugInfo) {
-                    gen.writeArrayFieldStart("raw_data");
-                    for (var res : results) {
-                        gen.writePOJO(res.getRawData());
-                    }
-                    gen.writeEndArray();
-                }
+            put(gen, "extent", result.getExtent());
+
+            put(gen, "extra", result.getMap("extra"));
+
+            gen.writeEndObject();
+
+            if (withGeometry && result.getGeometry() != null) {
+                gen.writeFieldName("geometry");
+                gen.writeRawValue(result.getGeometry());
+            } else {
+                gen.writeObjectFieldStart("geometry");
+                gen.writeStringField("type", "Point");
+                gen.writeObjectField("coordinates", result.getCoordinates());
                 gen.writeEndObject();
             }
 
             gen.writeEndObject();
-            gen.close();
-            return writer.toString();
-        } catch (IOException e) {
-            throw Spark.halt(400, "{\"message\": \"Error creating json.\"}");
         }
+
+        gen.writeEndArray();
+
+        if (withDebugInfo || queryDebugInfo != null) {
+            gen.writeObjectFieldStart("properties");
+            if (queryDebugInfo != null) {
+                gen.writeFieldName("debug");
+                gen.writeRawValue(queryDebugInfo);
+            }
+            if (withDebugInfo) {
+                gen.writeArrayFieldStart("raw_data");
+                for (var res : results) {
+                    gen.writePOJO(res.getRawData());
+                }
+                gen.writeEndArray();
+            }
+            gen.writeEndObject();
+        }
+
+        gen.writeEndObject();
+        gen.close();
+        return writer.toString();
     }
 
 

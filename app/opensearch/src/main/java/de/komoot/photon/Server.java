@@ -3,9 +3,10 @@ package de.komoot.photon;
 import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import de.komoot.photon.opensearch.*;
-import de.komoot.photon.searcher.ReverseHandler;
+import de.komoot.photon.query.ReverseRequest;
+import de.komoot.photon.query.SimpleSearchRequest;
+import de.komoot.photon.query.StructuredSearchRequest;
 import de.komoot.photon.searcher.SearchHandler;
-import de.komoot.photon.searcher.StructuredSearchHandler;
 import org.apache.hc.core5.http.HttpHost;
 import org.codelibs.opensearch.runner.OpenSearchRunner;
 import org.opensearch.client.json.jackson.JacksonJsonpMapper;
@@ -184,15 +185,15 @@ public class Server {
         return new de.komoot.photon.opensearch.Updater(client);
     }
 
-    public SearchHandler createSearchHandler(String[] languages, int queryTimeoutSec) {
+    public SearchHandler<SimpleSearchRequest> createSearchHandler(String[] languages, int queryTimeoutSec) {
         return new OpenSearchSearchHandler(client, languages, queryTimeoutSec);
     }
 
-    public StructuredSearchHandler createStructuredSearchHandler(String[] languages, int queryTimeoutSec) {
+    public SearchHandler<StructuredSearchRequest> createStructuredSearchHandler(String[] languages, int queryTimeoutSec) {
         return new OpenSearchStructuredSearchHandler(client, languages, queryTimeoutSec);
     }
 
-    public ReverseHandler createReverseHandler(int queryTimeoutSec) {
+    public SearchHandler<ReverseRequest> createReverseHandler(int queryTimeoutSec) {
         return new OpenSearchReverseHandler(client, queryTimeoutSec);
     }
 

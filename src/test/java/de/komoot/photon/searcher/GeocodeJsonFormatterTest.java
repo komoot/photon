@@ -3,6 +3,7 @@ package de.komoot.photon.searcher;
 import de.komoot.photon.Constants;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.util.List;
 
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
@@ -10,7 +11,7 @@ import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 class GeocodeJsonFormatterTest {
 
     @Test
-    void testConvertPointToGeojson() {
+    void testConvertPointToGeojson() throws IOException {
         GeocodeJsonFormatter formatter = new GeocodeJsonFormatter();
 
         final var allPointResults = List.of(
@@ -41,7 +42,7 @@ class GeocodeJsonFormatterTest {
     }
 
     @Test
-    void testConvertGeometryToGeojson() {
+    void testConvertGeometryToGeojson() throws IOException {
         GeocodeJsonFormatter formatter = new GeocodeJsonFormatter();
 
         final var allResults = List.of(

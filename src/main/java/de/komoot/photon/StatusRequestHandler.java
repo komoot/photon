@@ -1,33 +1,28 @@
 package de.komoot.photon;
 
+import io.javalin.http.Context;
+import io.javalin.http.Handler;
+import org.jetbrains.annotations.NotNull;
+
 import java.io.IOException;
-import java.util.Date;
 import java.util.Map;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import spark.Request;
-import spark.Response;
-import spark.RouteImpl;
-
-public class StatusRequestHandler extends RouteImpl {
+public class StatusRequestHandler implements Handler {
     private final Server server;
-    private final ObjectMapper mapper = new ObjectMapper();
 
-    protected StatusRequestHandler(String path, Server server) {
-        super(path);
+    protected StatusRequestHandler(Server server) {
         this.server = server;
     }
 
     @Override
-    public String handle(Request request, Response response) throws IOException {
+    public void handle(@NotNull Context context) throws IOException {
         DatabaseProperties dbProperties = server.loadFromDatabase();
-        String importDateStr = null;
-        if (dbProperties.getImportDate() instanceof Date) {
+        String importDateStr = "";
+        if (dbProperties.getImportDate() != null) {
             importDateStr = dbProperties.getImportDate().toInstant().toString();
         }
         
-        return mapper.writeValueAsString(Map.of("status", "Ok", "import_date", importDateStr));
+        context.json(Map.of("status", "Ok", "import_date", importDateStr));
     }
     
 }

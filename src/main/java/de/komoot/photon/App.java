@@ -7,26 +7,27 @@ import de.komoot.photon.json.JsonReader;
 import de.komoot.photon.nominatim.ImportThread;
 import de.komoot.photon.nominatim.NominatimImporter;
 import de.komoot.photon.nominatim.NominatimUpdater;
-import de.komoot.photon.searcher.ReverseHandler;
-import de.komoot.photon.searcher.SearchHandler;
-import de.komoot.photon.searcher.StructuredSearchHandler;
-import de.komoot.photon.utils.CorsFilter;
+import de.komoot.photon.query.*;
+import de.komoot.photon.searcher.GeocodeJsonFormatter;
+import de.komoot.photon.searcher.TagFilter;
+import io.javalin.Javalin;
+import io.javalin.http.ContentType;
+import org.locationtech.jts.geom.Envelope;
 import org.slf4j.Logger;
-import spark.Request;
-import spark.Response;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
-
-import static spark.Spark.*;
+import java.util.stream.Collectors;
 
 /**
  * Main Photon application.
  */
 public class App {
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(App.class);
+    private static Server esServer;
+    private static Javalin photonServer;
 
     public static void main(String[] rawArgs) throws Exception {
         CommandLineArgs args = parseCommandLine(rawArgs);
@@ -37,6 +38,15 @@ public class App {
             LOGGER.error(e.getMessage());
             LOGGER.error("Exiting.");
             System.exit(2);
+        }
+    }
+
+    public static void shutdown() {
+        if (photonServer != null) {
+            photonServer.stop();
+        }
+        if (esServer != null) {
+            esServer.shutdown();
         }
     }
 
@@ -52,7 +62,7 @@ public class App {
         }
 
         boolean shutdownES = false;
-        final Server esServer = new Server(args.getDataDirectory()).start(args.getCluster(), args.getTransportAddresses());
+        esServer = new Server(args.getDataDirectory()).start(args.getCluster(), args.getTransportAddresses());
         try {
             LOGGER.info("Make sure that the ES cluster is ready, this might take some time.");
             esServer.waitForReady();
@@ -298,56 +308,114 @@ public class App {
                         "\n Languages: {} \n Import Date: {} \n Support Structured Queries: {} \n Support Geometries: {}",
                 dbProperties.getLanguages(), dbProperties.getImportDate(), dbProperties.getSupportStructuredQueries(), dbProperties.getSupportGeometries());
 
-        port(args.getListenPort());
-        ipAddress(args.getListenIp());
+        photonServer = Javalin.create(config -> {
+            config.router.ignoreTrailingSlashes = true;
+            config.http.defaultContentType = ContentType.APPLICATION_JSON.toString();
+            if (args.isCorsAnyOrigin() || args.getCorsOrigin().length > 0) {
+                config.bundledPlugins.enableCors(cors -> {
+                    if (args.isCorsAnyOrigin()) {
+                        cors.addRule(it -> {
+                            it.anyHost();
+                            it.defaultScheme = "http";
+                        });
+                        cors.addRule(it -> {
+                            it.anyHost();
+                            it.defaultScheme = "https";
+                        });
+                    } else {
+                        for (var host : args.getCorsOrigin()) {
+                            LOGGER.info("Adding cors for {}", host);
+                            if (host.startsWith("http")) {
+                                cors.addRule(r -> r.allowHost(host));
+                            } else {
+                                cors.addRule(r -> r.allowHost("http://" + host, "https://" + host));
+                            }
+                        }
+                    }
+                });
+            }
+            config.validation.register(TagFilter.class, TagFilter::buildOsmTagFilter);
+            config.validation.register(Envelope.class, BoundingBoxParamConverter::apply);
+            config.validation.register(Boolean.class, b -> {
+                if (b == null) {
+                    return null;
+                }
+                final var lower = b.toLowerCase();
+                return "1".equals(lower) || "yes".equals(lower) || "true".equals(lower);
+            });
+            config.validation.register(Double.class, s -> {
+                if (s != null) {
+                    final var d = Double.parseDouble(s);
+                    if (Double.isNaN(d)) {
+                        throw new NumberFormatException();
+                    }
+                    return d;
+                }
+                return null;
+            });
+        });
 
-        String[] allowedOrigin = args.isCorsAnyOrigin() ? new String[]{ "*" } : args.getCorsOrigin();
-        if (allowedOrigin.length > 0) {
-            CorsFilter.enableCORS(allowedOrigin, "get", "*");
-        } else {
-            // Set Json content type. In the other case already set by enableCors.
-            before((request, response) -> response.type("application/json; charset=UTF-8"));
-        }
 
-        // setup search API
-        String[] langs = dbProperties.getLanguages();
+        final var formatter = new GeocodeJsonFormatter();
 
-        SearchHandler searchHandler = server.createSearchHandler(langs, args.getQueryTimeout());
-        get("api", new SearchRequestHandler("api", searchHandler, langs, args.getDefaultLanguage(), args.getMaxResults(), dbProperties.getSupportGeometries()));
-        get("api/", new SearchRequestHandler("api/", searchHandler, langs, args.getDefaultLanguage(), args.getMaxResults(), dbProperties.getSupportGeometries()));
+        photonServer.exception(Exception.class, (e, ctx) ->
+                ctx.status(400)
+                        .result(formatter.formatError(e.getMessage()))
+        );
+        photonServer.exception(BadRequestException.class, (e, ctx) ->
+                ctx.status(e.getHttpStatus())
+                        .result(formatter.formatError(e.getMessage()))
+        );
+
+        photonServer.get("/status", new StatusRequestHandler(server));
+
+        photonServer.get("/api", new GenericSearchHandler<>(
+                new SimpleSearchRequestFactory(
+                        Arrays.stream(dbProperties.getLanguages()).collect(Collectors.toList()),
+                        args.getDefaultLanguage(),
+                        args.getMaxResults(),
+                        dbProperties.getSupportGeometries()),
+                server.createSearchHandler(dbProperties.getLanguages(), args.getQueryTimeout()),
+                formatter));
 
         if (dbProperties.getSupportStructuredQueries()) {
-            StructuredSearchHandler structured = server.createStructuredSearchHandler(langs, args.getQueryTimeout());
-            get("structured", new StructuredSearchRequestHandler("structured", structured, langs, args.getDefaultLanguage(), args.getMaxResults(), dbProperties.getSupportGeometries()));
-            get("structured/", new StructuredSearchRequestHandler("structured/", structured, langs, args.getDefaultLanguage(), args.getMaxResults(), dbProperties.getSupportGeometries()));
+            photonServer.get("/structured", new GenericSearchHandler<>(
+                    new StructuredSearchRequestFactory(
+                            Arrays.stream(dbProperties.getLanguages()).collect(Collectors.toList()),
+                            args.getDefaultLanguage(),
+                            args.getMaxResults(),
+                            dbProperties.getSupportGeometries()),
+                    server.createStructuredSearchHandler(dbProperties.getLanguages(), args.getQueryTimeout()),
+                    formatter));
         }
 
-        ReverseHandler reverseHandler = server.createReverseHandler(args.getQueryTimeout());
-        get("reverse", new ReverseSearchRequestHandler("reverse", reverseHandler, dbProperties.getLanguages(),
-                args.getDefaultLanguage(), args.getMaxReverseResults()));
-        get("reverse/", new ReverseSearchRequestHandler("reverse/", reverseHandler, dbProperties.getLanguages(),
-                args.getDefaultLanguage(), args.getMaxReverseResults()));
-        
-        get("status", new StatusRequestHandler("status", server));
-        get("status/", new StatusRequestHandler("status/", server));
+        photonServer.get("/reverse", new GenericSearchHandler<>(
+                new ReverseRequestFactory(
+                        Arrays.stream(dbProperties.getLanguages()).collect(Collectors.toList()),
+                        args.getDefaultLanguage(),
+                        args.getMaxReverseResults(),
+                        dbProperties.getSupportGeometries()),
+                server.createReverseHandler(args.getQueryTimeout()),
+                formatter));
+
 
         if (args.isEnableUpdateApi()) {
             // setup update API
-            final NominatimUpdater nominatimUpdater = setupNominatimUpdater(args, server);
+            final var nominatimUpdater = setupNominatimUpdater(args, server);
+
             if (!nominatimUpdater.isSetUpForUpdates()) {
                 throw new UsageException("Update API enabled, but Nominatim database is not prepared. Run -nominatim-update-init-for first.");
             }
-            get("/nominatim-update/status", (Request request, Response response) -> {
-               if (nominatimUpdater.isBusy()) {
-                   return "\"BUSY\"";
-               }
 
-               return "\"OK\"";
-            });
-            get("/nominatim-update", (Request request, Response response) -> {
+            photonServer.get("/nominatim-update/status", ctx ->
+                    ctx.status(200).json(nominatimUpdater.isBusy() ? "BUSY" : "OK")
+            );
+            photonServer.get("/nominatim-update", ctx -> {
                 new Thread(()-> App.startNominatimUpdate(nominatimUpdater, server)).start();
-                return "\"nominatim update started (more information in console output) ...\"";
+                ctx.status(200).json("nominatim update started (more information in console output) ...");
             });
         }
+
+        photonServer.start(args.getListenIp(), args.getListenPort());
     }
 }

@@ -1,7 +1,6 @@
 package de.komoot.photon.query;
 
 import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.Point;
 import de.komoot.photon.ESBaseTester;
 import de.komoot.photon.Importer;
 import de.komoot.photon.searcher.PhotonResult;
@@ -16,7 +15,6 @@ import org.locationtech.jts.io.ParseException;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.HashSet;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -43,11 +41,12 @@ class QueryReverseTest extends ESBaseTester {
     }
 
     private List<PhotonResult> reverse(double lon, double lat, double radius, int limit) {
-        Point pt = FACTORY.createPoint(new Coordinate(lon, lat));
+        final var request = new ReverseRequest();
+        request.setLocation(FACTORY.createPoint(new Coordinate(lon, lat)));
+        request.setRadius(radius);
+        request.setLimit(limit, limit);
 
-        return getServer().createReverseHandler(1).reverse(
-            new ReverseRequest(pt, "en", radius, "", limit, true, new HashSet<>(), false, false)
-        );
+        return getServer().createReverseHandler(1).search(request);
     }
 
     @Test

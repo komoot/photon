@@ -55,25 +55,18 @@ dependencies {
     }
     implementation 'org.locationtech.jts:jts-core:1.20.0'
     implementation 'org.locationtech.jts.io:jts-io-common:1.20.0'
-    implementation 'com.sparkjava:spark-core:2.9.4'
+    implementation 'io.javalin:javalin:6.6.0'
     implementation 'net.postgis:postgis-jdbc:2024.1.0'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.18.2'
 
     testImplementation(platform("org.junit:junit-bom:5.11.3"))
     testImplementation 'com.h2database:h2:2.3.232'
     testImplementation 'org.junit.jupiter:junit-jupiter'
-    testImplementation 'org.mockito:mockito-core:5.14.2'
     testImplementation 'org.assertj:assertj-core:3.27.2'
     // freezing at 2.40 for Java 11
     testImplementation 'net.javacrumbs.json-unit:json-unit-assertj:2.40.1'
 
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-
-    // updates for indirect dependencies
-    implementation 'org.eclipse.jetty:jetty-server:9.4.56.v20240826'
-    implementation 'org.eclipse.jetty:jetty-webapp:9.4.56.v20240826'
-    implementation 'org.eclipse.jetty.websocket:websocket-server:9.4.56.v20240826'
-    implementation 'org.eclipse.jetty.websocket:websocket-servlet:9.4.56.v20240826'
 }
 
 tasks.named('test') {

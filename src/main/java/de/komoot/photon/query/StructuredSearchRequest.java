@@ -2,7 +2,7 @@ package de.komoot.photon.query;
 
 import org.apache.commons.lang3.StringUtils;
 
-public class StructuredPhotonRequest extends PhotonRequestBase {
+public class StructuredSearchRequest extends SearchRequestBase {
     private String countryCode;
     private String state;
     private String county;
@@ -11,10 +11,6 @@ public class StructuredPhotonRequest extends PhotonRequestBase {
     private String district;
     private String street;
     private String houseNumber;
-
-    public StructuredPhotonRequest(String language) {
-        super(language);
-    }
 
     public boolean getDebug() {
         return false;
