@@ -121,8 +121,9 @@ public class JsonDumper implements Importer {
             writer.writeNumberField("parent_place_id", doc.getParentPlaceId());
         }
 
-        if (!doc.getName().isEmpty())
-        writer.writeObjectField("name", doc.getName());
+        if (!doc.getName().isEmpty()) {
+            writer.writeObjectField("name", doc.getName());
+        }
 
         if (doc.getHouseNumber() != null) {
             writer.writeStringField("housenumber", doc.getHouseNumber());
