@@ -4,6 +4,7 @@ import de.komoot.photon.ESBaseTester;
 import de.komoot.photon.Importer;
 import de.komoot.photon.PhotonDoc;
 import de.komoot.photon.searcher.PhotonResult;
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -14,8 +15,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Tests that the database backend produces queries which can find all
@@ -48,6 +47,17 @@ class QueryBasicSearchTest extends ESBaseTester {
         return getServer().createSearchHandler(new String[]{"en"}, 1).search(request);
     }
 
+    private void assertWorking(SoftAssertions soft, String... queries) {
+        for (String query : queries) {
+            soft.assertThat(search(query)).hasSize(1);
+        }
+    }
+
+    private void assertNotWorking(SoftAssertions soft, String... queries) {
+        for (String query : queries) {
+            soft.assertThat(search(query)).hasSize(0);
+        }
+    }
 
     @Test
     void testSearchByDefaultName() throws IOException {
@@ -56,14 +66,11 @@ class QueryBasicSearchTest extends ESBaseTester {
         instance.finish();
         refresh();
 
-        assertAll("default name",
-                () -> assertEquals(1, search("muffle flu").size()),
-                () -> assertEquals(1, search("flu").size()),
-                () -> assertEquals(1, search("muffle").size()),
-                () -> assertEquals(1, search("mufle flu").size()),
-                () -> assertEquals(1, search("muffle flu 9").size()),
-                () -> assertEquals(0, search("huffle fluff").size())
-        );
+        SoftAssertions soft = new SoftAssertions();
+        assertWorking(soft, "muffle flu", "flu", "muffle", "mufle flu", "muffle flu 9");
+        assertNotWorking(soft,"huffle fluff");
+
+        soft.assertAll();
     }
 
     @Test
@@ -73,13 +80,12 @@ class QueryBasicSearchTest extends ESBaseTester {
         instance.finish();
         refresh();
 
-        assertAll("default name",
-                () -> assertEquals(1, search("hunted").size()),
-                () -> assertEquals(1, search("hunted hotel").size()),
-                () -> assertEquals(1, search("hunted house hotel").size()),
-                () -> assertEquals(1, search("hunted house hotel 7").size()),
-                () -> assertEquals(1, search("hunted hotel 7").size())
-        );
+        SoftAssertions soft = new SoftAssertions();
+        assertWorking(soft,
+                "hunted", "hunted hotel", "hunted house hotel",
+                "hunted house hotel 7", "hunted hotel 7");
+
+        soft.assertAll();
     }
     @Test
     void testSearchByAlternativeNames() throws IOException {
@@ -91,16 +97,13 @@ class QueryBasicSearchTest extends ESBaseTester {
         instance.finish();
         refresh();
 
-        assertAll("altnames",
-                () -> assertEquals(1, search("original").size()),
-                () -> assertEquals(1, search("alt").size()),
-                () -> assertEquals(1, search("older").size()),
-                () -> assertEquals(1, search("int").size()),
-                () -> assertEquals(1, search("local").size()),
-                () -> assertEquals(1, search("regional").size()),
-                () -> assertEquals(1, search("house").size()),
-                () -> assertEquals(0, search("other").size())
-        );
+        SoftAssertions soft = new SoftAssertions();
+        assertWorking(soft,
+                "original", "alt", "older", "int", "local",
+                "regional", "house");
+        assertNotWorking(soft, "other");
+
+        soft.assertAll();
     }
 
     @Test
@@ -118,14 +121,13 @@ class QueryBasicSearchTest extends ESBaseTester {
         instance.finish();
         refresh();
 
-        assertAll("name and address",
-                () -> assertEquals(1, search("castillo").size()),
-                () -> assertEquals(1, search("castillo callino").size()),
-                () -> assertEquals(1, search("castillo quartier madrid").size()),
-                () -> assertEquals(1, search("castillo block montagna estado").size()),
+        SoftAssertions soft = new SoftAssertions();
+        assertWorking(soft,
+                "castillo", "castillo callino",
+                "castillo quartier madrid", "castillo block montagna estado");
+        assertNotWorking(soft, "castillo state thing");
 
-                () -> assertEquals(0, search("castillo state thing").size())
-        );
+        soft.assertAll();
     }
 
     @Test
@@ -137,14 +139,12 @@ class QueryBasicSearchTest extends ESBaseTester {
         instance.finish();
         refresh();
 
-        assertAll("find names",
-                () -> assertEquals(1, search("Palermo").size()),
-                () -> assertEquals(1, search("Paler").size()),
-                () -> assertEquals(1, search("Palermo Sici").size()),
-                () -> assertEquals(1, search("Sicilia, Paler").size()),
-                () -> assertEquals(0, search("Sicilia").size()),
-                () -> assertEquals(0, search("Sici").size())
-        );
+        SoftAssertions soft = new SoftAssertions();
+        assertWorking(soft,
+                "Palermo", "Paler", "Palermo Sici", "Sicilia, Paler");
+        assertNotWorking(soft, "Sicilia", "Sici");
+
+        soft.assertAll();
     }
 
     @Test
@@ -157,12 +157,12 @@ class QueryBasicSearchTest extends ESBaseTester {
         instance.finish();
         refresh();
 
-        assertAll("named housenumber",
-                () -> assertEquals(1, search("hauptstrasse 5").size()),
-                () -> assertEquals(1, search("edeka, hauptstrasse 5").size()),
-                () -> assertEquals(1, search("edeka, hauptstr 5").size()),
-                () -> assertEquals(1, search("edeka, hauptstrasse").size())
-        );
+        SoftAssertions soft = new SoftAssertions();
+        assertWorking(soft,
+                "hauptstrasse 5", "edeka, hauptstrasse 5",
+                "edeka, hauptstr 5", "edeka, hauptstrasse");
+
+        soft.assertAll();
     }
 
     @Test
@@ -175,9 +175,10 @@ class QueryBasicSearchTest extends ESBaseTester {
         instance.finish();
         refresh();
 
-        assertAll("unnamed housenumber",
-                () -> assertEquals(1, search("hauptstrasse 5").size()),
-                () -> assertEquals(0, search("hauptstrasse").size())
-        );
+        SoftAssertions soft = new SoftAssertions();
+        assertWorking(soft, "hauptstrasse 5");
+        assertNotWorking(soft, "hauptstrasse");
+
+        soft.assertAll();
     }
 }

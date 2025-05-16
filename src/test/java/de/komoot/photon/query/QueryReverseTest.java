@@ -17,7 +17,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class QueryReverseTest extends ESBaseTester {
@@ -51,20 +51,17 @@ class QueryReverseTest extends ESBaseTester {
 
     @Test
     void testReverse() {
-        List<PhotonResult> results = reverse(10, 10, 0.1, 1);
-
-        assertEquals(1, results.size());
-        assertEquals(100, results.get(0).get("osm_id"));
+        assertThat(reverse(10, 10, 0.1, 1))
+                .satisfiesExactly(p -> assertThat(p.get("osm_id")).isEqualTo(100));
     }
 
     @ParameterizedTest
     @ValueSource(ints = {2, 3, 10})
     void testReverseMultiple(int limit) {
-        List<PhotonResult> results = reverse(10, 10, 20, limit);
-
-        assertEquals(2, results.size());
-        assertEquals(100, results.get(0).get("osm_id"));
-        assertEquals(101, results.get(1).get("osm_id"));
+        assertThat(reverse(10, 10, 20, limit))
+                .satisfiesExactly(
+                        p -> assertThat(p.get("osm_id")).isEqualTo(100),
+                        p -> assertThat(p.get("osm_id")).isEqualTo(101));
     }
 
 

@@ -11,8 +11,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import static org.junit.jupiter.api.Assertions.*;
-
+import static org.assertj.core.api.Assertions.*;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -64,14 +63,12 @@ class QueryByLanguageTest extends ESBaseTester {
         instance.finish();
         refresh();
 
-        assertEquals(1, search("original", "en").size());
-        assertEquals(1, search("finish", "en").size());
-        assertEquals(0, search("russian", "en").size());
+        assertThat(search("original", "en")).hasSize(1);
+        assertThat(search("finish", "en")).hasSize(1);
+        assertThat(search("russian", "en")).hasSize(0);
 
-        double enScore = search("finish", "en").get(0).getScore();
-        double fiScore = search("finish", "fi").get(0).getScore();
-
-        assertTrue(fiScore > enScore);
+        assertThat(search("finish", "fi").get(0).getScore())
+                .isGreaterThan(search("finish", "en").get(0).getScore());
     }
 
     @Test
@@ -82,9 +79,9 @@ class QueryByLanguageTest extends ESBaseTester {
         instance.finish();
         refresh();
 
-        assertEquals(1, search("simple", "de").size());
-        assertEquals(1, search("einfach", "de").size());
-        assertEquals(1, search("ancient", "de").size());
+        assertThat(search("simple", "de")).hasSize(1);
+        assertThat(search("einfach", "de")).hasSize(1);
+        assertThat(search("ancient", "de")).hasSize(1);
     }
 
     @ParameterizedTest
@@ -105,8 +102,8 @@ class QueryByLanguageTest extends ESBaseTester {
         instance.finish();
         refresh();
 
-        assertEquals(1, search("here, original", "de").size());
-        assertEquals(1, search("here, Deutsch", "de").size());
+        assertThat(search("here, original", "de")).hasSize(1);
+        assertThat(search("here, Deutsch", "de")).hasSize(1);
     }
 
     @ParameterizedTest
@@ -118,9 +115,9 @@ class QueryByLanguageTest extends ESBaseTester {
         instance.finish();
         refresh();
 
-        assertEquals(1, search("simplle", lang).size());
-        assertEquals(1, search("einfah", lang).size());
-        assertEquals(1, search("anciemt", lang).size());
-        assertEquals(0, search("sinister", lang).size());
+        assertThat(search("simplle", lang)).hasSize(1);
+        assertThat(search("einfah", lang)).hasSize(1);
+        assertThat(search("anciemt", lang)).hasSize(1);
+        assertThat(search("sinister", lang)).hasSize(0);
     }
 }

@@ -3,46 +3,44 @@ package de.komoot.photon;
 import de.komoot.photon.nominatim.model.AddressType;
 import org.junit.jupiter.api.Test;
 
-import java.util.HashMap;
+import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.*;
 
 class PhotonDocTest {
+
+    private PhotonDoc simplePhotonDoc() {
+        return new PhotonDoc(1, "W", 2, "highway", "residential").houseNumber("4");
+    }
 
     @Test
     void testCompleteAddressOverwritesStreet() {
         PhotonDoc doc = simplePhotonDoc();
         
-        HashMap<String, String> streetNames = new HashMap<>();
-        streetNames.put("name", "parent place street");
-        doc.setAddressPartIfNew(AddressType.STREET, streetNames);
+        doc.setAddressPartIfNew(AddressType.STREET, Map.of("name", "parent place street"));
+        doc.address(Map.of("street", "test street"));
 
-        HashMap<String, String> address = new HashMap<>();
-        address.put("street", "test street");
-        doc.address(address);
-        AssertUtil.assertAddressName("test street", doc, AddressType.STREET);
+        assertThat(doc.getAddressParts().get(AddressType.STREET))
+                .containsEntry("name", "test street");
     }
 
     @Test
     void testCompleteAddressCreatesStreetIfNonExistantBefore() {
         PhotonDoc doc = simplePhotonDoc();
 
-        HashMap<String, String> address = new HashMap<>();
-        address.put("street", "test street");
-        doc.address(address);
-        AssertUtil.assertAddressName("test street", doc, AddressType.STREET);
+        doc.address(Map.of("street", "test street"));
+
+        assertThat(doc.getAddressParts().get(AddressType.STREET))
+                .containsEntry("name", "test street");
+
     }
 
     @Test
     void testAddCountryCode() {
         PhotonDoc doc = new PhotonDoc(1, "W", 2, "highway", "residential").countryCode("de");
 
-        assertNotNull(doc.getCountryCode());
-        assertEquals("DE", doc.getCountryCode());
-    }
-
-    private PhotonDoc simplePhotonDoc() {
-        return new PhotonDoc(1, "W", 2, "highway", "residential").houseNumber("4");
+        assertThat(doc.getCountryCode())
+                .isEqualTo("DE");
     }
 
 }

@@ -9,6 +9,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.*;
 
 class PhotonDocAddressSetTest {
     private final PhotonDoc baseDoc = new PhotonDoc(10000, "N", 123, "place", "house")
@@ -42,89 +43,77 @@ class PhotonDocAddressSetTest {
 
     @Test
     void testEmptyAddressUselessDocument() {
-        var it = new PhotonDocAddressSet(baseDoc, Map.of()).iterator();
-
-        assertFalse(it.hasNext());
+        assertThat(new PhotonDocAddressSet(baseDoc, Map.of()))
+                .isEmpty();
     }
 
     @Test
     void testEmptyAddressUsefulDocument() {
-        var it = new PhotonDocAddressSet(baseDoc.names(Map.of("name", "foo")),
-                                                            Map.of()).iterator();
-
-        assertSame(it.next(), baseDoc);
-        assertFalse(it.hasNext());
+        assertThat(new PhotonDocAddressSet(
+                baseDoc.names(Map.of("name", "foo")),
+                Map.of()))
+                .satisfiesExactly(
+                        d -> assertThat(d).isSameAs(baseDoc)
+                );
     }
 
     @Test
     void testIrrelevantAddressParts() {
-        var it = new PhotonDocAddressSet(
-                baseDoc, Map.of("city", "a", "street", "s", "place", "p")
-        ).iterator();
-
-        assertFalse(it.hasNext());
+        assertThat(new PhotonDocAddressSet(baseDoc, Map.of(
+                "city", "a",
+                "street", "s",
+                "place", "p")))
+                .isEmpty();
     }
 
     @Test
     void testSimpleHousenumber() {
-        var it = new PhotonDocAddressSet(
-                baseDoc, Map.of("housenumber", "1")
-        ).iterator();
-
-        assertDocWithHnrAndStreet(it.next(), "1", "Chaussee");
-        assertFalse(it.hasNext());
+        assertThat(new PhotonDocAddressSet(baseDoc, Map.of(
+                "housenumber", "1")))
+                .satisfiesExactly(
+                        d -> assertDocWithHnrAndStreet(d, "1", "Chaussee"));
     }
 
     @Test
     void testHousenumberList() {
-        var it = new PhotonDocAddressSet(
-                baseDoc, Map.of("housenumber", "34;; 50 b;")
-        ).iterator();
-
-        assertDocWithHousenumber(it.next(), "34");
-        assertDocWithHousenumber(it.next(), "50 b");
-        assertFalse(it.hasNext());
+        assertThat(new PhotonDocAddressSet(baseDoc, Map.of(
+                "housenumber", "34;; 50 b;")))
+                .satisfiesExactly(
+                        d -> assertDocWithHousenumber(d, "34"),
+                        d2 -> assertDocWithHousenumber(d2, "50 b"));
     }
 
     @Test
     void testPlaceAddress() {
-        var it = new PhotonDocAddressSet(
-                baseDoc, Map.of("housenumber", "34;50 b",
-                                "place", "Nowhere",
-                                "street", "irrelevant")
-        ).iterator();
-
-        assertDocWithHnrAndStreet(it.next(), "34", "Nowhere");
-        assertDocWithHnrAndStreet(it.next(), "50 b", "Nowhere");
-        assertFalse(it.hasNext());
-
+        assertThat(new PhotonDocAddressSet(baseDoc, Map.of(
+                "housenumber", "34;50 b",
+                "place", "Nowhere",
+                "street", "irrelevant")))
+                .satisfiesExactly(
+                        d -> assertDocWithHnrAndStreet(d, "34", "Nowhere"),
+                        d2 -> assertDocWithHnrAndStreet(d2, "50 b", "Nowhere"));
     }
 
     @Test
     void testConscriptionAddress() {
-        var it = new PhotonDocAddressSet(
-                baseDoc, Map.of("housenumber", "34/50",
-                                "conscriptionnumber", "50",
-                                "streetnumber", "34",
-                                "place", "Nowhere"
-                              )
-        ).iterator();
-
-        assertDocWithHnrAndStreet(it.next(), "50", "Nowhere");
-        assertDocWithHnrAndStreet(it.next(), "34", "Chaussee");
-        assertFalse(it.hasNext());
+        assertThat(new PhotonDocAddressSet(baseDoc, Map.of(
+                "housenumber", "34/50",
+                "conscriptionnumber", "50",
+                "streetnumber", "34",
+                "place", "Nowhere")))
+                .satisfiesExactly(
+                        d -> assertDocWithHnrAndStreet(d, "50", "Nowhere"),
+                        d2 -> assertDocWithHnrAndStreet(d2, "34", "Chaussee"));
     }
 
     @Test
     void testBlockAddress() {
-        var it = new PhotonDocAddressSet(
-                baseDoc, Map.of("housenumber", "1",
-                                "block_number", "12")
-        ).iterator();
-
-        assertDocWithHnrAndStreet(it.next(), "1", "12");
-        assertFalse(it.hasNext());
-
+        assertThat(new PhotonDocAddressSet(baseDoc, Map.of(
+                "housenumber", "1",
+                "block_number", "12")))
+                .satisfiesExactly(
+                        d -> assertDocWithHnrAndStreet(d, "1", "12")
+                );
     }
 
     @ParameterizedTest
@@ -134,11 +123,9 @@ class PhotonDocAddressSetTest {
             "14, portsmith"
     })
     void testInvalidHousenumber(String houseNumber) {
-        var it = new PhotonDocAddressSet(
-                baseDoc, Map.of("housenumber", houseNumber)
-        ).iterator();
+        assertThat(new PhotonDocAddressSet(baseDoc, Map.of("housenumber", houseNumber)))
+                .isEmpty();
 
-        assertFalse(it.hasNext());
     }
 
 }
