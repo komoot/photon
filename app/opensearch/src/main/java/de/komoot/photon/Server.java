@@ -33,12 +33,6 @@ public class Server {
 
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(Server.class);
 
-//    public static final String OPENSEARCH_MODULES =
-//            "org.opensearch.transport.Netty4Plugin,"
-//            + "org.opensearch.analysis.common.CommonAnalysisPlugin,"
-//            + "org.opensearch.geo.GeoModulePlugin,"
-//            + "org.opensearch.geospatial.plugin.GeospatialPlugin";
-
     protected OpenSearchClient client;
     private OpenSearchRunner runner = null;
     protected final String dataDirectory;
