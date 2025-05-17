@@ -70,7 +70,7 @@ public class NominatimUpdater extends NominatimConnector {
     /**
      * Lock to prevent thread from updating concurrently.
      */
-    private ReentrantLock updateLock = new ReentrantLock();
+    private final ReentrantLock updateLock = new ReentrantLock();
 
 
     // One-item cache for address terms. Speeds up processing of rank 30 objects.
