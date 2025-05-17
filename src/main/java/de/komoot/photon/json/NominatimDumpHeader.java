@@ -51,11 +51,11 @@ public class NominatimDumpHeader {
     }
 
     public boolean isSortedByCountry() {
-        return features == null ? false : features.isSortedByCountry;
+        return features != null && features.isSortedByCountry;
     }
 
     public boolean hasAddressLines() {
-        return features == null ? true : features.hasAddressLines;
+        return features == null || features.hasAddressLines;
     }
 
 }

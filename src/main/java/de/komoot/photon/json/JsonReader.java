@@ -87,8 +87,8 @@ public class JsonReader {
     public void readFile(ImportThread importThread) throws IOException {
         String docType = readStartDocument();
         String currentCountry = "NONE";
-        boolean isSortedByCountry = header == null? false : header.isSortedByCountry();
-        boolean hasAddressLines = header == null ? true : header.hasAddressLines();
+        boolean isSortedByCountry = header != null && header.isSortedByCountry();
+        boolean hasAddressLines = header == null || header.hasAddressLines();
         while (docType != null) {
             if (NominatimPlaceDocument.DOCUMENT_TYPE.equals(docType)) {
                 Iterable<PhotonDoc> docs;
