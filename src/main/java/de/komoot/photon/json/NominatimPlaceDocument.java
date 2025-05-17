@@ -166,7 +166,7 @@ public class NominatimPlaceDocument {
                 Arrays.stream(addressLines)
                         .filter(l -> l.isAddress)
                         .map(l -> addressCache.get(l.placeId))
-                        .filter(l -> l != null)
+                        .filter(Objects::nonNull)
                         .collect(Collectors.toUnmodifiableList()));
        }
     }

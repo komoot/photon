@@ -42,7 +42,7 @@ public class NominatimAddressCache {
             template.query(BASE_COUNTRY_QUERY + " AND country_code = ?", rowMapper, countryCode);
         }
 
-        if (addresses.size() > 0) {
+        if (!addresses.isEmpty()) {
             LOGGER.info("Loaded {} address places for country {}", addresses.size(), countryCode);
         }
     }
@@ -61,8 +61,8 @@ public class NominatimAddressCache {
         }
 
         return Arrays.stream(placeIDs)
-                .map(id -> addresses.get(id))
-                .filter(r -> r != null)
+                .map(addresses::get)
+                .filter(Objects::nonNull)
                 .collect(Collectors.toCollection(ArrayList::new));
     }
 }
