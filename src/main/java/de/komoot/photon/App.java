@@ -12,8 +12,9 @@ import de.komoot.photon.searcher.GeocodeJsonFormatter;
 import de.komoot.photon.searcher.TagFilter;
 import io.javalin.Javalin;
 import io.javalin.http.ContentType;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.locationtech.jts.geom.Envelope;
-import org.slf4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,7 +26,7 @@ import java.util.stream.Collectors;
  * Main Photon application.
  */
 public class App {
-    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(App.class);
+    private static final Logger LOGGER = LogManager.getLogger();
     private static Server esServer;
     private static Javalin photonServer;
 

@@ -4,9 +4,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.komoot.photon.Constants;
 import de.komoot.photon.searcher.PhotonResult;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.elasticsearch.search.SearchHit;
-import org.slf4j.Logger;
-import org.json.JSONObject;
 
 import java.util.List;
 import java.util.Map;
@@ -15,7 +15,7 @@ import java.util.Map;
  * Response object from the ElasticSearch database.
  */
 public class ElasticResult implements PhotonResult {
-    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(ElasticResult.class);
+    private static final Logger LOGGER = LogManager.getLogger();
 
     private static final String[] NAME_PRECEDENCE = {"default", "housename", "int", "loc", "reg", "alt", "old"};
 

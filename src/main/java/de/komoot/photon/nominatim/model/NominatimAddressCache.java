@@ -3,7 +3,8 @@ package de.komoot.photon.nominatim.model;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.komoot.photon.nominatim.DBDataAdapter;
-import org.slf4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowCallbackHandler;
 
@@ -14,7 +15,7 @@ import java.util.stream.Collectors;
  * Container for caching information about address parts.
  */
 public class NominatimAddressCache {
-    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(NominatimAddressCache.class);
+    private static final Logger LOGGER = LogManager.getLogger();
 
     private static final String BASE_COUNTRY_QUERY =
             "SELECT place_id, name, class, type, rank_address FROM placex" +
@@ -41,7 +42,7 @@ public class NominatimAddressCache {
             template.query(BASE_COUNTRY_QUERY + " AND country_code = ?", rowMapper, countryCode);
         }
 
-        if (addresses.size() > 0) {
+        if (!addresses.isEmpty()) {
             LOGGER.info("Loaded {} address places for country {}", addresses.size(), countryCode);
         }
     }
@@ -60,8 +61,8 @@ public class NominatimAddressCache {
         }
 
         return Arrays.stream(placeIDs)
-                .map(id -> addresses.get(id))
-                .filter(r -> r != null)
+                .map(addresses::get)
+                .filter(Objects::nonNull)
                 .collect(Collectors.toCollection(ArrayList::new));
     }
 }

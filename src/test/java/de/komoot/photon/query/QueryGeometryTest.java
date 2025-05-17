@@ -8,22 +8,17 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.io.ParseException;
 import org.locationtech.jts.io.WKTReader;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.assertj.core.api.Assertions.*;
+import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 
-/**
- * Tests that the database backend produces queries which can find all
- * expected results. These tests do not check relevance.
- */
 class QueryGeometryTest extends ESBaseTester {
     private int testDocId = 10000;
 
@@ -33,15 +28,12 @@ class QueryGeometryTest extends ESBaseTester {
         setUpES(dataDirectory);
     }
 
-    private PhotonDoc createDoc(String... names)  {
-        Map<String, String> nameMap = new HashMap<>();
-
-        for (int i = 0; i < names.length - 1; i += 2) {
-            nameMap.put(names[i], names[i+1]);
-        }
-
+    private PhotonDoc createDoc(String geometry) throws ParseException {
         ++testDocId;
-        return new PhotonDoc(testDocId, "N", testDocId, "place", "city").names(nameMap);
+        return new PhotonDoc(testDocId, "N", testDocId, "place", "city")
+                .names(Map.of("name", "Muffle Flu"))
+                .geometry(new WKTReader().read(geometry))
+                .centroid(FACTORY.createPoint(new Coordinate(1.0, 2.34)));
     }
 
     private List<PhotonResult> search(String query) {
@@ -55,26 +47,28 @@ class QueryGeometryTest extends ESBaseTester {
     @Test
     void testSearchGetPolygon() throws IOException, ParseException {
         Importer instance = makeImporter();
-        Point location = FACTORY.createPoint(new Coordinate(1.0, 2.34));
-        PhotonDoc doc = createDoc("name", "Muffle Flu").geometry(new WKTReader().read("POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))")).centroid(location);
-        instance.add(List.of(doc));
+        instance.add(List.of(createDoc("POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))")));
         instance.finish();
         refresh();
-        List<PhotonResult> s = search("muffle flu");
 
-        assertNotNull(s.get(0).getGeometry());
+        assertThat(search("muffle flu"))
+                .element(0)
+                .satisfies(p ->
+                        assertThatJson(p.getGeometry()).isObject()
+                                .containsEntry("type", "Polygon"));
     }
 
     @Test
     void testSearchGetLineString() throws IOException, ParseException {
         Importer instance = makeImporter();
-        Point location = FACTORY.createPoint(new Coordinate(1.0, 2.34));
-        PhotonDoc doc = createDoc("name", "Muffle Flu").geometry(new WKTReader().read("LINESTRING (30 10, 10 30, 40 40)")).centroid(location);
-        instance.add(List.of(doc));
+        instance.add(List.of(createDoc("LINESTRING (30 10, 10 30, 40 40)")));
         instance.finish();
         refresh();
-        List<PhotonResult> s = search("muffle flu");
 
-        assertNotNull(s.get(0).getGeometry());
+        assertThat(search("muffle flu"))
+                .element(0)
+                .satisfies(p ->
+                        assertThatJson(p.getGeometry()).isObject()
+                                .containsEntry("type", "LineString"));
     }
 }

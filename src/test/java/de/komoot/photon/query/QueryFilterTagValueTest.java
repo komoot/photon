@@ -2,7 +2,6 @@ package de.komoot.photon.query;
 
 import de.komoot.photon.ESBaseTester;
 import de.komoot.photon.Importer;
-import de.komoot.photon.PhotonDoc;
 import de.komoot.photon.searcher.PhotonResult;
 import de.komoot.photon.searcher.TagFilter;
 import org.junit.jupiter.api.*;
@@ -10,26 +9,29 @@ import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.locationtech.jts.geom.Coordinate;
 
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class QueryFilterTagValueTest extends ESBaseTester {
-    private static final String[] TAGS = new String[]{"tourism", "attraction",
-                                                      "tourism", "hotel",
-                                                      "tourism", "museum",
-                                                      "tourism", "information",
-                                                      "amenity", "parking",
-                                                      "amenity", "restaurant",
-                                                      "amenity", "information",
-                                                      "food", "information",
-                                                      "railway", "station"};
+    private static final List<Map.Entry<String, String>> TAGS = List.of(
+            Map.entry("tourism", "attraction"),
+            Map.entry("tourism", "hotel"),
+            Map.entry("tourism", "museum"),
+            Map.entry("tourism", "information"),
+            Map.entry("amenity", "parking"),
+            Map.entry("amenity", "restaurant"),
+            Map.entry("amenity", "information"),
+            Map.entry("food", "information"),
+            Map.entry("railway", "station"));
 
     @BeforeAll
     void setUp(@TempDir Path dataDirectory) throws Exception {
@@ -37,17 +39,16 @@ class QueryFilterTagValueTest extends ESBaseTester {
         Importer instance = makeImporter();
         double lon = 13.38886;
         double lat = 52.51704;
-        for (int i = 0; i < TAGS.length; i++) {
-            String key = TAGS[i];
-            String value = TAGS[++i];
-            PhotonDoc doc = this.createDoc(lon, lat, i, i, key, value);
-            instance.add(List.of(doc));
+        int i = 0;
+        for (var entry : TAGS) {
+            instance.add(List.of(createDoc(lon, lat, i, i, entry.getKey(), entry.getValue())));
             lon += 0.00004;
-            lat += 0.00086;
-            doc = this.createDoc(lon, lat, i + 1, i + 1, key, value);
-            instance.add(List.of(doc));
+            lat += 0.00006;
+            ++i;
+            instance.add(List.of(createDoc(lon, lat, i, i, entry.getKey(), entry.getValue())));
             lon += 0.00004;
-            lat += 0.00086;
+            lat += 0.00006;
+            ++i;
         }
         instance.finish();
         refresh();
@@ -70,11 +71,27 @@ class QueryFilterTagValueTest extends ESBaseTester {
         return getServer().createSearchHandler(new String[]{"en"}, 1).search(request);
     }
 
+    private List<PhotonResult> reverseWithTags(String[] params) {
+        ReverseRequest request = new ReverseRequest();
+        request.setLocation(FACTORY.createPoint(new Coordinate(13.38886, 52.51704)));
+        request.setLimit(50, 50);
+
+        for (String param : params) {
+            request.addOsmTagFilter(TagFilter.buildOsmTagFilter(param));
+        }
+        return getServer().createReverseHandler(1).search(request);
+    }
 
     @ParameterizedTest
     @MethodSource("simpleTagFilterProvider")
-    void testSingleTagFilter(String filter, int expectedResults) {
-        assertEquals(expectedResults, searchWithTags(new String[]{filter}).size());
+    void testSearchSingleTagFilter(String filter, int expectedResults) {
+        assertThat(searchWithTags(new String[]{filter})).hasSize(expectedResults);
+    }
+
+    @ParameterizedTest
+    @MethodSource("simpleTagFilterProvider")
+    void testReverseSingleTagFilter(String filter, int expectedResults) {
+        assertThat(reverseWithTags(new String[]{filter})).hasSize(expectedResults);
     }
 
     static Stream<Arguments> simpleTagFilterProvider() {
@@ -90,11 +107,16 @@ class QueryFilterTagValueTest extends ESBaseTester {
         );
     }
 
+    @ParameterizedTest
+    @MethodSource("combinedTagFilterProvider")
+    void testSearchCombinedTagFilter(String[] filters, int expectedResults) {
+        assertThat(searchWithTags(filters)).hasSize(expectedResults);
+    }
 
     @ParameterizedTest
     @MethodSource("combinedTagFilterProvider")
-    void testCombinedTagFilter(String[] filters, int expectedResults) {
-        assertEquals(expectedResults, searchWithTags(filters).size());
+    void testReverseCombinedTagFilter(String[] filters, int expectedResults) {
+        assertThat(reverseWithTags(filters)).hasSize(expectedResults);
     }
 
     static Stream<Arguments> combinedTagFilterProvider() {

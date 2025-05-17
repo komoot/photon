@@ -1,7 +1,5 @@
 package de.komoot.photon.query;
 
-import org.apache.commons.lang3.StringUtils;
-
 public class StructuredSearchRequest extends SearchRequestBase {
     private String countryCode;
     private String state;
@@ -11,10 +9,6 @@ public class StructuredSearchRequest extends SearchRequestBase {
     private String district;
     private String street;
     private String houseNumber;
-
-    public boolean getDebug() {
-        return false;
-    }
 
     public String getCounty() {
         return county;
@@ -80,17 +74,17 @@ public class StructuredSearchRequest extends SearchRequestBase {
         this.state = state;
     }
 
-    public boolean hasState() { return !StringUtils.isEmpty(this.state); }
+    public boolean hasState() { return state != null && !state.isBlank(); }
 
-    public boolean hasDistrict() { return !StringUtils.isEmpty(this.district); }
+    public boolean hasDistrict() { return district != null && !district.isBlank(); }
 
-    public boolean hasPostCode() { return !StringUtils.isEmpty(this.postCode); }
+    public boolean hasPostCode() { return postCode != null && !postCode.isBlank(); }
 
-    public boolean hasCityOrPostCode() { return !StringUtils.isEmpty(this.city) || hasPostCode(); }
+    public boolean hasCityOrPostCode() { return (city != null && !city.isBlank()) || hasPostCode(); }
 
-    public boolean hasCounty() { return !StringUtils.isEmpty(this.county); }
+    public boolean hasCounty() { return county != null && !county.isBlank(); }
 
-    public boolean hasStreet() { return !StringUtils.isEmpty(this.street) || hasHouseNumber(); }
+    public boolean hasStreet() { return (street != null && !street.isBlank()) || hasHouseNumber(); }
 
-    public boolean hasHouseNumber() { return !StringUtils.isEmpty(this.houseNumber); }
+    public boolean hasHouseNumber() { return houseNumber != null && !houseNumber.isBlank(); }
 }

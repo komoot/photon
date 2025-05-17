@@ -16,9 +16,7 @@ public class ReflectionTestUtil {
             Field path = clazz.getDeclaredField(fieldName);
             path.setAccessible(true);
             return (T) path.get(anObject);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException("unable to get value of field", e);
-        } catch (NoSuchFieldException e) {
+        } catch (IllegalAccessException | NoSuchFieldException e) {
             throw new RuntimeException("unable to get value of field", e);
         }
     }
@@ -33,14 +31,5 @@ public class ReflectionTestUtil {
         } catch (NoSuchFieldException e) {
             throw new RuntimeException("unable to get value of field (missing)", e);
         }
-    }
-
-    public static <T> void setFieldValue(Object anObject, String fieldName, T value) {
-        setFieldValue(anObject, anObject.getClass(), fieldName, value);
-    }
-
-    public static <T> void setFieldValue(Object anObject, String fieldName, String subFieldName, T value) {
-        Object member = getFieldValue(anObject, fieldName);
-        setFieldValue(member, member.getClass(), subFieldName, value);
     }
 }

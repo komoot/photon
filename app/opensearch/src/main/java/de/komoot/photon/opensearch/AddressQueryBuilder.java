@@ -1,7 +1,6 @@
 package de.komoot.photon.opensearch;
 
 import de.komoot.photon.Constants;
-import org.apache.commons.lang3.StringUtils;
 import org.opensearch.client.opensearch._types.FieldValue;
 import org.opensearch.client.opensearch._types.query_dsl.*;
 import org.opensearch.common.unit.Fuzziness;
@@ -134,7 +133,7 @@ public class AddressQueryBuilder {
         Fuzziness fuzziness = lenient ? Fuzziness.AUTO : Fuzziness.ZERO;
 
         Query query;
-        if (StringUtils.containsWhitespace(postalCode)) {
+        if (postalCode.contains(" ")) {
             query = QueryBuilders.match()
                     .field(Constants.POSTCODE)
                     .query(FieldValue.of(postalCode))

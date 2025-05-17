@@ -6,17 +6,17 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import de.komoot.photon.*;
 import de.komoot.photon.nominatim.model.AddressType;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.locationtech.jts.io.geojson.GeoJsonWriter;
-import org.slf4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 public class JsonDumper implements Importer {
-    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(JsonDumper.class);
+    private static final Logger LOGGER = LogManager.getLogger();
 
     private final DatabaseProperties dbProperties;
 
@@ -121,8 +121,9 @@ public class JsonDumper implements Importer {
             writer.writeNumberField("parent_place_id", doc.getParentPlaceId());
         }
 
-        if (!doc.getName().isEmpty())
-        writer.writeObjectField("name", doc.getName());
+        if (!doc.getName().isEmpty()) {
+            writer.writeObjectField("name", doc.getName());
+        }
 
         if (doc.getHouseNumber() != null) {
             writer.writeStringField("housenumber", doc.getHouseNumber());

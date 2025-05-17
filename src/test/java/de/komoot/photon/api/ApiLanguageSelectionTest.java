@@ -19,14 +19,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static org.assertj.core.api.Assertions.*;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 
 /**
  * Test selection of returned languages.
  */
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class ApiLanguageSelectionTest extends ApiBaseTester {
+class ApiLanguageSelectionTest extends ApiBaseTester {
     private static final String[] BASE_URLS = {"/api?q=this", "/reverse?lat=2.0&lon=34.0"};
 
     @BeforeAll

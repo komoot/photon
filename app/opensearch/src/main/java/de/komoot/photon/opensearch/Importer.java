@@ -1,16 +1,17 @@
 package de.komoot.photon.opensearch;
 
 import de.komoot.photon.PhotonDoc;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.opensearch.client.opensearch.OpenSearchClient;
 import org.opensearch.client.opensearch._types.Time;
 import org.opensearch.client.opensearch.core.BulkRequest;
 import org.opensearch.client.opensearch.core.bulk.BulkResponseItem;
-import org.slf4j.Logger;
 
 import java.io.IOException;
 
 public class Importer implements de.komoot.photon.Importer {
-    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(Importer.class);
+    private static final Logger LOGGER = LogManager.getLogger();
 
     private final OpenSearchClient client;
     private BulkRequest.Builder bulkRequest = new BulkRequest.Builder();

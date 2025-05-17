@@ -10,10 +10,10 @@ import org.junit.jupiter.api.io.TempDir;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.*;
 
 class QueryByClassificationTest extends ESBaseTester {
     @TempDir
@@ -28,7 +28,7 @@ class QueryByClassificationTest extends ESBaseTester {
 
     private PhotonDoc createDoc(String key, String value, String name) {
         ++testDocId;
-        return new PhotonDoc(testDocId, "W", testDocId, key, value).names(Collections.singletonMap("name", name));
+        return new PhotonDoc(testDocId, "W", testDocId, key, value).names(Map.of("name", name));
     }
 
     private List<PhotonResult> search(String query) {
@@ -67,16 +67,15 @@ class QueryByClassificationTest extends ESBaseTester {
 
         String classTerm = Utils.buildClassificationString("amenity", "restaurant");
 
-        assertNotNull(classTerm);
+        assertThat(classTerm).isNotNull();
 
         PhotonResult response = getById(testDocId);
-        String classification = (String) response.get(Constants.CLASSIFICATION);
-        assertEquals(classification, classTerm);
+        assertThat((String) response.get(Constants.CLASSIFICATION))
+                .isEqualTo(classTerm);
 
-        List<PhotonResult> result = search(classTerm + " curli");
-
-        assertTrue(result.size() > 0);
-        assertEquals(testDocId, result.get(0).get("osm_id"));
+        assertThat(search(classTerm + " curli"))
+                .element(0)
+                .satisfies(p -> assertThat(p.get("osm_id")).isEqualTo(testDocId));
     }
 
     @Test
@@ -88,14 +87,13 @@ class QueryByClassificationTest extends ESBaseTester {
 
         updateClassification("amenity", "restaurant", "pub", "kneipe");
 
-        List<PhotonResult> result = search("pub curli");
-        assertTrue(result.size() > 0);
-        assertEquals(testDocId, result.get(0).get("osm_id"));
+        assertThat(search("pub curli"))
+                .element(0)
+                .satisfies(p -> assertThat(p.get("osm_id")).isEqualTo(testDocId));
 
-
-        result = search("curliflower kneipe");
-        assertTrue(result.size() > 0);
-        assertEquals(testDocId, result.get(0).get("osm_id"));
+        assertThat(search("curliflower kneipe"))
+                .element(0)
+                .satisfies(p -> assertThat(p.get("osm_id")).isEqualTo(testDocId));
     }
 
 
@@ -109,14 +107,14 @@ class QueryByClassificationTest extends ESBaseTester {
 
         updateClassification("aeroway", "terminal", "airport");
 
-        List<PhotonResult> result = search("airport");
-        assertTrue(result.size() > 0);
-        assertEquals(testDocId - 1, result.get(0).get("osm_id"));
+        assertThat(search("airport"))
+                .element(0)
+                .satisfies(p -> assertThat(p.get("osm_id")).isEqualTo(testDocId - 1));
 
 
-        result = search("airport houston");
-        assertTrue(result.size() > 0);
-        assertEquals(testDocId, result.get(0).get("osm_id"));
+        assertThat(search("airport houston"))
+                .element(0)
+                .satisfies(p -> assertThat(p.get("osm_id")).isEqualTo(testDocId));
     }
 
     @Test
@@ -129,37 +127,34 @@ class QueryByClassificationTest extends ESBaseTester {
 
         Path synonymPath = sharedTempDir.resolve("synonym.json");
 
-        final var mapper = new ObjectMapper();
-        final var writer = mapper.createGenerator(synonymPath.toFile(), JsonEncoding.UTF8);
-        writer.writeStartObject();
-        writer.writeArrayFieldStart("classification_terms");
-        writer.writeStartObject();
-        writer.writeStringField("key", "railway");
-        writer.writeStringField("value", "station");
-        writer.writeObjectField("terms", List.of("Station"));
-        writer.writeEndObject();
-        writer.writeStartObject();
-        writer.writeStringField("key", "railway");
-        writer.writeStringField("value", "halt");
-        writer.writeObjectField("terms", List.of("Station", "Stop"));
-        writer.writeEndObject();
-        writer.writeEndArray();
-        writer.writeEndObject();
-        writer.close();
+        new ObjectMapper().writeValue(synonymPath.toFile(), Map.of(
+                "classification_terms", List.of(
+                        Map.of(
+                                "key", "railway",
+                                "value", "station",
+                                "terms", List.of("Station")
+                        ),
+                        Map.of(
+                                "key", "railway",
+                                "value", "halt",
+                                "terms", List.of("Station", "stop")
+                        )
+                )
+        ));
 
         getServer().updateIndexSettings(synonymPath.toString());
         getServer().waitForReady();
 
-        List<PhotonResult> result = search("Station newtown");
-        assertTrue(result.size() > 0);
-        assertEquals(testDocId - 1, result.get(0).get("osm_id"));
+        assertThat(search("Station newtown"))
+                .element(0)
+                .satisfies(p -> assertThat(p.get("osm_id")).isEqualTo(testDocId - 1));
 
-        result = search("newtown stop");
-        assertTrue(result.size() > 0);
-        assertEquals(testDocId - 1, result.get(0).get("osm_id"));
+        assertThat(search("newtown stop"))
+                .element(0)
+                .satisfies(p -> assertThat(p.get("osm_id")).isEqualTo(testDocId - 1));
 
-        result = search("king's cross Station");
-        assertTrue(result.size() > 0);
-        assertEquals(testDocId, result.get(0).get("osm_id"));
+        assertThat(search("king's cross Station"))
+                .element(0)
+                .satisfies(p -> assertThat(p.get("osm_id")).isEqualTo(testDocId));
     }
 }

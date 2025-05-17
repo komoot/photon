@@ -1,6 +1,8 @@
 package de.komoot.photon.nominatim;
 
 import net.postgis.jdbc.PGgeometry;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.io.ParseException;
 import org.locationtech.jts.io.WKTReader;
@@ -16,6 +18,7 @@ import java.util.Map;
  * Utility functions to parse data from and create SQL for PostgreSQL/PostGIS.
  */
 public class PostgisDataAdapter implements DBDataAdapter {
+    private static final Logger LOGGER = LogManager.getLogger();
 
     @Override
     public Map<String, String> getMap(ResultSet rs, String columnName) throws SQLException {
@@ -40,7 +43,7 @@ public class PostgisDataAdapter implements DBDataAdapter {
                 return geometry;
             } catch (ParseException e) {
                 // ignore
-                System.out.println(e);
+                LOGGER.error("Cannot parse database geometry", e);
             }
         }
 

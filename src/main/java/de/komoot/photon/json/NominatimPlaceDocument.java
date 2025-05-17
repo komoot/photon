@@ -21,7 +21,7 @@ public class NominatimPlaceDocument {
     public static final String DOCUMENT_TYPE = "Place";
 
     private final PhotonDoc doc = new PhotonDoc();
-    private Map<String, String> address = Collections.emptyMap();
+    private Map<String, String> address = Map.of();
     private AddressLine[] addressLines = null;
 
     private static final GeometryFactory factory = new GeometryFactory(new PrecisionModel(10000000), 4326);
@@ -64,8 +64,8 @@ public class NominatimPlaceDocument {
                 String[] parts = cat.split("\\.");
                 doc.tagKey(parts[1]);
                 doc.tagValue(parts.length > 2 ? parts[2] : "yes");
+                return;
             }
-            return;
         }
         doc.tagKey("place");
         doc.tagValue("yes");
@@ -166,7 +166,7 @@ public class NominatimPlaceDocument {
                 Arrays.stream(addressLines)
                         .filter(l -> l.isAddress)
                         .map(l -> addressCache.get(l.placeId))
-                        .filter(l -> l != null)
+                        .filter(Objects::nonNull)
                         .collect(Collectors.toUnmodifiableList()));
        }
     }

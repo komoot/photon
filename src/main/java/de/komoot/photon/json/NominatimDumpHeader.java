@@ -3,14 +3,15 @@ package de.komoot.photon.json;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import de.komoot.photon.UsageException;
-import org.slf4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 public class NominatimDumpHeader {
-    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(NominatimDumpHeader.class);
+    private static final Logger LOGGER = LogManager.getLogger();
 
     public static final String DOCUMENT_TYPE = "NominatimDumpFile";
     public static final String EXPECTED_VERSION = "0.1.0";
@@ -50,11 +51,11 @@ public class NominatimDumpHeader {
     }
 
     public boolean isSortedByCountry() {
-        return features == null ? false : features.isSortedByCountry;
+        return features != null && features.isSortedByCountry;
     }
 
     public boolean hasAddressLines() {
-        return features == null ? true : features.hasAddressLines;
+        return features == null || features.hasAddressLines;
     }
 
 }

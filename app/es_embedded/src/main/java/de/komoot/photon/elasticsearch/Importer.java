@@ -2,11 +2,11 @@ package de.komoot.photon.elasticsearch;
 
 import de.komoot.photon.DatabaseProperties;
 import de.komoot.photon.PhotonDoc;
-import de.komoot.photon.ConfigExtraTags;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.client.Client;
-import org.slf4j.Logger;
 
 import java.io.IOException;
 
@@ -14,7 +14,7 @@ import java.io.IOException;
  * Elasticsearch importer
  */
 public class Importer implements de.komoot.photon.Importer {
-    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(Importer.class);
+    private static final Logger LOGGER = LogManager.getLogger();
 
     private int documentCount = 0;
 

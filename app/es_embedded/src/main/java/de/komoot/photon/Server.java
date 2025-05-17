@@ -5,6 +5,8 @@ import de.komoot.photon.query.ReverseRequest;
 import de.komoot.photon.query.SimpleSearchRequest;
 import de.komoot.photon.query.StructuredSearchRequest;
 import de.komoot.photon.searcher.SearchHandler;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.TransportClient;
@@ -19,7 +21,6 @@ import org.elasticsearch.node.NodeValidationException;
 import org.elasticsearch.plugins.Plugin;
 import org.elasticsearch.transport.Netty4Plugin;
 import org.elasticsearch.transport.client.PreBuiltTransportClient;
-import org.slf4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
@@ -49,7 +50,7 @@ public class Server {
      */
     public static final String DATABASE_VERSION = "0.3.6-1";
 
-    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(Server.class);
+    private static final Logger LOGGER = LogManager.getLogger();
 
     public static final String PROPERTY_DOCUMENT_ID = "DATABASE_PROPERTIES";
 

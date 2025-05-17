@@ -9,7 +9,8 @@ import de.komoot.photon.PhotonDoc;
 import de.komoot.photon.UsageException;
 import de.komoot.photon.nominatim.ImportThread;
 import de.komoot.photon.nominatim.model.AddressRow;
-import org.slf4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,7 +18,7 @@ import java.io.InputStream;
 import java.util.*;
 
 public class JsonReader {
-    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(JsonReader.class);
+    private static final Logger LOGGER = LogManager.getLogger();
 
     private final JsonParser parser;
     private NominatimDumpHeader header = null;
@@ -59,7 +60,7 @@ public class JsonReader {
         } else {
             this.countryFilter = Arrays.stream(countries).map(String::toUpperCase).toArray(String[]::new);
             Arrays.sort(this.countryFilter);
-        };
+        }
     }
 
     public void readHeader() throws IOException {
@@ -86,8 +87,8 @@ public class JsonReader {
     public void readFile(ImportThread importThread) throws IOException {
         String docType = readStartDocument();
         String currentCountry = "NONE";
-        boolean isSortedByCountry = header == null? false : header.isSortedByCountry();
-        boolean hasAddressLines = header == null ? true : header.hasAddressLines();
+        boolean isSortedByCountry = header != null && header.isSortedByCountry();
+        boolean hasAddressLines = header == null || header.hasAddressLines();
         while (docType != null) {
             if (NominatimPlaceDocument.DOCUMENT_TYPE.equals(docType)) {
                 Iterable<PhotonDoc> docs;

@@ -15,11 +15,10 @@ import java.nio.file.Path;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatIOException;
 
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class ApiCorsTest extends ApiBaseTester {
+class ApiCorsTest extends ApiBaseTester {
     private static final String[] BASE_URLS = {"/api/?q=Berlin", "/reverse/?lat=52.54714&lon=13.39026", "/status/"};
 
     @BeforeAll

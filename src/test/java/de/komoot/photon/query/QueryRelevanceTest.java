@@ -13,11 +13,10 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Test that the database backend produces queries that rank the
@@ -30,14 +29,8 @@ class QueryRelevanceTest extends ESBaseTester {
         setUpES(dataDirectory);
     }
 
-    private PhotonDoc createDoc(String key, String value, long id, String... names) {
-        Map<String, String> nameMap = new HashMap<>();
-
-        for (int i = 0; i < names.length - 1; i += 2) {
-            nameMap.put(names[i], names[i+1]);
-        }
-
-        return new PhotonDoc(id, "N", id, key, value).names(nameMap);
+    private PhotonDoc createDoc(String key, String value, long id, String nameKey, String nameValue) {
+        return new PhotonDoc(id, "N", id, key, value).names(Map.of(nameKey, nameValue));
     }
 
     private List<PhotonResult> search(String query) {
@@ -51,6 +44,14 @@ class QueryRelevanceTest extends ESBaseTester {
         return getServer().createSearchHandler(new String[]{"en"}, 1).search(request);
     }
 
+    private SimpleSearchRequest createBiasedRequest()
+    {
+        SimpleSearchRequest result = new SimpleSearchRequest();
+        result.setQuery("ham");
+        result.setLocationForBias(FACTORY.createPoint(new Coordinate(-9.9, -10)));
+        return result;
+    }
+
     @Test
     void testRelevanceByImportance() throws IOException {
         Importer instance = makeImporter();
@@ -59,10 +60,10 @@ class QueryRelevanceTest extends ESBaseTester {
         instance.finish();
         refresh();
 
-        List<PhotonResult> results = search("new york");
-
-        assertEquals(2, results.size());
-        assertEquals(2000, results.get(0).get("osm_id"));
+        assertThat(search("new york"))
+                .hasSize(2)
+                .element(0)
+                .satisfies(p -> assertThat(p.get("osm_id")).isEqualTo(2000));
     }
 
     @Test
@@ -73,10 +74,10 @@ class QueryRelevanceTest extends ESBaseTester {
         instance.finish();
         refresh();
 
-        List<PhotonResult> results = search("ham");
-
-        assertEquals(2, results.size());
-        assertEquals(1000, results.get(0).get("osm_id"));
+        assertThat(search("ham"))
+                .hasSize(2)
+                .element(0)
+                .satisfies(p -> assertThat(p.get("osm_id")).isEqualTo(1000));
     }
 
     @Test
@@ -87,10 +88,10 @@ class QueryRelevanceTest extends ESBaseTester {
         instance.finish();
         refresh();
 
-        List<PhotonResult> results = search("ham");
-
-        assertEquals(2, results.size());
-        assertEquals(1001, results.get(0).get("osm_id"));
+        assertThat(search("ham"))
+                .hasSize(2)
+                .element(0)
+                .satisfies(p -> assertThat(p.get("osm_id")).isEqualTo(1001));
     }
 
     @ParameterizedTest
@@ -106,10 +107,10 @@ class QueryRelevanceTest extends ESBaseTester {
         instance.finish();
         refresh();
 
-        List<PhotonResult> results = search(createBiasedRequest());
-
-        assertEquals(2, results.size());
-        assertEquals(1001, results.get(0).get("osm_id"));
+        assertThat(search(createBiasedRequest()))
+                .hasSize(2)
+                .element(0)
+                .satisfies(p -> assertThat(p.get("osm_id")).isEqualTo(1001));
     }
 
     @Test
@@ -126,17 +127,9 @@ class QueryRelevanceTest extends ESBaseTester {
         instance.finish();
         refresh();
 
-        List<PhotonResult> results = search(createBiasedRequest());
-
-        assertEquals(2, results.size());
-        assertEquals(1000, results.get(0).get("osm_id"));
-    }
-
-    private SimpleSearchRequest createBiasedRequest()
-    {
-        SimpleSearchRequest result = new SimpleSearchRequest();
-        result.setQuery("ham");
-        result.setLocationForBias(FACTORY.createPoint(new Coordinate(-9.9, -10)));
-        return result;
+        assertThat(search(createBiasedRequest()))
+                .hasSize(2)
+                .element(0)
+                .satisfies(p -> assertThat(p.get("osm_id")).isEqualTo(1000));
     }
 }

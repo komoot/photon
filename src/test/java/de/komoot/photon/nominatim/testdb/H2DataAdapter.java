@@ -17,7 +17,6 @@ public class H2DataAdapter implements DBDataAdapter {
     private static final ObjectMapper objectMapper = new ObjectMapper();
     @Override
     public Map<String, String> getMap(ResultSet rs, String columnName) throws SQLException {
-        Map<String, String> out = new HashMap<>();
         String json = rs.getString(columnName);
         try {
             return json == null ? Map.of() : objectMapper.readValue(rs.getString(columnName), mapTypeRef);

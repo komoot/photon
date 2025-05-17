@@ -1,7 +1,6 @@
 package de.komoot.photon.elasticsearch;
 
 import de.komoot.photon.searcher.PhotonResult;
-import org.apache.commons.lang3.NotImplementedException;
 import org.elasticsearch.action.get.GetResponse;
 
 import java.util.Map;
@@ -20,7 +19,7 @@ public class ElasticGetIdResult implements PhotonResult {
 
     @Override
     public String getLocalised(String key, String language) {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -30,25 +29,25 @@ public class ElasticGetIdResult implements PhotonResult {
 
     @Override
     public double[] getCoordinates() {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
     public String getGeometry() {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public double[] getExtent() {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public double getScore() {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public Map<String, Object> getRawData() {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 }

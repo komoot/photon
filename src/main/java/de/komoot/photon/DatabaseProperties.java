@@ -1,6 +1,7 @@
 package de.komoot.photon;
 
-import org.slf4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.*;
 
@@ -12,7 +13,7 @@ import static de.komoot.photon.Server.DATABASE_VERSION;
  * The server is responsible for making the data persistent in the Photon database.
  */
 public class DatabaseProperties {
-    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(DatabaseProperties.class);
+    private static final Logger LOGGER = LogManager.getLogger();
     private static final String[] DEFAULT_LANGAUGES = new String[]{"en", "de", "fr", "it"};
 
     private String[] languages = DEFAULT_LANGAUGES;
