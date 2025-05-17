@@ -94,7 +94,7 @@ class QueryByLanguageTest extends ESBaseTester {
         addressNames.put("name:de", "Deutsch");
 
         PhotonDoc doc = new PhotonDoc(45, "N", 3, "place", "house")
-                .names(Collections.singletonMap("name", "here"));
+                .names(Map.of("name", "here"));
 
         doc.setAddressPartIfNew(addressType, addressNames);
 

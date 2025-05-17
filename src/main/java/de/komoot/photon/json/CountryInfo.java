@@ -2,7 +2,6 @@ package de.komoot.photon.json;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.util.Collections;
 import java.util.Map;
 
 public class CountryInfo {
@@ -10,7 +9,7 @@ public class CountryInfo {
 
     private String countryCode;
 
-    private Map<String, String> name = Collections.emptyMap();
+    private Map<String, String> name = Map.of();
 
     @JsonProperty("name")
     public void setName(Map<String, String> names) {

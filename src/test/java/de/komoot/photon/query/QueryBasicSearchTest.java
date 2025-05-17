@@ -11,7 +11,6 @@ import org.junit.jupiter.api.io.TempDir;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -135,7 +134,7 @@ class QueryBasicSearchTest extends ESBaseTester {
         Importer instance = makeImporter();
         instance.add(List.of(
                 createDoc("name", "Palermo")
-                        .address(Collections.singletonMap("state", "Sicilia"))));
+                        .address(Map.of("state", "Sicilia"))));
         instance.finish();
         refresh();
 
@@ -153,7 +152,7 @@ class QueryBasicSearchTest extends ESBaseTester {
         instance.add(List.of(
                 createDoc("name", "Edeka")
                         .houseNumber("5")
-                        .address(Collections.singletonMap("street", "Hauptstrasse"))));
+                        .address(Map.of("street", "Hauptstrasse"))));
         instance.finish();
         refresh();
 
@@ -171,7 +170,7 @@ class QueryBasicSearchTest extends ESBaseTester {
         instance.add(List.of(
                 createDoc()
                         .houseNumber("5")
-                        .address(Collections.singletonMap("street", "Hauptstrasse"))));
+                        .address(Map.of("street", "Hauptstrasse"))));
         instance.finish();
         refresh();
 

@@ -270,7 +270,7 @@ public class NominatimUpdater extends NominatimConnector {
         AddressType atype = doc.getAddressType();
 
         if (atype == null || atype == AddressType.COUNTRY) {
-            return Collections.emptyList();
+            return List.of();
         }
 
         List<AddressRow> terms = null;

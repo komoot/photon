@@ -39,9 +39,9 @@ public class PhotonDoc {
     private String tagKey = null;
     private String tagValue = null;
 
-    private Map<String, String> name = Collections.emptyMap();
+    private Map<String, String> name = Map.of();
     private String postcode = null;
-    private Map<String, String> extratags = Collections.emptyMap();
+    private Map<String, String> extratags = Map.of();
     private Envelope bbox = null;
     private long parentPlaceId = 0; // 0 if unset
     private double importance = 0;

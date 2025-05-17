@@ -21,7 +21,7 @@ public class NominatimPlaceDocument {
     public static final String DOCUMENT_TYPE = "Place";
 
     private final PhotonDoc doc = new PhotonDoc();
-    private Map<String, String> address = Collections.emptyMap();
+    private Map<String, String> address = Map.of();
     private AddressLine[] addressLines = null;
 
     private static final GeometryFactory factory = new GeometryFactory(new PrecisionModel(10000000), 4326);
