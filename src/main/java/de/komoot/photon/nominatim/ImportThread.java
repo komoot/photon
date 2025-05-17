@@ -5,7 +5,7 @@ import de.komoot.photon.PhotonDoc;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.atomic.AtomicLong;
@@ -17,7 +17,7 @@ public class ImportThread {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private static final int PROGRESS_INTERVAL = 50000;
-    private static final Iterable<PhotonDoc> FINAL_DOCUMENT = Collections.EMPTY_LIST;
+    private static final List<PhotonDoc> FINAL_DOCUMENT = List.of();
     private final BlockingQueue<Iterable<PhotonDoc>> documents = new LinkedBlockingDeque<>(100);
     private final AtomicLong counter = new AtomicLong();
     private final Importer importer;
@@ -60,7 +60,6 @@ public class ImportThread {
 
     /**
      * Finalize the import.
-     *
      * Sends an end marker to the import thread and then waits for it to join.
      */
     public void finish() {

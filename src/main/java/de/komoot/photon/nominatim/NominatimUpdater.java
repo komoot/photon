@@ -246,7 +246,7 @@ public class NominatimUpdater extends NominatimConnector {
                 query,
                 placeToNominatimResult, placeId);
 
-        return result.isEmpty() ? Collections.EMPTY_LIST : result.get(0);
+        return result.isEmpty() ? List.of() : result.get(0);
     }
 
     public Iterable<PhotonDoc> getInterpolationsByPlaceId(long placeId) {
@@ -255,7 +255,7 @@ public class NominatimUpdater extends NominatimConnector {
                         + " FROM location_property_osmline WHERE place_id = ? and indexed_status = 0",
                 osmlineToNominatimResult, placeId);
 
-        return result.isEmpty() ? Collections.EMPTY_LIST : result.get(0);
+        return result.isEmpty() ? List.of() : result.get(0);
     }
 
 
