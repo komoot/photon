@@ -18,10 +18,6 @@ public class PlaceRowMapper implements RowMapper<PhotonDoc> {
     private final DBDataAdapter dbutils;
     private boolean useGeometryColumn;
 
-    public PlaceRowMapper(DBDataAdapter dbutils) {
-        this.dbutils = dbutils;
-    }
-
     public PlaceRowMapper(DBDataAdapter dbutils, boolean useGeometryColumn) {
         this.dbutils = dbutils;
         this.useGeometryColumn = useGeometryColumn;
@@ -53,5 +49,23 @@ public class PlaceRowMapper implements RowMapper<PhotonDoc> {
         doc.importance(rs.wasNull() ? (0.75 - rs.getInt("rank_search") / 40d) : importance);
 
         return doc;
+    }
+
+    public String makeBaseSelect() {
+        var sql = "SELECT p.place_id, p.osm_type, p.osm_id, p.class, p.type, p.name, p.postcode, p.admin_level," +
+                "       p.address, p.extratags, ST_Envelope(p.geometry) AS bbox, p.parent_place_id," +
+                "       p.rank_address, p.rank_search, p.importance, p.country_code, p.centroid, " +
+                dbutils.jsonArrayFromSelect(
+                        "address_place_id",
+                        "FROM place_addressline pa " +
+                                " WHERE pa.place_id IN (p.place_id, " +
+                                "coalesce(CASE WHEN p.rank_search = 30 THEN p.parent_place_id ELSE null END, p.place_id)) AND isaddress" +
+                                " ORDER BY cached_rank_address DESC") + " as addresslines";
+
+        if (useGeometryColumn) {
+            sql += ", p.geometry";
+        }
+
+        return sql;
     }
 }
