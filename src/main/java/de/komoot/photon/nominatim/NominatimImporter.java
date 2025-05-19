@@ -11,6 +11,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.sql.Types;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -54,8 +55,8 @@ public class NominatimImporter extends NominatimConnector {
             sqlArgTypes = new int[]{Types.VARCHAR};
         }
 
-        NominatimAddressCache addressCache = new NominatimAddressCache();
-        addressCache.loadCountryAddresses(template, dbutils, countryCode);
+        NominatimAddressCache addressCache = new NominatimAddressCache(dbutils);
+        addressCache.loadCountryAddresses(template, countryCode);
 
         final PlaceRowMapper placeRowMapper = new PlaceRowMapper(dbutils, useGeometryColumn);
         final String baseSelect = placeRowMapper.makeBaseSelect();
@@ -95,15 +96,14 @@ public class NominatimImporter extends NominatimConnector {
 
                     assert (doc != null);
 
-                    final var addressPlaces = addressCache.getAddressList(rs.getString("addresslines"));
                     if (rs.getString("parent_class") != null) {
-                        addressPlaces.add(0, new AddressRow(
+                        doc.completePlace(List.of(new AddressRow(
                                 dbutils.getMap(rs, "parent_name"),
                                 rs.getString("parent_class"),
                                 rs.getString("parent_type"),
-                                rs.getInt("parent_rank_address")));
+                                rs.getInt("parent_rank_address"))));
                     }
-                    doc.completePlace(addressPlaces);
+                    doc.completePlace(addressCache.getAddressList(rs.getString("addresslines")));
                     doc.address(address); // take precedence over computed address
                     doc.setCountry(cnames);
 
@@ -116,15 +116,15 @@ public class NominatimImporter extends NominatimConnector {
                 sqlArgs, sqlArgTypes, rs -> {
                     final PhotonDoc doc = osmlineRowMapper.mapRow(rs, 0);
 
-                    final var addressPlaces = addressCache.getAddressList(rs.getString("addresslines"));
                     if (rs.getString("parent_class") != null) {
-                        addressPlaces.add(0, new AddressRow(
+                        doc.completePlace(List.of(new AddressRow(
                                 dbutils.getMap(rs, "parent_name"),
                                 rs.getString("parent_class"),
                                 rs.getString("parent_type"),
-                                rs.getInt("parent_rank_address")));
+                                rs.getInt("parent_rank_address"))));
                     }
-                    doc.completePlace(addressPlaces);
+                    doc.completePlace(addressCache.getAddressList(rs.getString("addresslines")));
+                    doc.address(dbutils.getMap(rs, "address"));
 
                     doc.setCountry(cnames);
 

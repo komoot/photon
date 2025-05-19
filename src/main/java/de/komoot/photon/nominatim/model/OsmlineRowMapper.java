@@ -21,7 +21,7 @@ public class OsmlineRowMapper implements RowMapper<PhotonDoc> {
 
     public String makeBaseQuery(DBDataAdapter dbutils) {
         return "SELECT p.place_id, p.osm_id, p.parent_place_id, p.startnumber, p.endnumber," +
-                "      p.postcode, p.country_code, p.linegeo, p.step," +
+                "      p.postcode, p.country_code, p.address, p.linegeo, p.step," +
                 "      parent.class as parent_class, parent.type as parent_type," +
                 "      parent.rank_address as parent_rank_address, parent.name as parent_name, " +
                 dbutils.jsonArrayFromSelect(

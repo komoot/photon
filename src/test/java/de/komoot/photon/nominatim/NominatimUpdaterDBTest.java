@@ -1,6 +1,9 @@
 package de.komoot.photon.nominatim;
 
+import de.komoot.photon.AssertUtil;
+import de.komoot.photon.PhotonDoc;
 import de.komoot.photon.ReflectionTestUtil;
+import de.komoot.photon.nominatim.model.AddressType;
 import de.komoot.photon.nominatim.testdb.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,15 +17,13 @@ import org.springframework.transaction.support.TransactionTemplate;
 import static org.junit.jupiter.api.Assertions.*;
 
 class NominatimUpdaterDBTest {
-    private EmbeddedDatabase db;
     private NominatimUpdater connector;
     private CollectingUpdater updater;
     private JdbcTemplate jdbc;
-    private TransactionTemplate txTemplate;
 
     @BeforeEach
     void setup() {
-        db = new EmbeddedDatabaseBuilder()
+        EmbeddedDatabase db = new EmbeddedDatabaseBuilder()
                 .setType(EmbeddedDatabaseType.H2)
                 .generateUniqueName(true)
                 .addScript("/test-schema.sql")
@@ -34,7 +35,7 @@ class NominatimUpdaterDBTest {
         connector.setUpdater(updater);
 
         jdbc = new JdbcTemplate(db);
-        txTemplate = new TransactionTemplate(new DataSourceTransactionManager(db));
+        TransactionTemplate txTemplate = new TransactionTemplate(new DataSourceTransactionManager(db));
         ReflectionTestUtil.setFieldValue(connector, NominatimConnector.class, "template", jdbc);
         ReflectionTestUtil.setFieldValue(connector, NominatimConnector.class, "txTemplate", txTemplate);
     }
@@ -266,5 +267,28 @@ class NominatimUpdaterDBTest {
 
         updater.assertHasCreated(place1.getPlaceId());
         updater.assertHasDeleted(place2.getPlaceId());
+    }
+
+    @Test
+    void testUpdateWithAddressLowerRanks() {
+        PlacexTestRow place = PlacexTestRow.make_street("Burg").add(jdbc);
+        place.addAddresslines(jdbc,
+                new PlacexTestRow("place", "neighbourhood").name("Le Coin").ranks(24).add(jdbc),
+                new PlacexTestRow("place", "suburb").name("Crampton").ranks(20).add(jdbc),
+                new PlacexTestRow("place", "city").name("Grand Junction").ranks(16).add(jdbc),
+                new PlacexTestRow("place", "county").name("Lost County").ranks(12).add(jdbc),
+                new PlacexTestRow("place", "state").name("Le Havre").ranks(8).add(jdbc));
+        (new PhotonUpdateRow("placex", place.getPlaceId(), "UPDATE")).add(jdbc);
+        connector.update();
+        updater.assertFinishCalled();
+        assertEquals(0, updater.numDeleted());
+        assertEquals(1, updater.numCreated());
+        updater.assertHasCreated(place.getPlaceId());
+        PhotonDoc doc = updater.getCreated(place.getPlaceId(), 0);
+        AssertUtil.assertAddressName("Le Coin", doc, AddressType.LOCALITY);
+        AssertUtil.assertAddressName("Crampton", doc, AddressType.DISTRICT);
+        AssertUtil.assertAddressName("Grand Junction", doc, AddressType.CITY);
+        AssertUtil.assertAddressName("Lost County", doc, AddressType.COUNTY);
+        AssertUtil.assertAddressName("Le Havre", doc, AddressType.STATE);
     }
 }

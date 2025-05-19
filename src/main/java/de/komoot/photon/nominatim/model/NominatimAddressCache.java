@@ -23,9 +23,10 @@ public class NominatimAddressCache {
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
     private final Map<Long, AddressRow> addresses = new HashMap<>();
+    private final RowCallbackHandler rowMapper;
 
-    public void loadCountryAddresses(JdbcTemplate template, DBDataAdapter dbutils, String countryCode) {
-        final RowCallbackHandler rowMapper = rs ->
+    public NominatimAddressCache(DBDataAdapter dbutils) {
+        rowMapper = rs ->
                 addresses.put(
                         rs.getLong("place_id"),
                         new AddressRow(
@@ -34,8 +35,9 @@ public class NominatimAddressCache {
                                 rs.getString("type"),
                                 rs.getInt("rank_address")
                         ));
+    }
 
-
+    public void loadCountryAddresses(JdbcTemplate template, String countryCode) {
         if ("".equals(countryCode)) {
             template.query(BASE_COUNTRY_QUERY + " AND country_code is null", rowMapper);
         } else {
@@ -47,22 +49,46 @@ public class NominatimAddressCache {
         }
     }
 
-    public List<AddressRow> getAddressList(String addressline) {
-        if (addressline == null || addressline.isBlank()) {
-            return new ArrayList<>();
+    public List<AddressRow> getOrLoadAddressList(JdbcTemplate template, String json) {
+        if (json == null || json.isBlank()) {
+            return List.of();
         }
 
-        Long[] placeIDs;
+        final Long[] placeIDs = parsePlaceIdArray(json);
+
+        final Long[] missing = Arrays.stream(placeIDs)
+                .filter(id -> !addresses.containsKey(id)).toArray(Long[]::new);
+
+        if (missing.length > 0) {
+            template.query(
+                    BASE_COUNTRY_QUERY + " AND place_id = ANY(?)",
+                    rowMapper, (Object) missing);
+        }
+
+        return makeAddressList(placeIDs);
+    }
+
+    public List<AddressRow> getAddressList(String json) {
+        if (json == null || json.isBlank()) {
+            return List.of();
+        }
+
+        return makeAddressList(parsePlaceIdArray(json));
+    }
+
+    private List<AddressRow> makeAddressList(Long[] placeIDs) {
+        return Arrays.stream(placeIDs)
+                .map(addresses::get)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+    }
+
+    private Long[] parsePlaceIdArray(String json) {
         try {
-            placeIDs = objectMapper.readValue(addressline, Long[].class);
+            return objectMapper.readValue(json, Long[].class);
         } catch (JsonProcessingException e) {
             LOGGER.error("Cannot parse database response.", e);
             throw new RuntimeException("Parse error.");
         }
-
-        return Arrays.stream(placeIDs)
-                .map(addresses::get)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toCollection(ArrayList::new));
     }
 }
