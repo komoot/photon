@@ -97,7 +97,7 @@ public class NominatimImporter extends NominatimConnector {
                     assert (doc != null);
 
                     if (rs.getString("parent_class") != null) {
-                        doc.completePlace(List.of(new AddressRow(
+                        doc.completePlace(List.of(AddressRow.make(
                                 dbutils.getMap(rs, "parent_name"),
                                 rs.getString("parent_class"),
                                 rs.getString("parent_type"),
@@ -117,7 +117,7 @@ public class NominatimImporter extends NominatimConnector {
                     final PhotonDoc doc = osmlineRowMapper.mapRow(rs, 0);
 
                     if (rs.getString("parent_class") != null) {
-                        doc.completePlace(List.of(new AddressRow(
+                        doc.completePlace(List.of(AddressRow.make(
                                 dbutils.getMap(rs, "parent_name"),
                                 rs.getString("parent_class"),
                                 rs.getString("parent_type"),

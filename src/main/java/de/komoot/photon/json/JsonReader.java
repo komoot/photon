@@ -130,7 +130,7 @@ public class JsonReader {
                                     && !doc.getName().isEmpty()) {
                                 addressCache.put(
                                         doc.getPlaceId(),
-                                        new AddressRow(
+                                        AddressRow.make(
                                                 doc.getName(), doc.getTagKey(), doc.getTagValue(),
                                                 doc.getRankAddress()));
                             }

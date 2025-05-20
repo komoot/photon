@@ -85,7 +85,7 @@ public class NominatimUpdater extends NominatimConnector {
             assert (doc != null);
 
             if (rs.getInt("rank_search") == 30 && rs.getString("parent_class") != null) {
-                doc.completePlace(List.of(new AddressRow(
+                doc.completePlace(List.of(AddressRow.make(
                         dbutils.getMap(rs, "parent_name"),
                         rs.getString("parent_class"),
                         rs.getString("parent_type"),
@@ -111,7 +111,7 @@ public class NominatimUpdater extends NominatimConnector {
             assert doc != null;
 
             if (rs.getString("parent_class") != null) {
-                doc.completePlace(List.of(new AddressRow(
+                doc.completePlace(List.of(AddressRow.make(
                         dbutils.getMap(rs, "parent_name"),
                         rs.getString("parent_class"),
                         rs.getString("parent_type"),

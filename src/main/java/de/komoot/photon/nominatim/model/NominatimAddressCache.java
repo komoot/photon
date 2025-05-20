@@ -29,7 +29,7 @@ public class NominatimAddressCache {
         rowMapper = rs ->
                 addresses.put(
                         rs.getLong("place_id"),
-                        new AddressRow(
+                        AddressRow.make(
                                 Map.copyOf(dbutils.getMap(rs, "name")),
                                 rs.getString("class"),
                                 rs.getString("type"),
