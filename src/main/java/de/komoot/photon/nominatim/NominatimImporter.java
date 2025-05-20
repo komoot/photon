@@ -1,5 +1,6 @@
 package de.komoot.photon.nominatim;
 
+import de.komoot.photon.DatabaseProperties;
 import de.komoot.photon.PhotonDoc;
 import de.komoot.photon.PhotonDocAddressSet;
 import de.komoot.photon.PhotonDocInterpolationSet;
@@ -20,12 +21,12 @@ import java.util.Map;
 public class NominatimImporter extends NominatimConnector {
     private static final Logger LOGGER = LogManager.getLogger();
 
-    public NominatimImporter(String host, int port, String database, String username, String password, boolean useGeometryColumn) {
-        this(host, port, database, username, password, new PostgisDataAdapter(), useGeometryColumn);
+    public NominatimImporter(String host, int port, String database, String username, String password, DatabaseProperties dbProperties) {
+        this(host, port, database, username, password, new PostgisDataAdapter(), dbProperties);
     }
 
-    public NominatimImporter(String host, int port, String database, String username, String password, DBDataAdapter dataAdapter, boolean useGeometryColumn) {
-        super(host, port, database, username, password, dataAdapter, useGeometryColumn);
+    public NominatimImporter(String host, int port, String database, String username, String password, DBDataAdapter dataAdapter, DatabaseProperties dbProperties) {
+        super(host, port, database, username, password, dataAdapter, dbProperties);
     }
 
 
@@ -58,7 +59,7 @@ public class NominatimImporter extends NominatimConnector {
         NominatimAddressCache addressCache = new NominatimAddressCache(dbutils);
         addressCache.loadCountryAddresses(template, countryCode);
 
-        final PlaceRowMapper placeRowMapper = new PlaceRowMapper(dbutils, useGeometryColumn);
+        final PlaceRowMapper placeRowMapper = new PlaceRowMapper(dbutils, dbProperties.getLanguages(), dbProperties.getSupportGeometries());
         final String baseSelect = placeRowMapper.makeBaseSelect();
 
         // First read ranks below 30, independent places

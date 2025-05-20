@@ -1,6 +1,7 @@
 package de.komoot.photon.nominatim;
 
 import de.komoot.photon.AssertUtil;
+import de.komoot.photon.DatabaseProperties;
 import de.komoot.photon.PhotonDoc;
 import de.komoot.photon.ReflectionTestUtil;
 import de.komoot.photon.nominatim.model.AddressType;
@@ -30,7 +31,7 @@ class NominatimUpdaterDBTest {
                 .build();
 
 
-        connector = new NominatimUpdater(null, 0, null, null, null, new H2DataAdapter(), false);
+        connector = new NominatimUpdater(null, 0, null, null, null, new H2DataAdapter(), new DatabaseProperties());
         updater = new CollectingUpdater();
         connector.setUpdater(updater);
 

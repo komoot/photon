@@ -1,5 +1,6 @@
 package de.komoot.photon.nominatim;
 
+import de.komoot.photon.DatabaseProperties;
 import org.locationtech.jts.io.ParseException;
 import de.komoot.photon.AssertUtil;
 import de.komoot.photon.PhotonDoc;
@@ -36,7 +37,9 @@ class NominatimConnectorDBTest {
                 .build();
 
 
-        connector = new NominatimImporter(null, 0, null, null, null, new H2DataAdapter(), true);
+        DatabaseProperties dbProperties = new DatabaseProperties();
+        dbProperties.setSupportGeometries(true);
+        connector = new NominatimImporter(null, 0, null, null, null, new H2DataAdapter(), dbProperties);
         importer = new CollectingImporter();
 
         jdbc = new JdbcTemplate(db);

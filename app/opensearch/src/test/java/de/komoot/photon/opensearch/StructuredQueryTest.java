@@ -11,7 +11,6 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.io.TempDir;
 
 import java.nio.file.Path;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,13 +47,13 @@ public class StructuredQueryTest extends ESBaseTester {
         Importer instance = makeImporter();
 
         var country = new PhotonDoc(0, "R", 0, "place", "country")
-                .names(Collections.singletonMap("name", "Germany"))
+                .names(makeDocNames("name", "Germany"))
                 .countryCode(COUNTRY_CODE)
                 .importance(1.0)
                 .rankAddress(getRank(AddressType.COUNTRY));
 
         var city = new PhotonDoc(1, "R", 1, "place", "city")
-                .names(Collections.singletonMap("name", CITY))
+                .names(makeDocNames("name", CITY))
                 .countryCode(COUNTRY_CODE)
                 .postcode("12345")
                 .importance(1.0)
@@ -63,7 +62,7 @@ public class StructuredQueryTest extends ESBaseTester {
         Map<String, String> address = new HashMap<>();
         address.put("city", CITY);
         var suburb = new PhotonDoc(2, "N", 2, "place", "suburb")
-                .names(Collections.singletonMap("name", DISTRICT))
+                .names(makeDocNames("name", DISTRICT))
                 .countryCode(COUNTRY_CODE)
                 .postcode(DISTRICT_POST_CODE)
                 .address(address)
@@ -71,7 +70,7 @@ public class StructuredQueryTest extends ESBaseTester {
                 .rankAddress(getRank(AddressType.DISTRICT));
 
         var street = new PhotonDoc(3, "W", 3, "place", "street")
-                .names(Collections.singletonMap("name", STREET))
+                .names(makeDocNames("name", STREET))
                 .countryCode(COUNTRY_CODE)
                 .postcode("12345")
                 .address(address)
@@ -88,7 +87,7 @@ public class StructuredQueryTest extends ESBaseTester {
                 .rankAddress(getRank(AddressType.HOUSE));
 
         var busStop = new PhotonDoc(8, "N", 8, "highway", "house")
-                .names(Collections.singletonMap("name", CITY + ' ' + STREET))
+                .names(makeDocNames("name", CITY + ' ' + STREET))
                 .countryCode(COUNTRY_CODE)
                 .postcode("12345")
                 .address(address)

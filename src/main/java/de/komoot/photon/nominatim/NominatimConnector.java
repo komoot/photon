@@ -1,5 +1,6 @@
 package de.komoot.photon.nominatim;
 
+import de.komoot.photon.DatabaseProperties;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -18,12 +19,12 @@ import java.util.Map;
  */
 public class NominatimConnector {
     protected final DBDataAdapter dbutils;
+    protected final DatabaseProperties dbProperties;
     protected final JdbcTemplate template;
     protected final TransactionTemplate txTemplate;
     protected Map<String, Map<String, String>> countryNames;
-    protected boolean useGeometryColumn;
 
-    protected NominatimConnector(String host, int port, String database, String username, String password, DBDataAdapter dataAdapter, boolean useGeometryColumn) {
+    protected NominatimConnector(String host, int port, String database, String username, String password, DBDataAdapter dataAdapter, DatabaseProperties dbProperties) {
         BasicDataSource dataSource = new BasicDataSource();
 
         dataSource.setUrl(String.format("jdbc:postgresql://%s:%d/%s", host, port, database));
@@ -41,27 +42,22 @@ public class NominatimConnector {
         template.setFetchSize(100000);
 
         dbutils = dataAdapter;
-        this.useGeometryColumn = useGeometryColumn;
+        this.dbProperties = dbProperties;
     }
 
     public Date getLastImportDate() {
-        List<Date> importDates = template.query("SELECT lastimportdate FROM import_status ORDER BY lastimportdate DESC LIMIT 1", new RowMapper<Date>() {
-            public Date mapRow(ResultSet rs, int rowNum) throws SQLException {
-                return rs.getTimestamp("lastimportdate");
-            }
-        });
-        if (importDates.isEmpty()) {
-            return null;
-        }
+        List<Date> importDates = template.query(
+                "SELECT lastimportdate FROM import_status ORDER BY lastimportdate DESC LIMIT 1",
+                (rs, rowNum) -> rs.getTimestamp("lastimportdate"));
 
-        return importDates.get(0);
+        return importDates.isEmpty() ? null : importDates.get(0);
     }
 
     public Map<String, Map<String, String>> loadCountryNames() {
         if (countryNames == null) {
             countryNames = new HashMap<>();
             // Default for places outside any country.
-            countryNames.put("", new HashMap<>());
+            countryNames.put("", Map.of());
             template.query("SELECT country_code, name FROM country_name", rs -> {
                 countryNames.put(rs.getString("country_code"), dbutils.getMap(rs, "name"));
             });

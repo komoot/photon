@@ -60,7 +60,7 @@ public class PhotonDocConverter {
             builder.field("postcode", doc.getPostcode());
         }
 
-        writeName(builder, doc, dbProperties.getLanguages());
+        write(builder, doc.getName(), "name");
 
         for (AddressType entry : doc.getAddressParts().keySet()) {
             Map<String, String> fNames = new HashMap<>();
@@ -112,25 +112,6 @@ public class PhotonDocConverter {
 
         builder.endArray();
         builder.endObject();
-    }
-
-    private static void writeName(XContentBuilder builder, PhotonDoc doc, String[] languages) throws IOException {
-        Map<String, String> fNames = new HashMap<>();
-
-        doc.copyName(fNames, "default", "name");
-
-        for (String language : languages) {
-            doc.copyName(fNames, language, "name:" + language);
-        }
-
-        doc.copyName(fNames, "alt", "alt_name");
-        doc.copyName(fNames, "int", "int_name");
-        doc.copyName(fNames, "loc", "loc_name");
-        doc.copyName(fNames, "old", "old_name");
-        doc.copyName(fNames, "reg", "reg_name");
-        doc.copyName(fNames, "housename", "addr:housename");
-
-        write(builder, fNames, "name");
     }
 
     private static void write(XContentBuilder builder, Map<String, String> fNames, String name) throws IOException {

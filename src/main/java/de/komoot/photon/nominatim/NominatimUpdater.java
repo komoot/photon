@@ -1,9 +1,6 @@
 package de.komoot.photon.nominatim;
 
-import de.komoot.photon.PhotonDoc;
-import de.komoot.photon.PhotonDocAddressSet;
-import de.komoot.photon.PhotonDocInterpolationSet;
-import de.komoot.photon.Updater;
+import de.komoot.photon.*;
 import de.komoot.photon.nominatim.model.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -68,16 +65,16 @@ public class NominatimUpdater extends NominatimConnector {
     private final String placeBaseSQL;
     private final String osmlineBaseSQL;
 
-    public NominatimUpdater(String host, int port, String database, String username, String password, boolean useGeometryColumn) {
-        this(host, port, database, username, password, new PostgisDataAdapter(), useGeometryColumn);
+    public NominatimUpdater(String host, int port, String database, String username, String password, DatabaseProperties dbProperties) {
+        this(host, port, database, username, password, new PostgisDataAdapter(), dbProperties);
     }
 
-    public NominatimUpdater(String host, int port, String database, String username, String password, DBDataAdapter dataAdapter, boolean useGeometryColumn) {
-        super(host, port, database, username, password, dataAdapter, useGeometryColumn);
+    public NominatimUpdater(String host, int port, String database, String username, String password, DBDataAdapter dataAdapter, DatabaseProperties dbProperties) {
+        super(host, port, database, username, password, dataAdapter, dbProperties);
 
         final NominatimAddressCache addressCache = new NominatimAddressCache(dataAdapter);
 
-        final var placeRowMapper = new PlaceRowMapper(dbutils, useGeometryColumn);
+        final var placeRowMapper = new PlaceRowMapper(dbutils, dbProperties.getLanguages(), dbProperties.getSupportGeometries());
         placeBaseSQL = placeRowMapper.makeBaseSelect();
 
         placeToNominatimResult = (rs, rowNum) -> {

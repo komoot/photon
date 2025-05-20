@@ -10,7 +10,8 @@ import org.junit.jupiter.api.io.TempDir;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -19,11 +20,15 @@ class UpdaterTest extends ESBaseTester {
     @TempDir
     private Path dataDirectory;
 
+    private PhotonDoc createDoc(String... names) {
+        return new PhotonDoc()
+                .placeId(1234).osmType("N").osmId(1000).tagKey("place").tagValue("city")
+                .names(makeDocNames(names));
+    }
+
     @Test
     void addNameToDoc() throws IOException {
-        Map<String, String> names = new HashMap<>();
-        names.put("name", "Foo");
-        PhotonDoc doc = new PhotonDoc(1234, "N", 1000, "place", "city").names(names);
+        PhotonDoc doc = createDoc("name", "Foo");
 
         setUpES(dataDirectory);
         Importer instance = makeImporter();
@@ -31,7 +36,7 @@ class UpdaterTest extends ESBaseTester {
         instance.finish();
         refresh();
 
-        names.put("name:en", "Enfoo");
+        doc.names(makeDocNames("name", "Foo", "name:en", "Enfoo"));
         Updater updater = makeUpdater();
         updater.addOrUpdate(List.of(doc));
         updater.finish();
@@ -47,10 +52,7 @@ class UpdaterTest extends ESBaseTester {
 
     @Test
     void removeNameFromDoc() throws IOException {
-        Map<String, String> names = new HashMap<>();
-        names.put("name", "Foo");
-        names.put("name:en", "Enfoo");
-        PhotonDoc doc = new PhotonDoc(1234, "N", 1000, "place", "city").names(names);
+        PhotonDoc doc = createDoc("name", "Foo", "name:en", "Enfoo");
 
         setUpES(dataDirectory);
         Importer instance = makeImporter();
@@ -58,7 +60,7 @@ class UpdaterTest extends ESBaseTester {
         instance.finish();
         refresh();
 
-        names.remove("name");
+        doc.names(makeDocNames("name:en", "Enfoo"));
         Updater updater = makeUpdater();
         updater.addOrUpdate(List.of(doc));
         updater.finish();
@@ -74,9 +76,7 @@ class UpdaterTest extends ESBaseTester {
 
     @Test
     void addExtraTagsToDoc() throws IOException {
-        Map<String, String> names = new HashMap<>();
-        names.put("name", "Foo");
-        PhotonDoc doc = new PhotonDoc(1234, "N", 1000, "place", "city").names(names);
+        PhotonDoc doc = createDoc("name", "Foo");
 
         getProperties().setExtraTags(List.of("website"));
         setUpES(dataDirectory);
@@ -90,7 +90,7 @@ class UpdaterTest extends ESBaseTester {
 
         assertNull(response.get("extra"));
 
-        doc.extraTags(Collections.singletonMap("website", "http://site.foo"));
+        doc.extraTags(Map.of("website", "http://site.foo"));
         Updater updater = makeUpdater();
         updater.addOrUpdate(List.of(doc));
         updater.finish();
@@ -102,7 +102,7 @@ class UpdaterTest extends ESBaseTester {
         Map<String, String> extra = response.getMap("extra");
 
         assertNotNull(extra);
-        assertEquals(Collections.singletonMap("website", "http://site.foo"), extra);
+        assertEquals(Map.of("website", "http://site.foo"), extra);
     }
 
     @Test

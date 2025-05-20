@@ -122,7 +122,7 @@ public class App {
         final var dbProps = args.getDatabaseProperties();
 
         try {
-            final var connector = new NominatimImporter(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword(), false);
+            final var connector = new NominatimImporter(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword(), dbProps);
             dbProps.setImportDate(connector.getLastImportDate());
 
             final String filename = args.getJsonDump();
@@ -131,7 +131,7 @@ public class App {
 
             final var importThread = new ImportThread(jsonDumper);
             try {
-                importFromDatabase(args, importThread);
+                importFromDatabase(args, importThread, dbProps);
             } finally {
                 importThread.finish();
             }
@@ -161,7 +161,7 @@ public class App {
         try {
             Date importDate;
             if (args.getImportFile() == null) {
-                importDate = importFromDatabase(args, importThread);
+                importDate = importFromDatabase(args, importThread, dbProperties);
             } else {
                 importDate = importFromFile(args, importThread);
             }
@@ -177,9 +177,9 @@ public class App {
         LOGGER.info("Database has been successfully set up with the following properties:\n{}", dbProperties);
     }
 
-    private static Date importFromDatabase(CommandLineArgs args, ImportThread importThread) {
+    private static Date importFromDatabase(CommandLineArgs args, ImportThread importThread, DatabaseProperties dbProperties) {
         LOGGER.info("Connecting to database {} at {}:{}", args.getDatabase(), args.getHost(), args.getPort());
-        final var connector = new NominatimImporter(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword(), args.getImportGeometryColumn());
+        final var connector = new NominatimImporter(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword(), dbProperties);
         connector.prepareDatabase();
         connector.loadCountryNames();
 
@@ -205,7 +205,7 @@ public class App {
             for (int i = 0; i < numThreads; ++i) {
                 final NominatimImporter threadConnector;
                 if (i > 0) {
-                    threadConnector = new NominatimImporter(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword(), args.getImportGeometryColumn());
+                    threadConnector = new NominatimImporter(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword(), dbProperties);
                     threadConnector.loadCountryNames();
                 } else {
                     threadConnector = connector;
@@ -250,6 +250,7 @@ public class App {
         reader.setUseFullGeometries(args.getImportGeometryColumn());
         reader.setExtraTags(args.getExtraTags());
         reader.setCountryFilter(args.getCountryCodes());
+        reader.setLanguages(args.getLanguages());
 
         reader.readHeader();
         final var importDate = reader.getImportDate();
@@ -261,7 +262,7 @@ public class App {
 
 
     private static void startNominatimUpdateInit(CommandLineArgs args) {
-        NominatimUpdater nominatimUpdater = new NominatimUpdater(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword(), args.getImportGeometryColumn());
+        NominatimUpdater nominatimUpdater = new NominatimUpdater(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword(), new DatabaseProperties());
         nominatimUpdater.initUpdates(args.getNominatimUpdateInit());
     }
 
@@ -290,7 +291,7 @@ public class App {
             dbProperties.putConfigExtraTags(args.getExtraTags());
         }
 
-        NominatimUpdater nominatimUpdater = new NominatimUpdater(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword(), args.getImportGeometryColumn());
+        NominatimUpdater nominatimUpdater = new NominatimUpdater(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword(), dbProperties);
         nominatimUpdater.setUpdater(server.createUpdater(dbProperties));
         return nominatimUpdater;
     }

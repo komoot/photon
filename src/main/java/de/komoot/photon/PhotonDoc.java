@@ -1,6 +1,7 @@
     package de.komoot.photon;
 
 import de.komoot.photon.nominatim.model.AddressRow;
+import de.komoot.photon.nominatim.model.NameMap;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Point;
@@ -39,7 +40,7 @@ public class PhotonDoc {
     private String tagKey = null;
     private String tagValue = null;
 
-    private Map<String, String> name = Map.of();
+    private NameMap name = new NameMap();
     private String postcode = null;
     private Map<String, String> extratags = Map.of();
     private Envelope bbox = null;
@@ -81,6 +82,7 @@ public class PhotonDoc {
         this.countryCode = other.countryCode;
         this.centroid = other.centroid;
         this.rankAddress = other.rankAddress;
+        this.adminLevel = other.adminLevel;
         this.addressParts = other.addressParts;
         this.context = other.context;
         this.geometry = other.geometry;
@@ -111,7 +113,7 @@ public class PhotonDoc {
         return this;
     }
 
-    public PhotonDoc names(Map<String, String> names) {
+    public PhotonDoc names(NameMap names) {
         this.name = names;
         return this;
     }
@@ -357,7 +359,7 @@ public class PhotonDoc {
         return this.tagValue;
     }
 
-    public Map<String, String> getName() {
+    public NameMap getName() {
         return this.name;
     }
 

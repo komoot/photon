@@ -16,10 +16,12 @@ import java.sql.SQLException;
 public class PlaceRowMapper implements RowMapper<PhotonDoc> {
 
     private final DBDataAdapter dbutils;
-    private boolean useGeometryColumn;
+    private final String[] languages;
+    private final boolean useGeometryColumn;
 
-    public PlaceRowMapper(DBDataAdapter dbutils, boolean useGeometryColumn) {
+    public PlaceRowMapper(DBDataAdapter dbutils, String[] langauges, boolean useGeometryColumn) {
         this.dbutils = dbutils;
+        this.languages = langauges;
         this.useGeometryColumn = useGeometryColumn;
     }
 
@@ -28,7 +30,7 @@ public class PlaceRowMapper implements RowMapper<PhotonDoc> {
         PhotonDoc doc = new PhotonDoc(rs.getLong("place_id"),
                 rs.getString("osm_type"), rs.getLong("osm_id"),
                 rs.getString("class"), rs.getString("type"))
-                .names(dbutils.getMap(rs, "name"))
+                .names(NameMap.makeForPlace(dbutils.getMap(rs, "name"), languages))
                 .extraTags(dbutils.getMap(rs, "extratags"))
                 .bbox(dbutils.extractGeometry(rs, "bbox"))
                 .parentPlaceId(rs.getLong("parent_place_id"))

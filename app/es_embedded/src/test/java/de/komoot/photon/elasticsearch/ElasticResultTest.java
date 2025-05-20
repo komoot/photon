@@ -19,15 +19,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class ElasticResultTest  extends ESBaseTester {
-    private Map<String, String> makeMap(String... kv) {
-        Map<String, String> result = new HashMap<>();
-        for (int i = 0; i < kv.length; i += 2) {
-            result.put(kv[i], kv[i + 1]);
-        }
-
-        return result;
-    }
-
     protected PhotonDoc createDoc(double lon, double lat, int id, int osmId, String key, String value) {
         Point location = FACTORY.createPoint(new Coordinate(lon, lat));
         return new PhotonDoc(id, "W", osmId, key, value).centroid(location);
@@ -44,22 +35,22 @@ class ElasticResultTest  extends ESBaseTester {
 
         instance.add(List.of(
                 createDoc(45.2, -7.45, 123, 1123, "place", "city")
-                        .names(makeMap("name", "München", "name:it", "Monacco", "name:en", "Munich"))
+                        .names(makeDocNames("name", "München", "name:it", "Monacco", "name:en", "Munich"))
                         .address(Collections.singletonMap("state", "Bavaria"))
                         .countryCode("de")
-                        .extraTags(makeMap("population", "many", "capital", "yes", "maxage", "99"))));
+                        .extraTags(Map.of("population", "many", "capital", "yes", "maxage", "99"))));
         instance.add(List.of(
                 createDoc(0, 0, 99, 11999, "place", "locality")
-                        .names(makeMap("name", "null island"))));
+                        .names(makeDocNames("name", "null island"))));
         instance.add(List.of(
                 createDoc(-179, 1.0001, 923, 1923, "place", "house")
                         .houseNumber("34")
                         .bbox(FACTORY.createMultiPointFromCoords(
                                 new Coordinate[]{new Coordinate(-179.5, 1.0), new Coordinate(-178.5, 1.1)}))
-                        .address(makeMap("street", "Hauptstr", "city", "Hamburg"))));
+                        .address(Map.of("street", "Hauptstr", "city", "Hamburg"))));
         instance.add(List.of(
                 new PhotonDoc(42, "N", 42, "place", "hamlet")
-                        .names(makeMap("name", "nowhere"))));
+                        .names(makeDocNames("name", "nowhere"))));
 
         instance.finish();
         refresh();
@@ -93,12 +84,12 @@ class ElasticResultTest  extends ESBaseTester {
     @Test
     void testGetMap() {
         assertAll("getMap",
-                () -> assertEquals(makeMap("default", "München", "en", "Munich", "it", "Monacco"),
+                () -> assertEquals(Map.of("default", "München", "en", "Munich", "it", "Monacco"),
                                    search("München").getMap("name")),
-                () -> assertEquals(makeMap("default", "null island"),
+                () -> assertEquals(Map.of("default", "null island"),
                                    search("null island").getMap("name")),
                 () -> assertNull(search("Hauptstr 34").getMap("name")),
-                () -> assertEquals(makeMap("population", "many", "capital", "yes"),
+                () -> assertEquals(Map.of("population", "many", "capital", "yes"),
                                    search("München").getMap("extra"))
         );
     }

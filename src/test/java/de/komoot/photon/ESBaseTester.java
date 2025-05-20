@@ -1,5 +1,6 @@
 package de.komoot.photon;
 
+import de.komoot.photon.nominatim.model.NameMap;
 import de.komoot.photon.searcher.PhotonResult;
 import org.junit.jupiter.api.AfterEach;
 import org.locationtech.jts.geom.*;
@@ -19,14 +20,14 @@ public class ESBaseTester {
     private TestServer server;
     private final DatabaseProperties dbProperties = new DatabaseProperties();
 
-    protected Map<String, String> makeDocNames(String... names) {
+    protected NameMap makeDocNames(String... names) {
         Map<String, String> nameMap = new HashMap<>();
 
         for (int i = 0; i < names.length - 1; i += 2) {
             nameMap.put(names[i], names[i+1]);
         }
 
-        return nameMap;
+        return NameMap.makeForPlace(nameMap, dbProperties.getLanguages());
     }
 
     protected Map<String, String> makeAddressNames(String... names) {

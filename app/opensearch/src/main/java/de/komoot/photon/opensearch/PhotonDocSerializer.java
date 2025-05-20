@@ -61,7 +61,8 @@ public class PhotonDocSerializer extends StdSerializer<PhotonDoc> {
             gen.writeStringField("postcode", value.getPostcode());
         }
 
-        writeName(gen, value);
+        gen.writeObjectField("name", value.getName());
+
 
         for (var entry : value.getAddressParts().keySet()) {
             Map<String, String> fNames = new HashMap<>();
@@ -85,25 +86,6 @@ public class PhotonDocSerializer extends StdSerializer<PhotonDoc> {
         writeExtent(gen, value.getBbox());
 
         gen.writeEndObject();
-    }
-
-    private void writeName(JsonGenerator gen, PhotonDoc doc) throws IOException {
-        Map<String, String> fNames = new HashMap<>();
-
-        doc.copyName(fNames, "default", "name");
-
-        for (String language : dbProperties.getLanguages()) {
-            doc.copyName(fNames, language, "name:" + language);
-        }
-
-        doc.copyName(fNames, "alt", "alt_name");
-        doc.copyName(fNames, "int", "int_name");
-        doc.copyName(fNames, "loc", "loc_name");
-        doc.copyName(fNames, "old", "old_name");
-        doc.copyName(fNames, "reg", "reg_name");
-        doc.copyName(fNames, "housename", "addr:housename");
-
-        gen.writeObjectField("name", fNames);
     }
 
     private void writeContext(JsonGenerator gen, Map<String, Set<String>> contexts) throws IOException {
