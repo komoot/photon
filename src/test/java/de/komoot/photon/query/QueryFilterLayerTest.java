@@ -11,7 +11,6 @@ import org.locationtech.jts.geom.Coordinate;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.*;
@@ -27,9 +26,10 @@ class QueryFilterLayerTest extends ESBaseTester {
 
         int[] docRanks = {10, 13, 14, 22}; // state, city * 2, locality
         for (int rank : docRanks) {
-            instance.add(List.of(new PhotonDoc(id, "W", ++id, "place", "value")
-                            .names(Map.of("name", "berlin"))
-                            .centroid(FACTORY.createPoint(new Coordinate(10, 10)))
+            instance.add(List.of(new PhotonDoc()
+                            .placeId(id).osmType("W").osmId(++id).tagKey("place").tagValue("value")
+                            .names(makeDocNames("name", "berlin"))
+                            .centroid(makePoint(10, 10))
                             .rankAddress(rank)));
         }
 

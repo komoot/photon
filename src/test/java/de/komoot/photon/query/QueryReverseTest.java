@@ -1,6 +1,7 @@
 package de.komoot.photon.query;
 
 import de.komoot.photon.ESBaseTester;
+import de.komoot.photon.PhotonDoc;
 import org.locationtech.jts.geom.Coordinate;
 import de.komoot.photon.Importer;
 import de.komoot.photon.searcher.PhotonResult;
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.locationtech.jts.geom.Point;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -20,15 +22,28 @@ import static org.assertj.core.api.Assertions.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class QueryReverseTest extends ESBaseTester {
+    final Point[] TEST_POINTS = {
+            makePoint(10,10),
+            makePoint(10, 10.1),
+            makePoint(10, 10.2),
+            makePoint(-10, -10)
+    };
+
     @BeforeAll
     void setup(@TempDir Path dataDirectory) throws IOException {
         setUpES(dataDirectory);
 
         Importer instance = makeImporter();
-        instance.add(List.of(createDoc(10,10, 100, 100, "place", "house")));
-        instance.add(List.of(createDoc(10,10.1, 101, 101, "place", "house")));
-        instance.add(List.of(createDoc(10,10.2, 102, 102, "place", "house")));
-        instance.add(List.of(createDoc(-10,-10, 202, 102, "place", "house")));
+
+        int id = 100;
+        for (Point pt : TEST_POINTS) {
+            instance.add(List.of(new PhotonDoc()
+                    .placeId(id).osmType("N").osmId(id++).tagKey("place").tagValue("house")
+                    .centroid(pt)
+                    .names(makeDocNames("name", "some house"))
+            ));
+        }
+
         instance.finish();
         refresh();
     }

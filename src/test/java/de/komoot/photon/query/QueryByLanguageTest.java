@@ -35,14 +35,10 @@ class QueryByLanguageTest extends ESBaseTester {
     }
 
     private PhotonDoc createDoc(String... names) {
-        Map<String, String> nameMap = new HashMap<>();
-
-        for (int i = 0; i < names.length - 1; i += 2) {
-            nameMap.put(names[i], names[i+1]);
-        }
-
         ++testDocId;
-        return new PhotonDoc(testDocId, "W", testDocId, "place", "city").names(nameMap);
+        return new PhotonDoc()
+                .placeId(testDocId).osmType("W").osmId(testDocId).tagKey("place").tagValue("city")
+                .names(makeDocNames(names));
     }
 
     private List<PhotonResult> search(String query, String lang) {
@@ -89,14 +85,11 @@ class QueryByLanguageTest extends ESBaseTester {
     void queryAddressPartsLanguages(AddressType addressType) throws IOException {
         Importer instance = setup("en", "de");
 
-        Map<String, String> addressNames = new HashMap<>();
-        addressNames.put("name", "original");
-        addressNames.put("name:de", "Deutsch");
+        PhotonDoc doc = createDoc("name", "here").tagKey("place").tagValue("house");
 
-        PhotonDoc doc = new PhotonDoc(45, "N", 3, "place", "house")
-                .names(Map.of("name", "here"));
-
-        doc.setAddressPartIfNew(addressType, addressNames);
+        doc.setAddressPartIfNew(addressType, makeAddressNames(
+                "name", "original",
+                "name:de", "deutsch"));
 
         instance.add(List.of(doc));
         instance.finish();

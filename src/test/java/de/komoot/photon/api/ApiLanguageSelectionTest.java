@@ -2,6 +2,7 @@ package de.komoot.photon.api;
 
 import de.komoot.photon.App;
 import de.komoot.photon.Importer;
+import de.komoot.photon.PhotonDoc;
 import net.javacrumbs.jsonunit.assertj.JsonMapAssert;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -15,7 +16,6 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
@@ -33,9 +33,10 @@ class ApiLanguageSelectionTest extends ApiBaseTester {
         setUpES(dataDirectory);
         Importer instance = makeImporter();
 
-        instance.add(List.of(
-                createDoc(34.0, 2.0, 1000, 23, "place", "city")
-                        .names(Map.of(
+        instance.add(List.of(new PhotonDoc()
+                        .placeId(1000).osmType("N").osmId(23).tagKey("place").tagValue("city")
+                        .centroid(makePoint(34.0, 2.0))
+                        .names(makeDocNames(
                                 "name", "this",
                                 "name:en", "englishName",
                                 "name:de", "germanName",

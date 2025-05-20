@@ -14,7 +14,6 @@ import org.junit.jupiter.params.provider.ValueSource;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.Map;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -29,8 +28,10 @@ class QueryRelevanceTest extends ESBaseTester {
         setUpES(dataDirectory);
     }
 
-    private PhotonDoc createDoc(String key, String value, long id, String nameKey, String nameValue) {
-        return new PhotonDoc(id, "N", id, key, value).names(Map.of(nameKey, nameValue));
+    private PhotonDoc createDoc(String key, String value, long id, String... names) {
+        return new PhotonDoc()
+                .placeId(id).osmType("N").osmId(id).tagKey(key).tagValue(value)
+                .names(makeDocNames(names));
     }
 
     private List<PhotonResult> search(String query) {
@@ -53,9 +54,9 @@ class QueryRelevanceTest extends ESBaseTester {
     }
 
     @Test
-    void testRelevanceByImportance() throws IOException {
+    void testRelevanceByImportance() {
         Importer instance = makeImporter();
-        instance.add(List.of(createDoc("amenity", "restuarant", 1001, "name", "New York").importance(0.0)));
+        instance.add(List.of(createDoc("amenity", "restaurant", 1001, "name", "New York").importance(0.0)));
         instance.add(List.of(createDoc("place", "city", 2000, "name", "New York").importance(0.5)));
         instance.finish();
         refresh();
@@ -67,7 +68,7 @@ class QueryRelevanceTest extends ESBaseTester {
     }
 
     @Test
-    void testFullNameOverPartialName() throws IOException {
+    void testFullNameOverPartialName() {
         Importer instance = makeImporter();
         instance.add(List.of(createDoc("place", "hamlet", 1000, "name", "Ham")));
         instance.add(List.of(createDoc("place", "hamlet", 1001, "name", "Hamburg")));
@@ -81,7 +82,7 @@ class QueryRelevanceTest extends ESBaseTester {
     }
 
     @Test
-    void testPartialNameWithImportanceOverFullName() throws IOException {
+    void testPartialNameWithImportanceOverFullName() {
         Importer instance = makeImporter();
         instance.add(List.of(createDoc("place", "hamlet", 1000, "name", "Ham").importance(0.1)));
         instance.add(List.of(createDoc("place", "city", 1001, "name", "Hamburg").importance(0.5)));
@@ -96,7 +97,7 @@ class QueryRelevanceTest extends ESBaseTester {
 
     @ParameterizedTest
     @ValueSource(strings = {"Ham", "Hamm", "Hamburg"})
-    void testLocationPreferenceForEqualImportance(String placeName) throws IOException {
+    void testLocationPreferenceForEqualImportance(String placeName) {
         Importer instance = makeImporter();
         instance.add(List.of(
                 createDoc("place", "hamlet", 1000, "name", "Ham")
@@ -114,7 +115,7 @@ class QueryRelevanceTest extends ESBaseTester {
     }
 
     @Test
-    void testLocationPreferenceForHigherImportance() throws IOException {
+    void testLocationPreferenceForHigherImportance() {
         Importer instance = makeImporter();
         instance.add(List.of(
                 createDoc("place", "hamlet", 1000, "name", "Ham")

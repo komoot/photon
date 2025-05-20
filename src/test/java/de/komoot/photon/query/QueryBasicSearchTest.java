@@ -28,14 +28,10 @@ class QueryBasicSearchTest extends ESBaseTester {
     }
 
     private PhotonDoc createDoc(String... names) {
-        Map<String, String> nameMap = new HashMap<>();
-
-        for (int i = 0; i < names.length - 1; i += 2) {
-            nameMap.put(names[i], names[i+1]);
-        }
-
         ++testDocId;
-        return new PhotonDoc(testDocId, "N", testDocId, "place", "city").names(nameMap);
+        return new PhotonDoc()
+                .placeId(testDocId).osmType("N").osmId(testDocId).tagKey("place").tagValue("city")
+                .names(makeDocNames(names));
     }
 
     private List<PhotonResult> search(String query) {
