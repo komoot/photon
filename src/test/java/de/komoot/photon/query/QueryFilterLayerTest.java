@@ -8,7 +8,6 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.io.TempDir;
 import org.locationtech.jts.geom.Coordinate;
 
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
@@ -40,7 +39,7 @@ class QueryFilterLayerTest extends ESBaseTester {
 
     @AfterAll
     @Override
-    public void tearDown() throws IOException {
+    public void tearDown() {
         super.tearDown();
     }
 

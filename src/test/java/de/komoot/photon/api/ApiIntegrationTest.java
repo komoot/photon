@@ -10,7 +10,6 @@ import org.junit.jupiter.params.provider.FieldSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.locationtech.jts.io.WKTReader;
 
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Date;
 import java.util.List;
@@ -49,7 +48,7 @@ class ApiIntegrationTest extends ApiBaseTester {
 
     @AfterAll
     @Override
-    public void tearDown() throws IOException {
+    public void tearDown() {
         App.shutdown();
         shutdownES();
     }

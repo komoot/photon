@@ -10,7 +10,6 @@ import de.komoot.photon.searcher.PhotonResult;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.io.TempDir;
 
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.HashMap;
@@ -112,7 +111,7 @@ public class StructuredQueryTest extends ESBaseTester {
 
     @AfterAll
     @Override
-    public void tearDown() throws IOException {
+    public void tearDown() {
         super.tearDown();
     }
 

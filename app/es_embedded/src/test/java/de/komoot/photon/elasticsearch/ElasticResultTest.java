@@ -12,7 +12,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.io.TempDir;
 
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.*;
 
@@ -55,7 +54,8 @@ class ElasticResultTest  extends ESBaseTester {
         instance.add(List.of(
                 createDoc(-179, 1.0001, 923, 1923, "place", "house")
                         .houseNumber("34")
-                        .bbox(FACTORY.createMultiPoint(new Coordinate[]{new Coordinate(-179.5, 1.0), new Coordinate(-178.5, 1.1)}))
+                        .bbox(FACTORY.createMultiPointFromCoords(
+                                new Coordinate[]{new Coordinate(-179.5, 1.0), new Coordinate(-178.5, 1.1)}))
                         .address(makeMap("street", "Hauptstr", "city", "Hamburg"))));
         instance.add(List.of(
                 new PhotonDoc(42, "N", 42, "place", "hamlet")

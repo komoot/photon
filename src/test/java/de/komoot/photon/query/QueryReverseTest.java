@@ -1,7 +1,7 @@
 package de.komoot.photon.query;
 
-import org.locationtech.jts.geom.Coordinate;
 import de.komoot.photon.ESBaseTester;
+import org.locationtech.jts.geom.Coordinate;
 import de.komoot.photon.Importer;
 import de.komoot.photon.searcher.PhotonResult;
 import org.junit.jupiter.api.AfterAll;
@@ -11,7 +11,6 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.locationtech.jts.io.ParseException;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -22,7 +21,7 @@ import static org.assertj.core.api.Assertions.*;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class QueryReverseTest extends ESBaseTester {
     @BeforeAll
-    void setup(@TempDir Path dataDirectory) throws IOException, ParseException {
+    void setup(@TempDir Path dataDirectory) throws IOException {
         setUpES(dataDirectory);
 
         Importer instance = makeImporter();
@@ -36,7 +35,7 @@ class QueryReverseTest extends ESBaseTester {
 
     @AfterAll
     @Override
-    public void tearDown() throws IOException {
+    public void tearDown() {
         super.tearDown();
     }
 

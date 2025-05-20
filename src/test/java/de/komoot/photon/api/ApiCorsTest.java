@@ -10,7 +10,6 @@ import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.FieldSource;
 
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 
@@ -39,7 +38,7 @@ class ApiCorsTest extends ApiBaseTester {
 
     @AfterAll
     @Override
-    public void tearDown() throws IOException {
+    public void tearDown() {
         shutdownES();
     }
 
