@@ -34,7 +34,7 @@ public class NominatimPlaceDocument {
             doc.names(NameMap.makeForPlace(names, languages));
         }
 
-        doc.address(address);
+        doc.addAddresses(address, languages);
         return doc;
     }
 
@@ -48,13 +48,15 @@ public class NominatimPlaceDocument {
             return List.of();
         }
 
-        doc.address(address);
+        doc.addAddresses(address, languages);
         return new PhotonDocAddressSet(doc, address);
     }
 
-    public AddressRow asAddressRow() {
+    public AddressRow asAddressRow(String[] languages) {
         if (doc.getRankAddress() > 0 && doc.getRankAddress() < 28 && !names.isEmpty()) {
-            return AddressRow.make(names, doc.getTagKey(), doc.getTagValue(), doc.getRankAddress());
+            return AddressRow.make(
+                    names, doc.getTagKey(), doc.getTagValue(),
+                    doc.getRankAddress(), languages);
         }
 
         return null;
@@ -188,7 +190,7 @@ public class NominatimPlaceDocument {
 
     public void completeAddressLines(Map<Long, AddressRow> addressCache) {
         if (addressLines != null) {
-            doc.completePlace(
+            doc.addAddresses(
                 Arrays.stream(addressLines)
                         .filter(l -> l.isAddress)
                         .map(l -> addressCache.get(l.placeId))

@@ -65,7 +65,7 @@ public class StructuredQueryTest extends ESBaseTester {
                 .names(makeDocNames("name", DISTRICT))
                 .countryCode(COUNTRY_CODE)
                 .postcode(DISTRICT_POST_CODE)
-                .address(address)
+                .addAddresses(address, getProperties().getLanguages())
                 .importance(1.0)
                 .rankAddress(getRank(AddressType.DISTRICT));
 
@@ -73,7 +73,7 @@ public class StructuredQueryTest extends ESBaseTester {
                 .names(makeDocNames("name", STREET))
                 .countryCode(COUNTRY_CODE)
                 .postcode("12345")
-                .address(address)
+                .addAddresses(address, getProperties().getLanguages())
                 .importance(1.0)
                 .rankAddress(getRank(AddressType.STREET));
 
@@ -81,7 +81,7 @@ public class StructuredQueryTest extends ESBaseTester {
         var house = new PhotonDoc(4, "R", 4, "place", "house")
                 .countryCode(COUNTRY_CODE)
                 .postcode("12345")
-                .address(address)
+                .addAddresses(address, getProperties().getLanguages())
                 .houseNumber(HOUSE_NUMBER)
                 .importance(1.0)
                 .rankAddress(getRank(AddressType.HOUSE));
@@ -90,7 +90,7 @@ public class StructuredQueryTest extends ESBaseTester {
                 .names(makeDocNames("name", CITY + ' ' + STREET))
                 .countryCode(COUNTRY_CODE)
                 .postcode("12345")
-                .address(address)
+                .addAddresses(address, getProperties().getLanguages())
                 .houseNumber(HOUSE_NUMBER)
                 .importance(1.0)
                 .rankAddress(getRank(AddressType.HOUSE));
@@ -265,7 +265,7 @@ public class StructuredQueryTest extends ESBaseTester {
 
         var doc = new PhotonDoc(id, "R", id, "place", "house")
                 .countryCode(COUNTRY_CODE)
-                .address(hamletAddress)
+                .addAddresses(hamletAddress, getProperties().getLanguages())
                 .houseNumber(houseNumber)
                 .importance(1.0)
                 .rankAddress(getRank(AddressType.HOUSE));

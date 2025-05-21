@@ -130,23 +130,26 @@ public class JsonDumper implements Importer {
         }
 
         final Map<String, String> addressNames = new HashMap<>();
-        for (var entry : doc.getAddressParts().keySet()) {
-            if (entry != AddressType.COUNTRY) {
+        for (var entry : doc.getAddressParts().entrySet()) {
+            final var atype = entry.getKey();
+            if (atype != AddressType.COUNTRY) {
                 String baseKey;
-                if (entry == AddressType.LOCALITY) {
+                if (atype == AddressType.LOCALITY) {
                     baseKey = "neighbourhood";
-                } else if (entry == AddressType.DISTRICT) {
+                } else if (atype == AddressType.DISTRICT) {
                     baseKey = "suburb";
                 } else {
-                    baseKey = entry.getName();
+                    baseKey = atype.getName();
                 }
-                doc.copyAddressName(addressNames, baseKey, entry, "name");
 
-                baseKey += ":";
-                for (String language : dbProperties.getLanguages()) {
-                    doc.copyAddressName(
-                            addressNames, baseKey + language,
-                            entry, "name:" + language);
+                for (var name : entry.getValue().entrySet()) {
+                    if ("default".equals(name.getKey())) {
+                        addressNames.put(baseKey, name.getValue());
+                    } else {
+                        addressNames.put(
+                                String.format("%s:%s", baseKey, name.getKey()),
+                                name.getValue());
+                    }
                 }
             }
         }

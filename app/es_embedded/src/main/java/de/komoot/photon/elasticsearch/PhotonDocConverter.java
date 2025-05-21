@@ -3,7 +3,6 @@ package de.komoot.photon.elasticsearch;
 import de.komoot.photon.Constants;
 import de.komoot.photon.DatabaseProperties;
 import de.komoot.photon.PhotonDoc;
-import de.komoot.photon.ConfigExtraTags;
 import de.komoot.photon.nominatim.model.AddressType;
 
 import org.elasticsearch.common.xcontent.*;
@@ -12,7 +11,6 @@ import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.io.geojson.GeoJsonWriter;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -62,16 +60,8 @@ public class PhotonDocConverter {
 
         write(builder, doc.getName(), "name");
 
-        for (AddressType entry : doc.getAddressParts().keySet()) {
-            Map<String, String> fNames = new HashMap<>();
-
-            doc.copyAddressName(fNames, "default", entry, "name");
-
-            for (String language : dbProperties.getLanguages()) {
-                doc.copyAddressName(fNames, language, entry, "name:" + language);
-            }
-
-            write(builder, fNames, entry.getName());
+        for (var entry : doc.getAddressParts().entrySet()) {
+            write(builder, entry.getValue(), entry.getKey().getName());
         }
 
         String countryCode = doc.getCountryCode();
@@ -88,7 +78,7 @@ public class PhotonDocConverter {
     }
 
     private static void writeExtraTags(XContentBuilder builder, Map<String, String> extraTags) throws IOException {
-        if (extraTags.size() > 0) {
+        if (!extraTags.isEmpty()) {
             builder.startObject("extra");
             for (var entry : extraTags.entrySet()) {
                 builder.field(entry.getKey(), entry.getValue());

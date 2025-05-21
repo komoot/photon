@@ -9,7 +9,7 @@ public class AssertUtil {
 
     public static void assertAddressName(String name, PhotonDoc doc, AddressType addressType) {
         assertNotNull(doc.getAddressParts().get(addressType));
-        assertEquals(name, doc.getAddressParts().get(addressType).get("name"));
+        assertEquals(name, doc.getAddressParts().get(addressType).get("default"));
     }
 
     public static void assertNoAddress(PhotonDoc doc, AddressType addressType) {

@@ -56,7 +56,7 @@ public class NominatimImporter extends NominatimConnector {
             sqlArgTypes = new int[]{Types.VARCHAR};
         }
 
-        NominatimAddressCache addressCache = new NominatimAddressCache(dbutils);
+        NominatimAddressCache addressCache = new NominatimAddressCache(dbutils, dbProperties.getLanguages());
         addressCache.loadCountryAddresses(template, countryCode);
 
         final PlaceRowMapper placeRowMapper = new PlaceRowMapper(dbutils, dbProperties.getLanguages(), dbProperties.getSupportGeometries());
@@ -75,8 +75,8 @@ public class NominatimImporter extends NominatimConnector {
 
                     assert (doc != null);
 
-                    doc.completePlace(addressCache.getAddressList(rs.getString("addresslines")));
-                    doc.address(address); // take precedence over computed address
+                    doc.addAddresses(addressCache.getAddressList(rs.getString("addresslines")));
+                    doc.addAddresses(address, dbProperties.getLanguages()); // take precedence over computed address
                     doc.setCountry(cnames);
 
                     importThread.addDocument(new PhotonDocAddressSet(doc, address));
@@ -98,14 +98,15 @@ public class NominatimImporter extends NominatimConnector {
                     assert (doc != null);
 
                     if (rs.getString("parent_class") != null) {
-                        doc.completePlace(List.of(AddressRow.make(
+                        doc.addAddresses(List.of(AddressRow.make(
                                 dbutils.getMap(rs, "parent_name"),
                                 rs.getString("parent_class"),
                                 rs.getString("parent_type"),
-                                rs.getInt("parent_rank_address"))));
+                                rs.getInt("parent_rank_address"),
+                                dbProperties.getLanguages())));
                     }
-                    doc.completePlace(addressCache.getAddressList(rs.getString("addresslines")));
-                    doc.address(address); // take precedence over computed address
+                    doc.addAddresses(addressCache.getAddressList(rs.getString("addresslines")));
+                    doc.addAddresses(address, dbProperties.getLanguages()); // take precedence over computed address
                     doc.setCountry(cnames);
 
                     importThread.addDocument(new PhotonDocAddressSet(doc, address));
@@ -118,15 +119,16 @@ public class NominatimImporter extends NominatimConnector {
                     final PhotonDoc doc = osmlineRowMapper.mapRow(rs, 0);
 
                     if (rs.getString("parent_class") != null) {
-                        doc.completePlace(List.of(AddressRow.make(
+                        doc.addAddresses(List.of(AddressRow.make(
                                 dbutils.getMap(rs, "parent_name"),
                                 rs.getString("parent_class"),
                                 rs.getString("parent_type"),
-                                rs.getInt("parent_rank_address"))));
+                                rs.getInt("parent_rank_address"),
+                                dbProperties.getLanguages())));
                     }
-                    doc.completePlace(addressCache.getAddressList(rs.getString("addresslines")));
-                    doc.address(dbutils.getMap(rs, "address"));
-
+                    doc.addAddresses(addressCache.getAddressList(rs.getString("addresslines")));
+                    doc.addAddresses(dbutils.getMap(rs, "address"), dbProperties.getLanguages());
+                    
                     doc.setCountry(cnames);
 
                     importThread.addDocument(new PhotonDocInterpolationSet(

@@ -124,7 +124,7 @@ public class JsonReader {
                         currentCountry = cc;
                     }
                     if (hasAddressLines) {
-                        var row = parseDoc.asAddressRow();
+                        var row = parseDoc.asAddressRow(languages);
                         if (row != null) {
                             addressCache.put(parseDoc.getPlaceId(), row);
                         }

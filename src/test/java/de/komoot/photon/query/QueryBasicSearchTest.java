@@ -112,7 +112,8 @@ class QueryBasicSearchTest extends ESBaseTester {
         address.put("state", "Estado");
 
         Importer instance = makeImporter();
-        instance.add(List.of(createDoc("name", "Castillo").address(address)));
+        instance.add(List.of(createDoc("name", "Castillo")
+                .addAddresses(address, getProperties().getLanguages())));
         instance.finish();
         refresh();
 
@@ -130,7 +131,7 @@ class QueryBasicSearchTest extends ESBaseTester {
         Importer instance = makeImporter();
         instance.add(List.of(
                 createDoc("name", "Palermo")
-                        .address(Map.of("state", "Sicilia"))));
+                        .addAddresses(Map.of("state", "Sicilia"), getProperties().getLanguages())));
         instance.finish();
         refresh();
 
@@ -148,7 +149,7 @@ class QueryBasicSearchTest extends ESBaseTester {
         instance.add(List.of(
                 createDoc("name", "Edeka")
                         .houseNumber("5")
-                        .address(Map.of("street", "Hauptstrasse"))));
+                        .addAddresses(Map.of("street", "Hauptstrasse"), getProperties().getLanguages())));
         instance.finish();
         refresh();
 
@@ -166,7 +167,7 @@ class QueryBasicSearchTest extends ESBaseTester {
         instance.add(List.of(
                 createDoc()
                         .houseNumber("5")
-                        .address(Map.of("street", "Hauptstrasse"))));
+                        .addAddresses(Map.of("street", "Hauptstrasse"), getProperties().getLanguages())));
         instance.finish();
         refresh();
 

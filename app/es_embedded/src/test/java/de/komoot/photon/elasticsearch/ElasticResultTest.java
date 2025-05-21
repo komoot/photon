@@ -36,7 +36,7 @@ class ElasticResultTest  extends ESBaseTester {
         instance.add(List.of(
                 createDoc(45.2, -7.45, 123, 1123, "place", "city")
                         .names(makeDocNames("name", "München", "name:it", "Monacco", "name:en", "Munich"))
-                        .address(Collections.singletonMap("state", "Bavaria"))
+                        .addAddresses(Map.of("state", "Bavaria"), getProperties().getLanguages())
                         .countryCode("de")
                         .extraTags(Map.of("population", "many", "capital", "yes", "maxage", "99"))));
         instance.add(List.of(
@@ -47,7 +47,8 @@ class ElasticResultTest  extends ESBaseTester {
                         .houseNumber("34")
                         .bbox(FACTORY.createMultiPointFromCoords(
                                 new Coordinate[]{new Coordinate(-179.5, 1.0), new Coordinate(-178.5, 1.1)}))
-                        .address(Map.of("street", "Hauptstr", "city", "Hamburg"))));
+                        .addAddresses(Map.of("street", "Hauptstr", "city", "Hamburg"),
+                                getProperties().getLanguages())));
         instance.add(List.of(
                 new PhotonDoc(42, "N", 42, "place", "hamlet")
                         .names(makeDocNames("name", "nowhere"))));

@@ -72,7 +72,7 @@ public class NominatimUpdater extends NominatimConnector {
     public NominatimUpdater(String host, int port, String database, String username, String password, DBDataAdapter dataAdapter, DatabaseProperties dbProperties) {
         super(host, port, database, username, password, dataAdapter, dbProperties);
 
-        final NominatimAddressCache addressCache = new NominatimAddressCache(dataAdapter);
+        final NominatimAddressCache addressCache = new NominatimAddressCache(dataAdapter, dbProperties.getLanguages());
 
         final var placeRowMapper = new PlaceRowMapper(dbutils, dbProperties.getLanguages(), dbProperties.getSupportGeometries());
         placeBaseSQL = placeRowMapper.makeBaseSelect();
@@ -82,18 +82,19 @@ public class NominatimUpdater extends NominatimConnector {
             assert (doc != null);
 
             if (rs.getInt("rank_search") == 30 && rs.getString("parent_class") != null) {
-                doc.completePlace(List.of(AddressRow.make(
+                doc.addAddresses(List.of(AddressRow.make(
                         dbutils.getMap(rs, "parent_name"),
                         rs.getString("parent_class"),
                         rs.getString("parent_type"),
-                        rs.getInt("parent_rank_address"))));
+                        rs.getInt("parent_rank_address"),
+                        dbProperties.getLanguages())));
             }
-            doc.completePlace(
+            doc.addAddresses(
                     addressCache.getOrLoadAddressList(template, rs.getString("addresslines")));
 
             // Add address last, so it takes precedence.
             final var address = dbutils.getMap(rs, "address");
-            doc.address(address);
+            doc.addAddresses(address, dbProperties.getLanguages());
 
             doc.setCountry(countryNames.get(rs.getString("country_code")));
 
@@ -108,15 +109,16 @@ public class NominatimUpdater extends NominatimConnector {
             assert doc != null;
 
             if (rs.getString("parent_class") != null) {
-                doc.completePlace(List.of(AddressRow.make(
+                doc.addAddresses(List.of(AddressRow.make(
                         dbutils.getMap(rs, "parent_name"),
                         rs.getString("parent_class"),
                         rs.getString("parent_type"),
-                        rs.getInt("parent_rank_address"))));
+                        rs.getInt("parent_rank_address"),
+                        dbProperties.getLanguages())));
             }
-            doc.completePlace(
+            doc.addAddresses(
                     addressCache.getOrLoadAddressList(template, rs.getString("addresslines")));
-            doc.address(dbutils.getMap(rs, "address"));
+            doc.addAddresses(dbutils.getMap(rs, "address"), dbProperties.getLanguages());
             doc.setCountry(countryNames.get(rs.getString("country_code")));
 
             Geometry geometry = dbutils.extractGeometry(rs, "linegeo");

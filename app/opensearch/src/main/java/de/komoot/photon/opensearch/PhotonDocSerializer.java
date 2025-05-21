@@ -64,16 +64,8 @@ public class PhotonDocSerializer extends StdSerializer<PhotonDoc> {
         gen.writeObjectField("name", value.getName());
 
 
-        for (var entry : value.getAddressParts().keySet()) {
-            Map<String, String> fNames = new HashMap<>();
-
-            value.copyAddressName(fNames, "default", entry, "name");
-
-            for (String language : dbProperties.getLanguages()) {
-                value.copyAddressName(fNames, language, entry, "name:" + language);
-            }
-
-            gen.writeObjectField(entry.getName(), fNames);
+        for (var entry : value.getAddressParts().entrySet()) {
+            gen.writeObjectField(entry.getKey().getName(), entry.getValue());
         }
 
         String countryCode = value.getCountryCode();

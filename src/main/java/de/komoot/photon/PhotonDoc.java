@@ -147,54 +147,6 @@ public class PhotonDoc {
         return this;
     }
 
-    public PhotonDoc address(Map<String, String> address) {
-        Map<AddressType, Map<String, String>> overlay = new EnumMap<>(AddressType.class);
-        if (address != null) {
-            for (var entry : address.entrySet()) {
-                final String key = entry.getKey();
-
-                if (key.equals("postcode")) {
-                    postcode = entry.getValue();
-                } else {
-                    var match = ADDRESS_TYPE_TAG_MAP
-                            .stream()
-                            .filter(e -> key.startsWith(e.getValue()))
-                            .findFirst();
-                    if (match.isPresent()) {
-                        var atype = match.get().getKey();
-                        if (atype == AddressType.OTHER) {
-                            final String[] parts = key.split(":");
-                            context.add(Map.of(parts.length == 1 ? "name" : ("name:" + parts[parts.length - 1]), entry.getValue()));
-                        } else {
-                            var newKey = "name" + key.substring(match.get().getValue().length());
-                            overlay.computeIfAbsent(atype, k -> new HashMap<>()).put(newKey, entry.getValue());
-                        }
-                    }
-                }
-            }
-        }
-
-        for (var entry : overlay.entrySet()) {
-            final var atype = entry.getKey();
-            if (!setAddressPartIfNew(atype, entry.getValue())) {
-                final var origMap = addressParts.get(atype);
-                final var newMap = new HashMap<>(origMap);
-                for (var newEntry : entry.getValue().entrySet()) {
-                    final var oldValue = origMap.get(newEntry.getKey());
-                    if (oldValue == null) {
-                        newMap.put(newEntry.getKey(), newEntry.getValue());
-                    } else if (!newEntry.getValue().equals(oldValue)) {
-                        context.add(Map.of(newEntry.getKey(), oldValue));
-                        newMap.put(newEntry.getKey(), newEntry.getValue());
-                    }
-                }
-                addressParts.put(atype, newMap);
-            }
-        }
-
-        return this;
-    }
-
     public PhotonDoc extraTags(Map<String, String> extratags) {
         this.extratags = extratags;
 
@@ -246,32 +198,6 @@ public class PhotonDoc {
         return String.format("%d.%d", placeId, objectId);
     }
 
-    public void copyName(Map<String, String> target, String targetField, String nameField) {
-        String outname = name.get("_place_" + nameField);
-        if (outname == null) {
-            outname = name.get(nameField);
-        }
-
-        if (outname != null) {
-            target.put(targetField, outname);
-        }
-    }
-
-    public void copyAddressName(Map<String, String> target, String targetField, AddressType addressType, String nameField) {
-        Map<String, String> names = addressParts.get(addressType);
-
-        if (names != null) {
-            String outname = names.get("_place_" + nameField);
-            if (outname == null) {
-                outname = names.get(nameField);
-            }
-
-            if (outname != null) {
-                target.put(targetField, outname);
-            }
-        }
-    }
-
     public AddressType getAddressType() {
         return AddressType.fromRank(rankAddress);
     }
@@ -297,7 +223,7 @@ public class PhotonDoc {
     /**
      * Complete address data from a list of address rows.
      */
-    public void completePlace(List<AddressRow> addresses) {
+    public void addAddresses(List<AddressRow> addresses) {
         final AddressType doctype = getAddressType();
         for (AddressRow address : addresses) {
             if (address.isPostcode()) {
@@ -313,6 +239,67 @@ public class PhotonDoc {
                 }
             }
         }
+    }
+
+    /**
+     * Complete address data from a map of address terms.
+     */
+    public PhotonDoc addAddresses(Map<String, String> address, String[] languages) {
+        if (address == null || address.isEmpty()) {
+            return this;
+        }
+
+        Map<AddressType, Map<String, String>> overlay = new EnumMap<>(AddressType.class);
+        for (var entry : address.entrySet()) {
+            final String key = entry.getKey();
+
+            if (key.equals("postcode")) {
+                postcode = entry.getValue();
+            } else {
+                ADDRESS_TYPE_TAG_MAP
+                        .stream()
+                        .filter(e -> key.startsWith(e.getValue()))
+                        .findFirst()
+                        .map(e -> {
+                            var atype = e.getKey();
+                            if (atype == AddressType.OTHER) {
+                                final String[] parts = key.split(":");
+                                context.add(Map.of(parts.length == 1 ? "name" : ("name:" + parts[parts.length - 1]), entry.getValue()));
+                            } else {
+                                int prefixLen = e.getValue().length();
+                                if (key.length() == prefixLen) {
+                                    overlay.computeIfAbsent(atype, k -> new HashMap<>()).put("default", entry.getValue());
+                                } else if (key.charAt(prefixLen) == ':') {
+                                    final String intKey = key.substring(prefixLen + 1);
+                                    if (Arrays.stream(languages).noneMatch(l -> l.equals(intKey))) {
+                                        overlay.computeIfAbsent(atype, k -> new HashMap<>()).put("default", entry.getValue());
+                                    }
+                                }
+                            }
+                            return true;
+                        });
+            }
+        }
+
+        for (var entry : overlay.entrySet()) {
+            final var atype = entry.getKey();
+            if (!setAddressPartIfNew(atype, entry.getValue())) {
+                final var origMap = addressParts.get(atype);
+                final var newMap = new HashMap<>(origMap);
+                for (var newEntry : entry.getValue().entrySet()) {
+                    final var oldValue = origMap.get(newEntry.getKey());
+                    if (oldValue == null) {
+                        newMap.put(newEntry.getKey(), newEntry.getValue());
+                    } else if (!newEntry.getValue().equals(oldValue)) {
+                        context.add(Map.of(newEntry.getKey(), oldValue));
+                        newMap.put(newEntry.getKey(), newEntry.getValue());
+                    }
+                }
+                addressParts.put(atype, newMap);
+            }
+        }
+
+        return this;
     }
 
     public Map<String, Set<String>> getContextByLanguage(String[] languages) {

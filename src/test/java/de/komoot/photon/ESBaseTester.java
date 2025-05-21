@@ -1,5 +1,6 @@
 package de.komoot.photon;
 
+import de.komoot.photon.nominatim.model.AddressRow;
 import de.komoot.photon.nominatim.model.NameMap;
 import de.komoot.photon.searcher.PhotonResult;
 import org.junit.jupiter.api.AfterEach;
@@ -37,7 +38,7 @@ public class ESBaseTester {
             nameMap.put(names[i], names[i+1]);
         }
 
-        return nameMap;
+        return AddressRow.make(nameMap, "place", "city", 16, dbProperties.getLanguages()).getName();
     }
 
     protected Point makePoint(double x, double y) {

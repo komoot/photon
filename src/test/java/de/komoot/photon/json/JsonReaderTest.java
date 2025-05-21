@@ -164,6 +164,6 @@ class JsonReaderTest {
                 .hasFieldOrPropertyWithValue("postcode", "9490")
                 .hasFieldOrPropertyWithValue("addressParts",
                         Map.of(AddressType.CITY,
-                                Map.of("name", "Vaduz", "name:de", "VaduzD", "name:it", "VaduzI")));
+                                Map.of("default", "Vaduz", "de", "VaduzD")));
     }
 }
