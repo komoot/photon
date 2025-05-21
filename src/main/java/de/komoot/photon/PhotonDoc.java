@@ -235,9 +235,12 @@ public class PhotonDoc {
                 if (atype != null
                         && (atype == doctype || !setAddressPartIfNew(atype, address.getName()))
                         && address.isUsefulForContext()) {
-                    // no specifically handled item, check if useful for context
-                    getContext().addAll(address.getName());
+                    // if address level already exists but item still looks interesting,
+                    // add to context
+                    context.addAll(address.getName());
                 }
+
+                context.addAll(address.getContext());
             }
         }
     }

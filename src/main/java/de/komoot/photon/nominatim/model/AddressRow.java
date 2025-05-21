@@ -7,29 +7,34 @@ import java.util.Map;
  */
 public class AddressRow {
     private final NameMap name;
+    private final ContextMap context;
     private final AddressType addressType;
     private final boolean isPostCode;
 
-    private AddressRow(NameMap name, AddressType addressType, boolean isPostCode) {
+    private AddressRow(NameMap name, ContextMap context, AddressType addressType, boolean isPostCode) {
         this.name = name;
+        this.context = context;
         this.addressType = addressType;
         this.isPostCode = isPostCode;
     }
 
     public static AddressRow make(Map<String, String> name, String osmKey, String osmValue,
                                   int rankAddress, String[] languages) {
+        ContextMap context = new ContextMap();
+
         if (("place".equals(osmKey) && "postcode".equals(osmValue))
                 || ("boundary".equals(osmKey) && "postal_code".equals(osmValue))) {
             return new AddressRow(
                     new NameMap().setName("ref", name, "ref"),
+                    context,
                     AddressType.fromRank(rankAddress),
                     true
             );
         }
 
-
         return new AddressRow(
                 new NameMap().setLocaleNames(name, languages),
+                context,
                 AddressType.fromRank(rankAddress),
                 false);
     }
@@ -48,5 +53,9 @@ public class AddressRow {
 
     public Map<String, String> getName() {
         return this.name;
+    }
+
+    public ContextMap getContext() {
+        return context;
     }
 }
