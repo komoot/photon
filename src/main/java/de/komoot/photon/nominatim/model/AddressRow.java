@@ -30,6 +30,9 @@ public class AddressRow {
                     AddressType.fromRank(rankAddress),
                     true
             );
+        } else {
+            // Makes US state abbreviations searchable.
+            context.addName("default", name.get("ISO3166-2"));
         }
 
         return new AddressRow(
