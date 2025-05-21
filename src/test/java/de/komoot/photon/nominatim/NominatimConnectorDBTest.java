@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Date;
+import java.util.HashSet;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
@@ -243,7 +244,7 @@ class NominatimConnectorDBTest {
         PhotonDoc doc = importer.get(place);
 
         AssertUtil.assertAddressName("Dorf", doc, AddressType.CITY);
-        assertTrue(doc.getContext().contains(munip.getNames()));
+        assertEquals(new HashSet<>(munip.getNames().values()), doc.getContext().get("default"));
     }
 
     /**
@@ -263,7 +264,7 @@ class NominatimConnectorDBTest {
         PhotonDoc doc = importer.get(village);
 
         AssertUtil.assertNoAddress(doc, AddressType.CITY);
-        assertTrue(doc.getContext().contains(munip.getNames()));
+        assertEquals(new HashSet<>(munip.getNames().values()), doc.getContext().get("default"));
     }
 
     /**

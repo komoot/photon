@@ -154,14 +154,15 @@ public class JsonDumper implements Importer {
             }
         }
 
-        for (var entry : doc.getContextByLanguage(dbProperties.getLanguages()).entrySet()) {
-            int i = 1;
+        for (var entry : doc.getContext().entrySet()) {
             if ("default".equals(entry.getKey())) {
+                int i = 1;
                 for (var name : entry.getValue()) {
                     addressNames.put(String.format("other%d", i), name);
                     ++i;
                 }
             } else {
+                int i = 1;
                 for (var name : entry.getValue()) {
                     addressNames.put(String.format("other%d:%s", i, entry.getKey()), name);
                     ++i;

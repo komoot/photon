@@ -292,4 +292,6 @@ class NominatimUpdaterDBTest {
         AssertUtil.assertAddressName("Lost County", doc, AddressType.COUNTY);
         AssertUtil.assertAddressName("Le Havre", doc, AddressType.STATE);
     }
+
+
 }

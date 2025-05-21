@@ -67,7 +67,7 @@ public class PhotonDocConverter {
         String countryCode = doc.getCountryCode();
         if (countryCode != null)
             builder.field(Constants.COUNTRYCODE, countryCode);
-        writeContext(builder, doc.getContextByLanguage(dbProperties.getLanguages()));
+        writeContext(builder, doc.getContext());
         writeExtraTags(builder, dbProperties.configExtraTags().filterExtraTags(doc.getExtratags()));
         writeExtent(builder, doc.getBbox());
 

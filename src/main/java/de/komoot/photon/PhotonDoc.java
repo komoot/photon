@@ -1,6 +1,7 @@
     package de.komoot.photon;
 
 import de.komoot.photon.nominatim.model.AddressRow;
+import de.komoot.photon.nominatim.model.ContextMap;
 import de.komoot.photon.nominatim.model.NameMap;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
@@ -51,7 +52,7 @@ public class PhotonDoc {
     private Integer adminLevel = null;
 
     private Map<AddressType, Map<String, String>> addressParts = new EnumMap<>(AddressType.class);
-    private Set<Map<String, String>> context = new HashSet<>();
+    private ContextMap context = new ContextMap();
     private String houseNumber = null;
     private Point centroid = null;
     private Geometry geometry = null;
@@ -235,7 +236,7 @@ public class PhotonDoc {
                         && (atype == doctype || !setAddressPartIfNew(atype, address.getName()))
                         && address.isUsefulForContext()) {
                     // no specifically handled item, check if useful for context
-                    getContext().add(address.getName());
+                    getContext().addAll(address.getName());
                 }
             }
         }
@@ -263,8 +264,12 @@ public class PhotonDoc {
                         .map(e -> {
                             var atype = e.getKey();
                             if (atype == AddressType.OTHER) {
-                                final String[] parts = key.split(":");
-                                context.add(Map.of(parts.length == 1 ? "name" : ("name:" + parts[parts.length - 1]), entry.getValue()));
+                                final String[] parts = key.split(":", 0);
+                                if (parts.length == 1) {
+                                    context.addName("default", entry.getValue());
+                                } else if (Arrays.stream(languages).noneMatch(l -> l.equals(parts[parts.length - 1]))) {
+                                    context.addName(parts[parts.length - 1], entry.getValue());
+                                }
                             } else {
                                 int prefixLen = e.getValue().length();
                                 if (key.length() == prefixLen) {
@@ -291,7 +296,7 @@ public class PhotonDoc {
                     if (oldValue == null) {
                         newMap.put(newEntry.getKey(), newEntry.getValue());
                     } else if (!newEntry.getValue().equals(oldValue)) {
-                        context.add(Map.of(newEntry.getKey(), oldValue));
+                        context.addName(newEntry.getKey(), oldValue);
                         newMap.put(newEntry.getKey(), newEntry.getValue());
                     }
                 }
@@ -300,26 +305,6 @@ public class PhotonDoc {
         }
 
         return this;
-    }
-
-    public Map<String, Set<String>> getContextByLanguage(String[] languages) {
-        final Map<String, Set<String>> multimap = new HashMap<>();
-
-        for (Map<String, String> cmap : context) {
-            String locName = cmap.get("name");
-            if (locName != null) {
-                multimap.computeIfAbsent("default", k -> new HashSet<>()).add(locName);
-            }
-
-            for (String language : languages) {
-                locName = cmap.get("name:" + language);
-                if (locName != null) {
-                    multimap.computeIfAbsent(language, k -> new HashSet<>()).add(locName);
-                }
-            }
-        }
-
-        return multimap;
     }
 
     public void setCountry(Map<String, String> names) {
@@ -386,7 +371,7 @@ public class PhotonDoc {
         return this.addressParts;
     }
 
-    public Set<Map<String, String>> getContext() {
+    public ContextMap getContext() {
         return this.context;
     }
 

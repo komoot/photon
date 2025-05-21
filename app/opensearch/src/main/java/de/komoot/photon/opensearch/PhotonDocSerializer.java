@@ -73,7 +73,7 @@ public class PhotonDocSerializer extends StdSerializer<PhotonDoc> {
             gen.writeStringField(Constants.COUNTRYCODE, countryCode);
         }
 
-        writeContext(gen, value.getContextByLanguage(dbProperties.getLanguages()));
+        writeContext(gen, value.getContext());
         dbProperties.configExtraTags().writeFilteredExtraTags(gen, "extra", value.getExtratags());
         writeExtent(gen, value.getBbox());
 
