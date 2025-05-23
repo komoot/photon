@@ -127,7 +127,7 @@ public class App {
 
             final String filename = args.getJsonDump();
             final JsonDumper jsonDumper = new JsonDumper(filename, dbProps);
-            jsonDumper.writeHeader(connector.loadCountryNames());
+            jsonDumper.writeHeader(connector.loadCountryNames(dbProps.getLanguages()));
 
             final var importThread = new ImportThread(jsonDumper);
             try {
@@ -181,7 +181,7 @@ public class App {
         LOGGER.info("Connecting to database {} at {}:{}", args.getDatabase(), args.getHost(), args.getPort());
         final var connector = new NominatimImporter(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword(), dbProperties);
         connector.prepareDatabase();
-        connector.loadCountryNames();
+        connector.loadCountryNames(dbProperties.getLanguages());
 
         String[] countries = args.getCountryCodes();
 
@@ -206,7 +206,7 @@ public class App {
                 final NominatimImporter threadConnector;
                 if (i > 0) {
                     threadConnector = new NominatimImporter(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword(), dbProperties);
-                    threadConnector.loadCountryNames();
+                    threadConnector.loadCountryNames(dbProperties.getLanguages());
                 } else {
                     threadConnector = connector;
                 }

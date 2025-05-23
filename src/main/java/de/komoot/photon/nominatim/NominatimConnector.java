@@ -1,6 +1,8 @@
 package de.komoot.photon.nominatim;
 
 import de.komoot.photon.DatabaseProperties;
+import de.komoot.photon.nominatim.model.AddressRow;
+import de.komoot.photon.nominatim.model.NameMap;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -22,7 +24,7 @@ public class NominatimConnector {
     protected final DatabaseProperties dbProperties;
     protected final JdbcTemplate template;
     protected final TransactionTemplate txTemplate;
-    protected Map<String, Map<String, String>> countryNames;
+    protected Map<String, NameMap> countryNames;
 
     protected NominatimConnector(String host, int port, String database, String username, String password, DBDataAdapter dataAdapter, DatabaseProperties dbProperties) {
         BasicDataSource dataSource = new BasicDataSource();
@@ -53,13 +55,19 @@ public class NominatimConnector {
         return importDates.isEmpty() ? null : importDates.get(0);
     }
 
-    public Map<String, Map<String, String>> loadCountryNames() {
+    public Map<String, NameMap> loadCountryNames(String[] languages) {
         if (countryNames == null) {
             countryNames = new HashMap<>();
             // Default for places outside any country.
-            countryNames.put("", Map.of());
+            countryNames.put("", new NameMap());
             template.query("SELECT country_code, name FROM country_name", rs -> {
-                countryNames.put(rs.getString("country_code"), dbutils.getMap(rs, "name"));
+                countryNames.put(
+                        rs.getString("country_code"),
+                        AddressRow.make(dbutils.getMap(rs, "name"),
+                                "place",
+                                "country",
+                                4,
+                                languages).getName());
             });
         }
 

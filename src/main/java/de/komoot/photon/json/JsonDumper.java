@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import de.komoot.photon.*;
 import de.komoot.photon.nominatim.model.AddressType;
+import de.komoot.photon.nominatim.model.NameMap;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.locationtech.jts.io.geojson.GeoJsonWriter;
@@ -71,7 +72,7 @@ public class JsonDumper implements Importer {
         }
     }
 
-    public void writeHeader(Map<String, Map<String, String>> countryNames) throws IOException {
+    public void writeHeader(Map<String, NameMap> countryNames) throws IOException {
         writeStartDocument(NominatimDumpHeader.DOCUMENT_TYPE);
 
         writer.writeStartObject();

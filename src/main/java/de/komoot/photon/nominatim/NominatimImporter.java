@@ -36,7 +36,7 @@ public class NominatimImporter extends NominatimConnector {
      */
     public void readCountry(String countryCode, ImportThread importThread) {
         // Make sure, country names are available.
-        loadCountryNames();
+        loadCountryNames(dbProperties.getLanguages());
         final var cnames = countryNames.get(countryCode);
         if (cnames == null) {
             LOGGER.warn("Unknown country code {}. Skipping.", countryCode);
@@ -165,7 +165,7 @@ public class NominatimImporter extends NominatimConnector {
     }
 
     public String[] getCountriesFromDatabase() {
-        loadCountryNames();
+        loadCountryNames(dbProperties.getLanguages());
 
         return countryNames.keySet().toArray(new String[0]);
     }

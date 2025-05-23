@@ -54,7 +54,7 @@ public class AddressRow {
         return !name.isEmpty() && !isPostcode();
     }
 
-    public Map<String, String> getName() {
+    public NameMap getName() {
         return this.name;
     }
 

@@ -4,6 +4,7 @@ import de.komoot.photon.*;
 import de.komoot.photon.nominatim.model.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 import org.locationtech.jts.geom.Geometry;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.transaction.TransactionStatus;
@@ -146,7 +147,7 @@ public class NominatimUpdater extends NominatimConnector {
         LOGGER.info("Creating tracking tables");
         txTemplate.execute(new TransactionCallbackWithoutResult() {
             @Override
-            protected void doInTransactionWithoutResult(TransactionStatus status) {
+            protected void doInTransactionWithoutResult(@NotNull TransactionStatus status) {
                 template.execute(TRIGGER_SQL);
                 template.execute("GRANT SELECT, DELETE ON photon_updates TO \"" + updateUser + '"');
             }
@@ -156,7 +157,7 @@ public class NominatimUpdater extends NominatimConnector {
     public void update() {
         if (updateLock.tryLock()) {
             try {
-                loadCountryNames();
+                loadCountryNames(dbProperties.getLanguages());
                 updateFromPlacex();
                 updateFromInterpolations();
                 updater.finish();
