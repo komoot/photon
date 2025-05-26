@@ -123,7 +123,13 @@ public class JsonDumper implements Importer {
         }
 
         if (!doc.getName().isEmpty()) {
-            writer.writeObjectField("name", doc.getName());
+            writer.writeObjectFieldStart("name");
+            for (var entry : doc.getName().entrySet()) {
+                writer.writeStringField(
+                        convertNameKey(entry.getKey(), "name"),
+                        entry.getValue());
+            }
+            writer.writeEndObject();
         }
 
         if (doc.getHouseNumber() != null) {
@@ -144,26 +150,19 @@ public class JsonDumper implements Importer {
                 }
 
                 for (var name : entry.getValue().entrySet()) {
-                    if ("default".equals(name.getKey())) {
-                        addressNames.put(baseKey, name.getValue());
-                    } else {
-                        addressNames.put(
-                                String.format("%s:%s", baseKey, name.getKey()),
-                                name.getValue());
-                    }
+                    addressNames.put(convertNameKey(name.getKey(), baseKey), name.getValue());
                 }
             }
         }
 
         for (var entry : doc.getContext().entrySet()) {
+            int i = 1;
             if ("default".equals(entry.getKey())) {
-                int i = 1;
                 for (var name : entry.getValue()) {
                     addressNames.put(String.format("other%d", i), name);
                     ++i;
                 }
             } else {
-                int i = 1;
                 for (var name : entry.getValue()) {
                     addressNames.put(String.format("other%d:%s", i, entry.getKey()), name);
                     ++i;
@@ -219,5 +218,13 @@ public class JsonDumper implements Importer {
     private void writeEndDocument() throws IOException {
         writer.writeEndObject();
         writer.writeRaw('\n');
+    }
+
+    private String convertNameKey(String inKey, String base) {
+        if ("default".equals(inKey)) {
+            return base;
+        }
+
+        return String.format("%s:%s", base, inKey);
     }
 }

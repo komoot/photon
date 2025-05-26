@@ -122,8 +122,8 @@ class JsonDumperTest {
                 .containsEntry("country_code", "hu")
                 .doesNotContainKeys("parent_place_id", "admin_level", "postcode", "extra")
                 .containsEntry("name", Map.of(
-                        "default", "Spot",
-                        "de", "Sport"));
+                        "name", "Spot",
+                        "name:de", "Sport"));
     }
 
     @Test
@@ -142,7 +142,7 @@ class JsonDumperTest {
         assertThat(results).hasSize(6);
 
         assertThatPlaceDocument(results, place.getPlaceId())
-                .containsEntry("name", Map.of("default", "Burg"))
+                .containsEntry("name", Map.of("name", "Burg"))
                 .containsEntry("address", Map.of(
                         "state", "Le Havre",
                         "county", "Lost County",
