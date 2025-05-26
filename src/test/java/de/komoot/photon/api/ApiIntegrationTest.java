@@ -2,15 +2,14 @@ package de.komoot.photon.api;
 
 import de.komoot.photon.App;
 import de.komoot.photon.Importer;
+import de.komoot.photon.PhotonDoc;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.FieldSource;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.locationtech.jts.io.WKTReader;
 
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Date;
 import java.util.List;
@@ -23,7 +22,8 @@ import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
  */
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class ApiIntegrationTest extends ApiBaseTester {
-    private static final String[] BASE_URLS = {"/api?q=Berlin", "/reverse?lat=52.54714&lon=13.39026"};
+    private static final String[] BASE_URLS = {
+            "/api?q=Berlin", "/reverse?lat=52.54714&lon=13.39026"};
     private static final Date TEST_DATE = new Date();
 
     @BeforeAll
@@ -32,16 +32,28 @@ class ApiIntegrationTest extends ApiBaseTester {
         getProperties().setImportDate(TEST_DATE);
         setUpES(dataDirectory);
         Importer instance = makeImporter();
-        instance.add(List.of(createDoc(13.38886, 52.51704, 1000, 1000, "place", "city")
-                .importance(0.6)
-                .rankAddress(16)));
-        instance.add(List.of(createDoc(13.39026, 52.54714, 1001, 1001, "place", "suburb")
-                .importance(0.3)
-                .rankAddress(17)));
-        instance.add(List.of(createDoc(13.39026, 52.54714, 1002, 1002, "place", "hamlet")
-                .importance(0.3)
-                .rankAddress(25)
-                .geometry(new WKTReader().read("LINESTRING (30 10, 10 30, 40 40)"))));
+        instance.add(List.of(new PhotonDoc()
+                .placeId(1000).osmType("N").osmId(1000).tagKey("place").tagValue("city")
+                .importance(0.6).rankAddress(16)
+                .centroid(makePoint(13.38886, 52.51704))
+                .geometry(makeDocGeometry("POINT(13.38886 52.51704)"))
+                .names(makeDocNames("name", "berlin"))
+        ));
+        instance.add(List.of(new PhotonDoc()
+                .placeId(1001).osmType("R").osmId(1001).tagKey("place").tagValue("suburb")
+                .importance(0.3).rankAddress(17)
+                .centroid(makePoint(13.39026, 52.54714))
+                .geometry(makeDocGeometry("POLYGON ((6.4440619 52.1969454, 6.4441094 52.1969158, 6.4441408 52.1969347, 6.4441138 52.1969516, 6.4440933 52.1969643, 6.4440619 52.1969454))"))
+                .names(makeDocNames("name", "berlin"))
+        ));
+        instance.add(List.of(new PhotonDoc()
+                .placeId(1002).osmType("W").osmId(1002).tagKey("place").tagValue("hamlet")
+                .importance(0.3).rankAddress(25)
+                .centroid(makePoint(13.39026, 52.54714))
+                .geometry(makeDocGeometry("LINESTRING (30 10, 10 30, 40 40)"))
+                .names(makeDocNames("name", "berlin"))
+        ));
+
         instance.finish();
         refresh();
         startAPI();
@@ -49,7 +61,7 @@ class ApiIntegrationTest extends ApiBaseTester {
 
     @AfterAll
     @Override
-    public void tearDown() throws IOException {
+    public void tearDown() {
         App.shutdown();
         shutdownES();
     }
@@ -74,7 +86,6 @@ class ApiIntegrationTest extends ApiBaseTester {
                 .node("features").isArray().hasSize(1)
                 .element(0).isObject()
                 .node("properties").isObject()
-                .containsEntry("osm_type", "W")
                 .containsEntry("osm_key", "place")
                 .containsEntry("osm_value", osmValue)
                 .containsEntry("name", "berlin");
@@ -100,7 +111,6 @@ class ApiIntegrationTest extends ApiBaseTester {
                 .containsEntry("type", "Polygon");
 
         obj.node("properties").isObject()
-                .containsEntry("osm_type", "W")
                 .containsEntry("osm_key", "place")
                 .containsEntry("osm_value", "suburb")
                 .containsEntry("name", "berlin");
@@ -122,7 +132,6 @@ class ApiIntegrationTest extends ApiBaseTester {
                 .containsExactly(List.of(30, 10), List.of(10, 30), List.of(40, 40));
 
         obj.node("properties").isObject()
-                .containsEntry("osm_type", "W")
                 .containsEntry("osm_key", "place")
                 .containsEntry("osm_value", "hamlet")
                 .containsEntry("name", "berlin");

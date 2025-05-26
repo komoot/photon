@@ -10,8 +10,6 @@ import org.junit.jupiter.api.io.TempDir;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -22,19 +20,23 @@ class UpdaterTest extends ESBaseTester {
     @TempDir
     private Path dataDirectory;
 
+    private PhotonDoc createDoc(String... names) {
+        return new PhotonDoc()
+                .placeId(1234).osmType("N").osmId(1000).tagKey("place").tagValue("city")
+                .names(makeDocNames(names));
+    }
+
     @Test
     void addNameToDoc() throws IOException {
-        Map<String, String> names = new HashMap<>();
-        names.put("name", "Foo");
-        PhotonDoc doc = new PhotonDoc(1234, "N", 1000, "place", "city").names(names);
+        PhotonDoc doc = createDoc("name", "Foo");
 
         setUpES(dataDirectory);
         Importer instance = makeImporter();
-        instance.add(Collections.singleton(doc));
+        instance.add(List.of(doc));
         instance.finish();
         refresh();
 
-        names.put("name:en", "Enfoo");
+        doc.names(makeDocNames("name", "Foo", "name:en", "Enfoo"));
         Updater updater = makeUpdater();
         updater.addOrUpdate(List.of(doc));
         updater.finish();
@@ -50,18 +52,15 @@ class UpdaterTest extends ESBaseTester {
 
     @Test
     void removeNameFromDoc() throws IOException {
-        Map<String, String> names = new HashMap<>();
-        names.put("name", "Foo");
-        names.put("name:en", "Enfoo");
-        PhotonDoc doc = new PhotonDoc(1234, "N", 1000, "place", "city").names(names);
+        PhotonDoc doc = createDoc("name", "Foo", "name:en", "Enfoo");
 
         setUpES(dataDirectory);
         Importer instance = makeImporter();
-        instance.add(Collections.singleton(doc));
+        instance.add(List.of(doc));
         instance.finish();
         refresh();
 
-        names.remove("name");
+        doc.names(makeDocNames("name:en", "Enfoo"));
         Updater updater = makeUpdater();
         updater.addOrUpdate(List.of(doc));
         updater.finish();
@@ -77,14 +76,12 @@ class UpdaterTest extends ESBaseTester {
 
     @Test
     void addExtraTagsToDoc() throws IOException {
-        Map<String, String> names = new HashMap<>();
-        names.put("name", "Foo");
-        PhotonDoc doc = new PhotonDoc(1234, "N", 1000, "place", "city").names(names);
+        PhotonDoc doc = createDoc("name", "Foo");
 
         getProperties().setExtraTags(List.of("website"));
         setUpES(dataDirectory);
         Importer instance = makeImporter();
-        instance.add(Collections.singleton(doc));
+        instance.add(List.of(doc));
         instance.finish();
         refresh();
 
@@ -93,7 +90,7 @@ class UpdaterTest extends ESBaseTester {
 
         assertNull(response.get("extra"));
 
-        doc.extraTags(Collections.singletonMap("website", "http://site.foo"));
+        doc.extraTags(Map.of("website", "http://site.foo"));
         Updater updater = makeUpdater();
         updater.addOrUpdate(List.of(doc));
         updater.finish();
@@ -105,7 +102,7 @@ class UpdaterTest extends ESBaseTester {
         Map<String, String> extra = response.getMap("extra");
 
         assertNotNull(extra);
-        assertEquals(Collections.singletonMap("website", "http://site.foo"), extra);
+        assertEquals(Map.of("website", "http://site.foo"), extra);
     }
 
     @Test
@@ -114,20 +111,20 @@ class UpdaterTest extends ESBaseTester {
         setUpES(dataDirectory);
         Importer instance = makeImporter();
         instance.add(List.of(
-                new PhotonDoc(4432, "N", 100, "building", "yes").houseNumber("34"),
-                new PhotonDoc(4432, "N", 100, "building", "yes").houseNumber("35")));
+                createDoc().houseNumber("34"),
+                createDoc().houseNumber("35")));
         instance.finish();
         refresh();
 
-        assertNotNull(getById("4432"));
-        assertNotNull(getById("4432.1"));
+        assertNotNull(getById("1234"));
+        assertNotNull(getById("1234.1"));
 
         Updater updater = makeUpdater();
-        updater.delete(4432L);
+        updater.delete(1234L);
         updater.finish();
         refresh();
 
-        assertNotNull(getById("4432"));
-        assertNull(getById("4432.1"));
+        assertNotNull(getById("1234"));
+        assertNull(getById("1234.1"));
     }
 }

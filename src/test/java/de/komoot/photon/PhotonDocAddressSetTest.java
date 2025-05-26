@@ -1,6 +1,7 @@
 package de.komoot.photon;
 
 import de.komoot.photon.nominatim.model.AddressType;
+import de.komoot.photon.nominatim.model.NameMap;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -12,7 +13,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.assertj.core.api.Assertions.*;
 
 class PhotonDocAddressSetTest {
-    private final PhotonDoc baseDoc = new PhotonDoc(10000, "N", 123, "place", "house")
+    private final PhotonDoc baseDoc = new PhotonDoc()
+            .placeId(10000).osmType("N").osmId(123).tagKey("place").tagValue("house")
             .countryCode("de");
 
     @BeforeEach
@@ -50,7 +52,7 @@ class PhotonDocAddressSetTest {
     @Test
     void testEmptyAddressUsefulDocument() {
         assertThat(new PhotonDocAddressSet(
-                baseDoc.names(Map.of("name", "foo")),
+                baseDoc.names(NameMap.makeForPlace(Map.of("name", "foo"), new String[]{})),
                 Map.of()))
                 .satisfiesExactly(
                         d -> assertThat(d).isSameAs(baseDoc)

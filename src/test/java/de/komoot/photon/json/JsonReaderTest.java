@@ -41,6 +41,7 @@ class JsonReaderTest {
             reader.setExtraTags(configExtraTags);
             reader.setUseFullGeometries(configGeometryColumn);
             reader.setCountryFilter(configCountries);
+            reader.setLanguages(new String[]{"en", "de"});
 
             reader.readFile(importThread);
         } finally {
@@ -62,7 +63,7 @@ class JsonReaderTest {
                 .hasFieldOrPropertyWithValue("osmId", 223306798L)
                 .hasFieldOrPropertyWithValue("tagKey", "waterway")
                 .hasFieldOrPropertyWithValue("tagValue", "stream")
-                .hasFieldOrPropertyWithValue("name", Map.of("name", "Spiersbach", "name:de", "Spiersbach", "alt_name", "Spirsbach"))
+                .hasFieldOrPropertyWithValue("name", Map.of("default", "Spiersbach", "de", "Spiersbach", "alt", "Spirsbach"))
                 .hasFieldOrPropertyWithValue("postcode", null)
                 .hasFieldOrPropertyWithValue("extratags", Map.of())
                 .hasFieldOrPropertyWithValue("bbox", new Envelope(9.5461636, 9.556083, 47.2415541, 47.2966235))
@@ -163,6 +164,6 @@ class JsonReaderTest {
                 .hasFieldOrPropertyWithValue("postcode", "9490")
                 .hasFieldOrPropertyWithValue("addressParts",
                         Map.of(AddressType.CITY,
-                                Map.of("name", "Vaduz", "name:de", "VaduzD", "name:it", "VaduzI")));
+                                Map.of("default", "Vaduz", "de", "VaduzD")));
     }
 }

@@ -5,8 +5,10 @@ import de.komoot.photon.searcher.PhotonResult;
 import org.elasticsearch.action.admin.indices.refresh.RefreshRequest;
 import org.elasticsearch.action.get.GetResponse;
 
-public class ElasticTestServer extends Server {
-    public ElasticTestServer(String mainDirectory) {
+public class TestServer extends Server {
+    public static final String TEST_CLUSTER_NAME = "photon-test";
+
+    public TestServer(String mainDirectory) {
         super(mainDirectory);
     }
 
@@ -15,7 +17,7 @@ public class ElasticTestServer extends Server {
         return new IndexSettings().setShards(1);
     }
 
-    public PhotonResult getById(String id) {
+    public PhotonResult getByID(String id) {
         GetResponse response =  esClient.prepareGet(PhotonIndex.NAME,PhotonIndex.TYPE, id).execute().actionGet();
 
         return response.isExists() ? new ElasticGetIdResult(response) : null;
@@ -24,4 +26,17 @@ public class ElasticTestServer extends Server {
     public void refresh() {
         esClient.admin().indices().refresh(new RefreshRequest(PhotonIndex.NAME)).actionGet();
     }
+
+    public void startTestServer(String clusterName) {
+        start(TEST_CLUSTER_NAME, new String[]{});
+    }
+
+    public void stopTestServer() {
+        shutdown();
+    }
+
+    public void refreshTestServer() {
+            refreshIndexes();
+    }
+
 }

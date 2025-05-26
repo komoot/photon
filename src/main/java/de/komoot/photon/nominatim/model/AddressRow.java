@@ -6,45 +6,59 @@ import java.util.Map;
  * Representation of an address as returned by Nominatim's get_addressdata PL/pgSQL function.
  */
 public class AddressRow {
-    private final Map<String, String> name;
-    private final String osmKey;
-    private final String osmValue;
-    private final int rankAddress;
+    private final NameMap name;
+    private final ContextMap context;
+    private final AddressType addressType;
+    private final boolean isPostCode;
 
-    public AddressRow(Map<String, String> name, String osmKey, String osmValue, int rankAddress) {
+    private AddressRow(NameMap name, ContextMap context, AddressType addressType, boolean isPostCode) {
         this.name = name;
-        this.osmKey = osmKey;
-        this.osmValue = osmValue;
-        this.rankAddress = rankAddress;
+        this.context = context;
+        this.addressType = addressType;
+        this.isPostCode = isPostCode;
+    }
+
+    public static AddressRow make(Map<String, String> name, String osmKey, String osmValue,
+                                  int rankAddress, String[] languages) {
+        ContextMap context = new ContextMap();
+
+        if (("place".equals(osmKey) && "postcode".equals(osmValue))
+                || ("boundary".equals(osmKey) && "postal_code".equals(osmValue))) {
+            return new AddressRow(
+                    new NameMap().setName("ref", name, "ref"),
+                    context,
+                    AddressType.fromRank(rankAddress),
+                    true
+            );
+        } else {
+            // Makes US state abbreviations searchable.
+            context.addName("default", name.get("ISO3166-2"));
+        }
+
+        return new AddressRow(
+                new NameMap().setLocaleNames(name, languages),
+                context,
+                AddressType.fromRank(rankAddress),
+                false);
     }
 
     public AddressType getAddressType() {
-        return AddressType.fromRank(rankAddress);
+        return addressType;
     }
 
     public boolean isPostcode() {
-        if ("place".equals(osmKey) && "postcode".equals(osmValue)) {
-            return true;
-        }
-
-        return "boundary".equals(osmKey) && "postal_code".equals(osmValue);
+        return isPostCode;
     }
 
     public boolean isUsefulForContext() {
         return !name.isEmpty() && !isPostcode();
     }
 
-    public Map<String, String> getName() {
+    public NameMap getName() {
         return this.name;
     }
 
-    @Override
-    public String toString() {
-        return "AddressRow{" +
-                "name=" + name.getOrDefault("name", "?") +
-                ", osmKey='" + osmKey + '\'' +
-                ", osmValue='" + osmValue + '\'' +
-                ", rankAddress=" + rankAddress +
-                '}';
+    public ContextMap getContext() {
+        return context;
     }
 }

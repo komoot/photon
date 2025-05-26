@@ -2,6 +2,7 @@ package de.komoot.photon.query;
 
 import de.komoot.photon.ESBaseTester;
 import de.komoot.photon.Importer;
+import de.komoot.photon.PhotonDoc;
 import de.komoot.photon.searcher.PhotonResult;
 import de.komoot.photon.searcher.TagFilter;
 import org.junit.jupiter.api.*;
@@ -11,7 +12,6 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.locationtech.jts.geom.Coordinate;
 
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
@@ -41,14 +41,15 @@ class QueryFilterTagValueTest extends ESBaseTester {
         double lat = 52.51704;
         int i = 0;
         for (var entry : TAGS) {
-            instance.add(List.of(createDoc(lon, lat, i, i, entry.getKey(), entry.getValue())));
-            lon += 0.00004;
-            lat += 0.00006;
-            ++i;
-            instance.add(List.of(createDoc(lon, lat, i, i, entry.getKey(), entry.getValue())));
-            lon += 0.00004;
-            lat += 0.00006;
-            ++i;
+            for (int j = 0; j < 2; ++j) {
+                instance.add(List.of(new PhotonDoc()
+                        .placeId(i).osmType("N").osmId(i).tagKey(entry.getKey()).tagValue(entry.getValue())
+                        .centroid(makePoint(lon, lat))
+                        .names(makeDocNames("name", "myPlace"))));
+                lon += 0.00004;
+                lat += 0.00006;
+                ++i;
+            }
         }
         instance.finish();
         refresh();
@@ -56,13 +57,13 @@ class QueryFilterTagValueTest extends ESBaseTester {
 
     @AfterAll
     @Override
-    public void tearDown() throws IOException {
+    public void tearDown() {
         super.tearDown();
     }
 
     private List<PhotonResult> searchWithTags(String[] params) {
         SimpleSearchRequest request = new SimpleSearchRequest();
-        request.setQuery("berlin");
+        request.setQuery("myplace");
         request.setLimit(50, 50);
         for (String param : params) {
             request.addOsmTagFilter(TagFilter.buildOsmTagFilter(param));

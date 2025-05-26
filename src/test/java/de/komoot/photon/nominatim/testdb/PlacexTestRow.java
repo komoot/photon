@@ -163,19 +163,13 @@ public class PlacexTestRow {
         Assertions.assertEquals(value, doc.getTagValue());
         Assertions.assertEquals(rankAddress, (Integer) doc.getRankAddress());
         Assertions.assertEquals(new WKTReader().read(centroid), doc.getCentroid());
-        Assertions.assertEquals(names, doc.getName());
+        if (names.containsKey("name")) {
+            Assertions.assertEquals(names.get("name"), doc.getName().get("default"));
+        }
     }
 
     public Long getPlaceId() {
         return this.placeId;
-    }
-
-    public String getKey() {
-        return this.key;
-    }
-
-    public String getValue() {
-        return this.value;
     }
 
     public Map<String, String> getNames() {

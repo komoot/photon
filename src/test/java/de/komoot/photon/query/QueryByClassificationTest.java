@@ -28,7 +28,9 @@ class QueryByClassificationTest extends ESBaseTester {
 
     private PhotonDoc createDoc(String key, String value, String name) {
         ++testDocId;
-        return new PhotonDoc(testDocId, "W", testDocId, key, value).names(Map.of("name", name));
+        return new PhotonDoc()
+                .placeId(testDocId).osmType("W").osmId(testDocId).tagKey(key).tagValue(value)
+                .names(makeDocNames("name", name));
     }
 
     private List<PhotonResult> search(String query) {
@@ -59,7 +61,7 @@ class QueryByClassificationTest extends ESBaseTester {
     }
 
     @Test
-    void testQueryByClassificationString() throws IOException {
+    void testQueryByClassificationString() {
         Importer instance = makeImporter();
         instance.add(List.of(createDoc("amenity", "restaurant", "curliflower")));
         instance.finish();

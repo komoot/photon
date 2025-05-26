@@ -3,8 +3,6 @@ package de.komoot.photon.api;
 import de.komoot.photon.App;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.io.TempDir;
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.Point;
 
 import de.komoot.photon.Importer;
 import de.komoot.photon.PhotonDoc;
@@ -24,28 +22,20 @@ class ApiLanguagesTest extends ApiBaseTester {
         App.shutdown();
     }
 
-    protected PhotonDoc createDoc(int id, String key, String value, String... names) {
-        Point location = FACTORY.createPoint(new Coordinate(1.0, 2.34));
-        PhotonDoc doc = new PhotonDoc(id, "W", id, key, value).centroid(location);
-
-        Map<String, String> nameMap = new HashMap<>();
-
-        for (int i = 0; i < names.length - 1; i += 2) {
-            nameMap.put(names[i], names[i + 1]);
-        }
-
-        doc.names(nameMap);
-
-        return doc;
+    protected PhotonDoc createDoc(int id, String value, String... names) {
+        return new PhotonDoc()
+                .placeId(id).osmType("N").osmId(id).tagKey("place").tagValue(value)
+                .centroid(makePoint(1.0, 2.34))
+                .names(makeDocNames(names));
     }
 
     private void importPlaces(String... languages) throws Exception {
         getProperties().setLanguages(languages);
         setUpES(dataDirectory);
         Importer instance = makeImporter();
-        instance.add(List.of(createDoc(1000, "place", "city",
+        instance.add(List.of(createDoc(1000, "city",
                 "name:en", "thething", "name:fr", "letruc", "name:ch", "dasding")));
-        instance.add(List.of(createDoc(1001, "place", "town",
+        instance.add(List.of(createDoc(1001, "town",
                 "name:ch", "thething", "name:fr", "letruc", "name:en", "dasding")));
         instance.finish();
         refresh();

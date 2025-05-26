@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import de.komoot.photon.*;
 import de.komoot.photon.nominatim.model.AddressType;
+import de.komoot.photon.nominatim.model.NameMap;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.locationtech.jts.io.geojson.GeoJsonWriter;
@@ -71,7 +72,7 @@ public class JsonDumper implements Importer {
         }
     }
 
-    public void writeHeader(Map<String, Map<String, String>> countryNames) throws IOException {
+    public void writeHeader(Map<String, NameMap> countryNames) throws IOException {
         writeStartDocument(NominatimDumpHeader.DOCUMENT_TYPE);
 
         writer.writeStartObject();
@@ -122,7 +123,13 @@ public class JsonDumper implements Importer {
         }
 
         if (!doc.getName().isEmpty()) {
-            writer.writeObjectField("name", doc.getName());
+            writer.writeObjectFieldStart("name");
+            for (var entry : doc.getName().entrySet()) {
+                writer.writeStringField(
+                        convertNameKey(entry.getKey(), "name"),
+                        entry.getValue());
+            }
+            writer.writeEndObject();
         }
 
         if (doc.getHouseNumber() != null) {
@@ -130,28 +137,25 @@ public class JsonDumper implements Importer {
         }
 
         final Map<String, String> addressNames = new HashMap<>();
-        for (var entry : doc.getAddressParts().keySet()) {
-            if (entry != AddressType.COUNTRY) {
+        for (var entry : doc.getAddressParts().entrySet()) {
+            final var atype = entry.getKey();
+            if (atype != AddressType.COUNTRY) {
                 String baseKey;
-                if (entry == AddressType.LOCALITY) {
+                if (atype == AddressType.LOCALITY) {
                     baseKey = "neighbourhood";
-                } else if (entry == AddressType.DISTRICT) {
+                } else if (atype == AddressType.DISTRICT) {
                     baseKey = "suburb";
                 } else {
-                    baseKey = entry.getName();
+                    baseKey = atype.getName();
                 }
-                doc.copyAddressName(addressNames, baseKey, entry, "name");
 
-                baseKey += ":";
-                for (String language : dbProperties.getLanguages()) {
-                    doc.copyAddressName(
-                            addressNames, baseKey + language,
-                            entry, "name:" + language);
+                for (var name : entry.getValue().entrySet()) {
+                    addressNames.put(convertNameKey(name.getKey(), baseKey), name.getValue());
                 }
             }
         }
 
-        for (var entry : doc.getContextByLanguage(dbProperties.getLanguages()).entrySet()) {
+        for (var entry : doc.getContext().entrySet()) {
             int i = 1;
             if ("default".equals(entry.getKey())) {
                 for (var name : entry.getValue()) {
@@ -214,5 +218,13 @@ public class JsonDumper implements Importer {
     private void writeEndDocument() throws IOException {
         writer.writeEndObject();
         writer.writeRaw('\n');
+    }
+
+    private String convertNameKey(String inKey, String base) {
+        if ("default".equals(inKey)) {
+            return base;
+        }
+
+        return String.format("%s:%s", base, inKey);
     }
 }

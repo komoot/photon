@@ -22,12 +22,13 @@ public class JsonReader {
 
     private final JsonParser parser;
     private NominatimDumpHeader header = null;
-    private Map<String, Map<String, String>> countryNames = new HashMap<>();
-    private Map<Long, AddressRow> addressCache = new HashMap<>();
+    private final Map<String, Map<String, String>> countryNames = new HashMap<>();
+    private final Map<Long, AddressRow> addressCache = new HashMap<>();
 
     private boolean useFullGeometries = false;
     private ConfigExtraTags extraTags = new ConfigExtraTags();
     private String[] countryFilter = null;
+    private String[] languages = new String[0];
 
     public JsonReader(File inputFile) throws IOException {
         parser = configureObjectMapper().createParser(inputFile);
@@ -63,6 +64,10 @@ public class JsonReader {
         }
     }
 
+    public void setLanguages(String[] languages) {
+        this.languages = languages;
+    }
+
     public void readHeader() throws IOException {
         final String docType = readStartDocument();
 
@@ -91,21 +96,39 @@ public class JsonReader {
         boolean hasAddressLines = header == null || header.hasAddressLines();
         while (docType != null) {
             if (NominatimPlaceDocument.DOCUMENT_TYPE.equals(docType)) {
+                NominatimPlaceDocument parseDoc = null;
                 Iterable<PhotonDoc> docs;
                 if (parser.isExpectedStartObjectToken()) {
-                    docs = parsePlaceDocument().asMultiAddressDocs(countryFilter);
+                    parseDoc = parsePlaceDocument();
+                    docs = parseDoc.asMultiAddressDocs(countryFilter, languages);
                 } else if (parser.isExpectedStartArrayToken()) {
-                    docs = new ArrayList<>();
+                    List<PhotonDoc> docList = new ArrayList<>();
                     while (parser.nextToken() != JsonToken.END_ARRAY) {
-                        final var doc = parsePlaceDocument().asSimpleDoc();
+                        parseDoc = parsePlaceDocument();
+                        final var doc = parseDoc.asSimpleDoc(languages);
                         if (doc.isUsefulForIndex()
                                 && (countryFilter == null || Arrays.binarySearch(countryFilter, doc.getCountryCode()) >= 0)) {
-                            ((List) docs).add(doc);
+                            docList.add(doc);
                         }
                     }
+                    docs = docList;
                 } else {
                     LOGGER.error("Place document must contain object or an array of objects at {}", parser.currentLocation());
                     throw new UsageException("Invalid json file.");
+                }
+
+                if (parseDoc != null) {
+                    String cc = parseDoc.getCountryCode();
+                    if (isSortedByCountry && cc != null && !currentCountry.equals(cc)) {
+                        addressCache.clear();
+                        currentCountry = cc;
+                    }
+                    if (hasAddressLines) {
+                        var row = parseDoc.asAddressRow(languages);
+                        if (row != null) {
+                            addressCache.put(parseDoc.getPlaceId(), row);
+                        }
+                    }
                 }
 
                 var it = docs.iterator();
@@ -119,22 +142,6 @@ public class JsonReader {
                             }
                         }
 
-                        if (!it.hasNext()) {
-                            if (isSortedByCountry &&
-                                    doc.getCountryCode() != null && !currentCountry.equals(doc.getCountryCode())) {
-                                addressCache.clear();
-                                currentCountry = doc.getCountryCode();
-                            }
-                            if (hasAddressLines
-                                    && doc.getRankAddress() > 0 && doc.getRankAddress() < 28
-                                    && !doc.getName().isEmpty()) {
-                                addressCache.put(
-                                        doc.getPlaceId(),
-                                        new AddressRow(
-                                                doc.getName(), doc.getTagKey(), doc.getTagValue(),
-                                                doc.getRankAddress()));
-                            }
-                        }
                     }
 
                     importThread.addDocument(docs);

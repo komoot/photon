@@ -10,8 +10,8 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class CollectingUpdater implements Updater {
-    private List<Map.Entry<Integer, PhotonDoc>> created = new ArrayList<>();
-    private List<Long> deleted = new ArrayList<>();
+    private final List<Map.Entry<Integer, PhotonDoc>> created = new ArrayList<>();
+    private final List<Long> deleted = new ArrayList<>();
     private int finishCalled = 0;
 
     @Override
@@ -73,4 +73,12 @@ public class CollectingUpdater implements Updater {
         assertTrue(deleted.contains(id));
     }
 
+    public PhotonDoc getCreated(long placeId, long objectId) {
+        for (var entry: created) {
+            if (entry.getKey() == objectId && entry.getValue().getPlaceId() == placeId) {
+                return entry.getValue();
+            }
+        }
+        return null;
+    }
 }

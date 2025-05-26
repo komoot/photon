@@ -2,6 +2,7 @@ package de.komoot.photon.api;
 
 import de.komoot.photon.App;
 import de.komoot.photon.Importer;
+import de.komoot.photon.PhotonDoc;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -10,7 +11,6 @@ import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.FieldSource;
 
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 
@@ -19,15 +19,17 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class ApiCorsTest extends ApiBaseTester {
-    private static final String[] BASE_URLS = {"/api/?q=Berlin", "/reverse/?lat=52.54714&lon=13.39026", "/status/"};
+    private static final String[] BASE_URLS = {
+            "/api/?q=Berlin", "/reverse/?lat=52.54714&lon=13.39026", "/status/"};
 
     @BeforeAll
     void setUp(@TempDir Path dataDirectory) throws Exception {
         setUpES(dataDirectory);
         Importer instance = makeImporter();
-        instance.add(List.of(createDoc(13.39026, 52.54714, 1001, 1001, "place", "suburb")
-                .importance(0.3)
-                .rankAddress(17)));
+        instance.add(List.of(new PhotonDoc()
+                .placeId(1001).osmType("N").osmId(1001).tagKey("place").tagValue("suburb")
+                .centroid(makePoint(13.39026, 52.54714))
+        ));
         instance.finish();
         refresh();
     }
@@ -39,7 +41,7 @@ class ApiCorsTest extends ApiBaseTester {
 
     @AfterAll
     @Override
-    public void tearDown() throws IOException {
+    public void tearDown() {
         shutdownES();
     }
 

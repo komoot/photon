@@ -28,14 +28,10 @@ class QueryBasicSearchTest extends ESBaseTester {
     }
 
     private PhotonDoc createDoc(String... names) {
-        Map<String, String> nameMap = new HashMap<>();
-
-        for (int i = 0; i < names.length - 1; i += 2) {
-            nameMap.put(names[i], names[i+1]);
-        }
-
         ++testDocId;
-        return new PhotonDoc(testDocId, "N", testDocId, "place", "city").names(nameMap);
+        return new PhotonDoc()
+                .placeId(testDocId).osmType("N").osmId(testDocId).tagKey("place").tagValue("city")
+                .names(makeDocNames(names));
     }
 
     private List<PhotonResult> search(String query) {
@@ -116,7 +112,8 @@ class QueryBasicSearchTest extends ESBaseTester {
         address.put("state", "Estado");
 
         Importer instance = makeImporter();
-        instance.add(List.of(createDoc("name", "Castillo").address(address)));
+        instance.add(List.of(createDoc("name", "Castillo")
+                .addAddresses(address, getProperties().getLanguages())));
         instance.finish();
         refresh();
 
@@ -134,7 +131,7 @@ class QueryBasicSearchTest extends ESBaseTester {
         Importer instance = makeImporter();
         instance.add(List.of(
                 createDoc("name", "Palermo")
-                        .address(Map.of("state", "Sicilia"))));
+                        .addAddresses(Map.of("state", "Sicilia"), getProperties().getLanguages())));
         instance.finish();
         refresh();
 
@@ -152,7 +149,7 @@ class QueryBasicSearchTest extends ESBaseTester {
         instance.add(List.of(
                 createDoc("name", "Edeka")
                         .houseNumber("5")
-                        .address(Map.of("street", "Hauptstrasse"))));
+                        .addAddresses(Map.of("street", "Hauptstrasse"), getProperties().getLanguages())));
         instance.finish();
         refresh();
 
@@ -170,7 +167,7 @@ class QueryBasicSearchTest extends ESBaseTester {
         instance.add(List.of(
                 createDoc()
                         .houseNumber("5")
-                        .address(Map.of("street", "Hauptstrasse"))));
+                        .addAddresses(Map.of("street", "Hauptstrasse"), getProperties().getLanguages())));
         instance.finish();
         refresh();
 

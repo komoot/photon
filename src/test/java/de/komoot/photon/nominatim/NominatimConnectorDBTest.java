@@ -1,5 +1,6 @@
 package de.komoot.photon.nominatim;
 
+import de.komoot.photon.DatabaseProperties;
 import org.locationtech.jts.io.ParseException;
 import de.komoot.photon.AssertUtil;
 import de.komoot.photon.PhotonDoc;
@@ -14,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Date;
+import java.util.HashSet;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
@@ -36,7 +38,9 @@ class NominatimConnectorDBTest {
                 .build();
 
 
-        connector = new NominatimImporter(null, 0, null, null, null, new H2DataAdapter(), true);
+        DatabaseProperties dbProperties = new DatabaseProperties();
+        dbProperties.setSupportGeometries(true);
+        connector = new NominatimImporter(null, 0, null, null, null, new H2DataAdapter(), dbProperties);
         importer = new CollectingImporter();
 
         jdbc = new JdbcTemplate(db);
@@ -240,7 +244,7 @@ class NominatimConnectorDBTest {
         PhotonDoc doc = importer.get(place);
 
         AssertUtil.assertAddressName("Dorf", doc, AddressType.CITY);
-        assertTrue(doc.getContext().contains(munip.getNames()));
+        assertEquals(new HashSet<>(munip.getNames().values()), doc.getContext().get("default"));
     }
 
     /**
@@ -260,7 +264,7 @@ class NominatimConnectorDBTest {
         PhotonDoc doc = importer.get(village);
 
         AssertUtil.assertNoAddress(doc, AddressType.CITY);
-        assertTrue(doc.getContext().contains(munip.getNames()));
+        assertEquals(new HashSet<>(munip.getNames().values()), doc.getContext().get("default"));
     }
 
     /**

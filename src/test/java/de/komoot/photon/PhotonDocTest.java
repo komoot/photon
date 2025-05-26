@@ -18,20 +18,20 @@ class PhotonDocTest {
         PhotonDoc doc = simplePhotonDoc();
         
         doc.setAddressPartIfNew(AddressType.STREET, Map.of("name", "parent place street"));
-        doc.address(Map.of("street", "test street"));
+        doc.addAddresses(Map.of("street", "test street"), new String[]{"de"});
 
         assertThat(doc.getAddressParts().get(AddressType.STREET))
-                .containsEntry("name", "test street");
+                .containsEntry("default", "test street");
     }
 
     @Test
     void testCompleteAddressCreatesStreetIfNonExistantBefore() {
         PhotonDoc doc = simplePhotonDoc();
 
-        doc.address(Map.of("street", "test street"));
+        doc.addAddresses(Map.of("street", "test street"), new String[]{"de"});
 
         assertThat(doc.getAddressParts().get(AddressType.STREET))
-                .containsEntry("name", "test street");
+                .containsEntry("default", "test street");
 
     }
 

@@ -1,5 +1,6 @@
 package de.komoot.photon.nominatim;
 
+import de.komoot.photon.DatabaseProperties;
 import de.komoot.photon.PhotonDoc;
 import de.komoot.photon.PhotonDocAddressSet;
 import de.komoot.photon.PhotonDocInterpolationSet;
@@ -11,6 +12,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.sql.Types;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -19,12 +21,12 @@ import java.util.Map;
 public class NominatimImporter extends NominatimConnector {
     private static final Logger LOGGER = LogManager.getLogger();
 
-    public NominatimImporter(String host, int port, String database, String username, String password, boolean useGeometryColumn) {
-        this(host, port, database, username, password, new PostgisDataAdapter(), useGeometryColumn);
+    public NominatimImporter(String host, int port, String database, String username, String password, DatabaseProperties dbProperties) {
+        this(host, port, database, username, password, new PostgisDataAdapter(), dbProperties);
     }
 
-    public NominatimImporter(String host, int port, String database, String username, String password, DBDataAdapter dataAdapter, boolean useGeometryColumn) {
-        super(host, port, database, username, password, dataAdapter, useGeometryColumn);
+    public NominatimImporter(String host, int port, String database, String username, String password, DBDataAdapter dataAdapter, DatabaseProperties dbProperties) {
+        super(host, port, database, username, password, dataAdapter, dbProperties);
     }
 
 
@@ -34,7 +36,7 @@ public class NominatimImporter extends NominatimConnector {
      */
     public void readCountry(String countryCode, ImportThread importThread) {
         // Make sure, country names are available.
-        loadCountryNames();
+        loadCountryNames(dbProperties.getLanguages());
         final var cnames = countryNames.get(countryCode);
         if (cnames == null) {
             LOGGER.warn("Unknown country code {}. Skipping.", countryCode);
@@ -54,26 +56,15 @@ public class NominatimImporter extends NominatimConnector {
             sqlArgTypes = new int[]{Types.VARCHAR};
         }
 
-        NominatimAddressCache addressCache = new NominatimAddressCache();
-        addressCache.loadCountryAddresses(template, dbutils, countryCode);
+        NominatimAddressCache addressCache = new NominatimAddressCache(dbutils, dbProperties.getLanguages());
+        addressCache.loadCountryAddresses(template, countryCode);
 
-        final PlaceRowMapper placeRowMapper = new PlaceRowMapper(dbutils, useGeometryColumn);
-        String query = "SELECT place_id, osm_type, osm_id, class, type, name, postcode, admin_level," +
-                "       address, extratags, ST_Envelope(geometry) AS bbox, parent_place_id," +
-                "       rank_address, rank_search, importance, country_code, centroid, ";
-
-        if (useGeometryColumn) {
-            query += "geometry,";
-        }
+        final PlaceRowMapper placeRowMapper = new PlaceRowMapper(dbutils, dbProperties.getLanguages(), dbProperties.getSupportGeometries());
+        final String baseSelect = placeRowMapper.makeBaseSelect();
 
         // First read ranks below 30, independent places
         template.query(
-                query +
-                        dbutils.jsonArrayFromSelect(
-                                "address_place_id",
-                                "FROM place_addressline pa " +
-                                        " WHERE pa.place_id = p.place_id AND isaddress" +
-                                        " ORDER BY cached_rank_address DESC") + " as addresslines" +
+                baseSelect +
                         " FROM placex p" +
                         " WHERE linked_place_id IS NULL AND centroid IS NOT NULL AND " + countrySQL +
                         " AND rank_search < 30" +
@@ -84,30 +75,18 @@ public class NominatimImporter extends NominatimConnector {
 
                     assert (doc != null);
 
-                    doc.completePlace(addressCache.getAddressList(rs.getString("addresslines")));
-                    doc.address(address); // take precedence over computed address
+                    doc.addAddresses(addressCache.getAddressList(rs.getString("addresslines")));
+                    doc.addAddresses(address, dbProperties.getLanguages()); // take precedence over computed address
                     doc.setCountry(cnames);
 
                     importThread.addDocument(new PhotonDocAddressSet(doc, address));
                 });
 
         // Next get all POIs/housenumbers.
-        query = "SELECT p.place_id, p.osm_type, p.osm_id, p.class, p.type, p.name, p.postcode, p.admin_level," +
-                "       p.address, p.extratags, ST_Envelope(p.geometry) AS bbox, p.parent_place_id," +
-                "       p.rank_address, p.rank_search, p.importance, p.country_code, p.centroid, " +
-                "       parent.class as parent_class, parent.type as parent_type," +
-                "       parent.rank_address as parent_rank_address, parent.name as parent_name, ";
-
-        if (useGeometryColumn) {
-            query += "p.geometry as geometry, ";
-        }
         template.query(
-                 query +
-                        dbutils.jsonArrayFromSelect(
-                                "address_place_id",
-                                "FROM place_addressline pa " +
-                                        " WHERE pa.place_id IN (p.place_id, coalesce(p.parent_place_id, p.place_id)) AND isaddress" +
-                                        " ORDER BY cached_rank_address DESC, pa.place_id = p.place_id DESC") + " as addresslines" +
+                 baseSelect +
+                         " , parent.class as parent_class, parent.type as parent_type," +
+                         "   parent.rank_address as parent_rank_address, parent.name as parent_name" +
                         " FROM placex p LEFT JOIN placex parent ON p.parent_place_id = parent.place_id" +
                         " WHERE p.linked_place_id IS NULL AND p.centroid IS NOT NULL AND p." + countrySQL +
                         " AND p.rank_search = 30 " +
@@ -118,48 +97,38 @@ public class NominatimImporter extends NominatimConnector {
 
                     assert (doc != null);
 
-                    final var addressPlaces = addressCache.getAddressList(rs.getString("addresslines"));
                     if (rs.getString("parent_class") != null) {
-                        addressPlaces.add(0, new AddressRow(
+                        doc.addAddresses(List.of(AddressRow.make(
                                 dbutils.getMap(rs, "parent_name"),
                                 rs.getString("parent_class"),
                                 rs.getString("parent_type"),
-                                rs.getInt("parent_rank_address")));
+                                rs.getInt("parent_rank_address"),
+                                dbProperties.getLanguages())));
                     }
-                    doc.completePlace(addressPlaces);
-                    doc.address(address); // take precedence over computed address
+                    doc.addAddresses(addressCache.getAddressList(rs.getString("addresslines")));
+                    doc.addAddresses(address, dbProperties.getLanguages()); // take precedence over computed address
                     doc.setCountry(cnames);
 
                     importThread.addDocument(new PhotonDocAddressSet(doc, address));
                 });
 
         final OsmlineRowMapper osmlineRowMapper = new OsmlineRowMapper();
-        template.query(
-                "SELECT p.place_id, p.osm_id, p.parent_place_id, p.startnumber, p.endnumber, p.postcode, p.country_code, p.linegeo," +
-                        " p.step," +
-                        "       parent.class as parent_class, parent.type as parent_type," +
-                        "       parent.rank_address as parent_rank_address, parent.name as parent_name, " +
-                        dbutils.jsonArrayFromSelect(
-                                "address_place_id",
-                                "FROM place_addressline pa " +
-                                        " WHERE pa.place_id IN (p.place_id, coalesce(p.parent_place_id, p.place_id)) AND isaddress" +
-                                        " ORDER BY cached_rank_address DESC, pa.place_id = p.place_id DESC") + " as addresslines" +
-                        " FROM location_property_osmline p LEFT JOIN placex parent ON p.parent_place_id = parent.place_id" +
-                        " WHERE startnumber is not null AND p." + countrySQL +
-                        " ORDER BY p.geometry_sector, p.parent_place_id",
+        template.query(String.format("%s  AND p.%s ORDER BY p.geometry_sector, p.parent_place_id",
+                                     osmlineRowMapper.makeBaseQuery(dbutils), countrySQL),
                 sqlArgs, sqlArgTypes, rs -> {
                     final PhotonDoc doc = osmlineRowMapper.mapRow(rs, 0);
 
-                    final var addressPlaces = addressCache.getAddressList(rs.getString("addresslines"));
                     if (rs.getString("parent_class") != null) {
-                        addressPlaces.add(0, new AddressRow(
+                        doc.addAddresses(List.of(AddressRow.make(
                                 dbutils.getMap(rs, "parent_name"),
                                 rs.getString("parent_class"),
                                 rs.getString("parent_type"),
-                                rs.getInt("parent_rank_address")));
+                                rs.getInt("parent_rank_address"),
+                                dbProperties.getLanguages())));
                     }
-                    doc.completePlace(addressPlaces);
-
+                    doc.addAddresses(addressCache.getAddressList(rs.getString("addresslines")));
+                    doc.addAddresses(dbutils.getMap(rs, "address"), dbProperties.getLanguages());
+                    
                     doc.setCountry(cnames);
 
                     importThread.addDocument(new PhotonDocInterpolationSet(
@@ -196,7 +165,7 @@ public class NominatimImporter extends NominatimConnector {
     }
 
     public String[] getCountriesFromDatabase() {
-        loadCountryNames();
+        loadCountryNames(dbProperties.getLanguages());
 
         return countryNames.keySet().toArray(new String[0]);
     }

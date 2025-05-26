@@ -6,6 +6,7 @@ import de.komoot.photon.ConfigExtraTags;
 import de.komoot.photon.PhotonDoc;
 import de.komoot.photon.PhotonDocAddressSet;
 import de.komoot.photon.nominatim.model.AddressRow;
+import de.komoot.photon.nominatim.model.NameMap;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
@@ -22,24 +23,51 @@ public class NominatimPlaceDocument {
 
     private final PhotonDoc doc = new PhotonDoc();
     private Map<String, String> address = Map.of();
+    private Map<String, String> names = null;
     private AddressLine[] addressLines = null;
 
     private static final GeometryFactory factory = new GeometryFactory(new PrecisionModel(10000000), 4326);
     private static final GeoJsonReader jsonReader = new GeoJsonReader();
 
-    public PhotonDoc asSimpleDoc() {
-        doc.address(address);
+    public PhotonDoc asSimpleDoc(String[] languages) {
+        if (names != null) {
+            doc.names(NameMap.makeForPlace(names, languages));
+        }
+
+        doc.addAddresses(address, languages);
         return doc;
     }
 
-    public Iterable<PhotonDoc> asMultiAddressDocs(String[] countryFilter) {
+    public Iterable<PhotonDoc> asMultiAddressDocs(String[] countryFilter, String[] languages) {
+        if (names != null) {
+            doc.names(NameMap.makeForPlace(names, languages));
+        }
+
         if (countryFilter != null
                 && (doc.getCountryCode() == null || Arrays.binarySearch(countryFilter, doc.getCountryCode()) < 0)) {
             return List.of();
         }
 
-        doc.address(address);
+        doc.addAddresses(address, languages);
         return new PhotonDocAddressSet(doc, address);
+    }
+
+    public AddressRow asAddressRow(String[] languages) {
+        if (doc.getRankAddress() > 0 && doc.getRankAddress() < 28 && !names.isEmpty()) {
+            return AddressRow.make(
+                    names, doc.getTagKey(), doc.getTagValue(),
+                    doc.getRankAddress(), languages);
+        }
+
+        return null;
+    }
+
+    public Long getPlaceId() {
+        return doc.getPlaceId();
+    }
+
+    String getCountryCode() {
+        return doc.getCountryCode();
     }
 
     @JsonProperty("place_id")
@@ -101,7 +129,7 @@ public class NominatimPlaceDocument {
 
     @JsonProperty("name")
     void setNames(Map<String, String> names) {
-        doc.names(names);
+        this.names = names;
     }
 
     @JsonProperty("housenumber")
@@ -162,7 +190,7 @@ public class NominatimPlaceDocument {
 
     public void completeAddressLines(Map<Long, AddressRow> addressCache) {
         if (addressLines != null) {
-            doc.completePlace(
+            doc.addAddresses(
                 Arrays.stream(addressLines)
                         .filter(l -> l.isAddress)
                         .map(l -> addressCache.get(l.placeId))

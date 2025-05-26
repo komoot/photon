@@ -50,15 +50,17 @@ class JsonDumperTest {
     }
 
     private List<String> readEntireDatabase() throws IOException {
-        NominatimImporter connector = new NominatimImporter(null, 0, null, null, null, new H2DataAdapter(), configGeometryColumn);
+        final var dbProps = new DatabaseProperties();
+        dbProps.setLanguages(configLanguages);
+        dbProps.setExtraTags(configExtraTags);
+        dbProps.setSupportGeometries(configGeometryColumn);
+
+        NominatimImporter connector = new NominatimImporter(null, 0, null, null, null, new H2DataAdapter(), dbProps);
         ReflectionTestUtil.setFieldValue(connector, NominatimConnector.class, "template", jdbc);
         ReflectionTestUtil.setFieldValue(connector, NominatimConnector.class, "txTemplate", txTemplate);
 
         final var outCapture = new ByteArrayOutputStream();
 
-        final var dbProps = new DatabaseProperties();
-        dbProps.setLanguages(configLanguages);
-        dbProps.setExtraTags(configExtraTags);
         System.setOut(new PrintStream(outCapture));
         try {
             JsonDumper dumper = new JsonDumper("-", dbProps);
@@ -102,6 +104,7 @@ class JsonDumperTest {
                 .name("Spot")
                 .name("ref", "34")
                 .name("name:fi", "Spott")
+                .name("name:de", "Sport")
                 .name("odd_name", "Dot")
                 .add(jdbc);
 
@@ -120,9 +123,7 @@ class JsonDumperTest {
                 .doesNotContainKeys("parent_place_id", "admin_level", "postcode", "extra")
                 .containsEntry("name", Map.of(
                         "name", "Spot",
-                        "ref", "34",
-                        "name:fi", "Spott",
-                        "odd_name", "Dot"));
+                        "name:de", "Sport"));
     }
 
     @Test

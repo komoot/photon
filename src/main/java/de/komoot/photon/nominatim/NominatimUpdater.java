@@ -1,12 +1,10 @@
 package de.komoot.photon.nominatim;
 
-import de.komoot.photon.PhotonDoc;
-import de.komoot.photon.PhotonDocAddressSet;
-import de.komoot.photon.PhotonDocInterpolationSet;
-import de.komoot.photon.Updater;
+import de.komoot.photon.*;
 import de.komoot.photon.nominatim.model.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 import org.locationtech.jts.geom.Geometry;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.transaction.TransactionStatus;
@@ -20,10 +18,6 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public class NominatimUpdater extends NominatimConnector {
     private static final Logger LOGGER = LogManager.getLogger();
-
-    private static final String SELECT_COLS_PLACEX = "SELECT place_id, osm_type, osm_id, class, type, name, postcode, address, extratags, ST_Envelope(geometry) AS bbox, parent_place_id, linked_place_id, rank_address, rank_search, importance, country_code, centroid";
-    private static final String SELECT_COLS_ADDRESS = "SELECT p.name, p.class, p.type, p.rank_address";
-    private static final String SELECT_OSMLINE = "SELECT place_id, osm_id, parent_place_id, startnumber, endnumber, step, postcode, country_code, linegeo";
 
     private static final String TRIGGER_SQL =
             "DROP TABLE IF EXISTS photon_updates;"
@@ -58,57 +52,74 @@ public class NominatimUpdater extends NominatimConnector {
      * Map a row from location_property_osmline (address interpolation lines) to a photon doc.
      */
     private final RowMapper<Iterable<PhotonDoc>> osmlineToNominatimResult;
-
-
     /**
      * Maps a placex row in nominatim to a photon doc.
      * Some attributes are still missing and can be derived by connected address items.
      */
     private final RowMapper<Iterable<PhotonDoc>> placeToNominatimResult;
 
-
     /**
      * Lock to prevent thread from updating concurrently.
      */
     private final ReentrantLock updateLock = new ReentrantLock();
 
+    private final String placeBaseSQL;
+    private final String osmlineBaseSQL;
 
-    // One-item cache for address terms. Speeds up processing of rank 30 objects.
-    private long parentPlaceId = -1;
-    private List<AddressRow> parentTerms = null;
-
-
-    public NominatimUpdater(String host, int port, String database, String username, String password, boolean useGeometryColumn) {
-        this(host, port, database, username, password, new PostgisDataAdapter(), useGeometryColumn);
+    public NominatimUpdater(String host, int port, String database, String username, String password, DatabaseProperties dbProperties) {
+        this(host, port, database, username, password, new PostgisDataAdapter(), dbProperties);
     }
 
-    public NominatimUpdater(String host, int port, String database, String username, String password, DBDataAdapter dataAdapter, boolean useGeometryColumn) {
-        super(host, port, database, username, password, dataAdapter, useGeometryColumn);
+    public NominatimUpdater(String host, int port, String database, String username, String password, DBDataAdapter dataAdapter, DatabaseProperties dbProperties) {
+        super(host, port, database, username, password, dataAdapter, dbProperties);
 
-        final var placeRowMapper = new PlaceRowMapper(dbutils, useGeometryColumn);
+        final NominatimAddressCache addressCache = new NominatimAddressCache(dataAdapter, dbProperties.getLanguages());
+
+        final var placeRowMapper = new PlaceRowMapper(dbutils, dbProperties.getLanguages(), dbProperties.getSupportGeometries());
+        placeBaseSQL = placeRowMapper.makeBaseSelect();
 
         placeToNominatimResult = (rs, rowNum) -> {
-            PhotonDoc doc = placeRowMapper.mapRow(rs, rowNum);
+            final PhotonDoc doc = placeRowMapper.mapRow(rs, rowNum);
             assert (doc != null);
 
-            Map<String, String> address = dbutils.getMap(rs, "address");
+            if (rs.getInt("rank_search") == 30 && rs.getString("parent_class") != null) {
+                doc.addAddresses(List.of(AddressRow.make(
+                        dbutils.getMap(rs, "parent_name"),
+                        rs.getString("parent_class"),
+                        rs.getString("parent_type"),
+                        rs.getInt("parent_rank_address"),
+                        dbProperties.getLanguages())));
+            }
+            doc.addAddresses(
+                    addressCache.getOrLoadAddressList(template, rs.getString("addresslines")));
 
-            doc.completePlace(getAddresses(doc));
             // Add address last, so it takes precedence.
-            doc.address(address);
+            final var address = dbutils.getMap(rs, "address");
+            doc.addAddresses(address, dbProperties.getLanguages());
 
             doc.setCountry(countryNames.get(rs.getString("country_code")));
 
             return new PhotonDocAddressSet(doc, address);
         };
 
-        // Setup handling of interpolation table. There are two different formats depending on the Nominatim version.
-        // new-style interpolations
-        final OsmlineRowMapper osmlineRowMapper = new OsmlineRowMapper();
+        // Setup handling of interpolation table.
+        final var osmlineRowMapper = new OsmlineRowMapper();
+        osmlineBaseSQL = osmlineRowMapper.makeBaseQuery(dataAdapter);
         osmlineToNominatimResult = (rs, rownum) -> {
             PhotonDoc doc = osmlineRowMapper.mapRow(rs, rownum);
+            assert doc != null;
 
-            doc.completePlace(getAddresses(doc));
+            if (rs.getString("parent_class") != null) {
+                doc.addAddresses(List.of(AddressRow.make(
+                        dbutils.getMap(rs, "parent_name"),
+                        rs.getString("parent_class"),
+                        rs.getString("parent_type"),
+                        rs.getInt("parent_rank_address"),
+                        dbProperties.getLanguages())));
+            }
+            doc.addAddresses(
+                    addressCache.getOrLoadAddressList(template, rs.getString("addresslines")));
+            doc.addAddresses(dbutils.getMap(rs, "address"), dbProperties.getLanguages());
             doc.setCountry(countryNames.get(rs.getString("country_code")));
 
             Geometry geometry = dbutils.extractGeometry(rs, "linegeo");
@@ -136,7 +147,7 @@ public class NominatimUpdater extends NominatimConnector {
         LOGGER.info("Creating tracking tables");
         txTemplate.execute(new TransactionCallbackWithoutResult() {
             @Override
-            protected void doInTransactionWithoutResult(TransactionStatus status) {
+            protected void doInTransactionWithoutResult(@NotNull TransactionStatus status) {
                 template.execute(TRIGGER_SQL);
                 template.execute("GRANT SELECT, DELETE ON photon_updates TO \"" + updateUser + '"');
             }
@@ -146,7 +157,7 @@ public class NominatimUpdater extends NominatimConnector {
     public void update() {
         if (updateLock.tryLock()) {
             try {
-                loadCountryNames();
+                loadCountryNames(dbProperties.getLanguages());
                 updateFromPlacex();
                 updateFromInterpolations();
                 updater.finish();
@@ -232,18 +243,13 @@ public class NominatimUpdater extends NominatimConnector {
         });
     }
 
-
     public Iterable<PhotonDoc> getByPlaceId(long placeId) {
-        String query = SELECT_COLS_PLACEX;
-
-        if (useGeometryColumn) {
-            query += ", geometry";
-        }
-
-        query += " FROM placex WHERE place_id = ? and indexed_status = 0";
-
         var result = template.query(
-                query,
+                placeBaseSQL +
+                        "     , parent.class as parent_class, parent.type as parent_type," +
+                        "       parent.rank_address as parent_rank_address, parent.name as parent_name" +
+                        " FROM placex p LEFT JOIN placex parent ON p.parent_place_id = parent.place_id" +
+                        " WHERE p.place_id = ? and p.indexed_status = 0",
                 placeToNominatimResult, placeId);
 
         return result.isEmpty() ? List.of() : result.get(0);
@@ -251,57 +257,9 @@ public class NominatimUpdater extends NominatimConnector {
 
     public Iterable<PhotonDoc> getInterpolationsByPlaceId(long placeId) {
         var result = template.query(
-                SELECT_OSMLINE
-                        + " FROM location_property_osmline WHERE place_id = ? and indexed_status = 0",
+                osmlineBaseSQL + " AND p.place_id = ? and p.indexed_status = 0",
                 osmlineToNominatimResult, placeId);
 
         return result.isEmpty() ? List.of() : result.get(0);
-    }
-
-
-    List<AddressRow> getAddresses(PhotonDoc doc) {
-        RowMapper<AddressRow> rowMapper = (rs, rowNum) -> new AddressRow(
-                dbutils.getMap(rs, "name"),
-                rs.getString("class"),
-                rs.getString("type"),
-                rs.getInt("rank_address")
-        );
-
-        AddressType atype = doc.getAddressType();
-
-        if (atype == null || atype == AddressType.COUNTRY) {
-            return List.of();
-        }
-
-        List<AddressRow> terms = null;
-
-        if (atype == AddressType.HOUSE) {
-            long placeId = doc.getParentPlaceId();
-            if (placeId != parentPlaceId) {
-                parentTerms = template.query(SELECT_COLS_ADDRESS
-                                + " FROM placex p, place_addressline pa"
-                                + " WHERE p.place_id = pa.address_place_id and pa.place_id = ?"
-                                + " and pa.cached_rank_address > 4 and pa.address_place_id != ? and pa.isaddress"
-                                + " ORDER BY rank_address desc, fromarea desc, distance asc, rank_search desc",
-                        rowMapper, placeId, placeId);
-
-                // need to add the term for the parent place ID itself
-                parentTerms.addAll(0, template.query(SELECT_COLS_ADDRESS + " FROM placex p WHERE p.place_id = ?",
-                        rowMapper, placeId));
-                parentPlaceId = placeId;
-            }
-            terms = parentTerms;
-
-        } else {
-            long placeId = doc.getPlaceId();
-            terms = template.query(SELECT_COLS_ADDRESS
-                            + " FROM placex p, place_addressline pa"
-                            + " WHERE p.place_id = pa.address_place_id and pa.place_id = ?"
-                            + " and pa.cached_rank_address > 4 and pa.address_place_id != ? and pa.isaddress"
-                            + " ORDER BY rank_address desc, fromarea desc, distance asc, rank_search desc",
-                    rowMapper, placeId, placeId);
-        }
-
-        return terms;
     }
 }

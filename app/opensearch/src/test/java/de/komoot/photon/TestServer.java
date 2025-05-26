@@ -1,17 +1,20 @@
-package de.komoot.photon.opensearch;
+package de.komoot.photon;
 
-import de.komoot.photon.Server;
+import de.komoot.photon.opensearch.OpenSearchResult;
+import de.komoot.photon.opensearch.PhotonIndex;
 import de.komoot.photon.searcher.PhotonResult;
 import org.codelibs.opensearch.runner.OpenSearchRunner;
 import org.opensearch.common.settings.Settings;
 
 import java.io.IOException;
 
-public class OpenSearchTestServer extends Server {
+public class TestServer extends Server {
+    public static final String TEST_CLUSTER_NAME = "photon-test";
+
     private OpenSearchRunner runner;
     private String instanceDir;
 
-    public OpenSearchTestServer(String mainDirectory) {
+    public TestServer(String mainDirectory) {
         super(mainDirectory);
 
         instanceDir = mainDirectory;
@@ -47,10 +50,22 @@ public class OpenSearchTestServer extends Server {
         start(clusterName, transportAddresses);
     }
 
-    public void stopTestServer() throws IOException {
+    public void stopTestServer() {
         shutdown();
-        runner.close();
+        try {
+            runner.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         runner.clean();
+    }
+
+    public void refreshTestServer() {
+        try {
+            refreshIndexes();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public PhotonResult getByID(String id) {
