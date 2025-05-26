@@ -122,7 +122,7 @@ public class PhotonQueryBuilder {
         queryBuilderForTopLevelFilter = QueryBuilders.boolQuery()
                 .should(QueryBuilders.boolQuery().mustNot(QueryBuilders.existsQuery("housenumber")))
                 .should(QueryBuilders.matchQuery("housenumber", query).analyzer("standard"))
-                .should(QueryBuilders.existsQuery(String.format("name.%s.raw", language)));
+                .should(QueryBuilders.existsQuery(String.format("name.%s.raw", defLang)));
 
         osmTagFilter = new OsmTagFilter();
         
