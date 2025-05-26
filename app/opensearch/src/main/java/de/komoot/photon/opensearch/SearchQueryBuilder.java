@@ -139,7 +139,7 @@ public class SearchQueryBuilder {
                         .field("housenumber")
                         .analyzer("standard")))
                 .should(q3 -> q3.exists(ex2 -> ex2
-                        .field(String.format("name.%s.raw", language))));
+                        .field(String.format("name.%s.raw", defLang))));
     }
 
     public SearchQueryBuilder(StructuredSearchRequest request, String language, String[] languages, boolean lenient)

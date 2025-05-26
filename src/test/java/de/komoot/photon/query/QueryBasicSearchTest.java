@@ -34,28 +34,38 @@ class QueryBasicSearchTest extends ESBaseTester {
                 .names(makeDocNames(names));
     }
 
-    private List<PhotonResult> search(String query) {
+    private List<PhotonResult> search(String query, String lang) {
         final var request = new SimpleSearchRequest();
         request.setQuery(query);
-        request.setLanguage("en");
+        if (lang != null) {
+            request.setLanguage(lang);
+        }
 
         return getServer().createSearchHandler(new String[]{"en"}, 1).search(request);
     }
 
     private void assertWorking(SoftAssertions soft, String... queries) {
-        for (String query : queries) {
-            soft.assertThat(search(query)).hasSize(1);
+        for (var lang : new String[]{"default", "en", null}) {
+            for (String query : queries) {
+                soft.assertThat(search(query, lang))
+                        .withFailMessage("Searching for '%s' (language: %s) failed.", query, lang)
+                        .hasSize(1);
+            }
         }
     }
 
     private void assertNotWorking(SoftAssertions soft, String... queries) {
-        for (String query : queries) {
-            soft.assertThat(search(query)).hasSize(0);
+        for (var lang : new String[]{"en", "default", null}) {
+            for (String query : queries) {
+                soft.assertThat(search(query, lang))
+                        .withFailMessage("Searching for '%s' (language: %s) unexpectedly succeeded.", query, lang)
+                        .hasSize(0);
+            }
         }
     }
 
     @Test
-    void testSearchByDefaultName() throws IOException {
+    void testSearchByDefaultName() {
         Importer instance = makeImporter();
         instance.add(List.of(createDoc("name", "Muffle Flu")));
         instance.finish();
@@ -69,7 +79,7 @@ class QueryBasicSearchTest extends ESBaseTester {
     }
 
     @Test
-    void testSearchNameSkipTerms() throws IOException {
+    void testSearchNameSkipTerms() {
         Importer instance = makeImporter();
         instance.add(List.of(createDoc("name", "Hunted House Hotel")));
         instance.finish();
@@ -83,7 +93,7 @@ class QueryBasicSearchTest extends ESBaseTester {
         soft.assertAll();
     }
     @Test
-    void testSearchByAlternativeNames() throws IOException {
+    void testSearchByAlternativeNames() {
         Importer instance = makeImporter();
         instance.add(List.of(
                 createDoc("name", "original", "alt_name", "alt", "old_name", "older", "int_name", "int",
@@ -102,7 +112,7 @@ class QueryBasicSearchTest extends ESBaseTester {
     }
 
     @Test
-    void testSearchByNameAndAddress() throws IOException {
+    void testSearchByNameAndAddress() {
         Map<String, String> address = new HashMap<>();
         address.put("street", "Callino");
         address.put("city", "Madrid");
@@ -127,7 +137,7 @@ class QueryBasicSearchTest extends ESBaseTester {
     }
 
     @Test
-    void testSearchMustContainANameTerm() throws IOException {
+    void testSearchMustContainANameTerm() {
         Importer instance = makeImporter();
         instance.add(List.of(
                 createDoc("name", "Palermo")
@@ -144,7 +154,7 @@ class QueryBasicSearchTest extends ESBaseTester {
     }
 
     @Test
-    void testSearchWithHousenumberNamed() throws IOException {
+    void testSearchWithHousenumberNamed() {
         Importer instance = makeImporter();
         instance.add(List.of(
                 createDoc("name", "Edeka")
@@ -162,7 +172,7 @@ class QueryBasicSearchTest extends ESBaseTester {
     }
 
     @Test
-    void testSearchWithHousenumberUnnamed() throws IOException {
+    void testSearchWithHousenumberUnnamed() {
         Importer instance = makeImporter();
         instance.add(List.of(
                 createDoc()
