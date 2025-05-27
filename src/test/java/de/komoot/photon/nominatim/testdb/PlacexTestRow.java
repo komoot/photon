@@ -157,6 +157,7 @@ public class PlacexTestRow {
     }
 
     public void assertEquals(PhotonDoc doc) throws ParseException {
+        Assertions.assertEquals(placeId, doc.getPlaceId());
         Assertions.assertEquals(osmType, doc.getOsmType());
         Assertions.assertEquals(osmId, (Long) doc.getOsmId());
         Assertions.assertEquals(key, doc.getTagKey());
