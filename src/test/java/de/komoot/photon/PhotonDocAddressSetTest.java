@@ -19,8 +19,8 @@ class PhotonDocAddressSetTest {
 
     @BeforeEach
     public void setupPhotonDoc() {
-        baseDoc.setAddressPartIfNew(AddressType.CITY, Map.of("name", "Hamburg"));
-        baseDoc.setAddressPartIfNew(AddressType.STREET, Map.of("name", "Chaussee"));
+        baseDoc.setAddressPartIfNew(AddressType.CITY, Map.of("default", "Hamburg"));
+        baseDoc.setAddressPartIfNew(AddressType.STREET, Map.of("default", "Chaussee"));
     }
 
     private void assertDocWithHousenumber(PhotonDoc doc, String housenumber) {
@@ -38,8 +38,8 @@ class PhotonDocAddressSetTest {
     private void assertDocWithHnrAndStreet(PhotonDoc doc, String housenumber, String street) {
         assertAll(
                 () -> assertDocWithHousenumber(doc, housenumber),
-                () -> assertEquals(Map.of("name", street), doc.getAddressParts().get(AddressType.STREET)),
-                () -> assertEquals(Map.of("name", "Hamburg"), doc.getAddressParts().get(AddressType.CITY))
+                () -> assertEquals(Map.of("default", street), doc.getAddressParts().get(AddressType.STREET)),
+                () -> assertEquals(Map.of("default", "Hamburg"), doc.getAddressParts().get(AddressType.CITY))
         );
     }
 

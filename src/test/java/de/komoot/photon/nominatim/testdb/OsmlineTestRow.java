@@ -1,11 +1,13 @@
 package de.komoot.photon.nominatim.testdb;
 
+import de.komoot.photon.PhotonDoc;
+import org.junit.jupiter.api.Assertions;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 public class OsmlineTestRow {
     private static long placeIdSequence = 100000;
 
-    private Long placeId;
+    private final Long placeId;
     private Long parentPlaceId;
     private Long osmId = 23L;
     private Integer startnumber;
@@ -43,6 +45,14 @@ public class OsmlineTestRow {
                 placeId, parentPlaceId, osmId, startnumber, endnumber, step, lineGeo, countryCode);
 
         return this;
+    }
+
+    public void assertEquals(PhotonDoc doc) {
+        Assertions.assertEquals("W", doc.getOsmType());
+        Assertions.assertEquals(osmId, (Long) doc.getOsmId());
+        Assertions.assertEquals("place", doc.getTagKey());
+        Assertions.assertEquals("house_number", doc.getTagValue());
+        Assertions.assertEquals(30, (Integer) doc.getRankAddress());
     }
 
     public Long getPlaceId() {

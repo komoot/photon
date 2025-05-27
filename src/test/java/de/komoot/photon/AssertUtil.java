@@ -11,8 +11,4 @@ public class AssertUtil {
         assertNotNull(doc.getAddressParts().get(addressType));
         assertEquals(name, doc.getAddressParts().get(addressType).get("default"));
     }
-
-    public static void assertNoAddress(PhotonDoc doc, AddressType addressType) {
-        assertNull(doc.getAddressParts().get(addressType));
-    }
 }

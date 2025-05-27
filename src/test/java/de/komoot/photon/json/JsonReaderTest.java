@@ -48,6 +48,8 @@ class JsonReaderTest {
             importThread.finish();
         }
 
+        assertThat(importer.getFinishCalled()).isEqualTo(1);
+
         return importer;
     }
 
@@ -56,9 +58,8 @@ class JsonReaderTest {
         input.println(TEST_SIMPLE_STREAM);
         var importer = readJson();
 
-        assertThat(importer.size()).isEqualTo(1);
-
-        assertThat(importer.get(100818))
+        assertThat(importer).singleElement()
+                .hasFieldOrPropertyWithValue("placeId", 100818L)
                 .hasFieldOrPropertyWithValue("osmType", "W")
                 .hasFieldOrPropertyWithValue("osmId", 223306798L)
                 .hasFieldOrPropertyWithValue("tagKey", "waterway")
@@ -73,7 +74,7 @@ class JsonReaderTest {
                 .hasFieldOrPropertyWithValue("rankAddress", 0)
                 .hasFieldOrPropertyWithValue("adminLevel", null)
                 .hasFieldOrPropertyWithValue("houseNumber", null)
-                .hasFieldOrPropertyWithValue("centroid", geomFactory.createPoint(new Coordinate(9.53713454,47.27052526)))
+                .hasFieldOrPropertyWithValue("centroid", geomFactory.createPoint(new Coordinate(9.53713454, 47.27052526)))
                 .hasFieldOrPropertyWithValue("geometry", null);
     }
 
@@ -83,16 +84,15 @@ class JsonReaderTest {
         input.println(TEST_SIMPLE_STREAM);
         var importer = readJson();
 
-        assertThat(importer.size()).isEqualTo(1);
-
-        assertThat(importer.get(100818))
+        assertThat(importer).singleElement()
+                .hasFieldOrPropertyWithValue("placeId", 100818L)
                 .hasFieldOrPropertyWithValue("bbox", new Envelope(9.5461636, 9.556083, 47.2415541, 47.2966235))
-                .hasFieldOrPropertyWithValue("centroid", geomFactory.createPoint(new Coordinate(9.53713454,47.27052526)))
+                .hasFieldOrPropertyWithValue("centroid", geomFactory.createPoint(new Coordinate(9.53713454, 47.27052526)))
                 .hasFieldOrPropertyWithValue("geometry", geomFactory.createLineString(new Coordinate[]{
-                        new Coordinate(9.5461636,47.2415541),
-                        new Coordinate(9.5558108,47.2955234),
-                        new Coordinate(9.556083,47.2962812),
-                        new Coordinate(9.554958,47.2966235)
+                        new Coordinate(9.5461636, 47.2415541),
+                        new Coordinate(9.5558108, 47.2955234),
+                        new Coordinate(9.556083, 47.2962812),
+                        new Coordinate(9.554958, 47.2966235)
                 }));
 
     }
@@ -103,9 +103,8 @@ class JsonReaderTest {
         input.println(TEST_SIMPLE_STREAM);
         var importer = readJson();
 
-        assertThat(importer.size()).isEqualTo(1);
-
-        assertThat(importer.get(100818))
+        assertThat(importer).singleElement()
+                .hasFieldOrPropertyWithValue("placeId", 100818L)
                 .hasFieldOrPropertyWithValue("extratags", Map.of("boat", "no"));
     }
 
@@ -115,9 +114,8 @@ class JsonReaderTest {
         input.println(TEST_SIMPLE_STREAM);
         var importer = readJson();
 
-        assertThat(importer.size()).isEqualTo(1);
-
-        assertThat(importer.get(100818))
+        assertThat(importer).singleElement()
+                .hasFieldOrPropertyWithValue("placeId", 100818L)
                 .hasFieldOrPropertyWithValue("extratags", Map.of("boat", "no"));
     }
 
@@ -127,9 +125,8 @@ class JsonReaderTest {
         input.println(TEST_SIMPLE_STREAM);
         var importer = readJson();
 
-        assertThat(importer.size()).isEqualTo(1);
-
-        assertThat(importer.get(100818))
+        assertThat(importer).singleElement()
+                .hasFieldOrPropertyWithValue("placeId", 100818L)
                 .hasFieldOrPropertyWithValue("extratags", Map.of());
     }
 
@@ -158,9 +155,10 @@ class JsonReaderTest {
 
         var importer = readJson();
 
-        assertThat(importer.size()).isEqualTo(2);
-
-        assertThat(importer.get(105764))
+        assertThat(importer)
+                .hasSize(2)
+                .last()
+                .hasFieldOrPropertyWithValue("placeId", 105764L)
                 .hasFieldOrPropertyWithValue("postcode", "9490")
                 .hasFieldOrPropertyWithValue("addressParts",
                         Map.of(AddressType.CITY,

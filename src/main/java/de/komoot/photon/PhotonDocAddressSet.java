@@ -44,7 +44,7 @@ public class PhotonDocAddressSet implements Iterable<PhotonDoc> {
 
                 final String place = address.get("place");
                 if (place != null && !place.isBlank()) {
-                    placeAddress.put(AddressType.STREET, Map.of("name", place));
+                    placeAddress.put(AddressType.STREET, Map.of("default", place));
                 }
             }
 
@@ -75,7 +75,7 @@ public class PhotonDocAddressSet implements Iterable<PhotonDoc> {
                         }
                     }
 
-                    placeAddress.put(AddressType.STREET, Map.of("name", place));
+                    placeAddress.put(AddressType.STREET, Map.of("default", place));
                 } else {
                     placeAddress = base.getAddressParts();
                 }
