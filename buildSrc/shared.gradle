@@ -42,26 +42,26 @@ sourceSets {
 }
 
 dependencies {
-    implementation 'org.apache.logging.log4j:log4j-core:2.24.1'
-    implementation 'org.apache.logging.log4j:log4j-api:2.24.1'
-    implementation 'org.postgresql:postgresql:42.7.4'
-    implementation 'org.slf4j:slf4j-api:2.0.16'
-    implementation 'org.apache.logging.log4j:log4j-slf4j2-impl:2.24.1'
+    implementation 'org.apache.logging.log4j:log4j-core:2.24.3'
+    implementation 'org.apache.logging.log4j:log4j-api:2.24.3'
+    implementation 'org.postgresql:postgresql:42.7.5'
+    implementation 'org.apache.logging.log4j:log4j-slf4j2-impl:2.24.3'
     implementation 'org.jcommander:jcommander:2.0'
+    // freezing at 5.x for Java 11
     implementation 'org.springframework:spring-jdbc:5.3.39'
-    implementation ('org.apache.commons:commons-dbcp2:2.12.0') {
+    implementation ('org.apache.commons:commons-dbcp2:2.13.0') {
         exclude(module: 'commons-logging')
     }
     implementation 'org.locationtech.jts:jts-core:1.20.0'
     implementation 'org.locationtech.jts.io:jts-io-common:1.20.0'
     implementation 'io.javalin:javalin:6.6.0'
     implementation 'net.postgis:postgis-jdbc:2024.1.0'
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.18.2'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.19.0'
 
-    testImplementation(platform("org.junit:junit-bom:5.11.3"))
+    testImplementation(platform("org.junit:junit-bom:5.12.2"))
     testImplementation 'com.h2database:h2:2.3.232'
     testImplementation 'org.junit.jupiter:junit-jupiter'
-    testImplementation 'org.assertj:assertj-core:3.27.2'
+    testImplementation 'org.assertj:assertj-core:3.27.3'
     // freezing at 2.40 for Java 11
     testImplementation 'net.javacrumbs.json-unit:json-unit-assertj:2.40.1'
 
