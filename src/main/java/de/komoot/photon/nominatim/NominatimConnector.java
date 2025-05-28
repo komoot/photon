@@ -58,13 +58,14 @@ public class NominatimConnector {
             // Default for places outside any country.
             countryNames.put("", new NameMap());
             template.query("SELECT country_code, name FROM country_name", rs -> {
-                countryNames.put(
-                        rs.getString("country_code"),
-                        AddressRow.make(dbutils.getMap(rs, "name"),
-                                "place",
-                                "country",
-                                4,
-                                languages).getName());
+                var names = AddressRow.make(dbutils.getMap(rs, "name"),
+                        "place",
+                        "country",
+                        4,
+                        languages).getName();
+                if (!names.isEmpty()) {
+                    countryNames.put(rs.getString("country_code"), names);
+                }
             });
         }
 

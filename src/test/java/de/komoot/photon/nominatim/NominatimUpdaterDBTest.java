@@ -54,7 +54,11 @@ class NominatimUpdaterDBTest {
         assertThat(updater.getFinishCalled()).isEqualTo(1);
 
         updater.assertThatDeleted().isEmpty();
-        updater.assertThatCreated().singleElement().satisfies(place::assertEquals);
+        updater.assertThatCreated().singleElement()
+                .satisfies(place::assertEquals)
+                .hasFieldOrPropertyWithValue("addressParts", Map.of(
+                        AddressType.COUNTRY, COUNTRY_NAMES
+                ));
     }
 
     @ParameterizedTest
@@ -79,6 +83,20 @@ class NominatimUpdaterDBTest {
 
         updater.assertThatDeleted().isEmpty();
         updater.assertThatCreated().isEmpty();
+    }
+
+    @Test
+    void testInsertUnknownCountry() {
+        PlacexTestRow place = new PlacexTestRow("place", "city").name("Town").country(null).add(jdbc);
+        new PhotonUpdateRow("placex", place.getPlaceId(), "UPDATE").add(jdbc);
+
+        connector.update();
+        assertThat(updater.getFinishCalled()).isEqualTo(1);
+
+        updater.assertThatDeleted().isEmpty();
+        updater.assertThatCreated().singleElement()
+                .satisfies(place::assertEquals)
+                .hasFieldOrPropertyWithValue("addressParts", Map.of());
     }
 
     @Test
@@ -126,6 +144,26 @@ class NominatimUpdaterDBTest {
                 .satisfies(place::assertEquals)
                 .hasFieldOrPropertyWithValue("addressParts", Map.of(
                         AddressType.COUNTY, Map.of("default", "Lost County"),
+                        AddressType.STATE, Map.of("default", "Le Havre"),
+                        AddressType.COUNTRY, COUNTRY_NAMES));
+    }
+
+    @Test
+    void testUpdatePlaceDisappearingAddressLine() {
+        PlacexTestRow place = new PlacexTestRow("natural", "water").name("Lake Tee").rankAddress(0).rankSearch(20).add(jdbc);
+
+        place.addAddresslines(jdbc,
+                new PlacexTestRow("place", "county").name("Lost County").ranks(12),
+                new PlacexTestRow("place", "state").name("Le Havre").ranks(8).add(jdbc));
+
+        new PhotonUpdateRow("placex", place.getPlaceId(), "UPDATE").add(jdbc);
+
+        connector.update();
+
+        updater.assertThatDeleted().isEmpty();
+        updater.assertThatCreated().singleElement()
+                .satisfies(place::assertEquals)
+                .hasFieldOrPropertyWithValue("addressParts", Map.of(
                         AddressType.STATE, Map.of("default", "Le Havre"),
                         AddressType.COUNTRY, COUNTRY_NAMES));
     }

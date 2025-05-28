@@ -230,14 +230,16 @@ public class PhotonDoc {
             if (address.isPostcode()) {
                 this.postcode = address.getName().getOrDefault("ref", this.postcode);
             } else {
-                final AddressType atype = address.getAddressType();
+                if (!address.getName().isEmpty()) {
+                    final AddressType atype = address.getAddressType();
 
-                if (atype != null
-                        && (atype == doctype || !setAddressPartIfNew(atype, address.getName()))
-                        && address.isUsefulForContext()) {
-                    // if address level already exists but item still looks interesting,
-                    // add to context
-                    context.addAll(address.getName());
+                    if (atype != null
+                            && (atype == doctype || !setAddressPartIfNew(atype, address.getName()))
+                            && address.isUsefulForContext()) {
+                        // if address level already exists but item still looks interesting,
+                        // add to context
+                        context.addAll(address.getName());
+                    }
                 }
 
                 context.addAll(address.getContext());
@@ -312,7 +314,9 @@ public class PhotonDoc {
     }
 
     public void setCountry(Map<String, String> names) {
-        addressParts.put(AddressType.COUNTRY, names);
+        if (names != null) {
+            addressParts.put(AddressType.COUNTRY, names);
+        }
     }
 
     public long getPlaceId() {

@@ -159,6 +159,22 @@ class NominatimConnectorDBTest {
     }
 
     @Test
+    void testPlaceAddressLineWithNoUsableName() {
+        PlacexTestRow place = new PlacexTestRow("natural", "water").name("Lake Tee").rankAddress(0).rankSearch(20).add(jdbc);
+
+        place.addAddresslines(jdbc,
+                new PlacexTestRow("place", "county").name("name:zh", "Lost County").ranks(12).add(jdbc),
+                new PlacexTestRow("place", "state").name("Le Havre").ranks(8).add(jdbc));
+
+        readEntireDatabase();
+
+        importer.assertThatByRow(place)
+                .hasFieldOrPropertyWithValue("addressParts", Map.of(
+                        AddressType.STATE, Map.of("default", "Le Havre"),
+                        AddressType.COUNTRY, COUNTRY_NAMES));
+    }
+
+    @Test
     void testPoiAddress() {
         PlacexTestRow parent = PlacexTestRow.make_street("Burg").add(jdbc);
 

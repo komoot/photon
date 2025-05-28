@@ -54,9 +54,10 @@ public class NominatimPlaceDocument {
 
     public AddressRow asAddressRow(String[] languages) {
         if (doc.getRankAddress() > 0 && doc.getRankAddress() < 28 && !names.isEmpty()) {
-            return AddressRow.make(
+            final var row = AddressRow.make(
                     names, doc.getTagKey(), doc.getTagValue(),
                     doc.getRankAddress(), languages);
+            return row.getName().isEmpty() ? null : row;
         }
 
         return null;

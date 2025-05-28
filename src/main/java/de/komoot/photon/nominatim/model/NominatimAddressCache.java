@@ -26,16 +26,18 @@ public class NominatimAddressCache {
     private final RowCallbackHandler rowMapper;
 
     public NominatimAddressCache(DBDataAdapter dbutils, String[] languages) {
-        rowMapper = rs ->
+        rowMapper = rs -> {
+            final var row = AddressRow.make(
+                    dbutils.getMap(rs, "name"),
+                    rs.getString("class"),
+                    rs.getString("type"),
+                    rs.getInt("rank_address"),
+                    languages);
+            if (!row.getName().isEmpty()) {
                 addresses.put(
-                        rs.getLong("place_id"),
-                        AddressRow.make(
-                                Map.copyOf(dbutils.getMap(rs, "name")),
-                                rs.getString("class"),
-                                rs.getString("type"),
-                                rs.getInt("rank_address"),
-                                languages
-                        ));
+                        rs.getLong("place_id"), row);
+            }
+        };
     }
 
     public void loadCountryAddresses(JdbcTemplate template, String countryCode) {
