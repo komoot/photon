@@ -1,26 +1,26 @@
 package de.komoot.photon.nominatim.testdb;
 
-import org.locationtech.jts.io.ParseException;
+import org.assertj.core.api.ListAssert;
+import org.assertj.core.api.ObjectAssert;
 import de.komoot.photon.Importer;
 import de.komoot.photon.PhotonDoc;
 
+import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.*;
 
-public class CollectingImporter implements Importer {
-    private List<Map.Entry<Integer, PhotonDoc>> docs = new ArrayList<>();
+public class CollectingImporter extends AbstractList<PhotonDoc> implements Importer {
+    private final List<PhotonDoc> docs = new ArrayList<>();
     private int finishCalled = 0;
 
 
     @Override
     public void add(Iterable<PhotonDoc> inputDocs)
     {
-        int objectId = 0;
         for (var doc : inputDocs) {
-            docs.add(Map.entry(objectId++, doc));
+            docs.add(doc);
         }
     }
 
@@ -29,54 +29,40 @@ public class CollectingImporter implements Importer {
         ++finishCalled;
     }
 
-    public void assertFinishCalled(int num) {
-        assertEquals(num, finishCalled);
-    }
-
+    @Override
     public int size() {
         return docs.size();
     }
 
-    public PhotonDoc get(PlacexTestRow row) {
-        return get(row.getPlaceId());
+    @Override
+    public PhotonDoc get(int idx) {
+        return docs.get(idx);
     }
 
-    public PhotonDoc get(long placeId) {
-        for (Map.Entry<Integer, PhotonDoc> doc : docs) {
-            if (doc.getValue().getPlaceId() == placeId) {
-                return doc.getValue();
-            }
-        }
-
-        fail("No document found with that place_id.");
-        return null;
+    public int getFinishCalled() {
+        return finishCalled;
     }
 
-    public void assertContains(PlacexTestRow row) throws ParseException {
-        PhotonDoc doc = null;
-        for (Map.Entry<Integer, PhotonDoc> outdoc : docs) {
-            if (outdoc.getValue().getPlaceId() == row.getPlaceId()) {
-                assertNull(doc, "Row is contained multiple times");
-                doc = outdoc.getValue();
-            }
-        }
-
-        assertNotNull(doc, "Row not found");
-
-        row.assertEquals(doc);
+    public ObjectAssert<PhotonDoc> assertThatByPlaceId(long placeId) {
+        return assertThat(docs.stream().filter(d -> d.getPlaceId() == placeId))
+                .hasSize(1)
+                .first();
     }
 
-    public void assertContains(PlacexTestRow row, String housenumber) throws ParseException {
-        PhotonDoc doc = null;
-        for (Map.Entry<Integer, PhotonDoc> outdoc : docs) {
-            if (outdoc.getValue().getPlaceId() == row.getPlaceId()
-                    && housenumber.equals(outdoc.getValue().getHouseNumber())) {
-                assertNull(doc, "Row is contained multiple times");
-                doc = outdoc.getValue();
-            }
-        }
+    public ObjectAssert<PhotonDoc> assertThatByRow(PlacexTestRow row) {
+        return assertThatByPlaceId(row.getPlaceId())
+                .satisfies(row::assertEquals);
+    }
 
-        assertNotNull(doc, "Row not found");
+    public ListAssert<PhotonDoc> assertThatAllByRow(OsmlineTestRow row) {
+        return assertThat(docs.stream().filter(d -> d.getPlaceId() == row.getPlaceId()))
+                .isNotEmpty()
+                .allSatisfy(row::assertEquals);
+    }
 
-        row.assertEquals(doc);
-    }}
+    public ListAssert<PhotonDoc> assertThatAllByRow(PlacexTestRow row) {
+        return assertThat(docs.stream().filter(d -> d.getPlaceId() == row.getPlaceId()))
+                .isNotEmpty()
+                .allSatisfy(row::assertEquals);
+    }
+}

@@ -1,9 +1,10 @@
 package de.komoot.photon.nominatim;
 
 import de.komoot.photon.DatabaseProperties;
-import org.locationtech.jts.io.ParseException;
-import de.komoot.photon.AssertUtil;
-import de.komoot.photon.PhotonDoc;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.PrecisionModel;
 import de.komoot.photon.ReflectionTestUtil;
 import de.komoot.photon.nominatim.model.AddressType;
 import de.komoot.photon.nominatim.testdb.CollectingImporter;
@@ -12,10 +13,8 @@ import de.komoot.photon.nominatim.testdb.OsmlineTestRow;
 import de.komoot.photon.nominatim.testdb.PlacexTestRow;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.Date;
-import java.util.HashSet;
+import java.util.*;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
@@ -24,10 +23,17 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import static org.assertj.core.api.Assertions.*;
+
 class NominatimConnectorDBTest {
+    private static final GeometryFactory FACTORY = new GeometryFactory(new PrecisionModel(), 4326);
     private NominatimImporter connector;
     private CollectingImporter importer;
     private JdbcTemplate jdbc;
+
+    private boolean supportGeometries = false;
+
+    private static final Map<String, String> COUNTRY_NAMES = Map.of("default", "USA", "en", "United States");
 
     @BeforeEach
     void setup() {
@@ -37,19 +43,29 @@ class NominatimConnectorDBTest {
                 .addScript("/test-schema.sql")
                 .build();
 
+        jdbc = new JdbcTemplate(db);
+    }
 
+    protected Point makePoint(double x, double y) {
+        return FACTORY.createPoint(new Coordinate(x, y));
+    }
+
+    private void setupImporter() {
         DatabaseProperties dbProperties = new DatabaseProperties();
-        dbProperties.setSupportGeometries(true);
+        dbProperties.setSupportGeometries(supportGeometries);
+        dbProperties.setLanguages(new String[]{"en", "de", "fr"});
         connector = new NominatimImporter(null, 0, null, null, null, new H2DataAdapter(), dbProperties);
         importer = new CollectingImporter();
 
-        jdbc = new JdbcTemplate(db);
-        TransactionTemplate txTemplate = new TransactionTemplate(new DataSourceTransactionManager(db));
+        assert(jdbc.getDataSource() != null);
+        TransactionTemplate txTemplate = new TransactionTemplate(new DataSourceTransactionManager(jdbc.getDataSource()));
         ReflectionTestUtil.setFieldValue(connector, NominatimConnector.class, "template", jdbc);
         ReflectionTestUtil.setFieldValue(connector, NominatimConnector.class, "txTemplate", txTemplate);
     }
 
     private void readEntireDatabase() {
+        setupImporter();
+
         ImportThread importThread = new ImportThread(importer);
         try {
             for (var country: connector.getCountriesFromDatabase()) {
@@ -58,23 +74,25 @@ class NominatimConnectorDBTest {
         } finally {
             importThread.finish();
         }
-
     }
 
     @Test
-    void testSimpleNodeImport() throws ParseException {
+    void testSimpleNodeImport() {
         PlacexTestRow place = new PlacexTestRow("amenity", "cafe").name("Spot").add(jdbc);
         readEntireDatabase();
 
-        assertEquals(1, importer.size());
-        importer.assertContains(place);
+        assertThat(importer).singleElement()
+                .satisfies(place::assertEquals)
+                .hasFieldOrPropertyWithValue("geometry", null);
     }
 
     @Test
-    void testImportForSelectedCountries() throws ParseException {
+    void testImportForSelectedCountries() {
         PlacexTestRow place = new PlacexTestRow("amenity", "cafe").name("SpotHU").country("hu").add(jdbc);
         new PlacexTestRow("amenity", "cafe").name("SpotDE").country("de").add(jdbc);
         new PlacexTestRow("amenity", "cafe").name("SpotUS").country("us").add(jdbc);
+
+        setupImporter();
 
         ImportThread importThread = new ImportThread(importer);
         try {
@@ -85,8 +103,8 @@ class NominatimConnectorDBTest {
             importThread.finish();
         }
 
-        assertEquals(1, importer.size());
-        importer.assertContains(place);
+        assertThat(importer.getFinishCalled()).isEqualTo(1);
+        assertThat(importer).singleElement().satisfies(place::assertEquals);
     }
 
     @Test
@@ -96,12 +114,12 @@ class NominatimConnectorDBTest {
 
         readEntireDatabase();
 
-        assertEquals(0.5, importer.get(place1.getPlaceId()).getImportance(), 0.00001);
-        assertEquals(0.3, importer.get(place2.getPlaceId()).getImportance(), 0.00001);
+        importer.assertThatByRow(place1).hasFieldOrPropertyWithValue("importance", 0.5);
+        importer.assertThatByRow(place2).hasFieldOrPropertyWithValue("importance", 0.3);
     }
 
     @Test
-    void testPlaceAddress() throws ParseException {
+    void testPlaceAddress() {
         PlacexTestRow place = PlacexTestRow.make_street("Burg").add(jdbc);
 
         place.addAddresslines(jdbc,
@@ -113,20 +131,18 @@ class NominatimConnectorDBTest {
 
         readEntireDatabase();
 
-        assertEquals(6, importer.size());
-        importer.assertContains(place);
-
-        PhotonDoc doc = importer.get(place);
-
-        AssertUtil.assertAddressName("Le Coin", doc, AddressType.LOCALITY);
-        AssertUtil.assertAddressName("Crampton", doc, AddressType.DISTRICT);
-        AssertUtil.assertAddressName("Grand Junction", doc, AddressType.CITY);
-        AssertUtil.assertAddressName("Lost County", doc, AddressType.COUNTY);
-        AssertUtil.assertAddressName("Le Havre", doc, AddressType.STATE);
+        importer.assertThatByRow(place)
+                .hasFieldOrPropertyWithValue("addressParts", Map.of(
+                        AddressType.LOCALITY, Map.of("default", "Le Coin"),
+                        AddressType.DISTRICT, Map.of("default", "Crampton"),
+                        AddressType.CITY, Map.of("default", "Grand Junction"),
+                        AddressType.COUNTY, Map.of("default", "Lost County"),
+                        AddressType.STATE, Map.of("default", "Le Havre"),
+                        AddressType.COUNTRY, COUNTRY_NAMES));
     }
 
     @Test
-    void testPlaceAddressAddressRank0() throws ParseException {
+    void testPlaceAddressAddressRank0() {
         PlacexTestRow place = new PlacexTestRow("natural", "water").name("Lake Tee").rankAddress(0).rankSearch(20).add(jdbc);
 
         place.addAddresslines(jdbc,
@@ -135,17 +151,15 @@ class NominatimConnectorDBTest {
 
         readEntireDatabase();
 
-        assertEquals(3, importer.size());
-        importer.assertContains(place);
-
-        PhotonDoc doc = importer.get(place);
-
-        AssertUtil.assertAddressName("Lost County", doc, AddressType.COUNTY);
-        AssertUtil.assertAddressName("Le Havre", doc, AddressType.STATE);
+        importer.assertThatByRow(place)
+                .hasFieldOrPropertyWithValue("addressParts", Map.of(
+                        AddressType.COUNTY, Map.of("default", "Lost County"),
+                        AddressType.STATE, Map.of("default", "Le Havre"),
+                        AddressType.COUNTRY, COUNTRY_NAMES));
     }
 
     @Test
-    void testPoiAddress() throws ParseException {
+    void testPoiAddress() {
         PlacexTestRow parent = PlacexTestRow.make_street("Burg").add(jdbc);
 
         parent.addAddresslines(jdbc,
@@ -155,21 +169,15 @@ class NominatimConnectorDBTest {
 
         readEntireDatabase();
 
-        assertEquals(3, importer.size());
-        importer.assertContains(place);
-
-        PhotonDoc doc = importer.get(place);
-
-        AssertUtil.assertAddressName("Burg", doc, AddressType.STREET);
-        AssertUtil.assertNoAddress(doc, AddressType.LOCALITY);
-        AssertUtil.assertNoAddress(doc, AddressType.DISTRICT);
-        AssertUtil.assertAddressName("Grand Junction", doc, AddressType.CITY);
-        AssertUtil.assertNoAddress(doc, AddressType.COUNTY);
-        AssertUtil.assertNoAddress(doc, AddressType.STATE);
+        importer.assertThatByRow(place)
+                .hasFieldOrPropertyWithValue("addressParts", Map.of(
+                        AddressType.STREET, Map.of("default", "Burg"),
+                        AddressType.CITY, Map.of("default", "Grand Junction"),
+                        AddressType.COUNTRY, COUNTRY_NAMES));
     }
 
     @Test
-    void testInterpolationPoint() throws ParseException {
+    void testInterpolationPoint() {
         PlacexTestRow street = PlacexTestRow.make_street("La strada").add(jdbc);
 
         OsmlineTestRow osmline =
@@ -177,19 +185,13 @@ class NominatimConnectorDBTest {
 
         readEntireDatabase();
 
-        assertEquals(2, importer.size());
-
-        PlacexTestRow expect = new PlacexTestRow("place", "house_number")
-                .id(osmline.getPlaceId())
-                .parent(street)
-                .osm("W", 23)
-                .centroid(45.0, 23.0);
-
-        importer.assertContains(expect, "45");
+        importer.assertThatAllByRow(osmline).singleElement()
+                .hasFieldOrPropertyWithValue("houseNumber", "45")
+                .hasFieldOrPropertyWithValue("centroid", makePoint(45.0, 23.0));
     }
 
     @Test
-    void testInterpolationAny() throws ParseException {
+    void testInterpolationAny() {
         PlacexTestRow street = PlacexTestRow.make_street("La strada").add(jdbc);
 
         OsmlineTestRow osmline =
@@ -197,17 +199,21 @@ class NominatimConnectorDBTest {
 
         readEntireDatabase();
 
-        assertEquals(12, importer.size());
-
-        PlacexTestRow expect = new PlacexTestRow("place", "house_number").id(osmline.getPlaceId()).parent(street).osm("W", 23);
+        var expect = importer.assertThatAllByRow(osmline);
 
         for (int i = 1; i <= 11; ++i) {
-            importer.assertContains(expect.centroid(0, (i - 1) * 0.1), String.valueOf(i));
+            final var idx = i;
+            expect.withFailMessage("Entry for housenumber %s failed", idx)
+                    .satisfies(d -> {
+                        assertThatObject(d.getCentroid()).isEqualTo(makePoint(0, (idx - 1) * 0.1));
+                        assertThat(d.getHouseNumber()).isEqualTo(String.valueOf(idx));
+                    },
+                    atIndex(idx - 1));
         }
     }
 
     @Test
-    void testInterpolationWithSteps() throws ParseException {
+    void testInterpolationWithSteps() {
         PlacexTestRow street = PlacexTestRow.make_street("La strada").add(jdbc);
 
         OsmlineTestRow osmline =
@@ -215,12 +221,15 @@ class NominatimConnectorDBTest {
 
         readEntireDatabase();
 
-        assertEquals(7, importer.size());
-
-        PlacexTestRow expect = new PlacexTestRow("place", "house_number").id(osmline.getPlaceId()).parent(street).osm("W", 23);
+        var expect = importer.assertThatAllByRow(osmline);
 
         for (int i = 0; i < 6; ++i) {
-            importer.assertContains(expect.centroid(0, i * 0.2), String.valueOf(10 + i * 2));
+            final var idx = i;
+            expect.satisfies(d -> {
+                        assertThatObject(d.getCentroid()).isEqualTo(makePoint(0, idx * 0.2));
+                        assertThat(d.getHouseNumber()).isEqualTo(String.valueOf(10 + idx * 2));
+                    },
+                    atIndex(i));
         }
     }
 
@@ -239,12 +248,14 @@ class NominatimConnectorDBTest {
 
         readEntireDatabase();
 
-        assertEquals(3, importer.size());
-
-        PhotonDoc doc = importer.get(place);
-
-        AssertUtil.assertAddressName("Dorf", doc, AddressType.CITY);
-        assertEquals(new HashSet<>(munip.getNames().values()), doc.getContext().get("default"));
+        importer.assertThatByRow(place)
+                .hasFieldOrPropertyWithValue("addressParts", Map.of(
+                        AddressType.CITY, Map.of("default", "Dorf"),
+                        AddressType.COUNTRY, COUNTRY_NAMES
+                ))
+                .hasFieldOrPropertyWithValue("context", Map.of(
+                        "default", Set.of("Gemeinde")
+                ));
     }
 
     /**
@@ -259,78 +270,96 @@ class NominatimConnectorDBTest {
 
         readEntireDatabase();
 
-        assertEquals(2, importer.size());
-
-        PhotonDoc doc = importer.get(village);
-
-        AssertUtil.assertNoAddress(doc, AddressType.CITY);
-        assertEquals(new HashSet<>(munip.getNames().values()), doc.getContext().get("default"));
+        importer.assertThatByRow(village)
+                .hasFieldOrPropertyWithValue("addressParts", Map.of(AddressType.COUNTRY, COUNTRY_NAMES))
+                .hasFieldOrPropertyWithValue("context", Map.of(
+                        "default", Set.of("Gemeinde")
+                ));
     }
 
     /**
      * Unnamed objects are imported when they have a housenumber.
      */
     @Test
-    void testUnnamedObjectWithHousenumber() {
+    void testUnnamedObjectWithHousenumberAndStreetAddress() {
         PlacexTestRow parent = PlacexTestRow.make_street("Main St").add(jdbc);
-        PlacexTestRow place = new PlacexTestRow("building", "yes").addr("housenumber", "123").parent(parent).add(jdbc);
+        PlacexTestRow place = new PlacexTestRow("building", "yes")
+                .addr("housenumber", "123")
+                .addr("street", "North Main St")
+                .parent(parent).add(jdbc);
 
         readEntireDatabase();
 
-        assertEquals(2, importer.size());
-
-        PhotonDoc doc = importer.get(place);
-        assertEquals("123", doc.getHouseNumber());
+        importer.assertThatByRow(place)
+                .hasFieldOrPropertyWithValue("houseNumber", "123")
+                .hasFieldOrPropertyWithValue("addressParts", Map.of(
+                        AddressType.STREET, Map.of("default", "North Main St"),
+                        AddressType.COUNTRY, COUNTRY_NAMES
+                ));
     }
 
     /**
      * Semicolon-separated housenumber lists result in multiple iport objects.
      */
     @Test
-    void testObjectWithHousenumberList() throws ParseException {
+    void testObjectWithHousenumberList() {
         PlacexTestRow parent = PlacexTestRow.make_street("Main St").add(jdbc);
         PlacexTestRow place = new PlacexTestRow("building", "yes").addr("housenumber", "1;2a;3").parent(parent).add(jdbc);
 
         readEntireDatabase();
 
-        assertEquals(4, importer.size());
-
-        importer.assertContains(place, "1");
-        importer.assertContains(place, "2a");
-        importer.assertContains(place, "3");
+        importer.assertThatAllByRow(place)
+                        .allSatisfy(d -> assertThat(d.getAddressParts())
+                                .containsEntry(AddressType.STREET, Map.of("default", "Main St")))
+                .extracting("houseNumber")
+                .containsExactlyInAnyOrder("1", "2a", "3");
     }
 
     /**
      * streetnumbers and conscription numbers are recognised.
      */
     @Test
-    void testObjectWithconscriptionNumber() throws ParseException {
+    void testObjectWithConscriptionNumber() {
         PlacexTestRow parent = PlacexTestRow.make_street("Main St").add(jdbc);
         PlacexTestRow place = new PlacexTestRow("building", "yes")
                 .addr("streetnumber", "34")
                 .addr("conscriptionnumber", "99521")
+                .addr("place", "Village")
                 .parent(parent).add(jdbc);
+
+        place.addAddresslines(jdbc,
+                parent,
+                new PlacexTestRow("place", "city").name("Grand Central").ranks(16).add(jdbc));
 
         readEntireDatabase();
 
-        assertEquals(3, importer.size());
-
-        importer.assertContains(place, "34");
-        importer.assertContains(place, "99521");
+        importer.assertThatAllByRow(place)
+                .anySatisfy(d -> assertThat(d)
+                        .hasFieldOrPropertyWithValue("houseNumber", "34")
+                        .hasFieldOrPropertyWithValue("addressParts", Map.of(
+                                AddressType.STREET, Map.of("default", "Main St"),
+                                AddressType.CITY, Map.of("default", "Grand Central"),
+                                AddressType.COUNTRY, COUNTRY_NAMES
+                        )))
+                .anySatisfy(d -> assertThat(d)
+                        .hasFieldOrPropertyWithValue("houseNumber", "99521")
+                        .hasFieldOrPropertyWithValue("addressParts", Map.of(
+                                AddressType.STREET, Map.of("default", "Village"),
+                                AddressType.CITY, Map.of("default", "Grand Central"),
+                                AddressType.COUNTRY, COUNTRY_NAMES
+                        )));
     }
     /**
      * Unnamed objects are ignored when they do not have a housenumber.
      */
     @Test
     void testUnnamedObjectWithOutHousenumber() {
-        PlacexTestRow parent = PlacexTestRow.make_street("Main St").add(jdbc);
-        new PlacexTestRow("building", "yes").parent(parent).add(jdbc);
+        var parent = PlacexTestRow.make_street("Main St").add(jdbc);
+        var place = new PlacexTestRow("building", "yes").parent(parent).add(jdbc);
 
         readEntireDatabase();
 
-        assertEquals(1, importer.size());
-
-        importer.get(parent);
+        assertThat(importer).allSatisfy(d -> assertThat(d.getPlaceId()).isNotEqualTo(place.getPlaceId()));
     }
 
     /**
@@ -342,21 +371,23 @@ class NominatimConnectorDBTest {
 
         readEntireDatabase();
 
-        assertEquals(1, importer.size());
-
-        assertNull(importer.get(place).getCountryCode());
+        importer.assertThatByRow(place)
+                        .hasFieldOrPropertyWithValue("countryCode", null);
     }
 
     @Test
     void testGeometry() {
+        supportGeometries = true;
         PlacexTestRow place = new PlacexTestRow("building", "yes").name("Oosterbroek Zuivel").country("de").add(jdbc);
         readEntireDatabase();
-        assertEquals(1, importer.size());
-        assertNotNull(importer.get(place).getGeometry());
+
+        importer.assertThatByRow(place)
+                .extracting("geometry").isNotNull();
     }
 
     @Test
     void testUsePostcodeFromPlacex() {
+        supportGeometries = true;
         PlacexTestRow parent = PlacexTestRow.make_street("Main St").add(jdbc);
         PlacexTestRow place = new PlacexTestRow("building", "yes")
                 .addr("housenumber", "34")
@@ -365,9 +396,8 @@ class NominatimConnectorDBTest {
 
         readEntireDatabase();
 
-        PhotonDoc result = importer.get(place);
-
-        assertEquals("AA 44XH", result.getPostcode());
+        importer.assertThatByRow(place)
+                .hasFieldOrPropertyWithValue("postcode", "AA 44XH");
     }
 
     @Test
@@ -384,9 +414,8 @@ class NominatimConnectorDBTest {
 
         readEntireDatabase();
 
-        PhotonDoc result = importer.get(place);
-
-        assertEquals("1234XZ", result.getPostcode());
+        importer.assertThatByRow(place)
+                .hasFieldOrPropertyWithValue("postcode", "1234XZ");
     }
 
     @Test
@@ -404,18 +433,18 @@ class NominatimConnectorDBTest {
 
         readEntireDatabase();
 
-        PhotonDoc result = importer.get(place);
-
-        assertEquals("45-234", result.getPostcode());
+        importer.assertThatByRow(place)
+                .hasFieldOrPropertyWithValue("postcode", "45-234");
     }
 
     @Test
     void testGetImportDate() {
-        Date importDate = connector.getLastImportDate();
-        assertNull(importDate);
-        
-        importDate = new Date();
+        setupImporter();
+
+        assertThat(connector.getLastImportDate()).isNull();
+
+        var importDate = new Date();
         jdbc.update("INSERT INTO import_status(lastimportdate, indexed) VALUES(?, ?)", importDate, true);
-        assertEquals(importDate, connector.getLastImportDate());
+        assertThat(connector.getLastImportDate()).hasSameTimeAs(importDate);
     }
 }

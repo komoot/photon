@@ -8,7 +8,6 @@ import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.io.geojson.GeoJsonWriter;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 

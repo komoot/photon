@@ -253,6 +253,7 @@ public class PhotonDoc {
             return this;
         }
 
+        List<String> langList = Arrays.asList(languages);
         Map<AddressType, Map<String, String>> overlay = new EnumMap<>(AddressType.class);
         for (var entry : address.entrySet()) {
             final String key = entry.getKey();
@@ -264,14 +265,15 @@ public class PhotonDoc {
                         .stream()
                         .filter(e -> key.startsWith(e.getValue()))
                         .findFirst()
-                        .map(e -> {
+                        .ifPresent(e -> {
                             var atype = e.getKey();
                             if (atype == AddressType.OTHER) {
                                 final String[] parts = key.split(":", 0);
+                                final String intKey = parts[parts.length - 1];
                                 if (parts.length == 1) {
                                     context.addName("default", entry.getValue());
-                                } else if (Arrays.stream(languages).noneMatch(l -> l.equals(parts[parts.length - 1]))) {
-                                    context.addName(parts[parts.length - 1], entry.getValue());
+                                } else if (langList.contains(intKey)) {
+                                    context.addName(intKey, entry.getValue());
                                 }
                             } else {
                                 int prefixLen = e.getValue().length();
@@ -279,12 +281,11 @@ public class PhotonDoc {
                                     overlay.computeIfAbsent(atype, k -> new HashMap<>()).put("default", entry.getValue());
                                 } else if (key.charAt(prefixLen) == ':') {
                                     final String intKey = key.substring(prefixLen + 1);
-                                    if (Arrays.stream(languages).noneMatch(l -> l.equals(intKey))) {
-                                        overlay.computeIfAbsent(atype, k -> new HashMap<>()).put("default", entry.getValue());
+                                    if (langList.contains(intKey)) {
+                                        overlay.computeIfAbsent(atype, k -> new HashMap<>()).put(intKey, entry.getValue());
                                     }
                                 }
                             }
-                            return true;
                         });
             }
         }

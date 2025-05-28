@@ -91,7 +91,13 @@ public class JsonDumper implements Importer {
             if (!e.getKey().isBlank()) {
                 writer.writeStartObject();
                 writer.writeObjectField("country_code", e.getKey());
-                writer.writeObjectField("name", e.getValue());
+                writer.writeObjectFieldStart("name");
+                for (var entry : e.getValue().entrySet()) {
+                    writer.writeStringField(
+                            convertNameKey(entry.getKey(), "name"),
+                            entry.getValue());
+                }
+                writer.writeEndObject();
                 writer.writeEndObject();
             }
         }

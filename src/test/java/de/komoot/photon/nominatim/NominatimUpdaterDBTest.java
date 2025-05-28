@@ -1,13 +1,13 @@
 package de.komoot.photon.nominatim;
 
-import de.komoot.photon.AssertUtil;
 import de.komoot.photon.DatabaseProperties;
-import de.komoot.photon.PhotonDoc;
 import de.komoot.photon.ReflectionTestUtil;
 import de.komoot.photon.nominatim.model.AddressType;
 import de.komoot.photon.nominatim.testdb.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
@@ -15,12 +15,16 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.util.Map;
+
+import static org.assertj.core.api.Assertions.*;
 
 class NominatimUpdaterDBTest {
     private NominatimUpdater connector;
     private CollectingUpdater updater;
     private JdbcTemplate jdbc;
+
+    private static final Map<String, String> COUNTRY_NAMES = Map.of("default", "USA", "en", "United States");
 
     @BeforeEach
     void setup() {
@@ -44,208 +48,148 @@ class NominatimUpdaterDBTest {
     @Test
     void testSimpleInsert() {
         PlacexTestRow place = new PlacexTestRow("place", "city").name("Town").add(jdbc);
-        (new PhotonUpdateRow("placex", place.getPlaceId(), "UPDATE")).add(jdbc);
+        new PhotonUpdateRow("placex", place.getPlaceId(), "UPDATE").add(jdbc);
 
         connector.update();
-        updater.assertFinishCalled();
+        assertThat(updater.getFinishCalled()).isEqualTo(1);
 
-        assertEquals(0, updater.numDeleted());
-        assertEquals(1, updater.numCreated());
-
-        updater.assertHasCreated(place.getPlaceId());
+        updater.assertThatDeleted().isEmpty();
+        updater.assertThatCreated().singleElement().satisfies(place::assertEquals);
     }
 
-    @Test
-    void testSimpleDelete() {
+    @ParameterizedTest
+    @ValueSource(strings = {"placex", "location_property_osmline"})
+    void testSimpleDelete(String table) {
         final long place_id = 47836;
-        (new PhotonUpdateRow("placex", place_id, "DELETE")).add(jdbc);
+        new PhotonUpdateRow(table, place_id, "DELETE").add(jdbc);
 
         connector.update();
-        updater.assertFinishCalled();
 
-        assertEquals(1, updater.numDeleted());
-        assertEquals(0, updater.numCreated());
+        updater.assertThatCreated().isEmpty();
+        updater.assertThatDeleted().containsExactly(place_id);
+    }
 
-        updater.assertHasDeleted(place_id);
+    @ParameterizedTest
+    @ValueSource(strings = {"placex", "location_property_osmline"})
+    void testInsertNonExisting(String table) {
+        new PhotonUpdateRow(table, 12345L, "UPDATE").add(jdbc);
+
+        connector.update();
+        assertThat(updater.getFinishCalled()).isEqualTo(1);
+
+        updater.assertThatDeleted().isEmpty();
+        updater.assertThatCreated().isEmpty();
     }
 
     @Test
-    void testSimpleDeleteNonExisting() {
-        final long place_id = 28119;
-        (new PhotonUpdateRow("placex", place_id, "DELETE")).add(jdbc);
+    void testUpdateLowerRanksWithAddress() {
+        PlacexTestRow place = PlacexTestRow.make_street("Burg").add(jdbc);
+
+        place.addAddresslines(jdbc,
+                new PlacexTestRow("place", "neighbourhood").name("Le Coin").ranks(24).add(jdbc),
+                new PlacexTestRow("place", "suburb").name("Crampton").ranks(20).add(jdbc),
+                new PlacexTestRow("place", "city").name("Grand Junction").ranks(16).add(jdbc),
+                new PlacexTestRow("place", "county").name("Lost County").ranks(12).add(jdbc),
+                new PlacexTestRow("place", "state").name("Le Havre").ranks(8).add(jdbc));
+
+
+        new PhotonUpdateRow("placex", place.getPlaceId(), "UPDATE").add(jdbc);
 
         connector.update();
-        updater.assertFinishCalled();
 
-        assertEquals(1, updater.numDeleted());
-        assertEquals(0, updater.numCreated());
-
-        updater.assertHasDeleted(place_id);
+        updater.assertThatDeleted().isEmpty();
+        updater.assertThatCreated().singleElement()
+                .satisfies(place::assertEquals)
+                .hasFieldOrPropertyWithValue("addressParts", Map.of(
+                        AddressType.LOCALITY, Map.of("default", "Le Coin"),
+                        AddressType.DISTRICT, Map.of("default", "Crampton"),
+                        AddressType.CITY, Map.of("default", "Grand Junction"),
+                        AddressType.COUNTY, Map.of("default", "Lost County"),
+                        AddressType.STATE, Map.of("default", "Le Havre"),
+                        AddressType.COUNTRY, COUNTRY_NAMES));
     }
 
     @Test
-    void testDeleteMultiDocument() {
-        final long place_id = 887;
-        (new PhotonUpdateRow("placex", place_id, "DELETE")).add(jdbc);
+    void testUpdatePlaceAddressAddressRank0() {
+        PlacexTestRow place = new PlacexTestRow("natural", "water").name("Lake Tee").rankAddress(0).rankSearch(20).add(jdbc);
+
+        place.addAddresslines(jdbc,
+                new PlacexTestRow("place", "county").name("Lost County").ranks(12).add(jdbc),
+                new PlacexTestRow("place", "state").name("Le Havre").ranks(8).add(jdbc));
+
+        new PhotonUpdateRow("placex", place.getPlaceId(), "UPDATE").add(jdbc);
 
         connector.update();
-        updater.assertFinishCalled();
 
-        assertEquals(1, updater.numDeleted());
-        assertEquals(0, updater.numCreated());
-
-        updater.assertHasDeleted(place_id);
+        updater.assertThatDeleted().isEmpty();
+        updater.assertThatCreated().singleElement()
+                .satisfies(place::assertEquals)
+                .hasFieldOrPropertyWithValue("addressParts", Map.of(
+                        AddressType.COUNTY, Map.of("default", "Lost County"),
+                        AddressType.STATE, Map.of("default", "Le Havre"),
+                        AddressType.COUNTRY, COUNTRY_NAMES));
     }
 
-    @Test
-    void testUpdateLowerRanks() {
-        PlacexTestRow place = new PlacexTestRow("place", "city").name("Town").rankAddress(12).add(jdbc);
-        (new PhotonUpdateRow("placex", place.getPlaceId(), "UPDATE")).add(jdbc);
-
-        connector.update();
-        updater.assertFinishCalled();
-
-        assertEquals(0, updater.numDeleted());
-        assertEquals(1, updater.numCreated());
-
-        updater.assertHasCreated(place.getPlaceId());
-    }
 
     @Test
     void testUpdateSimpleRank30() {
-        PlacexTestRow place = new PlacexTestRow("building", "yes").housenumber(23).rankAddress(30).add(jdbc);
-        (new PhotonUpdateRow("placex", place.getPlaceId(), "UPDATE")).add(jdbc);
+        PlacexTestRow parent = PlacexTestRow.make_street("Burg").add(jdbc);
+
+        parent.addAddresslines(jdbc,
+                new PlacexTestRow("place", "city").name("Grand Junction").ranks(16).add(jdbc));
+
+        PlacexTestRow place = new PlacexTestRow("place", "house").name("House").parent(parent).add(jdbc);
+
+        new PhotonUpdateRow("placex", place.getPlaceId(), "UPDATE").add(jdbc);
 
         connector.update();
-        updater.assertFinishCalled();
 
-        assertEquals(0, updater.numDeleted());
-        assertEquals(1, updater.numCreated());
+        updater.assertThatDeleted().isEmpty();
+        updater.assertThatCreated().singleElement()
+                .satisfies(place::assertEquals)
+                .hasFieldOrPropertyWithValue("addressParts", Map.of(
+                        AddressType.STREET, Map.of("default", "Burg"),
+                        AddressType.CITY, Map.of("default", "Grand Junction"),
+                        AddressType.COUNTRY, COUNTRY_NAMES));
 
-        updater.assertHasCreated(place.getPlaceId());
     }
 
     @Test
     void testUpdateRank30MoreHousenumbers() {
-        PlacexTestRow place = new PlacexTestRow("building", "yes").addr("housenumber", "1;2a;3").rankAddress(30).add(jdbc);
-        (new PhotonUpdateRow("placex", place.getPlaceId(), "UPDATE")).add(jdbc);
+        PlacexTestRow parent = PlacexTestRow.make_street("Main St").add(jdbc);
+        PlacexTestRow place = new PlacexTestRow("building", "yes").addr("housenumber", "1;2a;3").parent(parent).add(jdbc);
+
+        new PhotonUpdateRow("placex", place.getPlaceId(), "UPDATE").add(jdbc);
 
         connector.update();
-        updater.assertFinishCalled();
 
-        assertEquals(0, updater.numDeleted());
-        assertEquals(3, updater.numCreated());
+        updater.assertThatDeleted().isEmpty();
+        updater.assertThatCreated()
+                .allSatisfy(place::assertEquals)
+                .allSatisfy(d -> assertThat(d.getAddressParts())
+                        .containsEntry(AddressType.STREET, Map.of("default", "Main St")))
+                .extracting("houseNumber")
+                .containsExactlyInAnyOrder("1", "2a", "3");
 
-        updater.assertHasCreated(place.getPlaceId(), "1");
-        updater.assertHasCreated(place.getPlaceId(), "2a");
-        updater.assertHasCreated(place.getPlaceId(), "3");
-    }
-
-    @Test
-    void testUpdateRank30SameHousenumbers() {
-        PlacexTestRow place = new PlacexTestRow("building", "yes").addr("housenumber", "1;2a;3").rankAddress(30).add(jdbc);
-        (new PhotonUpdateRow("placex", place.getPlaceId(), "UPDATE")).add(jdbc);
-
-        connector.update();
-        updater.assertFinishCalled();
-
-        assertEquals(0, updater.numDeleted());
-        assertEquals(3, updater.numCreated());
-
-        updater.assertHasCreated(place.getPlaceId(), "1");
-        updater.assertHasCreated(place.getPlaceId(), "2a");
-        updater.assertHasCreated(place.getPlaceId(), "3");
-    }
-
-    @Test
-    void testUpdateRank30LessHousenumbers() {
-        PlacexTestRow place = new PlacexTestRow("building", "yes").addr("housenumber", "1").rankAddress(30).add(jdbc);
-        (new PhotonUpdateRow("placex", place.getPlaceId(), "UPDATE")).add(jdbc);
-
-        connector.update();
-        updater.assertFinishCalled();
-
-        assertEquals(0, updater.numDeleted());
-        assertEquals(1, updater.numCreated());
-
-        updater.assertHasCreated(place.getPlaceId(), "1");
     }
 
     @Test
     void testInsertInterpolation() {
         PlacexTestRow street = PlacexTestRow.make_street("La strada").add(jdbc);
 
-        OsmlineTestRow osmline =
-                new OsmlineTestRow().number(6, 8, 1).parent(street).geom("LINESTRING(0 0, 0 1)").add(jdbc);
-        (new PhotonUpdateRow("location_property_osmline", osmline.getPlaceId(), "UPDATE")).add(jdbc);
+        var osmline = new OsmlineTestRow().number(6, 8, 1).parent(street).geom("LINESTRING(0 0, 0 1)").add(jdbc);
+
+        new PhotonUpdateRow("location_property_osmline", osmline.getPlaceId(), "UPDATE").add(jdbc);
 
         connector.update();
-        updater.assertFinishCalled();
 
-        assertEquals(0, updater.numDeleted());
-        assertEquals(3, updater.numCreated());
-
-        updater.assertHasCreated(osmline.getPlaceId(), "6");
-        updater.assertHasCreated(osmline.getPlaceId(), "7");
-        updater.assertHasCreated(osmline.getPlaceId(), "8");
+        updater.assertThatDeleted().isEmpty();
+        updater.assertThatCreated()
+                .allSatisfy(osmline::assertEquals)
+                .extracting("houseNumber")
+                .containsExactlyInAnyOrder("6", "7", "8");
     }
 
-    @Test
-    void testUpdateInterpolationSameLength() {
-        PlacexTestRow street = PlacexTestRow.make_street("La strada").add(jdbc);
-
-        OsmlineTestRow osmline =
-                new OsmlineTestRow().number(6, 8, 1).parent(street).geom("LINESTRING(0 0, 0 1)").add(jdbc);
-        (new PhotonUpdateRow("location_property_osmline", osmline.getPlaceId(), "UPDATE")).add(jdbc);
-
-        connector.update();
-        updater.assertFinishCalled();
-
-        assertEquals(0, updater.numDeleted());
-        assertEquals(3, updater.numCreated());
-
-        updater.assertHasCreated(osmline.getPlaceId(), "6");
-        updater.assertHasCreated(osmline.getPlaceId(), "7");
-        updater.assertHasCreated(osmline.getPlaceId(), "8");
-    }
-
-    @Test
-    void testUpdateInterpolationLonger() {
-        PlacexTestRow street = PlacexTestRow.make_street("La strada").add(jdbc);
-
-        OsmlineTestRow osmline =
-                new OsmlineTestRow().number(6, 8, 1).parent(street).geom("LINESTRING(0 0, 0 1)").add(jdbc);
-        (new PhotonUpdateRow("location_property_osmline", osmline.getPlaceId(), "UPDATE")).add(jdbc);
-
-        connector.update();
-        updater.assertFinishCalled();
-
-        assertEquals(0, updater.numDeleted());
-        assertEquals(3, updater.numCreated());
-
-        updater.assertHasCreated(osmline.getPlaceId(), "6");
-        updater.assertHasCreated(osmline.getPlaceId(), "7");
-        updater.assertHasCreated(osmline.getPlaceId(), "8");
-    }
-
-    @Test
-    void testUpdateInterpolationShorter() {
-        PlacexTestRow street = PlacexTestRow.make_street("La strada").add(jdbc);
-
-        OsmlineTestRow osmline =
-                new OsmlineTestRow().number(6, 8, 1).parent(street).geom("LINESTRING(0 0, 0 1)").add(jdbc);
-        (new PhotonUpdateRow("location_property_osmline", osmline.getPlaceId(), "UPDATE")).add(jdbc);
-
-        connector.update();
-        updater.assertFinishCalled();
-
-        assertEquals(0, updater.numDeleted());
-        assertEquals(3, updater.numCreated());
-
-        updater.assertHasCreated(osmline.getPlaceId(), "6");
-        updater.assertHasCreated(osmline.getPlaceId(), "7");
-        updater.assertHasCreated(osmline.getPlaceId(), "8");
-    }
 
     @Test
     void testUpdateWithDuplicatesDeleteLast() throws InterruptedException {
@@ -261,37 +205,8 @@ class NominatimUpdaterDBTest {
         (new PhotonUpdateRow("placex", place2.getPlaceId(), "DELETE")).add(jdbc);
 
         connector.update();
-        updater.assertFinishCalled();
 
-        assertEquals(1, updater.numDeleted());
-        assertEquals(1, updater.numCreated());
-
-        updater.assertHasCreated(place1.getPlaceId());
-        updater.assertHasDeleted(place2.getPlaceId());
+        updater.assertThatDeleted().containsExactly(place2.getPlaceId());
+        updater.assertThatCreated().singleElement().satisfies(place1::assertEquals);
     }
-
-    @Test
-    void testUpdateWithAddressLowerRanks() {
-        PlacexTestRow place = PlacexTestRow.make_street("Burg").add(jdbc);
-        place.addAddresslines(jdbc,
-                new PlacexTestRow("place", "neighbourhood").name("Le Coin").ranks(24).add(jdbc),
-                new PlacexTestRow("place", "suburb").name("Crampton").ranks(20).add(jdbc),
-                new PlacexTestRow("place", "city").name("Grand Junction").ranks(16).add(jdbc),
-                new PlacexTestRow("place", "county").name("Lost County").ranks(12).add(jdbc),
-                new PlacexTestRow("place", "state").name("Le Havre").ranks(8).add(jdbc));
-        (new PhotonUpdateRow("placex", place.getPlaceId(), "UPDATE")).add(jdbc);
-        connector.update();
-        updater.assertFinishCalled();
-        assertEquals(0, updater.numDeleted());
-        assertEquals(1, updater.numCreated());
-        updater.assertHasCreated(place.getPlaceId());
-        PhotonDoc doc = updater.getCreated(place.getPlaceId(), 0);
-        AssertUtil.assertAddressName("Le Coin", doc, AddressType.LOCALITY);
-        AssertUtil.assertAddressName("Crampton", doc, AddressType.DISTRICT);
-        AssertUtil.assertAddressName("Grand Junction", doc, AddressType.CITY);
-        AssertUtil.assertAddressName("Lost County", doc, AddressType.COUNTY);
-        AssertUtil.assertAddressName("Le Havre", doc, AddressType.STATE);
-    }
-
-
 }

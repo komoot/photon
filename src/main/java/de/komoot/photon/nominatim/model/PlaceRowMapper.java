@@ -39,6 +39,11 @@ public class PlaceRowMapper implements RowMapper<PhotonDoc> {
                 .rankAddress(rs.getInt("rank_address"))
                 .postcode(rs.getString("postcode"));
 
+        final var admin_level = rs.getInt("admin_level");
+        if (admin_level > 0 && admin_level < 15) {
+            doc.adminLevel(admin_level);
+        }
+
         if (useGeometryColumn) {
             try {
                 doc.geometry(dbutils.extractGeometry(rs, "geometry"));
