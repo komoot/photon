@@ -9,6 +9,7 @@ import de.komoot.photon.PhotonDoc;
 import de.komoot.photon.UsageException;
 import de.komoot.photon.nominatim.ImportThread;
 import de.komoot.photon.nominatim.model.AddressRow;
+import de.komoot.photon.nominatim.model.NameMap;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -22,7 +23,7 @@ public class JsonReader {
 
     private final JsonParser parser;
     private NominatimDumpHeader header = null;
-    private final Map<String, Map<String, String>> countryNames = new HashMap<>();
+    private final Map<String, NameMap> countryNames = new HashMap<>();
     private final Map<Long, AddressRow> addressCache = new HashMap<>();
 
     private boolean useFullGeometries = false;
@@ -153,7 +154,8 @@ public class JsonReader {
                 }
                 while (parser.nextToken() != JsonToken.END_ARRAY) {
                     var cinfo = parser.readValueAs(CountryInfo.class);
-                    countryNames.put(cinfo.getCountryCode().toUpperCase(), cinfo.getName());
+                    countryNames.put(cinfo.getCountryCode().toUpperCase(),
+                                     NameMap.makeForPlace(cinfo.getName(), languages));
                 }
             } else {
                 LOGGER.warn("Unknown document type '{}'. Ignored.", docType);
@@ -208,7 +210,7 @@ public class JsonReader {
             }
         }
 
-        LOGGER.error("Missing 'properties' field at {}", parser.currentLocation());
+        LOGGER.error("Missing 'content' field at {}", parser.currentLocation());
         throw new UsageException("Invalid dump file.");
     }
 

@@ -5,6 +5,7 @@ import de.komoot.photon.ReflectionTestUtil;
 import de.komoot.photon.nominatim.ImportThread;
 import de.komoot.photon.nominatim.NominatimConnector;
 import de.komoot.photon.nominatim.NominatimImporter;
+import de.komoot.photon.nominatim.model.NameMap;
 import de.komoot.photon.nominatim.testdb.H2DataAdapter;
 import de.komoot.photon.nominatim.testdb.OsmlineTestRow;
 import de.komoot.photon.nominatim.testdb.PlacexTestRow;
@@ -81,7 +82,7 @@ class JsonDumperTest {
     }
 
     private String filterByPlaceId(List<String> results, long placeID) {
-        return results.stream().filter(s -> s.contains(String.format("\"place_id\":%d,", placeID))).findFirst().get();
+        return results.stream().filter(s -> s.contains(String.format("\"place_id\":%d,", placeID))).findFirst().orElse(null);
     }
 
     private JsonMapAssert assertThatPlaceDocument(List<String> results, long placeID) {
@@ -100,6 +101,7 @@ class JsonDumperTest {
                 .rankSearch(27)
                 .rankAddress(26)
                 .importance(0.123)
+                .adminLevel(10)
                 .country("hu")
                 .name("Spot")
                 .name("ref", "34")
@@ -119,8 +121,9 @@ class JsonDumperTest {
                 .containsEntry("categories", List.of("osm.highway.residential"))
                 .containsEntry("rank_address", 26)
                 .containsEntry("importance", 0.123)
+                .containsEntry("admin_level", 10)
                 .containsEntry("country_code", "hu")
-                .doesNotContainKeys("parent_place_id", "admin_level", "postcode", "extra")
+                .doesNotContainKeys("parent_place_id", "postcode", "extra")
                 .containsEntry("name", Map.of(
                         "name", "Spot",
                         "name:de", "Sport"));
@@ -128,7 +131,7 @@ class JsonDumperTest {
 
     @Test
     void testPlaceAddress() throws IOException {
-        PlacexTestRow place = PlacexTestRow.make_street("Burg").add(jdbc);
+        PlacexTestRow place = PlacexTestRow.make_street("Burg").postcode("55771").add(jdbc);
 
         place.addAddresslines(jdbc,
                 new PlacexTestRow("place", "neighbourhood").name("Le Coin").ranks(24).add(jdbc),
@@ -143,6 +146,8 @@ class JsonDumperTest {
 
         assertThatPlaceDocument(results, place.getPlaceId())
                 .containsEntry("name", Map.of("name", "Burg"))
+                .containsEntry("postcode", "55771")
+                .doesNotContainKeys("admin_level")
                 .containsEntry("address", Map.of(
                         "state", "Le Havre",
                         "county", "Lost County",
@@ -154,7 +159,7 @@ class JsonDumperTest {
     }
 
     @Test
-    void testInterpolationImport() throws IOException {
+    void testInterpolationExport() throws IOException {
         PlacexTestRow street = PlacexTestRow.make_street("La strada").add(jdbc);
 
         OsmlineTestRow osmline =
@@ -180,7 +185,11 @@ class JsonDumperTest {
         PlacexTestRow place = PlacexTestRow.make_street("Main Street").add(jdbc);
 
         place.addAddresslines(jdbc,
-                new PlacexTestRow("place", "municipality").name("Gemeinde").ranks(14).add(jdbc),
+                new PlacexTestRow("place", "municipality")
+                        .name("Gemeinde")
+                        .name("name:en", "Ville")
+                        .name("name:es", "Lugar")
+                        .ranks(14).add(jdbc),
                 new PlacexTestRow("place", "village").name("Dorf").ranks(16).add(jdbc)
         );
 
@@ -191,12 +200,13 @@ class JsonDumperTest {
         assertThatPlaceDocument(results, place.getPlaceId())
                 .containsEntry("address", Map.of(
                         "city", "Dorf",
-                        "other1", "Gemeinde"
+                        "other1", "Gemeinde",
+                        "other1:en", "Ville"
                 ));
     }
 
     @Test
-    void testImportForSelectedCountries() throws IOException {
+    void testExportForSelectedCountries() throws IOException {
         PlacexTestRow place = new PlacexTestRow("amenity", "cafe").name("SpotHU").country("hu").add(jdbc);
         new PlacexTestRow("amenity", "cafe").name("SpotDE").country("de").add(jdbc);
         new PlacexTestRow("amenity", "cafe").name("SpotUS").country("us").add(jdbc);
@@ -302,5 +312,42 @@ class JsonDumperTest {
 
         assertThatPlaceDocument(results, place.getPlaceId())
                 .containsEntry("extra", Map.of("maxspeed", "120"));
+    }
+
+    @Test
+    void testHeaderOutput() throws IOException {
+        final var outCapture = new ByteArrayOutputStream();
+
+        System.setOut(new PrintStream(outCapture));
+        try {
+            JsonDumper dumper = new JsonDumper("-", new DatabaseProperties());
+            dumper.writeHeader(Map.of(
+                            "ch", NameMap.makeForPlace(Map.of(
+                                    "name", "Schweiz/Suisse",
+                                    "name:de", "Schweiz",
+                                    "name:fr", "Suisse"), new String[]{"fr"}),
+                            "", new NameMap()));
+            dumper.finish();
+        } finally {
+            System.setOut(stdout);
+        }
+
+        var lines = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(outCapture.toByteArray())))
+                .lines().collect(Collectors.toList());
+
+        assertThat(lines).hasSize(2);
+
+        assertThatJson(lines.get(0)).isObject()
+                .containsEntry("type", "NominatimDumpFile")
+                .node("content").isObject()
+                .containsEntry("version", NominatimDumpHeader.EXPECTED_VERSION)
+                .containsKeys("generator", "database_version", "data_timestamp", "features");
+
+        assertThatJson(lines.get(1)).isObject()
+                .containsEntry("type", "CountryInfo")
+                .node("content").isArray().singleElement().isObject()
+                .containsEntry("country_code", "ch")
+                .containsEntry("name", Map.of("name", "Schweiz/Suisse", "name:fr", "Suisse"));
+
     }
 }
