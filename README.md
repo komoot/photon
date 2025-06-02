@@ -295,7 +295,7 @@ import are valid for a JSON dump as well. To dump the data to standard output
 To read a JSON dump previously created with photon, use the following command:
 
 ```
-java -jar photon-*.jar -import-file <filename>
+java -jar photon-*.jar -nominatim-import -import-file <filename>
 ```
 
 When the filename is `-`, then photon reads from standard input allowing you
