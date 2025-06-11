@@ -13,6 +13,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import java.nio.file.Path;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 
@@ -30,6 +31,7 @@ class ApiIntegrationTest extends ApiBaseTester {
     void setUp(@TempDir Path dataDirectory) throws Exception {
         getProperties().setSupportGeometries(true);
         getProperties().setImportDate(TEST_DATE);
+        getProperties().setExtraTags(List.of("transport_modes"));
         setUpES(dataDirectory);
         Importer instance = makeImporter();
         instance.add(List.of(new PhotonDoc()
@@ -52,6 +54,14 @@ class ApiIntegrationTest extends ApiBaseTester {
                 .centroid(makePoint(13.39026, 52.54714))
                 .geometry(makeDocGeometry("LINESTRING (30 10, 10 30, 40 40)"))
                 .names(makeDocNames("name", "berlin"))
+        ));
+        instance.add(List.of(new PhotonDoc()
+                .placeId(1003).osmType("W").osmId(1003).tagKey("place").tagValue("foo")
+                .importance(0.3).rankAddress(25)
+                .centroid(makePoint(10.75305, 59.91035))
+                .geometry(makeDocGeometry("LINESTRING (30 10, 10 30, 40 40)"))
+                .names(makeDocNames("name", "oslo"))
+                .extraTags(Map.of("transport_modes", "onstreetTram,onstreetBus"))
         ));
 
         instance.finish();
@@ -320,5 +330,17 @@ class ApiIntegrationTest extends ApiBaseTester {
     void testSearchBadLocationBiasScale(String param) {
         assertHttpError("/api?q=berlin&lat=52.54714&lon=13.39026&location_bias_scale=" + param, 400);
     }
-}
 
+    @Test
+    void testExtraTags() throws Exception {
+        var obj = assertThatJson(readURL("/api?q=oslo&limit=1"))
+                .isObject()
+                .node("features").isArray().hasSize(1)
+                .element(0).isObject();
+
+        obj.node("properties").isObject()
+                .containsEntry("name", "oslo")
+                .node("extra").isObject()
+                .containsEntry("transport_modes", "onstreetTram,onstreetBus");
+    }
+}

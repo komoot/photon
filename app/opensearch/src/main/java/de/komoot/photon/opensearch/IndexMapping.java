@@ -64,6 +64,19 @@ public class IndexMapping {
         return this;
     }
 
+    public IndexMapping addExtraTags(List<String> extraTagsFromCmd) {
+        if (extraTagsFromCmd == null || extraTagsFromCmd.isEmpty()) {
+            return this;
+        }
+
+        mappings.properties("extra", b -> b.object(o -> o.dynamic(DynamicMapping.True)));
+
+        for (String tagKey : extraTagsFromCmd) {
+            mappings.properties("extra." + tagKey, b -> b.keyword(p -> p.index(true)));
+        }
+        return this;
+    }
+
     private void setupBaseMappings() {
         mappings = new PutMappingRequest.Builder();
 
