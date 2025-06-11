@@ -22,7 +22,7 @@ public demo server at [photon.komoot.io](https://photon.komoot.io).
 - filter by bounding box
 - reverse geocode a coordinate to an address
 - OSM data import (built upon [Nominatim](https://nominatim.org)) inclusive continuous updates
-- import and export as JSON dumps
+- import and export dumps in concatenated JSON format
 
 ## Demo server
 
@@ -286,13 +286,13 @@ where NOMINATIM_DIR is the project directory of your Nominatim installation.
 
 Imports normally write the data directly into a ElasticSearch/OpenSearch
 database. When adding the parameter `-json <filename>` the data is written
-out as a JSON dump file instead. All parameter that influence a database
-import are valid for a JSON dump as well. To dump the data to standard output
-(for example, to directly pack the data), use `-json -`.
+out as a newline-delimited JSON dump file instead. All parameter that influence
+a database import are valid for a JSON dump as well. To dump the data to
+standard output (for example, to directly pack the data), use `-json -`.
 
 ### Importing data from a JSON dump
 
-To read a JSON dump previously created with photon, use the following command:
+To read a dump file previously created with photon, use the following command:
 
 ```
 java -jar photon-*.jar -nominatim-import -import-file <filename>
