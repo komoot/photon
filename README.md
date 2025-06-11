@@ -105,6 +105,13 @@ wget -O - https://download1.graphhopper.com/public/photon-db-latest.tar.bz2 | pb
 
 Don't forget to adapt the directory to **match your photon version**.
 
+### Updating photon with a new version of the archive
+
+You need to swap out the databases atomically: download and unpack the new version, swap the directories to put the new directory in place of the old one, then restart photon. Now delete the old database. This unfortunately means you need twice the space of the database for updates.
+
+Do not unpack the database in place of the old one. This will lead to corrupted data.
+
+
 ## Building photon from scratch
 
 photon uses gradle for building. To build the package from source make sure you have a JDK installed. Then run:
