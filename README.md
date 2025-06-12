@@ -113,7 +113,7 @@ photon uses gradle for building. To build the package from source make sure you 
 ./gradlew build
 ```
 
-This will build and test photon in the ElasticSearch and OpenSearch version. 
+This will build and test photon in the ElasticSearch and OpenSearch version.
 The final jar can be found in the `target` directory.
 
 ## Usage
@@ -430,6 +430,18 @@ http://localhost:2322/api?q=berlin&layer=city&layer=locality
 ```
 
 Example above will return both cities and localities.
+
+#### Dedupe results
+
+```
+http://localhost:2322/api?q=berlin&dedupe=1
+```
+
+Sometimes you have several objects in OSM identifying the same place or object in reality.
+The simplest case is a street being split into many different OSM ways due to different characteristics.
+Photon will attempt to detect such duplicates and only return one match.
+Setting `dedupe` parameter to `0` disables this deduplication mechanism and ensures that all results are returned.
+By default, Photon will attempt to deduplicate results which have the same `name`, `postcode`, and `osm_value` if exists.
 
 ### Results for Search and Reverse
 

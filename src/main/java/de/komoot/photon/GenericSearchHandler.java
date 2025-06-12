@@ -30,7 +30,9 @@ public class GenericSearchHandler<T extends RequestBase> implements Handler {
         var results = requestHandler.search(searchRequest);
 
         // Further filtering
-        results = new StreetDupesRemover(searchRequest.getLanguage()).execute(results);
+        if (searchRequest.getDedupe()){
+            results = new StreetDupesRemover(searchRequest.getLanguage()).execute(results);
+        }
 
         // Restrict to the requested limit.
         if (results.size() > searchRequest.getLimit()) {

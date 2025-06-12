@@ -8,6 +8,7 @@ public class RequestBase {
     private String language = "default";
     private int limit = 15;
     private boolean debug = false;
+    private boolean dedupe = true;
     private boolean returnGeometry = false;
 
     private final List<TagFilter> osmTagFilters = new ArrayList<>(1);
@@ -23,6 +24,10 @@ public class RequestBase {
 
     public boolean getDebug() {
         return debug;
+    }
+
+    public boolean getDedupe() {
+        return dedupe;
     }
 
     public boolean getReturnGeometry() {
@@ -52,6 +57,12 @@ public class RequestBase {
     public void setDebug(Boolean debug) {
         if (debug != null) {
             this.debug = debug;
+        }
+    }
+
+    public void setDedupe(Boolean dedupe) {
+        if (dedupe != null) {
+            this.dedupe = dedupe;
         }
     }
 

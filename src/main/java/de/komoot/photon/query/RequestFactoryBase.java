@@ -12,7 +12,7 @@ import java.util.Set;
 
 public class RequestFactoryBase {
     protected static final Set<String> BASE_PARAMETERS = Set.of(
-            "lang", "limit", "debug", "geometry", "osm_tag", "layer");
+        "lang", "limit", "debug", "dedupe", "geometry", "osm_tag", "layer");
     private static final List<String> AVAILABLE_LAYERS = AddressType.getNames();
     private static final GeometryFactory GEOMETRY_FACTORY = new GeometryFactory(new PrecisionModel(), 4326);
 
@@ -36,6 +36,8 @@ public class RequestFactoryBase {
                                 .get(), maxResults);
 
         request.setDebug(context.queryParamAsClass("debug", Boolean.class).getOrDefault(false));
+
+        request.setDedupe(context.queryParamAsClass("dedupe", Boolean.class).getOrDefault(true));
 
         request.addLayerFilters(context.queryParamsAsClass("layer", String.class)
                 .allowNullable()
