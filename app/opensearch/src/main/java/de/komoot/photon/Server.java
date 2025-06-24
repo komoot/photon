@@ -79,6 +79,7 @@ public class Server {
             settingsBuilder.put("discovery.type", "single-node");
             settingsBuilder.putList("discovery.seed_hosts", "127.0.0.1:9201");
             settingsBuilder.put("indices.query.bool.max_clause_count", "30000");
+            settingsBuilder.put("index.codec", "best_compression");
         }).build(OpenSearchRunner.newConfigs()
                 .basePath(dataDirectory)
                 .clusterName(clusterName)
@@ -108,6 +109,7 @@ public class Server {
     public void shutdown() {
         if (runner != null) {
             try {
+                LOGGER.info("Shutting down OpenSearch runner");
                 runner.close();
             } catch (IOException e) {
                 LOGGER.error("IO error on closing database", e);
