@@ -89,11 +89,20 @@ class PhotonDocAddressSetTest {
     void testPlaceAddress() {
         assertThat(new PhotonDocAddressSet(baseDoc, Map.of(
                 "housenumber", "34;50 b",
-                "place", "Nowhere",
-                "street", "irrelevant")))
+                "place", "Nowhere")))
                 .satisfiesExactly(
                         d -> assertDocWithHnrAndStreet(d, "34", "Nowhere"),
                         d2 -> assertDocWithHnrAndStreet(d2, "50 b", "Nowhere"));
+    }
+
+    @Test
+    void testPlaceAndStreetAddress() {
+        assertThat(new PhotonDocAddressSet(baseDoc, Map.of(
+                "housenumber", "34",
+                "place", "Nowhere",
+                "street", "Chaussee")))
+                .satisfiesExactly(
+                        d -> assertDocWithHnrAndStreet(d, "34", "Chaussee"));
     }
 
     @Test
@@ -102,7 +111,8 @@ class PhotonDocAddressSetTest {
                 "housenumber", "34/50",
                 "conscriptionnumber", "50",
                 "streetnumber", "34",
-                "place", "Nowhere")))
+                "place", "Nowhere",
+                "street", "Chaussee")))
                 .satisfiesExactly(
                         d -> assertDocWithHnrAndStreet(d, "50", "Nowhere"),
                         d2 -> assertDocWithHnrAndStreet(d2, "34", "Chaussee"));
@@ -117,6 +127,7 @@ class PhotonDocAddressSetTest {
                         d -> assertDocWithHnrAndStreet(d, "1", "12")
                 );
     }
+
 
     @ParameterizedTest
     @ValueSource(strings = {

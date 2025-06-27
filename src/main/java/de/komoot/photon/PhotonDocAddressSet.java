@@ -31,30 +31,24 @@ public class PhotonDocAddressSet implements Iterable<PhotonDoc> {
     }
 
     private void addPlaceAddress(PhotonDoc base, Map<String, String> address, String key) {
-        Map<AddressType, Map<String, String>> placeAddress = null;
-        for (String hnr : splitHousenumber(address, key)) {
-            if (placeAddress == null) {
-                placeAddress = new EnumMap<>(AddressType.class);
-
-                for (var entry : base.getAddressParts().entrySet()) {
-                    if (entry.getKey() != AddressType.STREET) {
-                        placeAddress.put(entry.getKey(), entry.getValue());
-                    }
+        final String place = address.get("place");
+        if (place != null && !place.isBlank()) {
+            Map<AddressType, Map<String, String>> placeAddress = null;
+            for (String hnr : splitHousenumber(address, key)) {
+                if (placeAddress == null) {
+                    placeAddress = copyAddressWithStreet(base, place);
                 }
 
-                final String place = address.get("place");
-                if (place != null && !place.isBlank()) {
-                    placeAddress.put(AddressType.STREET, Map.of("default", place));
-                }
+                docs.add(new PhotonDoc(base).replaceAddress(placeAddress).houseNumber(hnr));
             }
-
-            docs.add(new PhotonDoc(base).replaceAddress(placeAddress).houseNumber(hnr));
         }
     }
 
     private void addStreetAddress(PhotonDoc base, Map<String, String> address, String key) {
-        for (String hnr : splitHousenumber(address, key)) {
-            docs.add(new PhotonDoc(base).houseNumber(hnr));
+        if (address.containsKey("street")) {
+            for (String hnr : splitHousenumber(address, key)) {
+                docs.add(new PhotonDoc(base).houseNumber(hnr));
+            }
         }
     }
 
@@ -62,22 +56,20 @@ public class PhotonDocAddressSet implements Iterable<PhotonDoc> {
         Map<AddressType, Map<String, String>> placeAddress = null;
         for (String hnr : splitHousenumber(address, key)) {
             if (placeAddress == null) {
-                String place = address.get("place");
-                if (place == null || place.isBlank()) {
-                    place = address.get("block_number");
-                }
-                if (place != null && !place.isBlank()) {
-                    placeAddress = new EnumMap<>(AddressType.class);
-
-                    for (var entry : base.getAddressParts().entrySet()) {
-                        if (entry.getKey() != AddressType.STREET) {
-                            placeAddress.put(entry.getKey(), entry.getValue());
-                        }
-                    }
-
-                    placeAddress.put(AddressType.STREET, Map.of("default", place));
+                String block = address.get("block_number");
+                if (block != null && !block.isBlank()) {
+                    // block numbers replace streets unconditionally.
+                    // We assume that addr:street is a tagging error and ignore it.
+                    placeAddress = copyAddressWithStreet(base, block);
                 } else {
-                    placeAddress = base.getAddressParts();
+                    String place = address.get("place");
+                    // When addr:place and addr:Street appear together, then assume
+                    // that addr:place is a tagging error and ignore it.
+                    if (place != null && !place.isBlank() && !address.containsKey("street")) {
+                        placeAddress = copyAddressWithStreet(base, place);
+                    } else {
+                        placeAddress = base.getAddressParts();
+                    }
                 }
             }
 
@@ -96,6 +88,20 @@ public class PhotonDocAddressSet implements Iterable<PhotonDoc> {
                 .filter(s -> !s.isBlank() && s.length() < 20)
                 .map(String::trim)
                 .toArray(String[]::new);
+    }
+
+    private EnumMap<AddressType, Map<String, String>> copyAddressWithStreet(PhotonDoc base, String streetName) {
+        final EnumMap<AddressType, Map<String, String>> outmap = new EnumMap<>(AddressType.class);
+
+        for (var entry : base.getAddressParts().entrySet()) {
+            if (entry.getKey() != AddressType.STREET) {
+                outmap.put(entry.getKey(), entry.getValue());
+            }
+        }
+
+        outmap.put(AddressType.STREET, Map.of("default", streetName));
+
+        return outmap;
     }
 
 }
