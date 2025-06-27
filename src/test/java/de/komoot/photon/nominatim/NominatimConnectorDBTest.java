@@ -341,6 +341,7 @@ class NominatimConnectorDBTest {
                 .addr("streetnumber", "34")
                 .addr("conscriptionnumber", "99521")
                 .addr("place", "Village")
+                .addr("street", "Main St")
                 .parent(parent).add(jdbc);
 
         place.addAddresslines(jdbc,
