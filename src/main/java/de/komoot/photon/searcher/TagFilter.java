@@ -48,7 +48,7 @@ public class TagFilter {
         String key = null;
         String value = null;
 
-        String[] parts = filter.split(":");
+        String[] parts = splitFilter(filter);
 
         if (parts.length == 2) {
             boolean excludeKey = parts[0].startsWith("!");
@@ -78,6 +78,15 @@ public class TagFilter {
         }
 
         return (kind == null) ? null : new TagFilter(kind, key, value);
+    }
+
+    // Split the filter string by colon, and handle values with colons in "extra" tags.
+    private static String[] splitFilter(String filter) {
+        String[] parts = filter.split(":");
+        if (parts.length > 2 && parts[0].startsWith("extra.")) {
+            return filter.split(":", 2);
+        }
+        return parts;
     }
 
     @Override

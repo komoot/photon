@@ -127,6 +127,7 @@ public class Server {
 
         new IndexMapping(dbProperties.getSupportStructuredQueries())
                 .addLanguages(dbProperties.getLanguages())
+                .addExtraTags(dbProperties.getExtraTags())
                 .putMapping(client, PhotonIndex.NAME);
 
         saveToDatabase(dbProperties);
@@ -147,6 +148,7 @@ public class Server {
         if (dbProperties.getLanguages() != null) {
             (new IndexMapping(dbProperties.getSupportStructuredQueries()))
                     .addLanguages(dbProperties.getLanguages())
+                    .addExtraTags(dbProperties.getExtraTags())
                     .putMapping(client, PhotonIndex.NAME);
         }
     }

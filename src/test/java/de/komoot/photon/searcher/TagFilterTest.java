@@ -29,7 +29,8 @@ class TagFilterTest {
                 arguments(":!path", TagFilterKind.EXCLUDE, null, "path"),
                 arguments("!highway:path", TagFilterKind.EXCLUDE, "highway", "path"),
                 arguments("!highway:!path", TagFilterKind.EXCLUDE, "highway", "path"),
-                arguments("amenity:!post_box", TagFilterKind.EXCLUDE_VALUE, "amenity", "post_box")
+                arguments("amenity:!post_box", TagFilterKind.EXCLUDE_VALUE, "amenity", "post_box"),
+                arguments("extra.transport_modes:onstreetTram", TagFilterKind.INCLUDE, "extra.transport_modes", "onstreetTram")
         );
     }
 
