@@ -23,7 +23,7 @@ import static org.assertj.core.api.Assertions.*;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class QueryReverseTest extends ESBaseTester {
     final Point[] TEST_POINTS = {
-            makePoint(10,10),
+            makePoint(10, 10),
             makePoint(10, 10.1),
             makePoint(10, 10.2),
             makePoint(-10, -10)
@@ -54,11 +54,13 @@ class QueryReverseTest extends ESBaseTester {
         super.tearDown();
     }
 
-    private List<PhotonResult> reverse(double lon, double lat, double radius, int limit) {
+    private List<PhotonResult> reverse(double lon, double lat, double radius, Integer limit) {
         final var request = new ReverseRequest();
         request.setLocation(FACTORY.createPoint(new Coordinate(lon, lat)));
         request.setRadius(radius);
-        request.setLimit(limit, limit);
+        if (limit != null) {
+            request.setLimit(limit, limit);
+        }
 
         return getServer().createReverseHandler(1).search(request);
     }
@@ -69,6 +71,13 @@ class QueryReverseTest extends ESBaseTester {
                 .satisfiesExactly(p -> assertThat(p.get("osm_id")).isEqualTo(100));
     }
 
+    @Test
+    void testDefaultLimitIsOne() {
+        assertThat(reverse(10, 10, 20, null))
+                .satisfiesExactly(
+                        p -> assertThat(p.get("osm_id")).isEqualTo(100));
+    }
+
     @ParameterizedTest
     @ValueSource(ints = {2, 3, 10})
     void testReverseMultiple(int limit) {
@@ -77,6 +86,4 @@ class QueryReverseTest extends ESBaseTester {
                         p -> assertThat(p.get("osm_id")).isEqualTo(100),
                         p -> assertThat(p.get("osm_id")).isEqualTo(101));
     }
-
-
 }

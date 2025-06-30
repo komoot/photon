@@ -185,7 +185,7 @@ class ApiIntegrationTest extends ApiBaseTester {
     @ParameterizedTest
     @FieldSource("BASE_URLS")
     void testManyLayers(String baseUrl) throws Exception {
-        assertThatJson(readURL(baseUrl + "&layer=locality&layer=district")).isObject()
+        assertThatJson(readURL(baseUrl + "&layer=locality&layer=district&limit=20")).isObject()
                 .node("features").isArray().hasSize(2);
     }
 
@@ -198,7 +198,7 @@ class ApiIntegrationTest extends ApiBaseTester {
     @ParameterizedTest
     @FieldSource("BASE_URLS")
     void testOsmKeyFilter(String baseUrl) throws Exception {
-        assertThatJson(readURL(baseUrl + "&osm_tag=place"))
+        assertThatJson(readURL(baseUrl + "&osm_tag=place&limit=20"))
                 .node("features").isArray().hasSizeGreaterThan(1);
     }
 
@@ -219,7 +219,7 @@ class ApiIntegrationTest extends ApiBaseTester {
     @ParameterizedTest
     @FieldSource("BASE_URLS")
     void testOsmValueFilter(String baseUrl) throws Exception {
-        assertThatJson(readURL(baseUrl + "&osm_tag=:hamlet")).isObject()
+        assertThatJson(readURL(baseUrl + "&osm_tag=:hamlet&limit=20")).isObject()
                 .node("features").isArray().hasSize(1)
                 .element(0).isObject()
                 .node("properties").isObject()
@@ -229,7 +229,7 @@ class ApiIntegrationTest extends ApiBaseTester {
     @ParameterizedTest
     @FieldSource("BASE_URLS")
     void testOsmValueFilterNeg(String baseUrl) throws Exception {
-        assertThatJson(readURL(baseUrl + "&layer=locality&layer=district&osm_tag=:!hamlet")).isObject()
+        assertThatJson(readURL(baseUrl + "&layer=locality&layer=district&osm_tag=:!hamlet&limit=20")).isObject()
                 .node("features").isArray().hasSize(1)
                 .element(0).isObject()
                 .node("properties").isObject()
@@ -239,7 +239,7 @@ class ApiIntegrationTest extends ApiBaseTester {
     @ParameterizedTest
     @FieldSource("BASE_URLS")
     void testOsmTagFilter(String baseUrl) throws Exception {
-        assertThatJson(readURL(baseUrl + "&osm_tag=place:hamlet")).isObject()
+        assertThatJson(readURL(baseUrl + "&osm_tag=place:hamlet&limit=20")).isObject()
                 .node("features").isArray().hasSize(1)
                 .element(0).isObject()
                 .node("properties").isObject()
@@ -249,7 +249,7 @@ class ApiIntegrationTest extends ApiBaseTester {
     @ParameterizedTest
     @FieldSource("BASE_URLS")
     void testOsmTagFilterNeg(String baseUrl) throws Exception {
-        assertThatJson(readURL(baseUrl + "&layer=locality&layer=district&osm_tag=!place:hamlet")).isObject()
+        assertThatJson(readURL(baseUrl + "&layer=locality&layer=district&osm_tag=!place:hamlet&limit=20")).isObject()
                 .node("features").isArray().hasSize(1)
                 .element(0).isObject()
                 .node("properties").isObject()
