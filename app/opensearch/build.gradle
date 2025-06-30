@@ -1,5 +1,5 @@
 plugins {
-  id 'com.gradleup.shadow' version '8.3.6'
+  id 'com.gradleup.shadow' version '8.3.7'
   id 'application'
   id 'jacoco'
   id 'org.sonarqube' version '6.2.0.5505'
@@ -18,7 +18,7 @@ sourceSets {
 }
 
 dependencies {
-    implementation 'org.opensearch.client:opensearch-java:2.24.0'
+    implementation 'org.opensearch.client:opensearch-java:2.25.0'
     implementation 'org.apache.httpcomponents.client5:httpclient5:5.5'
 
     implementation('org.codelibs.opensearch:opensearch-runner:2.19.1.0') {
