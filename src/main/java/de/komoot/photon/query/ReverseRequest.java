@@ -11,6 +11,10 @@ public class ReverseRequest extends RequestBase {
     private String queryStringFilter;
     private boolean locationDistanceSort = true;
 
+    public ReverseRequest() {
+        setLimit(1, 1);
+    }
+
     public Point getLocation() {
         return location;
     }
