@@ -26,7 +26,7 @@ public class ReverseRequestFactory extends RequestFactoryBase implements Request
         request.setLocation(parseLatLon(context, true));
         request.setRadius(context.queryParamAsClass("radius", Double.class).allowNullable().get());
         request.setQueryStringFilter(context.queryParam("query_string_filter"));
-        request.setLocationDistanceSort(context.queryParamAsClass("distance_sort", Boolean.class).getOrDefault(false));
+        request.setLocationDistanceSort(context.queryParamAsClass("distance_sort", Boolean.class).getOrDefault(true));
 
         return request;
     }
