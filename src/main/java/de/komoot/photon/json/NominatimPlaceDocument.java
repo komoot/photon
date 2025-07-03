@@ -71,22 +71,22 @@ public class NominatimPlaceDocument {
         return doc.getCountryCode();
     }
 
-    @JsonProperty("place_id")
+    @JsonProperty(DumpFields.PLACE_ID)
     void setPlaceId(long placeId) {
         doc.placeId(placeId);
     }
 
-    @JsonProperty("object_type")
+    @JsonProperty(DumpFields.PLACE_OBJECT_TYPE)
     void setOsmType(String osmType) {
         doc.osmType(osmType);
     }
 
-    @JsonProperty("object_id")
+    @JsonProperty(DumpFields.PLACE_OBJECT_ID)
     void setOsmId(long osmId) {
         doc.osmId(osmId);
     }
 
-    @JsonProperty("categories")
+    @JsonProperty(DumpFields.PLACE_CATEGORIES)
     void setCategories(String[] categories) {
         for (var cat : categories) {
             if (cat.startsWith("osm.")) {
@@ -100,65 +100,55 @@ public class NominatimPlaceDocument {
         doc.tagValue("yes");
     }
 
-    @JsonProperty("tag_key")
-    void setTagKey(String tagKey) {
-        doc.tagKey(tagKey);
-    }
-
-    @JsonProperty("tag_value")
-    void setTagValue(String tagValue) {
-        doc.tagValue(tagValue);
-    }
-
-    @JsonProperty("rank_address")
+    @JsonProperty(DumpFields.PLACE_RANK_ADDRESS)
     void setRankAddress(int rankAddress) {
         doc.rankAddress(rankAddress);
     }
 
-    @JsonProperty("admin_level")
+    @JsonProperty(DumpFields.PLACE_ADMIN_LEVEL)
     void setAdminLevel(int adminLevel) { doc.adminLevel(adminLevel); }
 
-    @JsonProperty("importance")
+    @JsonProperty(DumpFields.PLACE_IMPORTANCE)
     void setImportance(double importance) {
         doc.importance(importance);
     }
 
-    @JsonProperty("parent_place_id")
+    @JsonProperty(DumpFields.PLACE_PARENT_PLACE_ID)
     void setParentPlaceId(long parentPlaceId) {
         doc.parentPlaceId(parentPlaceId);
     }
 
-    @JsonProperty("name")
+    @JsonProperty(DumpFields.PLACE_NAMES)
     void setNames(Map<String, String> names) {
         this.names = names;
     }
 
-    @JsonProperty("housenumber")
+    @JsonProperty(DumpFields.PLACE_HOUSENUMBER)
     void setHousenumber(String housenumber) {
         doc.houseNumber(housenumber);
     }
 
-    @JsonProperty("address")
+    @JsonProperty(DumpFields.PLACE_ADDRESS)
     void setAddress(Map<String, String> address) {
         this.address = address;
     }
 
-    @JsonProperty("extratags")
+    @JsonProperty(DumpFields.PLACE_EXTRA_TAGS)
     void setExtratags(Map<String, String> extratags) {
         doc.extraTags(extratags);
     }
 
-    @JsonProperty("postcode")
+    @JsonProperty(DumpFields.PLACE_POSTCODE)
     void setPostcode(String postcode) {
         doc.postcode(postcode);
     }
 
-    @JsonProperty("country_code")
+    @JsonProperty(DumpFields.PLACE_COUNTRY_CODE)
     void setCountryCode(String countryCode) {
         doc.countryCode(countryCode);
     }
 
-    @JsonProperty("centroid")
+    @JsonProperty(DumpFields.PLACE_CENTROID)
     void setCentroid(double[] coordinates) throws IOException {
         if (coordinates.length != 2) {
             throw new IOException("Invalid centroid. Must be an array of two doubles.");
@@ -166,7 +156,7 @@ public class NominatimPlaceDocument {
         doc.centroid(factory.createPoint(new Coordinate(coordinates[0], coordinates[1])));
     }
 
-    @JsonProperty("bbox")
+    @JsonProperty(DumpFields.PLACE_BBOX)
     void setBbox(double[] coordinates) throws IOException {
         if (coordinates.length != 4) {
             throw new IOException("Invalid bbox. Must be an array of four doubles.");
@@ -177,14 +167,14 @@ public class NominatimPlaceDocument {
         }));
     }
 
-    @JsonProperty("geometry")
+    @JsonProperty(DumpFields.PLACE_GEOMETRY)
     void setGeometry(JsonNode geojson) throws ParseException {
         final var geometry = jsonReader.read(geojson.toString());
         doc.geometry(geometry);
         doc.bbox(geometry.getEnvelope());
     }
 
-    @JsonProperty("addresslines")
+    @JsonProperty(DumpFields.PLACE_ADDRESSLINES)
     void setAddressLines(AddressLine[] addressLines) {
         this.addressLines = addressLines;
     }
