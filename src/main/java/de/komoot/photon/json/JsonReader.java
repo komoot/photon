@@ -192,15 +192,16 @@ public class JsonReader {
         }
 
         final String fieldName = parser.nextFieldName();
-        if (!"type".equals(fieldName)) {
-            LOGGER.error("Unexpected field '{}' instead of 'type' at {}", fieldName, parser.currentLocation());
+        if (!DumpFields.DOCUMENT_TYPE.equals(fieldName)) {
+            LOGGER.error("Unexpected field '{}' instead of '{}' at {}",
+                    fieldName, DumpFields.DOCUMENT_TYPE, parser.currentLocation());
             throw new UsageException("Invalid dump file.");
         }
 
         final String documentType = parser.nextTextValue();
 
         while (parser.nextToken() != JsonToken.END_OBJECT) {
-            if ("content".equals(parser.currentName())) {
+            if (DumpFields.DOCUMENT_CONTENT.equals(parser.currentName())) {
                 parser.nextToken();
                 return documentType;
             } else {
@@ -210,7 +211,8 @@ public class JsonReader {
             }
         }
 
-        LOGGER.error("Missing 'content' field at {}", parser.currentLocation());
+        LOGGER.error("Missing '{}' field at {}",
+                DumpFields.DOCUMENT_CONTENT, parser.currentLocation());
         throw new UsageException("Invalid dump file.");
     }
 

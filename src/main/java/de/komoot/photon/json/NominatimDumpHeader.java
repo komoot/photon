@@ -21,6 +21,7 @@ public class NominatimDumpHeader {
     private NominatimDumpFileFeatures features;
     private Map<String, String> extraProperties = new HashMap<>();
 
+    @JsonProperty(DumpFields.HEADER_VERSION)
     void setVersion(String version) {
         if (!EXPECTED_VERSION.equals(version)) {
             LOGGER.error("Dump file header has version '{}'. Expect version '{}'",
@@ -29,16 +30,17 @@ public class NominatimDumpHeader {
         }
     }
 
+    @JsonProperty(DumpFields.HEADER_GENERATOR)
     void setGenerator(String generator) {
         this.generator = generator;
     }
 
-    @JsonProperty("data_timestamp")
+    @JsonProperty(DumpFields.HEADER_DB_TIME)
     void setDataTimestamp(Date timestamp) {
         dataTimestamp = timestamp;
     }
 
-    @JsonProperty("features")
+    @JsonProperty(DumpFields.HEADER_FEATURES)
     void setFeatures(NominatimDumpFileFeatures features) { this.features = features; }
 
     public Date getDataTimestamp() {
