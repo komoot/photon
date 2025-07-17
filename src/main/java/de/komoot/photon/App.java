@@ -67,11 +67,11 @@ public class App {
             return true;
         }
 
-        esServer = new Server(args.getDataDirectory()).start(args.getCluster(), args.getTransportAddresses());
+        esServer = new Server(args.getDataDirectory());
 
-        LOGGER.info("Make sure that the ES cluster is ready, this might take some time.");
-        esServer.waitForReady();
-        LOGGER.info("ES cluster is now ready.");
+        LOGGER.info("Start up database cluster, this might take some time.");
+        esServer.start(args.getCluster(), args.getTransportAddresses());
+        LOGGER.info("Database cluster is now ready.");
 
         if (args.isNominatimImport()) {
             startNominatimImport(args, esServer);

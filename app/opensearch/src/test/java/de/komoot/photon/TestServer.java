@@ -20,7 +20,7 @@ public class TestServer extends Server {
         instanceDir = mainDirectory;
     }
 
-    public void startTestServer(String clusterName) {
+    public void startTestServer(String clusterName) throws IOException {
         runner = new OpenSearchRunner();
         runner.onBuild(new OpenSearchRunner.Builder() {
             @Override
