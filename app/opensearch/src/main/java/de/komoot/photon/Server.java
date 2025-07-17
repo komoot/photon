@@ -36,13 +36,28 @@ public class Server {
 
     protected OpenSearchClient client;
     private OpenSearchRunner runner = null;
-    protected final String dataDirectory;
+    protected final File dataDirectory;
 
     public Server(String mainDirectory) {
-        dataDirectory = new File(mainDirectory, "photon_data").getAbsolutePath();
+        dataDirectory = new File(mainDirectory, "photon_data");
     }
 
-    public void start(String clusterName, String[] transportAddresses) throws IOException {
+    public void start(String clusterName, String[] transportAddresses, boolean create) throws IOException {
+        if (!create && transportAddresses.length == 0) {
+            if (!dataDirectory.isDirectory()) {
+                LOGGER.error("Data directory '{}' doesn't exist.", dataDirectory.getAbsolutePath());
+                throw new IOException("OpenSearch database not found.");
+            }
+
+            final File nodeDirectory = new File(dataDirectory, "node_1");
+
+            if (!nodeDirectory.isDirectory()) {
+                LOGGER.error("Data directory '{}' seems to be empty. Are you using an index for OpenSearch?",
+                        dataDirectory.getAbsolutePath());
+                throw new IOException("OpenSearch database not found.");
+            }
+        }
+
         HttpHost[] hosts;
         if (transportAddresses.length == 0) {
             hosts = startInternal(clusterName);
@@ -80,7 +95,7 @@ public class Server {
             settingsBuilder.putList("discovery.seed_hosts", "127.0.0.1:9201");
             settingsBuilder.put("indices.query.bool.max_clause_count", "30000");
         }).build(OpenSearchRunner.newConfigs()
-                .basePath(dataDirectory)
+                .basePath(dataDirectory.getAbsolutePath())
                 .clusterName(clusterName)
                 .numOfNode(1)
         );
