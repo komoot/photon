@@ -25,8 +25,6 @@ import org.elasticsearch.transport.client.PreBuiltTransportClient;
 import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.time.Instant;
@@ -64,7 +62,7 @@ public class Server {
 
     protected Client esClient;
 
-    private File esDirectory;
+    private final File esDirectory;
 
     protected static class MyNode extends Node {
         public MyNode(Settings preparedSettings, Collection<Class<? extends Plugin>> classpathPlugins) {
