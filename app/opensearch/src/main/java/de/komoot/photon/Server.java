@@ -42,7 +42,7 @@ public class Server {
         dataDirectory = new File(mainDirectory, "photon_data").getAbsolutePath();
     }
 
-    public Server start(String clusterName, String[] transportAddresses) {
+    public void start(String clusterName, String[] transportAddresses) throws IOException {
         HttpHost[] hosts;
         if (transportAddresses.length == 0) {
             hosts = startInternal(clusterName);
@@ -69,7 +69,7 @@ public class Server {
 
         client = new OpenSearchClient(transport);
 
-        return this;
+        waitForReady();
     }
 
     private HttpHost[] startInternal(String clusterName) {
