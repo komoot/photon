@@ -70,7 +70,7 @@ public class App {
         esServer = new Server(args.getDataDirectory());
 
         LOGGER.info("Start up database cluster, this might take some time.");
-        esServer.start(args.getCluster(), args.getTransportAddresses());
+        esServer.start(args.getCluster(), args.getTransportAddresses(), args.isNominatimImport());
         LOGGER.info("Database cluster is now ready.");
 
         if (args.isNominatimImport()) {

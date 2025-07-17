@@ -73,14 +73,26 @@ public class Server {
     }
 
     public Server(String mainDirectory) {
-        try {
-            setupDirectories(new File(mainDirectory).toURI().toURL());
-        } catch (Exception e) {
-            throw new UsageException("Can't create directories: " + mainDirectory + ": " + e.getMessage());
-        }
+        final File photonDirectory = new File(mainDirectory, "photon_data");
+        esDirectory = new File(photonDirectory, "elasticsearch");
     }
 
-    public void start(String clusterName, String[] transportAddresses) {
+    public void start(String clusterName, String[] transportAddresses, boolean create) throws IOException {
+        if (!create) {
+            final File photonDirectory = esDirectory.getParentFile();
+            if (!photonDirectory.isDirectory()) {
+                LOGGER.error("Data directory '{}' doesn't exist.", photonDirectory.getAbsolutePath());
+                throw new IOException("ElasticSearch database not found.");
+            }
+            if (!esDirectory.isDirectory()) {
+                LOGGER.error("Data directory '{}' seems to be empty. Are you using an index for ElasticSearch?",
+                        photonDirectory.getAbsolutePath());
+                throw new IOException("ElasticSearch database not found.");
+            }
+        }
+
+        setupDirectories();
+
         Settings.Builder sBuilder = Settings.builder();
         sBuilder.put("path.home", this.esDirectory.toString());
         sBuilder.put("network.host", "127.0.0.1"); // http://stackoverflow.com/a/15509589/1245622
@@ -149,19 +161,11 @@ public class Server {
     }
 
 
-    private void setupDirectories(URL directoryName) throws IOException, URISyntaxException {
-        final File mainDirectory = new File(directoryName.toURI());
-        final File photonDirectory = new File(mainDirectory, "photon_data");
-        this.esDirectory = new File(photonDirectory, "elasticsearch");
-        final File pluginDirectory = new File(esDirectory, "plugins");
-        final File scriptsDirectory = new File(esDirectory, "config/scripts");
+    private void setupDirectories() throws IOException {
         final File painlessDirectory = new File(esDirectory, "modules/lang-painless");
 
-        for (File directory : new File[]{photonDirectory, esDirectory, pluginDirectory, scriptsDirectory,
-                painlessDirectory}) {
-            directory.mkdirs();
-        }
-
+        // Need this directory to inject painless modules.
+        painlessDirectory.mkdirs();
         // copy script directory to ElasticSearch directory
         final ClassLoader loader = Thread.currentThread().getContextClassLoader();
 
