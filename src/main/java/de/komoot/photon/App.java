@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 /**
@@ -27,70 +28,71 @@ import java.util.stream.Collectors;
  */
 public class App {
     private static final Logger LOGGER = LogManager.getLogger();
-    private static Server esServer;
+    private static final AtomicReference<Server> esServer = new AtomicReference<>();
     private static Javalin photonServer;
 
     public static void main(String[] rawArgs) throws Exception {
         CommandLineArgs args = parseCommandLine(rawArgs);
 
         try {
-            runPhoton(args);
+            if (runPhoton(args)) {
+                shutdown();
+            }
         } catch (UsageException e) {
             LOGGER.error(e.getMessage());
-            LOGGER.error("Exiting.");
+            shutdown();
             System.exit(2);
         }
     }
 
     public static void shutdown() {
+        LOGGER.info("Shutting down the service.");
         if (photonServer != null) {
             photonServer.stop();
+            photonServer = null;
         }
-        if (esServer != null) {
-            esServer.shutdown();
+        final Server temp = esServer.getAndSet(null);
+        if (temp != null) {
+            temp.shutdown();
         }
     }
 
-    private static void runPhoton(CommandLineArgs args) throws IOException {
+    private static boolean runPhoton(CommandLineArgs args) throws IOException {
         if (args.getJsonDump() != null) {
             startJsonDump(args);
-            return;
+            return true;
         }
 
         if (args.getNominatimUpdateInit() != null) {
             startNominatimUpdateInit(args);
-            return;
+            return true;
         }
 
-        boolean shutdownES = false;
-        esServer = new Server(args.getDataDirectory()).start(args.getCluster(), args.getTransportAddresses());
-        try {
-            LOGGER.info("Make sure that the ES cluster is ready, this might take some time.");
-            esServer.waitForReady();
-            LOGGER.info("ES cluster is now ready.");
+        esServer.set(new Server(args.getDataDirectory()));
 
-            if (args.isNominatimImport()) {
-                shutdownES = true;
-                startNominatimImport(args, esServer);
-                return;
-            }
+        LOGGER.info("Start up database cluster, this might take some time.");
+        esServer.get().start(args.getCluster(), args.getTransportAddresses(), args.isNominatimImport());
+        LOGGER.info("Database cluster is now ready.");
 
-            // Working on an existing installation.
-            // Update the index settings in case there are any changes.
-            esServer.updateIndexSettings(args.getSynonymFile());
-            esServer.refreshIndexes();
-
-            if (args.isNominatimUpdate()) {
-                shutdownES = true;
-                startNominatimUpdate(setupNominatimUpdater(args, esServer), esServer);
-                return;
-            }
-
-            // No special action specified -> normal mode: start search API
-            startApi(args, esServer);
-        } finally {
-            if (shutdownES) esServer.shutdown();
+        if (args.isNominatimImport()) {
+            startNominatimImport(args, esServer.get());
+            return true;
         }
+
+        // Working on an existing installation.
+        // Update the index settings in case there are any changes.
+        esServer.get().updateIndexSettings(args.getSynonymFile());
+        esServer.get().refreshIndexes();
+
+        if (args.isNominatimUpdate()) {
+            startNominatimUpdate(setupNominatimUpdater(args, esServer.get()), esServer.get());
+            return true;
+        }
+
+        // No special action specified -> normal mode: start search API
+        startApi(args, esServer.get());
+
+        return false;
     }
 
 
@@ -369,6 +371,14 @@ public class App {
                         .result(formatter.formatError(e.getMessage()))
         );
 
+        photonServer.events(event -> event.serverStopped(() -> {
+            final Server temp = esServer.getAndSet(null);
+            if (temp != null) {
+                LOGGER.info("Server has been stopped. Shutting down node.");
+                temp.shutdown();
+            }
+        }));
+
         photonServer.get("/status", new StatusRequestHandler(server));
 
         photonServer.get("/api", new GenericSearchHandler<>(
@@ -417,6 +427,11 @@ public class App {
                 ctx.status(200).json("nominatim update started (more information in console output) ...");
             });
         }
+
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            LOGGER.info("Shutdown requested.");
+            shutdown();
+        }));
 
         photonServer.start(args.getListenIp(), args.getListenPort());
     }

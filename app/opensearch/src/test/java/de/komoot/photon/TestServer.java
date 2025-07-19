@@ -20,7 +20,7 @@ public class TestServer extends Server {
         instanceDir = mainDirectory;
     }
 
-    public void startTestServer(String clusterName) {
+    public void startTestServer(String clusterName) throws IOException {
         runner = new OpenSearchRunner();
         runner.onBuild(new OpenSearchRunner.Builder() {
             @Override
@@ -47,7 +47,7 @@ public class TestServer extends Server {
         runner.ensureYellow();
 
         String[] transportAddresses = {"127.0.0.1:" + runner.node().settings().get("http.port")};
-        start(clusterName, transportAddresses);
+        start(clusterName, transportAddresses, true);
     }
 
     public void stopTestServer() {

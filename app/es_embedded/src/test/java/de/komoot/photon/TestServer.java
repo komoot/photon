@@ -4,6 +4,7 @@ import de.komoot.photon.elasticsearch.*;
 import de.komoot.photon.searcher.PhotonResult;
 import org.elasticsearch.action.admin.indices.refresh.RefreshRequest;
 import org.elasticsearch.action.get.GetResponse;
+import java.io.IOException;
 
 public class TestServer extends Server {
     public static final String TEST_CLUSTER_NAME = "photon-test";
@@ -28,7 +29,11 @@ public class TestServer extends Server {
     }
 
     public void startTestServer(String clusterName) {
-        start(TEST_CLUSTER_NAME, new String[]{});
+        try {
+            start(TEST_CLUSTER_NAME, new String[]{}, true);
+        } catch (IOException e) {
+            throw new RuntimeException("Setup error", e);
+        }
     }
 
     public void stopTestServer() {
