@@ -30,26 +30,6 @@ repositories {
      mavenCentral()
 }
 
-sourceSets {
-    main {
-        java {
-            srcDir rootProject.file('src/main/java')
-        }
-        resources {
-            srcDir rootProject.file('src/main/resources')
-        }
-    }
-    test {
-        java {
-            srcDir rootProject.file('src/test/java/')
-        }
-        resources {
-            srcDir rootProject.file('src/test/resources')
-        }
-    }
-}
-
-
 dependencies {
     implementation 'org.opensearch.client:opensearch-java:2.24.0'
     implementation 'org.apache.httpcomponents.client5:httpclient5:5.5'
@@ -114,14 +94,14 @@ jacocoTestReport {
 }
 
 tasks.named('jar') {
-    archiveBaseName.set('original-photon-opensearch')
+    archiveBaseName.set('original-photon')
     manifest.attributes('Multi-Release': 'true')
 }
 
 shadowJar {
     mergeServiceFiles()
-    destinationDirectory.set(rootProject.file('target'))
-    archiveBaseName.set('photon-opensearch')
+    destinationDirectory.set(file('target'))
+    archiveBaseName.set('photon')
     archiveClassifier.set('')
 
     transform(com.github.jengelman.gradle.plugins.shadow.transformers.Log4j2PluginsCacheFileTransformer)
