@@ -1,0 +1,118 @@
+plugins {
+  id 'com.gradleup.shadow' version '8.3.8'
+  id 'application'
+  id 'jacoco'
+  id 'org.sonarqube' version '6.2.0.5505'
+}
+
+group = 'de.komoot.photon'
+version = '0.7.0'
+description = "Geocoder for OSM data (OpenSearch-based version)"
+
+distZip.enabled = false
+distTar.enabled = false
+shadowDistZip.enabled = false
+shadowDistTar.enabled = false
+
+application {
+    mainClass = 'de.komoot.photon.App';
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+    compileJava.options.encoding = "UTF-8"
+    compileTestJava.options.encoding = "UTF-8"
+}
+
+repositories {
+     maven { url "https://www.datanucleus.org/downloads/maven2/" }
+     mavenCentral()
+}
+
+dependencies {
+    implementation 'org.opensearch.client:opensearch-java:2.26.0'
+    implementation 'org.apache.httpcomponents.client5:httpclient5:5.5'
+
+    implementation('org.codelibs.opensearch:opensearch-runner:2.19.1.0') {
+        exclude(module: 'repository-url')
+        exclude(module: 'reindex-client')
+        exclude(module: 'rank-eval-client')
+        exclude(module: 'percolator-client')
+        exclude(module: 'parent-join-client')
+        exclude(module: 'mapper-extras-client')
+        exclude(module: 'opensearch-scripting-painless-spi')
+        exclude(module: 'lang-painless')
+        exclude(module: 'lang-mustache-client')
+        exclude(module: 'lang-expression')
+        exclude(module: 'ingest-user-agent')
+        exclude(module: 'ingest-common')
+        exclude(module: 'aggs-matrix-stats-client')
+        exclude(module: 'lucene-grouping')
+    }
+
+    implementation 'org.apache.logging.log4j:log4j-core:2.25.1'
+    implementation 'org.apache.logging.log4j:log4j-api:2.25.1'
+    implementation 'org.postgresql:postgresql:42.7.7'
+    implementation 'org.apache.logging.log4j:log4j-slf4j2-impl:2.25.1'
+    implementation 'org.jcommander:jcommander:2.0'
+    // freezing at 5.x for Java 11
+    implementation 'org.springframework:spring-jdbc:5.3.39'
+    implementation ('org.apache.commons:commons-dbcp2:2.13.0') {
+        exclude(module: 'commons-logging')
+    }
+    implementation 'org.locationtech.jts:jts-core:1.20.0'
+    implementation 'org.locationtech.jts.io:jts-io-common:1.20.0'
+    implementation 'io.javalin:javalin:6.7.0'
+    implementation 'net.postgis:postgis-jdbc:2025.1.1'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.19.2'
+
+    testImplementation(platform("org.junit:junit-bom:5.13.4"))
+    testImplementation 'com.h2database:h2:2.3.232'
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testImplementation 'org.assertj:assertj-core:3.27.3'
+    // freezing at 2.40 for Java 11
+    testImplementation 'net.javacrumbs.json-unit:json-unit-assertj:2.40.1'
+
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
+
+test {
+    systemProperty "sun.net.http.allowRestrictedHeaders", "true"
+}
+
+
+jacocoTestReport {
+    reports {
+        xml.required = true
+        html.required = false
+    }
+}
+
+tasks.named('jar') {
+    archiveBaseName.set('original-photon')
+    manifest.attributes('Multi-Release': 'true')
+}
+
+shadowJar {
+    mergeServiceFiles()
+    destinationDirectory.set(file('target'))
+    archiveBaseName.set('photon')
+    archiveClassifier.set('')
+
+    transform(com.github.jengelman.gradle.plugins.shadow.transformers.Log4j2PluginsCacheFileTransformer)
+
+    exclude '**/module-info.class'
+
+    // This mitigates against the log4j JNDI lookup vulnerability:
+    // https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-44228
+    // Since we are using an old version of elastic search that is incompatible
+    // with a patched, newer version of log4j we have to remove the class
+    // JndiLookup from the fat jar. This is the recommended course of action
+    // when you cannot upgrade as per https://logging.apache.org/log4j/2.x/security.html
+    exclude 'org/apache/logging/log4j/core/lookup/JndiLookup.class'
+}
