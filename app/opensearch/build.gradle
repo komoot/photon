@@ -37,6 +37,9 @@ dependencies {
         exclude(module: 'aggs-matrix-stats-client')
         exclude(module: 'lucene-grouping')
     }
+
+    // overwrite version provided by opensearch-runner
+    implementation 'commons-io:commons-io:2.20.0'
 }
 
 tasks.named('jar') {
