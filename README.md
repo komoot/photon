@@ -133,7 +133,7 @@ java -jar photon-*.jar
 ```
 
 Use `-data-dir` to point to the _parent_ directory of the `photon_data` directory
-with the database. By default photon will look for a `photob_data` directory
+with the database. By default photon will look for a `photon_data` directory
 in the current working directory.
 
 Alternatively, you can make photon connect to an external ElasticSearch/OpenSearch
