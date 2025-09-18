@@ -204,7 +204,11 @@ public class SearchQueryBuilder {
                 .query(finalQueryWithoutTagFilterBuilder.build())
                 .functions(fn1 -> fn1.exp(ex -> ex
                         .field("coordinate")
-                        .placement(p -> p.origin(JsonData.of(params)).scale(JsonData.of(radius + "km")))))
+                        .placement(p -> p
+                                .origin(JsonData.of(params))
+                                .decay(0.8)
+                                .offset(JsonData.of(radius / 10 + "km"))
+                                .scale(JsonData.of(radius + "km")))))
                 .functions(fn2 -> fn2.linear(lin -> lin
                         .field("importance")
                         .placement(p -> p.origin(JsonData.of(1.0)).scale(JsonData.of(fnscale)).decay(0.5))))
