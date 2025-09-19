@@ -30,7 +30,7 @@ public class Server {
      * changes in an incompatible way. If it is already at the next released
      * version, increase the dev version.
      */
-    public static final String DATABASE_VERSION = "0.3.6-1";
+    public static final String DATABASE_VERSION = "1.0.0-0";
 
     private static final Logger LOGGER = LogManager.getLogger();
 

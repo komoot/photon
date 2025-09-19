@@ -2,6 +2,7 @@ package de.komoot.photon.opensearch;
 
 import org.opensearch.client.opensearch.OpenSearchClient;
 import org.opensearch.client.opensearch._types.mapping.DynamicMapping;
+import org.opensearch.client.opensearch._types.mapping.IndexOptions;
 import org.opensearch.client.opensearch.indices.PutMappingRequest;
 
 import java.io.IOException;
@@ -95,6 +96,7 @@ public class IndexMapping {
         // The catch-all collector used to find overall matches.
         mappings.properties("collector.base", b -> b.text(p -> p
                 .index(true)
+                .indexOptions(IndexOptions.Docs)
                 .analyzer("index_ngram")));
 
         // Collector for all address parts in the default language.
