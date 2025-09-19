@@ -116,11 +116,4 @@ shadowJar {
     // JndiLookup from the fat jar. This is the recommended course of action
     // when you cannot upgrade as per https://logging.apache.org/log4j/2.x/security.html
     exclude 'org/apache/logging/log4j/core/lookup/JndiLookup.class'
-
-    minimize {
-        exclude(dependency("org.opensearch.*:.*:.*"))
-        exclude(dependency("org.springframework:spring-jdbc:.*"))
-        exclude(dependency("org.postgresql:.*:.*"))
-        exclude(dependency("net.postgis:.*:.*"))
-    }
 }

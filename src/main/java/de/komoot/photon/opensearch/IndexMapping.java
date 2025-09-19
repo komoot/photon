@@ -97,7 +97,6 @@ public class IndexMapping {
         mappings.properties("collector.base", b -> b.text(p -> p
                 .index(true)
                 .indexOptions(IndexOptions.Docs)
-                .norms(false)
                 .analyzer("index_ngram")));
 
         // Collector for all address parts in the default language.
