@@ -1,5 +1,5 @@
 plugins {
-  id 'com.gradleup.shadow' version '8.3.8'
+  id 'com.gradleup.shadow' version '9.1.0'
   id 'application'
   id 'jacoco'
   id 'org.sonarqube' version '6.2.0.5505'
@@ -99,14 +99,15 @@ tasks.named('jar') {
 }
 
 shadowJar {
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+
     mergeServiceFiles()
+
     destinationDirectory.set(file('target'))
     archiveBaseName.set('photon')
     archiveClassifier.set('')
 
     transform(com.github.jengelman.gradle.plugins.shadow.transformers.Log4j2PluginsCacheFileTransformer)
-
-    exclude '**/module-info.class'
 
     // This mitigates against the log4j JNDI lookup vulnerability:
     // https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-44228
@@ -115,4 +116,11 @@ shadowJar {
     // JndiLookup from the fat jar. This is the recommended course of action
     // when you cannot upgrade as per https://logging.apache.org/log4j/2.x/security.html
     exclude 'org/apache/logging/log4j/core/lookup/JndiLookup.class'
+
+    minimize {
+        exclude(dependency("org.opensearch.*:.*:.*"))
+        exclude(dependency("org.springframework:spring-jdbc:.*"))
+        exclude(dependency("org.postgresql:.*:.*"))
+        exclude(dependency("net.postgis:.*:.*"))
+    }
 }
