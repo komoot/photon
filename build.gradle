@@ -26,7 +26,7 @@ java {
 }
 
 repositories {
-     maven { url "https://www.datanucleus.org/downloads/maven2/" }
+     maven { url = uri("https://www.datanucleus.org/downloads/maven2/") }
      mavenCentral()
 }
 
