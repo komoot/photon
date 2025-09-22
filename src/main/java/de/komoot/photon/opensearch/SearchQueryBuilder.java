@@ -258,10 +258,6 @@ public class SearchQueryBuilder {
                     q.filter(queryBuilderForTopLevelFilter.build().toQuery());
                 }
 
-                q.filter(f -> f.bool(fb -> fb
-                        .mustNot(n -> n.ids(i -> i.values(PhotonIndex.PROPERTY_DOCUMENT_ID)))
-                ));
-
                 final var tagFilters = osmTagFilter.build();
                 if (tagFilters != null) {
                     q.filter(tagFilters);

@@ -11,6 +11,7 @@ import org.apache.hc.core5.http.HttpHost;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codelibs.opensearch.runner.OpenSearchRunner;
+import org.opensearch.client.json.JsonData;
 import org.opensearch.client.json.jackson.JacksonJsonpMapper;
 import org.opensearch.client.opensearch.OpenSearchClient;
 import org.opensearch.client.opensearch._types.HealthStatus;
@@ -30,7 +31,7 @@ public class Server {
      * changes in an incompatible way. If it is already at the next released
      * version, increase the dev version.
      */
-    public static final String DATABASE_VERSION = "1.0.0-0";
+    public static final String DATABASE_VERSION = "1.0.0-1";
 
     private static final Logger LOGGER = LogManager.getLogger();
 
@@ -167,24 +168,23 @@ public class Server {
     }
 
     public void saveToDatabase(DatabaseProperties dbProperties) throws IOException {
-        client.index(r -> r
-                        .index(PhotonIndex.NAME)
-                        .id(PhotonIndex.PROPERTY_DOCUMENT_ID)
-                        .document(dbProperties)
-                        );
+        client.indices().putMapping(m -> m
+                .index(PhotonIndex.NAME)
+                .meta(PhotonIndex.META_DB_PROPERTIES, JsonData.of(dbProperties)));
     }
 
     public DatabaseProperties loadFromDatabase() throws IOException {
-        var dbEntry = client.get(r -> r
-                .index(PhotonIndex.NAME)
-                .id(PhotonIndex.PROPERTY_DOCUMENT_ID),
-                DatabaseProperties.class);
+        var meta = client.indices()
+                .getMapping(m -> m.index(PhotonIndex.NAME))
+                .get(PhotonIndex.NAME)
+                .mappings()
+                .meta();
 
-        if (!dbEntry.found()) {
-            throw new UsageException("Cannot access property record. Database too old?");
+        if (!meta.containsKey(PhotonIndex.META_DB_PROPERTIES)) {
+            throw new UsageException("Cannot access property meta data. Database too old?");
         }
 
-        return dbEntry.source();
+        return meta.get(PhotonIndex.META_DB_PROPERTIES).to(DatabaseProperties.class);
     }
 
     public Importer createImporter(DatabaseProperties dbProperties) {
