@@ -20,6 +20,7 @@ public class DatabaseProperties {
     private Date importDate;
     private boolean supportStructuredQueries = false;
     private boolean supportGeometries = false;
+    private boolean synonymsInstalled = false;
     private ConfigExtraTags extraTags = new ConfigExtraTags();
 
     public void setDatabaseVersion(String version) {
@@ -122,6 +123,15 @@ public class DatabaseProperties {
         return extraTags.asConfigParam();
     }
 
+    public DatabaseProperties setSynonymsInstalled(boolean synonymsInstalled) {
+        this.synonymsInstalled = synonymsInstalled;
+        return this;
+    }
+
+    public boolean getSynonymsInstalled() {
+        return synonymsInstalled;
+    }
+
     public ConfigExtraTags configExtraTags() {
         return extraTags;
     }
@@ -137,6 +147,8 @@ public class DatabaseProperties {
                 ", importDate=" + importDate +
                 ", supportStructuredQueries=" + supportStructuredQueries +
                 ", supportGeometries=" + supportGeometries +
+                ", synonymsInstalled=" + synonymsInstalled +
+                ", extraTags=" + extraTags +
                 '}';
     }
 }

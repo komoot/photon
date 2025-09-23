@@ -76,4 +76,9 @@ public class ConfigExtraTags {
 
         return Arrays.stream(tags).collect(Collectors.toList());
     }
+
+    @Override
+    public String toString() {
+        return allowAll ? "<ALL>" : Arrays.toString(tags);
+    }
 }
