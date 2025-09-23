@@ -153,11 +153,17 @@ public class Server {
         // database if the version does not fit.
         var dbProperties = loadFromDatabase();
 
-        try {
-            (new IndexSettingBuilder()).setSynonymFile(synonymFile).updateIndex(client, PhotonIndex.NAME);
-        } catch (OpenSearchException ex) {
-            client.shutdown();
-            throw new UsageException("Could not install synonyms: " + ex.getMessage());
+        if (dbProperties.getSynonymsInstalled() || synonymFile != null) {
+
+            try {
+                (new IndexSettingBuilder()).setSynonymFile(synonymFile).updateIndex(client, PhotonIndex.NAME);
+            } catch (OpenSearchException ex) {
+                client.shutdown();
+                throw new UsageException("Could not install synonyms: " + ex.getMessage());
+            }
+
+            dbProperties.setSynonymsInstalled(synonymFile != null);
+            saveToDatabase(dbProperties);
         }
 
         if (dbProperties.getLanguages() != null) {
