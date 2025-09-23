@@ -165,12 +165,6 @@ public class Server {
             dbProperties.setSynonymsInstalled(synonymFile != null);
             saveToDatabase(dbProperties);
         }
-
-        if (dbProperties.getLanguages() != null) {
-            (new IndexMapping(dbProperties.getSupportStructuredQueries()))
-                    .addLanguages(dbProperties.getLanguages())
-                    .putMapping(client, PhotonIndex.NAME);
-        }
     }
 
     public void saveToDatabase(DatabaseProperties dbProperties) throws IOException {
