@@ -42,8 +42,15 @@ public class IndexMapping {
 
         mappings.properties("housenumber", b -> b.text(p -> p
                 .index(true)
+                .indexOptions(IndexOptions.Docs)
                 .analyzer("index_housenumber")
                 .searchAnalyzer("standard")
+                .fields("full", f -> f.text(full -> full
+                        .index(true)
+                        .norms(false)
+                        .indexOptions(IndexOptions.Docs)
+                        .analyzer("lowercase_keyword")
+                ))
         ));
 
         mappings.properties("classification", b -> b.text(p -> p

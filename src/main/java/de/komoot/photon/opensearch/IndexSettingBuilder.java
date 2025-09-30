@@ -235,5 +235,10 @@ public class IndexSettingBuilder {
                 .filter(NORMALIZATION_FILTERS)
                 .filter("prefix_edge_ngram", "unique")
         ));
+
+        settings.analyzer("lowercase_keyword", f -> f.custom(d -> d
+                .tokenizer("keyword")
+                .filter("lowercase")
+        ));
     }
 }
