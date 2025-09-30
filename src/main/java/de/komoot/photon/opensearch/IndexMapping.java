@@ -67,6 +67,7 @@ public class IndexMapping {
         if (supportStructuredQueries) {
             mappings.properties("postcode", b -> b.text(p -> p
                     .index(true)
+                    .norms(false)
                     .analyzer("index_raw")
             ));
         }
@@ -74,11 +75,13 @@ public class IndexMapping {
         // General collectors.
         mappings.properties("collector.all", b -> b.text(p -> p
                 .index(true)
+                .norms(false)
                 .indexOptions(IndexOptions.Freqs)
                 .analyzer("index_fullword")
                 .searchAnalyzer("search")
                 .fields("ngram", ngramField -> ngramField.text(p1 -> p1
                         .index(true)
+                        .norms(false)
                         .indexOptions(IndexOptions.Freqs)
                         .analyzer("index_ngram")
                         .searchAnalyzer("search")
@@ -87,11 +90,13 @@ public class IndexMapping {
 
         mappings.properties("collector.name", b -> b.text(p -> p
                 .index(true)
+                .norms(false)
                 .indexOptions(IndexOptions.Freqs)
                 .analyzer("index_name_ngram")
                 .searchAnalyzer("search")
                 .fields("prefix", prefixField -> prefixField.text(p1 -> p1
                         .index(true)
+                        .norms(false)
                         .indexOptions(IndexOptions.Freqs)
                         .analyzer("index_name_prefix")
                         .searchAnalyzer("search_prefix")
@@ -100,6 +105,7 @@ public class IndexMapping {
 
         mappings.properties("collector.parent", b -> b.text(p -> p
                 .index(true)
+                .norms(false)
                 .indexOptions(IndexOptions.Docs)
                 .analyzer("index_name_ngram")
                 .searchAnalyzer("search")
@@ -109,6 +115,7 @@ public class IndexMapping {
             for (var field : ADDRESS_FIELDS) {
                 mappings.properties(getAddressFieldCollector(field), b -> b.text(p -> p
                         .index(true)
+                        .norms(false)
                         .analyzer("index_raw")
                         .searchAnalyzer("search")
                 ));
