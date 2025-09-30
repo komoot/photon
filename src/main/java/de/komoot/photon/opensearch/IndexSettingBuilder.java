@@ -5,7 +5,6 @@ import de.komoot.photon.ConfigClassificationTerm;
 import de.komoot.photon.ConfigSynonyms;
 import de.komoot.photon.UsageException;
 import org.opensearch.client.opensearch.OpenSearchClient;
-import org.opensearch.client.opensearch._types.analysis.TokenChar;
 import org.opensearch.client.opensearch.indices.IndexSettingsAnalysis;
 
 import java.io.File;
@@ -13,9 +12,9 @@ import java.io.IOException;
 import java.util.*;
 
 public class IndexSettingBuilder {
-    private IndexSettingsAnalysis.Builder settings = new IndexSettingsAnalysis.Builder();
+    private final IndexSettingsAnalysis.Builder settings = new IndexSettingsAnalysis.Builder();
     private int numShards = 1;
-    private Set<String> extraFilters = new HashSet<>();
+    private final Set<String> extraFilters = new HashSet<>();
 
     public IndexSettingBuilder setShards(Integer numShards) {
         this.numShards = numShards == null ? 1 : numShards;
@@ -99,29 +98,17 @@ public class IndexSettingBuilder {
     }
 
     private void addDefaultSettings() {
-        settings.filter("photonlength",
-                f -> f.definition(d -> d.length(l -> l.min(2).max(500))));
-        settings.filter("preserving_word_delimiter",
-                f -> f.definition(d -> d.wordDelimiterGraph(w -> w.preserveOriginal(true))));
+        final var NORMALIZATION_FILTERS = List.of(
+                "lowercase",
+                "german_normalization",
+                "asciifolding"
+        );
 
         settings.charFilter("punctuationgreedy",
                 f -> f.definition(d -> d.patternReplace(p -> p.pattern("[\\.,']").replacement(" "))));
         settings.charFilter("remove_ws_hnr_suffix",
                 f -> f.definition(d -> d.patternReplace(p -> p.pattern("(\\d+)\\s(?=\\p{L}\\b)").replacement("$1"))));
 
-        settings.tokenizer("edge_ngram",
-                f -> f.definition(d -> d.edgeNgram(e -> e.minGram(1).maxGram(100).tokenChars(TokenChar.Letter, TokenChar.Digit))));
-
-        settings.analyzer("index_ngram",
-                f -> f.custom(d -> d
-                        .charFilter("punctuationgreedy", "remove_ws_hnr_suffix")
-                        .tokenizer("edge_ngram")
-                        .filter("preserving_word_delimiter",
-                                "flatten_graph",
-                                "lowercase",
-                                "german_normalization",
-                                "asciifolding",
-                                "unique")));
         settings.analyzer("search",
                 f -> f.custom(d -> {
                     d.charFilter("punctuationgreedy")
@@ -142,12 +129,14 @@ public class IndexSettingBuilder {
                                 "german_normalization",
                                 "asciifolding",
                                 "unique")));
+
         settings.analyzer("index_housenumber",
                 f -> f.custom(d -> d
                         .charFilter("punctuationgreedy", "remove_ws_hnr_suffix")
                         .tokenizer("standard")
                         .filter("lowercase",
-                                "preserving_word_delimiter")));
+                                "word_delimiter_graph")));
+
         settings.analyzer("search_classification",
                 f -> f.custom(d -> {
                     d.tokenizer("whitespace")
@@ -158,5 +147,93 @@ public class IndexSettingBuilder {
 
                     return d;
                 }));
+
+        settings.analyzer("search_prefix", f -> f.custom(d -> d
+                .tokenizer("keyword")
+                .filter("keep_alphanum")
+                .filter(NORMALIZATION_FILTERS)
+        ));
+
+        // Collector analyzers.
+        settings.tokenizer("collection_split", b -> b.definition(d -> d
+                .simplePatternSplit(p -> p.pattern(";"))
+        ));
+
+        settings.filter("delimiter_whitespace", f -> f.definition(d -> d
+                .wordDelimiterGraph(w -> w
+                        .preserveOriginal(false)
+                        .stemEnglishPossessive(false)
+                        .splitOnNumerics(false)
+                        .splitOnCaseChange(false)
+                        .typeTable("- => ALPHA",
+                                "' => ALPHA",
+                                ". => ALPHA"))
+        ));
+
+        settings.filter("delimiter_terms", f -> f.definition(d -> d
+                .wordDelimiterGraph(w -> w
+                        .preserveOriginal(false)
+                        .stemEnglishPossessive(false)
+                        .catenateAll(true))
+        ));
+
+        settings.filter("keep_alphanum", f -> f.definition(d -> d
+                .patternReplace(p -> p
+                        .pattern("[^\\p{IsAlphabetic}\\p{IsDigit}]")
+                        .replacement("")
+                        .flags(""))
+        ));
+
+        settings.filter("prefix_edge_ngram", f -> f.definition(d -> d
+                .edgeNgram(e -> e
+                        .minGram(1)
+                        .maxGram(30)
+                        .preserveOriginal(false))
+        ));
+
+        settings.filter("name_edge_ngram", f -> f.definition(d -> d
+                .edgeNgram(e -> e
+                        .minGram(5)
+                        .maxGram(30)
+                        .preserveOriginal(true))
+        ));
+
+
+        settings.analyzer("index_fullword", f -> f.custom(d -> d
+                .tokenizer("collection_split")
+                .filter("delimited_term_freq",
+                        "delimiter_whitespace",
+                        "delimiter_terms")
+                .filter(NORMALIZATION_FILTERS)
+                .filter("unique")
+        ));
+
+        settings.analyzer("index_ngram", f -> f.custom(d -> d
+                .tokenizer("collection_split")
+                .filter("delimited_term_freq",
+                        "delimiter_whitespace",
+                        "delimiter_terms",
+                        "prefix_edge_ngram")
+                .filter(NORMALIZATION_FILTERS)
+                .filter("unique")
+        ));
+
+        settings.analyzer("index_name_ngram", f -> f.custom(d -> d
+                .tokenizer("collection_split")
+                .filter("delimited_term_freq",
+                        "delimiter_whitespace",
+                        "delimiter_terms",
+                        "name_edge_ngram")
+                .filter(NORMALIZATION_FILTERS)
+                .filter("unique")
+        ));
+
+        settings.analyzer("index_name_prefix", f -> f.custom(d -> d
+                .tokenizer("collection_split")
+                .filter("delimited_term_freq",
+                        "keep_alphanum")
+                .filter(NORMALIZATION_FILTERS)
+                .filter("prefix_edge_ngram", "unique")
+        ));
     }
 }

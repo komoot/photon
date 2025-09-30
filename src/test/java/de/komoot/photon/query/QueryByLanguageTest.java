@@ -62,9 +62,6 @@ class QueryByLanguageTest extends ESBaseTester {
         assertThat(search("original", "en")).hasSize(1);
         assertThat(search("finish", "en")).hasSize(1);
         assertThat(search("russian", "en")).hasSize(0);
-
-        assertThat(search("finish", "fi").get(0).getScore())
-                .isGreaterThan(search("finish", "en").get(0).getScore());
     }
 
     @Test

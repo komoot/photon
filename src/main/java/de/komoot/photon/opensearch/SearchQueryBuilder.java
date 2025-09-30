@@ -14,7 +14,7 @@ import java.util.*;
 
 public class SearchQueryBuilder {
     private ObjectBuilder<Query> finalQueryWithoutTagFilterBuilder;
-    private BoolQuery.Builder queryBuilderForTopLevelFilter;
+    private final BoolQuery.Builder queryBuilderForTopLevelFilter;
     private OsmTagFilter osmTagFilter = new OsmTagFilter();
     private GeoBoundingBoxQuery.Builder bboxQueryBuilder;
     private TermsQuery.Builder layerQueryBuilder;
@@ -26,8 +26,7 @@ public class SearchQueryBuilder {
         // 1. All terms of the query must be contained in the place record somehow. Be more lenient on second try.
         query4QueryBuilder.must(base -> base.match(q -> {
             q.query(fn -> fn.stringValue(query));
-            q.analyzer("search");
-            q.field("collector.base");
+            q.field("collector.all.ngram");
 
             if (lenient) {
                 q.fuzziness("AUTO");
@@ -42,16 +41,13 @@ public class SearchQueryBuilder {
         // 2. Prefer records that have the full names in. For address records with house numbers this is the main
         //    filter criterion because they have no name. Boost the score in this case.
         query4QueryBuilder.should(shd -> shd.functionScore(fs -> fs
-                .query(q -> q.multiMatch(mm -> {
-                    mm.query(query).type(TextQueryType.BestFields).analyzer("search");
-                    mm.fields(String.format(Locale.ROOT, "%s^%f", "collector.default", 1.0f));
+                .query(q -> q.match(m -> m
+                        .query(qs -> qs.stringValue(query))
+                        .field("collector.all")
+                        .fuzziness(lenient ? "AUTO" : "0")
+                        .prefixLength(2)
 
-                    for (String lang : languages) {
-                        mm.fields(String.format(Locale.ROOT, "collector.%s^%f", lang, lang.equals(language) ? 1.0f : 0.6f));
-                    }
-
-                    return mm.boost(0.3f);
-                }))
+                ))
                 .functions(fn -> fn
                         .filter(flt -> flt
                                 .match(m -> m
@@ -62,29 +58,22 @@ public class SearchQueryBuilder {
         ));
 
         // 3. Either the name or house number must be in the query terms.
-        final String defLang = "default".equals(language) ? languages[0] : language;
-        var nameNgramQuery = MultiMatchQuery.of(q -> {
-            q.query(query).type(TextQueryType.BestFields).analyzer("search");
-
-            if (lenient) {
-                q.fuzziness("AUTO").prefixLength(2);
-            }
-
-            for (String lang : languages) {
-                q.fields(String.format(Locale.ROOT, "name.%s.ngrams^%f", lang, lang.equals(defLang) ? 1.0f : 0.4f));
-            }
-
-            q.fields("name.other^0.4");
-
-            if (query.indexOf(',') < 0 && query.indexOf(' ') < 0) {
-                q.boost(2f);
-            }
-
-            return q;
-        });
+        var nameNgramQuery = MatchQuery.of(q -> q
+                .query(qs -> qs.stringValue(query))
+                .field("collector.name")
+                .fuzziness(lenient ? "AUTO" : "0")
+                .prefixLength(2)
+                .boost(1f)
+        );
 
         if (query.indexOf(',') < 0 && query.indexOf(' ') < 0) {
-            query4QueryBuilder.must(nameNgramQuery.toQuery());
+            query4QueryBuilder.must(m -> m.match(q -> q
+                .query(qs -> qs.stringValue(query))
+                .field("collector.name.prefix")
+                .fuzziness(lenient ? "AUTO" : "0")
+                .prefixLength(2)
+                .boost(2f)
+            ));
         } else {
             query4QueryBuilder.must(m -> m.bool(q -> q
                     .should(nameNgramQuery.toQuery())
@@ -101,14 +90,6 @@ public class SearchQueryBuilder {
                     .minimumShouldMatch("1")
             ));
         }
-
-        // 4. Rerank results for having the full name in the default language.
-        query4QueryBuilder.should(m -> m.match(inner -> inner
-                .query(q -> q.stringValue(query))
-                .field(String.format("name.%s.raw", language))
-                .analyzer("search")
-                .fuzziness(lenient ? "auto" : "0")
-        ));
 
         // Weigh the resulting score by importance. Use a linear scale function that ensures that the weight
         // never drops to 0 and cancels out the ES score.
@@ -139,7 +120,7 @@ public class SearchQueryBuilder {
                         .field("housenumber")
                         .analyzer("standard")))
                 .should(q3 -> q3.exists(ex2 -> ex2
-                        .field(String.format("name.%s.raw", defLang))));
+                        .field("collector.name")));
     }
 
     public SearchQueryBuilder(StructuredSearchRequest request, String language, String[] languages, boolean lenient)

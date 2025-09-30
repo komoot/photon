@@ -229,10 +229,8 @@ public class AddressQueryBuilder {
     }
 
     private Query getFuzzyQuery(String name, String value, float boost) {
-        return getFuzzyQueryCore(name + "_collector", value, boost);
-    }
+        final var field = "collector.field." + name;
 
-    private Query getFuzzyQueryCore(String field, String value, float boost) {
         if (lenient) {
             return QueryBuilders.match()
                     .field(field)
@@ -253,12 +251,7 @@ public class AddressQueryBuilder {
 
     private BoolQuery.Builder getFuzzyNameQueryBuilder(String value, String objectType) {
         var or = QueryBuilders.bool();
-        for (String lang : languages) {
-            float boost = lang.equals(language) ? 1.0f : FACTOR_FOR_WRONG_LANGUAGE;
-            var fieldName = Constants.NAME + '.' + lang + ".raw";
-
-            or.should(getFuzzyQueryCore(fieldName, value, boost));
-        }
+        or.should(getFuzzyQuery("name", value));
 
         return or.minimumShouldMatch("1")
                 .filter(QueryBuilders.term()
