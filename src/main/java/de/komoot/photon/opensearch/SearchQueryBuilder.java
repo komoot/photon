@@ -20,7 +20,7 @@ public class SearchQueryBuilder {
     private TermsQuery.Builder layerQueryBuilder;
     private Query finalQuery = null;
 
-    public SearchQueryBuilder(String query, String language, String[] languages, boolean lenient) {
+    public SearchQueryBuilder(String query, boolean lenient) {
         var query4QueryBuilder = QueryBuilders.bool();
 
         // 1. All terms of the query must be contained in the place record somehow. Be more lenient on second try.
@@ -123,10 +123,10 @@ public class SearchQueryBuilder {
                         .field("collector.name")));
     }
 
-    public SearchQueryBuilder(StructuredSearchRequest request, String language, String[] languages, boolean lenient)
+    public SearchQueryBuilder(StructuredSearchRequest request, boolean lenient)
     {
         var hasSubStateField = request.hasCounty() || request.hasCityOrPostCode() || request.hasDistrict() || request.hasStreet();
-        var query4QueryBuilder = new AddressQueryBuilder(lenient, language, languages)
+        var query4QueryBuilder = new AddressQueryBuilder(lenient)
                 .addCountryCode(request.getCountryCode(), request.hasState() || hasSubStateField)
                 .addState(request.getState(), hasSubStateField)
                 .addCounty(request.getCounty(), request.hasCityOrPostCode() || request.hasDistrict() || request.hasStreet())

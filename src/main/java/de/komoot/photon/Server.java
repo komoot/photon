@@ -196,12 +196,12 @@ public class Server {
         return new de.komoot.photon.opensearch.Updater(client);
     }
 
-    public SearchHandler<SimpleSearchRequest> createSearchHandler(String[] languages, int queryTimeoutSec) {
-        return new OpenSearchSearchHandler(client, languages, queryTimeoutSec);
+    public SearchHandler<SimpleSearchRequest> createSearchHandler(int queryTimeoutSec) {
+        return new OpenSearchSearchHandler(client, queryTimeoutSec);
     }
 
-    public SearchHandler<StructuredSearchRequest> createStructuredSearchHandler(String[] languages, int queryTimeoutSec) {
-        return new OpenSearchStructuredSearchHandler(client, languages, queryTimeoutSec);
+    public SearchHandler<StructuredSearchRequest> createStructuredSearchHandler(int queryTimeoutSec) {
+        return new OpenSearchStructuredSearchHandler(client, queryTimeoutSec);
     }
 
     public SearchHandler<ReverseRequest> createReverseHandler(int queryTimeoutSec) {
