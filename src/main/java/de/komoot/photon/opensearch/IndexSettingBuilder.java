@@ -106,47 +106,23 @@ public class IndexSettingBuilder {
 
         settings.charFilter("punctuationgreedy",
                 f -> f.definition(d -> d.patternReplace(p -> p.pattern("[\\.,']").replacement(" "))));
-        settings.charFilter("remove_ws_hnr_suffix",
-                f -> f.definition(d -> d.patternReplace(p -> p.pattern("(\\d+)\\s(?=\\p{L}\\b)").replacement("$1"))));
 
-        settings.analyzer("search",
-                f -> f.custom(d -> {
-                    d.charFilter("punctuationgreedy")
-                            .tokenizer("standard")
-                            .filter("lowercase");
-                    for (var filter : extraFilters) {
-                        d.filter(filter);
-                    }
-                    d.filter("german_normalization", "asciifolding");
+        settings.analyzer("search", f -> f.custom(d -> {
+            d.charFilter("punctuationgreedy");
+            d.tokenizer("standard");
+            d.filter(NORMALIZATION_FILTERS);
+            for (var filter : extraFilters) {
+                d.filter(filter);
+            }
 
-                    return d;
-                }));
-        settings.analyzer("index_raw",
-                f -> f.custom(d -> d
-                        .charFilter("punctuationgreedy")
-                        .tokenizer("standard")
-                        .filter("lowercase",
-                                "german_normalization",
-                                "asciifolding",
-                                "unique")));
+            return d;
+        }));
 
-        settings.analyzer("index_housenumber",
-                f -> f.custom(d -> d
-                        .charFilter("punctuationgreedy", "remove_ws_hnr_suffix")
-                        .tokenizer("standard")
-                        .filter("lowercase",
-                                "word_delimiter_graph")));
-
-        settings.analyzer("search_classification",
-                f -> f.custom(d -> {
-                    d.tokenizer("whitespace")
-                            .filter("lowercase");
-                    if (extraFilters.contains("classification_synonyms")) {
-                        d.filter("classification_synonyms");
-                    }
-
-                    return d;
-                }));
+        settings.analyzer("index_raw", f -> f.custom(d -> d
+                .charFilter("punctuationgreedy")
+                .tokenizer("standard")
+                .filter(NORMALIZATION_FILTERS)
+        ));
 
         settings.analyzer("search_prefix", f -> f.custom(d -> d
                 .tokenizer("keyword")
@@ -175,6 +151,14 @@ public class IndexSettingBuilder {
                         .preserveOriginal(false)
                         .stemEnglishPossessive(false)
                         .catenateAll(true))
+        ));
+
+        settings.filter("delimiter_alphanum", f -> f.definition(d -> d
+                .wordDelimiterGraph(w -> w
+                        .preserveOriginal(false)
+                        .stemEnglishPossessive(false)
+                        .splitOnNumerics(false)
+                        .splitOnCaseChange(false))
         ));
 
         settings.filter("keep_alphanum", f -> f.definition(d -> d
@@ -235,6 +219,12 @@ public class IndexSettingBuilder {
                 .filter(NORMALIZATION_FILTERS)
                 .filter("prefix_edge_ngram", "unique")
         ));
+
+        settings.analyzer("index_housenumber", f -> f.custom(d -> d
+                .tokenizer("collection_split")
+                .filter("lowercase",
+                        "delimiter_alphanum",
+                        "delimiter_terms")));
 
         settings.analyzer("lowercase_keyword", f -> f.custom(d -> d
                 .tokenizer("keyword")

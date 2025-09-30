@@ -61,7 +61,7 @@ public class IndexMapping {
         mappings.properties("classification", b -> b.text(p -> p
                 .index(true)
                 .analyzer("keyword")
-                .searchAnalyzer("search_classification")
+                .searchAnalyzer("search")
         ));
 
         if (supportStructuredQueries) {
