@@ -26,16 +26,21 @@ public class IndexMapping {
         mappings.dynamic(DynamicMapping.False)
                 .source(s -> s.excludes("collector"));
 
-        mappings.properties("osm_type", b -> b.text(p -> p.index(false)));
-        mappings.properties("osm_id", b -> b.unsignedLong(l -> l.index(false)));
+        // Only list fields here that need an index in some form. All other fields will
+        // be passive fields saved in and retrivable by _source.
 
         for (var field : new String[]{"osm_key", "osm_value", "type"}) {
-            mappings.properties(field, b -> b.keyword(p -> p.index(true)));
+            mappings.properties(field, b -> b.keyword(p -> p
+                    .index(true)
+                    .docValues(false)
+            ));
         }
 
         mappings.properties("coordinate", b -> b.geoPoint(p -> p));
-        mappings.properties("geometry", b -> b.geoShape(p -> p));
-        mappings.properties("countrycode", b -> b.keyword(p -> p.index(true)));
+        mappings.properties("countrycode", b -> b.keyword(p -> p
+                .index(true)
+                .docValues(false)
+        ));
         mappings.properties("importance", b -> b.float_(p -> p
                 .index(false)
         ));
@@ -59,10 +64,12 @@ public class IndexMapping {
                 .searchAnalyzer("search_classification")
         ));
 
-        mappings.properties("postcode", b -> b.text(p -> p
-                .index(supportStructuredQueries)
-                .analyzer("index_raw")
-        ));
+        if (supportStructuredQueries) {
+            mappings.properties("postcode", b -> b.text(p -> p
+                    .index(true)
+                    .analyzer("index_raw")
+            ));
+        }
 
         // General collectors.
         mappings.properties("collector.all", b -> b.text(p -> p
