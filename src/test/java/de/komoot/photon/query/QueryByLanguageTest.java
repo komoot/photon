@@ -46,7 +46,7 @@ class QueryByLanguageTest extends ESBaseTester {
         request.setQuery(query);
         request.setLanguage(lang);
 
-        return getServer().createSearchHandler(languageList, 1).search(request);
+        return getServer().createSearchHandler(1).search(request);
     }
 
     @Test
@@ -62,9 +62,6 @@ class QueryByLanguageTest extends ESBaseTester {
         assertThat(search("original", "en")).hasSize(1);
         assertThat(search("finish", "en")).hasSize(1);
         assertThat(search("russian", "en")).hasSize(0);
-
-        assertThat(search("finish", "fi").get(0).getScore())
-                .isGreaterThan(search("finish", "en").get(0).getScore());
     }
 
     @Test

@@ -17,12 +17,10 @@ import java.io.IOException;
  */
 public class OpenSearchStructuredSearchHandler implements SearchHandler<StructuredSearchRequest> {
     private final OpenSearchClient client;
-    private final String[] supportedLanguages;
     private final String queryTimeout;
 
-    public OpenSearchStructuredSearchHandler(OpenSearchClient client, String[] languages, int queryTimeoutSec) {
+    public OpenSearchStructuredSearchHandler(OpenSearchClient client, int queryTimeoutSec) {
         this.client = client;
-        this.supportedLanguages = languages;
         queryTimeout = queryTimeoutSec + "s";
     }
 
@@ -64,7 +62,7 @@ public class OpenSearchStructuredSearchHandler implements SearchHandler<Structur
     }
 
     public SearchQueryBuilder buildQuery(StructuredSearchRequest photonRequest, boolean lenient) {
-        return new SearchQueryBuilder(photonRequest, photonRequest.getLanguage(), supportedLanguages, lenient).
+        return new SearchQueryBuilder(photonRequest, lenient).
                 withOsmTagFilters(photonRequest.getOsmTagFilters()).
                 withLayerFilters(photonRequest.getLayerFilters()).
                 withLocationBias(photonRequest.getLocationForBias(), photonRequest.getScaleForBias(), photonRequest.getZoomForBias()).

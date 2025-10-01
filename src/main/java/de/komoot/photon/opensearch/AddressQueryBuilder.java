@@ -15,9 +15,6 @@ public class AddressQueryBuilder {
     private static final float DISTRICT_BOOST = 2.0f;
     private static final float STREET_BOOST = 5.0f; // we filter streets in the wrong city / district / ... so we can use a high boost value
     private static final float HOUSE_NUMBER_BOOST = 10.0f;
-    private static final float FACTOR_FOR_WRONG_LANGUAGE = 0.1f;
-    private final String[] languages;
-    private final String language;
 
     private BoolQuery.Builder query = QueryBuilders.bool();
 
@@ -25,10 +22,8 @@ public class AddressQueryBuilder {
 
     private boolean lenient;
 
-    public AddressQueryBuilder(boolean lenient, String language, String[] languages) {
+    public AddressQueryBuilder(boolean lenient) {
         this.lenient = lenient;
-        this.language = language;
-        this.languages = languages;
     }
 
     public Query getQuery() {
@@ -229,10 +224,8 @@ public class AddressQueryBuilder {
     }
 
     private Query getFuzzyQuery(String name, String value, float boost) {
-        return getFuzzyQueryCore(name + "_collector", value, boost);
-    }
+        final var field = "collector.field." + name;
 
-    private Query getFuzzyQueryCore(String field, String value, float boost) {
         if (lenient) {
             return QueryBuilders.match()
                     .field(field)
@@ -253,12 +246,7 @@ public class AddressQueryBuilder {
 
     private BoolQuery.Builder getFuzzyNameQueryBuilder(String value, String objectType) {
         var or = QueryBuilders.bool();
-        for (String lang : languages) {
-            float boost = lang.equals(language) ? 1.0f : FACTOR_FOR_WRONG_LANGUAGE;
-            var fieldName = Constants.NAME + '.' + lang + ".raw";
-
-            or.should(getFuzzyQueryCore(fieldName, value, boost));
-        }
+        or.should(getFuzzyQuery("name", value));
 
         return or.minimumShouldMatch("1")
                 .filter(QueryBuilders.term()

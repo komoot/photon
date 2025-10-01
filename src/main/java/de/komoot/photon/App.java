@@ -387,7 +387,7 @@ public class App {
                         args.getDefaultLanguage(),
                         args.getMaxResults(),
                         dbProperties.getSupportGeometries()),
-                server.createSearchHandler(dbProperties.getLanguages(), args.getQueryTimeout()),
+                server.createSearchHandler(args.getQueryTimeout()),
                 formatter));
 
         if (dbProperties.getSupportStructuredQueries()) {
@@ -397,7 +397,7 @@ public class App {
                             args.getDefaultLanguage(),
                             args.getMaxResults(),
                             dbProperties.getSupportGeometries()),
-                    server.createStructuredSearchHandler(dbProperties.getLanguages(), args.getQueryTimeout()),
+                    server.createStructuredSearchHandler(args.getQueryTimeout()),
                     formatter));
         }
 

@@ -38,11 +38,11 @@ class QueryRelevanceTest extends ESBaseTester {
         final var request = new SimpleSearchRequest();
         request.setQuery(query);
 
-        return getServer().createSearchHandler(new String[]{"en"}, 1).search(request);
+        return getServer().createSearchHandler(1).search(request);
     }
 
     private List<PhotonResult> search(SimpleSearchRequest request) {
-        return getServer().createSearchHandler(new String[]{"en"}, 1).search(request);
+        return getServer().createSearchHandler(1).search(request);
     }
 
     private SimpleSearchRequest createBiasedRequest()

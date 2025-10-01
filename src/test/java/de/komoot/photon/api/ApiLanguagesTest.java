@@ -67,14 +67,4 @@ class ApiLanguagesTest extends ApiBaseTester {
                 .node("features").isArray()
                 .hasSize(2);
     }
-
-    @Test
-    void testUseCommandLineLanguages() throws Exception {
-        importPlaces("en", "fr", "ch");
-        startAPI("-languages", "en,fr");
-
-        assertThatJson(readURL("/api?q=thething")).isObject()
-                .node("features").isArray()
-                .hasSize(1);
-    }
 }

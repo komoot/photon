@@ -11,24 +11,26 @@ import java.util.stream.Collectors;
  * the mapping toward Nominatim's address ranks.
  */
 public enum AddressType {
-    HOUSE("house", 29, 30),
-    STREET("street", 26, 28),
-    LOCALITY("locality", 22, 25),
-    DISTRICT("district", 17, 21),
-    CITY("city", 13, 16),
-    COUNTY("county", 10, 12),
-    STATE("state", 5, 9),
-    COUNTRY("country", 4, 4),
-    OTHER("other", 0, 0);
+    HOUSE("house", 29, 30, 3),
+    STREET("street", 26, 28, 2),
+    LOCALITY("locality", 22, 25, 1),
+    DISTRICT("district", 17, 21, 1),
+    CITY("city", 13, 16, 3),
+    COUNTY("county", 10, 12, 1),
+    STATE("state", 5, 9, 1),
+    COUNTRY("country", 4, 4, 2),
+    OTHER("other", 0, 0, 1);
 
     private final String name;
     private final int minRank;
     private final int maxRank;
+    private final int searchPrio;
 
-    AddressType(String name, int minRank, int maxRank) {
+    AddressType(String name, int minRank, int maxRank, int searchPrio) {
         this.name = name;
         this.minRank = minRank;
         this.maxRank = maxRank;
+        this.searchPrio = searchPrio;
     }
 
     /**
@@ -63,5 +65,9 @@ public enum AddressType {
 
     public static List<String> getNames() {
         return Arrays.stream(AddressType.values()).map(AddressType::getName).collect(Collectors.toList());
+    }
+
+    public int getSearchPrio() {
+        return searchPrio;
     }
 }

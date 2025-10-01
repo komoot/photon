@@ -141,7 +141,7 @@ public class StructuredQueryTest extends ESBaseTester {
         request.setDistrict(HAMLET);
         request.setHouseNumber("2");
 
-        var queryHandler = getServer().createStructuredSearchHandler(new String[]{LANGUAGE}, 1);
+        var queryHandler = getServer().createStructuredSearchHandler(1);
         var results = queryHandler.search(request);
         assertEquals(1, results.size());
         var result = results.get(0);
@@ -154,7 +154,7 @@ public class StructuredQueryTest extends ESBaseTester {
         request.setCountryCode(COUNTRY_CODE);
         request.setCity(CITY);
         request.setStreet(STREET);
-        var queryHandler = getServer().createStructuredSearchHandler(new String[]{LANGUAGE}, 1);
+        var queryHandler = getServer().createStructuredSearchHandler(1);
         var results = queryHandler.search(request);
         for (var result : results)
         {
@@ -166,7 +166,7 @@ public class StructuredQueryTest extends ESBaseTester {
     void returnsOnlyCountryForCountryRequests() {
         var request = new StructuredSearchRequest();
         request.setCountryCode(COUNTRY_CODE);
-        var queryHandler = getServer().createStructuredSearchHandler(new String[]{LANGUAGE}, 1);
+        var queryHandler = getServer().createStructuredSearchHandler(1);
         var results = queryHandler.search(request);
         assertEquals(1, results.size());
         var result = results.get(0);
@@ -179,7 +179,7 @@ public class StructuredQueryTest extends ESBaseTester {
         request.setCountryCode(COUNTRY_CODE);
         request.setCity(CITY);
 
-        var queryHandler = getServer().createStructuredSearchHandler(new String[]{LANGUAGE}, 1);
+        var queryHandler = getServer().createStructuredSearchHandler(1);
         var results = queryHandler.search(request);
 
         for (var result : results) {
@@ -252,7 +252,7 @@ public class StructuredQueryTest extends ESBaseTester {
     }
 
     private PhotonResult search(StructuredSearchRequest request) {
-        var queryHandler = getServer().createStructuredSearchHandler(new String[]{LANGUAGE}, 1);
+        var queryHandler = getServer().createStructuredSearchHandler(1);
         var results = queryHandler.search(request);
 
         return results.get(0);

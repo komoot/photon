@@ -31,7 +31,7 @@ public class Server {
      * changes in an incompatible way. If it is already at the next released
      * version, increase the dev version.
      */
-    public static final String DATABASE_VERSION = "1.0.0-1";
+    public static final String DATABASE_VERSION = "1.0.0-2";
 
     private static final Logger LOGGER = LogManager.getLogger();
 
@@ -142,7 +142,6 @@ public class Server {
         new IndexSettingBuilder().setShards(5).createIndex(client, PhotonIndex.NAME);
 
         new IndexMapping(dbProperties.getSupportStructuredQueries())
-                .addLanguages(dbProperties.getLanguages())
                 .putMapping(client, PhotonIndex.NAME);
 
         saveToDatabase(dbProperties);
@@ -197,12 +196,12 @@ public class Server {
         return new de.komoot.photon.opensearch.Updater(client);
     }
 
-    public SearchHandler<SimpleSearchRequest> createSearchHandler(String[] languages, int queryTimeoutSec) {
-        return new OpenSearchSearchHandler(client, languages, queryTimeoutSec);
+    public SearchHandler<SimpleSearchRequest> createSearchHandler(int queryTimeoutSec) {
+        return new OpenSearchSearchHandler(client, queryTimeoutSec);
     }
 
-    public SearchHandler<StructuredSearchRequest> createStructuredSearchHandler(String[] languages, int queryTimeoutSec) {
-        return new OpenSearchStructuredSearchHandler(client, languages, queryTimeoutSec);
+    public SearchHandler<StructuredSearchRequest> createStructuredSearchHandler(int queryTimeoutSec) {
+        return new OpenSearchStructuredSearchHandler(client, queryTimeoutSec);
     }
 
     public SearchHandler<ReverseRequest> createReverseHandler(int queryTimeoutSec) {

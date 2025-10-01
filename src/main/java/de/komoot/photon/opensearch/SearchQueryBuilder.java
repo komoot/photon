@@ -11,6 +11,7 @@ import org.opensearch.client.opensearch._types.query_dsl.*;
 import org.opensearch.client.util.ObjectBuilder;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class SearchQueryBuilder {
     private ObjectBuilder<Query> finalQueryWithoutTagFilterBuilder;
@@ -20,132 +21,151 @@ public class SearchQueryBuilder {
     private TermsQuery.Builder layerQueryBuilder;
     private Query finalQuery = null;
 
-    public SearchQueryBuilder(String query, String language, String[] languages, boolean lenient) {
-        var query4QueryBuilder = QueryBuilders.bool();
-
-        // 1. All terms of the query must be contained in the place record somehow. Be more lenient on second try.
-        query4QueryBuilder.must(base -> base.match(q -> {
-            q.query(fn -> fn.stringValue(query));
-            q.analyzer("search");
-            q.field("collector.base");
-
-            if (lenient) {
-                q.fuzziness("AUTO");
-                q.prefixLength(2);
-                q.minimumShouldMatch("-34%");
-            } else {
-                q.operator(Operator.And);
-            }
-            return q;
-        }));
-
-        // 2. Prefer records that have the full names in. For address records with house numbers this is the main
-        //    filter criterion because they have no name. Boost the score in this case.
-        query4QueryBuilder.should(shd -> shd.functionScore(fs -> fs
-                .query(q -> q.multiMatch(mm -> {
-                    mm.query(query).type(TextQueryType.BestFields).analyzer("search");
-                    mm.fields(String.format(Locale.ROOT, "%s^%f", "collector.default", 1.0f));
-
-                    for (String lang : languages) {
-                        mm.fields(String.format(Locale.ROOT, "collector.%s^%f", lang, lang.equals(language) ? 1.0f : 0.6f));
-                    }
-
-                    return mm.boost(0.3f);
-                }))
-                .functions(fn -> fn
-                        .filter(flt -> flt
-                                .match(m -> m
-                                        .query(q -> q.stringValue(query))
-                                        .field("housenumber")))
-                        .weight(10.0)
-                )
-        ));
-
-        // 3. Either the name or house number must be in the query terms.
-        final String defLang = "default".equals(language) ? languages[0] : language;
-        var nameNgramQuery = MultiMatchQuery.of(q -> {
-            q.query(query).type(TextQueryType.BestFields).analyzer("search");
-
-            if (lenient) {
-                q.fuzziness("AUTO").prefixLength(2);
-            }
-
-            for (String lang : languages) {
-                q.fields(String.format(Locale.ROOT, "name.%s.ngrams^%f", lang, lang.equals(defLang) ? 1.0f : 0.4f));
-            }
-
-            q.fields("name.other^0.4");
-
-            if (query.indexOf(',') < 0 && query.indexOf(' ') < 0) {
-                q.boost(2f);
-            }
-
-            return q;
-        });
-
-        if (query.indexOf(',') < 0 && query.indexOf(' ') < 0) {
-            query4QueryBuilder.must(nameNgramQuery.toQuery());
+    public SearchQueryBuilder(String query, boolean lenient) {
+        if (query.length() < 4 || query.matches("^\\p{IsAlphabetic}+$")) {
+            setupShortQuery(query, lenient);
         } else {
-            query4QueryBuilder.must(m -> m.bool(q -> q
-                    .should(nameNgramQuery.toQuery())
-                    .should(shd1 -> shd1
-                            .match(m1 -> m1
-                                    .query(q1 -> q1.stringValue(query))
-                                    .field("housenumber")
-                                    .analyzer("standard")))
-                    .should(shd2 -> shd2
-                            .match(m2 -> m2
-                                    .query(q2 -> q2.stringValue(query))
-                                    .field("classification")
-                                    .boost(0.1f)))
-                    .minimumShouldMatch("1")
-            ));
+            setupFullQuery(query, lenient);
         }
-
-        // 4. Rerank results for having the full name in the default language.
-        query4QueryBuilder.should(m -> m.match(inner -> inner
-                .query(q -> q.stringValue(query))
-                .field(String.format("name.%s.raw", language))
-                .analyzer("search")
-                .fuzziness(lenient ? "auto" : "0")
-        ));
-
-        // Weigh the resulting score by importance. Use a linear scale function that ensures that the weight
-        // never drops to 0 and cancels out the ES score.
-        finalQueryWithoutTagFilterBuilder = new Query.Builder().functionScore(fs -> fs
-                .query(query4QueryBuilder.build().toQuery())
-                .functions(fn1 -> fn1
-                        .linear(df1 -> df1
-                                .field("importance")
-                                .placement(p1 -> p1
-                                        .origin(JsonData.of(1.0))
-                                        .scale(JsonData.of(0.6))
-                                        .decay(0.5))))
-                .functions(fn2 -> fn2
-                        .filter(flt -> flt
-                                .match(m -> m
-                                        .query(q -> q.stringValue(query))
-                                        .field("classification")))
-                        .weight(0.1))
-                .scoreMode(FunctionScoreMode.Sum)
-        );
-
-        // Filter for later: records that have a house number and no name must only appear when the house number matches.
-        queryBuilderForTopLevelFilter = QueryBuilders.bool()
-                .should(q1 -> q1.bool(qin -> qin
-                        .mustNot(mn -> mn.exists(ex -> ex.field("housenumber")))))
-                .should(q2 -> q2.match(m2 -> m2
-                        .query(iq -> iq.stringValue(query))
-                        .field("housenumber")
-                        .analyzer("standard")))
-                .should(q3 -> q3.exists(ex2 -> ex2
-                        .field(String.format("name.%s.raw", defLang))));
     }
 
-    public SearchQueryBuilder(StructuredSearchRequest request, String language, String[] languages, boolean lenient)
+    public void setupShortQuery(String query, boolean lenient) {
+        final var queryField = FieldValue.of(f -> f.stringValue(query));
+
+        final var prefixMatch = MatchQuery.of(nmb -> nmb
+                                .query(queryField)
+                                .field("collector.name.prefix")
+                                .boost((query.length()) > 3 ? 0.5f : 0.8f));
+
+        finalQueryWithoutTagFilterBuilder = new Query.Builder().functionScore(fs -> fs
+                .query(q -> q.bool(b -> {
+                    if (lenient) {
+                        b.must(prefixOrFullName -> prefixOrFullName.bool(bi -> bi
+                                .should(iq -> iq.match(prefixMatch))
+                                .should(iq2 -> iq2.match(nmb -> nmb
+                                        .query(queryField)
+                                        .field("collector.name")
+                                        .fuzziness("AUTO")
+                                        .prefixLength(2)
+                                        .boost(0.2f)))
+                        ));
+                    } else {
+                        b.must(iq -> iq.match(prefixMatch));
+                    }
+                    b.should(fullMatch -> fullMatch.match(fmb -> fmb
+                            .query(queryField)
+                            .field("collector.all")
+                            .boost((query.length()) > 3 ? 0.4f : 0.1f)));
+                    return b;
+                }))
+                .functions(fvf -> fvf.fieldValueFactor(fvfb -> fvfb
+                        .field("importance")
+                        .factor(40.0)
+                        .missing(0.00001)
+                ))
+                .functions(demotePoi -> demotePoi
+                        .weight(0.2)
+                        .filter(fbool -> fbool.bool(c -> c
+                                .mustNot(fp -> fp.term(tp -> tp
+                                        .field(Constants.OBJECT_TYPE)
+                                        .value(FieldValue.of("other"))))))
+                )
+                .scoreMode(FunctionScoreMode.Sum)
+                .boostMode(FunctionBoostMode.Sum)
+        );
+    }
+
+    public void setupFullQuery(String query, boolean lenient) {
+        final var queryField = FieldValue.of(f -> f.stringValue(query));
+        final boolean isAlphabetic = query.matches("[\\p{IsAlphabetic} ]+");
+        finalQueryWithoutTagFilterBuilder = new Query.Builder().functionScore(fs -> fs
+                .query(coreQuery -> coreQuery.bool(coreBuilder -> {
+                    coreBuilder.must(fullMatch -> fullMatch.match(fmb -> {
+                        fmb.query(queryField);
+                        fmb.field("collector.all.ngram");
+                        fmb.boost(0.1f);
+
+                        if (lenient) {
+                            fmb.minimumShouldMatch("2<-1 6<-2");
+                            fmb.fuzziness("AUTO");
+                            fmb.prefixLength(2);
+                        } else {
+                            fmb.operator(Operator.And);
+                        }
+                        return fmb;
+                    }));
+                    coreBuilder.must(outer -> outer.disMax(outerb -> outerb
+                            .boost(0.2f)
+                            .queries(builder -> builder.match(q -> q
+                                    .query(queryField)
+                                    .field("collector.name")
+                                    .fuzziness(lenient ? "AUTO" : "0")
+                                    .prefixLength(2)
+                                    .boost(isAlphabetic ? 1.5f : 1.0f)
+                            ))
+                            .queries(builder -> builder.bool(b -> b
+                                    .must(hnrWeighted -> hnrWeighted
+                                            .functionScore(hnrFS -> hnrFS
+                                                    .boostMode(FunctionBoostMode.Multiply)
+                                                    .scoreMode(FunctionScoreMode.Sum)
+                                                    .query(hnr -> hnr
+                                                            .match(m1 -> m1
+                                                                    .query(queryField)
+                                                                    .boost(0.6f)
+                                                                    .field("housenumber")
+                                                            ))
+                                                    .functions(fullHnr -> fullHnr
+                                                            .weight(1.0)
+                                                            .filter(hmrExact -> hmrExact
+                                                                    .terms(t -> t
+                                                                            .field("housenumber.full")
+                                                                            .boost(2f)
+                                                                            .terms(tf -> tf.value(
+                                                                                    Arrays.stream(query.toLowerCase().split("[ ,;]+"))
+                                                                                            .map(s -> FieldValue.of(fv -> fv.stringValue(s)))
+                                                                                            .collect(Collectors.toList())
+                                                                            ))
+                                                                    )
+                                                            ))
+                                                    .functions(constFact -> constFact.weight(1.0))
+                                            ))
+                                    .must(parent -> parent
+                                            .match(m2 -> m2
+                                                    .query(queryField)
+                                                    .field("collector.parent")
+                                                    .fuzziness(lenient ? "AUTO" : "0")
+                                                    .prefixLength(2)
+                                            ))
+                            ))
+                    ));
+                    coreBuilder.should(fullWord -> fullWord.match(fwm -> fwm
+                            .query(queryField)
+                            .field("collector.all")
+                    ));
+                    if (!lenient && query.indexOf(',') < 0) {
+                        coreBuilder.should(prefixMatch -> prefixMatch.match(nmb -> nmb
+                                .query(queryField)
+                                .field("collector.name.prefix")
+                                .boost(isAlphabetic ? 0.1f : 0.01f)
+                        ));
+                    }
+
+                    return coreBuilder;
+                }))
+                .functions(fvf -> fvf.fieldValueFactor(fvfb -> fvfb
+                        .field("importance")
+                        .factor(isAlphabetic ? 40.0 : 20.0)
+                        .missing(0.00001)
+                ))
+                .scoreMode(FunctionScoreMode.Sum)
+                .boostMode(FunctionBoostMode.Sum)
+        );
+    }
+
+    public SearchQueryBuilder(StructuredSearchRequest request, boolean lenient)
     {
         var hasSubStateField = request.hasCounty() || request.hasCityOrPostCode() || request.hasDistrict() || request.hasStreet();
-        var query4QueryBuilder = new AddressQueryBuilder(lenient, language, languages)
+        var query4QueryBuilder = new AddressQueryBuilder(lenient)
                 .addCountryCode(request.getCountryCode(), request.hasState() || hasSubStateField)
                 .addState(request.getState(), hasSubStateField)
                 .addCounty(request.getCounty(), request.hasCityOrPostCode() || request.hasDistrict() || request.hasStreet())

@@ -69,7 +69,7 @@ class QueryFilterTagValueTest extends ESBaseTester {
             request.addOsmTagFilter(TagFilter.buildOsmTagFilter(param));
         }
 
-        return getServer().createSearchHandler(new String[]{"en"}, 1).search(request);
+        return getServer().createSearchHandler(1).search(request);
     }
 
     private List<PhotonResult> reverseWithTags(String[] params) {

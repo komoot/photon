@@ -14,12 +14,10 @@ import java.util.List;
 
 public class OpenSearchSearchHandler implements SearchHandler<SimpleSearchRequest> {
     private final OpenSearchClient client;
-    private final String[] supportedLanguages;
     private final String queryTimeout;
 
-    public OpenSearchSearchHandler(OpenSearchClient client, String[] supportedLanguages, int queryTimeout) {
+    public OpenSearchSearchHandler(OpenSearchClient client, int queryTimeout) {
         this.client = client;
-        this.supportedLanguages = supportedLanguages;
         this.queryTimeout = queryTimeout + "s";
     }
 
@@ -48,7 +46,7 @@ public class OpenSearchSearchHandler implements SearchHandler<SimpleSearchReques
     }
 
     private SearchQueryBuilder buildQuery(SimpleSearchRequest request, boolean lenient) {
-        return new SearchQueryBuilder(request.getQuery(), request.getLanguage(), supportedLanguages, lenient).
+        return new SearchQueryBuilder(request.getQuery(), lenient).
                 withOsmTagFilters(request.getOsmTagFilters()).
                 withLayerFilters(request.getLayerFilters()).
                 withLocationBias(request.getLocationForBias(), request.getScaleForBias(), request.getZoomForBias()).
