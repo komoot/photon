@@ -62,11 +62,13 @@ public class OpenSearchStructuredSearchHandler implements SearchHandler<Structur
     }
 
     public SearchQueryBuilder buildQuery(StructuredSearchRequest photonRequest, boolean lenient) {
-        return new SearchQueryBuilder(photonRequest, lenient).
-                withOsmTagFilters(photonRequest.getOsmTagFilters()).
-                withLayerFilters(photonRequest.getLayerFilters()).
-                withLocationBias(photonRequest.getLocationForBias(), photonRequest.getScaleForBias(), photonRequest.getZoomForBias()).
-                withBoundingBox(photonRequest.getBbox());
+        return new SearchQueryBuilder(photonRequest, lenient)
+                .withOsmTagFilters(photonRequest.getOsmTagFilters())
+                .withLayerFilters(photonRequest.getLayerFilters())
+                .withIncludeCategories(photonRequest.getIncluded())
+                .withExcludeCategories(photonRequest.getExcluded())
+                .withLocationBias(photonRequest.getLocationForBias(), photonRequest.getScaleForBias(), photonRequest.getZoomForBias())
+                .withBoundingBox(photonRequest.getBbox());
     }
 
     private SearchResponse<OpenSearchResult> sendQuery(Query query, Integer limit) {

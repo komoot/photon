@@ -16,10 +16,8 @@ import java.util.stream.Collectors;
 public class SearchQueryBuilder {
     private ObjectBuilder<Query> finalQueryWithoutTagFilterBuilder;
     private BoolQuery.Builder queryBuilderForTopLevelFilter;
-    private OsmTagFilter osmTagFilter = new OsmTagFilter();
-    private GeoBoundingBoxQuery.Builder bboxQueryBuilder;
-    private TermsQuery.Builder layerQueryBuilder;
     private Query finalQuery = null;
+    private final List<Query> filters = new ArrayList<>();
 
     public SearchQueryBuilder(String query, boolean lenient) {
         if (query.length() < 4 || query.matches("^\\p{IsAlphabetic}+$")) {
@@ -203,8 +201,6 @@ public class SearchQueryBuilder {
             queryBuilderForTopLevelFilter = QueryBuilders.bool().must(noHouseOrHouseNumber)
                     .mustNot(typeOtherQuery);
         }
-
-        osmTagFilter = new OsmTagFilter();
     }
 
     public SearchQueryBuilder withLocationBias(Point point, double scale, int zoom) {
@@ -241,20 +237,23 @@ public class SearchQueryBuilder {
 
     public SearchQueryBuilder withBoundingBox(Envelope bbox) {
         if (bbox != null) {
-            bboxQueryBuilder = QueryBuilders.geoBoundingBox()
+            filters.add(QueryBuilders.geoBoundingBox()
                     .field("coordinate")
                     .boundingBox(b -> b.coords(c -> c
                             .top(bbox.getMaxY())
                             .bottom(bbox.getMinY())
                             .left(bbox.getMinX())
-                            .right(bbox.getMaxX())));
+                            .right(bbox.getMaxX())))
+                    .build().toQuery());
         }
 
         return this;
     }
 
     public SearchQueryBuilder withOsmTagFilters(List<TagFilter> filters) {
-        osmTagFilter.withOsmTagFilters(filters);
+        if (filters != null && !filters.isEmpty()) {
+            this.filters.add(new OsmTagFilter().withOsmTagFilters(filters).build());
+        }
         return this;
     }
 
@@ -264,9 +263,30 @@ public class SearchQueryBuilder {
             for (var filter : filters) {
                 terms.add(FieldValue.of(filter));
             }
-            layerQueryBuilder = QueryBuilders.terms().field("type").terms(t -> t.value(terms));
+            this.filters.add(QueryBuilders.terms()
+                    .field("type")
+                    .terms(t -> t.value(terms))
+                    .build().toQuery());
         }
 
+        return this;
+    }
+
+    public SearchQueryBuilder withIncludeCategories(List<String> filters) {
+        for (var terms : filters) {
+            if (!terms.isEmpty()) {
+                this.filters.add(new CategoryFilter(terms).buildIncludeQuery());
+            }
+        }
+        return this;
+    }
+
+    public SearchQueryBuilder withExcludeCategories(List<String> filters) {
+        for (var terms : filters) {
+            if (!terms.isEmpty()) {
+                this.filters.add(new CategoryFilter(terms).buildExcludeQuery());
+            }
+        }
         return this;
     }
 
@@ -278,18 +298,7 @@ public class SearchQueryBuilder {
                     q.filter(queryBuilderForTopLevelFilter.build().toQuery());
                 }
 
-                final var tagFilters = osmTagFilter.build();
-                if (tagFilters != null) {
-                    q.filter(tagFilters);
-                }
-
-                if (bboxQueryBuilder != null) {
-                    q.filter(bboxQueryBuilder.build().toQuery());
-                }
-
-                if (layerQueryBuilder != null) {
-                    q.filter(layerQueryBuilder.build().toQuery());
-                }
+                q.filter(filters);
 
                 return q;
             }).toQuery();

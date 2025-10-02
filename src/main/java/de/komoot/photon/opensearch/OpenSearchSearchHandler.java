@@ -46,11 +46,13 @@ public class OpenSearchSearchHandler implements SearchHandler<SimpleSearchReques
     }
 
     private SearchQueryBuilder buildQuery(SimpleSearchRequest request, boolean lenient) {
-        return new SearchQueryBuilder(request.getQuery(), lenient).
-                withOsmTagFilters(request.getOsmTagFilters()).
-                withLayerFilters(request.getLayerFilters()).
-                withLocationBias(request.getLocationForBias(), request.getScaleForBias(), request.getZoomForBias()).
-                withBoundingBox(request.getBbox());
+        return new SearchQueryBuilder(request.getQuery(), lenient)
+                .withOsmTagFilters(request.getOsmTagFilters())
+                .withLayerFilters(request.getLayerFilters())
+                .withIncludeCategories(request.getIncluded())
+                .withExcludeCategories(request.getExcluded())
+                .withLocationBias(request.getLocationForBias(), request.getScaleForBias(), request.getZoomForBias())
+                .withBoundingBox(request.getBbox());
     }
 
     private SearchResponse<OpenSearchResult> sendQuery(Query query, int limit) {

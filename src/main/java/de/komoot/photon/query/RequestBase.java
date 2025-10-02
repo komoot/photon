@@ -14,8 +14,8 @@ public class RequestBase {
 
     private final List<TagFilter> osmTagFilters = new ArrayList<>(1);
     private final Set<String> layerFilters = new HashSet<>(1);
-    private final List<List<String>> includeCategory = new ArrayList<>();
-    private final List<List<String>> excludeCategory = new ArrayList<>();
+    private final List<String> includeCategories = new ArrayList<>();
+    private final List<String> excludeCategories = new ArrayList<>();
 
     public String getLanguage() {
         return language;
@@ -45,9 +45,9 @@ public class RequestBase {
         return layerFilters;
     }
 
-    public List<List<String>> getIncluded() { return includeCategory; }
+    public List<String> getIncluded() { return includeCategories; }
 
-    public List<List<String>> getExcluded() { return excludeCategory; }
+    public List<String> getExcluded() { return excludeCategories; }
 
     public void setLanguage(String language) {
         if (language != null) {
@@ -88,14 +88,10 @@ public class RequestBase {
     }
 
     void addIncludeCategory(List<String> cats) {
-        for (var c : cats) {
-            includeCategory.add(Arrays.stream(c.split(",")).collect(Collectors.toList()));
-        }
+        includeCategories.addAll(cats);
     }
 
     void addExcludeCategory(List<String> cats) {
-        for (var c : cats) {
-            excludeCategory.add(Arrays.stream(c.split(",")).collect(Collectors.toList()));
-        }
+        excludeCategories.addAll(cats);
     }
 }
