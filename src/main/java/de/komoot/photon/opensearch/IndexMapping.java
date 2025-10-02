@@ -27,7 +27,7 @@ public class IndexMapping {
                 ;//.source(s -> s.excludes("collector"));
 
         // Only list fields here that need an index in some form. All other fields will
-        // be passive fields saved in and retrivable by _source.
+        // be passive fields saved in and retrievable by _source.
 
         for (var field : new String[]{"osm_key", "osm_value", "type"}) {
             mappings.properties(field, b -> b.keyword(p -> p

@@ -15,8 +15,9 @@ import java.util.regex.Pattern;
  * Denormalized document with all information needed for saving in the Photon database.
  */
 public class PhotonDoc {
-    public static final Pattern CATEGORY_INVALID_CHARS = Pattern.compile("[^a-zA-Z0-9_-]");
-    private static final Pattern CATEGORY_PATTERN = Pattern.compile("[^a-zA-Z0-9._-]");
+    public static final String CATEGORY_VALID_CHARS = "a-zA-Z0-9_-";
+    public static final Pattern CATEGORY_INVALID_CHARS = Pattern.compile("[^" + CATEGORY_VALID_CHARS + "]");
+    private static final Pattern CATEGORY_PATTERN = Pattern.compile("[^." + CATEGORY_VALID_CHARS + "]");
 
     private static final List<Map.Entry<AddressType, String>> ADDRESS_TYPE_TAG_MAP = List.of(
             Map.entry(AddressType.STREET, "street"),

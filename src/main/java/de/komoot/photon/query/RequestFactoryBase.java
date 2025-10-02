@@ -1,5 +1,6 @@
 package de.komoot.photon.query;
 
+import de.komoot.photon.PhotonDoc;
 import de.komoot.photon.nominatim.model.AddressType;
 import de.komoot.photon.searcher.TagFilter;
 import io.javalin.http.Context;
@@ -9,12 +10,14 @@ import org.locationtech.jts.geom.*;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 public class RequestFactoryBase {
     protected static final Set<String> BASE_PARAMETERS = Set.of(
-        "lang", "limit", "debug", "dedupe", "geometry", "osm_tag", "layer");
+        "lang", "limit", "debug", "dedupe", "geometry", "osm_tag", "layer", "include", "exclude");
     private static final List<String> AVAILABLE_LAYERS = AddressType.getNames();
     private static final GeometryFactory GEOMETRY_FACTORY = new GeometryFactory(new PrecisionModel(), 4326);
+    private static final Pattern INVALID_CATEGORY_CHARS = Pattern.compile("[^.," + PhotonDoc.CATEGORY_VALID_CHARS + "]");
 
     private final List<String> supportedLanguages;
     private final String defaultLangauge;
@@ -43,6 +46,18 @@ public class RequestFactoryBase {
                 .allowNullable()
                 .check(AVAILABLE_LAYERS::containsAll,
                         "Unknown layer type. Available layers: " + AVAILABLE_LAYERS)
+                .get());
+
+        request.addIncludeCategory(context.queryParamsAsClass("include", String.class)
+                .allowNullable()
+                .check(sl -> !INVALID_CATEGORY_CHARS.matcher(String.join("", sl)).find(),
+                      "Invalid category name in 'include'")
+                .get());
+
+        request.addExcludeCategory(context.queryParamsAsClass("exclude", String.class)
+                .allowNullable()
+                .check(sl -> !INVALID_CATEGORY_CHARS.matcher(String.join("", sl)).find(),
+                        "Invalid category name in 'exclude'")
                 .get());
 
         final var tagFilters = context.queryParamsAsClass("osm_tag", TagFilter.class)
