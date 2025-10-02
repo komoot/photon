@@ -1,12 +1,9 @@
 package de.komoot.photon;
 
-import java.util.regex.Pattern;
-
 /**
  * Helper functions to convert a photon document to XContentBuilder object / JSON
  */
 public class Utils {
-    static final Pattern STRING_PATTERN = Pattern.compile("[^a-zA-Z0-9_-]");
 
     // http://stackoverflow.com/a/4031040/1437096
     public static String stripNonDigits(
@@ -23,7 +20,7 @@ public class Utils {
     }
 
     public static String buildClassificationString(String key, String value) {
-        if (STRING_PATTERN.matcher(key).find() || STRING_PATTERN.matcher(value).find()) {
+        if (PhotonDoc.CATEGORY_INVALID_CHARS.matcher(key).find() || PhotonDoc.CATEGORY_INVALID_CHARS.matcher(value).find()) {
             return null;
         }
 

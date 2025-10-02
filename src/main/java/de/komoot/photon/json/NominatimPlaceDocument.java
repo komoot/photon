@@ -87,9 +87,10 @@ public class NominatimPlaceDocument {
     }
 
     @JsonProperty(DumpFields.PLACE_CATEGORIES)
-    void setCategories(String[] categories) {
+    void setCategories(List<String> categories) {
+        doc.categories(categories);
         for (var cat : categories) {
-            if (cat.startsWith("osm.")) {
+            if (cat.startsWith("osm.") && cat.length() > 4) {
                 String[] parts = cat.split("\\.");
                 doc.tagKey(parts[1]);
                 doc.tagValue(parts.length > 2 ? parts[2] : "yes");

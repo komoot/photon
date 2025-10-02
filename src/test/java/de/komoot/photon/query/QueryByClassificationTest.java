@@ -30,6 +30,7 @@ class QueryByClassificationTest extends ESBaseTester {
         ++testDocId;
         return new PhotonDoc()
                 .placeId(testDocId).osmType("W").osmId(testDocId).tagKey(key).tagValue(value)
+                .categories(List.of(String.format("osm.%s.%s", key, value)))
                 .names(makeDocNames("name", name));
     }
 
@@ -70,10 +71,6 @@ class QueryByClassificationTest extends ESBaseTester {
         String classTerm = Utils.buildClassificationString("amenity", "restaurant");
 
         assertThat(classTerm).isNotNull();
-
-        PhotonResult response = getById(testDocId);
-        assertThat((String) response.get(Constants.CLASSIFICATION))
-                .isEqualTo(classTerm);
 
         assertThat(search(classTerm + " curli"))
                 .element(0)

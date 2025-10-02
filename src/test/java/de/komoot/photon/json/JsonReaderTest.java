@@ -30,7 +30,7 @@ class JsonReaderTest {
     private boolean configGeometryColumn = false;
 
     private static final String TEST_SIMPLE_CONTENT =
-            "{\"place_id\":100818,\"object_type\":\"W\",\"object_id\":223306798,\"categories\" : [\"osm.waterway.stream\"], \"rank_address\" : 0, \"rank_search\" : 22, \"importance\" : 0.10667666666666664,\"name\":{\"name\": \"Spiersbach\", \"name:de\": \"Spiersbach\", \"alt_name\": \"Spirsbach\"},\"extra\":{\"boat\": \"no\"},\"country_code\":\"at\",\"centroid\":[9.53713454,47.27052526],\"geometry\":{\"type\":\"LineString\",\"coordinates\":[[9.5461636,47.2415541],[9.5558108,47.2955234],[9.556083,47.2962812],[9.554958,47.2966235]]}}";
+            "{\"place_id\":100818,\"object_type\":\"W\",\"object_id\":223306798,\"categories\" : [\"osm.waterway.stream\", \"natural.water.flowing.23-5\", \"bad.täg\"], \"rank_address\" : 0, \"rank_search\" : 22, \"importance\" : 0.10667666666666664,\"name\":{\"name\": \"Spiersbach\", \"name:de\": \"Spiersbach\", \"alt_name\": \"Spirsbach\"},\"extra\":{\"boat\": \"no\"},\"country_code\":\"at\",\"centroid\":[9.53713454,47.27052526],\"geometry\":{\"type\":\"LineString\",\"coordinates\":[[9.5461636,47.2415541],[9.5558108,47.2955234],[9.556083,47.2962812],[9.554958,47.2966235]]}}";
     private static final String TEST_SIMPLE_STREAM =
             "{\"type\":\"Place\",\"content\":" + TEST_SIMPLE_CONTENT + "}";
 
@@ -84,7 +84,8 @@ class JsonReaderTest {
                 .hasFieldOrPropertyWithValue("adminLevel", null)
                 .hasFieldOrPropertyWithValue("houseNumber", null)
                 .hasFieldOrPropertyWithValue("centroid", geomFactory.createPoint(new Coordinate(9.53713454, 47.27052526)))
-                .hasFieldOrPropertyWithValue("geometry", null);
+                .hasFieldOrPropertyWithValue("geometry", null)
+                .hasFieldOrPropertyWithValue("categories", Set.of("osm.waterway.stream", "natural.water.flowing.23-5"));
     }
 
     @Test

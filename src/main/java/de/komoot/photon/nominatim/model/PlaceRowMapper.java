@@ -6,6 +6,7 @@ import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 /**
  * Maps the basic attributes of a placex table row to a PhotonDoc.
@@ -27,11 +28,20 @@ public class PlaceRowMapper implements RowMapper<PhotonDoc> {
 
     @Override
     public PhotonDoc mapRow(ResultSet rs, int rowNum) throws SQLException {
+        String osmKey = rs.getString("class");
+        String osmValue = rs.getString("type");
+        if (PhotonDoc.CATEGORY_INVALID_CHARS.matcher(osmKey).find()) {
+            osmKey = "place";
+            osmValue = "yes";
+        } else if (PhotonDoc.CATEGORY_INVALID_CHARS.matcher(osmValue).find()) {
+            osmValue = "yes";
+        }
         PhotonDoc doc = new PhotonDoc(rs.getLong("place_id"),
                 rs.getString("osm_type"), rs.getLong("osm_id"),
-                rs.getString("class"), rs.getString("type"))
+                osmKey, osmValue)
                 .names(NameMap.makeForPlace(dbutils.getMap(rs, "name"), languages))
                 .extraTags(dbutils.getMap(rs, "extratags"))
+                .categories(List.of(String.format("osm.%s.%s", osmKey, osmValue)))
                 .bbox(dbutils.extractGeometry(rs, "bbox"))
                 .parentPlaceId(rs.getLong("parent_place_id"))
                 .countryCode(rs.getString("country_code"))

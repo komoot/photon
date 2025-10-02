@@ -6,6 +6,7 @@ import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 public class OsmlineRowMapper implements RowMapper<PhotonDoc> {
     @Override
@@ -16,6 +17,7 @@ public class OsmlineRowMapper implements RowMapper<PhotonDoc> {
                 "place", "house_number")
                 .parentPlaceId(rs.getLong("parent_place_id"))
                 .countryCode(rs.getString("country_code"))
+                .categories(List.of("osm.place.house_number"))
                 .postcode(rs.getString("postcode"));
     }
 

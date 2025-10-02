@@ -9,11 +9,15 @@ import org.locationtech.jts.geom.Point;
 import de.komoot.photon.nominatim.model.AddressType;
 
 import java.util.*;
+import java.util.regex.Pattern;
 
 /**
  * Denormalized document with all information needed for saving in the Photon database.
  */
 public class PhotonDoc {
+    public static final Pattern CATEGORY_INVALID_CHARS = Pattern.compile("[^a-zA-Z0-9_-]");
+    private static final Pattern CATEGORY_PATTERN = Pattern.compile("[^a-zA-Z0-9._-]");
+
     private static final List<Map.Entry<AddressType, String>> ADDRESS_TYPE_TAG_MAP = List.of(
             Map.entry(AddressType.STREET, "street"),
             Map.entry(AddressType.CITY, "city"),
@@ -44,6 +48,7 @@ public class PhotonDoc {
     private NameMap name = new NameMap();
     private String postcode = null;
     private Map<String, String> extratags = Map.of();
+    private Set<String> categorySet = new HashSet<>();
     private Envelope bbox = null;
     private long parentPlaceId = 0; // 0 if unset
     private double importance = 0;
@@ -160,6 +165,18 @@ public class PhotonDoc {
                 // take more specific extra tag information
                 tagKey = "place";
                 tagValue = place;
+            }
+        }
+
+        return this;
+    }
+
+    public PhotonDoc categories(Collection<String> collection) {
+        this.categorySet.clear();
+
+        for (var category : collection) {
+            if (!CATEGORY_PATTERN.matcher(category).find()) {
+                categorySet.add(category);
             }
         }
 
@@ -350,6 +367,8 @@ public class PhotonDoc {
     public Map<String, String> getExtratags() {
         return this.extratags;
     }
+
+    public Set<String> getCategories() { return this.categorySet; }
 
     public Envelope getBbox() {
         return this.bbox;

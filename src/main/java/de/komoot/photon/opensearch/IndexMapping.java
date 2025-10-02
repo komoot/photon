@@ -24,7 +24,7 @@ public class IndexMapping {
         mappings = new PutMappingRequest.Builder();
 
         mappings.dynamic(DynamicMapping.False)
-                .source(s -> s.excludes("collector"));
+                ;//.source(s -> s.excludes("collector"));
 
         // Only list fields here that need an index in some form. All other fields will
         // be passive fields saved in and retrivable by _source.
