@@ -2,7 +2,7 @@ target/
 photon_data/
 dependency-reduced-pom.xml
 .gradle/
-app/*/build
+build
 
 .idea/
 *.iml
