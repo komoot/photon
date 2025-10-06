@@ -38,8 +38,8 @@ public class PhotonDoc {
     private long placeId = -1;
     private String osmType = null;
     private long osmId = -1;
-    private String tagKey = null;
-    private String tagValue = null;
+    private String tagKey = "place";
+    private String tagValue = "yes";
 
     private NameMap name = new NameMap();
     private String postcode = null;
