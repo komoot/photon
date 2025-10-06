@@ -133,4 +133,56 @@ class QueryRelevanceTest extends ESBaseTester {
                 .element(0)
                 .satisfies(p -> assertThat(p.get("osm_id")).isEqualTo(1000));
     }
+
+    @ParameterizedTest
+    @ValueSource(doubles = {0.8, 0.6, 0.4, 0.2})
+    void testLocationPreferenceScaleForImportance(double scale) {
+        Importer instance = makeImporter();
+        instance.add(List.of(
+                createDoc("place", "hamlet", 1000, "name", "Ham")
+                        .importance(1.0 - scale)
+                        .centroid(FACTORY.createPoint(new Coordinate(10, 10)))));
+        instance.add(List.of(
+                createDoc("place", "hamlet", 1001, "name", "Ham")
+                        .importance(0.01)
+                        .centroid(FACTORY.createPoint(new Coordinate(-10, -10)))));
+        instance.finish();
+        refresh();
+
+        final var request = new SimpleSearchRequest();
+        request.setQuery("ham");
+        request.setLocationForBias(FACTORY.createPoint(new Coordinate(-9.99, -10)));
+        request.setScale(scale);
+
+        assertThat(search(request))
+                .hasSize(2)
+                .element(0)
+                .satisfies(p -> assertThat(p.get("osm_id")).isEqualTo(1000));
+    }
+
+    @ParameterizedTest
+    @ValueSource(doubles = {0.8, 0.6, 0.4, 0.2})
+    void testLocationPreferenceScaleForLocation(double scale) {
+        Importer instance = makeImporter();
+        instance.add(List.of(
+                createDoc("place", "hamlet", 1000, "name", "Ham")
+                        .importance(1.0 - scale)
+                        .centroid(FACTORY.createPoint(new Coordinate(10, 10)))));
+        instance.add(List.of(
+                createDoc("place", "hamlet", 1001, "name", "Ham")
+                        .importance(0.01)
+                        .centroid(FACTORY.createPoint(new Coordinate(-10, -10)))));
+        instance.finish();
+        refresh();
+
+        final var request = new SimpleSearchRequest();
+        request.setQuery("ham");
+        request.setLocationForBias(FACTORY.createPoint(new Coordinate(-9.99, -10)));
+        request.setScale(scale - 0.1);
+
+        assertThat(search(request))
+                .hasSize(2)
+                .element(0)
+                .satisfies(p -> assertThat(p.get("osm_id")).isEqualTo(1001));
+    }
 }

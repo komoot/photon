@@ -9,10 +9,11 @@ import org.opensearch.client.opensearch._types.SearchType;
 import org.opensearch.client.opensearch._types.SortOrder;
 import org.opensearch.client.opensearch._types.query_dsl.Query;
 import org.opensearch.client.opensearch.core.SearchResponse;
+import org.opensearch.client.opensearch.core.search.Hit;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class OpenSearchReverseHandler implements SearchHandler<ReverseRequest> {
     private final OpenSearchClient client;
@@ -25,20 +26,18 @@ public class OpenSearchReverseHandler implements SearchHandler<ReverseRequest> {
 
     @Override
     public List<PhotonResult> search(ReverseRequest request) {
-        final var queryBuilder = new ReverseQueryBuilder(request.getLocation(), request.getRadius(), request.getQueryStringFilter(), request.getLayerFilters())
-                .withOsmTagFilters(request.getOsmTagFilters());
+        final var queryBuilder = new ReverseQueryBuilder(request.getLocation(), request.getRadius());
+        queryBuilder.addQueryFilter(request.getQueryStringFilter());
+        queryBuilder.addLayerFilter(request.getLayerFilters());
+        queryBuilder.addOsmTagFilter(request.getOsmTagFilters());
 
-
-        final var results = search(queryBuilder.buildQuery(),
+        final var results = search(queryBuilder.build(),
                 request.getLimit(),
                 request.getLocationDistanceSort() ? request.getLocation() : null);
 
-        final List<PhotonResult> ret = new ArrayList<>();
-        for (var hit : results.hits().hits()) {
-            ret.add(hit.source());
-        }
-
-        return ret;
+        return results.hits().hits().stream()
+                .map(Hit::source)
+                .collect(Collectors.toList());
     }
 
     @Override

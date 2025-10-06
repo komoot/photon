@@ -26,23 +26,21 @@ public class OpenSearchStructuredSearchHandler implements SearchHandler<Structur
 
     @Override
     public List<PhotonResult> search(StructuredSearchRequest photonRequest) {
-        var queryBuilder = buildQuery(photonRequest, false);
-
         // for the case of deduplication we need a bit more results, #300
         int limit = photonRequest.getLimit();
         int extLimit = limit > 1 ? (int) Math.round(photonRequest.getLimit() * 1.5) : 1;
 
-        var results = sendQuery(queryBuilder.buildQuery(), extLimit);
+        var results = sendQuery(buildQuery(photonRequest, false), extLimit);
 
         if (results.hits().total().value() == 0) {
-            results = sendQuery(buildQuery(photonRequest, true).buildQuery(), extLimit);
+            results = sendQuery(buildQuery(photonRequest, true), extLimit);
 
             if (results.hits().total().value() == 0 && photonRequest.hasStreet()) {
                 var street = photonRequest.getStreet();
                 var houseNumber = photonRequest.getHouseNumber();
                 photonRequest.setStreet(null);
                 photonRequest.setHouseNumber(null);
-                results = sendQuery(buildQuery(photonRequest, true).buildQuery(), extLimit);
+                results = sendQuery(buildQuery(photonRequest, true), extLimit);
                 photonRequest.setStreet(street);
                 photonRequest.setHouseNumber(houseNumber);
             }
@@ -61,12 +59,14 @@ public class OpenSearchStructuredSearchHandler implements SearchHandler<Structur
         return "{}";
     }
 
-    public SearchQueryBuilder buildQuery(StructuredSearchRequest photonRequest, boolean lenient) {
-        return new SearchQueryBuilder(photonRequest, lenient).
-                withOsmTagFilters(photonRequest.getOsmTagFilters()).
-                withLayerFilters(photonRequest.getLayerFilters()).
-                withLocationBias(photonRequest.getLocationForBias(), photonRequest.getScaleForBias(), photonRequest.getZoomForBias()).
-                withBoundingBox(photonRequest.getBbox());
+    public Query buildQuery(StructuredSearchRequest photonRequest, boolean lenient) {
+        final var query = new SearchQueryBuilder(photonRequest, lenient);
+        query.addOsmTagFilter(photonRequest.getOsmTagFilters());
+        query.addLayerFilter(photonRequest.getLayerFilters());
+        query.addLocationBias(photonRequest.getLocationForBias(), photonRequest.getScaleForBias(), photonRequest.getZoomForBias());
+        query.addBoundingBox(photonRequest.getBbox());
+
+        return query.build();
     }
 
     private SearchResponse<OpenSearchResult> sendQuery(Query query, Integer limit) {

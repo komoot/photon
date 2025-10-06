@@ -26,10 +26,10 @@ public class OpenSearchSearchHandler implements SearchHandler<SimpleSearchReques
         final int limit = request.getLimit();
         final int extLimit = limit > 1 ? (int) Math.round(limit * 1.5) : 1;
 
-        var results = sendQuery(buildQuery(request, false).buildQuery(), extLimit);
+        var results = sendQuery(buildQuery(request, false), extLimit);
 
         if (results.hits().hits().isEmpty()) {
-            results = sendQuery(buildQuery(request, true).buildQuery(), extLimit);
+            results = sendQuery(buildQuery(request, true), extLimit);
         }
 
         List<PhotonResult> ret = new ArrayList<>();
@@ -45,12 +45,14 @@ public class OpenSearchSearchHandler implements SearchHandler<SimpleSearchReques
         return "{}";
     }
 
-    private SearchQueryBuilder buildQuery(SimpleSearchRequest request, boolean lenient) {
-        return new SearchQueryBuilder(request.getQuery(), lenient).
-                withOsmTagFilters(request.getOsmTagFilters()).
-                withLayerFilters(request.getLayerFilters()).
-                withLocationBias(request.getLocationForBias(), request.getScaleForBias(), request.getZoomForBias()).
-                withBoundingBox(request.getBbox());
+    private Query buildQuery(SimpleSearchRequest request, boolean lenient) {
+        final var query = new SearchQueryBuilder(request.getQuery(), lenient);
+        query.addOsmTagFilter(request.getOsmTagFilters());
+        query.addLayerFilter(request.getLayerFilters());
+        query.addLocationBias(request.getLocationForBias(), request.getScaleForBias(), request.getZoomForBias());
+        query.addBoundingBox(request.getBbox());
+
+        return query.build();
     }
 
     private SearchResponse<OpenSearchResult> sendQuery(Query query, int limit) {
