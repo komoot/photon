@@ -55,13 +55,13 @@ public class CollectingImporter extends AbstractList<PhotonDoc> implements Impor
     }
 
     public ListAssert<PhotonDoc> assertThatAllByRow(OsmlineTestRow row) {
-        return assertThat(docs.stream().filter(d -> d.getPlaceId() == row.getPlaceId()))
+        return assertThat(docs.stream().filter(d -> d.getPlaceId().equals(row.getPlaceId())))
                 .isNotEmpty()
                 .allSatisfy(row::assertEquals);
     }
 
     public ListAssert<PhotonDoc> assertThatAllByRow(PlacexTestRow row) {
-        return assertThat(docs.stream().filter(d -> d.getPlaceId() == row.getPlaceId()))
+        return assertThat(docs.stream().filter(d -> d.getPlaceId().equals(row.getPlaceId())))
                 .isNotEmpty()
                 .allSatisfy(row::assertEquals);
     }

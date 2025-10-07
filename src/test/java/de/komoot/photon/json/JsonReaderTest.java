@@ -268,7 +268,7 @@ class JsonReaderTest {
         var importer = readJson();
 
         assertThat(importer).singleElement()
-                .hasFieldOrPropertyWithValue("placeId", -1L);
+                .hasFieldOrPropertyWithValue("placeId", null);
     }
 
     @Test

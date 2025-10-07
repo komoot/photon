@@ -7,6 +7,7 @@ import org.opensearch.client.opensearch.OpenSearchClient;
 import org.opensearch.client.opensearch._types.Time;
 import org.opensearch.client.opensearch.core.BulkRequest;
 import org.opensearch.client.opensearch.core.bulk.BulkResponseItem;
+import org.opensearch.client.opensearch.core.bulk.CreateOperation;
 
 import java.io.IOException;
 
@@ -16,6 +17,7 @@ public class Importer implements de.komoot.photon.Importer {
     private final OpenSearchClient client;
     private BulkRequest.Builder bulkRequest = new BulkRequest.Builder();
     private int todoDocuments = 0;
+    private boolean hasPrintedNoUpdates = false;
 
     public Importer(OpenSearchClient client) {
         this.client = client;
@@ -24,15 +26,29 @@ public class Importer implements de.komoot.photon.Importer {
 
     @Override
     public void add(Iterable<PhotonDoc> docs) {
-        long placeID = 0;
+        Long placeID = null;
         int objectId = 0;
         for (var doc : docs) {
             if (objectId == 0) {
                 placeID = doc.getPlaceId();
             }
-            final String uuid = PhotonDoc.makeUid(placeID, objectId++);
-            bulkRequest.operations(op -> op
-                    .index(i -> i.index(PhotonIndex.NAME).id(uuid).document(doc)));
+            if (placeID == null) {
+                if (!hasPrintedNoUpdates) {
+                    LOGGER.warn("Documents have no place_id. Updates will not be possible.");
+                    hasPrintedNoUpdates = true;
+                }
+                bulkRequest.operations(op -> op
+                        .create(i -> i
+                                .index(PhotonIndex.NAME)
+                                .document(doc)));
+            } else {
+                final String uuid = PhotonDoc.makeUid(placeID, objectId++);
+                bulkRequest.operations(op -> op
+                        .create(i -> i
+                                .index(PhotonIndex.NAME)
+                                .id(uuid)
+                                .document(doc)));
+            }
             ++todoDocuments;
 
             if (todoDocuments % 10000 == 0) {
@@ -58,15 +74,18 @@ public class Importer implements de.komoot.photon.Importer {
 
     private void saveDocuments() {
         try {
-            var response = client.bulk(bulkRequest.build());
+            final var request = bulkRequest.build();
+            final var response = client.bulk(request);
 
             if (response.errors()) {
                 for (BulkResponseItem bri: response.items()) {
-                    LOGGER.error("Error during bulk import.");
-                    if (bri.error() != null) {
-                        LOGGER.error(bri.error().reason());
-                        LOGGER.error(bri.error().type());
-                        LOGGER.error(bri.error().stackTrace());
+                    if (bri.status() != 201) {
+                        LOGGER.error("Error during bulk import: {}", bri.toJsonString());
+                        for (var op : request.operations()) {
+                            if (op.isCreate() && op.create().id().equals(bri.id())) {
+                                LOGGER.error("Bad document: {}", op.create().document());
+                            }
+                        }
                     }
                 }
             }

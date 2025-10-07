@@ -35,7 +35,7 @@ public class PhotonDoc {
             Map.entry(AddressType.OTHER, "quarter")
             );
 
-    private long placeId = -1;
+    private Long placeId = null;
     private String osmType = null;
     private long osmId = -1;
     private String tagKey = "place";
@@ -319,7 +319,7 @@ public class PhotonDoc {
         }
     }
 
-    public long getPlaceId() {
+    public Long getPlaceId() {
         return this.placeId;
     }
 

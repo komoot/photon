@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.*;
 
 class ImporterTest extends ESBaseTester {
 
@@ -111,5 +112,37 @@ class ImporterTest extends ESBaseTester {
         assertNotNull(response);
 
         assertNull(response.get("extra"));
+    }
+
+    @Test
+    void testUsingPlaceIdsTwice() {
+        Importer instance = makeImporter();
+
+        instance.add(List.of(
+                new PhotonDoc(113344, "N", 1, "place", "yes")
+        ));
+        // Photon will log an error here and ignore the offending document.
+        instance.add(List.of(
+                new PhotonDoc(113344, "N", 2, "place", "yes")
+        ));
+        instance.finish();
+
+        assertThat(getById(113344))
+                .extracting(p -> p.get("osm_id"))
+                .isEqualTo(1);
+    }
+
+    @Test
+    void testImportWithoutPlaceId() {
+        Importer instance = makeImporter();
+
+        for (long i = 0; i < 10; ++i) {
+            instance.add(List.of(new PhotonDoc().osmType("XXR").osmId(i).houseNumber(Long.toString(i))));
+        }
+        instance.finish();
+
+        assertThat(getAll())
+                .extracting(p -> p.get("osm_id"))
+                .containsExactlyInAnyOrder(0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
     }
 }
