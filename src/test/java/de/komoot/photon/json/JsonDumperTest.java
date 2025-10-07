@@ -101,7 +101,6 @@ class JsonDumperTest {
                 .rankSearch(27)
                 .rankAddress(26)
                 .importance(0.123)
-                .adminLevel(10)
                 .country("hu")
                 .name("Spot")
                 .name("ref", "34")
@@ -121,7 +120,6 @@ class JsonDumperTest {
                 .containsEntry("categories", List.of("osm.highway.residential"))
                 .containsEntry("rank_address", 26)
                 .containsEntry("importance", 0.123)
-                .containsEntry("admin_level", 10)
                 .containsEntry("country_code", "hu")
                 .doesNotContainKeys("parent_place_id", "postcode", "extra")
                 .containsEntry("name", Map.of(

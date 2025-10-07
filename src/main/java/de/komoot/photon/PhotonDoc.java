@@ -48,7 +48,6 @@ public class PhotonDoc {
     private double importance = 0;
     private String countryCode = null;
     private int rankAddress = 30;
-    private Integer adminLevel = null;
 
     private Map<AddressType, Map<String, String>> addressParts = new EnumMap<>(AddressType.class);
     private ContextMap context = new ContextMap();
@@ -81,7 +80,6 @@ public class PhotonDoc {
         this.countryCode = other.countryCode;
         this.centroid = other.centroid;
         this.rankAddress = other.rankAddress;
-        this.adminLevel = other.adminLevel;
         this.addressParts = other.addressParts;
         this.context = other.context;
         this.geometry = other.geometry;
@@ -172,11 +170,6 @@ public class PhotonDoc {
 
     public PhotonDoc rankAddress(int rank) {
         this.rankAddress = rank;
-        return this;
-    }
-
-    public PhotonDoc adminLevel(int level) {
-        this.adminLevel = (level < 1 || level >= 15) ? null : level;
         return this;
     }
 
@@ -358,10 +351,6 @@ public class PhotonDoc {
 
     public int getRankAddress() {
         return this.rankAddress;
-    }
-
-    public Integer getAdminLevel() {
-        return this.adminLevel;
     }
 
     public Map<AddressType, Map<String, String>> getAddressParts() {

@@ -80,7 +80,6 @@ class JsonReaderTest {
                 .hasFieldOrPropertyWithValue("importance", 0.10667666666666664)
                 .hasFieldOrPropertyWithValue("countryCode", "AT")
                 .hasFieldOrPropertyWithValue("rankAddress", 0)
-                .hasFieldOrPropertyWithValue("adminLevel", null)
                 .hasFieldOrPropertyWithValue("houseNumber", null)
                 .hasFieldOrPropertyWithValue("centroid", geomFactory.createPoint(new Coordinate(9.53713454, 47.27052526)))
                 .hasFieldOrPropertyWithValue("geometry", null);
@@ -110,7 +109,6 @@ class JsonReaderTest {
                         .hasFieldOrPropertyWithValue("importance", 0.10667666666666664)
                         .hasFieldOrPropertyWithValue("countryCode", "AT")
                         .hasFieldOrPropertyWithValue("rankAddress", 0)
-                        .hasFieldOrPropertyWithValue("adminLevel", null)
                         .hasFieldOrPropertyWithValue("houseNumber", null)
                         .hasFieldOrPropertyWithValue("addressParts", Map.of())
                         .hasFieldOrPropertyWithValue("centroid", geomFactory.createPoint(new Coordinate(9.53713454, 47.27052526)))

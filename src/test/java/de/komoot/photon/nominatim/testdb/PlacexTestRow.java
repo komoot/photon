@@ -18,7 +18,6 @@ public class PlacexTestRow {
     private Long parentPlaceId;
     private String osmType = "N";
     private Long osmId;
-    private Integer adminLevel;
     private String key;
     private String value;
     private Map<String, String> names = new HashMap<>();
@@ -94,11 +93,6 @@ public class PlacexTestRow {
         return this;
     }
 
-    public PlacexTestRow adminLevel(int value) {
-        adminLevel = value;
-        return this;
-    }
-
     public PlacexTestRow addr(String type, String value) {
         address.put(type, value);
         return this;
@@ -143,12 +137,12 @@ public class PlacexTestRow {
     public PlacexTestRow add(JdbcTemplate jdbc) {
         jdbc.update(
                 "INSERT INTO placex (place_id, parent_place_id, osm_type, osm_id,"
-                        + " class, type, rank_search, rank_address, admin_level,"
+                        + " class, type, rank_search, rank_address,"
                         + " centroid, geometry, name, extratags, country_code,"
                         + " importance, address, postcode, indexed_status)"
-                        + " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? FORMAT JSON, ? FORMAT JSON, ?, ?, ? FORMAT JSON, ?, 0)",
+                        + " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? FORMAT JSON, ? FORMAT JSON, ?, ?, ? FORMAT JSON, ?, 0)",
                 placeId, parentPlaceId, osmType, osmId,
-                key, value, rankSearch, rankAddress, adminLevel,
+                key, value, rankSearch, rankAddress,
                 centroid, geometry, asJson(names), asJson(extraTags), countryCode,
                 importance, asJson(address), postcode);
         return this;

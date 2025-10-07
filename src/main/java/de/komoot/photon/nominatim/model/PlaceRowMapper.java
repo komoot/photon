@@ -38,11 +38,6 @@ public class PlaceRowMapper implements RowMapper<PhotonDoc> {
                 .rankAddress(rs.getInt("rank_address"))
                 .postcode(rs.getString("postcode"));
 
-        final var admin_level = rs.getInt("admin_level");
-        if (admin_level > 0 && admin_level < 15) {
-            doc.adminLevel(admin_level);
-        }
-
         if (useGeometryColumn) {
             try {
                 doc.geometry(dbutils.extractGeometry(rs, "geometry"));
@@ -58,7 +53,7 @@ public class PlaceRowMapper implements RowMapper<PhotonDoc> {
     }
 
     public String makeBaseSelect() {
-        var sql = "SELECT p.place_id, p.osm_type, p.osm_id, p.class, p.type, p.name, p.postcode, p.admin_level," +
+        var sql = "SELECT p.place_id, p.osm_type, p.osm_id, p.class, p.type, p.name, p.postcode," +
                 "       p.address, p.extratags, ST_Envelope(p.geometry) AS bbox," +
                 "       p.rank_address, p.rank_search, p.importance, p.country_code, p.centroid, " +
                 dbutils.jsonArrayFromSelect(

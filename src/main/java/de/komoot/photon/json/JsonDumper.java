@@ -120,10 +120,6 @@ public class JsonDumper implements Importer {
 
         writer.writeNumberField(DumpFields.PLACE_RANK_ADDRESS, doc.getRankAddress());
 
-        if (doc.getAdminLevel() != null) {
-            writer.writeNumberField(DumpFields.PLACE_ADMIN_LEVEL, doc.getAdminLevel());
-        }
-
         writer.writeNumberField(DumpFields.PLACE_IMPORTANCE, doc.getImportance());
 
         if (!doc.getName().isEmpty()) {

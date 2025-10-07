@@ -113,13 +113,6 @@ public class NominatimPlaceDocument {
         }
     }
 
-    @JsonProperty(DumpFields.PLACE_ADMIN_LEVEL)
-    void setAdminLevel(Integer adminLevel) {
-        if (adminLevel != null) {
-            doc.adminLevel(adminLevel);
-        }
-    }
-
     @JsonProperty(DumpFields.PLACE_IMPORTANCE)
     void setImportance(Double importance) {
         if (importance != null && !importance.isNaN() && !importance.isInfinite()) {
