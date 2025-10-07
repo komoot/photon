@@ -18,9 +18,7 @@ public class DumpFields {
     public static final String PLACE_OBJECT_ID = "object_id";
     public static final String PLACE_CATEGORIES = "categories";
     public static final String PLACE_RANK_ADDRESS = "rank_address";
-    public static final String PLACE_ADMIN_LEVEL = "admin_level";
     public static final String PLACE_IMPORTANCE = "importance";
-    public static final String PLACE_PARENT_PLACE_ID = "parent_place_id";
     public static final String PLACE_NAMES = "name";
     public static final String PLACE_HOUSENUMBER = "housenumber";
     public static final String PLACE_ADDRESS = "address";

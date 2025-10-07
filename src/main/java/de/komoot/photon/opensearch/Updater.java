@@ -20,12 +20,15 @@ public class Updater implements de.komoot.photon.Updater {
     }
 
     public void addOrUpdate(Iterable<PhotonDoc> docs) {
-        long placeID = 0;
+        Long placeID = null;
         int objectId = 0;
 
         for (var doc: docs) {
             if (objectId == 0) {
                 placeID = doc.getPlaceId();
+                if (placeID == null) {
+                    throw new RuntimeException("Documents without place_id cannot be used for updates.");
+                }
             }
             final String uid = PhotonDoc.makeUid(placeID, objectId++);
 
@@ -37,7 +40,9 @@ public class Updater implements de.komoot.photon.Updater {
             }
         }
 
-        deleteSubset(placeID, objectId);
+        if (placeID != null) {
+            deleteSubset(placeID, objectId);
+        }
     }
 
     public void delete(long placeId) {

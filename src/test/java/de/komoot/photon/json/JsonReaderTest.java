@@ -77,11 +77,9 @@ class JsonReaderTest {
                 .hasFieldOrPropertyWithValue("postcode", null)
                 .hasFieldOrPropertyWithValue("extratags", Map.of())
                 .hasFieldOrPropertyWithValue("bbox", new Envelope(9.5461636, 9.556083, 47.2415541, 47.2966235))
-                .hasFieldOrPropertyWithValue("parentPlaceId", 0L)
                 .hasFieldOrPropertyWithValue("importance", 0.10667666666666664)
                 .hasFieldOrPropertyWithValue("countryCode", "AT")
                 .hasFieldOrPropertyWithValue("rankAddress", 0)
-                .hasFieldOrPropertyWithValue("adminLevel", null)
                 .hasFieldOrPropertyWithValue("houseNumber", null)
                 .hasFieldOrPropertyWithValue("centroid", geomFactory.createPoint(new Coordinate(9.53713454, 47.27052526)))
                 .hasFieldOrPropertyWithValue("geometry", null);
@@ -108,11 +106,9 @@ class JsonReaderTest {
                         .hasFieldOrPropertyWithValue("postcode", null)
                         .hasFieldOrPropertyWithValue("extratags", Map.of())
                         .hasFieldOrPropertyWithValue("bbox", new Envelope(9.5461636, 9.556083, 47.2415541, 47.2966235))
-                        .hasFieldOrPropertyWithValue("parentPlaceId", 0L)
                         .hasFieldOrPropertyWithValue("importance", 0.10667666666666664)
                         .hasFieldOrPropertyWithValue("countryCode", "AT")
                         .hasFieldOrPropertyWithValue("rankAddress", 0)
-                        .hasFieldOrPropertyWithValue("adminLevel", null)
                         .hasFieldOrPropertyWithValue("houseNumber", null)
                         .hasFieldOrPropertyWithValue("addressParts", Map.of())
                         .hasFieldOrPropertyWithValue("centroid", geomFactory.createPoint(new Coordinate(9.53713454, 47.27052526)))
@@ -222,7 +218,7 @@ class JsonReaderTest {
 
     @Test
     void testAddressFromAddressField() throws IOException {
-        input.println("{\"type\":\"Place\",\"content\":{\"place_id\" : 105764, \"object_type\" : \"N\", \"object_id\" : 4637485890, \"categories\" : [\"osm.amenity.theatre\"], \"rank_address\" : 30, \"rank_search\" : 30, \"importance\" : 9.99999999995449e-06,\"parent_place_id\":106180,\"name\":{\"name\": \"Kleintheater Schlösslekeller\"},\"address\":{\"city\": \"Vaduz\", \"city:de\": \"VaduzD\", \"city:hu\": \"VaduzHU\", \"other1\": \"This\", \"other2\": \"That\", \"other1:de\": \"Dies\", \"other2:de\": \"Das\"},\"postcode\":\"9490\",\"country_code\":\"li\",\"addresslines\":[{\"place_id\":106180,\"rank_address\":26,\"fromarea\":false,\"isaddress\":true},{\"place_id\":105903,\"rank_address\":16,\"isaddress\":true,\"fromarea\":true}, {\"place_id\":106289,\"rank_address\":12,\"isaddress\":true,\"fromarea\":true}],\"centroid\":[9.52394930,47.12904370]}}");
+        input.println("{\"type\":\"Place\",\"content\":{\"place_id\" : 105764, \"object_type\" : \"N\", \"object_id\" : 4637485890, \"categories\" : [\"osm.amenity.theatre\"], \"rank_address\" : 30, \"rank_search\" : 30, \"importance\" : 9.99999999995449e-06,\"parent_place_id\":106180,\"name\":{\"name\": \"Kleintheater Schlösslekeller\"},\"address\":{\"city\": \"Vaduz\", \"city:de\": \"VaduzD\", \"city:hu\": \"VaduzHU\", \"other1\": \"This\", \"other2\": \"That\", \"other1:de\": \"Dies\", \"other2:de\": \"Das\", \"other3\": null},\"postcode\":\"9490\",\"country_code\":\"li\",\"addresslines\":[{\"place_id\":106180,\"rank_address\":26,\"fromarea\":false,\"isaddress\":true},{\"place_id\":105903,\"rank_address\":16,\"isaddress\":true,\"fromarea\":true}, {\"place_id\":106289,\"rank_address\":12,\"isaddress\":true,\"fromarea\":true}],\"centroid\":[9.52394930,47.12904370]}}");
 
         var importer = readJson();
 
@@ -260,5 +256,115 @@ class JsonReaderTest {
 
         assertThat(reader.getImportDate()).hasSameTimeAs("2021-01-06T15:53:42+00:00");
 
+    }
+
+    @Test
+    void testNullPlaceIdIgnored() throws IOException {
+        input.println(TEST_SIMPLE_STREAM.replace("100818", "null"));
+        var importer = readJson();
+
+        assertThat(importer).singleElement()
+                .hasFieldOrPropertyWithValue("placeId", null);
+    }
+
+    @Test
+    void testOmitOsmTypeId() throws IOException {
+        input.println(TEST_SIMPLE_STREAM.replace("\"object_type\":\"W\",\"object_id\":223306798,", ""));
+        var importer = readJson();
+
+        assertThat(importer).singleElement()
+                .hasFieldOrPropertyWithValue("osmType", null)
+                .hasFieldOrPropertyWithValue("osmId", -1L);
+    }
+
+    @Test
+    void testNullCategories() throws IOException {
+        input.println(TEST_SIMPLE_STREAM.replace("[\"osm.waterway.stream\"]", "null"));
+        var importer = readJson();
+
+        assertThat(importer).singleElement()
+                .hasFieldOrPropertyWithValue("tagKey", "place")
+                .hasFieldOrPropertyWithValue("tagValue", "yes");
+    }
+
+    @Test
+    void testNullCategory() throws IOException {
+        input.println(TEST_SIMPLE_STREAM.replace("[\"osm.waterway.stream\"]", "[null, \"osm.waterway.stream\"]"));
+        var importer = readJson();
+
+        assertThat(importer).singleElement()
+                .hasFieldOrPropertyWithValue("tagKey", "waterway")
+                .hasFieldOrPropertyWithValue("tagValue", "stream");
+    }
+
+    @Test
+    void testNullRankAddressIgnored() throws IOException {
+        input.println(TEST_SIMPLE_STREAM.replace("\"rank_address\" : 0", "\"rank_address\" : null"));
+        var importer = readJson();
+
+        assertThat(importer).singleElement()
+                .hasFieldOrPropertyWithValue("rankAddress", 30);
+    }
+
+    @Test
+    void testNullImportanceIgnored() throws IOException {
+        input.println(TEST_SIMPLE_STREAM.replace("0.10667666666666664", "null"));
+        var importer = readJson();
+
+        assertThat(importer).singleElement()
+                .hasFieldOrPropertyWithValue("importance", 0.0);
+    }
+
+    @Test
+    void testNullNamesIgnored() throws IOException {
+        input.println(TEST_SIMPLE_STREAM.replace("{\"name\": \"Spiersbach\", \"name:de\": \"Spiersbach\", \"alt_name\": \"Spirsbach\"}", "null,\"housenumber\": \"1\""));
+        var importer = readJson();
+
+        assertThat(importer).singleElement()
+                .hasFieldOrPropertyWithValue("name", Map.of())
+                .hasFieldOrPropertyWithValue("houseNumber", "1");
+    }
+
+    @Test
+    void testNullInNamesIgnored() throws IOException {
+        input.println(TEST_SIMPLE_STREAM.replace("\"Spirsbach\"", "null"));
+        var importer = readJson();
+
+        assertThat(importer).singleElement()
+                .hasFieldOrPropertyWithValue("name", Map.of("default", "Spiersbach", "de", "Spiersbach"));
+    }
+
+    @Test
+    void testNullAddressIgnored() throws IOException {
+        input.println("{\"type\":\"Place\",\"content\":{\"place_id\" : 105764, \"object_type\" : \"N\", \"object_id\" : 4637485890, \"categories\" : [\"osm.amenity.theatre\"], \"rank_address\" : 30, \"rank_search\" : 30, \"importance\" : 9.99999999995449e-06,\"parent_place_id\":106180,\"name\":{\"name\": \"Kleintheater Schlösslekeller\"},\"address\":null,\"postcode\":\"9490\",\"country_code\":\"li\",\"addresslines\":[{\"place_id\":106180,\"rank_address\":26,\"fromarea\":false,\"isaddress\":true},{\"place_id\":105903,\"rank_address\":16,\"isaddress\":true,\"fromarea\":true}, {\"place_id\":106289,\"rank_address\":12,\"isaddress\":true,\"fromarea\":true}],\"centroid\":[9.52394930,47.12904370]}}");
+        var importer = readJson();
+
+        assertThat(importer).singleElement()
+                .hasFieldOrPropertyWithValue("addressParts", Map.of())
+                .hasFieldOrPropertyWithValue("context", Map.of());
+
+    }
+
+    @Test
+    void testNullExtraIgnored() throws IOException {
+        configExtraTags = new ConfigExtraTags(List.of("ALL"));
+        input.println(TEST_SIMPLE_STREAM.replace("{\"boat\": \"no\"}", "null"));
+
+        var importer = readJson();
+
+        assertThat(importer).singleElement()
+                .hasFieldOrPropertyWithValue("extratags", Map.of());
+    }
+
+
+    @Test
+    void testNullInExtraIgnored() throws IOException {
+        configExtraTags = new ConfigExtraTags(List.of("ALL"));
+        input.println(TEST_SIMPLE_STREAM.replace("\"boat\": \"no\"", "\"access\": \"yes\", \"foot\": null"));
+
+        var importer = readJson();
+
+        assertThat(importer).singleElement()
+                .hasFieldOrPropertyWithValue("extratags", Map.of("access", "yes"));
     }
 }

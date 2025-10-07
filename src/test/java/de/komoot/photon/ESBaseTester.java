@@ -11,6 +11,7 @@ import org.locationtech.jts.io.WKTReader;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -65,6 +66,8 @@ public class ESBaseTester {
     protected PhotonResult getById(String id) {
         return server.getByID(id);
     }
+
+    protected List<PhotonResult> getAll() { return server.getAll(); }
 
     public void setUpES(Path dataDirectory) throws IOException {
         server = new TestServer(dataDirectory.toString());

@@ -108,7 +108,9 @@ public class JsonDumper implements Importer {
 
     public void writeNominatimDocument(PhotonDoc doc) throws IOException {
         writer.writeStartObject();
-        writer.writeNumberField(DumpFields.PLACE_ID, doc.getPlaceId());
+        if (doc.getPlaceId() != null) {
+            writer.writeNumberField(DumpFields.PLACE_ID, doc.getPlaceId());
+        }
         writer.writeStringField(DumpFields.PLACE_OBJECT_TYPE, doc.getOsmType());
         writer.writeNumberField(DumpFields.PLACE_OBJECT_ID, doc.getOsmId());
 
@@ -118,15 +120,7 @@ public class JsonDumper implements Importer {
 
         writer.writeNumberField(DumpFields.PLACE_RANK_ADDRESS, doc.getRankAddress());
 
-        if (doc.getAdminLevel() != null) {
-            writer.writeNumberField(DumpFields.PLACE_ADMIN_LEVEL, doc.getAdminLevel());
-        }
-
         writer.writeNumberField(DumpFields.PLACE_IMPORTANCE, doc.getImportance());
-
-        if (doc.getRankAddress() > 28) {
-            writer.writeNumberField(DumpFields.PLACE_PARENT_PLACE_ID, doc.getParentPlaceId());
-        }
 
         if (!doc.getName().isEmpty()) {
             writer.writeObjectFieldStart(DumpFields.PLACE_NAMES);

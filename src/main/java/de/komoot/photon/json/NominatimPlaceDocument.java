@@ -72,8 +72,10 @@ public class NominatimPlaceDocument {
     }
 
     @JsonProperty(DumpFields.PLACE_ID)
-    void setPlaceId(long placeId) {
-        doc.placeId(placeId);
+    void setPlaceId(Long placeId) {
+        if (placeId != null) {
+            doc.placeId(placeId);
+        }
     }
 
     @JsonProperty(DumpFields.PLACE_OBJECT_TYPE)
@@ -82,18 +84,22 @@ public class NominatimPlaceDocument {
     }
 
     @JsonProperty(DumpFields.PLACE_OBJECT_ID)
-    void setOsmId(long osmId) {
-        doc.osmId(osmId);
+    void setOsmId(Long osmId) {
+        if (osmId != null) {
+            doc.osmId(osmId);
+        }
     }
 
     @JsonProperty(DumpFields.PLACE_CATEGORIES)
-    void setCategories(String[] categories) {
-        for (var cat : categories) {
-            if (cat.startsWith("osm.")) {
-                String[] parts = cat.split("\\.");
-                doc.tagKey(parts[1]);
-                doc.tagValue(parts.length > 2 ? parts[2] : "yes");
-                return;
+    void setCategories(List<String> categories) {
+        if (categories != null) {
+            for (var cat : categories) {
+                if (cat != null && cat.startsWith("osm.")) {
+                    String[] parts = cat.split("\\.");
+                    doc.tagKey(parts[1]);
+                    doc.tagValue(parts.length > 2 ? parts[2] : "yes");
+                    return;
+                }
             }
         }
         doc.tagKey("place");
@@ -101,26 +107,24 @@ public class NominatimPlaceDocument {
     }
 
     @JsonProperty(DumpFields.PLACE_RANK_ADDRESS)
-    void setRankAddress(int rankAddress) {
-        doc.rankAddress(rankAddress);
+    void setRankAddress(Integer rankAddress) {
+        if (rankAddress != null) {
+            doc.rankAddress(rankAddress);
+        }
     }
-
-    @JsonProperty(DumpFields.PLACE_ADMIN_LEVEL)
-    void setAdminLevel(int adminLevel) { doc.adminLevel(adminLevel); }
 
     @JsonProperty(DumpFields.PLACE_IMPORTANCE)
-    void setImportance(double importance) {
-        doc.importance(importance);
-    }
-
-    @JsonProperty(DumpFields.PLACE_PARENT_PLACE_ID)
-    void setParentPlaceId(long parentPlaceId) {
-        doc.parentPlaceId(parentPlaceId);
+    void setImportance(Double importance) {
+        if (importance != null && !importance.isNaN() && !importance.isInfinite()) {
+            doc.importance(importance);
+        }
     }
 
     @JsonProperty(DumpFields.PLACE_NAMES)
     void setNames(Map<String, String> names) {
-        this.names = names;
+        if (names != null) {
+            this.names = names;
+        }
     }
 
     @JsonProperty(DumpFields.PLACE_HOUSENUMBER)
@@ -130,12 +134,17 @@ public class NominatimPlaceDocument {
 
     @JsonProperty(DumpFields.PLACE_ADDRESS)
     void setAddress(Map<String, String> address) {
-        this.address = address;
+        if (address != null) {
+            this.address = address;
+        }
     }
 
     @JsonProperty(DumpFields.PLACE_EXTRA_TAGS)
     void setExtratags(Map<String, String> extratags) {
-        doc.extraTags(extratags);
+        if (extratags != null) {
+            extratags.values().removeIf(Objects::isNull);
+            doc.extraTags(extratags);
+        }
     }
 
     @JsonProperty(DumpFields.PLACE_POSTCODE)
@@ -149,34 +158,42 @@ public class NominatimPlaceDocument {
     }
 
     @JsonProperty(DumpFields.PLACE_CENTROID)
-    void setCentroid(double[] coordinates) throws IOException {
-        if (coordinates.length != 2) {
-            throw new IOException("Invalid centroid. Must be an array of two doubles.");
+    void setCentroid(Double[] coordinates) throws IOException {
+        if (coordinates != null) {
+            if (coordinates.length != 2 || coordinates[0] == null || coordinates[1] == null) {
+                throw new IOException("Invalid centroid. Must be an array of two doubles.");
+            }
+            doc.centroid(factory.createPoint(new Coordinate(coordinates[0], coordinates[1])));
         }
-        doc.centroid(factory.createPoint(new Coordinate(coordinates[0], coordinates[1])));
     }
 
     @JsonProperty(DumpFields.PLACE_BBOX)
-    void setBbox(double[] coordinates) throws IOException {
-        if (coordinates.length != 4) {
-            throw new IOException("Invalid bbox. Must be an array of four doubles.");
+    void setBbox(Double[] coordinates) throws IOException {
+        if (coordinates != null) {
+            if (coordinates.length != 4 || Arrays.stream(coordinates).anyMatch(Objects::isNull)) {
+                throw new IOException("Invalid bbox. Must be an array of four doubles.");
+            }
+            doc.bbox(factory.createMultiPoint(new Point[]{
+                    factory.createPoint(new Coordinate(coordinates[0], coordinates[1])),
+                    factory.createPoint(new Coordinate(coordinates[2], coordinates[3]))
+            }));
         }
-        doc.bbox(factory.createMultiPoint(new Point[]{
-                factory.createPoint(new Coordinate(coordinates[0], coordinates[1])),
-                factory.createPoint(new Coordinate(coordinates[2], coordinates[3]))
-        }));
     }
 
     @JsonProperty(DumpFields.PLACE_GEOMETRY)
     void setGeometry(JsonNode geojson) throws ParseException {
-        final var geometry = jsonReader.read(geojson.toString());
-        doc.geometry(geometry);
-        doc.bbox(geometry.getEnvelope());
+        if (geojson != null) {
+            final var geometry = jsonReader.read(geojson.toString());
+            doc.geometry(geometry);
+            doc.bbox(geometry.getEnvelope());
+        }
     }
 
     @JsonProperty(DumpFields.PLACE_ADDRESSLINES)
     void setAddressLines(AddressLine[] addressLines) {
-        this.addressLines = addressLines;
+        if (addressLines != null) {
+            this.addressLines = addressLines;
+        }
     }
 
     public void completeAddressLines(Map<Long, AddressRow> addressCache) {

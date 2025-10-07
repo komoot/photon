@@ -7,6 +7,8 @@ import org.codelibs.opensearch.runner.OpenSearchRunner;
 import org.opensearch.common.settings.Settings;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class TestServer extends Server {
     public static final String TEST_CLUSTER_NAME = "photon-test";
@@ -82,5 +84,19 @@ public class TestServer extends Server {
         }
 
         return null;
+    }
+
+    public List<PhotonResult> getAll() {
+        try {
+            final var response = client.search(s -> s.size(1000), OpenSearchResult.class);
+
+            return response.hits().hits()
+                    .stream().map(h -> h.source())
+                    .collect(Collectors.toList());
+        } catch (IOException e) {
+            //ignore
+        }
+
+        return List.of();
     }
 }

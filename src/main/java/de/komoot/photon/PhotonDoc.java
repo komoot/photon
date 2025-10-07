@@ -35,21 +35,19 @@ public class PhotonDoc {
             Map.entry(AddressType.OTHER, "quarter")
             );
 
-    private long placeId = -1;
+    private Long placeId = null;
     private String osmType = null;
     private long osmId = -1;
-    private String tagKey = null;
-    private String tagValue = null;
+    private String tagKey = "place";
+    private String tagValue = "yes";
 
     private NameMap name = new NameMap();
     private String postcode = null;
     private Map<String, String> extratags = Map.of();
     private Envelope bbox = null;
-    private long parentPlaceId = 0; // 0 if unset
     private double importance = 0;
     private String countryCode = null;
     private int rankAddress = 30;
-    private Integer adminLevel = null;
 
     private Map<AddressType, Map<String, String>> addressParts = new EnumMap<>(AddressType.class);
     private ContextMap context = new ContextMap();
@@ -78,12 +76,10 @@ public class PhotonDoc {
         this.postcode = other.postcode;
         this.extratags = other.extratags;
         this.bbox = other.bbox;
-        this.parentPlaceId = other.parentPlaceId;
         this.importance = other.importance;
         this.countryCode = other.countryCode;
         this.centroid = other.centroid;
         this.rankAddress = other.rankAddress;
-        this.adminLevel = other.adminLevel;
         this.addressParts = other.addressParts;
         this.context = other.context;
         this.geometry = other.geometry;
@@ -166,11 +162,6 @@ public class PhotonDoc {
         return this;
     }
 
-    public PhotonDoc parentPlaceId(long parentPlaceId) {
-        this.parentPlaceId = parentPlaceId;
-        return this;
-    }
-
     public PhotonDoc importance(Double importance) {
         this.importance = importance;
 
@@ -179,11 +170,6 @@ public class PhotonDoc {
 
     public PhotonDoc rankAddress(int rank) {
         this.rankAddress = rank;
-        return this;
-    }
-
-    public PhotonDoc adminLevel(int level) {
-        this.adminLevel = (level < 1 || level >= 15) ? null : level;
         return this;
     }
 
@@ -319,7 +305,7 @@ public class PhotonDoc {
         }
     }
 
-    public long getPlaceId() {
+    public Long getPlaceId() {
         return this.placeId;
     }
 
@@ -355,10 +341,6 @@ public class PhotonDoc {
         return this.bbox;
     }
 
-    public long getParentPlaceId() {
-        return this.parentPlaceId;
-    }
-
     public double getImportance() {
         return this.importance;
     }
@@ -369,10 +351,6 @@ public class PhotonDoc {
 
     public int getRankAddress() {
         return this.rankAddress;
-    }
-
-    public Integer getAdminLevel() {
-        return this.adminLevel;
     }
 
     public Map<AddressType, Map<String, String>> getAddressParts() {
@@ -407,7 +385,6 @@ public class PhotonDoc {
                 ", postcode='" + postcode + '\'' +
                 ", extratags=" + extratags +
                 ", bbox=" + bbox +
-                ", parentPlaceId=" + parentPlaceId +
                 ", importance=" + importance +
                 ", countryCode='" + countryCode + '\'' +
                 ", rankAddress=" + rankAddress +
