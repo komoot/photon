@@ -77,7 +77,6 @@ class JsonReaderTest {
                 .hasFieldOrPropertyWithValue("postcode", null)
                 .hasFieldOrPropertyWithValue("extratags", Map.of())
                 .hasFieldOrPropertyWithValue("bbox", new Envelope(9.5461636, 9.556083, 47.2415541, 47.2966235))
-                .hasFieldOrPropertyWithValue("parentPlaceId", 0L)
                 .hasFieldOrPropertyWithValue("importance", 0.10667666666666664)
                 .hasFieldOrPropertyWithValue("countryCode", "AT")
                 .hasFieldOrPropertyWithValue("rankAddress", 0)
@@ -108,7 +107,6 @@ class JsonReaderTest {
                         .hasFieldOrPropertyWithValue("postcode", null)
                         .hasFieldOrPropertyWithValue("extratags", Map.of())
                         .hasFieldOrPropertyWithValue("bbox", new Envelope(9.5461636, 9.556083, 47.2415541, 47.2966235))
-                        .hasFieldOrPropertyWithValue("parentPlaceId", 0L)
                         .hasFieldOrPropertyWithValue("importance", 0.10667666666666664)
                         .hasFieldOrPropertyWithValue("countryCode", "AT")
                         .hasFieldOrPropertyWithValue("rankAddress", 0)
@@ -317,24 +315,6 @@ class JsonReaderTest {
 
         assertThat(importer).singleElement()
                 .hasFieldOrPropertyWithValue("importance", 0.0);
-    }
-
-    @Test
-    void testValidParentPlace() throws IOException {
-        input.println(TEST_SIMPLE_STREAM.replace("\"rank_search\" : 22", "\"parent_place_id\" : 123"));
-        var importer = readJson();
-
-        assertThat(importer).singleElement()
-                .hasFieldOrPropertyWithValue("parentPlaceId", 123L);
-    }
-
-    @Test
-    void testNullParentPlaceIgnored() throws IOException {
-        input.println(TEST_SIMPLE_STREAM.replace("\"rank_search\" : 22", "\"parent_place_id\" : null"));
-        var importer = readJson();
-
-        assertThat(importer).singleElement()
-                .hasFieldOrPropertyWithValue("parentPlaceId", 0L);
     }
 
     @Test

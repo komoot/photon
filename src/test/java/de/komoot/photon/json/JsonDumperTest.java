@@ -234,7 +234,6 @@ class JsonDumperTest {
         assertThat(results).hasSize(1);
 
         assertThatPlaceDocument(results, place.getPlaceId())
-                .containsEntry("parent_place_id", 0)
                 .doesNotContainKey("geometry")
                 .node("centroid").isEqualTo("[10.1, -3.45]");
 

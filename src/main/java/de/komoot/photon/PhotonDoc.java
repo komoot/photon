@@ -45,7 +45,6 @@ public class PhotonDoc {
     private String postcode = null;
     private Map<String, String> extratags = Map.of();
     private Envelope bbox = null;
-    private long parentPlaceId = 0; // 0 if unset
     private double importance = 0;
     private String countryCode = null;
     private int rankAddress = 30;
@@ -78,7 +77,6 @@ public class PhotonDoc {
         this.postcode = other.postcode;
         this.extratags = other.extratags;
         this.bbox = other.bbox;
-        this.parentPlaceId = other.parentPlaceId;
         this.importance = other.importance;
         this.countryCode = other.countryCode;
         this.centroid = other.centroid;
@@ -163,11 +161,6 @@ public class PhotonDoc {
             }
         }
 
-        return this;
-    }
-
-    public PhotonDoc parentPlaceId(long parentPlaceId) {
-        this.parentPlaceId = parentPlaceId;
         return this;
     }
 
@@ -355,10 +348,6 @@ public class PhotonDoc {
         return this.bbox;
     }
 
-    public long getParentPlaceId() {
-        return this.parentPlaceId;
-    }
-
     public double getImportance() {
         return this.importance;
     }
@@ -407,7 +396,6 @@ public class PhotonDoc {
                 ", postcode='" + postcode + '\'' +
                 ", extratags=" + extratags +
                 ", bbox=" + bbox +
-                ", parentPlaceId=" + parentPlaceId +
                 ", importance=" + importance +
                 ", countryCode='" + countryCode + '\'' +
                 ", rankAddress=" + rankAddress +

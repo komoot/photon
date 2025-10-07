@@ -33,7 +33,6 @@ public class PlaceRowMapper implements RowMapper<PhotonDoc> {
                 .names(NameMap.makeForPlace(dbutils.getMap(rs, "name"), languages))
                 .extraTags(dbutils.getMap(rs, "extratags"))
                 .bbox(dbutils.extractGeometry(rs, "bbox"))
-                .parentPlaceId(rs.getLong("parent_place_id"))
                 .countryCode(rs.getString("country_code"))
                 .centroid(dbutils.extractGeometry(rs, "centroid"))
                 .rankAddress(rs.getInt("rank_address"))
@@ -60,7 +59,7 @@ public class PlaceRowMapper implements RowMapper<PhotonDoc> {
 
     public String makeBaseSelect() {
         var sql = "SELECT p.place_id, p.osm_type, p.osm_id, p.class, p.type, p.name, p.postcode, p.admin_level," +
-                "       p.address, p.extratags, ST_Envelope(p.geometry) AS bbox, p.parent_place_id," +
+                "       p.address, p.extratags, ST_Envelope(p.geometry) AS bbox," +
                 "       p.rank_address, p.rank_search, p.importance, p.country_code, p.centroid, " +
                 dbutils.jsonArrayFromSelect(
                         "address_place_id",

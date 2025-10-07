@@ -126,10 +126,6 @@ public class JsonDumper implements Importer {
 
         writer.writeNumberField(DumpFields.PLACE_IMPORTANCE, doc.getImportance());
 
-        if (doc.getRankAddress() > 28) {
-            writer.writeNumberField(DumpFields.PLACE_PARENT_PLACE_ID, doc.getParentPlaceId());
-        }
-
         if (!doc.getName().isEmpty()) {
             writer.writeObjectFieldStart(DumpFields.PLACE_NAMES);
             for (var entry : doc.getName().entrySet()) {

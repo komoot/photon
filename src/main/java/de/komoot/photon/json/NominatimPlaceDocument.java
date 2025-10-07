@@ -127,13 +127,6 @@ public class NominatimPlaceDocument {
         }
     }
 
-    @JsonProperty(DumpFields.PLACE_PARENT_PLACE_ID)
-    void setParentPlaceId(Long parentPlaceId) {
-        if (parentPlaceId != null) {
-            doc.parentPlaceId(parentPlaceId);
-        }
-    }
-
     @JsonProperty(DumpFields.PLACE_NAMES)
     void setNames(Map<String, String> names) {
         if (names != null) {
