@@ -9,11 +9,16 @@ import org.locationtech.jts.geom.Point;
 import de.komoot.photon.nominatim.model.AddressType;
 
 import java.util.*;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * Denormalized document with all information needed for saving in the Photon database.
  */
 public class PhotonDoc {
+    public static final String CATEGORY_VALID_CHARS = "a-zA-Z0-9_-";
+    private static final Pattern CATEGORY_PATTERN = Pattern.compile(
+            String.format("[%s]+\\.[.%s]+", CATEGORY_VALID_CHARS, CATEGORY_VALID_CHARS));
     private static final List<Map.Entry<AddressType, String>> ADDRESS_TYPE_TAG_MAP = List.of(
             Map.entry(AddressType.STREET, "street"),
             Map.entry(AddressType.CITY, "city"),
@@ -44,6 +49,7 @@ public class PhotonDoc {
     private NameMap name = new NameMap();
     private String postcode = null;
     private Map<String, String> extratags = Map.of();
+    private Set<String> categorySet = Set.of();
     private Envelope bbox = null;
     private double importance = 0;
     private String countryCode = null;
@@ -75,6 +81,7 @@ public class PhotonDoc {
         this.houseNumber = other.houseNumber;
         this.postcode = other.postcode;
         this.extratags = other.extratags;
+        this.categorySet = other.categorySet;
         this.bbox = other.bbox;
         this.importance = other.importance;
         this.countryCode = other.countryCode;
@@ -158,6 +165,14 @@ public class PhotonDoc {
                 tagValue = place;
             }
         }
+
+        return this;
+    }
+
+    public PhotonDoc categories(Collection<String> collection) {
+        this.categorySet = collection.stream()
+                .filter(s -> CATEGORY_PATTERN.matcher(s).matches())
+                .collect(Collectors.toSet());
 
         return this;
     }
@@ -335,6 +350,10 @@ public class PhotonDoc {
 
     public Map<String, String> getExtratags() {
         return this.extratags;
+    }
+
+    public Set<String> getCategories() {
+            return categorySet;
     }
 
     public Envelope getBbox() {

@@ -36,11 +36,6 @@ public class PhotonDocSerializer extends StdSerializer<PhotonDoc> {
         gen.writeStringField(Constants.OBJECT_TYPE, atype == null ? "locality" : atype.getName());
         gen.writeNumberField(Constants.IMPORTANCE, value.getImportance());
 
-        String classification = Utils.buildClassificationString(value.getTagKey(), value.getTagValue());
-        if (classification != null) {
-            termCollector.add(classification, 1);
-        }
-
         if (value.getCentroid() != null) {
             gen.writeObjectFieldStart("coordinate");
             gen.writeNumberField("lat", value.getCentroid().getY());
@@ -101,6 +96,10 @@ public class PhotonDocSerializer extends StdSerializer<PhotonDoc> {
 
         for (var contextVal : value.getContext().values()) {
             termCollector.addAll(contextVal, 1);
+        }
+
+        for (var cat : value.getCategories()) {
+            termCollector.add("#" + cat, 1);
         }
 
         gen.writeObjectFieldStart("collector");

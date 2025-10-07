@@ -6,6 +6,8 @@ import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * Maps the basic attributes of a placex table row to a PhotonDoc.
@@ -14,6 +16,8 @@ import java.sql.SQLException;
  * for the place.
  */
 public class PlaceRowMapper implements RowMapper<PhotonDoc> {
+    private static final Pattern CATEGORY_PATTERN = Pattern.compile(
+            String.format("[%s]+", PhotonDoc.CATEGORY_VALID_CHARS));
 
     private final DBDataAdapter dbutils;
     private final String[] languages;
@@ -27,11 +31,20 @@ public class PlaceRowMapper implements RowMapper<PhotonDoc> {
 
     @Override
     public PhotonDoc mapRow(ResultSet rs, int rowNum) throws SQLException {
+        String osmKey = rs.getString("class");
+        String osmValue = rs.getString("type");
+        if (!CATEGORY_PATTERN.matcher(osmKey).matches()) {
+            osmKey = "place";
+            osmValue = "yes";
+        } else if (!CATEGORY_PATTERN.matcher(osmValue).matches()) {
+            osmValue = "yes";
+        }
         PhotonDoc doc = new PhotonDoc(rs.getLong("place_id"),
                 rs.getString("osm_type"), rs.getLong("osm_id"),
-                rs.getString("class"), rs.getString("type"))
+                osmKey, osmValue)
                 .names(NameMap.makeForPlace(dbutils.getMap(rs, "name"), languages))
                 .extraTags(dbutils.getMap(rs, "extratags"))
+                .categories(List.of(String.format("osm.%s.%s", osmKey, osmValue)))
                 .bbox(dbutils.extractGeometry(rs, "bbox"))
                 .countryCode(rs.getString("country_code"))
                 .centroid(dbutils.extractGeometry(rs, "centroid"))

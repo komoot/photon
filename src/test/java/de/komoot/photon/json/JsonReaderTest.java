@@ -284,7 +284,8 @@ class JsonReaderTest {
 
         assertThat(importer).singleElement()
                 .hasFieldOrPropertyWithValue("tagKey", "place")
-                .hasFieldOrPropertyWithValue("tagValue", "yes");
+                .hasFieldOrPropertyWithValue("tagValue", "yes")
+                .hasFieldOrPropertyWithValue("categories", Set.of());
     }
 
     @Test
@@ -294,7 +295,18 @@ class JsonReaderTest {
 
         assertThat(importer).singleElement()
                 .hasFieldOrPropertyWithValue("tagKey", "waterway")
-                .hasFieldOrPropertyWithValue("tagValue", "stream");
+                .hasFieldOrPropertyWithValue("tagValue", "stream")
+                .hasFieldOrPropertyWithValue("categories", Set.of("osm.waterway.stream"));
+    }
+
+    @Test
+    void testInvalidCategories() throws IOException {
+        input.println(TEST_SIMPLE_STREAM.replace("[\"osm.waterway.stream\"]",
+                "[\"osm.\", \"foo.bar.\", \"foo\", \"34,2\", \"ty.#23\", \"number..34\", \"ab.c d\", \".another.thing\"]"));
+        var importer = readJson();
+
+        assertThat(importer).singleElement()
+                .hasFieldOrPropertyWithValue("categories", Set.of("foo.bar", "number.34", "another.thing"));
     }
 
     @Test

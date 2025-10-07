@@ -93,8 +93,14 @@ public class NominatimPlaceDocument {
     @JsonProperty(DumpFields.PLACE_CATEGORIES)
     void setCategories(List<String> categories) {
         if (categories != null) {
+            doc.categories(categories.stream()
+                    .filter(Objects::nonNull)
+                    .map(s -> s.replaceAll("\\.\\.+", "."))
+                    .map(s -> s.replaceAll("^\\.", ""))
+                    .map(s -> s.replaceAll("\\.$", ""))
+                    .collect(Collectors.toList()));
             for (var cat : categories) {
-                if (cat != null && cat.startsWith("osm.")) {
+                if (cat != null && cat.startsWith("osm.") && cat.length() > 4) {
                     String[] parts = cat.split("\\.");
                     doc.tagKey(parts[1]);
                     doc.tagValue(parts.length > 2 ? parts[2] : "yes");
@@ -102,8 +108,6 @@ public class NominatimPlaceDocument {
                 }
             }
         }
-        doc.tagKey("place");
-        doc.tagValue("yes");
     }
 
     @JsonProperty(DumpFields.PLACE_RANK_ADDRESS)

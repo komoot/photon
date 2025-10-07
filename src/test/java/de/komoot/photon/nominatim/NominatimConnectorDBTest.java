@@ -1,6 +1,8 @@
 package de.komoot.photon.nominatim;
 
 import de.komoot.photon.DatabaseProperties;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
@@ -76,14 +78,28 @@ class NominatimConnectorDBTest {
         }
     }
 
-    @Test
-    void testSimpleNodeImport() {
-        PlacexTestRow place = new PlacexTestRow("amenity", "cafe").name("Spot").add(jdbc);
+    @ParameterizedTest
+    @ValueSource(strings = {"cafe", "45", "good_cafe", "3-a-b"})
+    void testSimpleNodeImport(String value) {
+        PlacexTestRow place = new PlacexTestRow("amenity", value).name("Spot").add(jdbc);
         readEntireDatabase();
 
         assertThat(importer).singleElement()
                 .satisfies(place::assertEquals)
-                .hasFieldOrPropertyWithValue("geometry", null);
+                .hasFieldOrPropertyWithValue("geometry", null)
+                .hasFieldOrPropertyWithValue("categories", Set.of("osm.amenity." + value));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"a b", "er:45", "@#", ""})
+    void testImportBadTagValue(String value) {
+        PlacexTestRow place = new PlacexTestRow("amenity", value).name("Spot").add(jdbc);
+        readEntireDatabase();
+
+        assertThat(importer).singleElement()
+                .hasFieldOrPropertyWithValue("tagKey", "amenity")
+                .hasFieldOrPropertyWithValue("tagValue", "yes")
+                .hasFieldOrPropertyWithValue("categories", Set.of("osm.amenity.yes"));
     }
 
     @Test
