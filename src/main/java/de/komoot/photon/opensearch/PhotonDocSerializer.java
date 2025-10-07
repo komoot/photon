@@ -38,7 +38,6 @@ public class PhotonDocSerializer extends StdSerializer<PhotonDoc> {
 
         String classification = Utils.buildClassificationString(value.getTagKey(), value.getTagValue());
         if (classification != null) {
-            gen.writeStringField(Constants.CLASSIFICATION, classification);
             termCollector.add(classification, 1);
         }
 

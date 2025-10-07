@@ -71,10 +71,6 @@ class QueryByClassificationTest extends ESBaseTester {
 
         assertThat(classTerm).isNotNull();
 
-        PhotonResult response = getById(testDocId);
-        assertThat((String) response.get(Constants.CLASSIFICATION))
-                .isEqualTo(classTerm);
-
         assertThat(search(classTerm + " curli"))
                 .element(0)
                 .satisfies(p -> assertThat(p.get("osm_id")).isEqualTo(testDocId));

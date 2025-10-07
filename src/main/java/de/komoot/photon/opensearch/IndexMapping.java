@@ -58,12 +58,6 @@ public class IndexMapping {
                 ))
         ));
 
-        mappings.properties("classification", b -> b.text(p -> p
-                .index(true)
-                .analyzer("keyword")
-                .searchAnalyzer("search")
-        ));
-
         if (supportStructuredQueries) {
             mappings.properties("postcode", b -> b.text(p -> p
                     .index(true)

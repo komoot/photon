@@ -1,9 +1,12 @@
 package de.komoot.photon;
 
+import java.util.regex.Pattern;
+
 /**
  * Helper functions to convert a photon document to XContentBuilder object / JSON
  */
 public class Utils {
+    static final Pattern STRING_PATTERN = Pattern.compile("[^a-zA-Z0-9_-]");
 
     // http://stackoverflow.com/a/4031040/1437096
     public static String stripNonDigits(
@@ -20,24 +23,10 @@ public class Utils {
     }
 
     public static String buildClassificationString(String key, String value) {
-        if ("place".equals(key) || "building".equals(key)) {
+        if (STRING_PATTERN.matcher(key).find() || STRING_PATTERN.matcher(value).find()) {
             return null;
         }
 
-        if ("highway".equals(key)
-            && ("unclassified".equals(value) || "residential".equals(value))) {
-            return null;
-        }
-
-        for (char c : value.toCharArray()) {
-            if (!(c == '_'
-                  || ((c >= 'a') && (c <= 'z'))
-                  || ((c >= 'A') && (c <= 'Z'))
-                  || ((c >= '0') && (c <= '9')))) {
-                return null;
-            }
-        }
-
-        return "tpfld" + value.replace("_", "").toLowerCase() + "clsfld" + key.replace("_", "").toLowerCase();
+        return String.format("#osm.%s.%s", key, value);
     }
 }
