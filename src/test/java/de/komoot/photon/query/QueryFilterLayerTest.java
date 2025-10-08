@@ -30,6 +30,7 @@ class QueryFilterLayerTest extends ESBaseTester {
                             .placeId(id).osmType("W").osmId(++id).tagKey("place").tagValue("value")
                             .names(makeDocNames("name", "berlin"))
                             .centroid(makePoint(10, 10))
+
                             .rankAddress(rank)));
         }
 
