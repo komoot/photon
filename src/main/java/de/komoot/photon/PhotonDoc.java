@@ -17,6 +17,8 @@ import java.util.stream.Collectors;
  */
 public class PhotonDoc {
     public static final String CATEGORY_VALID_CHARS = "a-zA-Z0-9_-";
+    public static final String DEFAULT_OSM_KEY = "place";
+    public static final String DEFAULT_OSM_VALUE = "yes";
     private static final Pattern CATEGORY_PATTERN = Pattern.compile(
             String.format("[%s]+\\.[.%s]+", CATEGORY_VALID_CHARS, CATEGORY_VALID_CHARS));
     private static final List<Map.Entry<AddressType, String>> ADDRESS_TYPE_TAG_MAP = List.of(
@@ -43,8 +45,8 @@ public class PhotonDoc {
     private Long placeId = null;
     private String osmType = null;
     private long osmId = -1;
-    private String tagKey = "place";
-    private String tagValue = "yes";
+    private String tagKey = DEFAULT_OSM_KEY;
+    private String tagValue = DEFAULT_OSM_VALUE;
 
     private NameMap name = new NameMap();
     private String postcode = null;

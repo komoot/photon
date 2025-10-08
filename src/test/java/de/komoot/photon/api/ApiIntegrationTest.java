@@ -34,6 +34,7 @@ class ApiIntegrationTest extends ApiBaseTester {
         Importer instance = makeImporter();
         instance.add(List.of(new PhotonDoc()
                 .placeId(1000).osmType("N").osmId(1000).tagKey("place").tagValue("city")
+                .categories(List.of("osm.place.city"))
                 .importance(0.6).rankAddress(16)
                 .centroid(makePoint(13.38886, 52.51704))
                 .geometry(makeDocGeometry("POINT(13.38886 52.51704)"))
@@ -41,6 +42,7 @@ class ApiIntegrationTest extends ApiBaseTester {
         ));
         instance.add(List.of(new PhotonDoc()
                 .placeId(1001).osmType("R").osmId(1001).tagKey("place").tagValue("suburb")
+                .categories(List.of("osm.place.suburb"))
                 .importance(0.3).rankAddress(17)
                 .centroid(makePoint(13.39026, 52.54714))
                 .geometry(makeDocGeometry("POLYGON ((6.4440619 52.1969454, 6.4441094 52.1969158, 6.4441408 52.1969347, 6.4441138 52.1969516, 6.4440933 52.1969643, 6.4440619 52.1969454))"))
@@ -48,6 +50,7 @@ class ApiIntegrationTest extends ApiBaseTester {
         ));
         instance.add(List.of(new PhotonDoc()
                 .placeId(1002).osmType("W").osmId(1002).tagKey("place").tagValue("hamlet")
+                .categories(List.of("osm.place.hamlet"))
                 .importance(0.3).rankAddress(25)
                 .centroid(makePoint(13.39026, 52.54714))
                 .geometry(makeDocGeometry("LINESTRING (30 10, 10 30, 40 40)"))
@@ -260,6 +263,32 @@ class ApiIntegrationTest extends ApiBaseTester {
     @FieldSource("BASE_URLS")
     void testBadOsmTagParameter(String baseUrl) {
         assertHttpError(baseUrl + "&osm_tag=bad:bad:bad", 400);
+    }
+
+    @ParameterizedTest
+    @FieldSource("BASE_URLS")
+    void testIncludeCategory(String baseUrl) throws Exception {
+        assertThatJson(readURL(baseUrl + "&include=osm.place.hamlet&limit=20")).isObject()
+                .node("features").isArray().hasSize(1)
+                .element(0).isObject()
+                .node("properties").isObject()
+                .containsEntry("osm_value", "hamlet");
+    }
+
+    @ParameterizedTest
+    @FieldSource("BASE_URLS")
+    void testExcludeCategory(String baseUrl) throws Exception {
+        assertThatJson(readURL(baseUrl + "&exclude=osm.place.city&exclude=osm.place.suburb&limit=20")).isObject()
+                .node("features").isArray().hasSize(1)
+                .element(0).isObject()
+                .node("properties").isObject()
+                .containsEntry("osm_value", "hamlet");
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"4+5.6", "abc", "ab..23", "a.b,c", "a.b,!c.d"})
+    void testCategoryBadValues(String paramValue) {
+        assertHttpError("/api?q=berlin&include=" + paramValue, 400);
     }
 
     @ParameterizedTest
