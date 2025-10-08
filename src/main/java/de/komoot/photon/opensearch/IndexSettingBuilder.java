@@ -192,6 +192,16 @@ public class IndexSettingBuilder {
                 )
         ));
 
+        settings.filter("split_category", f -> f.definition(d -> d
+                .patternCapture(c -> c
+                        .preserveOriginal(false)
+                        .patterns("^([^.]+\\.[^.]+)",
+                                "^([^.]+\\.[^.]+\\.[^.]+)",
+                                "^([^.]+\\.[^.]+\\.[^.]+\\.[^.]+)",
+                                "^([^.]+\\.[^.]+\\.[^.]+\\.[^.]+\\.[^.]+)")
+                )
+        ));
+
         settings.filter("drop_empty_tokens", f -> f.definition(d -> d
                 .length(l -> l.min(1).max(500))
         ));
@@ -302,6 +312,11 @@ public class IndexSettingBuilder {
                 .charFilter("punctuationgreedy")
                 .tokenizer("standard")
                 .filter(NORMALIZATION_FILTERS)
+        ));
+
+        settings.analyzer("index_categories", f -> f.custom(d -> d
+                .tokenizer("keyword")
+                .filter("split_category")
         ));
     }
 }

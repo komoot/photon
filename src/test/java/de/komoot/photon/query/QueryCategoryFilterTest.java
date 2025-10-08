@@ -106,6 +106,8 @@ public class QueryCategoryFilterTest extends ESBaseTester {
                         List.of(2, 4)),
                 arguments(List.of("+grade.A1"),
                         List.of(4)),
+                arguments(List.of("+grade.a1"),
+                        List.of()),
                 arguments(List.of("+osm.tourism", "+accomodation.tent,accomodation.guest_house"),
                         List.of(1, 3)),
                 arguments(List.of("-osm.tourism"),

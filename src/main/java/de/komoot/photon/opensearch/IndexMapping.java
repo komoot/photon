@@ -24,7 +24,7 @@ public class IndexMapping {
         mappings = new PutMappingRequest.Builder();
 
         mappings.dynamic(DynamicMapping.False)
-                .source(s -> s.excludes("collector"));
+                .source(s -> s.excludes("collector", "categories"));
 
         // Only list fields here that need an index in some form. All other fields will
         // be passive fields saved in and retrivable by _source.
@@ -35,6 +35,14 @@ public class IndexMapping {
                     .docValues(false)
             ));
         }
+
+        mappings.properties("categories", b -> b.text(p -> p
+                .index(true)
+                .indexOptions(IndexOptions.Docs)
+                .norms(false)
+                .analyzer("index_categories")
+                .searchAnalyzer("keyword")
+        ));
 
         mappings.properties("coordinate", b -> b.geoPoint(p -> p));
         mappings.properties("countrycode", b -> b.keyword(p -> p

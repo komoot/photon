@@ -98,8 +98,11 @@ public class PhotonDocSerializer extends StdSerializer<PhotonDoc> {
             termCollector.addAll(contextVal, 1);
         }
 
-        for (var cat : value.getCategories()) {
-            termCollector.add("#" + cat, 1);
+        if (!value.getCategories().isEmpty()) {
+            gen.writeObjectField("categories", value.getCategories());
+            for (var cat : value.getCategories()) {
+                termCollector.add("#" + cat, 1);
+            }
         }
 
         gen.writeObjectFieldStart("collector");
