@@ -438,6 +438,13 @@ http://localhost:2322/api?q=berlin&layer=city&layer=locality
 
 Example above will return both cities and localities.
 
+#### Filter results by category
+
+Use `include` and `exclude` parameters to filter by category. What
+categories are defined depends on the specific installation of Photon.
+
+See the [category documentation](docs/categories.md) for more information.
+
 #### Dedupe results
 
 ```
