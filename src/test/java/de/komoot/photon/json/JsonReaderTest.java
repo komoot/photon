@@ -302,11 +302,11 @@ class JsonReaderTest {
     @Test
     void testInvalidCategories() throws IOException {
         input.println(TEST_SIMPLE_STREAM.replace("[\"osm.waterway.stream\"]",
-                "[\"osm.\", \"foo.bar.\", \"foo\", \"34,2\", \"ty.#23\", \"number..34\", \"ab.c d\", \".another.thing\"]"));
+                "[\"osm.\", \"foo.bar\", \"foo\", \"34,2\", \"ty.#23\", \"number.3-4\", \"ab.c d\", \"-_-.---_-\"]"));
         var importer = readJson();
 
         assertThat(importer).singleElement()
-                .hasFieldOrPropertyWithValue("categories", Set.of("foo.bar", "number.34", "another.thing"));
+                .hasFieldOrPropertyWithValue("categories", Set.of("foo.bar", "number.3-4", "-_-.---_-"));
     }
 
     @Test

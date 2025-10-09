@@ -17,9 +17,6 @@ public class RequestFactoryBase {
         "lang", "limit", "debug", "dedupe", "geometry", "osm_tag", "layer", "include", "exclude");
     private static final List<String> AVAILABLE_LAYERS = AddressType.getNames();
     private static final GeometryFactory GEOMETRY_FACTORY = new GeometryFactory(new PrecisionModel(), 4326);
-    private static final Pattern CATEGORY_FILTER_PATTERN = Pattern.compile(
-            String.format("[%1$s]+(\\.[%1$s]+)+(,[%1$s]+(\\.[%1$s]+)+)*", PhotonDoc.CATEGORY_VALID_CHARS)
-    );
 
     private final List<String> supportedLanguages;
     private final String defaultLangauge;
@@ -63,13 +60,15 @@ public class RequestFactoryBase {
 
         request.addIncludeCategories(context.queryParamsAsClass("include", String.class)
                 .allowNullable()
-                .check(l -> l.stream().allMatch(s -> CATEGORY_FILTER_PATTERN.matcher(s).matches()),
+                .check(l -> l.stream()
+                                .allMatch(s -> PhotonDoc.CATEGORY_PATTERN.matcher(s).matches()),
                         "Invalid category pattern in 'include'.")
                 .get());
 
         request.addExcludeCategories(context.queryParamsAsClass("exclude", String.class)
                 .allowNullable()
-                .check(l -> l.stream().allMatch(s -> CATEGORY_FILTER_PATTERN.matcher(s).matches()),
+                .check(l -> l.stream()
+                                .allMatch(s -> PhotonDoc.CATEGORY_PATTERN.matcher(s).matches()),
                         "Invalid category pattern in 'exclude'.")
                 .get());
 

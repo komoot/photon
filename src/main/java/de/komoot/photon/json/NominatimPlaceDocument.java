@@ -107,12 +107,7 @@ public class NominatimPlaceDocument {
     @JsonProperty(DumpFields.PLACE_CATEGORIES)
     void setCategories(List<String> categories) {
         if (categories != null) {
-            doc.categories(categories.stream()
-                    .filter(Objects::nonNull)
-                    .map(s -> s.replaceAll("\\.\\.+", "."))
-                    .map(s -> s.replaceAll("^\\.", ""))
-                    .map(s -> s.replaceAll("\\.$", ""))
-                    .collect(Collectors.toList()));
+            doc.categories(categories);
             // Equal comparison is intentional here. We only want to replace the
             // tagKey/Value, if it hasn't been set to something custom yet.
             if (doc.getTagKey() == PhotonDoc.DEFAULT_OSM_KEY) {

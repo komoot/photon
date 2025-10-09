@@ -17,10 +17,10 @@ import java.util.stream.Collectors;
  */
 public class PhotonDoc {
     public static final String CATEGORY_VALID_CHARS = "a-zA-Z0-9_-";
+    public static final Pattern CATEGORY_PATTERN = Pattern.compile(
+            String.format("[%1$s]+(\\.[%1$s]+)+(,[%1$s]+(\\.[%1$s]+)+)*", PhotonDoc.CATEGORY_VALID_CHARS));
     public static final String DEFAULT_OSM_KEY = "place";
     public static final String DEFAULT_OSM_VALUE = "yes";
-    private static final Pattern CATEGORY_PATTERN = Pattern.compile(
-            String.format("[%s]+\\.[.%s]+", CATEGORY_VALID_CHARS, CATEGORY_VALID_CHARS));
     private static final List<Map.Entry<AddressType, String>> ADDRESS_TYPE_TAG_MAP = List.of(
             Map.entry(AddressType.STREET, "street"),
             Map.entry(AddressType.CITY, "city"),
@@ -173,6 +173,7 @@ public class PhotonDoc {
 
     public PhotonDoc categories(Collection<String> collection) {
         this.categorySet = collection.stream()
+                .filter(Objects::nonNull)
                 .filter(s -> CATEGORY_PATTERN.matcher(s).matches())
                 .collect(Collectors.toSet());
 
