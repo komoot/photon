@@ -90,20 +90,37 @@ public class NominatimPlaceDocument {
         }
     }
 
+    @JsonProperty(DumpFields.PLACE_OSM_KEY)
+    void setOsmKey(String key) {
+        if (key != null) {
+            doc.tagKey(key);
+        }
+    }
+
+    @JsonProperty(DumpFields.PLACE_OSM_VALUE)
+    void setOsmValue(String value) {
+        if (value != null) {
+            doc.tagValue(value);
+        }
+    }
+
     @JsonProperty(DumpFields.PLACE_CATEGORIES)
     void setCategories(List<String> categories) {
         if (categories != null) {
-            for (var cat : categories) {
-                if (cat != null && cat.startsWith("osm.")) {
-                    String[] parts = cat.split("\\.");
-                    doc.tagKey(parts[1]);
-                    doc.tagValue(parts.length > 2 ? parts[2] : "yes");
-                    return;
+            doc.categories(categories);
+            // Equal comparison is intentional here. We only want to replace the
+            // tagKey/Value, if it hasn't been set to something custom yet.
+            if (doc.getTagKey() == PhotonDoc.DEFAULT_OSM_KEY) {
+                for (var cat : categories) {
+                    if (cat != null && cat.startsWith("osm.") && cat.length() > 4) {
+                        String[] parts = cat.split("\\.");
+                        doc.tagKey(parts[1]);
+                        doc.tagValue(parts.length > 2 ? parts[2] : "yes");
+                        return;
+                    }
                 }
             }
         }
-        doc.tagKey("place");
-        doc.tagValue("yes");
     }
 
     @JsonProperty(DumpFields.PLACE_RANK_ADDRESS)

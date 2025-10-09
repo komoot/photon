@@ -284,7 +284,8 @@ class JsonReaderTest {
 
         assertThat(importer).singleElement()
                 .hasFieldOrPropertyWithValue("tagKey", "place")
-                .hasFieldOrPropertyWithValue("tagValue", "yes");
+                .hasFieldOrPropertyWithValue("tagValue", "yes")
+                .hasFieldOrPropertyWithValue("categories", Set.of());
     }
 
     @Test
@@ -294,7 +295,18 @@ class JsonReaderTest {
 
         assertThat(importer).singleElement()
                 .hasFieldOrPropertyWithValue("tagKey", "waterway")
-                .hasFieldOrPropertyWithValue("tagValue", "stream");
+                .hasFieldOrPropertyWithValue("tagValue", "stream")
+                .hasFieldOrPropertyWithValue("categories", Set.of("osm.waterway.stream"));
+    }
+
+    @Test
+    void testInvalidCategories() throws IOException {
+        input.println(TEST_SIMPLE_STREAM.replace("[\"osm.waterway.stream\"]",
+                "[\"osm.\", \"foo.bar\", \"foo\", \"34,2\", \"ty.#23\", \"number.3-4\", \"ab.c d\", \"-_-.---_-\"]"));
+        var importer = readJson();
+
+        assertThat(importer).singleElement()
+                .hasFieldOrPropertyWithValue("categories", Set.of("foo.bar", "number.3-4", "-_-.---_-"));
     }
 
     @Test
@@ -366,5 +378,49 @@ class JsonReaderTest {
 
         assertThat(importer).singleElement()
                 .hasFieldOrPropertyWithValue("extratags", Map.of("access", "yes"));
+    }
+
+    @Test
+    void testCustomKeyValuePreferred() throws IOException {
+        input.println("{\"type\":\"Place\",\"content\":{\"osm_key\" : \"house\", \"osm_value\" : \"public\", \"categories\" : [\"osm.amenity.theatre\"],\"name\":{\"name\": \"Kleintheater Schlösslekeller\"}}}");
+        var importer = readJson();
+
+        assertThat(importer).singleElement()
+                .hasFieldOrPropertyWithValue("tagKey", "house")
+                .hasFieldOrPropertyWithValue("tagValue", "public");
+
+    }
+
+    @Test
+    void testCustomKeyValueAfterCategoriesPreferred() throws IOException {
+        input.println("{\"type\":\"Place\",\"content\":{\"categories\" : [\"osm.amenity.theatre\"],\"osm_key\" : \"house\", \"osm_value\" : \"public\", \"name\":{\"name\": \"Kleintheater Schlösslekeller\"}}}");
+        var importer = readJson();
+
+        assertThat(importer).singleElement()
+                .hasFieldOrPropertyWithValue("tagKey", "house")
+                .hasFieldOrPropertyWithValue("tagValue", "public");
+
+    }
+
+    @Test
+    void testKeyValueFallbackCategories() throws IOException {
+        input.println("{\"type\":\"Place\",\"content\":{\"categories\" : [\"osm.amenity.theatre\"], \"name\":{\"name\": \"Kleintheater Schlösslekeller\"}}}");
+        var importer = readJson();
+
+        assertThat(importer).singleElement()
+                .hasFieldOrPropertyWithValue("tagKey", "amenity")
+                .hasFieldOrPropertyWithValue("tagValue", "theatre");
+
+    }
+
+    @Test
+    void testKeyValueNoInformation() throws IOException {
+        input.println("{\"type\":\"Place\",\"content\":{\"name\":{\"name\": \"Kleintheater Schlösslekeller\"}}}");
+        var importer = readJson();
+
+        assertThat(importer).singleElement()
+                .hasFieldOrPropertyWithValue("tagKey", "place")
+                .hasFieldOrPropertyWithValue("tagValue", "yes");
+
     }
 }

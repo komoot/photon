@@ -64,6 +64,8 @@ public class OpenSearchStructuredSearchHandler implements SearchHandler<Structur
         query.addOsmTagFilter(photonRequest.getOsmTagFilters());
         query.addLayerFilter(photonRequest.getLayerFilters());
         query.addLocationBias(photonRequest.getLocationForBias(), photonRequest.getScaleForBias(), photonRequest.getZoomForBias());
+        query.includeCategories(photonRequest.getIncludeCategories());
+        query.excludeCategories(photonRequest.getExcludeCategories());
         query.addBoundingBox(photonRequest.getBbox());
 
         return query.build();

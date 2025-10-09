@@ -13,6 +13,8 @@ public class RequestBase {
 
     private final List<TagFilter> osmTagFilters = new ArrayList<>(1);
     private final Set<String> layerFilters = new HashSet<>(1);
+    private final Set<String> includeCategories = new HashSet<>();
+    private final Set<String> excludeCategories = new HashSet<>();
 
     public String getLanguage() {
         return language;
@@ -40,6 +42,14 @@ public class RequestBase {
 
     public Set<String> getLayerFilters() {
         return layerFilters;
+    }
+
+    public Set<String> getIncludeCategories() {
+        return includeCategories;
+    }
+
+    public Set<String> getExcludeCategories() {
+        return excludeCategories;
     }
 
     public void setLanguage(String language) {
@@ -78,5 +88,13 @@ public class RequestBase {
 
     void addLayerFilters(Collection<String> filters) {
         layerFilters.addAll(filters);
+    }
+
+    void addIncludeCategories(Collection<String> categories) {
+        includeCategories.addAll(categories);
+    }
+
+    void addExcludeCategories(Collection<String> categories) {
+        excludeCategories.addAll(categories);
     }
 }

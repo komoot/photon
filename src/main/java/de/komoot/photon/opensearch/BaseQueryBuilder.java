@@ -36,4 +36,16 @@ public class BaseQueryBuilder {
             ));
         }
     }
+
+    public void includeCategories(Collection<String> queryTerms) {
+        for (var term : queryTerms) {
+            outerQuery.filter(new CategoryFilter(term).buildIncludeQuery());
+        }
+    }
+
+    public void excludeCategories(Collection<String> queryTerms) {
+        for (var term : queryTerms) {
+            outerQuery.filter(new CategoryFilter(term).buildExcludeQuery());
+        }
+    }
 }

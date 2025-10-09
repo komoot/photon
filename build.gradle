@@ -100,8 +100,17 @@ tasks.named('jar') {
 
 shadowJar {
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
+    failOnDuplicateEntries = true
 
     mergeServiceFiles()
+
+    filesMatching("META-INF/*") {
+      duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    }
+
+    filesMatching("org/apache/commons/logging/**") {
+      duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    }
 
     destinationDirectory.set(file('target'))
     archiveBaseName.set('photon')

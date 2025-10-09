@@ -33,7 +33,7 @@ class JsonDumperTest {
     private JdbcTemplate jdbc;
     private TransactionTemplate txTemplate;
 
-    private String[] configLanguages = new String[]{"en", "de"};
+    private final String[] configLanguages = new String[]{"en", "de"};
     private List<String> configExtraTags = List.of();
     private String[] configCountries = null;
     private boolean configGeometryColumn = false;
@@ -117,6 +117,8 @@ class JsonDumperTest {
                 .containsEntry("place_id", place.getPlaceId())
                 .containsEntry("object_type", "W")
                 .containsEntry("object_id", 3452765)
+                .containsEntry("osm_key", "highway")
+                .containsEntry("osm_value", "residential")
                 .containsEntry("categories", List.of("osm.highway.residential"))
                 .containsEntry("rank_address", 26)
                 .containsEntry("importance", 0.123)

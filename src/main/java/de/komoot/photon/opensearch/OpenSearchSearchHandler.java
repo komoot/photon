@@ -50,6 +50,8 @@ public class OpenSearchSearchHandler implements SearchHandler<SimpleSearchReques
         query.addOsmTagFilter(request.getOsmTagFilters());
         query.addLayerFilter(request.getLayerFilters());
         query.addLocationBias(request.getLocationForBias(), request.getScaleForBias(), request.getZoomForBias());
+        query.includeCategories(request.getIncludeCategories());
+        query.excludeCategories(request.getExcludeCategories());
         query.addBoundingBox(request.getBbox());
 
         return query.build();

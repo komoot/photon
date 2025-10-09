@@ -114,12 +114,11 @@ public class JsonDumper implements Importer {
         writer.writeStringField(DumpFields.PLACE_OBJECT_TYPE, doc.getOsmType());
         writer.writeNumberField(DumpFields.PLACE_OBJECT_ID, doc.getOsmId());
 
-        writer.writeArrayFieldStart(DumpFields.PLACE_CATEGORIES);
-        writer.writeString(String.format("osm.%s.%s", doc.getTagKey(), doc.getTagValue()));
-        writer.writeEndArray();
+        writer.writeStringField(DumpFields.PLACE_OSM_KEY, doc.getTagKey());
+        writer.writeStringField(DumpFields.PLACE_OSM_VALUE, doc.getTagValue());
+        writer.writeObjectField(DumpFields.PLACE_CATEGORIES,doc.getCategories());
 
         writer.writeNumberField(DumpFields.PLACE_RANK_ADDRESS, doc.getRankAddress());
-
         writer.writeNumberField(DumpFields.PLACE_IMPORTANCE, doc.getImportance());
 
         if (!doc.getName().isEmpty()) {

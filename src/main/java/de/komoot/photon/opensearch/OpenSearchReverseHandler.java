@@ -30,6 +30,8 @@ public class OpenSearchReverseHandler implements SearchHandler<ReverseRequest> {
         queryBuilder.addQueryFilter(request.getQueryStringFilter());
         queryBuilder.addLayerFilter(request.getLayerFilters());
         queryBuilder.addOsmTagFilter(request.getOsmTagFilters());
+        queryBuilder.includeCategories(request.getIncludeCategories());
+        queryBuilder.excludeCategories(request.getExcludeCategories());
 
         final var results = search(queryBuilder.build(),
                 request.getLimit(),
