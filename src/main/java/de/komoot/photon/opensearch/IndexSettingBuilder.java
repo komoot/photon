@@ -61,14 +61,14 @@ public class IndexSettingBuilder {
                 hasSynonymFilter = true;
             }
 
-            if (synonymConfig.getClassificationTerms() != null) {
+            if (!synonymConfig.getClassificationTerms().isEmpty()) {
                 setClassificationTerms(synonymConfig.getClassificationTerms());
             }
         }
         return this;
     }
 
-    private void setClassificationTerms(ConfigClassificationTerm[] terms) {
+    private void setClassificationTerms(Collection<ConfigClassificationTerm> terms) {
         // Collect for each term in the list the possible classification expansions.
         Map<String, Set<String>> collector = new HashMap<>();
         for (var term : terms) {

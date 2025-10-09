@@ -69,11 +69,7 @@ class QueryByClassificationTest extends ESBaseTester {
         instance.finish();
         refresh();
 
-        String classTerm = Utils.buildClassificationString("amenity", "restaurant");
-
-        assertThat(classTerm).isNotNull();
-
-        assertThat(search(classTerm + " curli"))
+        assertThat(search("#osm.amenity.restaurant curli"))
                 .element(0)
                 .satisfies(p -> assertThat(p.get("osm_id")).isEqualTo(testDocId));
     }

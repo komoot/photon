@@ -1,6 +1,11 @@
 package de.komoot.photon;
 
+import java.util.regex.Pattern;
+
 public class ConfigClassificationTerm {
+    private static final Pattern LABEL_PATTERN = Pattern.compile(
+            String.format("[%s]+", PhotonDoc.CATEGORY_VALID_CHARS)
+    );
 
     private String key;
     private String value;
@@ -30,7 +35,11 @@ public class ConfigClassificationTerm {
         this.terms = terms;
     }
 
+    public boolean isValidCategory() {
+        return LABEL_PATTERN.matcher(key).matches() && LABEL_PATTERN.matcher(value).matches();
+    }
+
     public String getClassificationString() {
-        return Utils.buildClassificationString(key, value);
+        return String.format("#osm.%s.%s", key, value);
     }
 }

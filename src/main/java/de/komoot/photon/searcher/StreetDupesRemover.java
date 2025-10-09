@@ -1,7 +1,6 @@
 package de.komoot.photon.searcher;
 
 import de.komoot.photon.Constants;
-import de.komoot.photon.Utils;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -37,7 +36,7 @@ public class StreetDupesRemover {
                     }
 
                     if (language.equals("nl")) {
-                        final String onlyDigitsPostcode = Utils.stripNonDigits(postcode);
+                        final String onlyDigitsPostcode = stripNonDigits(postcode);
                         key += ":" + onlyDigitsPostcode + ":" + name;
                     } else {
                         key += ":" + postcode + ":" + name;
@@ -55,4 +54,18 @@ public class StreetDupesRemover {
 
         return filteredItems;
     }
+
+    private static String stripNonDigits(
+            final CharSequence input /* inspired by seh's comment */) {
+        final StringBuilder sb = new StringBuilder(
+                input.length() /* also inspired by seh's comment */);
+        for (int i = 0; i < input.length(); i++) {
+            final char c = input.charAt(i);
+            if (c > 47 && c < 58) {
+                sb.append(c);
+            }
+        }
+        return sb.toString();
+    }
+
 }
