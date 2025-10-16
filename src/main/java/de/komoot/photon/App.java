@@ -124,16 +124,19 @@ public class App {
         final var dbProps = args.getDatabaseProperties();
 
         try {
-            final var connector = new NominatimImporter(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword(), dbProps);
-            dbProps.setImportDate(connector.getLastImportDate());
-
             final String filename = args.getJsonDump();
             final JsonDumper jsonDumper = new JsonDumper(filename, dbProps);
-            jsonDumper.writeHeader(connector.loadCountryNames(dbProps.getLanguages()));
-
             final var importThread = new ImportThread(jsonDumper);
+
             try {
-                importFromDatabase(args, importThread, dbProps);
+                if (args.getImportFile() == null) {
+                    final var connector = new NominatimImporter(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword(), dbProps);
+                    dbProps.setImportDate(connector.getLastImportDate());
+                    jsonDumper.writeHeader(connector.loadCountryNames(dbProps.getLanguages()));
+                    importFromDatabase(args, importThread, dbProps);
+                } else {
+                    importFromFile(args, importThread);
+                }
             } finally {
                 importThread.finish();
             }
