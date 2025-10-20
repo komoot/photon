@@ -7,7 +7,6 @@ import org.opensearch.client.opensearch.OpenSearchClient;
 import org.opensearch.client.opensearch._types.Time;
 import org.opensearch.client.opensearch.core.BulkRequest;
 import org.opensearch.client.opensearch.core.bulk.BulkResponseItem;
-import org.opensearch.client.opensearch.core.bulk.CreateOperation;
 
 import java.io.IOException;
 
@@ -66,7 +65,7 @@ public class Importer implements de.komoot.photon.Importer {
         enableImportSettings(false);
 
         try {
-            client.indices().refresh();
+            client.indices().refresh(r -> r.index(PhotonIndex.NAME));
         } catch (IOException e) {
             LOGGER.warn("Refresh of database failed", e);
         }
@@ -82,7 +81,7 @@ public class Importer implements de.komoot.photon.Importer {
                     if (bri.status() != 201) {
                         LOGGER.error("Error during bulk import: {}", bri.toJsonString());
                         for (var op : request.operations()) {
-                            if (op.isCreate() && op.create().id().equals(bri.id())) {
+                            if (op.isCreate() && bri.id() != null && bri.id().equals(op.create().id())) {
                                 LOGGER.error("Bad document: {}", op.create().document());
                             }
                         }
@@ -103,7 +102,7 @@ public class Importer implements de.komoot.photon.Importer {
                     .index(PhotonIndex.NAME)
                     .settings(is -> is
                             .refreshInterval(Time.of(t -> t.time(enable ? "-1" : "15s")))
-                            .numberOfReplicas(enable ? "0" : "1")));
+                            .numberOfReplicas(enable ? 0 : 1)));
         } catch (IOException e) {
             LOGGER.warn("IO error while setting refresh interval", e);
         }

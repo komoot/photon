@@ -32,7 +32,7 @@ public class IndexSettingBuilder {
         client.indices().create(r -> r
                 .index(indexName)
                 .settings(s -> s
-                        .numberOfShards(Integer.toString(numShards))
+                        .numberOfShards(numShards)
                         .analysis(settings.build())));
     }
 

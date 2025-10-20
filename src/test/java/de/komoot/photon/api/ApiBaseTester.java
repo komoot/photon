@@ -26,10 +26,13 @@ public class ApiBaseTester extends ESBaseTester {
     }
 
     protected void startAPI(String... extraParams) throws Exception {
+        // Get the actual port of the test OpenSearch instance
+        String testPort = getTestServer().getHttpPort();
+
         final String[] params = Stream.concat(
                 Stream.of("-cluster", TEST_CLUSTER_NAME,
                         "-listen-port", Integer.toString(LISTEN_PORT),
-                        "-transport-addresses", "127.0.0.1",
+                        "-transport-addresses", "127.0.0.1:" + testPort,
                         "-data-dir", photonDirectory),
                 Arrays.stream(extraParams)).toArray(String[]::new);
 

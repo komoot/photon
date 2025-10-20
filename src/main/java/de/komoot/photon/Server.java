@@ -119,7 +119,7 @@ public class Server {
 
     public void refreshIndexes() throws IOException {
         waitForReady();
-        client.indices().refresh();
+        client.indices().refresh(r -> r.index(PhotonIndex.NAME));
     }
 
     public void shutdown() {
@@ -157,12 +157,22 @@ public class Server {
             try {
                 (new IndexSettingBuilder()).setSynonymFile(synonymFile).updateIndex(client, PhotonIndex.NAME);
             } catch (OpenSearchException ex) {
-                client.shutdown();
+                closeClientQuietly();
                 throw new UsageException("Could not install synonyms: " + ex.getMessage());
             }
 
             dbProperties.setSynonymsInstalled(synonymFile != null);
             saveToDatabase(dbProperties);
+        }
+    }
+
+    private void closeClientQuietly() {
+        if (client != null) {
+            try {
+                client._transport().close();
+            } catch (Exception e) {
+                LOGGER.warn("Error closing OpenSearch client transport", e);
+            }
         }
     }
 
