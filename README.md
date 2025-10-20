@@ -53,7 +53,7 @@ and only available version soon.
 photon requires Java, version 21+.
 
 If you want to run against an external database instead of using the embedded
-server, ElasticSearch 5.6 or OpenSearch 3.x is needed.
+server, OpenSearch 3.x is needed.
 
 A planet-wide database requires about 220GB disk space (as of 2025, grows by
 about 10% a year). Using SSDs for storage is strongly recommended, NVME would
