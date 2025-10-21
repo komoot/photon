@@ -31,6 +31,12 @@ repositories {
 }
 
 dependencies {
+    constraints {
+        implementation('commons-io:commons-io:2.20.0') {
+            because 'force latest version to fix CVE-2024-47554'
+        }
+    }
+
     implementation 'org.opensearch.client:opensearch-java:3.2.0'
     implementation 'org.apache.httpcomponents.client5:httpclient5:5.5.1'
 
