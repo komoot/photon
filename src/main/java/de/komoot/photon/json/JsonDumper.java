@@ -114,6 +114,8 @@ public class JsonDumper implements Importer {
         writer.writeStringField(DumpFields.PLACE_OBJECT_TYPE, doc.getOsmType());
         writer.writeNumberField(DumpFields.PLACE_OBJECT_ID, doc.getOsmId());
 
+        final var addressType = doc.getAddressType();
+        writer.writeStringField(Constants.OBJECT_TYPE, addressType == null ? "other" : addressType.getName());
         writer.writeStringField(DumpFields.PLACE_OSM_KEY, doc.getTagKey());
         writer.writeStringField(DumpFields.PLACE_OSM_VALUE, doc.getTagValue());
         writer.writeObjectField(DumpFields.PLACE_CATEGORIES,doc.getCategories());
