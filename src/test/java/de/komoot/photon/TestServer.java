@@ -62,6 +62,10 @@ public class TestServer extends Server {
         runner.clean();
     }
 
+    public String getHttpPort() {
+        return runner.node().settings().get("http.port");
+    }
+
     public void refreshTestServer() {
         try {
             refreshIndexes();

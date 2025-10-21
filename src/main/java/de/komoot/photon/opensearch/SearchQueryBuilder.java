@@ -24,7 +24,7 @@ public class SearchQueryBuilder extends BaseQueryBuilder {
 
         innerQuery.functions(fvf -> fvf.fieldValueFactor(fvfb -> fvfb
                         .field("importance")
-                        .factor(importance_factor)
+                        .factor((float) importance_factor)
                         .missing(0.00001)))
                 .scoreMode(FunctionScoreMode.Sum)
                 .boostMode(FunctionBoostMode.Sum);
@@ -60,7 +60,7 @@ public class SearchQueryBuilder extends BaseQueryBuilder {
         }));
 
         innerQuery.functions(demotePoi -> demotePoi
-                .weight(0.2)
+                .weight(0.2f)
                 .filter(fbool -> fbool.bool(c -> c
                         .mustNot(fp -> fp.term(tp -> tp
                                 .field(Constants.OBJECT_TYPE)
@@ -110,7 +110,7 @@ public class SearchQueryBuilder extends BaseQueryBuilder {
                                                             .field("housenumber")
                                                     ))
                                             .functions(fullHnr -> fullHnr
-                                                    .weight(1.0)
+                                                    .weight(1.0f)
                                                     .filter(hmrExact -> hmrExact
                                                             .terms(t -> t
                                                                     .field("housenumber.full")
@@ -122,7 +122,7 @@ public class SearchQueryBuilder extends BaseQueryBuilder {
                                                                     ))
                                                             )
                                                     ))
-                                            .functions(constFact -> constFact.weight(1.0))
+                                            .functions(constFact -> constFact.weight(1.0f))
                                     ))
                             .must(parent -> parent
                                     .match(m2 -> m2
@@ -197,7 +197,7 @@ public class SearchQueryBuilder extends BaseQueryBuilder {
         final double fnscale = Double.min(1.0, Double.max(0.0, scale));
 
         innerQuery.functions(fn1 -> fn1
-                .weight(38.0 * (1.0 - fnscale))
+                .weight((float) (38.0 * (1.0 - fnscale)))
                 .exp(ex -> ex
                         .field("coordinate")
                         .placement(p -> p

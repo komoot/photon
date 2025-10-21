@@ -90,6 +90,12 @@ public class ESBaseTester {
         return server;
     }
 
+    protected TestServer getTestServer() {
+        assert server != null;
+
+        return server;
+    }
+
     protected DatabaseProperties getProperties() {
         return dbProperties;
     }

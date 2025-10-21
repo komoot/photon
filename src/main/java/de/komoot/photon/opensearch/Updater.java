@@ -76,7 +76,7 @@ public class Updater implements de.komoot.photon.Updater {
     public void finish() {
         updateDocuments();
         try {
-            client.indices().refresh();
+            client.indices().refresh(r -> r.index(PhotonIndex.NAME));
         } catch (IOException e) {
             LOGGER.warn("IO error on refresh.");
         }
