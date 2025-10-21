@@ -34,29 +34,30 @@ public class OpenSearchResultDeserializer extends StdDeserializer<OpenSearchResu
             geometry = node.get("geometry").toString();
         }
 
-        var fields = node.fields();
-        while (fields.hasNext()) {
-            final var entry = fields.next();
-            final String key = entry.getKey();
-            final JsonNode value = entry.getValue();
+        var fieldNames = node.fieldNames();
+        while (fieldNames.hasNext()) {
+            String key = fieldNames.next();
+            final JsonNode value = node.get(key);
             if (value.isTextual()) {
                 tags.put(key, value.asText());
             } else if (value.isInt()) {
-                tags.put(entry.getKey(), value.asInt());
+                tags.put(key, value.asInt());
             } else if (value.isLong()) {
-                tags.put(entry.getKey(), value.asLong());
+                tags.put(key, value.asLong());
             } else if (value.isFloatingPointNumber()) {
-                tags.put(entry.getKey(), value.asDouble());
+                tags.put(key, value.asDouble());
             } else if (value.isObject()) {
                 Map<String, String> vtags = new HashMap<>();
-                var subfields = value.fields();
-                while (subfields.hasNext()) {
-                    final var subentry = subfields.next();
-                    if (subentry.getValue().isTextual()) {
-                        vtags.put(subentry.getKey(), subentry.getValue().asText());
+                ObjectNode objValue = (ObjectNode) value;
+                var subFieldNames = objValue.fieldNames();
+                while (subFieldNames.hasNext()) {
+                    String subKey = subFieldNames.next();
+                    JsonNode subValue = objValue.get(subKey);
+                    if (subValue.isTextual()) {
+                        vtags.put(subKey, subValue.asText());
                     }
-                    localeTags.put(key, vtags);
                 }
+                localeTags.put(key, vtags);
             }
         }
 

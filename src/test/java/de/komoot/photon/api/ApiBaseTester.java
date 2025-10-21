@@ -7,7 +7,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.URL;
+import java.net.URI;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.stream.Collectors;
@@ -40,7 +40,8 @@ public class ApiBaseTester extends ESBaseTester {
     }
 
     protected HttpURLConnection connect(String url) throws IOException {
-        return (HttpURLConnection) new URL("http://127.0.0.1:" + LISTEN_PORT + url).openConnection();
+        String urlString = "http://127.0.0.1:" + LISTEN_PORT + url.replace(" ", "%20");
+        return (HttpURLConnection) URI.create(urlString).toURL().openConnection();
     }
 
     protected String readURL(String url) throws IOException {
