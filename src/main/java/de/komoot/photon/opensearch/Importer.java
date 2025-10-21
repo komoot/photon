@@ -4,7 +4,6 @@ import de.komoot.photon.PhotonDoc;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.opensearch.client.opensearch.OpenSearchClient;
-import org.opensearch.client.opensearch._types.Time;
 import org.opensearch.client.opensearch.core.BulkRequest;
 import org.opensearch.client.opensearch.core.bulk.BulkResponseItem;
 
@@ -20,7 +19,6 @@ public class Importer implements de.komoot.photon.Importer {
 
     public Importer(OpenSearchClient client) {
         this.client = client;
-        enableImportSettings(true);
     }
 
     @Override
@@ -62,8 +60,6 @@ public class Importer implements de.komoot.photon.Importer {
             saveDocuments();
         }
 
-        enableImportSettings(false);
-
         try {
             client.indices().refresh(r -> r.index(PhotonIndex.NAME));
         } catch (IOException e) {
@@ -94,18 +90,5 @@ public class Importer implements de.komoot.photon.Importer {
 
         bulkRequest = new BulkRequest.Builder();
         todoDocuments = 0;
-    }
-
-    private void enableImportSettings(boolean enable) {
-        try {
-            client.indices().putSettings(s -> s
-                    .index(PhotonIndex.NAME)
-                    .settings(is -> is
-                            .refreshInterval(Time.of(t -> t.time(enable ? "-1" : "15s")))
-                            .numberOfReplicas(enable ? 0 : 1)));
-        } catch (IOException e) {
-            LOGGER.warn("IO error while setting refresh interval", e);
-        }
-
     }
 }
