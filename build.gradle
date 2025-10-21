@@ -1,8 +1,8 @@
 plugins {
-  id 'com.gradleup.shadow' version '9.1.0'
+  id 'com.gradleup.shadow' version '9.2.2'
   id 'application'
   id 'jacoco'
-  id 'org.sonarqube' version '6.2.0.5505'
+  id 'org.sonarqube' version '6.3.1.5724'
 }
 
 group = 'de.komoot.photon'
@@ -32,9 +32,9 @@ repositories {
 
 dependencies {
     implementation 'org.opensearch.client:opensearch-java:3.2.0'
-    implementation 'org.apache.httpcomponents.client5:httpclient5:5.5'
+    implementation 'org.apache.httpcomponents.client5:httpclient5:5.5.1'
 
-    implementation('org.codelibs.opensearch:opensearch-runner:3.2.0.0') {
+    implementation('org.codelibs.opensearch:opensearch-runner:3.3.0.0') {
         exclude(module: 'repository-url')
         exclude(module: 'reindex-client')
         exclude(module: 'rank-eval-client')
@@ -51,12 +51,12 @@ dependencies {
         exclude(module: 'lucene-grouping')
     }
 
-    implementation 'org.apache.logging.log4j:log4j-core:2.25.1'
-    implementation 'org.apache.logging.log4j:log4j-api:2.25.1'
-    implementation 'org.postgresql:postgresql:42.7.7'
-    implementation 'org.apache.logging.log4j:log4j-slf4j2-impl:2.25.1'
-    implementation 'org.jcommander:jcommander:2.0'
-    implementation 'org.springframework:spring-jdbc:6.2.2'
+    implementation 'org.apache.logging.log4j:log4j-core:2.25.2'
+    implementation 'org.apache.logging.log4j:log4j-api:2.25.2'
+    implementation 'org.postgresql:postgresql:42.7.8'
+    implementation 'org.apache.logging.log4j:log4j-slf4j2-impl:2.25.2'
+    implementation 'org.jcommander:jcommander:3.0'
+    implementation 'org.springframework:spring-jdbc:6.2.12'
     implementation ('org.apache.commons:commons-dbcp2:2.13.0') {
         exclude(module: 'commons-logging')
     }
@@ -66,11 +66,11 @@ dependencies {
     implementation 'net.postgis:postgis-jdbc:2025.1.1'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.19.2'
 
-    testImplementation(platform("org.junit:junit-bom:5.13.4"))
-    testImplementation 'com.h2database:h2:2.3.232'
+    testImplementation(platform("org.junit:junit-bom:5.14.0"))
+    testImplementation 'com.h2database:h2:2.4.240'
     testImplementation 'org.junit.jupiter:junit-jupiter'
-    testImplementation 'org.assertj:assertj-core:3.27.3'
-    testImplementation 'net.javacrumbs.json-unit:json-unit-assertj:3.4.1'
+    testImplementation 'org.assertj:assertj-core:3.27.6'
+    testImplementation 'net.javacrumbs.json-unit:json-unit-assertj:5.0.0'
 
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
