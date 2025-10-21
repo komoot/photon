@@ -53,12 +53,8 @@ public class PostgisDataAdapter implements DBDataAdapter {
     @Override
     public boolean hasColumn(JdbcTemplate template, String table, String column) {
         return template.query("SELECT count(*) FROM information_schema.columns WHERE table_name = ? and column_name = ?",
-                new RowMapper<Boolean>() {
-                    @Override
-                    public Boolean mapRow(ResultSet resultSet, int i) throws SQLException {
-                        return resultSet.getInt(1) > 0;
-                    }
-                }, table, column).get(0);
+                (ResultSet resultSet, int i) -> resultSet.getInt(1) > 0,
+                table, column).getFirst();
     }
 
     @Override
