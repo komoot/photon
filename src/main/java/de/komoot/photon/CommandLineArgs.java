@@ -85,7 +85,7 @@ public class CommandLineArgs {
 
     @Parameter(names = "-cors-any", description = "Enable cross-site resource sharing for any origin.")
     private boolean corsAnyOrigin = false;
-    
+
     @Parameter(names = "-cors-origin", description = "Comma-separated list of origins for which to enable cross-site resource sharing.")
     private List<String> corsOrigin = new ArrayList<>();
 
@@ -103,6 +103,9 @@ public class CommandLineArgs {
 
     @Parameter(names = "-import-geometry-column", description = "[import-only] Add the 'geometry' column from Nominatim on import (i.e. add Polygons/Linestrings/Multipolygons etc. for cities, countries etc.). WARNING: This will increase the Elasticsearch Index size! (~575GB for Planet)")
     private boolean importGeometryColumn = false;
+
+    @Parameter(names = {"-metrics-enable"}, description = "Set to 'prometheus' to enable built-in Prometheus metrics endpoint")
+    private String metricsEnable = "";
 
     public String[] getLanguages(boolean useDefaultIfEmpty) {
         if (useDefaultIfEmpty && languages.isEmpty()) {
@@ -228,6 +231,10 @@ public class CommandLineArgs {
 
     public boolean getImportGeometryColumn() {
         return importGeometryColumn;
+    }
+
+    public String getMetricsEnable() {
+        return metricsEnable;
     }
 
     public DatabaseProperties getDatabaseProperties() {

@@ -4,6 +4,7 @@ import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
 import de.komoot.photon.json.JsonDumper;
 import de.komoot.photon.json.JsonReader;
+import de.komoot.photon.metrics.MetricsConfig;
 import de.komoot.photon.nominatim.ImportThread;
 import de.komoot.photon.nominatim.NominatimImporter;
 import de.komoot.photon.nominatim.NominatimUpdater;
@@ -22,6 +23,8 @@ import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
+
+import static de.komoot.photon.metrics.MetricsConfig.setupMetrics;
 
 /**
  * Main Photon application.
@@ -268,7 +271,7 @@ public class App {
         nominatimUpdater.initUpdates(args.getNominatimUpdateInit());
     }
 
-    private static void startNominatimUpdate(NominatimUpdater nominatimUpdater, Server esServer)  {
+    private static void startNominatimUpdate(NominatimUpdater nominatimUpdater, Server esServer) {
         nominatimUpdater.update();
 
         try {
@@ -312,9 +315,14 @@ public class App {
                         "\n Languages: {} \n Import Date: {} \n Support Structured Queries: {} \n Support Geometries: {}",
                 dbProperties.getLanguages(), dbProperties.getImportDate(), dbProperties.getSupportStructuredQueries(), dbProperties.getSupportGeometries());
 
+        MetricsConfig metrics = setupMetrics(args);
+
         photonServer = Javalin.create(config -> {
             config.router.ignoreTrailingSlashes = true;
             config.http.defaultContentType = ContentType.APPLICATION_JSON.toString();
+            if (metrics.isEnabled()) {
+                config.registerPlugin(metrics.getPlugin());
+            }
             if (args.isCorsAnyOrigin() || args.getCorsOrigin().length > 0) {
                 config.bundledPlugins.enableCors(cors -> {
                     if (args.isCorsAnyOrigin()) {
@@ -423,8 +431,15 @@ public class App {
                     ctx.status(200).json(nominatimUpdater.isBusy() ? "BUSY" : "OK")
             );
             photonServer.get("/nominatim-update", ctx -> {
-                new Thread(()-> App.startNominatimUpdate(nominatimUpdater, server)).start();
+                new Thread(() -> App.startNominatimUpdate(nominatimUpdater, server)).start();
                 ctx.status(200).json("nominatim update started (more information in console output) ...");
+            });
+        }
+
+        if (metrics.isEnabled()) {
+            photonServer.get(metrics.getPath(), ctx -> {
+                String contentType = "text/plain; version=0.0.4; charset=utf-8";
+                ctx.contentType(contentType).result(metrics.getRegistry().scrape());
             });
         }
 
