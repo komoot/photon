@@ -10,11 +10,13 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.FieldSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Date;
 import java.util.List;
 
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * API tests that check queries against an already running ES instance and
@@ -59,7 +61,7 @@ class ApiIntegrationTest extends ApiBaseTester {
 
         instance.finish();
         refresh();
-        startAPI();
+        startAPI("-metrics-enable", "prometheus");
     }
 
     @AfterAll
@@ -73,7 +75,7 @@ class ApiIntegrationTest extends ApiBaseTester {
 
     @ParameterizedTest
     @FieldSource("BASE_URLS")
-    void testBogus(String baseUrl)  {
+    void testBogus(String baseUrl) {
         assertHttpError(baseUrl + "&bogus=thing", 400);
     }
 
@@ -163,7 +165,7 @@ class ApiIntegrationTest extends ApiBaseTester {
 
     @ParameterizedTest
     @FieldSource("BASE_URLS")
-    void testBadLimitParameter(String baseUrl)  {
+    void testBadLimitParameter(String baseUrl) {
         assertHttpError(baseUrl + "&limit=NaN", 400);
     }
 
@@ -328,7 +330,7 @@ class ApiIntegrationTest extends ApiBaseTester {
             "lat=52.54714&lon=180.01", "lat=90.01&lon=13.39026",
             "lat=52.54714&lon=-180.01", "lat=-90.01&lon=13.39026"
     })
-    void testSearchBadLocation(String param)  {
+    void testSearchBadLocation(String param) {
         assertHttpError("/api?q=berlin&" + param, 400);
     }
 
@@ -348,6 +350,11 @@ class ApiIntegrationTest extends ApiBaseTester {
     @ValueSource(strings = {"bad", "NaN"})
     void testSearchBadLocationBiasScale(String param) {
         assertHttpError("/api?q=berlin&lat=52.54714&lon=13.39026&location_bias_scale=" + param, 400);
+    }
+
+    @Test
+    void testMetricsEndpoint() throws IOException {
+        assertEquals(200, connect("/metrics").getResponseCode());
     }
 }
 
