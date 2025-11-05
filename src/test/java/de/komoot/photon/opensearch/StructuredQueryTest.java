@@ -42,7 +42,6 @@ public class StructuredQueryTest extends ESBaseTester {
     @BeforeAll
     void setUp(@TempDir Path dataDirectory) throws Exception {
         getProperties().setLanguages(new String[]{LANGUAGE, "de", "fr"});
-        getProperties().setSupportStructuredQueries(true);
         setUpES(dataDirectory);
         Importer instance = makeImporter();
 

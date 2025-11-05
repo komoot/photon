@@ -1,9 +1,14 @@
 # Using structured queries
 
-The OpenSearch version of Photon optionally supports structured queries. Structured queries make it possible to search for specific countrycode / city / postcode / street / ... instead of the default query string.
-If the address fields are known, structured queries often lead to better results than the construction of a query string followed by a free text search.
+The OpenSearch version of Photon has a separate endpoint for structured queries.
+Structured queries make it possible to search for specific
+countrycode / city / postcode / street / ... instead of the default query string.
+If the address fields are known, structured queries often lead to better
+results than the construction of a query string followed by a free text search.
 
-## Usage
+## Enabling support
+
+**Starting from Photon 1.0, structured queries are always available.**
 
 Use "-structured" when importing the nominatim database. This option increases the index size by around 10%.
 
@@ -13,7 +18,11 @@ On startup photon checks whether the index supports structured queries and if so
 ```
 http://localhost:2322/structured?city=berlin
 ```
-is available. Supported parameters are
+is available.
+
+## Usage
+
+Supported parameters are
 ```
 "lang", "limit",  "lon", "lat", "osm_tag", "location_bias_scale", "bbox", "debug", "zoom", "layer", "countrycode", "state", "county", "city", "postcode", "district", "housenumber", "street"
 ```

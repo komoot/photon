@@ -18,7 +18,7 @@ public class DatabaseProperties {
 
     private String[] languages = DEFAULT_LANGAUGES;
     private Date importDate;
-    private boolean supportStructuredQueries = false;
+    private boolean supportStructuredQueries = true;
     private boolean supportGeometries = false;
     private boolean synonymsInstalled = false;
     private ConfigExtraTags extraTags = new ConfigExtraTags();
@@ -97,21 +97,18 @@ public class DatabaseProperties {
         return this;
     }
 
-    public boolean getSupportStructuredQueries() {
-        return supportStructuredQueries;
-    }
-
-    public DatabaseProperties setSupportStructuredQueries(boolean supportStructuredQueries) {
-        this.supportStructuredQueries = supportStructuredQueries;
-        return this;
-    }
-
     public boolean getSupportGeometries() {
         return supportGeometries;
     }
 
     public DatabaseProperties setSupportGeometries(boolean supportGeometries) {
         this.supportGeometries = supportGeometries;
+        return this;
+    }
+
+    // needed for backwards compatibility
+    public DatabaseProperties setSupportStructuredQueries(boolean supportStructuredQueries) {
+        this.supportStructuredQueries = supportStructuredQueries;
         return this;
     }
 
