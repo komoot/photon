@@ -31,36 +31,42 @@ public class SearchQueryBuilder extends BaseQueryBuilder {
     }
 
     public double setupShortQuery(String query, boolean lenient) {
+        final int qlen = query.length();
         final var queryField = FieldValue.of(f -> f.stringValue(query));
 
-        final var prefixMatch = MatchQuery.of(nmb -> nmb
-                .query(queryField)
-                .field("collector.name.prefix")
-                .boost((query.length()) > 3 ? 0.5f : 0.8f));
-
         innerQuery.query(q -> q.bool(b -> {
-            if (lenient) {
-                b.must(prefixOrFullName -> prefixOrFullName.bool(bi -> bi
-                        .should(iq -> iq.match(prefixMatch))
-                        .should(iq2 -> iq2.match(nmb -> nmb
-                                .query(queryField)
-                                .field("collector.name")
-                                .fuzziness("AUTO")
-                                .prefixLength(2)
-                                .boost(0.2f)))
+            b.should(prefixMatch -> prefixMatch.match(nmb -> nmb
+                    .query(queryField)
+                    .field("collector.name.prefix")));
+
+            if (qlen < 4) {
+                b.should(fullMatch -> fullMatch.term(ftm -> ftm
+                        .field("collector.field.name")
+                        .value(queryField)
                 ));
             } else {
-                b.must(iq -> iq.match(prefixMatch));
+                b.should(fullMatch -> fullMatch.fuzzy(fzq -> fzq
+                        .field("collector.field.name")
+                        .value(queryField)
+                        .fuzziness("AUTO")
+                        .prefixLength(qlen <= 6 ? 1 : 2)
+                ));
             }
-            b.should(fullMatch -> fullMatch.match(fmb -> fmb
-                    .query(queryField)
-                    .field("collector.all")
-                    .boost((query.length()) > 3 ? 0.4f : 0.1f)));
+
+            if (lenient) {
+                b.should(iq2 -> iq2.match(nmb -> nmb
+                        .query(queryField)
+                        .field("collector.name")
+                        .fuzziness("AUTO")
+                        .prefixLength(2)
+                        .boost(0.2f)));
+            }
+
             return b;
         }));
 
         innerQuery.functions(demotePoi -> demotePoi
-                .weight(0.2f)
+                .weight(0.4f)
                 .filter(fbool -> fbool.bool(c -> c
                         .mustNot(fp -> fp.term(tp -> tp
                                 .field(Constants.OBJECT_TYPE)
