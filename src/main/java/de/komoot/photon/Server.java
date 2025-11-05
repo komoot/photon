@@ -31,7 +31,7 @@ public class Server {
      * changes in an incompatible way. If it is already at the next released
      * version, increase the dev version.
      */
-    public static final String DATABASE_VERSION = "1.0.0-2";
+    public static final String DATABASE_VERSION = "1.0.0-3";
 
     private static final Logger LOGGER = LogManager.getLogger();
 
@@ -141,8 +141,7 @@ public class Server {
 
         new IndexSettingBuilder().setShards(5).createIndex(client, PhotonIndex.NAME);
 
-        new IndexMapping(dbProperties.getSupportStructuredQueries())
-                .putMapping(client, PhotonIndex.NAME);
+        new IndexMapping().putMapping(client, PhotonIndex.NAME);
 
         saveToDatabase(dbProperties);
     }

@@ -12,15 +12,15 @@ public class IndexMapping {
 
     private PutMappingRequest.Builder mappings;
 
-    public IndexMapping(boolean supportStructuredQueries) {
-        setupBaseMappings(supportStructuredQueries);
+    public IndexMapping() {
+        setupBaseMappings();
     }
 
     public void putMapping(OpenSearchClient client, String indexName) throws IOException {
         client.indices().putMapping(mappings.index(indexName).build());
     }
 
-    private void setupBaseMappings(boolean supportStructuredQueries) {
+    private void setupBaseMappings() {
         mappings = new PutMappingRequest.Builder();
 
         mappings.dynamic(DynamicMapping.False)
@@ -66,13 +66,11 @@ public class IndexMapping {
                 ))
         ));
 
-        if (supportStructuredQueries) {
-            mappings.properties("postcode", b -> b.text(p -> p
-                    .index(true)
-                    .norms(false)
-                    .analyzer("index_raw")
-            ));
-        }
+        mappings.properties("postcode", b -> b.text(p -> p
+                .index(true)
+                .norms(false)
+                .analyzer("index_raw")
+        ));
 
         // General collectors.
         mappings.properties("collector.all", b -> b.text(p -> p
@@ -113,19 +111,13 @@ public class IndexMapping {
                 .searchAnalyzer("search")
         ));
 
-        if (supportStructuredQueries) {
-            for (var field : ADDRESS_FIELDS) {
-                mappings.properties(getAddressFieldCollector(field), b -> b.text(p -> p
-                        .index(true)
-                        .norms(false)
-                        .analyzer("index_raw")
-                        .searchAnalyzer("search")
-                ));
-            }
+        for (var field : ADDRESS_FIELDS) {
+            mappings.properties("collector.field." + field, b -> b.text(p -> p
+                    .index(true)
+                    .norms(false)
+                    .analyzer("index_raw")
+                    .searchAnalyzer("search")
+            ));
         }
-    }
-
-    private String getAddressFieldCollector(String field) {
-        return "collector.field." + field;
     }
 }

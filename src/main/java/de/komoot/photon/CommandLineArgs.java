@@ -17,7 +17,7 @@ public class CommandLineArgs {
     @Parameter(names = "-j", description = "Number of threads to use for import.")
     private int threads = 1;
 
-    @Parameter(names = "-structured", description = "Enable support for structured queries.")
+    @Parameter(names = "-structured", description = "(unused) Structured queries are always enabled.")
     private boolean supportStructuredQueries = false;
 
     @Parameter(names = "-cluster", description = "Name of ElasticSearch cluster to put the server into.")
@@ -219,8 +219,6 @@ public class CommandLineArgs {
         return this.usage;
     }
     
-    public boolean getSupportStructuredQueries() { return supportStructuredQueries; }
-
     public int getMaxReverseResults() {
         return maxReverseResults;
     }
@@ -243,7 +241,6 @@ public class CommandLineArgs {
             dbProps.setLanguages(languages.toArray(new String[0]));
         }
         dbProps.setSupportGeometries(importGeometryColumn);
-        dbProps.setSupportStructuredQueries(supportStructuredQueries);
 
         if (extraTags != null) {
             dbProps.setExtraTags(extraTags);

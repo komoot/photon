@@ -311,9 +311,14 @@ public class App {
             dbProperties.restrictLanguages(args.getLanguages());
         }
 
-        LOGGER.info("Starting API with the following settings: " +
-                        "\n Languages: {} \n Import Date: {} \n Support Structured Queries: {} \n Support Geometries: {}",
-                dbProperties.getLanguages(), dbProperties.getImportDate(), dbProperties.getSupportStructuredQueries(), dbProperties.getSupportGeometries());
+        LOGGER.info("""
+                        Starting API with the following settings: 
+                        
+                         Languages: {}
+                         Import Date: {}
+                         Support Structured Queries: true
+                         Support Geometries: {}""",
+                dbProperties.getLanguages(), dbProperties.getImportDate(), dbProperties.getSupportGeometries());
 
         MetricsConfig metrics = setupMetrics(args);
 
@@ -398,16 +403,14 @@ public class App {
                 server.createSearchHandler(args.getQueryTimeout()),
                 formatter));
 
-        if (dbProperties.getSupportStructuredQueries()) {
-            photonServer.get("/structured", new GenericSearchHandler<>(
-                    new StructuredSearchRequestFactory(
-                            Arrays.stream(dbProperties.getLanguages()).collect(Collectors.toList()),
-                            args.getDefaultLanguage(),
-                            args.getMaxResults(),
-                            dbProperties.getSupportGeometries()),
-                    server.createStructuredSearchHandler(args.getQueryTimeout()),
-                    formatter));
-        }
+        photonServer.get("/structured", new GenericSearchHandler<>(
+                new StructuredSearchRequestFactory(
+                        Arrays.stream(dbProperties.getLanguages()).collect(Collectors.toList()),
+                        args.getDefaultLanguage(),
+                        args.getMaxResults(),
+                        dbProperties.getSupportGeometries()),
+                server.createStructuredSearchHandler(args.getQueryTimeout()),
+                formatter));
 
         photonServer.get("/reverse", new GenericSearchHandler<>(
                 new ReverseRequestFactory(
