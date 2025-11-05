@@ -79,9 +79,8 @@ dumps of the photon database at
 The dumps are available for the world-wide dataset and for selected country datasets.
 The dumps contain names in English, German, French and local language. There
 is no support for
-[structured queries](/docs/structured.md)
-or [full geometry output](https://github.com/komoot/photon/pull/823). If you need these
-features, you need to import your own database, see below.
+[full geometry output](https://github.com/komoot/photon/pull/823). If you need
+this feature, you need to import your own database, see below.
 
 For ElasticSearch photon use:
 
@@ -222,10 +221,6 @@ and bounding box in results but the full geometry as well. **WARNING:**
 enabling this option will more than double the size of the database.
 (_Experimental Feature!_)
 
-`-structured` adds the indexes to the database that are necessary for structured
-queries, see [structured queries](/docs/structured.md).
-(_Experimental Feature!_)
-
 ### Updating data via Nominatim
 
 Once you have imported your own photon database from a Nominatim source, you
@@ -318,8 +313,9 @@ optins like `-country-code`, `-language` or `-extra-tags`.
 photon has three default endpoints: `/api` for forward search, `/reverse` for
 reverse geocding and `/status` as a health check of the server.
 
-For the optional `/structured` endpoint for structured queries, see
-[docs/structured.md](docs/structured.md).
+For the `/structured` endpoint for structured queries, see
+[docs/structured.md](docs/structured.md). This endpoint is not available
+on the public demo server.
 
 The `/update` endpoint for triggering updates is described in the section
 "Updating data via Nominatim" above.
