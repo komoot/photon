@@ -32,7 +32,8 @@ repositories {
 
 dependencies {
     constraints {
-        implementation('commons-io:commons-io:2.20.0') {
+        implementation('commons-io:commons-io') {
+            version { require('[2.20.0,)') }
             because 'force latest version to fix CVE-2024-47554'
         }
     }
