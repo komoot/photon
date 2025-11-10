@@ -2,8 +2,10 @@ package de.komoot.photon.metrics;
 
 import de.komoot.photon.CommandLineArgs;
 import org.junit.jupiter.api.Test;
+import org.opensearch.client.opensearch.OpenSearchClient;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
 
 class MetricsConfigTest {
     @Test
@@ -14,8 +16,9 @@ class MetricsConfigTest {
                 return "prometheus";
             }
         };
+        var client = mock(OpenSearchClient.class);
 
-        MetricsConfig metricsConfig = MetricsConfig.setupMetrics(args);
+        MetricsConfig metricsConfig = MetricsConfig.setupMetrics(args, client);
         assertNotNull(metricsConfig.getRegistry());
         assertNotNull(metricsConfig.getPlugin());
         assertTrue(metricsConfig.isEnabled());
@@ -29,8 +32,9 @@ class MetricsConfigTest {
                 return "";
             }
         };
+        var client = mock(OpenSearchClient.class);
 
-        MetricsConfig metricsConfig = MetricsConfig.setupMetrics(args);
+        MetricsConfig metricsConfig = MetricsConfig.setupMetrics(args, client);
         assertThrows(IllegalStateException.class, metricsConfig::getRegistry);
         assertThrows(IllegalStateException.class, metricsConfig::getPlugin);
         assertFalse(metricsConfig.isEnabled());

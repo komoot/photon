@@ -80,6 +80,7 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter'
     testImplementation 'org.assertj:assertj-core:3.27.6'
     testImplementation 'net.javacrumbs.json-unit:json-unit-assertj:5.0.0'
+    testImplementation 'org.mockito:mockito-core:5.20.0'
 
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
