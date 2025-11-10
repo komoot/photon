@@ -17,6 +17,7 @@ import org.opensearch.client.opensearch.OpenSearchClient;
 import org.opensearch.client.opensearch._types.HealthStatus;
 import org.opensearch.client.opensearch._types.OpenSearchException;
 import org.opensearch.client.transport.httpclient5.ApacheHttpClient5TransportBuilder;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -215,6 +216,11 @@ public class Server {
 
     public SearchHandler<ReverseRequest> createReverseHandler(int queryTimeoutSec) {
         return new OpenSearchReverseHandler(client, queryTimeoutSec);
+    }
+
+    @NotNull
+    protected OpenSearchClient getClient() {
+        return client;
     }
 
     private void registerPhotonDocSerializer(DatabaseProperties dbProperties) {

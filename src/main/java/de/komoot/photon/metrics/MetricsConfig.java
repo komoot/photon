@@ -15,6 +15,7 @@ import io.micrometer.prometheusmetrics.PrometheusMeterRegistry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
+import org.opensearch.client.opensearch.OpenSearchClient;
 
 public class MetricsConfig {
     private static final Logger LOGGER = LogManager.getLogger();
@@ -25,10 +26,11 @@ public class MetricsConfig {
     private MetricsConfig() {
     }
 
-    private void init() {
+    private void init(@NotNull OpenSearchClient client) {
         registry = new PrometheusMeterRegistry(PrometheusConfig.DEFAULT);
         registry.config().commonTags("application", "Photon");
         registerJvmMetrics(registry);
+        registerOpenSearchMetrics(client);
         micrometerPlugin = new MicrometerPlugin(micrometerPluginConfig -> micrometerPluginConfig.registry = registry);
         LOGGER.info("Metrics enabled at " + path);
     }
@@ -41,6 +43,10 @@ public class MetricsConfig {
         new JvmThreadMetrics().bindTo(registry);
         new ProcessorMetrics().bindTo(registry);
         new UptimeMetrics().bindTo(registry);
+    }
+
+    private void registerOpenSearchMetrics(@NotNull OpenSearchClient client) {
+        new OpenSearchMetrics(client).bindTo(registry);
     }
 
     @NotNull
@@ -69,10 +75,10 @@ public class MetricsConfig {
     }
 
     @NotNull
-    public static MetricsConfig setupMetrics(CommandLineArgs args) {
+    public static MetricsConfig setupMetrics(@NotNull CommandLineArgs args, @NotNull OpenSearchClient client) {
         MetricsConfig metricsConfig = new MetricsConfig();
         if (args.getMetricsEnable() != null && args.getMetricsEnable().equalsIgnoreCase("prometheus")) {
-            metricsConfig.init();
+            metricsConfig.init(client);
         }
         return metricsConfig;
     }
