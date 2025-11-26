@@ -39,19 +39,12 @@ public class SearchQueryBuilder extends BaseQueryBuilder {
                     .query(queryField)
                     .field("collector.name.prefix")));
 
-            if (qlen < 4) {
-                b.should(fullMatch -> fullMatch.term(ftm -> ftm
-                        .field("collector.field.name")
-                        .value(queryField)
-                ));
-            } else {
-                b.should(fullMatch -> fullMatch.fuzzy(fzq -> fzq
-                        .field("collector.field.name")
-                        .value(queryField)
-                        .fuzziness("AUTO")
-                        .prefixLength(qlen <= 6 ? 1 : 2)
-                ));
-            }
+            b.should(fullMatch -> fullMatch.match(fzq -> fzq
+                    .field("collector.field.name.full")
+                    .query(queryField)
+                    .fuzziness(qlen < 4 ? "0" : "AUTO")
+                    .prefixLength(qlen <= 6 ? 1 : 2)
+            ));
 
             if (lenient) {
                 b.should(iq2 -> iq2.match(nmb -> nmb
