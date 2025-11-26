@@ -8,10 +8,12 @@ import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -32,6 +34,13 @@ class QueryBasicSearchTest extends ESBaseTester {
         return new PhotonDoc()
                 .placeId(testDocId).osmType("N").osmId(testDocId).tagKey("place").tagValue("city")
                 .names(makeDocNames(names));
+    }
+
+    private void setupDocs(PhotonDoc... docs) {
+        Importer instance = makeImporter();
+        instance.add(Arrays.asList(docs));
+        instance.finish();
+        refresh();
     }
 
     private List<PhotonResult> search(String query, String lang) {
@@ -65,25 +74,71 @@ class QueryBasicSearchTest extends ESBaseTester {
     }
 
     @Test
+    void testSearchVeryShortNameCaseInsensitive() {
+        setupDocs(createDoc("name", "BER"));
+
+        var soft = new SoftAssertions();
+        assertWorking(soft,"ber", "Ber", "BER");
+        assertNotWorking(soft, "bär");
+
+        soft.assertAll();
+    }
+
+    @Test
+    void testSearchVeryShortNameNormalised() {
+        setupDocs(createDoc("name", "öl"));
+
+        var soft = new SoftAssertions();
+        assertWorking(soft,"Ol", "Öl", "öl", "ol");
+
+        soft.assertAll();
+    }
+
+    @Test
+    void testSearchSingleWordName() {
+        setupDocs(createDoc("name", "Müggeln"));
+
+        var soft = new SoftAssertions();
+        assertWorking(soft,"müggeln", "Müggeln", "muggeln", "mugglen");
+        assertNotWorking(soft, "mukklen");
+
+        soft.assertAll();
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"with (braces)", "split | up X", "dot.notation.a.x.c"})
+    void testSearchComplexName(String value) {
+        setupDocs(createDoc("name", value));
+
+        var soft = new SoftAssertions();
+        assertWorking(soft, value);
+        soft.assertAll();
+    }
+
+    @Test
+    void testPrefixMatching() {
+        setupDocs(createDoc("name", "Mönchengladbach Hbf"));
+
+        var soft = new SoftAssertions();
+        assertWorking(soft,"m", "M", "mo", "Mö", "Mon", "mön", "moen", "moncen", "hbf");
+        assertNotWorking(soft, "monn");
+        soft.assertAll();
+    }
+
+    @Test
     void testSearchByDefaultName() {
-        Importer instance = makeImporter();
-        instance.add(List.of(createDoc("name", "Muffle Flu")));
-        instance.finish();
-        refresh();
+        setupDocs(createDoc("name", "Muffle Flu"));
 
         SoftAssertions soft = new SoftAssertions();
         assertWorking(soft, "muffle flu", "flu", "muffle", "mufle flu", "muffle flu 9");
-        assertNotWorking(soft,"huffle fluff");
+        assertNotWorking(soft, "huffle fluff");
 
         soft.assertAll();
     }
 
     @Test
     void testSearchNameSkipTerms() {
-        Importer instance = makeImporter();
-        instance.add(List.of(createDoc("name", "Hunted House Hotel")));
-        instance.finish();
-        refresh();
+        setupDocs(createDoc("name", "Hunted House Hotel"));
 
         SoftAssertions soft = new SoftAssertions();
         assertWorking(soft,
@@ -92,15 +147,18 @@ class QueryBasicSearchTest extends ESBaseTester {
 
         soft.assertAll();
     }
+
     @Test
     void testSearchByAlternativeNames() {
-        Importer instance = makeImporter();
-        instance.add(List.of(
-                createDoc("name", "original", "alt_name", "alt", "old_name", "older", "int_name", "int",
-                               "loc_name", "local", "reg_name", "regional", "addr:housename", "house",
-                               "other_name", "other")));
-        instance.finish();
-        refresh();
+        setupDocs(createDoc(
+                "name", "original",
+                "alt_name", "alt",
+                "old_name", "older",
+                "int_name", "int",
+                "loc_name", "local",
+                "reg_name", "regional",
+                "addr:housename", "house",
+                "other_name", "other"));
 
         SoftAssertions soft = new SoftAssertions();
         assertWorking(soft,
@@ -113,19 +171,15 @@ class QueryBasicSearchTest extends ESBaseTester {
 
     @Test
     void testSearchByNameAndAddress() {
-        Map<String, String> address = new HashMap<>();
-        address.put("street", "Callino");
-        address.put("city", "Madrid");
-        address.put("suburb", "Quartier");
-        address.put("neighbourhood", "El Block");
-        address.put("county", "Montagña");
-        address.put("state", "Estado");
-
-        Importer instance = makeImporter();
-        instance.add(List.of(createDoc("name", "Castillo")
-                .addAddresses(address, getProperties().getLanguages())));
-        instance.finish();
-        refresh();
+        setupDocs(createDoc("name", "Castillo")
+                .addAddresses(Map.of(
+                                "street", "Callino",
+                                "city", "Madrid",
+                                "suburb", "Quartier",
+                                "neighbourhood", "El Block",
+                                "county", "Montagña",
+                                "state", "Estado"),
+                        getProperties().getLanguages()));
 
         SoftAssertions soft = new SoftAssertions();
         assertWorking(soft,
@@ -138,12 +192,9 @@ class QueryBasicSearchTest extends ESBaseTester {
 
     @Test
     void testSearchMustContainANameTerm() {
-        Importer instance = makeImporter();
-        instance.add(List.of(
+        setupDocs(
                 createDoc("name", "Palermo")
-                        .addAddresses(Map.of("state", "Sicilia"), getProperties().getLanguages())));
-        instance.finish();
-        refresh();
+                        .addAddresses(Map.of("state", "Sicilia"), getProperties().getLanguages()));
 
         SoftAssertions soft = new SoftAssertions();
         assertWorking(soft,
@@ -155,13 +206,10 @@ class QueryBasicSearchTest extends ESBaseTester {
 
     @Test
     void testSearchWithHousenumberNamed() {
-        Importer instance = makeImporter();
-        instance.add(List.of(
+        setupDocs(
                 createDoc("name", "Edeka")
                         .houseNumber("5")
-                        .addAddresses(Map.of("street", "Hauptstrasse"), getProperties().getLanguages())));
-        instance.finish();
-        refresh();
+                        .addAddresses(Map.of("street", "Hauptstrasse"), getProperties().getLanguages()));
 
         SoftAssertions soft = new SoftAssertions();
         assertWorking(soft,
@@ -173,13 +221,10 @@ class QueryBasicSearchTest extends ESBaseTester {
 
     @Test
     void testSearchWithHousenumberUnnamed() {
-        Importer instance = makeImporter();
-        instance.add(List.of(
+        setupDocs(
                 createDoc()
                         .houseNumber("5")
-                        .addAddresses(Map.of("street", "Hauptstrasse"), getProperties().getLanguages())));
-        instance.finish();
-        refresh();
+                        .addAddresses(Map.of("street", "Hauptstrasse"), getProperties().getLanguages()));
 
         SoftAssertions soft = new SoftAssertions();
         assertWorking(soft, "hauptstrasse 5");
