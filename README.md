@@ -92,14 +92,15 @@ For OpenSearch photon use:
 * world-wide: `https://download1.graphhopper.com/public/experimental/`
 * country extracts: `https://download1.graphhopper.com/public/experimental/extracts/`
 
-Make sure you have bzip2 or pbzip2 installed and execute one of these two
-commands in your shell. This will download, uncompress and extract the huge
+Make sure you have bzip2 or pbzip2 installed. Do not use WinRAR for unpacking,
+it is known to have issues with the files. Execute one of these two
+commands in your shell to download, uncompress and extract the huge
 database in one step:
 
 ```
-wget -O - https://download1.graphhopper.com/public/photon-db-latest.tar.bz2 | bzip2 -cd | tar x
+wget -O - https://download1.graphhopper.com/public/photon-db-planet-0.7OS-latest.tar.bz2 | bzip2 -cd | tar x
 # you can significantly speed up extracting using pbzip2 (recommended):
-wget -O - https://download1.graphhopper.com/public/photon-db-latest.tar.bz2 | pbzip2 -cd | tar x
+wget -O - https://download1.graphhopper.com/public/photon-db-planet-0.7OS-latest.tar.bz2 | pbzip2 -cd | tar x
 ```
 
 Don't forget to adapt the directory to **match your photon version**.
