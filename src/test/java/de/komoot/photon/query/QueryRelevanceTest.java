@@ -34,6 +34,15 @@ class QueryRelevanceTest extends ESBaseTester {
                 .names(makeDocNames(names));
     }
 
+    private void setupDocs(PhotonDoc... docs) {
+        Importer instance = makeImporter();
+        for (var doc : docs) {
+            instance.add(List.of(doc));
+        }
+        instance.finish();
+        refresh();
+    }
+
     private List<PhotonResult> search(String query) {
         final var request = new SimpleSearchRequest();
         request.setQuery(query);
@@ -53,101 +62,108 @@ class QueryRelevanceTest extends ESBaseTester {
         return result;
     }
 
+    private void assertSearchOsmIds(String query, Integer... ids) {
+        assertThat(search(query))
+                .extracting(p -> p.get("osm_id"))
+                .containsExactly(ids);
+    }
+
+    @Test
+    void testShortNamePartialOverMissSpelling() {
+        setupDocs(
+                createDoc("place", "city", 1000, "name", "Oslo"),
+                createDoc("place", "town", 1001, "name", "Olsokava")
+        );
+
+        assertSearchOsmIds("olso", 1001, 1000);
+        assertSearchOsmIds("Olso", 1001, 1000);
+        assertSearchOsmIds("oslo", 1000);
+        assertSearchOsmIds("Oslo", 1000);
+    }
+
+    @Test
+    void testShortNameMissSpellingOverPartialWithImportance() {
+        setupDocs(
+                createDoc("place", "city", 1000, "name", "Oslo")
+                        .importance(0.5),
+                createDoc("place", "town", 1001, "name", "Olsokava")
+                        .importance(0.1)
+        );
+
+        assertSearchOsmIds("olso", 1000, 1001);
+        assertSearchOsmIds("Olso", 1000, 1001);
+    }
+
     @Test
     void testRelevanceByImportance() {
-        Importer instance = makeImporter();
-        instance.add(List.of(createDoc("amenity", "restaurant", 1001, "name", "New York").importance(0.0)));
-        instance.add(List.of(createDoc("place", "city", 2000, "name", "New York").importance(0.5)));
-        instance.finish();
-        refresh();
+        setupDocs(
+                createDoc("amenity", "restaurant", 1001, "name", "New York")
+                        .importance(0.0),
+                createDoc("place", "city", 2000, "name", "New York")
+                        .importance(0.5));
 
-        assertThat(search("new york"))
-                .hasSize(2)
-                .element(0)
-                .satisfies(p -> assertThat(p.get("osm_id")).isEqualTo(2000));
+        assertSearchOsmIds("new york", 2000, 1001);
     }
 
     @Test
     void testFullNameOverPartialName() {
-        Importer instance = makeImporter();
-        instance.add(List.of(createDoc("place", "hamlet", 1000, "name", "Ham")));
-        instance.add(List.of(createDoc("place", "hamlet", 1001, "name", "Hamburg")));
-        instance.finish();
-        refresh();
+        setupDocs(
+                createDoc("place", "hamlet", 1000, "name", "Ham"),
+                createDoc("place", "hamlet", 1001, "name", "Hamburg"));
 
-        assertThat(search("ham"))
-                .hasSize(2)
-                .element(0)
-                .satisfies(p -> assertThat(p.get("osm_id")).isEqualTo(1000));
+        assertSearchOsmIds("ham", 1000, 1001);
     }
 
     @Test
     void testPartialNameWithImportanceOverFullName() {
-        Importer instance = makeImporter();
-        instance.add(List.of(createDoc("place", "hamlet", 1000, "name", "Ham").importance(0.1)));
-        instance.add(List.of(createDoc("place", "city", 1001, "name", "Hamburg").importance(0.5)));
-        instance.finish();
-        refresh();
+        setupDocs(
+                createDoc("place", "hamlet", 1000, "name", "Ham")
+                        .importance(0.1),
+                createDoc("place", "city", 1001, "name", "Hamburg")
+                        .importance(0.5));
 
-        assertThat(search("ham"))
-                .hasSize(2)
-                .element(0)
-                .satisfies(p -> assertThat(p.get("osm_id")).isEqualTo(1001));
+        assertSearchOsmIds("ham", 1001, 1000);
     }
 
     @ParameterizedTest
     @ValueSource(strings = {"Ham", "Hamm", "Hamburg"})
     void testLocationPreferenceForEqualImportance(String placeName) {
-        Importer instance = makeImporter();
-        instance.add(List.of(
+        setupDocs(
                 createDoc("place", "hamlet", 1000, "name", "Ham")
-                        .centroid(FACTORY.createPoint(new Coordinate(10, 10)))));
-        instance.add(List.of(
+                        .centroid(FACTORY.createPoint(new Coordinate(10, 10))),
                 createDoc("place", "hamlet", 1001, "name", placeName)
-                        .centroid(FACTORY.createPoint(new Coordinate(-10, -10)))));
-        instance.finish();
-        refresh();
+                        .centroid(FACTORY.createPoint(new Coordinate(-10, -10))));
 
         assertThat(search(createBiasedRequest()))
-                .hasSize(2)
-                .element(0)
-                .satisfies(p -> assertThat(p.get("osm_id")).isEqualTo(1001));
+                .extracting(p -> p.get("osm_id"))
+                .containsExactly(1001, 1000);
     }
 
     @Test
     void testLocationPreferenceForHigherImportance() {
-        Importer instance = makeImporter();
-        instance.add(List.of(
+        setupDocs(
                 createDoc("place", "hamlet", 1000, "name", "Ham")
                         .importance(0.8)
-                        .centroid(FACTORY.createPoint(new Coordinate(10, 10)))));
-        instance.add(List.of(
+                        .centroid(FACTORY.createPoint(new Coordinate(10, 10))),
                 createDoc("place", "hamlet", 1001, "name", "Ham")
                         .importance(0.01)
-                        .centroid(FACTORY.createPoint(new Coordinate(-10, -10)))));
-        instance.finish();
-        refresh();
+                        .centroid(FACTORY.createPoint(new Coordinate(-10, -10))));
 
         assertThat(search(createBiasedRequest()))
-                .hasSize(2)
-                .element(0)
-                .satisfies(p -> assertThat(p.get("osm_id")).isEqualTo(1000));
+                .extracting(p -> p.get("osm_id"))
+                .containsExactly(1000, 1001);
     }
 
     @ParameterizedTest
     @ValueSource(doubles = {0.8, 0.6, 0.4, 0.2})
     void testLocationPreferenceScaleForImportance(double scale) {
-        Importer instance = makeImporter();
-        instance.add(List.of(
+        setupDocs(
                 createDoc("place", "hamlet", 1000, "name", "Ham")
                         .importance(1.0 - scale)
-                        .centroid(FACTORY.createPoint(new Coordinate(10, 10)))));
-        instance.add(List.of(
+                        .centroid(FACTORY.createPoint(new Coordinate(10, 10))),
                 createDoc("place", "hamlet", 1001, "name", "Ham")
                         .importance(0.01)
-                        .centroid(FACTORY.createPoint(new Coordinate(-10, -10)))));
-        instance.finish();
-        refresh();
+                        .centroid(FACTORY.createPoint(new Coordinate(-10, -10))));
 
         final var request = new SimpleSearchRequest();
         request.setQuery("ham");
@@ -155,25 +171,20 @@ class QueryRelevanceTest extends ESBaseTester {
         request.setScale(scale);
 
         assertThat(search(request))
-                .hasSize(2)
-                .element(0)
-                .satisfies(p -> assertThat(p.get("osm_id")).isEqualTo(1000));
+                .extracting(p -> p.get("osm_id"))
+                .containsExactly(1000, 1001);
     }
 
     @ParameterizedTest
     @ValueSource(doubles = {0.8, 0.6, 0.4, 0.2})
     void testLocationPreferenceScaleForLocation(double scale) {
-        Importer instance = makeImporter();
-        instance.add(List.of(
+        setupDocs(
                 createDoc("place", "hamlet", 1000, "name", "Ham")
                         .importance(1.0 - scale)
-                        .centroid(FACTORY.createPoint(new Coordinate(10, 10)))));
-        instance.add(List.of(
+                        .centroid(FACTORY.createPoint(new Coordinate(10, 10))),
                 createDoc("place", "hamlet", 1001, "name", "Ham")
                         .importance(0.01)
-                        .centroid(FACTORY.createPoint(new Coordinate(-10, -10)))));
-        instance.finish();
-        refresh();
+                        .centroid(FACTORY.createPoint(new Coordinate(-10, -10))));
 
         final var request = new SimpleSearchRequest();
         request.setQuery("ham");
@@ -181,8 +192,7 @@ class QueryRelevanceTest extends ESBaseTester {
         request.setScale(scale - 0.1);
 
         assertThat(search(request))
-                .hasSize(2)
-                .element(0)
-                .satisfies(p -> assertThat(p.get("osm_id")).isEqualTo(1001));
+                .extracting(p -> p.get("osm_id"))
+                .containsExactly(1001, 1000);
     }
 }

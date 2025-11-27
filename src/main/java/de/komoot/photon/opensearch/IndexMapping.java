@@ -117,6 +117,13 @@ public class IndexMapping {
                     .norms(false)
                     .analyzer("index_raw")
                     .searchAnalyzer("search")
+                    .fields("full", prefixField -> prefixField.text(p1 -> p1
+                            .index(true)
+                            .norms(false)
+                            .indexOptions(IndexOptions.Docs)
+                            .analyzer("index_name_full")
+                            .searchAnalyzer("search_prefix")
+                    ))
             ));
         }
     }

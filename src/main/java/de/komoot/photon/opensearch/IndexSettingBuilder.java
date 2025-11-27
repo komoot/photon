@@ -297,6 +297,13 @@ public class IndexSettingBuilder {
                 .filter("prefix_edge_ngram", "unique")
         ));
 
+        settings.analyzer("index_name_full", f -> f.custom(d -> d
+                .tokenizer("keyword")
+                .filter("keep_alphanum")
+                .filter(NORMALIZATION_FILTERS)
+                .filter("unique")
+        ));
+
         settings.analyzer("index_housenumber", f -> f.custom(d -> d
                 .tokenizer("collection_split")
                 .filter("lowercase",
