@@ -320,7 +320,7 @@ public class App {
                          Support Geometries: {}""",
                 dbProperties.getLanguages(), dbProperties.getImportDate(), dbProperties.getSupportGeometries());
 
-        MetricsConfig metrics = setupMetrics(args);
+        MetricsConfig metrics = setupMetrics(args, server.getClient());
 
         photonServer = Javalin.create(config -> {
             config.router.ignoreTrailingSlashes = true;
