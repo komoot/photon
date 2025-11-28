@@ -105,6 +105,10 @@ tasks.named('jar') {
     manifest.attributes('Multi-Release': 'true')
 }
 
+def gitHashProvider = providers.exec {
+    commandLine 'git', 'rev-parse', '--short', 'HEAD'
+}.standardOutput.asText.map { it.trim() }
+
 shadowJar {
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
     failOnDuplicateEntries = true
@@ -121,6 +125,13 @@ shadowJar {
 
     filesMatching("org/apache/commons/logging/**") {
       duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    }
+
+    manifest {
+      attributes(
+        'Implementation-Version': version,
+        'Git-Commit': gitHashProvider
+      )
     }
 
     destinationDirectory.set(file('target'))
