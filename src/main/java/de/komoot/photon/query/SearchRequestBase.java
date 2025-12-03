@@ -8,6 +8,7 @@ public class SearchRequestBase extends RequestBase {
     private double scale = 0.2;
     private int zoom = 14;
     private Envelope bbox = null;
+    private boolean includeHousenumbers = false;
 
     public Envelope getBbox() {
         return bbox;
@@ -47,5 +48,13 @@ public class SearchRequestBase extends RequestBase {
         if (bbox != null) {
             this.bbox = bbox;
         }
+    }
+
+    public boolean getIncludeHousenumbers() {
+        return includeHousenumbers;
+    }
+
+    public void setIncludeHousenumbers(boolean includeHousenumbers) {
+        this.includeHousenumbers = includeHousenumbers;
     }
 }
