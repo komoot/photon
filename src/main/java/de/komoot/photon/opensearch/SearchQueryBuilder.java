@@ -219,7 +219,24 @@ public class SearchQueryBuilder extends BaseQueryBuilder {
         }
     }
 
+    /**
+     * Include housenumber results that match the query in their parent field.
+     * This allows finding addresses like "Main Street 5" when searching for "Main Street".
+     * Only applies when the query doesn't already contain a house number (digits).
+     */
+    public void includeHousenumbers(String query, boolean includeHousenumbers) {
+        if (includeHousenumbers && !query.matches(".*\\d.*")) {
+            outerQuery.should(QueryBuilders.bool()
+                    .must(m -> m.match(match -> match.field("collector.parent").query(FieldValue.of(query))))
+                    .must(m -> m.exists(e -> e.field(Constants.HOUSENUMBER)))
+                    .build().toQuery());
+        }
+    }
+
     public Query build() {
-        return outerQuery.must(innerQuery.build().toQuery()).build().toQuery();
+        return outerQuery
+                .should(innerQuery.build().toQuery())
+                .minimumShouldMatch("1")
+                .build().toQuery();
     }
 }
