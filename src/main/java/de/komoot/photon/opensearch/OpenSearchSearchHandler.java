@@ -53,6 +53,7 @@ public class OpenSearchSearchHandler implements SearchHandler<SimpleSearchReques
         query.includeCategories(request.getIncludeCategories());
         query.excludeCategories(request.getExcludeCategories());
         query.addBoundingBox(request.getBbox());
+        query.includeHousenumbers(request.getQuery(), request.getIncludeHousenumbers());
 
         return query.build();
     }
