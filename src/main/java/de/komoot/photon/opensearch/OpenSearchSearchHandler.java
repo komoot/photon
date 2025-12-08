@@ -46,14 +46,13 @@ public class OpenSearchSearchHandler implements SearchHandler<SimpleSearchReques
     }
 
     private Query buildQuery(SimpleSearchRequest request, boolean lenient) {
-        final var query = new SearchQueryBuilder(request.getQuery(), lenient);
+        final var query = new SearchQueryBuilder(request.getQuery(), lenient, request.getSuggestAddresses());
         query.addOsmTagFilter(request.getOsmTagFilters());
         query.addLayerFilter(request.getLayerFilters());
         query.addLocationBias(request.getLocationForBias(), request.getScaleForBias(), request.getZoomForBias());
         query.includeCategories(request.getIncludeCategories());
         query.excludeCategories(request.getExcludeCategories());
         query.addBoundingBox(request.getBbox());
-        query.includeHousenumbers(request.getQuery(), request.getIncludeHousenumbers());
 
         return query.build();
     }

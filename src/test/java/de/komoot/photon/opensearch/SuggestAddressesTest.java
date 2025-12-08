@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class IncludeHousenumbersTest extends ESBaseTester {
+class SuggestAddressesTest extends ESBaseTester {
 
     private static final String STREET_NAME = "Test Street";
 
@@ -45,8 +45,31 @@ class IncludeHousenumbersTest extends ESBaseTester {
                 .importance(0.1)
                 .rankAddress(30);
 
+        // Add houses on same street name in different cities (Auelestr scenario)
+        var addressTriesen = new HashMap<String, String>();
+        addressTriesen.put("street", "Auelestr");
+        addressTriesen.put("city", "Triesen");
+        var houseTriesen = new PhotonDoc(3, "N", 3, "building", "yes")
+                .countryCode("LI")
+                .houseNumber("16")
+                .addAddresses(addressTriesen, getProperties().getLanguages())
+                .importance(0.1)
+                .rankAddress(30);
+
+        var addressVaduz = new HashMap<String, String>();
+        addressVaduz.put("street", "Auelestr");
+        addressVaduz.put("city", "Vaduz");
+        var houseVaduz = new PhotonDoc(4, "N", 4, "building", "yes")
+                .countryCode("LI")
+                .houseNumber("16")
+                .addAddresses(addressVaduz, getProperties().getLanguages())
+                .importance(0.1)
+                .rankAddress(30);
+
         instance.add(List.of(street));
         instance.add(List.of(house));
+        instance.add(List.of(houseTriesen));
+        instance.add(List.of(houseVaduz));
         instance.finish();
         refresh();
     }
@@ -58,7 +81,7 @@ class IncludeHousenumbersTest extends ESBaseTester {
     }
 
     @Test
-    void searchWithoutIncludeHousenumbersReturnsOnlyStreet() {
+    void searchWithoutSuggestAddressesReturnsOnlyStreet() {
         var request = new SimpleSearchRequest();
         request.setQuery(STREET_NAME);
 
@@ -71,10 +94,10 @@ class IncludeHousenumbersTest extends ESBaseTester {
     }
 
     @Test
-    void searchWithIncludeHousenumbersReturnsHousenumbers() {
+    void searchWithSuggestAddressesReturnsAddresses() {
         var request = new SimpleSearchRequest();
         request.setQuery(STREET_NAME);
-        request.setIncludeHousenumbers(true);
+        request.setSuggestAddresses(true);
 
         var handler = getServer().createSearchHandler(1);
         var results = handler.search(request);
@@ -84,18 +107,35 @@ class IncludeHousenumbersTest extends ESBaseTester {
     }
 
     @Test
-    void searchWithHousenumberInQueryDoesNotTriggerIncludeHousenumbers() {
-        // When query already contains a number, include_housenumbers should not add
+    void searchWithHousenumberInQueryDoesNotTriggerSuggestAddresses() {
+        // When query already contains a number, suggest_addresses should not add
         // the alternative housenumber query path (it's redundant since the main query
         // already handles housenumber matching)
         var request = new SimpleSearchRequest();
         request.setQuery(STREET_NAME + " 42");
-        request.setIncludeHousenumbers(true);
+        request.setSuggestAddresses(true);
 
         var handler = getServer().createSearchHandler(1);
         var results = handler.search(request);
 
         assertEquals(1, results.size());
         assertEquals("42", results.getFirst().get(Constants.HOUSENUMBER));
+    }
+
+    @Test
+    void suggestAddressesRespectsOtherQueryTerms() {
+        // When searching for "Auelestr Triesen", should only return addresses in Triesen,
+        // not addresses in Vaduz just because they have a housenumber on the same street name
+        var request = new SimpleSearchRequest();
+        request.setQuery("Auelestr Triesen");
+        request.setSuggestAddresses(true);
+
+        var handler = getServer().createSearchHandler(10);
+        var results = handler.search(request);
+
+        assertEquals(1, results.size(), "Expected only Triesen result, got: " + results);
+        assertEquals("16", results.getFirst().get(Constants.HOUSENUMBER));
+        // City is stored in localised format
+        assertEquals("Triesen", results.getFirst().getLocalised(Constants.CITY, "en"));
     }
 }

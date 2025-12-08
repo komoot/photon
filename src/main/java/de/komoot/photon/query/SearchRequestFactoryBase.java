@@ -11,7 +11,7 @@ import java.util.stream.Stream;
 public class SearchRequestFactoryBase extends RequestFactoryBase {
     protected static final Set<String> SEARCH_PARAMETERS =
             Stream.concat(BASE_PARAMETERS.stream(),
-                            Stream.of("lat", "lon", "location_bias_scale", "zoom", "bbox", "include_housenumbers"))
+                            Stream.of("lat", "lon", "location_bias_scale", "zoom", "bbox", "suggest_addresses"))
                     .collect(Collectors.toSet());
 
     protected SearchRequestFactoryBase(List<String> supportedLanguages, String defaultLanguage, int maxResults, boolean supportGeometries) {
@@ -31,7 +31,7 @@ public class SearchRequestFactoryBase extends RequestFactoryBase {
         request.setLocationForBias(parseLatLon(context, false));
         request.setBbox(context.queryParamAsClass("bbox", Envelope.class)
                 .allowNullable().get());
-        request.setIncludeHousenumbers(context.queryParamAsClass("include_housenumbers", Boolean.class)
+        request.setSuggestAddresses(context.queryParamAsClass("suggest_addresses", Boolean.class)
                 .getOrDefault(false));
     }
 
