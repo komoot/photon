@@ -57,7 +57,6 @@ public class SearchQueryBuilder extends BaseQueryBuilder {
             }
 
             if (suggestAddresses) {
-                // Match addresses where the parent (street) matches and housenumber exists but no name
                 b.should(addressMatch -> addressMatch.bool(ab -> ab
                         .must(m -> m.match(match -> match
                                 .field("collector.parent")

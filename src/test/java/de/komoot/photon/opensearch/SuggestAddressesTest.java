@@ -83,12 +83,25 @@ class SuggestAddressesTest extends ESBaseTester {
                 .importance(0.1)
                 .rankAddress(30);
 
-        instance.add(List.of(street));
-        instance.add(List.of(house));
-        instance.add(List.of(houseTriesen));
-        instance.add(List.of(houseVaduz));
-        instance.add(List.of(alphabeticStreet));
-        instance.add(List.of(houseRomsdalsveien));
+        // Add a street with spaces in name (triggers full query path)
+        var multiWordStreet = new PhotonDoc(7, "W", 7, "highway", "residential")
+                .names(makeDocNames("name", "Nils Gotlands veg"))
+                .countryCode("NO")
+                .importance(0.5)
+                .rankAddress(26);
+
+        // Add a house on that street
+        var addressNilsGotlands = new HashMap<String, String>();
+        addressNilsGotlands.put("street", "Nils Gotlands veg");
+        var houseNilsGotlands = new PhotonDoc(8, "N", 8, "building", "yes")
+                .countryCode("NO")
+                .houseNumber("5")
+                .addAddresses(addressNilsGotlands, getProperties().getLanguages())
+                .importance(0.1)
+                .rankAddress(30);
+
+        instance.add(List.of(street, house, houseTriesen, houseVaduz, alphabeticStreet, houseRomsdalsveien,
+                multiWordStreet, houseNilsGotlands));
         instance.finish();
         refresh();
     }
@@ -172,5 +185,20 @@ class SuggestAddressesTest extends ESBaseTester {
         assertEquals(2, results.size(), "Expected street and address, got: " + results);
         assertEquals("Romsdalsveien", results.getFirst().getLocalised(Constants.NAME, "en"));
         assertEquals("10", results.get(1).get(Constants.HOUSENUMBER));
+    }
+
+    @Test
+    void suggestAddressesWorksForMultiWordStreetNames() {
+        // Multi-word queries (like "Nils Gotlands veg") use the full query path.
+        var request = new SimpleSearchRequest();
+        request.setQuery("Nils Gotlands veg");
+        request.setSuggestAddresses(true);
+
+        var handler = getServer().createSearchHandler(10);
+        var results = handler.search(request);
+
+        assertEquals(2, results.size(), "Expected street and address, got: " + results);
+        assertEquals("Nils Gotlands veg", results.getFirst().getLocalised(Constants.NAME, "en"));
+        assertEquals("5", results.get(1).get(Constants.HOUSENUMBER));
     }
 }
