@@ -66,10 +66,29 @@ class SuggestAddressesTest extends ESBaseTester {
                 .importance(0.1)
                 .rankAddress(30);
 
+        // Add a street with pure alphabetic name (triggers short query path)
+        var alphabeticStreet = new PhotonDoc(5, "W", 5, "highway", "residential")
+                .names(makeDocNames("name", "Romsdalsveien"))
+                .countryCode("NO")
+                .importance(0.5)
+                .rankAddress(26);
+
+        // Add a house on that street
+        var addressRomsdalsveien = new HashMap<String, String>();
+        addressRomsdalsveien.put("street", "Romsdalsveien");
+        var houseRomsdalsveien = new PhotonDoc(6, "N", 6, "building", "yes")
+                .countryCode("NO")
+                .houseNumber("10")
+                .addAddresses(addressRomsdalsveien, getProperties().getLanguages())
+                .importance(0.1)
+                .rankAddress(30);
+
         instance.add(List.of(street));
         instance.add(List.of(house));
         instance.add(List.of(houseTriesen));
         instance.add(List.of(houseVaduz));
+        instance.add(List.of(alphabeticStreet));
+        instance.add(List.of(houseRomsdalsveien));
         instance.finish();
         refresh();
     }
@@ -137,5 +156,21 @@ class SuggestAddressesTest extends ESBaseTester {
         assertEquals("16", results.getFirst().get(Constants.HOUSENUMBER));
         // City is stored in localised format
         assertEquals("Triesen", results.getFirst().getLocalised(Constants.CITY, "en"));
+    }
+
+    @Test
+    void suggestAddressesWorksForPureAlphabeticStreetNames() {
+        // Pure alphabetic queries (like "Romsdalsveien") use the short query path.
+        // suggest_addresses should work for these too.
+        var request = new SimpleSearchRequest();
+        request.setQuery("Romsdalsveien");
+        request.setSuggestAddresses(true);
+
+        var handler = getServer().createSearchHandler(10);
+        var results = handler.search(request);
+
+        assertEquals(2, results.size(), "Expected street and address, got: " + results);
+        assertEquals("Romsdalsveien", results.getFirst().getLocalised(Constants.NAME, "en"));
+        assertEquals("10", results.get(1).get(Constants.HOUSENUMBER));
     }
 }

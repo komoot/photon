@@ -18,7 +18,7 @@ public class SearchQueryBuilder extends BaseQueryBuilder {
 
     public SearchQueryBuilder(String query, boolean lenient, boolean suggestAddresses) {
         if (query.length() < 4 || query.matches("^\\p{IsAlphabetic}+$")) {
-            importance_factor = setupShortQuery(query, lenient);
+            importance_factor = setupShortQuery(query, lenient, suggestAddresses);
         } else {
             importance_factor = setupFullQuery(query, lenient, suggestAddresses);
         }
@@ -31,7 +31,7 @@ public class SearchQueryBuilder extends BaseQueryBuilder {
                 .boostMode(FunctionBoostMode.Sum);
     }
 
-    public double setupShortQuery(String query, boolean lenient) {
+    public double setupShortQuery(String query, boolean lenient, boolean suggestAddresses) {
         final int qlen = query.length();
         final var queryField = FieldValue.of(f -> f.stringValue(query));
 
@@ -54,6 +54,17 @@ public class SearchQueryBuilder extends BaseQueryBuilder {
                         .fuzziness("AUTO")
                         .prefixLength(2)
                         .boost(0.2f)));
+            }
+
+            if (suggestAddresses) {
+                // Match addresses where the parent (street) matches and housenumber exists but no name
+                b.should(addressMatch -> addressMatch.bool(ab -> ab
+                        .must(m -> m.match(match -> match
+                                .field("collector.parent")
+                                .query(queryField)))
+                        .must(m -> m.exists(e -> e.field(Constants.HOUSENUMBER)))
+                        .mustNot(m -> m.exists(e -> e.field(Constants.NAME)))
+                ));
             }
 
             return b;
