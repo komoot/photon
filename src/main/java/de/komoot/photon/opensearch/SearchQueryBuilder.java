@@ -17,7 +17,7 @@ public class SearchQueryBuilder extends BaseQueryBuilder {
     double importance_factor = 40.0;
 
     public SearchQueryBuilder(String query, boolean lenient, boolean suggestAddresses) {
-        if (query.length() < 4 || query.matches("^\\p{IsAlphabetic}+$")) {
+        if (!suggestAddresses && (query.length() < 4 || query.matches("^\\p{IsAlphabetic}+$"))) {
             importance_factor = setupShortQuery(query, lenient);
         } else {
             importance_factor = setupFullQuery(query, lenient, suggestAddresses);
