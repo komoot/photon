@@ -1,25 +1,26 @@
 package de.komoot.photon.opensearch;
 
-import de.komoot.photon.query.StructuredSearchRequest;
 import de.komoot.photon.Constants;
+import de.komoot.photon.query.StructuredSearchRequest;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Point;
 import org.opensearch.client.json.JsonData;
 import org.opensearch.client.opensearch._types.FieldValue;
 import org.opensearch.client.opensearch._types.query_dsl.*;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class SearchQueryBuilder extends BaseQueryBuilder {
     public FunctionScoreQuery.Builder innerQuery = new FunctionScoreQuery.Builder();
     double importance_factor = 40.0;
 
-    public SearchQueryBuilder(String query, boolean lenient) {
-        if (query.length() < 4 || query.matches("^\\p{IsAlphabetic}+$")) {
+    public SearchQueryBuilder(String query, boolean lenient, boolean suggestAddresses) {
+        if (!suggestAddresses && (query.length() < 4 || query.matches("^\\p{IsAlphabetic}+$"))) {
             importance_factor = setupShortQuery(query, lenient);
         } else {
-            importance_factor = setupFullQuery(query, lenient);
+            importance_factor = setupFullQuery(query, lenient, suggestAddresses);
         }
 
         innerQuery.functions(fvf -> fvf.fieldValueFactor(fvfb -> fvfb
@@ -69,7 +70,7 @@ public class SearchQueryBuilder extends BaseQueryBuilder {
         return 40.0;
     }
 
-    public double setupFullQuery(String query, boolean lenient) {
+    public double setupFullQuery(String query, boolean lenient, boolean suggestAddresses) {
         final var queryField = FieldValue.of(f -> f.stringValue(query));
         final boolean isAlphabetic = query.matches("[\\p{IsAlphabetic} ]+");
 
@@ -97,39 +98,48 @@ public class SearchQueryBuilder extends BaseQueryBuilder {
                             .prefixLength(2)
                             .boost(isAlphabetic ? 1.5f : 1.0f)
                     ))
-                    .queries(builder -> builder.bool(b -> b
-                            .must(hnrWeighted -> hnrWeighted
-                                    .functionScore(hnrFS -> hnrFS
-                                            .boostMode(FunctionBoostMode.Multiply)
-                                            .scoreMode(FunctionScoreMode.Sum)
-                                            .query(hnr -> hnr
-                                                    .match(m1 -> m1
-                                                            .query(queryField)
-                                                            .boost(0.6f)
-                                                            .field("housenumber")
-                                                    ))
-                                            .functions(fullHnr -> fullHnr
-                                                    .weight(1.0f)
-                                                    .filter(hmrExact -> hmrExact
-                                                            .terms(t -> t
-                                                                    .field("housenumber.full")
-                                                                    .boost(2f)
-                                                                    .terms(tf -> tf.value(
-                                                                            Arrays.stream(query.toLowerCase().split("[ ,;]+"))
-                                                                                    .map(s -> FieldValue.of(fv -> fv.stringValue(s)))
-                                                                                    .collect(Collectors.toList())
-                                                                    ))
-                                                            )
-                                                    ))
-                                            .functions(constFact -> constFact.weight(1.0f))
-                                    ))
-                            .must(parent -> parent
-                                    .match(m2 -> m2
-                                            .query(queryField)
-                                            .field("collector.parent")
-                                            .fuzziness(lenient ? "AUTO" : "0")
-                                            .prefixLength(2)
-                                    ))
+                    .queries(builder -> builder.bool(b -> {
+                                var hnrQuery = QueryBuilders
+                                        .functionScore()
+                                        .boostMode(FunctionBoostMode.Multiply)
+                                        .scoreMode(FunctionScoreMode.Sum)
+                                        .query(hnr -> hnr
+                                                .match(m1 -> m1
+                                                        .query(queryField)
+                                                        .boost(0.6f)
+                                                        .field("housenumber")
+                                                ))
+                                        .functions(fullHnr -> fullHnr
+                                                .weight(1.0f)
+                                                .filter(hmrExact -> hmrExact
+                                                        .terms(t -> t
+                                                                .field("housenumber.full")
+                                                                .boost(2f)
+                                                                .terms(tf -> tf.value(
+                                                                        Arrays.stream(query.toLowerCase().split("[ ,;]+"))
+                                                                                .map(s -> FieldValue.of(fv -> fv.stringValue(s)))
+                                                                                .collect(Collectors.toList())
+                                                                ))
+                                                        )
+                                                ))
+                                        .functions(constFact -> constFact.weight(1.0f))
+                                        .build().toQuery();
+
+                                if (suggestAddresses) {
+                                    b.should(hnrQuery);
+                                    b.must(m -> m.exists(e -> e.field(Constants.HOUSENUMBER)));
+                                    b.mustNot(m -> m.exists(e -> e.field(Constants.NAME)));
+                                } else {
+                                    b.must(hnrQuery);
+                                }
+                                return b.must(parent -> parent
+                                        .match(m2 -> m2
+                                                .query(queryField)
+                                                .field("collector.parent")
+                                                .fuzziness(lenient ? "AUTO" : "0")
+                                                .prefixLength(2)
+                                        ));
+                            }
                     ))
             ));
             coreBuilder.should(fullWord -> fullWord.match(fwm -> fwm
@@ -220,6 +230,8 @@ public class SearchQueryBuilder extends BaseQueryBuilder {
     }
 
     public Query build() {
-        return outerQuery.must(innerQuery.build().toQuery()).build().toQuery();
+        return outerQuery
+                .must(innerQuery.build().toQuery())
+                .build().toQuery();
     }
 }
