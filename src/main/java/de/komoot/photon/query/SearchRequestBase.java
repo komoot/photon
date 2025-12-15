@@ -8,6 +8,7 @@ public class SearchRequestBase extends RequestBase {
     private double scale = 0.2;
     private int zoom = 14;
     private Envelope bbox = null;
+    private boolean suggestAddresses = false;
 
     public Envelope getBbox() {
         return bbox;
@@ -47,5 +48,13 @@ public class SearchRequestBase extends RequestBase {
         if (bbox != null) {
             this.bbox = bbox;
         }
+    }
+
+    public boolean getSuggestAddresses() {
+        return suggestAddresses;
+    }
+
+    public void setSuggestAddresses(boolean suggestAddresses) {
+        this.suggestAddresses = suggestAddresses;
     }
 }
