@@ -34,7 +34,14 @@ public class OpenSearchSearchHandler implements SearchHandler<SimpleSearchReques
 
         List<PhotonResult> ret = new ArrayList<>();
         for (var hit : results.hits().hits()) {
-            ret.add(hit.source().setScore(hit.score()));
+            var score = hit.score();
+            var source = hit.source();
+            if (source != null) {
+                if (score != null) {
+                    source.setScore(score);
+                }
+                ret.add(source);
+            }
         }
 
         return ret;
