@@ -32,10 +32,10 @@ public class OpenSearchStructuredSearchHandler implements SearchHandler<Structur
 
         var results = sendQuery(buildQuery(photonRequest, false), extLimit);
 
-        if (results.hits().total().value() == 0) {
+        if (results.hits().total() != null && results.hits().total().value() == 0) {
             results = sendQuery(buildQuery(photonRequest, true), extLimit);
 
-            if (results.hits().total().value() == 0 && photonRequest.hasStreet()) {
+            if (results.hits().total() != null && results.hits().total().value() == 0 && photonRequest.hasStreet()) {
                 var street = photonRequest.getStreet();
                 var houseNumber = photonRequest.getHouseNumber();
                 photonRequest.setStreet(null);
@@ -48,7 +48,14 @@ public class OpenSearchStructuredSearchHandler implements SearchHandler<Structur
 
         List<PhotonResult> ret = new ArrayList<>();
         for (var hit : results.hits().hits()) {
-            ret.add(hit.source().setScore(hit.score()));
+            var source = hit.source();
+            var score = hit.score();
+            if (source != null) {
+                if (score != null) {
+                    source.setScore(score);
+                }
+                ret.add(source);
+            }
         }
 
         return ret;

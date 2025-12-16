@@ -2,6 +2,7 @@ package de.komoot.photon.nominatim.model;
 
 import de.komoot.photon.PhotonDoc;
 import de.komoot.photon.nominatim.DBDataAdapter;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;
@@ -10,6 +11,7 @@ import java.util.List;
 
 public class OsmlineRowMapper implements RowMapper<PhotonDoc> {
     @Override
+    @NotNull
     public PhotonDoc mapRow(ResultSet rs, int rowNum) throws SQLException {
         return new PhotonDoc(
                 rs.getLong("place_id"),
