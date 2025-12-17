@@ -21,34 +21,19 @@ public class OpenSearchMetrics implements MeterBinder {
         this.client = client;
     }
 
-    private static class CachedStats {
-        final long timestamp;
-        final double documentCount;
-        final double indexSizeBytes;
-        final double searchTotal;
-        final double searchTimeMillis;
-        final double indexingTotal;
-        final double indexingTimeMillis;
-        final double activeShards;
-        final double relocatingShards;
-        final double unassignedShards;
-        final double healthStatus;
-
-        CachedStats(long timestamp, double documentCount, double indexSizeBytes, double searchTotal,
-                    double searchTimeMillis, double indexingTotal, double indexingTimeMillis,
-                    double activeShards, double relocatingShards, double unassignedShards, double healthStatus) {
-            this.timestamp = timestamp;
-            this.documentCount = documentCount;
-            this.indexSizeBytes = indexSizeBytes;
-            this.searchTotal = searchTotal;
-            this.searchTimeMillis = searchTimeMillis;
-            this.indexingTotal = indexingTotal;
-            this.indexingTimeMillis = indexingTimeMillis;
-            this.activeShards = activeShards;
-            this.relocatingShards = relocatingShards;
-            this.unassignedShards = unassignedShards;
-            this.healthStatus = healthStatus;
-        }
+    private record CachedStats(
+            long timestamp,
+            double documentCount,
+            double indexSizeBytes,
+            double searchTotal,
+            double searchTimeMillis,
+            double indexingTotal,
+            double indexingTimeMillis,
+            double activeShards,
+            double relocatingShards,
+            double unassignedShards,
+            double healthStatus
+    ) {
 
         boolean isExpired() {
             return System.currentTimeMillis() - timestamp > CACHE_TTL_MS;

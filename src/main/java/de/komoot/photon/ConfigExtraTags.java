@@ -20,7 +20,7 @@ public class ConfigExtraTags {
     }
 
     public ConfigExtraTags(List<String> tags) {
-        this.allowAll = tags.size() == 1 && "ALL".equals(tags.get(0));
+        this.allowAll = tags.size() == 1 && "ALL".equals(tags.getFirst());
         this.tags = allowAll ? null : tags.toArray(new String[0]);
     }
 

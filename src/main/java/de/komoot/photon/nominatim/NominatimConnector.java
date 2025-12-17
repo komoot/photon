@@ -49,7 +49,7 @@ public class NominatimConnector {
                 "SELECT lastimportdate FROM import_status ORDER BY lastimportdate DESC LIMIT 1",
                 (rs, rowNum) -> rs.getTimestamp("lastimportdate"));
 
-        return importDates.isEmpty() ? null : importDates.get(0);
+        return importDates.isEmpty() ? null : importDates.getFirst();
     }
 
     public Map<String, NameMap> loadCountryNames(String[] languages) {

@@ -220,7 +220,7 @@ public class NominatimPlaceDocument {
                         .filter(l -> l.isAddress)
                         .map(l -> addressCache.get(l.placeId))
                         .filter(Objects::nonNull)
-                        .collect(Collectors.toUnmodifiableList()));
+                        .toList());
        }
     }
 

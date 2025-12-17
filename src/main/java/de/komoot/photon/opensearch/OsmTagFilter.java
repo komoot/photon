@@ -38,23 +38,23 @@ public class OsmTagFilter {
     }
 
     private void addOsmTagFilter(TagFilter filter) {
-        if (filter.getKind() == TagFilterKind.EXCLUDE_VALUE) {
+        if (filter.kind() == TagFilterKind.EXCLUDE_VALUE) {
             appendIncludeTerm(BoolQuery.of(q -> q
-                    .must(makeTermsQuery("osm_key", filter.getKey()))
-                    .mustNot(makeTermsQuery("osm_value", filter.getValue()))).toQuery());
+                    .must(makeTermsQuery("osm_key", filter.key()))
+                    .mustNot(makeTermsQuery("osm_value", filter.value()))).toQuery());
         } else {
             Query query;
             if (filter.isKeyOnly()) {
-                query = makeTermsQuery("osm_key", filter.getKey());
+                query = makeTermsQuery("osm_key", filter.key());
             } else if (filter.isValueOnly()) {
-                query = makeTermsQuery("osm_value", filter.getValue());
+                query = makeTermsQuery("osm_value", filter.value());
             } else {
                 query = BoolQuery.of(q -> q
-                        .must(makeTermsQuery("osm_key", filter.getKey()))
-                        .must(makeTermsQuery("osm_value", filter.getValue()))).toQuery();
+                        .must(makeTermsQuery("osm_key", filter.key()))
+                        .must(makeTermsQuery("osm_value", filter.value()))).toQuery();
             }
 
-            if (filter.getKind() == TagFilterKind.INCLUDE) {
+            if (filter.kind() == TagFilterKind.INCLUDE) {
                 appendIncludeTerm(query);
             } else {
                 appendExcludeTerm(query);
