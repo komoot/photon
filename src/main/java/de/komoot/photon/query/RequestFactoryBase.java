@@ -10,7 +10,6 @@ import org.locationtech.jts.geom.*;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
-import java.util.regex.Pattern;
 
 public class RequestFactoryBase {
     protected static final Set<String> BASE_PARAMETERS = Set.of(

@@ -19,32 +19,33 @@ import java.util.concurrent.locks.ReentrantLock;
 public class NominatimUpdater extends NominatimConnector {
     private static final Logger LOGGER = LogManager.getLogger();
 
-    private static final String TRIGGER_SQL =
-            "DROP TABLE IF EXISTS photon_updates;"
-            + "CREATE TABLE photon_updates (rel TEXT, place_id BIGINT,"
-            + "                             operation TEXT,"
-            + "                             indexed_date TIMESTAMP WITH TIME ZONE);"
-            + "CREATE OR REPLACE FUNCTION photon_update_func()\n"
-            + " RETURNS TRIGGER AS $$\n"
-            + "BEGIN\n"
-            + "  INSERT INTO photon_updates("
-            + "     VALUES (TG_TABLE_NAME, OLD.place_id, TG_OP, statement_timestamp()));"
-            + "  RETURN NEW;"
-            + "END; $$ LANGUAGE plpgsql;"
-            + "CREATE OR REPLACE TRIGGER photon_trigger_update_placex"
-            + "   AFTER UPDATE ON placex FOR EACH ROW"
-            + "   WHEN (OLD.indexed_status > 0 AND NEW.indexed_status = 0)"
-            + "   EXECUTE FUNCTION photon_update_func();"
-            + "CREATE OR REPLACE TRIGGER photon_trigger_delete_placex"
-            + "   AFTER DELETE ON placex FOR EACH ROW"
-            + "   EXECUTE FUNCTION photon_update_func();"
-            + "CREATE OR REPLACE TRIGGER photon_trigger_update_interpolation "
-            + "   AFTER UPDATE ON location_property_osmline FOR EACH ROW"
-            + "   WHEN (OLD.indexed_status > 0 AND NEW.indexed_status = 0)"
-            + "   EXECUTE FUNCTION photon_update_func();"
-            + "CREATE OR REPLACE TRIGGER photon_trigger_delete_interpolation"
-            + "   AFTER DELETE ON location_property_osmline FOR EACH ROW"
-            + "   EXECUTE FUNCTION photon_update_func()";
+    private static final String TRIGGER_SQL = """
+            DROP TABLE IF EXISTS photon_updates;
+            CREATE TABLE photon_updates (rel TEXT, place_id BIGINT,
+                                         operation TEXT,
+                                         indexed_date TIMESTAMP WITH TIME ZONE);
+            CREATE OR REPLACE FUNCTION photon_update_func()
+             RETURNS TRIGGER AS $$
+            BEGIN
+              INSERT INTO photon_updates(
+                 VALUES (TG_TABLE_NAME, OLD.place_id, TG_OP, statement_timestamp()));
+              RETURN NEW;
+            END; $$ LANGUAGE plpgsql;
+            CREATE OR REPLACE TRIGGER photon_trigger_update_placex
+               AFTER UPDATE ON placex FOR EACH ROW
+               WHEN (OLD.indexed_status > 0 AND NEW.indexed_status = 0)
+               EXECUTE FUNCTION photon_update_func();
+            CREATE OR REPLACE TRIGGER photon_trigger_delete_placex
+               AFTER DELETE ON placex FOR EACH ROW
+               EXECUTE FUNCTION photon_update_func();
+            CREATE OR REPLACE TRIGGER photon_trigger_update_interpolation 
+               AFTER UPDATE ON location_property_osmline FOR EACH ROW
+               WHEN (OLD.indexed_status > 0 AND NEW.indexed_status = 0)
+               EXECUTE FUNCTION photon_update_func();
+            CREATE OR REPLACE TRIGGER photon_trigger_delete_interpolation
+               AFTER DELETE ON location_property_osmline FOR EACH ROW
+               EXECUTE FUNCTION photon_update_func()
+        """;
 
     private Updater updater;
 
@@ -252,7 +253,7 @@ public class NominatimUpdater extends NominatimConnector {
                         " WHERE p.place_id = ? and p.indexed_status = 0",
                 placeToNominatimResult, placeId);
 
-        return result.isEmpty() ? List.of() : result.get(0);
+        return result.isEmpty() ? List.of() : result.getFirst();
     }
 
     public Iterable<PhotonDoc> getInterpolationsByPlaceId(long placeId) {
@@ -260,6 +261,6 @@ public class NominatimUpdater extends NominatimConnector {
                 osmlineBaseSQL + " AND p.place_id = ? and p.indexed_status = 0",
                 osmlineToNominatimResult, placeId);
 
-        return result.isEmpty() ? List.of() : result.get(0);
+        return result.isEmpty() ? List.of() : result.getFirst();
     }
 }

@@ -12,7 +12,7 @@ public class CategoryFilter {
 
     public CategoryFilter(String filterTerm) {
         this.categories = Arrays.stream(filterTerm.split(","))
-                .map(s -> FieldValue.of(s))
+                .map(FieldValue::of)
                 .collect(Collectors.toList());
     }
 

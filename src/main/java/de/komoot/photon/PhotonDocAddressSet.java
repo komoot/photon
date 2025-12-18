@@ -1,6 +1,7 @@
 package de.komoot.photon;
 
 import de.komoot.photon.nominatim.model.AddressType;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.regex.Pattern;
@@ -26,7 +27,7 @@ public class PhotonDocAddressSet implements Iterable<PhotonDoc> {
     }
 
     @Override
-    public Iterator<PhotonDoc> iterator() {
+    public @NotNull Iterator<PhotonDoc> iterator() {
         return docs.iterator();
     }
 
