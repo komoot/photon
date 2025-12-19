@@ -3,6 +3,7 @@ plugins {
   id 'application'
   id 'jacoco'
   id 'org.sonarqube' version '6.3.1.5724'
+  id 'com.github.ben-manes.versions' version '0.53.0'
 }
 
 group = 'de.komoot.photon'
@@ -147,4 +148,17 @@ shadowJar {
     // JndiLookup from the fat jar. This is the recommended course of action
     // when you cannot upgrade as per https://logging.apache.org/log4j/2.x/security.html
     exclude 'org/apache/logging/log4j/core/lookup/JndiLookup.class'
+}
+
+def isNonStable = { String version ->
+  def stableKeyword = ['RELEASE', 'FINAL', 'GA'].any { it -> version.toUpperCase().contains(it) }
+  def regex = /^[0-9,.v-]+(-r)?$/
+  return !stableKeyword && !(version ==~ regex)
+}
+
+dependencyUpdates {
+  gradleReleaseChannel = "current"
+  rejectVersionIf {
+    isNonStable(it.candidate.version)
+  }
 }
