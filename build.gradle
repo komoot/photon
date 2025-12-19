@@ -149,14 +149,6 @@ shadowJar {
     archiveClassifier.set('')
 
     transform(com.github.jengelman.gradle.plugins.shadow.transformers.Log4j2PluginsCacheFileTransformer)
-
-    // This mitigates against the log4j JNDI lookup vulnerability:
-    // https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-44228
-    // Since we are using an old version of elastic search that is incompatible
-    // with a patched, newer version of log4j we have to remove the class
-    // JndiLookup from the fat jar. This is the recommended course of action
-    // when you cannot upgrade as per https://logging.apache.org/log4j/2.x/security.html
-    exclude 'org/apache/logging/log4j/core/lookup/JndiLookup.class'
 }
 
 def isNonStable = { String version ->
