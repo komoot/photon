@@ -58,10 +58,10 @@ dependencies {
         exclude(module: 'lucene-grouping')
     }
 
-    implementation 'org.apache.logging.log4j:log4j-core:2.25.2'
-    implementation 'org.apache.logging.log4j:log4j-api:2.25.2'
+    implementation 'org.apache.logging.log4j:log4j-core:2.25.3'
+    implementation 'org.apache.logging.log4j:log4j-api:2.25.3'
     implementation 'org.postgresql:postgresql:42.7.8'
-    implementation 'org.apache.logging.log4j:log4j-slf4j2-impl:2.25.2'
+    implementation 'org.apache.logging.log4j:log4j-slf4j2-impl:2.25.3'
     implementation 'org.jcommander:jcommander:3.0'
     implementation 'org.springframework:spring-jdbc:6.2.12'
     implementation ('org.apache.commons:commons-dbcp2:2.13.0') {
