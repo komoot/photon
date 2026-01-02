@@ -163,8 +163,8 @@ public class IndexSettingBuilder {
     private void addDefaultSettings() {
         final var NORMALIZATION_FILTERS = List.of(
                 "lowercase",
-                "german_normalization",
-                "asciifolding"
+                "asciifolding",
+                "german_normalization"
         );
 
         // Classification filtering.

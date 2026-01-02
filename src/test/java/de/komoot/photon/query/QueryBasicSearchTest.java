@@ -11,6 +11,8 @@ import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import static org.assertj.core.api.Assertions.*;
+
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Arrays;
@@ -99,8 +101,37 @@ class QueryBasicSearchTest extends ESBaseTester {
         setupDocs(createDoc("name", "Müggeln"));
 
         var soft = new SoftAssertions();
-        assertWorking(soft,"müggeln", "Müggeln", "muggeln", "mugglen");
+        assertWorking(soft,"müggeln", "Müggeln", "muggeln", "mugglen", "mueggeln");
         assertNotWorking(soft, "mukklen");
+
+        soft.assertAll();
+    }
+
+    @Test
+    void testSearchWithEthel() {
+        setupDocs(createDoc("name", "Bœuf sur le Toit"),
+                  createDoc("name", "Noeds"));
+
+        var soft = new SoftAssertions();
+        assertWorking(soft, "Bœuff", "Boeuff");
+        assertWorking(soft, "Noedss", "Nœdss");
+
+        soft.assertAll();
+    }
+
+    @Test
+    void testSearchWithEumlaut() {
+        setupDocs(createDoc("name", "Moëns"),
+                  createDoc("name", "Mons"));
+
+        var soft = new SoftAssertions();
+
+        for (String query : List.of("Moëns", "Moens", "Moenss", "Moënss")) {
+            soft.assertThat(search(query, "en"))
+                    .first()
+                    .satisfies(p ->
+                            assertThat(p.getLocalised("name", "default")).isEqualTo("Moëns"));
+        }
 
         soft.assertAll();
     }
