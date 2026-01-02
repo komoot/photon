@@ -1,8 +1,9 @@
 plugins {
-  id 'com.gradleup.shadow' version '9.2.2'
+  id 'com.gradleup.shadow' version '9.3.0'
   id 'application'
   id 'jacoco'
-  id 'org.sonarqube' version '6.3.1.5724'
+  id 'org.sonarqube' version '7.2.2.6593'
+  id 'com.github.ben-manes.versions' version '0.53.0'
 }
 
 group = 'de.komoot.photon'
@@ -38,10 +39,10 @@ dependencies {
         }
     }
 
-    implementation 'org.opensearch.client:opensearch-java:3.2.0'
+    implementation 'org.opensearch.client:opensearch-java:3.4.0'
     implementation 'org.apache.httpcomponents.client5:httpclient5:5.5.1'
 
-    implementation('org.codelibs.opensearch:opensearch-runner:3.3.0.0') {
+    implementation('org.codelibs.opensearch:opensearch-runner:3.4.0.0') {
         exclude(module: 'repository-url')
         exclude(module: 'reindex-client')
         exclude(module: 'rank-eval-client')
@@ -58,30 +59,39 @@ dependencies {
         exclude(module: 'lucene-grouping')
     }
 
-    implementation 'org.apache.logging.log4j:log4j-core:2.25.2'
-    implementation 'org.apache.logging.log4j:log4j-api:2.25.2'
+    implementation 'org.apache.logging.log4j:log4j-core:2.25.3'
+    implementation 'org.apache.logging.log4j:log4j-api:2.25.3'
     implementation 'org.postgresql:postgresql:42.7.8'
-    implementation 'org.apache.logging.log4j:log4j-slf4j2-impl:2.25.2'
+    implementation 'org.apache.logging.log4j:log4j-slf4j2-impl:2.25.3'
     implementation 'org.jcommander:jcommander:3.0'
     implementation 'org.springframework:spring-jdbc:6.2.12'
-    implementation ('org.apache.commons:commons-dbcp2:2.13.0') {
+    implementation ('org.apache.commons:commons-dbcp2:2.14.0') {
         exclude(module: 'commons-logging')
     }
     implementation 'org.locationtech.jts:jts-core:1.20.0'
     implementation 'org.locationtech.jts.io:jts-io-common:1.20.0'
     implementation 'io.javalin:javalin:6.7.0'
     implementation 'io.javalin:javalin-micrometer:6.7.0'
-    implementation 'io.micrometer:micrometer-registry-prometheus:1.14.5'
+    implementation 'io.micrometer:micrometer-registry-prometheus:1.16.1'
     implementation 'net.postgis:postgis-jdbc:2025.1.1'
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.19.2'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.20.1'
 
     testImplementation(platform("org.junit:junit-bom:5.14.0"))
     testImplementation 'com.h2database:h2:2.4.240'
     testImplementation 'org.junit.jupiter:junit-jupiter'
     testImplementation 'org.assertj:assertj-core:3.27.6'
-    testImplementation 'net.javacrumbs.json-unit:json-unit-assertj:5.0.0'
+    testImplementation 'net.javacrumbs.json-unit:json-unit-assertj:5.1.0'
 
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+configurations.configureEach {
+    resolutionStrategy.eachDependency { details ->
+        if (details.requested.group == 'io.netty') {
+            details.useVersion '4.2.8.Final'
+            details.because 'force latest version to fix CVE-2025-67735'
+        }
+    }
 }
 
 tasks.named('test') {
@@ -139,12 +149,17 @@ shadowJar {
     archiveClassifier.set('')
 
     transform(com.github.jengelman.gradle.plugins.shadow.transformers.Log4j2PluginsCacheFileTransformer)
+}
 
-    // This mitigates against the log4j JNDI lookup vulnerability:
-    // https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-44228
-    // Since we are using an old version of elastic search that is incompatible
-    // with a patched, newer version of log4j we have to remove the class
-    // JndiLookup from the fat jar. This is the recommended course of action
-    // when you cannot upgrade as per https://logging.apache.org/log4j/2.x/security.html
-    exclude 'org/apache/logging/log4j/core/lookup/JndiLookup.class'
+def isNonStable = { String version ->
+  def stableKeyword = ['RELEASE', 'FINAL', 'GA'].any { it -> version.toUpperCase().contains(it) }
+  def regex = /^[0-9,.v-]+(-r)?$/
+  return !stableKeyword && !(version ==~ regex)
+}
+
+dependencyUpdates {
+  gradleReleaseChannel = "current"
+  rejectVersionIf {
+    isNonStable(it.candidate.version)
+  }
 }
