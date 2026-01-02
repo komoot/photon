@@ -64,7 +64,7 @@ dependencies {
     implementation 'org.postgresql:postgresql:42.7.8'
     implementation 'org.apache.logging.log4j:log4j-slf4j2-impl:2.25.3'
     implementation 'org.jcommander:jcommander:3.0'
-    implementation 'org.springframework:spring-jdbc:6.2.12'
+    implementation 'org.springframework:spring-jdbc:7.0.2'
     implementation ('org.apache.commons:commons-dbcp2:2.14.0') {
         exclude(module: 'commons-logging')
     }
@@ -76,13 +76,12 @@ dependencies {
     implementation 'net.postgis:postgis-jdbc:2025.1.1'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.20.1'
 
-    testImplementation(platform("org.junit:junit-bom:5.14.0"))
     testImplementation 'com.h2database:h2:2.4.240'
-    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testImplementation 'org.junit.jupiter:junit-jupiter:6.0.1'
     testImplementation 'org.assertj:assertj-core:3.27.6'
     testImplementation 'net.javacrumbs.json-unit:json-unit-assertj:5.1.0'
 
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher:6.0.1'
 }
 
 configurations.configureEach {
