@@ -65,7 +65,7 @@ class QueryRelevanceTest extends ESBaseTester {
     private void assertSearchOsmIds(String query, Integer... ids) {
         assertThat(search(query))
                 .extracting(p -> p.get("osm_id"))
-                .containsExactly(ids);
+                .containsExactly((Object[]) ids);
     }
 
     @Test

@@ -4,6 +4,7 @@ import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.beust.jcommander.ParametersDelegate;
 import de.komoot.photon.config.ApiServerConfig;
+import de.komoot.photon.config.PhotonDBConfig;
 import de.komoot.photon.config.PostgresqlConfig;
 import de.komoot.photon.utils.CorsMutuallyExclusiveValidator;
 
@@ -19,15 +20,6 @@ public class CommandLineArgs {
 
     @Parameter(names = "-j", description = "Number of threads to use for import.")
     private int threads = 1;
-
-    @Parameter(names = "-structured", description = "(unused) Structured queries are always enabled.")
-    private boolean supportStructuredQueries = false;
-
-    @Parameter(names = "-cluster", description = "Name of ElasticSearch cluster to put the server into.")
-    private String cluster = "photon";
-
-    @Parameter(names = "-transport-addresses", description = "Comma-separated list of addresses of external ElasticSearch nodes the client can connect to. An empty list (the default) forces an internal node to start.")
-    private List<String> transportAddresses = new ArrayList<>();
 
     @Parameter(names = "-nominatim-import", description = "Import nominatim database into photon (deleting the previous index).")
     private boolean nominatimImport = false;
@@ -54,9 +46,6 @@ public class CommandLineArgs {
     private String importFile = null;
 
 
-    @Parameter(names = "-data-dir", description = "Photon data directory.")
-    private String dataDirectory = new File(".").getAbsolutePath();
-
     @Parameter(names = "-h", description = "Show help / usage")
     private boolean usage = false;
 
@@ -68,6 +57,9 @@ public class CommandLineArgs {
 
     @ParametersDelegate
     private ApiServerConfig apiServerConfig = new ApiServerConfig();
+
+    @ParametersDelegate
+    private PhotonDBConfig photonDBConfig = new PhotonDBConfig();
 
     public String[] getLanguages(boolean useDefaultIfEmpty) {
         if (useDefaultIfEmpty && languages.isEmpty()) {
@@ -83,14 +75,6 @@ public class CommandLineArgs {
 
     public int getThreads() {
         return Integer.min(10, Integer.max(0, threads));
-    }
-
-    public String getCluster() {
-        return this.cluster;
-    }
-
-    public String[] getTransportAddresses() {
-        return this.transportAddresses.toArray(new String[0]);
     }
 
     public boolean isNominatimImport() {
@@ -121,10 +105,6 @@ public class CommandLineArgs {
 
     public String getImportFile() { return this.importFile; }
 
-    public String getDataDirectory() {
-        return this.dataDirectory;
-    }
-
     public boolean isUsage() {
         return this.usage;
     }
@@ -136,6 +116,8 @@ public class CommandLineArgs {
     public PostgresqlConfig getPostgresqlConfig() { return postgresqlConfig; }
 
     public ApiServerConfig getApiServerConfig() { return apiServerConfig; }
+
+    public PhotonDBConfig getPhotonDBConfig() { return photonDBConfig; }
 
     public DatabaseProperties getDatabaseProperties() {
         final var dbProps = new DatabaseProperties();

@@ -72,10 +72,9 @@ public class App {
             return true;
         }
 
-        esServer.set(new Server(args.getDataDirectory()));
-
         LOGGER.info("Start up database cluster, this might take some time.");
-        esServer.get().start(args.getCluster(), args.getTransportAddresses(), args.isNominatimImport());
+        esServer.set(new Server());
+        esServer.get().start(args.getPhotonDBConfig(), args.isNominatimImport());
         LOGGER.info("Database cluster is now ready.");
 
         if (args.isNominatimImport()) {
