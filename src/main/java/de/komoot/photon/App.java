@@ -3,6 +3,7 @@ package de.komoot.photon;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
 import de.komoot.photon.config.ApiServerConfig;
+import de.komoot.photon.config.ImportFilterConfig;
 import de.komoot.photon.json.JsonDumper;
 import de.komoot.photon.json.JsonReader;
 import de.komoot.photon.metrics.MetricsConfig;
@@ -122,7 +123,7 @@ public class App {
      * Take nominatim data and dump it to a Json file.
      */
     private static void startJsonDump(CommandLineArgs args) {
-        final var dbProps = args.getDatabaseProperties();
+        final var dbProps = args.getImportFilterConfig().getDatabaseProperties();
 
         try {
             final var connector = new NominatimImporter(args.getPostgresqlConfig(), dbProps);
@@ -149,7 +150,7 @@ public class App {
      * Read all data from a Nominatim database and import it into a Photon database.
      */
     private static void startNominatimImport(CommandLineArgs args, Server esServer) {
-        final var dbProperties = args.getDatabaseProperties();
+        final var dbProperties = args.getImportFilterConfig().getDatabaseProperties();
 
         try {
             LOGGER.info("Reinitializing database index with languages {}.", String.join(",", dbProperties.getLanguages()));
@@ -166,7 +167,7 @@ public class App {
             if (args.getImportFile() == null) {
                 importDate = importFromDatabase(args, importThread, dbProperties);
             } else {
-                importDate = importFromFile(args, importThread);
+                importDate = importFromFile(args.getImportFile(), args.getImportFilterConfig(), importThread);
             }
             dbProperties.setImportDate(importDate);
             esServer.saveToDatabase(dbProperties);
@@ -186,7 +187,7 @@ public class App {
         connector.prepareDatabase();
         connector.loadCountryNames(dbProperties.getLanguages());
 
-        String[] countries = args.getCountryCodes();
+        String[] countries = args.getImportFilterConfig().getCountryCodes();
 
         if (countries == null || countries.length == 0) {
             countries = connector.getCountriesFromDatabase();
@@ -242,12 +243,12 @@ public class App {
         return connector.getLastImportDate();
     }
 
-    private static Date importFromFile(CommandLineArgs args, ImportThread importerThread) throws IOException {
+    private static Date importFromFile(String importFile, ImportFilterConfig args, ImportThread importerThread) throws IOException {
         JsonReader reader;
-        if ("-".equals(args.getImportFile())) {
+        if ("-".equals(importFile)) {
             reader = new JsonReader(System.in);
         } else {
-            reader = new JsonReader(new File(args.getImportFile()));
+            reader = new JsonReader(new File(importFile));
         }
 
         reader.setUseFullGeometries(args.getImportGeometryColumn());
@@ -290,8 +291,8 @@ public class App {
         // Get database properties and ensure that the version is compatible.
         DatabaseProperties dbProperties = server.loadFromDatabase();
 
-        if (args.isExtraTagsSet()) {
-            dbProperties.putConfigExtraTags(args.getExtraTags());
+        if (args.getImportFilterConfig().isExtraTagsSet()) {
+            dbProperties.putConfigExtraTags(args.getImportFilterConfig().getExtraTags());
         }
 
         NominatimUpdater nominatimUpdater = new NominatimUpdater(args.getPostgresqlConfig(), dbProperties);

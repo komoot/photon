@@ -1,10 +1,13 @@
 package de.komoot.photon.config;
 
 import com.beust.jcommander.Parameter;
+import com.beust.jcommander.Parameters;
+import de.komoot.photon.utils.CorsMutuallyExclusiveValidator;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Parameters(parametersValidators = CorsMutuallyExclusiveValidator.class)
 public class ApiServerConfig {
     @Parameter(names = "-listen-port", description = "Port for the Photon server to listen to.")
     private int listenPort = 2322;
