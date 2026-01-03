@@ -75,9 +75,9 @@ public class MetricsConfig {
     }
 
     @NotNull
-    public static MetricsConfig setupMetrics(@NotNull CommandLineArgs args, @NotNull OpenSearchClient client) {
+    public static MetricsConfig setupMetrics(String metricsType, @NotNull OpenSearchClient client) {
         MetricsConfig metricsConfig = new MetricsConfig();
-        if (args.getMetricsEnable() != null && args.getMetricsEnable().equalsIgnoreCase("prometheus")) {
+        if ("prometheus".equalsIgnoreCase(metricsType)) {
             metricsConfig.init(client);
         }
         return metricsConfig;

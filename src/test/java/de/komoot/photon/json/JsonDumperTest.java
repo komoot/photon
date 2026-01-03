@@ -2,6 +2,7 @@ package de.komoot.photon.json;
 
 import de.komoot.photon.DatabaseProperties;
 import de.komoot.photon.ReflectionTestUtil;
+import de.komoot.photon.config.PostgresqlConfig;
 import de.komoot.photon.nominatim.ImportThread;
 import de.komoot.photon.nominatim.NominatimConnector;
 import de.komoot.photon.nominatim.NominatimImporter;
@@ -56,7 +57,7 @@ class JsonDumperTest {
         dbProps.setExtraTags(configExtraTags);
         dbProps.setSupportGeometries(configGeometryColumn);
 
-        NominatimImporter connector = new NominatimImporter(null, 0, null, null, null, new H2DataAdapter(), dbProps);
+        NominatimImporter connector = new NominatimImporter(new PostgresqlConfig(), new H2DataAdapter(), dbProps);
         ReflectionTestUtil.setFieldValue(connector, NominatimConnector.class, "template", jdbc);
         ReflectionTestUtil.setFieldValue(connector, NominatimConnector.class, "txTemplate", txTemplate);
 

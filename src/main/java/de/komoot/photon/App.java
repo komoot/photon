@@ -2,6 +2,7 @@ package de.komoot.photon;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
+import de.komoot.photon.config.ApiServerConfig;
 import de.komoot.photon.json.JsonDumper;
 import de.komoot.photon.json.JsonReader;
 import de.komoot.photon.metrics.MetricsConfig;
@@ -82,18 +83,16 @@ public class App {
             return true;
         }
 
-        // Working on an existing installation.
-        // Update the index settings in case there are any changes.
-        esServer.get().updateIndexSettings(args.getSynonymFile());
-        esServer.get().refreshIndexes();
-
         if (args.isNominatimUpdate()) {
             startNominatimUpdate(setupNominatimUpdater(args, esServer.get()), esServer.get());
             return true;
         }
 
         // No special action specified -> normal mode: start search API
-        startApi(args, esServer.get());
+        startApi(
+                args.getApiServerConfig(),
+                esServer.get(),
+                args.getApiServerConfig().isEnableUpdateApi() ? setupNominatimUpdater(args, esServer.get()) : null);
 
         return false;
     }
@@ -127,7 +126,7 @@ public class App {
         final var dbProps = args.getDatabaseProperties();
 
         try {
-            final var connector = new NominatimImporter(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword(), dbProps);
+            final var connector = new NominatimImporter(args.getPostgresqlConfig(), dbProps);
             dbProps.setImportDate(connector.getLastImportDate());
 
             final String filename = args.getJsonDump();
@@ -183,8 +182,8 @@ public class App {
     }
 
     private static Date importFromDatabase(CommandLineArgs args, ImportThread importThread, DatabaseProperties dbProperties) {
-        LOGGER.info("Connecting to database {} at {}:{}", args.getDatabase(), args.getHost(), args.getPort());
-        final var connector = new NominatimImporter(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword(), dbProperties);
+        LOGGER.info("Connecting to {}", args.getPostgresqlConfig().toString());
+        final var connector = new NominatimImporter(args.getPostgresqlConfig(), dbProperties);
         connector.prepareDatabase();
         connector.loadCountryNames(dbProperties.getLanguages());
 
@@ -210,7 +209,7 @@ public class App {
             for (int i = 0; i < numThreads; ++i) {
                 final NominatimImporter threadConnector;
                 if (i > 0) {
-                    threadConnector = new NominatimImporter(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword(), dbProperties);
+                    threadConnector = new NominatimImporter(args.getPostgresqlConfig(), dbProperties);
                     threadConnector.loadCountryNames(dbProperties.getLanguages());
                 } else {
                     threadConnector = connector;
@@ -267,7 +266,7 @@ public class App {
 
 
     private static void startNominatimUpdateInit(CommandLineArgs args) {
-        NominatimUpdater nominatimUpdater = new NominatimUpdater(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword(), new DatabaseProperties());
+        NominatimUpdater nominatimUpdater = new NominatimUpdater(args.getPostgresqlConfig(), new DatabaseProperties());
         nominatimUpdater.initUpdates(args.getNominatimUpdateInit());
     }
 
@@ -296,7 +295,7 @@ public class App {
             dbProperties.putConfigExtraTags(args.getExtraTags());
         }
 
-        NominatimUpdater nominatimUpdater = new NominatimUpdater(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword(), dbProperties);
+        NominatimUpdater nominatimUpdater = new NominatimUpdater(args.getPostgresqlConfig(), dbProperties);
         nominatimUpdater.setUpdater(server.createUpdater(dbProperties));
         return nominatimUpdater;
     }
@@ -304,15 +303,16 @@ public class App {
     /**
      * Start API server to accept search requests via http.
      */
-    private static void startApi(CommandLineArgs args, Server server) throws IOException {
+    private static void startApi(ApiServerConfig args, Server server, NominatimUpdater updater) throws IOException {
         // Get database properties and ensure that the version is compatible.
         DatabaseProperties dbProperties = server.loadFromDatabase();
-        if (args.getLanguages(false).length > 0) {
-            dbProperties.restrictLanguages(args.getLanguages());
-        }
+
+        // Update the index settings in case there are any changes.
+        esServer.get().updateIndexSettings(args.getSynonymFile());
+        esServer.get().refreshIndexes();
 
         LOGGER.info("""
-                        Starting API with the following settings: 
+                        Starting API with the following settings:
                         
                          Languages: {}
                          Import Date: {}
@@ -320,7 +320,7 @@ public class App {
                          Support Geometries: {}""",
                 dbProperties.getLanguages(), dbProperties.getImportDate(), dbProperties.getSupportGeometries());
 
-        MetricsConfig metrics = setupMetrics(args, server.getClient());
+        MetricsConfig metrics = setupMetrics(args.getMetrics(), server.getClient());
 
         photonServer = Javalin.create(config -> {
             config.router.ignoreTrailingSlashes = true;
@@ -422,19 +422,17 @@ public class App {
                 formatter));
 
 
-        if (args.isEnableUpdateApi()) {
+        if (updater != null) {
             // setup update API
-            final var nominatimUpdater = setupNominatimUpdater(args, server);
-
-            if (!nominatimUpdater.isSetUpForUpdates()) {
+            if (!updater.isSetUpForUpdates()) {
                 throw new UsageException("Update API enabled, but Nominatim database is not prepared. Run -nominatim-update-init-for first.");
             }
 
             photonServer.get("/nominatim-update/status", ctx ->
-                    ctx.status(200).json(nominatimUpdater.isBusy() ? "BUSY" : "OK")
+                    ctx.status(200).json(updater.isBusy() ? "BUSY" : "OK")
             );
             photonServer.get("/nominatim-update", ctx -> {
-                new Thread(() -> App.startNominatimUpdate(nominatimUpdater, server)).start();
+                new Thread(() -> App.startNominatimUpdate(updater, server)).start();
                 ctx.status(200).json("nominatim update started (more information in console output) ...");
             });
         }
@@ -451,6 +449,6 @@ public class App {
             shutdown();
         }));
 
-        photonServer.start(args.getListenIp(), args.getListenPort());
+        photonServer.start(args.getIp(), args.getPort());
     }
 }

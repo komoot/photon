@@ -4,6 +4,7 @@ import de.komoot.photon.DatabaseProperties;
 import de.komoot.photon.PhotonDoc;
 import de.komoot.photon.PhotonDocAddressSet;
 import de.komoot.photon.PhotonDocInterpolationSet;
+import de.komoot.photon.config.PostgresqlConfig;
 import de.komoot.photon.nominatim.model.AddressRow;
 import de.komoot.photon.nominatim.model.NominatimAddressCache;
 import de.komoot.photon.nominatim.model.OsmlineRowMapper;
@@ -21,18 +22,18 @@ import java.util.Map;
 public class NominatimImporter extends NominatimConnector {
     private static final Logger LOGGER = LogManager.getLogger();
 
-    public NominatimImporter(String host, int port, String database, String username, String password, DatabaseProperties dbProperties) {
-        this(host, port, database, username, password, new PostgisDataAdapter(), dbProperties);
+    public NominatimImporter(PostgresqlConfig config, DatabaseProperties dbProperties) {
+        this(config, new PostgisDataAdapter(), dbProperties);
     }
 
-    public NominatimImporter(String host, int port, String database, String username, String password, DBDataAdapter dataAdapter, DatabaseProperties dbProperties) {
-        super(host, port, database, username, password, dataAdapter, dbProperties);
+    public NominatimImporter(PostgresqlConfig config, DBDataAdapter dataAdapter, DatabaseProperties dbProperties) {
+        super(config, dataAdapter, dbProperties);
     }
 
 
     /**
      * Parse every relevant row in placex and location_osmline
-     * for the given country. Also imports place from county-less places.
+     * for the given country. Also imports place from country-less places.
      */
     public void readCountry(String countryCode, ImportThread importThread) {
         // Make sure, country names are available.

@@ -1,6 +1,7 @@
 package de.komoot.photon.nominatim;
 
 import de.komoot.photon.DatabaseProperties;
+import de.komoot.photon.config.PostgresqlConfig;
 import de.komoot.photon.nominatim.model.AddressRow;
 import de.komoot.photon.nominatim.model.NameMap;
 import org.apache.commons.dbcp2.BasicDataSource;
@@ -23,13 +24,14 @@ public class NominatimConnector {
     protected final TransactionTemplate txTemplate;
     protected Map<String, NameMap> countryNames;
 
-    protected NominatimConnector(String host, int port, String database, String username, String password, DBDataAdapter dataAdapter, DatabaseProperties dbProperties) {
+    protected NominatimConnector(PostgresqlConfig cfg, DBDataAdapter dataAdapter, DatabaseProperties dbProperties) {
         BasicDataSource dataSource = new BasicDataSource();
 
-        dataSource.setUrl(String.format("jdbc:postgresql://%s:%d/%s", host, port, database));
-        dataSource.setUsername(username);
-        if (password != null) {
-            dataSource.setPassword(password);
+        dataSource.setUrl(String.format("jdbc:postgresql://%s:%d/%s",
+                cfg.getHost(), cfg.getPort(), cfg.getDatabase()));
+        dataSource.setUsername(cfg.getUser());
+        if (cfg.getPassword() != null) {
+            dataSource.setPassword(cfg.getPassword());
         }
 
         // Keep disabled or server-side cursors won't work.

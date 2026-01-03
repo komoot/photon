@@ -2,6 +2,7 @@ package de.komoot.photon.nominatim;
 
 import de.komoot.photon.DatabaseProperties;
 import de.komoot.photon.ReflectionTestUtil;
+import de.komoot.photon.config.PostgresqlConfig;
 import de.komoot.photon.nominatim.model.AddressType;
 import de.komoot.photon.nominatim.testdb.*;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,7 +36,7 @@ class NominatimUpdaterDBTest {
                 .build();
 
 
-        connector = new NominatimUpdater(null, 0, null, null, null, new H2DataAdapter(), new DatabaseProperties());
+        connector = new NominatimUpdater(new PostgresqlConfig(), new H2DataAdapter(), new DatabaseProperties());
         updater = new CollectingUpdater();
         connector.setUpdater(updater);
 
