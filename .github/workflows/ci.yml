@@ -114,8 +114,8 @@ jobs:
       - name: Import Photon
         run: |
           PHOTON_VERSION=$(grep 'version =' build.gradle | head -n 1 | sed "s:.*= '::;s:'.*::")
-          java -jar "target/photon-$PHOTON_VERSION.jar" -nominatim-import -database nominatim -user runner -password foobar
-          java -jar "target/photon-$PHOTON_VERSION.jar" -nominatim-update-init-for runner -database nominatim -user runner -password foobar
+          java -jar "target/photon-$PHOTON_VERSION.jar" import -database nominatim -user runner -password foobar
+          java -jar "target/photon-$PHOTON_VERSION.jar" update-init -import-user runner -database nominatim -user runner -password foobar
 
       - name: Update Nominatim
         run: |
@@ -130,4 +130,4 @@ jobs:
       - name: Update Photon
         run: |
           PHOTON_VERSION=$(grep 'version =' build.gradle | head -n 1 | sed "s:.*= '::;s:'.*::")
-          java -jar "target/photon-$PHOTON_VERSION.jar" -nominatim-update -database nominatim -user runner -password foobar
+          java -jar "target/photon-$PHOTON_VERSION.jar" update -database nominatim -user runner -password foobar
