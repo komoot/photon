@@ -36,7 +36,8 @@ public class PhotonCli {
                 .addCommand(
                         Commands.CMD_UPDATE_INIT.getCmd(),
                         new CommandUpdateInit(
-                                cmdline.getUpdateInitConfig()))
+                                cmdline.getUpdateInitConfig(),
+                                cmdline.getPostgresqlConfig()))
                 .addCommand(
                         Commands.CMD_JSON_DUMP.getCmd(),
                         new CommandJsonDump(
@@ -49,9 +50,11 @@ public class PhotonCli {
                         new CommandServe(
                                 cmdline.getGeneralConfig(),
                                 cmdline.getPhotonDBConfig(),
-                                cmdline.getApiServerConfig()))
+                                cmdline.getApiServerConfig(),
+                                cmdline.getPostgresqlConfig()))
                 .programName("photon")
                 .build();
+        jCommander.setUsageFormatter(new PhotonUsageFormatter(jCommander));
     }
 
     public Commands parse(String[] args) {

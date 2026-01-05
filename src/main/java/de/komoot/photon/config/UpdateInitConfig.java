@@ -3,8 +3,11 @@ package de.komoot.photon.config;
 import com.beust.jcommander.Parameter;
 
 public class UpdateInitConfig {
-    @Parameter(names = "-import-user",
-               description = "Set up tracking of updates in the Nominatim database for the given user and exit.")
+    public static final String GROUP = "Initialisation options";
+
+    @Parameter(names = "-import-user", category = GROUP, description = """
+            Name of PostgreSQL user running the updates
+            """)
     private String importUser = null;
 
     public String getImportUser() {

@@ -4,9 +4,9 @@ import java.util.Objects;
 
 public enum Commands {
     CMD_IMPORT("import"),
-    CMD_JSON_DUMP("nominatim-to-json"),
     CMD_UPDATE("update"),
     CMD_UPDATE_INIT("update-init"),
+    CMD_JSON_DUMP("dump-nominatim-db"),
     CMD_SERVE("serve");
 
     private final String cmd;

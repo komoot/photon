@@ -8,16 +8,29 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ImportFilterConfig {
-    @Parameter(names = "-languages", description = "Comma-separated list of languages to use. On import sets the name translations to use (default: de,en,fr,it). When running, the languages to be searched may be further restricted.")
+    public static final String GROUP = "Data filtering options";
+
+    @Parameter(names = "-languages", category = GROUP, placeholder = "LANG,...", description = """
+            Comma-separated list of languages for which names will be extracted from the source
+            """)
     private List<String> languages = List.of("en", "de", "fr", "it");
 
-    @Parameter(names = "-country-codes", description = "[import-only] Comma-separated list of country codes for countries the importer should import, comma separated. An empty list means the full database is imported.")
+    @Parameter(names = "-country-codes", category = GROUP, placeholder = "CC,...", description = """
+            Restrict data from which country to use; comma-separated list of two-letter country codes of countries to use
+            """)
     private List<String> countryCodes = new ArrayList<>();
 
-    @Parameter(names = "-extra-tags", description = "Comma-separated list of additional tags to save for each place.")
+    @Parameter(names = "-extra-tags", category = GROUP, placeholder = "[ALL|tag,...]", description = """
+            Additional information to extract for each place; when unset only necessary address information
+            will be used; the special term 'ALL' means to use all available information; a comma-separated list of
+            tag keys restricts the usage to the given tags
+            """)
     private List<String> extraTags = null;
 
-    @Parameter(names = "-import-geometry-column", description = "[import-only] Add the 'geometry' column from Nominatim on import (i.e. add Polygons/Linestrings/Multipolygons etc. for cities, countries etc.). WARNING: This will increase the Elasticsearch Index size! (~575GB for Planet)")
+    @Parameter(names = {"-full-geometries", "-import-geometry-column"}, category = GROUP, description = """
+            Add the full geometry for each place if available instead of just recording the centroid;
+            WARNING: this will increase the Photon database size quite a bit
+            """)
     private boolean importGeometryColumn = false;
 
     public String[] getLanguages() {

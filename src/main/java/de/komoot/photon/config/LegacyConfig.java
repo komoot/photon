@@ -3,7 +3,7 @@ package de.komoot.photon.config;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 
-@Parameters(hidden = true)
+@Parameters(parametersValidators = LegacyMutuallyExclusiveValidator.class, hidden = true)
 public class LegacyConfig {
     @Parameter(names = "-nominatim-import", description = "Import nominatim database into photon (deleting the previous index).")
     private boolean nominatimImport = false;

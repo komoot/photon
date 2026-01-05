@@ -3,10 +3,14 @@ package de.komoot.photon.config;
 import com.beust.jcommander.Parameter;
 
 public class GeneralConfig {
-    @Parameter(names = "-j", description = "Number of threads to use (only for selected operations).")
+    public static final String GROUP="General options";
+
+    @Parameter(names = "-j", category = GROUP, description = """
+            Use given number of threads in parallel where possible
+            """)
     private int threads = 1;
 
-    @Parameter(names = "-h", description = "Show help / usage")
+    @Parameter(names = "-h", category = GROUP, description = "Show help/usage")
     private boolean usage = false;
 
     public int getThreads() {
