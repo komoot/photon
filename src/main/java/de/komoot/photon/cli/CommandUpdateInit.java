@@ -2,6 +2,7 @@ package de.komoot.photon.cli;
 
 import com.beust.jcommander.Parameters;
 import com.beust.jcommander.ParametersDelegate;
+import de.komoot.photon.config.GeneralConfig;
 import de.komoot.photon.config.PostgresqlConfig;
 import de.komoot.photon.config.UpdateInitConfig;
 
@@ -20,10 +21,14 @@ import de.komoot.photon.config.UpdateInitConfig;
         it needs in order to mark data as processed.
         """)
 public class CommandUpdateInit {
-    public CommandUpdateInit(UpdateInitConfig cfg, PostgresqlConfig pgCfg) {
+    public CommandUpdateInit(GeneralConfig gCfg, UpdateInitConfig cfg, PostgresqlConfig pgCfg) {
+        generalConfig = gCfg;
         updateInitConfig = cfg;
         postgresqlConfig = pgCfg;
     }
+
+    @ParametersDelegate
+    private final GeneralConfig generalConfig;
 
     @ParametersDelegate
     private final UpdateInitConfig updateInitConfig;

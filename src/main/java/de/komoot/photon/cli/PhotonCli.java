@@ -36,6 +36,7 @@ public class PhotonCli {
                 .addCommand(
                         Commands.CMD_UPDATE_INIT.getCmd(),
                         new CommandUpdateInit(
+                                cmdline.getGeneralConfig(),
                                 cmdline.getUpdateInitConfig(),
                                 cmdline.getPostgresqlConfig()))
                 .addCommand(
