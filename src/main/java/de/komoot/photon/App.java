@@ -114,6 +114,9 @@ public class App {
             dbProps.setImportDate(connector.getLastImportDate());
 
             final String filename = cli.getExportDumpConfig().getExportFile();
+            if (filename == null) {
+                throw new UsageException("-export-file required for json export.");
+            }
             final JsonDumper jsonDumper = new JsonDumper(filename, dbProps);
             jsonDumper.writeHeader(connector.loadCountryNames(dbProps.getLanguages()));
 
@@ -263,6 +266,9 @@ public class App {
 
     private static void startNominatimUpdateInit(PostgresqlConfig pgConfig, UpdateInitConfig initConfig) {
         NominatimUpdater nominatimUpdater = new NominatimUpdater(pgConfig, new DatabaseProperties());
+        if (initConfig.getImportUser() == null) {
+            throw new UsageException("-import-user required for update initialisation");
+        }
         nominatimUpdater.initUpdates(initConfig.getImportUser());
     }
 
