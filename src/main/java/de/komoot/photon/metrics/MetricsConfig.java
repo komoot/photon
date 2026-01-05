@@ -1,6 +1,5 @@
 package de.komoot.photon.metrics;
 
-import de.komoot.photon.CommandLineArgs;
 import io.javalin.micrometer.MicrometerPlugin;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.binder.jvm.ClassLoaderMetrics;
