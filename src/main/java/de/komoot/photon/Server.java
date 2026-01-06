@@ -2,6 +2,7 @@ package de.komoot.photon;
 
 import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import de.komoot.photon.config.PhotonDBConfig;
 import de.komoot.photon.opensearch.*;
 import de.komoot.photon.query.ReverseRequest;
 import de.komoot.photon.query.SimpleSearchRequest;
@@ -38,14 +39,10 @@ public class Server {
 
     protected OpenSearchClient client;
     private OpenSearchRunner runner = null;
-    protected final File dataDirectory;
 
-    public Server(String mainDirectory) {
-        dataDirectory = new File(mainDirectory, "photon_data");
-    }
-
-    public void start(String clusterName, String[] transportAddresses, boolean create) throws IOException {
-        if (!create && transportAddresses.length == 0) {
+    public void start(PhotonDBConfig config, boolean create) throws IOException {
+        final File dataDirectory = new File(config.getDataDirectory(), "photon_data");
+        if (!create && config.getTransportAddresses().isEmpty()) {
             if (!dataDirectory.isDirectory()) {
                 LOGGER.error("Data directory '{}' doesn't exist.", dataDirectory.getAbsolutePath());
                 throw new IOException("OpenSearch database not found.");
@@ -61,15 +58,14 @@ public class Server {
         }
 
         HttpHost[] hosts;
-        if (transportAddresses.length == 0) {
-            hosts = startInternal(clusterName);
+        if (config.getTransportAddresses().isEmpty()) {
+            hosts = startInternal(dataDirectory, config.getCluster());
         } else {
-            hosts = new HttpHost[transportAddresses.length];
-            for (int i = 0; i < transportAddresses.length; ++i) {
-                final String[] parts = transportAddresses[i].split(":", 2);
-                hosts[i] = new HttpHost("http", parts[0],
-                        parts.length > 1 ? Integer.parseInt(parts[1]) : 9201);
-            }
+            hosts = config.getTransportAddresses().stream()
+                    .map(addr -> addr.split(":", 2))
+                    .map(parts -> new HttpHost("http", parts[0],
+                        parts.length > 1 ? Integer.parseInt(parts[1]) : 9201))
+                    .toArray(HttpHost[]::new);
         }
 
         final var module = new SimpleModule("PhotonResultDeserializer",
@@ -89,7 +85,7 @@ public class Server {
         waitForReady();
     }
 
-    private HttpHost[] startInternal(String clusterName) {
+    private HttpHost[] startInternal(File dataDirectory, String clusterName) {
         runner = new OpenSearchRunner();
         runner.onBuild((number, settingsBuilder) -> {
             settingsBuilder.put("http.cors.enabled", false);

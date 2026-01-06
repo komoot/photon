@@ -1,7 +1,8 @@
 package de.komoot.photon;
 
-import com.beust.jcommander.JCommander;
-import com.beust.jcommander.ParameterException;
+import de.komoot.photon.cli.Commands;
+import de.komoot.photon.cli.PhotonCli;
+import de.komoot.photon.config.*;
 import de.komoot.photon.json.JsonDumper;
 import de.komoot.photon.json.JsonReader;
 import de.komoot.photon.metrics.MetricsConfig;
@@ -35,10 +36,15 @@ public class App {
     private static Javalin photonServer;
 
     public static void main(String[] rawArgs) throws Exception {
-        CommandLineArgs args = parseCommandLine(rawArgs);
+        PhotonCli cli = new PhotonCli();
+        var command = cli.parse(rawArgs);
+
+        if (command == null) {
+            System.exit(1);
+        }
 
         try {
-            if (runPhoton(args)) {
+            if (runPhoton(command, cli)) {
                 shutdown();
             }
         } catch (UsageException e) {
@@ -60,83 +66,67 @@ public class App {
         }
     }
 
-    private static boolean runPhoton(CommandLineArgs args) throws IOException {
-        if (args.getJsonDump() != null) {
-            startJsonDump(args);
+    private static boolean runPhoton(Commands command, PhotonCli cli) throws IOException {
+        if (command == Commands.CMD_JSON_DUMP) {
+            startJsonDump(cli);
             return true;
         }
 
-        if (args.getNominatimUpdateInit() != null) {
-            startNominatimUpdateInit(args);
+        if (command == Commands.CMD_UPDATE_INIT) {
+            startNominatimUpdateInit(cli.getPostgresqlConfig(), cli.getUpdateInitConfig());
             return true;
         }
-
-        esServer.set(new Server(args.getDataDirectory()));
 
         LOGGER.info("Start up database cluster, this might take some time.");
-        esServer.get().start(args.getCluster(), args.getTransportAddresses(), args.isNominatimImport());
+        esServer.set(new Server());
+        esServer.get().start(cli.getPhotonDBConfig(), command == Commands.CMD_IMPORT);
         LOGGER.info("Database cluster is now ready.");
 
-        if (args.isNominatimImport()) {
-            startNominatimImport(args, esServer.get());
+        if (command == Commands.CMD_IMPORT) {
+            startNominatimImport(cli, esServer.get());
             return true;
         }
 
-        // Working on an existing installation.
-        // Update the index settings in case there are any changes.
-        esServer.get().updateIndexSettings(args.getSynonymFile());
-        esServer.get().refreshIndexes();
-
-        if (args.isNominatimUpdate()) {
-            startNominatimUpdate(setupNominatimUpdater(args, esServer.get()), esServer.get());
+        if (command == Commands.CMD_UPDATE) {
+            startNominatimUpdate(
+                    setupNominatimUpdater(cli.getPostgresqlConfig(), cli.getImportFilterConfig(), esServer.get()),
+                    esServer.get());
             return true;
         }
 
         // No special action specified -> normal mode: start search API
-        startApi(args, esServer.get());
+        startApi(
+                cli.getApiServerConfig(),
+                esServer.get(),
+                cli.getApiServerConfig().isEnableUpdateApi() ? setupNominatimUpdater(cli.getPostgresqlConfig(), cli.getImportFilterConfig(), esServer.get()) : null);
 
         return false;
     }
 
-
-    private static CommandLineArgs parseCommandLine(String[] rawArgs) {
-        CommandLineArgs args = new CommandLineArgs();
-        final JCommander jCommander = new JCommander(args);
-        try {
-            jCommander.parse(rawArgs);
-        } catch (ParameterException e) {
-            LOGGER.warn("Could not start photon: {}", e.getMessage());
-            jCommander.usage();
-            System.exit(1);
-        }
-
-        // show help
-        if (args.isUsage()) {
-            jCommander.usage();
-            System.exit(1);
-        }
-
-        return args;
-    }
-
-
     /**
      * Take nominatim data and dump it to a Json file.
      */
-    private static void startJsonDump(CommandLineArgs args) {
-        final var dbProps = args.getDatabaseProperties();
+    private static void startJsonDump(PhotonCli cli) {
+        final var dbProps = cli.getImportFilterConfig().getDatabaseProperties();
 
         try {
-            final var connector = new NominatimImporter(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword(), dbProps);
+            final var connector = new NominatimImporter(cli.getPostgresqlConfig(), dbProps);
             dbProps.setImportDate(connector.getLastImportDate());
 
-            final String filename = args.getJsonDump();
+            final String filename = cli.getExportDumpConfig().getExportFile();
+            if (filename == null) {
+                throw new UsageException("-export-file required for json export.");
+            }
             final JsonDumper jsonDumper = new JsonDumper(filename, dbProps);
             jsonDumper.writeHeader(connector.loadCountryNames(dbProps.getLanguages()));
 
             final var importThread = new ImportThread(jsonDumper);
             try {
-                importFromDatabase(args, importThread, dbProps);
+                importFromDatabase(cli.getPostgresqlConfig(),
+                        cli.getGeneralConfig().getThreads(),
+                        cli.getImportFilterConfig().getCountryCodes(),
+                        importThread,
+                        dbProps);
             } finally {
                 importThread.finish();
             }
@@ -150,8 +140,9 @@ public class App {
     /**
      * Read all data from a Nominatim database and import it into a Photon database.
      */
-    private static void startNominatimImport(CommandLineArgs args, Server esServer) {
-        final var dbProperties = args.getDatabaseProperties();
+    private static void startNominatimImport(PhotonCli cli, Server esServer) {
+        final var importFilterConfig = cli.getImportFilterConfig();
+        final var dbProperties = importFilterConfig.getDatabaseProperties();
 
         try {
             LOGGER.info("Reinitializing database index with languages {}.", String.join(",", dbProperties.getLanguages()));
@@ -165,10 +156,15 @@ public class App {
 
         try {
             Date importDate;
-            if (args.getImportFile() == null) {
-                importDate = importFromDatabase(args, importThread, dbProperties);
+            if (cli.getImportFileConfig().isEnabled()) {
+                importDate = importFromFile(cli.getImportFileConfig(), importFilterConfig, importThread);
             } else {
-                importDate = importFromFile(args, importThread);
+                importDate = importFromDatabase(
+                        cli.getPostgresqlConfig(),
+                        cli.getGeneralConfig().getThreads(),
+                        importFilterConfig.getCountryCodes(),
+                        importThread,
+                        dbProperties);
             }
             dbProperties.setImportDate(importDate);
             esServer.saveToDatabase(dbProperties);
@@ -182,21 +178,22 @@ public class App {
         LOGGER.info("Database has been successfully set up with the following properties:\n{}", dbProperties);
     }
 
-    private static Date importFromDatabase(CommandLineArgs args, ImportThread importThread, DatabaseProperties dbProperties) {
-        LOGGER.info("Connecting to database {} at {}:{}", args.getDatabase(), args.getHost(), args.getPort());
-        final var connector = new NominatimImporter(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword(), dbProperties);
+    private static Date importFromDatabase(PostgresqlConfig postgresqlConfig, int numThreads, String[] filterCountries,
+                                           ImportThread importThread, DatabaseProperties dbProperties) {
+        LOGGER.info("Connecting to {}", postgresqlConfig.toString());
+        final var connector = new NominatimImporter(postgresqlConfig, dbProperties);
         connector.prepareDatabase();
         connector.loadCountryNames(dbProperties.getLanguages());
 
-        String[] countries = args.getCountryCodes();
+        String[] countries;
 
-        if (countries == null || countries.length == 0) {
+        if (filterCountries == null || filterCountries.length == 0) {
             countries = connector.getCountriesFromDatabase();
         } else {
-            countries = Arrays.stream(countries).map(String::trim).filter(s -> !s.isBlank()).toArray(String[]::new);
+            countries = Arrays.stream(filterCountries)
+                    .map(String::trim)
+                    .filter(s -> !s.isBlank()).toArray(String[]::new);
         }
-
-        final int numThreads = args.getThreads();
 
         if (numThreads == 1) {
             for (var country : countries) {
@@ -210,7 +207,7 @@ public class App {
             for (int i = 0; i < numThreads; ++i) {
                 final NominatimImporter threadConnector;
                 if (i > 0) {
-                    threadConnector = new NominatimImporter(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword(), dbProperties);
+                    threadConnector = new NominatimImporter(postgresqlConfig, dbProperties);
                     threadConnector.loadCountryNames(dbProperties.getLanguages());
                 } else {
                     threadConnector = connector;
@@ -244,12 +241,13 @@ public class App {
         return connector.getLastImportDate();
     }
 
-    private static Date importFromFile(CommandLineArgs args, ImportThread importerThread) throws IOException {
+    private static Date importFromFile(ImportFileConfig importFileConfig, ImportFilterConfig args, ImportThread importerThread) throws IOException {
         JsonReader reader;
-        if ("-".equals(args.getImportFile())) {
+        final String importFile = importFileConfig.getImportFile();
+        if ("-".equals(importFile)) {
             reader = new JsonReader(System.in);
         } else {
-            reader = new JsonReader(new File(args.getImportFile()));
+            reader = new JsonReader(new File(importFile));
         }
 
         reader.setUseFullGeometries(args.getImportGeometryColumn());
@@ -266,9 +264,12 @@ public class App {
     }
 
 
-    private static void startNominatimUpdateInit(CommandLineArgs args) {
-        NominatimUpdater nominatimUpdater = new NominatimUpdater(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword(), new DatabaseProperties());
-        nominatimUpdater.initUpdates(args.getNominatimUpdateInit());
+    private static void startNominatimUpdateInit(PostgresqlConfig pgConfig, UpdateInitConfig initConfig) {
+        NominatimUpdater nominatimUpdater = new NominatimUpdater(pgConfig, new DatabaseProperties());
+        if (initConfig.getImportUser() == null) {
+            throw new UsageException("-import-user required for update initialisation");
+        }
+        nominatimUpdater.initUpdates(initConfig.getImportUser());
     }
 
     private static void startNominatimUpdate(NominatimUpdater nominatimUpdater, Server esServer) {
@@ -288,15 +289,17 @@ public class App {
     /**
      * Prepare Nominatim updater.
      */
-    private static NominatimUpdater setupNominatimUpdater(CommandLineArgs args, Server server) throws IOException {
+    private static NominatimUpdater setupNominatimUpdater(PostgresqlConfig postgresqlConfig,
+                                                          ImportFilterConfig importFilterConfig,
+                                                          Server server) throws IOException {
         // Get database properties and ensure that the version is compatible.
         DatabaseProperties dbProperties = server.loadFromDatabase();
 
-        if (args.isExtraTagsSet()) {
-            dbProperties.putConfigExtraTags(args.getExtraTags());
+        if (importFilterConfig.isExtraTagsSet()) {
+            dbProperties.putConfigExtraTags(importFilterConfig.getExtraTags());
         }
 
-        NominatimUpdater nominatimUpdater = new NominatimUpdater(args.getHost(), args.getPort(), args.getDatabase(), args.getUser(), args.getPassword(), dbProperties);
+        NominatimUpdater nominatimUpdater = new NominatimUpdater(postgresqlConfig, dbProperties);
         nominatimUpdater.setUpdater(server.createUpdater(dbProperties));
         return nominatimUpdater;
     }
@@ -304,15 +307,16 @@ public class App {
     /**
      * Start API server to accept search requests via http.
      */
-    private static void startApi(CommandLineArgs args, Server server) throws IOException {
+    private static void startApi(ApiServerConfig args, Server server, NominatimUpdater updater) throws IOException {
         // Get database properties and ensure that the version is compatible.
         DatabaseProperties dbProperties = server.loadFromDatabase();
-        if (args.getLanguages(false).length > 0) {
-            dbProperties.restrictLanguages(args.getLanguages());
-        }
+
+        // Update the index settings in case there are any changes.
+        esServer.get().updateIndexSettings(args.getSynonymFile());
+        esServer.get().refreshIndexes();
 
         LOGGER.info("""
-                        Starting API with the following settings: 
+                        Starting API with the following settings:
                         
                          Languages: {}
                          Import Date: {}
@@ -320,7 +324,7 @@ public class App {
                          Support Geometries: {}""",
                 dbProperties.getLanguages(), dbProperties.getImportDate(), dbProperties.getSupportGeometries());
 
-        MetricsConfig metrics = setupMetrics(args, server.getClient());
+        MetricsConfig metrics = setupMetrics(args.getMetrics(), server.getClient());
 
         photonServer = Javalin.create(config -> {
             config.router.ignoreTrailingSlashes = true;
@@ -422,19 +426,17 @@ public class App {
                 formatter));
 
 
-        if (args.isEnableUpdateApi()) {
+        if (updater != null) {
             // setup update API
-            final var nominatimUpdater = setupNominatimUpdater(args, server);
-
-            if (!nominatimUpdater.isSetUpForUpdates()) {
+            if (!updater.isSetUpForUpdates()) {
                 throw new UsageException("Update API enabled, but Nominatim database is not prepared. Run -nominatim-update-init-for first.");
             }
 
             photonServer.get("/nominatim-update/status", ctx ->
-                    ctx.status(200).json(nominatimUpdater.isBusy() ? "BUSY" : "OK")
+                    ctx.status(200).json(updater.isBusy() ? "BUSY" : "OK")
             );
             photonServer.get("/nominatim-update", ctx -> {
-                new Thread(() -> App.startNominatimUpdate(nominatimUpdater, server)).start();
+                new Thread(() -> App.startNominatimUpdate(updater, server)).start();
                 ctx.status(200).json("nominatim update started (more information in console output) ...");
             });
         }
@@ -451,6 +453,6 @@ public class App {
             shutdown();
         }));
 
-        photonServer.start(args.getListenIp(), args.getListenPort());
+        photonServer.start(args.getIp(), args.getPort());
     }
 }

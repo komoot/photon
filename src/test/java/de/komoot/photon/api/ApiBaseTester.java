@@ -30,7 +30,7 @@ public class ApiBaseTester extends ESBaseTester {
         String testPort = getTestServer().getHttpPort();
 
         final String[] params = Stream.concat(
-                Stream.of("-cluster", TEST_CLUSTER_NAME,
+                Stream.of("serve", "-cluster", TEST_CLUSTER_NAME,
                         "-listen-port", Integer.toString(LISTEN_PORT),
                         "-transport-addresses", "127.0.0.1:" + testPort,
                         "-data-dir", photonDirectory),

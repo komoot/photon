@@ -1,6 +1,7 @@
 package de.komoot.photon.nominatim;
 
 import de.komoot.photon.DatabaseProperties;
+import de.komoot.photon.config.PostgresqlConfig;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.locationtech.jts.geom.Coordinate;
@@ -56,7 +57,7 @@ class NominatimConnectorDBTest {
         DatabaseProperties dbProperties = new DatabaseProperties();
         dbProperties.setSupportGeometries(supportGeometries);
         dbProperties.setLanguages(new String[]{"en", "de", "fr"});
-        connector = new NominatimImporter(null, 0, null, null, null, new H2DataAdapter(), dbProperties);
+        connector = new NominatimImporter(new PostgresqlConfig(), new H2DataAdapter(), dbProperties);
         importer = new CollectingImporter();
 
         assert(jdbc.getDataSource() != null);
@@ -93,7 +94,7 @@ class NominatimConnectorDBTest {
     @ParameterizedTest
     @ValueSource(strings = {"a b", "er:45", "@#", ""})
     void testImportBadTagValue(String value) {
-        PlacexTestRow place = new PlacexTestRow("amenity", value).name("Spot").add(jdbc);
+        new PlacexTestRow("amenity", value).name("Spot").add(jdbc);
         readEntireDatabase();
 
         assertThat(importer).singleElement()

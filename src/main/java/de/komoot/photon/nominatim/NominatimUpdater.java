@@ -1,6 +1,7 @@
 package de.komoot.photon.nominatim;
 
 import de.komoot.photon.*;
+import de.komoot.photon.config.PostgresqlConfig;
 import de.komoot.photon.nominatim.model.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -38,7 +39,7 @@ public class NominatimUpdater extends NominatimConnector {
             CREATE OR REPLACE TRIGGER photon_trigger_delete_placex
                AFTER DELETE ON placex FOR EACH ROW
                EXECUTE FUNCTION photon_update_func();
-            CREATE OR REPLACE TRIGGER photon_trigger_update_interpolation 
+            CREATE OR REPLACE TRIGGER photon_trigger_update_interpolation
                AFTER UPDATE ON location_property_osmline FOR EACH ROW
                WHEN (OLD.indexed_status > 0 AND NEW.indexed_status = 0)
                EXECUTE FUNCTION photon_update_func();
@@ -67,12 +68,12 @@ public class NominatimUpdater extends NominatimConnector {
     private final String placeBaseSQL;
     private final String osmlineBaseSQL;
 
-    public NominatimUpdater(String host, int port, String database, String username, String password, DatabaseProperties dbProperties) {
-        this(host, port, database, username, password, new PostgisDataAdapter(), dbProperties);
+    public NominatimUpdater(PostgresqlConfig config, DatabaseProperties dbProperties) {
+        this(config, new PostgisDataAdapter(), dbProperties);
     }
 
-    public NominatimUpdater(String host, int port, String database, String username, String password, DBDataAdapter dataAdapter, DatabaseProperties dbProperties) {
-        super(host, port, database, username, password, dataAdapter, dbProperties);
+    public NominatimUpdater(PostgresqlConfig config, DBDataAdapter dataAdapter, DatabaseProperties dbProperties) {
+        super(config, dataAdapter, dbProperties);
 
         final NominatimAddressCache addressCache = new NominatimAddressCache(dataAdapter, dbProperties.getLanguages());
 

@@ -1,5 +1,6 @@
 package de.komoot.photon;
 
+import de.komoot.photon.config.PhotonDBConfig;
 import de.komoot.photon.opensearch.OpenSearchResult;
 import de.komoot.photon.opensearch.PhotonIndex;
 import de.komoot.photon.searcher.PhotonResult;
@@ -17,8 +18,6 @@ public class TestServer extends Server {
     private String instanceDir;
 
     public TestServer(String mainDirectory) {
-        super(mainDirectory);
-
         instanceDir = mainDirectory;
     }
 
@@ -48,8 +47,8 @@ public class TestServer extends Server {
         // wait for yellow status
         runner.ensureYellow();
 
-        String[] transportAddresses = {"127.0.0.1:" + runner.node().settings().get("http.port")};
-        start(clusterName, transportAddresses, true);
+        var config = new PhotonDBConfig(instanceDir, clusterName, List.of("127.0.0.1:" + runner.node().settings().get("http.port")));
+        start(config, true);
     }
 
     public void stopTestServer() {

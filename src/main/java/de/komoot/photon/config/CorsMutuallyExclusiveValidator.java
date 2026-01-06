@@ -1,4 +1,4 @@
-package de.komoot.photon.utils;
+package de.komoot.photon.config;
 
 import com.beust.jcommander.IParametersValidator;
 import com.beust.jcommander.ParameterException;
