@@ -28,6 +28,13 @@ jobs:
       - name: Compile project, run tests
         run: ./gradlew build --no-daemon
 
+      - name: Upload photon jar artifact
+        if: matrix.java == 21
+        uses: actions/upload-artifact@v6
+        with:
+          name: photon-jar
+          path: target/photon-*.jar
+          if-no-files-found: error
 
   import:
     name: Import OSM data from Nominatim into Photon
