@@ -20,9 +20,17 @@ public class SimpleSearchRequestFactory extends SearchRequestFactoryBase impleme
         checkParams(context, FREE_SEARCH_PARAMETERS);
 
         final var request = new SimpleSearchRequest();
-
         completeSearchRequest(request, context);
-        request.setQuery(context.queryParamAsClass("q", String.class).get());
+
+        var query = context.queryParamAsClass("q", String.class);
+        if (query.getOrDefault("").isEmpty()) {
+            if (request.getIncludeCategories().isEmpty()) {
+                throw new BadRequestException(400, "q parameter is required when no include categories are specified");
+            }
+            request.setQuery("");
+        } else {
+            request.setQuery(query.get());
+        }
 
         return request;
     }
