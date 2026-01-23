@@ -319,6 +319,15 @@ class ApiIntegrationTest extends ApiBaseTester {
         assertHttpError("/api?debug=1", 400);
     }
 
+    @Test
+    void testEmptyQueryWithInclude() throws Exception {
+        assertThatJson(readURL("/api?include=osm.place.city")).isObject()
+                .node("features").isArray().hasSize(1)
+                .element(0).isObject()
+                .node("properties").isObject()
+                .containsEntry("osm_value", "city");
+    }
+
     @ParameterizedTest
     @ValueSource(strings = {
             "lat=52.54714", "lon=13.39026",
@@ -357,4 +366,3 @@ class ApiIntegrationTest extends ApiBaseTester {
         assertEquals(200, connect("/metrics").getResponseCode());
     }
 }
-
