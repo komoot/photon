@@ -28,6 +28,13 @@ jobs:
       - name: Compile project, run tests
         run: ./gradlew build --no-daemon
 
+      - name: Rename jar with version and git SHA
+        if: matrix.java == 21
+        run: |
+          VERSION=$(./gradlew -q properties --property version | grep '^version:' | awk '{print $2}')
+          SHA=$(git rev-parse --short HEAD)
+          mv target/photon-*.jar target/photon-$VERSION-$SHA.jar
+
       - name: Upload photon jar artifact
         if: matrix.java == 21
         uses: actions/upload-artifact@v6
@@ -52,6 +59,9 @@ jobs:
 
       - name: Compile project
         run: ./gradlew assemble --no-daemon
+
+      - name: Get Photon version
+        run: echo "PHOTON_VERSION=$(./gradlew -q properties --property version | grep '^version:' | awk '{print $2}')" >> "$GITHUB_ENV"
 
       - uses: actions/checkout@v6
         with:
@@ -120,7 +130,6 @@ jobs:
 
       - name: Import Photon
         run: |
-          PHOTON_VERSION=$(grep 'version =' build.gradle | head -n 1 | sed "s:.*= '::;s:'.*::")
           java -jar "target/photon-$PHOTON_VERSION.jar" import -database nominatim -user runner -password foobar
           java -jar "target/photon-$PHOTON_VERSION.jar" update-init -import-user runner -database nominatim -user runner -password foobar
 
@@ -135,6 +144,4 @@ jobs:
           NOMINATIM_REPLICATION_MAX_DIFF: 10
 
       - name: Update Photon
-        run: |
-          PHOTON_VERSION=$(grep 'version =' build.gradle | head -n 1 | sed "s:.*= '::;s:'.*::")
-          java -jar "target/photon-$PHOTON_VERSION.jar" update -database nominatim -user runner -password foobar
+        run: java -jar "target/photon-$PHOTON_VERSION.jar" update -database nominatim -user runner -password foobar
