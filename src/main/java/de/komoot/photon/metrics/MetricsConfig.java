@@ -1,7 +1,10 @@
 package de.komoot.photon.metrics;
 
 import io.javalin.micrometer.MicrometerPlugin;
+import io.micrometer.core.instrument.Meter;
 import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.config.MeterFilter;
+import io.micrometer.core.instrument.distribution.DistributionStatisticConfig;
 import io.micrometer.core.instrument.binder.jvm.ClassLoaderMetrics;
 import io.micrometer.core.instrument.binder.jvm.JvmGcMetrics;
 import io.micrometer.core.instrument.binder.jvm.JvmMemoryMetrics;
@@ -28,6 +31,18 @@ public class MetricsConfig {
     private void init(@NotNull OpenSearchClient client) {
         registry = new PrometheusMeterRegistry(PrometheusConfig.DEFAULT);
         registry.config().commonTags("application", "Photon");
+        registry.config().meterFilter(new MeterFilter() {
+            @Override
+            public DistributionStatisticConfig configure(Meter.Id id, DistributionStatisticConfig config) {
+                if (id.getName().equals("jetty.server.requests")) {
+                    return DistributionStatisticConfig.builder()
+                            .percentilesHistogram(true)
+                            .build()
+                            .merge(config);
+                }
+                return config;
+            }
+        });
         registerJvmMetrics(registry);
         registerOpenSearchMetrics(client);
         micrometerPlugin = new MicrometerPlugin(micrometerPluginConfig -> micrometerPluginConfig.registry = registry);
