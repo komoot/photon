@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class AddressLine {
 
     @JsonProperty("place_id")
-    public long placeId;
+    public String placeId;
 
     @JsonProperty("rank_address")
     public int rankAddress;

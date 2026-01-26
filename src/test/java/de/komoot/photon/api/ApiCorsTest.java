@@ -27,7 +27,7 @@ class ApiCorsTest extends ApiBaseTester {
         setUpES(dataDirectory);
         Importer instance = makeImporter();
         instance.add(List.of(new PhotonDoc()
-                .placeId(1001).osmType("N").osmId(1001).tagKey("place").tagValue("suburb")
+                .placeId("1001").osmType("N").osmId(1001).tagKey("place").tagValue("suburb")
                 .centroid(makePoint(13.39026, 52.54714))
         ));
         instance.finish();

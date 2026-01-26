@@ -29,7 +29,7 @@ class SuggestAddressesTest extends ESBaseTester {
         Importer instance = makeImporter();
 
         // Add a street
-        var street = new PhotonDoc(1, "W", 1, "highway", "residential")
+        var street = new PhotonDoc("1", "W", 1, "highway", "residential")
                 .names(makeDocNames("name", STREET_NAME))
                 .countryCode("DE")
                 .importance(0.5)
@@ -38,7 +38,7 @@ class SuggestAddressesTest extends ESBaseTester {
         // Add a house on that street
         var address = new HashMap<String, String>();
         address.put("street", STREET_NAME);
-        var house = new PhotonDoc(2, "N", 2, "building", "yes")
+        var house = new PhotonDoc("2", "N", 2, "building", "yes")
                 .countryCode("DE")
                 .houseNumber("42")
                 .addAddresses(address, getProperties().getLanguages())
@@ -49,7 +49,7 @@ class SuggestAddressesTest extends ESBaseTester {
         var addressTriesen = new HashMap<String, String>();
         addressTriesen.put("street", "Auelestr");
         addressTriesen.put("city", "Triesen");
-        var houseTriesen = new PhotonDoc(3, "N", 3, "building", "yes")
+        var houseTriesen = new PhotonDoc("3", "N", 3, "building", "yes")
                 .countryCode("LI")
                 .houseNumber("16")
                 .addAddresses(addressTriesen, getProperties().getLanguages())
@@ -59,7 +59,7 @@ class SuggestAddressesTest extends ESBaseTester {
         var addressVaduz = new HashMap<String, String>();
         addressVaduz.put("street", "Auelestr");
         addressVaduz.put("city", "Vaduz");
-        var houseVaduz = new PhotonDoc(4, "N", 4, "building", "yes")
+        var houseVaduz = new PhotonDoc("4", "N", 4, "building", "yes")
                 .countryCode("LI")
                 .houseNumber("16")
                 .addAddresses(addressVaduz, getProperties().getLanguages())
@@ -67,7 +67,7 @@ class SuggestAddressesTest extends ESBaseTester {
                 .rankAddress(30);
 
         // Add a street with pure alphabetic name (triggers short query path)
-        var alphabeticStreet = new PhotonDoc(5, "W", 5, "highway", "residential")
+        var alphabeticStreet = new PhotonDoc("5", "W", 5, "highway", "residential")
                 .names(makeDocNames("name", "Romsdalsveien"))
                 .countryCode("NO")
                 .importance(0.5)
@@ -76,7 +76,7 @@ class SuggestAddressesTest extends ESBaseTester {
         // Add a house on that street
         var addressRomsdalsveien = new HashMap<String, String>();
         addressRomsdalsveien.put("street", "Romsdalsveien");
-        var houseRomsdalsveien = new PhotonDoc(6, "N", 6, "building", "yes")
+        var houseRomsdalsveien = new PhotonDoc("6", "N", 6, "building", "yes")
                 .countryCode("NO")
                 .houseNumber("10")
                 .addAddresses(addressRomsdalsveien, getProperties().getLanguages())
@@ -84,7 +84,7 @@ class SuggestAddressesTest extends ESBaseTester {
                 .rankAddress(30);
 
         // Add a street with spaces in name (triggers full query path)
-        var multiWordStreet = new PhotonDoc(7, "W", 7, "highway", "residential")
+        var multiWordStreet = new PhotonDoc("7", "W", 7, "highway", "residential")
                 .names(makeDocNames("name", "Nils Gotlands veg"))
                 .countryCode("NO")
                 .importance(0.5)
@@ -93,7 +93,7 @@ class SuggestAddressesTest extends ESBaseTester {
         // Add a house on that street
         var addressNilsGotlands = new HashMap<String, String>();
         addressNilsGotlands.put("street", "Nils Gotlands veg");
-        var houseNilsGotlands = new PhotonDoc(8, "N", 8, "building", "yes")
+        var houseNilsGotlands = new PhotonDoc("8", "N", 8, "building", "yes")
                 .countryCode("NO")
                 .houseNumber("5")
                 .addAddresses(addressNilsGotlands, getProperties().getLanguages())

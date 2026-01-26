@@ -38,7 +38,7 @@ class QueryReverseTest extends ESBaseTester {
         int id = 100;
         for (Point pt : TEST_POINTS) {
             instance.add(List.of(new PhotonDoc()
-                    .placeId(id).osmType("N").osmId(id++).tagKey("place").tagValue("house")
+                    .placeId(Integer.toString(id)).osmType("N").osmId(id++).tagKey("place").tagValue("house")
                     .centroid(pt)
                     .names(makeDocNames("name", "some house"))
             ));

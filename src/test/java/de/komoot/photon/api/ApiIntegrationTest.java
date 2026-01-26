@@ -35,7 +35,7 @@ class ApiIntegrationTest extends ApiBaseTester {
         setUpES(dataDirectory);
         Importer instance = makeImporter();
         instance.add(List.of(new PhotonDoc()
-                .placeId(1000).osmType("N").osmId(1000).tagKey("place").tagValue("city")
+                .placeId("1000").osmType("N").osmId(1000).tagKey("place").tagValue("city")
                 .categories(List.of("osm.place.city"))
                 .importance(0.6).rankAddress(16)
                 .centroid(makePoint(13.38886, 52.51704))
@@ -43,7 +43,7 @@ class ApiIntegrationTest extends ApiBaseTester {
                 .names(makeDocNames("name", "berlin"))
         ));
         instance.add(List.of(new PhotonDoc()
-                .placeId(1001).osmType("R").osmId(1001).tagKey("place").tagValue("suburb")
+                .placeId("1001").osmType("R").osmId(1001).tagKey("place").tagValue("suburb")
                 .categories(List.of("osm.place.suburb"))
                 .importance(0.3).rankAddress(17)
                 .centroid(makePoint(13.39026, 52.54714))
@@ -51,7 +51,7 @@ class ApiIntegrationTest extends ApiBaseTester {
                 .names(makeDocNames("name", "berlin"))
         ));
         instance.add(List.of(new PhotonDoc()
-                .placeId(1002).osmType("W").osmId(1002).tagKey("place").tagValue("hamlet")
+                .placeId("1002").osmType("W").osmId(1002).tagKey("place").tagValue("hamlet")
                 .categories(List.of("osm.place.hamlet"))
                 .importance(0.3).rankAddress(25)
                 .centroid(makePoint(13.39026, 52.54714))

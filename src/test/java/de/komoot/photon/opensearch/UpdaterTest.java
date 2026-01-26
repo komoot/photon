@@ -22,7 +22,7 @@ class UpdaterTest extends ESBaseTester {
 
     private PhotonDoc createDoc(String... names) {
         return new PhotonDoc()
-                .placeId(1234).osmType("N").osmId(1000).tagKey("place").tagValue("city")
+                .placeId("1234").osmType("N").osmId(1000).tagKey("place").tagValue("city")
                 .names(makeDocNames(names));
     }
 
@@ -120,7 +120,7 @@ class UpdaterTest extends ESBaseTester {
         assertNotNull(getById("1234.1"));
 
         Updater updater = makeUpdater();
-        updater.delete(1234L);
+        updater.delete("1234");
         updater.finish();
         refresh();
 

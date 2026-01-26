@@ -109,7 +109,7 @@ public class JsonDumper implements Importer {
     public void writeNominatimDocument(PhotonDoc doc) throws IOException {
         writer.writeStartObject();
         if (doc.getPlaceId() != null) {
-            writer.writeNumberField(DumpFields.PLACE_ID, doc.getPlaceId());
+            writer.writeStringField(DumpFields.PLACE_ID, doc.getPlaceId());
         }
         writer.writeStringField(DumpFields.PLACE_OBJECT_TYPE, doc.getOsmType());
         writer.writeNumberField(DumpFields.PLACE_OBJECT_ID, doc.getOsmId());

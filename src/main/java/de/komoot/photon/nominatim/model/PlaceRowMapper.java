@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 
 /**
  * Maps the basic attributes of a placex table row to a PhotonDoc.
- *
+ * <p>
  * This class does not complete address information (neither country information)
  * for the place.
  */
@@ -39,7 +39,7 @@ public class PlaceRowMapper implements RowMapper<PhotonDoc> {
         } else if (!CATEGORY_PATTERN.matcher(osmValue).matches()) {
             osmValue = "yes";
         }
-        PhotonDoc doc = new PhotonDoc(rs.getLong("place_id"),
+        PhotonDoc doc = new PhotonDoc(Long.toString(rs.getLong("place_id")),
                 rs.getString("osm_type"), rs.getLong("osm_id"),
                 osmKey, osmValue)
                 .names(NameMap.makeForPlace(dbutils.getMap(rs, "name"), languages))

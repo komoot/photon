@@ -24,7 +24,7 @@ class ApiLanguagesTest extends ApiBaseTester {
 
     protected PhotonDoc createDoc(int id, String value, String... names) {
         return new PhotonDoc()
-                .placeId(id).osmType("N").osmId(id).tagKey("place").tagValue(value)
+                .placeId(Integer.toString(id)).osmType("N").osmId(id).tagKey("place").tagValue(value)
                 .centroid(makePoint(1.0, 2.34))
                 .names(makeDocNames(names));
     }

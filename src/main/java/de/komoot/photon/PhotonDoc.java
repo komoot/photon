@@ -42,7 +42,7 @@ public class PhotonDoc {
             Map.entry(AddressType.OTHER, "quarter")
             );
 
-    private Long placeId = null;
+    private String placeId = null;
     private String osmType = null;
     private long osmId = -1;
     private String tagKey = DEFAULT_OSM_KEY;
@@ -65,7 +65,7 @@ public class PhotonDoc {
 
     public PhotonDoc() {}
 
-    public PhotonDoc(long placeId, String osmType, long osmId, String tagKey, String tagValue) {
+    public PhotonDoc(String placeId, String osmType, long osmId, String tagKey, String tagValue) {
         this.placeId = placeId;
         this.osmType = osmType;
         this.osmId = osmId;
@@ -94,7 +94,7 @@ public class PhotonDoc {
         this.geometry = other.geometry;
     }
 
-    public PhotonDoc placeId(long placeId) {
+    public PhotonDoc placeId(String placeId) {
         this.placeId = placeId;
         return this;
     }
@@ -196,11 +196,11 @@ public class PhotonDoc {
         return this;
     }
 
-    public static String makeUid(long placeId, int objectId) {
+    public static String makeUid(String placeId, int objectId) {
         if (objectId <= 0)
             return String.valueOf(placeId);
 
-        return String.format("%d.%d", placeId, objectId);
+        return String.format("%s.%d", placeId, objectId);
     }
 
     public AddressType getAddressType() {
@@ -323,7 +323,7 @@ public class PhotonDoc {
         }
     }
 
-    public Long getPlaceId() {
+    public String getPlaceId() {
         return this.placeId;
     }
 

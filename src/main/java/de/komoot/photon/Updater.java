@@ -6,7 +6,7 @@ package de.komoot.photon;
 public interface Updater {
     void addOrUpdate(Iterable<PhotonDoc> docs);
 
-    void delete(long docId);
+    void delete(String docId);
 
     void finish();
 }

@@ -71,7 +71,7 @@ class NominatimUpdaterDBTest {
         connector.update();
 
         updater.assertThatCreated().isEmpty();
-        updater.assertThatDeleted().containsExactly(place_id);
+        updater.assertThatDeleted().containsExactly(Long.toString(place_id));
     }
 
     @ParameterizedTest
@@ -245,7 +245,7 @@ class NominatimUpdaterDBTest {
 
         connector.update();
 
-        updater.assertThatDeleted().containsExactly(place2.getPlaceId());
+        updater.assertThatDeleted().containsExactly(place2.getPlaceString());
         updater.assertThatCreated().singleElement().satisfies(place1::assertEquals);
     }
 }

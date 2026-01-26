@@ -24,7 +24,7 @@ public class JsonReader {
     private final JsonParser parser;
     private NominatimDumpHeader header = null;
     private final Map<String, NameMap> countryNames = new HashMap<>();
-    private final Map<Long, AddressRow> addressCache = new HashMap<>();
+    private final Map<String, AddressRow> addressCache = new HashMap<>();
 
     private boolean useFullGeometries = false;
     private ConfigExtraTags extraTags = new ConfigExtraTags();

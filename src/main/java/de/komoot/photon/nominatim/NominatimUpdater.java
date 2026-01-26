@@ -182,7 +182,7 @@ public class NominatimUpdater extends NominatimConnector {
 
             if (place.isToDelete()) {
                 ++deletedPlaces;
-                updater.delete(placeId);
+                updater.delete(Long.toString(placeId));
             } else {
                 updater.addOrUpdate(getByPlaceId(placeId));
                 ++updatedPlaces;
@@ -207,7 +207,7 @@ public class NominatimUpdater extends NominatimConnector {
 
             if (place.isToDelete()) {
                 ++deletedInterpolations;
-                updater.delete(placeId);
+                updater.delete(Long.toString(placeId));
             } else {
                 updater.addOrUpdate(getInterpolationsByPlaceId(placeId));
                 ++updatedInterpolations;

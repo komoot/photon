@@ -27,7 +27,7 @@ class QueryGeometryTest extends ESBaseTester {
     private PhotonDoc createDoc(String geometry) {
         ++testDocId;
         return new PhotonDoc()
-                .placeId(testDocId).osmType("N").osmId(testDocId).tagKey("place").tagValue("city")
+                .placeId(Integer.toString(testDocId)).osmType("N").osmId(testDocId).tagKey("place").tagValue("city")
                 .names(makeDocNames("name", "Muffle Flu"))
                 .geometry(makeDocGeometry(geometry))
                 .centroid(makePoint(1.0, 2.34));

@@ -16,7 +16,6 @@ import org.locationtech.jts.io.geojson.GeoJsonReader;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class NominatimPlaceDocument {
     public static final String DOCUMENT_TYPE = "Place";
@@ -63,7 +62,7 @@ public class NominatimPlaceDocument {
         return null;
     }
 
-    public Long getPlaceId() {
+    public String getPlaceId() {
         return doc.getPlaceId();
     }
 
@@ -73,6 +72,13 @@ public class NominatimPlaceDocument {
 
     @JsonProperty(DumpFields.PLACE_ID)
     void setPlaceId(Long placeId) {
+        if (placeId != null) {
+            doc.placeId(Long.toString(placeId));
+        }
+    }
+
+    @JsonProperty(DumpFields.PLACE_ID)
+    void setPlaceIdAsString(String placeId) {
         if (placeId != null) {
             doc.placeId(placeId);
         }
@@ -213,7 +219,7 @@ public class NominatimPlaceDocument {
         }
     }
 
-    public void completeAddressLines(Map<Long, AddressRow> addressCache) {
+    public void completeAddressLines(Map<String, AddressRow> addressCache) {
         if (addressLines != null) {
             doc.addAddresses(
                 Arrays.stream(addressLines)

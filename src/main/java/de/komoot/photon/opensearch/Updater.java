@@ -20,7 +20,7 @@ public class Updater implements de.komoot.photon.Updater {
     }
 
     public void addOrUpdate(Iterable<PhotonDoc> docs) {
-        Long placeID = null;
+        String placeID = null;
         int objectId = 0;
 
         for (var doc: docs) {
@@ -45,11 +45,11 @@ public class Updater implements de.komoot.photon.Updater {
         }
     }
 
-    public void delete(long placeId) {
+    public void delete(String placeId) {
         deleteSubset(placeId, 0);
     }
 
-    private void deleteSubset(long docId, int fromObjectId) {
+    private void deleteSubset(String docId, int fromObjectId) {
         int objectId = fromObjectId;
 
         while (exists(docId, objectId++)) {
@@ -63,7 +63,7 @@ public class Updater implements de.komoot.photon.Updater {
         }
     }
 
-    private boolean exists(long docId, int objectId) {
+    private boolean exists(String docId, int objectId) {
         try {
             return client.exists(e -> e.index(PhotonIndex.NAME).id(PhotonDoc.makeUid(docId, objectId))).value();
         } catch (IOException e) {

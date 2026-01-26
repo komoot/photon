@@ -37,7 +37,7 @@ class QueryByLanguageTest extends ESBaseTester {
     private PhotonDoc createDoc(String... names) {
         ++testDocId;
         return new PhotonDoc()
-                .placeId(testDocId).osmType("W").osmId(testDocId).tagKey("place").tagValue("city")
+                .placeId(Integer.toString(testDocId)).osmType("W").osmId(testDocId).tagKey("place").tagValue("city")
                 .names(makeDocNames(names));
     }
 

@@ -43,25 +43,25 @@ public class CollectingImporter extends AbstractList<PhotonDoc> implements Impor
         return finishCalled;
     }
 
-    public ObjectAssert<PhotonDoc> assertThatByPlaceId(long placeId) {
-        return assertThat(docs.stream().filter(d -> d.getPlaceId() == placeId))
+    public ObjectAssert<PhotonDoc> assertThatByPlaceId(String placeId) {
+        return assertThat(docs.stream().filter(d -> d.getPlaceId().equals(placeId)))
                 .hasSize(1)
                 .first();
     }
 
     public ObjectAssert<PhotonDoc> assertThatByRow(PlacexTestRow row) {
-        return assertThatByPlaceId(row.getPlaceId())
+        return assertThatByPlaceId(row.getPlaceString())
                 .satisfies(row::assertEquals);
     }
 
     public ListAssert<PhotonDoc> assertThatAllByRow(OsmlineTestRow row) {
-        return assertThat(docs.stream().filter(d -> d.getPlaceId().equals(row.getPlaceId())))
+        return assertThat(docs.stream().filter(d -> d.getPlaceId().equals(row.getPlaceString())))
                 .isNotEmpty()
                 .allSatisfy(row::assertEquals);
     }
 
     public ListAssert<PhotonDoc> assertThatAllByRow(PlacexTestRow row) {
-        return assertThat(docs.stream().filter(d -> d.getPlaceId().equals(row.getPlaceId())))
+        return assertThat(docs.stream().filter(d -> d.getPlaceId().equals(row.getPlaceString())))
                 .isNotEmpty()
                 .allSatisfy(row::assertEquals);
     }
