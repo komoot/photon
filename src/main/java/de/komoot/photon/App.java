@@ -78,8 +78,7 @@ public class App {
         }
 
         LOGGER.info("Start up database cluster, this might take some time.");
-        esServer.set(new Server());
-        esServer.get().start(cli.getPhotonDBConfig(), command == Commands.CMD_IMPORT);
+        esServer.set(new Server(cli.getPhotonDBConfig(), command == Commands.CMD_IMPORT));
         LOGGER.info("Database cluster is now ready.");
 
         if (command == Commands.CMD_IMPORT) {

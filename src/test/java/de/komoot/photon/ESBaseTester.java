@@ -70,10 +70,8 @@ public class ESBaseTester {
     protected List<PhotonResult> getAll() { return server.getAll(); }
 
     public void setUpES(Path dataDirectory) throws IOException {
-        server = new TestServer(dataDirectory.toString());
-        server.startTestServer(TEST_CLUSTER_NAME);
-        server.recreateIndex(dbProperties);
-        server.refreshIndexes();
+        server = new TestServer(dataDirectory.toString(), TEST_CLUSTER_NAME);
+        server.reloadDBProperties(dbProperties);
     }
 
     protected Importer makeImporter() {
@@ -87,7 +85,7 @@ public class ESBaseTester {
     protected Server getServer() {
         assert server != null;
 
-        return server;
+        return server.getServer();
     }
 
     protected TestServer getTestServer() {
