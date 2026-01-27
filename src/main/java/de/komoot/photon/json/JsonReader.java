@@ -12,23 +12,26 @@ import de.komoot.photon.nominatim.model.AddressRow;
 import de.komoot.photon.nominatim.model.NameMap;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 
+@NullMarked
 public class JsonReader {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private final JsonParser parser;
-    private NominatimDumpHeader header = null;
+    @Nullable private NominatimDumpHeader header = null;
     private final Map<String, NameMap> countryNames = new HashMap<>();
     private final Map<String, AddressRow> addressCache = new HashMap<>();
 
     private boolean useFullGeometries = false;
     private ConfigExtraTags extraTags = new ConfigExtraTags();
-    private String[] countryFilter = null;
+    private String @Nullable [] countryFilter = null;
     private String[] languages = new String[0];
 
     public JsonReader(File inputFile) throws IOException {
@@ -44,6 +47,7 @@ public class JsonReader {
     private ObjectMapper configureObjectMapper() {
         final var mapper = new ObjectMapper();
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        mapper.configure(DeserializationFeature.FAIL_ON_NULL_CREATOR_PROPERTIES, true);
 
         return mapper;
     }
@@ -56,7 +60,7 @@ public class JsonReader {
         this.extraTags = extraTags;
     }
 
-    public void setCountryFilter(String[] countries) {
+    public void setCountryFilter(String @Nullable [] countries) {
         if (countries == null || countries.length == 0) {
             this.countryFilter = null;
         } else {
@@ -82,6 +86,7 @@ public class JsonReader {
         readEndDocument();
     }
 
+    @Nullable
     public Date getImportDate() {
         if (header == null) {
             throw new RuntimeException("Import date is only available after reading the file header.");
@@ -181,6 +186,7 @@ public class JsonReader {
         return doc;
     }
 
+    @Nullable
     private String readStartDocument() throws IOException {
         if (!parser.hasCurrentToken()) {
             return null;

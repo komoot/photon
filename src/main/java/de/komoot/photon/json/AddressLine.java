@@ -1,11 +1,14 @@
 package de.komoot.photon.json;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
+@NullMarked
 public class AddressLine {
 
     @JsonProperty("place_id")
-    public String placeId;
+    @Nullable public String placeId;
 
     @JsonProperty("rank_address")
     public int rankAddress;
