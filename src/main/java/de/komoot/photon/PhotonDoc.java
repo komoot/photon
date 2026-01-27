@@ -3,6 +3,8 @@
 import de.komoot.photon.nominatim.model.AddressRow;
 import de.komoot.photon.nominatim.model.ContextMap;
 import de.komoot.photon.nominatim.model.NameMap;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Point;
@@ -15,6 +17,7 @@ import java.util.stream.Collectors;
 /**
  * Denormalized document with all information needed for saving in the Photon database.
  */
+@NullMarked
 public class PhotonDoc {
     public static final String CATEGORY_VALID_CHARS = "a-zA-Z0-9_-";
     public static final Pattern CATEGORY_PATTERN = Pattern.compile(
@@ -42,30 +45,30 @@ public class PhotonDoc {
             Map.entry(AddressType.OTHER, "quarter")
             );
 
-    private String placeId = null;
-    private String osmType = null;
+    @Nullable private String placeId = null;
+    @Nullable private String osmType = null;
     private long osmId = -1;
     private String tagKey = DEFAULT_OSM_KEY;
     private String tagValue = DEFAULT_OSM_VALUE;
 
     private NameMap name = new NameMap();
-    private String postcode = null;
+    @Nullable private String postcode = null;
     private Map<String, String> extratags = Map.of();
     private Set<String> categorySet = Set.of();
-    private Envelope bbox = null;
+    @Nullable private Envelope bbox = null;
     private double importance = 0;
-    private String countryCode = null;
+    @Nullable private String countryCode = null;
     private int rankAddress = 30;
 
     private Map<AddressType, Map<String, String>> addressParts = new EnumMap<>(AddressType.class);
     private ContextMap context = new ContextMap();
-    private String houseNumber = null;
-    private Point centroid = null;
-    private Geometry geometry = null;
+    @Nullable private String houseNumber = null;
+    @Nullable private Point centroid = null;
+    @Nullable private Geometry geometry = null;
 
     public PhotonDoc() {}
 
-    public PhotonDoc(String placeId, String osmType, long osmId, String tagKey, String tagValue) {
+    public PhotonDoc(@Nullable String placeId, @Nullable String osmType, long osmId, String tagKey, String tagValue) {
         this.placeId = placeId;
         this.osmType = osmType;
         this.osmId = osmId;
@@ -94,12 +97,12 @@ public class PhotonDoc {
         this.geometry = other.geometry;
     }
 
-    public PhotonDoc placeId(String placeId) {
+    public PhotonDoc placeId(@Nullable String placeId) {
         this.placeId = placeId;
         return this;
     }
 
-    public PhotonDoc osmType(String osmType) {
+    public PhotonDoc osmType(@Nullable String osmType) {
         this.osmType = osmType;
         return this;
     }
@@ -124,12 +127,12 @@ public class PhotonDoc {
         return this;
     }
 
-    public PhotonDoc houseNumber(String houseNumber) {
+    public PhotonDoc houseNumber(@Nullable String houseNumber) {
         this.houseNumber = (houseNumber == null || houseNumber.isEmpty()) ? null : houseNumber;
         return this;
     }
 
-    public PhotonDoc bbox(Geometry geom) {
+    public PhotonDoc bbox(@Nullable Geometry geom) {
         if (geom != null) {
             this.bbox = geom.getEnvelopeInternal();
         }
@@ -141,20 +144,20 @@ public class PhotonDoc {
         return this;
     }
 
-    public PhotonDoc geometry(Geometry geometry) {
+    public PhotonDoc geometry(@Nullable Geometry geometry) {
         this.geometry = geometry;
         return this;
     }
 
-    public PhotonDoc countryCode(String countryCode) {
+    public PhotonDoc countryCode(@Nullable String countryCode) {
         if (countryCode != null) {
             this.countryCode = countryCode.toUpperCase();
         }
         return this;
     }
 
-    public PhotonDoc extraTags(Map<String, String> extratags) {
-        this.extratags = extratags;
+    public PhotonDoc extraTags(@Nullable Map<String, String> extratags) {
+        this.extratags = extratags == null ? Map.of() : extratags;
 
         if (extratags != null) {
             String place = extratags.get("place");
@@ -171,7 +174,7 @@ public class PhotonDoc {
         return this;
     }
 
-    public PhotonDoc categories(Collection<String> collection) {
+    public PhotonDoc categories(Collection<@Nullable String> collection) {
         this.categorySet = collection.stream()
                 .filter(Objects::nonNull)
                 .filter(s -> CATEGORY_PATTERN.matcher(s).matches())
@@ -180,7 +183,7 @@ public class PhotonDoc {
         return this;
     }
 
-    public PhotonDoc importance(Double importance) {
+    public PhotonDoc importance(double importance) {
         this.importance = importance;
 
         return this;
@@ -197,12 +200,10 @@ public class PhotonDoc {
     }
 
     public static String makeUid(String placeId, int objectId) {
-        if (objectId <= 0)
-            return String.valueOf(placeId);
-
-        return String.format("%s.%d", placeId, objectId);
+        return (objectId <= 0) ? placeId : String.format("%s.%d", placeId, objectId);
     }
 
+    @Nullable
     public AddressType getAddressType() {
         return AddressType.fromRank(rankAddress);
     }
@@ -254,7 +255,7 @@ public class PhotonDoc {
     /**
      * Complete address data from a map of address terms.
      */
-    public PhotonDoc addAddresses(Map<String, String> address, String[] languages) {
+    public PhotonDoc addAddresses(@Nullable Map<String, String> address, String[] languages) {
         if (address == null || address.isEmpty()) {
             return this;
         }
@@ -317,16 +318,18 @@ public class PhotonDoc {
         return this;
     }
 
-    public void setCountry(Map<String, String> names) {
+    public void setCountry(@Nullable Map<String, String> names) {
         if (names != null) {
             addressParts.put(AddressType.COUNTRY, names);
         }
     }
 
+    @Nullable
     public String getPlaceId() {
         return this.placeId;
     }
 
+    @Nullable
     public String getOsmType() {
         return this.osmType;
     }
@@ -347,6 +350,7 @@ public class PhotonDoc {
         return this.name;
     }
 
+    @Nullable
     public String getPostcode() {
         return this.postcode;
     }
@@ -359,6 +363,7 @@ public class PhotonDoc {
             return categorySet;
     }
 
+    @Nullable
     public Envelope getBbox() {
         return this.bbox;
     }
@@ -367,6 +372,7 @@ public class PhotonDoc {
         return this.importance;
     }
 
+    @Nullable
     public String getCountryCode() {
         return this.countryCode;
     }
@@ -383,14 +389,17 @@ public class PhotonDoc {
         return this.context;
     }
 
+    @Nullable
     public String getHouseNumber() {
         return this.houseNumber;
     }
 
+    @Nullable
     public Point getCentroid() {
         return this.centroid;
     }
 
+    @Nullable
     public Geometry getGeometry() {
         return this.geometry;
     }
