@@ -1,7 +1,10 @@
 package de.komoot.photon.config;
 
 import com.beust.jcommander.Parameter;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
+@NullMarked
 public class PostgresqlConfig {
     public static final String GROUP = "PostgreSQL options";
 
@@ -28,7 +31,7 @@ public class PostgresqlConfig {
     @Parameter(names = "-password", category = GROUP, placeholder = "PASSWORD", description = """
             Password for the PostgreSQL user
             """)
-    private String password = null;
+    @Nullable private String password = null;
 
     public String getHost() {
         return this.host;
@@ -46,7 +49,7 @@ public class PostgresqlConfig {
         return this.user;
     }
 
-    public String getPassword() {
+    @Nullable public String getPassword() {
         return this.password;
     }
 

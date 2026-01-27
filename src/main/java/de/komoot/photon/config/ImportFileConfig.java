@@ -1,6 +1,7 @@
 package de.komoot.photon.config;
 
 import com.beust.jcommander.Parameter;
+import org.jspecify.annotations.Nullable;
 
 public class ImportFileConfig {
     public static final String GROUP = "Dump file import options";
@@ -8,9 +9,12 @@ public class ImportFileConfig {
     @Parameter(names = "-import-file", category = GROUP, placeholder = "FILE", description = """
             Name of json dump file
             """)
-    private String importFile = null;
+    @Nullable private String importFile = null;
 
-    public String getImportFile() { return this.importFile; }
+    public String getImportFile() {
+        assert this.importFile != null; // must only be called after isEnabled()
+        return this.importFile;
+    }
 
     public boolean isEnabled() { return this.importFile != null; }
 }

@@ -2,10 +2,13 @@ package de.komoot.photon.config;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@NullMarked
 @Parameters(parametersValidators = CorsMutuallyExclusiveValidator.class)
 public class ApiServerConfig {
     public static final String GROUP = "API options";
@@ -32,7 +35,7 @@ public class ApiServerConfig {
 
     @Parameter(names = "-enable-update-api", category = GROUP, description = """
             Enable the additional endpoint /nominatim-update, which allows to trigger updates
-            from a nominatim database; make sure to also set te PostgreSQL connection parameters 
+            from a nominatim database; make sure to also set te PostgreSQL connection parameters
             """)
     private boolean enableUpdateApi = false;
 
@@ -61,7 +64,7 @@ public class ApiServerConfig {
     @Parameter(names = "-synonym-file", category = GROUP, placeholder = "FILE", description = """
             File with synonym and classification terms
             """)
-    private String synonymFile = null;
+    @Nullable private String synonymFile = null;
 
     @Parameter(names = "-query-timeout", category = GROUP, placeholder = "SEC", description = """
             Time in seconds after which to cancel queries to the Photon database
@@ -104,7 +107,7 @@ public class ApiServerConfig {
         return this.defaultLanguage;
     }
 
-    public String getSynonymFile() {
+    @Nullable public String getSynonymFile() {
         return this.synonymFile;
     }
 

@@ -1,11 +1,13 @@
 package de.komoot.photon.config;
 
 import com.beust.jcommander.Parameter;
+import org.jspecify.annotations.NullMarked;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+@NullMarked
 public class PhotonDBConfig {
     public static final String GROUP = "Photon database options";
 
