@@ -1,5 +1,6 @@
 package de.komoot.photon.opensearch;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.komoot.photon.ConfigClassificationTerm;
 import de.komoot.photon.ConfigSynonyms;
@@ -51,7 +52,10 @@ public class IndexSettingBuilder {
 
     public IndexSettingBuilder setSynonymFile(String synonymFile) throws IOException {
         if (synonymFile != null) {
-            final var synonymConfig = new ObjectMapper().readValue(new File(synonymFile), ConfigSynonyms.class);
+            final var synonymConfig = new ObjectMapper()
+                    .configure(DeserializationFeature.FAIL_ON_NULL_CREATOR_PROPERTIES, true)
+                    .configure(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES, true)
+                    .readValue(new File(synonymFile), ConfigSynonyms.class);
 
             final var synonyms = synonymConfig.getSearchSynonyms();
             if (synonyms != null && !synonyms.isEmpty()) {
@@ -74,16 +78,14 @@ public class IndexSettingBuilder {
         for (var term : terms) {
             String classString = term.getClassificationString();
 
-            if (classString != null) {
-                for (var repl : term.getTerms()) {
-                    String norm = repl.toLowerCase().trim();
-                    if (norm.indexOf(' ') >= 0) {
-                        throw new UsageException("Syntax error in synonym file: only single word classification terms allowed.");
-                    }
+            for (var repl : term.terms()) {
+                String norm = repl.toLowerCase().trim();
+                if (norm.indexOf(' ') >= 0) {
+                    throw new UsageException("Syntax error in synonym file: only single word classification terms allowed.");
+                }
 
-                    if (norm.length() > 1) {
-                        collector.computeIfAbsent(norm, k -> new HashSet<>()).add(classString);
-                    }
+                if (norm.length() > 1) {
+                    collector.computeIfAbsent(norm, k -> new HashSet<>()).add(classString);
                 }
             }
         }
