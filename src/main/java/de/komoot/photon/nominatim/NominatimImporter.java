@@ -11,6 +11,7 @@ import de.komoot.photon.nominatim.model.OsmlineRowMapper;
 import de.komoot.photon.nominatim.model.PlaceRowMapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jspecify.annotations.NullMarked;
 
 import java.sql.Types;
 import java.util.List;
@@ -19,6 +20,7 @@ import java.util.Map;
 /**
  * Importer for data from a Nominatim database.
  */
+@NullMarked
 public class NominatimImporter extends NominatimConnector {
     private static final Logger LOGGER = LogManager.getLogger();
 
@@ -36,9 +38,7 @@ public class NominatimImporter extends NominatimConnector {
      * for the given country. Also imports place from country-less places.
      */
     public void readCountry(String countryCode, ImportThread importThread) {
-        // Make sure, country names are available.
-        loadCountryNames(dbProperties.getLanguages());
-        final var cnames = countryNames.get(countryCode);
+        final var cnames = loadCountryNames(dbProperties.getLanguages()).get(countryCode);
         if (cnames == null) {
             LOGGER.warn("Unknown country code {}. Skipping.", countryCode);
             return;
@@ -47,7 +47,7 @@ public class NominatimImporter extends NominatimConnector {
         final String countrySQL;
         final Object[] sqlArgs;
         final int[] sqlArgTypes;
-        if ("".equals(countryCode)) {
+        if (countryCode.isEmpty()) {
             countrySQL = "country_code is null";
             sqlArgs = new Object[0];
             sqlArgTypes = new int[0];
@@ -74,8 +74,6 @@ public class NominatimImporter extends NominatimConnector {
                     final PhotonDoc doc = placeRowMapper.mapRow(rs, 0);
                     final Map<String, String> address = dbutils.getMap(rs, "address");
 
-                    assert (doc != null);
-
                     doc.addAddresses(addressCache.getAddressList(rs.getString("addresslines")));
                     doc.addAddresses(address, dbProperties.getLanguages()); // take precedence over computed address
                     doc.setCountry(cnames);
@@ -95,8 +93,6 @@ public class NominatimImporter extends NominatimConnector {
                 sqlArgs, sqlArgTypes, rs -> {
                     final PhotonDoc doc = placeRowMapper.mapRow(rs, 0);
                     final Map<String, String> address = dbutils.getMap(rs, "address");
-
-                    assert (doc != null);
 
                     if (rs.getString("parent_class") != null) {
                         doc.addAddresses(List.of(AddressRow.make(
@@ -132,13 +128,17 @@ public class NominatimImporter extends NominatimConnector {
                     
                     doc.setCountry(cnames);
 
-                    importThread.addDocument(new PhotonDocInterpolationSet(
-                            doc,
-                            rs.getLong("startnumber"),
-                            rs.getLong("endnumber"),
-                            rs.getLong("step"),
-                            dbutils.extractGeometry(rs, "linegeo")
-                    ));
+                    var geometry = dbutils.extractGeometry(rs, "linegeo");
+
+                    if (geometry != null) {
+                        importThread.addDocument(new PhotonDocInterpolationSet(
+                                doc,
+                                rs.getLong("startnumber"),
+                                rs.getLong("endnumber"),
+                                rs.getLong("step"),
+                                geometry
+                                ));
+                    }
                 });
 
     }
@@ -146,7 +146,7 @@ public class NominatimImporter extends NominatimConnector {
 
     /**
      * Prepare the database for export.
-     *
+     * <p>
      * This function ensures that the proper index are available and if
      * not will create them. This may take a while.
      */
@@ -166,8 +166,6 @@ public class NominatimImporter extends NominatimConnector {
     }
 
     public String[] getCountriesFromDatabase() {
-        loadCountryNames(dbProperties.getLanguages());
-
-        return countryNames.keySet().toArray(new String[0]);
+        return loadCountryNames(dbProperties.getLanguages()).keySet().toArray(new String[0]);
     }
 }

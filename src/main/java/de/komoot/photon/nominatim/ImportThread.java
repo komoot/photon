@@ -4,6 +4,8 @@ import de.komoot.photon.Importer;
 import de.komoot.photon.PhotonDoc;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
@@ -13,6 +15,7 @@ import java.util.concurrent.atomic.AtomicLong;
 /**
  * Worker thread for bulk importing data from a Nominatim database.
  */
+@NullMarked
 public class ImportThread {
     private static final Logger LOGGER = LogManager.getLogger();
 
@@ -36,7 +39,7 @@ public class ImportThread {
      *
      * @param docs Fully filled nominatim document.
      */
-    public void addDocument(Iterable<PhotonDoc> docs) {
+    public void addDocument(@Nullable Iterable<PhotonDoc> docs) {
         if (docs == null || !docs.iterator().hasNext()) {
             return;
         }
