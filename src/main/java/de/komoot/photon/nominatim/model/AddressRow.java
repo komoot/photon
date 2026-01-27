@@ -1,10 +1,13 @@
 package de.komoot.photon.nominatim.model;
 
+import org.jspecify.annotations.NullMarked;
+
 import java.util.Map;
 
 /**
  * Representation of an address as returned by Nominatim's get_addressdata PL/pgSQL function.
  */
+@NullMarked
 public class AddressRow {
     private final NameMap name;
     private final ContextMap context;
@@ -27,7 +30,7 @@ public class AddressRow {
             return new AddressRow(
                     new NameMap().setName("ref", name, "ref"),
                     context,
-                    AddressType.fromRank(rankAddress),
+                    AddressType.fromRank(rankAddress, AddressType.OTHER),
                     true
             );
         } else {
@@ -38,7 +41,7 @@ public class AddressRow {
         return new AddressRow(
                 new NameMap().setLocaleNames(name, languages),
                 context,
-                AddressType.fromRank(rankAddress),
+                AddressType.fromRank(rankAddress, AddressType.OTHER),
                 false);
     }
 

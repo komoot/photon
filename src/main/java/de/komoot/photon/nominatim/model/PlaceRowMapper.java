@@ -2,6 +2,7 @@ package de.komoot.photon.nominatim.model;
 
 import de.komoot.photon.PhotonDoc;
 import de.komoot.photon.nominatim.DBDataAdapter;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;
@@ -15,6 +16,7 @@ import java.util.regex.Pattern;
  * This class does not complete address information (neither country information)
  * for the place.
  */
+@NullMarked
 public class PlaceRowMapper implements RowMapper<PhotonDoc> {
     private static final Pattern CATEGORY_PATTERN = Pattern.compile(
             String.format("[%s]+", PhotonDoc.CATEGORY_VALID_CHARS));

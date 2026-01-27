@@ -171,9 +171,9 @@ public class NominatimUpdater extends NominatimConnector {
         int deletedPlaces = 0;
 
         for (UpdateRow place : getPlaces("placex")) {
-            long placeId = place.getPlaceId();
+            long placeId = place.placeId();
 
-            if (place.isToDelete()) {
+            if (place.toDelete()) {
                 ++deletedPlaces;
                 updater.delete(Long.toString(placeId));
             } else {
@@ -196,9 +196,9 @@ public class NominatimUpdater extends NominatimConnector {
         int updatedInterpolations = 0;
         int deletedInterpolations = 0;
         for (UpdateRow place : getPlaces("location_property_osmline")) {
-            long placeId = place.getPlaceId();
+            long placeId = place.placeId();
 
-            if (place.isToDelete()) {
+            if (place.toDelete()) {
                 ++deletedInterpolations;
                 updater.delete(Long.toString(placeId));
             } else {
@@ -222,14 +222,14 @@ public class NominatimUpdater extends NominatimConnector {
 
             // For each place only keep the newest item.
             // Order doesn't really matter because updates of each place are independent now.
-            results.sort(Comparator.comparing(UpdateRow::getPlaceId).thenComparing(
-                    Comparator.comparing(UpdateRow::getUpdateDate).reversed()));
+            results.sort(Comparator.comparing(UpdateRow::placeId).thenComparing(
+                    Comparator.comparing(UpdateRow::updateDate).reversed()));
 
             ArrayList<UpdateRow> todo = new ArrayList<>();
             long prevId = -1;
             for (UpdateRow row : results) {
-                if (row.getPlaceId() != prevId) {
-                    prevId = row.getPlaceId();
+                if (row.placeId() != prevId) {
+                    prevId = row.placeId();
                     todo.add(row);
                 }
             }
