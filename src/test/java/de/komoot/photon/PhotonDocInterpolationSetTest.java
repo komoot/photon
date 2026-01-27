@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.assertj.core.api.Assertions.*;
 
 class PhotonDocInterpolationSetTest {
-    private final PhotonDoc baseDoc = new PhotonDoc(10000, "N", 123, "place", "house")
+    private final PhotonDoc baseDoc = new PhotonDoc("10000", "N", 123, "place", "house")
             .countryCode("de");
     private final WKTReader reader = new WKTReader();
     private Geometry lineGeo;
@@ -31,7 +31,7 @@ class PhotonDocInterpolationSetTest {
                 () -> assertNotSame(baseDoc, doc),
                 () -> assertEquals("place", doc.getTagKey()),
                 () -> assertEquals("house", doc.getTagValue()),
-                () -> assertEquals(10000, doc.getPlaceId()),
+                () -> assertEquals("10000", doc.getPlaceId()),
                 () -> assertEquals("N", doc.getOsmType()),
                 () -> assertEquals(123, doc.getOsmId()),
                 () -> assertEquals(housenumber, doc.getHouseNumber()),

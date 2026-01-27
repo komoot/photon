@@ -16,10 +16,12 @@ import org.locationtech.jts.io.geojson.GeoJsonReader;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
+import java.util.regex.Pattern;
 
 public class NominatimPlaceDocument {
     public static final String DOCUMENT_TYPE = "Place";
+
+    private static final Pattern PLACEID_PATTERN = Pattern.compile("[0-9a-zA-Z_-]{1,60}");
 
     private final PhotonDoc doc = new PhotonDoc();
     private Map<String, String> address = Map.of();
@@ -63,7 +65,7 @@ public class NominatimPlaceDocument {
         return null;
     }
 
-    public Long getPlaceId() {
+    public String getPlaceId() {
         return doc.getPlaceId();
     }
 
@@ -74,6 +76,16 @@ public class NominatimPlaceDocument {
     @JsonProperty(DumpFields.PLACE_ID)
     void setPlaceId(Long placeId) {
         if (placeId != null) {
+            doc.placeId(Long.toString(placeId));
+        }
+    }
+
+    @JsonProperty(DumpFields.PLACE_ID)
+    void setPlaceIdAsString(String placeId) throws IOException {
+        if (placeId != null) {
+            if (!PLACEID_PATTERN.matcher(placeId).matches()) {
+                throw new IOException("PlaceID must only consist of letters, numbers, dash and underscore and not exceed 60 characters.");
+            }
             doc.placeId(placeId);
         }
     }
@@ -213,7 +225,7 @@ public class NominatimPlaceDocument {
         }
     }
 
-    public void completeAddressLines(Map<Long, AddressRow> addressCache) {
+    public void completeAddressLines(Map<String, AddressRow> addressCache) {
         if (addressLines != null) {
             doc.addAddresses(
                 Arrays.stream(addressLines)

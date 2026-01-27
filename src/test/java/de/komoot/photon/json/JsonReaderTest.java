@@ -29,8 +29,8 @@ class JsonReaderTest {
     private String[] configCountries = null;
     private boolean configGeometryColumn = false;
 
-    private static final String TEST_SIMPLE_CONTENT =
-            "{\"place_id\":100818,\"object_type\":\"W\",\"object_id\":223306798,\"categories\" : [\"osm.waterway.stream\"], \"rank_address\" : 0, \"rank_search\" : 22, \"importance\" : 0.10667666666666664,\"name\":{\"name\": \"Spiersbach\", \"name:de\": \"Spiersbach\", \"alt_name\": \"Spirsbach\"},\"extra\":{\"boat\": \"no\"},\"country_code\":\"at\",\"centroid\":[9.53713454,47.27052526],\"geometry\":{\"type\":\"LineString\",\"coordinates\":[[9.5461636,47.2415541],[9.5558108,47.2955234],[9.556083,47.2962812],[9.554958,47.2966235]]}}";
+    private static final String TEST_SIMPLE_CONTENT = """
+            {"place_id":100818,"object_type":"W","object_id":223306798,"categories" : ["osm.waterway.stream"], "rank_address" : 0, "rank_search" : 22, "importance" : 0.10667666666666664,"name":{"name": "Spiersbach", "name:de": "Spiersbach", "alt_name": "Spirsbach"},"extra":{"boat": "no"},"country_code":"at","centroid":[9.53713454,47.27052526],"geometry":{"type":"LineString","coordinates":[[9.5461636,47.2415541],[9.5558108,47.2955234],[9.556083,47.2962812],[9.554958,47.2966235]]}}""";
     private static final String TEST_SIMPLE_STREAM =
             "{\"type\":\"Place\",\"content\":" + TEST_SIMPLE_CONTENT + "}";
 
@@ -68,7 +68,7 @@ class JsonReaderTest {
         var importer = readJson();
 
         assertThat(importer).singleElement()
-                .hasFieldOrPropertyWithValue("placeId", 100818L)
+                .hasFieldOrPropertyWithValue("placeId", "100818")
                 .hasFieldOrPropertyWithValue("osmType", "W")
                 .hasFieldOrPropertyWithValue("osmId", 223306798L)
                 .hasFieldOrPropertyWithValue("tagKey", "waterway")
@@ -98,7 +98,7 @@ class JsonReaderTest {
         assertThat(importer)
                 .hasSize(2)
                 .allSatisfy(d -> assertThat(d)
-                        .hasFieldOrPropertyWithValue("placeId", 100818L)
+                        .hasFieldOrPropertyWithValue("placeId", "100818")
                         .hasFieldOrPropertyWithValue("osmType", "W")
                         .hasFieldOrPropertyWithValue("tagKey", "waterway")
                         .hasFieldOrPropertyWithValue("tagValue", "stream")
@@ -118,13 +118,41 @@ class JsonReaderTest {
     }
 
     @Test
+    void testPlaceIDAsString() throws IOException {
+        input.println(TEST_SIMPLE_STREAM.replaceFirst("100818", "\"X45D4\""));
+
+        var importer = readJson();
+
+        assertThat(importer).singleElement()
+                .hasFieldOrPropertyWithValue("placeId", "X45D4");
+    }
+
+    @Test
+    void testPlaceIDTooLong() {
+        input.println(TEST_SIMPLE_STREAM.replaceFirst("100818", "1".repeat(61)));
+
+        assertThatIOException()
+                .isThrownBy(() -> readJson())
+                .withMessageContaining("exceed 60 char");
+    }
+
+    @Test
+    void testPlaceIDInvalidCharacters() {
+        input.println(TEST_SIMPLE_STREAM.replaceFirst("100818", "\"a b@\""));
+
+        assertThatIOException()
+                .isThrownBy(() -> readJson())
+                .withMessageContaining("must only consist of letters");
+    }
+
+    @Test
     void testSimpleImportWithGeometry() throws IOException {
         configGeometryColumn = true;
         input.println(TEST_SIMPLE_STREAM);
         var importer = readJson();
 
         assertThat(importer).singleElement()
-                .hasFieldOrPropertyWithValue("placeId", 100818L)
+                .hasFieldOrPropertyWithValue("placeId", "100818")
                 .hasFieldOrPropertyWithValue("bbox", new Envelope(9.5461636, 9.556083, 47.2415541, 47.2966235))
                 .hasFieldOrPropertyWithValue("centroid", geomFactory.createPoint(new Coordinate(9.53713454, 47.27052526)))
                 .hasFieldOrPropertyWithValue("geometry", geomFactory.createLineString(new Coordinate[]{
@@ -138,7 +166,8 @@ class JsonReaderTest {
 
     @Test
     void testImportWithCountryInfo() throws IOException {
-        input.println("{\"type\":\"CountryInfo\",\"content\":[{\"country_code\":\"at\",\"name\":{\"name\": \"Österreich\", \"name:ab\": \"Австриа\", \"name:de\": \"Österreich\", \"name:dv\": \"އޮސްޓްރިއާ\", \"name:dz\": \"ཨས་ཊི་ཡ\", \"name:ee\": \"Austria\", \"name:el\": \"Αυστρία\", \"name:en\": \"Austria\"}}]}");
+        input.println("""
+                {"type":"CountryInfo","content":[{"country_code":"at","name":{"name": "Österreich", "name:ab": "Австриа", "name:de": "Österreich", "name:dv": "އޮސްޓްރިއާ", "name:dz": "ཨས་ཊི་ཡ", "name:ee": "Austria", "name:el": "Αυστρία", "name:en": "Austria"}}]}""");
         input.println(TEST_SIMPLE_STREAM);
         var importer = readJson();
 
@@ -155,7 +184,7 @@ class JsonReaderTest {
         var importer = readJson();
 
         assertThat(importer).singleElement()
-                .hasFieldOrPropertyWithValue("placeId", 100818L)
+                .hasFieldOrPropertyWithValue("placeId", "100818")
                 .hasFieldOrPropertyWithValue("extratags", Map.of("boat", "no"));
     }
 
@@ -166,7 +195,7 @@ class JsonReaderTest {
         var importer = readJson();
 
         assertThat(importer).singleElement()
-                .hasFieldOrPropertyWithValue("placeId", 100818L)
+                .hasFieldOrPropertyWithValue("placeId", "100818")
                 .hasFieldOrPropertyWithValue("extratags", Map.of("boat", "no"));
     }
 
@@ -177,7 +206,7 @@ class JsonReaderTest {
         var importer = readJson();
 
         assertThat(importer).singleElement()
-                .hasFieldOrPropertyWithValue("placeId", 100818L)
+                .hasFieldOrPropertyWithValue("placeId", "100818")
                 .hasFieldOrPropertyWithValue("extratags", Map.of());
     }
 
@@ -201,15 +230,17 @@ class JsonReaderTest {
 
     @Test
     void testAddressFromAddressLines() throws IOException {
-        input.println("{\"type\":\"Place\",\"content\":{\"place_id\" : 105903, \"object_type\" : \"R\", \"object_id\" : 1155956, \"categories\" : [\"osm.place.city\"], \"rank_address\" : 16, \"rank_search\" : 16, \"importance\" : 0.6014034960585685,\"admin_level\":8,\"name\":{\"name\": \"Vaduz\", \"name:de\": \"VaduzD\", \"name:it\": \"VaduzI\"},\"centroid\":[9.52279620,47.13928620],\"geometry\":{\"type\":\"Point\",\"coordinates\":[9.4950763,47.1569405]}}}");
-        input.println("{\"type\":\"Place\",\"content\":{\"place_id\" : 105764, \"object_type\" : \"N\", \"object_id\" : 4637485890, \"categories\" : [\"osm.amenity.theatre\"], \"rank_address\" : 30, \"rank_search\" : 30, \"importance\" : 9.99999999995449e-06,\"parent_place_id\":106180,\"name\":{\"name\": \"Kleintheater Schlösslekeller\"},\"address\":{\"country\": \"LI\", \"postcode\": \"9490\"},\"postcode\":\"9490\",\"country_code\":\"li\",\"addresslines\":[{\"place_id\":106180,\"rank_address\":26,\"fromarea\":false,\"isaddress\":true},{\"place_id\":105903,\"rank_address\":16,\"isaddress\":true,\"fromarea\":true}, {\"place_id\":106289,\"rank_address\":12,\"isaddress\":true,\"fromarea\":true}],\"centroid\":[9.52394930,47.12904370],\"geometry\":{\"type\":\"Point\",\"coordinates\":[9.5239493,47.1290437]}}}");
+        input.println("""
+                {"type":"Place","content":{"place_id" : 105903, "object_type" : "R", "object_id" : 1155956, "categories" : ["osm.place.city"], "rank_address" : 16, "rank_search" : 16, "importance" : 0.6014034960585685,"admin_level":8,"name":{"name": "Vaduz", "name:de": "VaduzD", "name:it": "VaduzI"},"centroid":[9.52279620,47.13928620],"geometry":{"type":"Point","coordinates":[9.4950763,47.1569405]}}}""");
+        input.println("""
+                {"type":"Place","content":{"place_id" : 105764, "object_type" : "N", "object_id" : 4637485890, "categories" : ["osm.amenity.theatre"], "rank_address" : 30, "rank_search" : 30, "importance" : 9.99999999995449e-06,"parent_place_id":106180,"name":{"name": "Kleintheater Schlösslekeller"},"address":{"country": "LI", "postcode": "9490"},"postcode":"9490","country_code":"li","addresslines":[{"place_id":"106180","rank_address":26,"isaddress":true},{"place_id":105903,"rank_address":16,"isaddress":true}, {"place_id":106289,"rank_address":12,"isaddress":true}],"centroid":[9.52394930,47.12904370],"geometry":{"type":"Point","coordinates":[9.5239493,47.1290437]}}}""");
 
         var importer = readJson();
 
         assertThat(importer)
                 .hasSize(2)
                 .last()
-                .hasFieldOrPropertyWithValue("placeId", 105764L)
+                .hasFieldOrPropertyWithValue("placeId", "105764")
                 .hasFieldOrPropertyWithValue("postcode", "9490")
                 .hasFieldOrPropertyWithValue("addressParts",
                         Map.of(AddressType.CITY,
@@ -218,7 +249,8 @@ class JsonReaderTest {
 
     @Test
     void testAddressFromAddressField() throws IOException {
-        input.println("{\"type\":\"Place\",\"content\":{\"place_id\" : 105764, \"object_type\" : \"N\", \"object_id\" : 4637485890, \"categories\" : [\"osm.amenity.theatre\"], \"rank_address\" : 30, \"rank_search\" : 30, \"importance\" : 9.99999999995449e-06,\"parent_place_id\":106180,\"name\":{\"name\": \"Kleintheater Schlösslekeller\"},\"address\":{\"city\": \"Vaduz\", \"city:de\": \"VaduzD\", \"city:hu\": \"VaduzHU\", \"other1\": \"This\", \"other2\": \"That\", \"other1:de\": \"Dies\", \"other2:de\": \"Das\", \"other3\": null},\"postcode\":\"9490\",\"country_code\":\"li\",\"addresslines\":[{\"place_id\":106180,\"rank_address\":26,\"fromarea\":false,\"isaddress\":true},{\"place_id\":105903,\"rank_address\":16,\"isaddress\":true,\"fromarea\":true}, {\"place_id\":106289,\"rank_address\":12,\"isaddress\":true,\"fromarea\":true}],\"centroid\":[9.52394930,47.12904370]}}");
+        input.println("""
+                {"type":"Place","content":{"place_id" : 105764, "object_type" : "N", "object_id" : 4637485890, "categories" : ["osm.amenity.theatre"], "rank_address" : 30, "rank_search" : 30, "importance" : 9.99999999995449e-06,"parent_place_id":106180,"name":{"name": "Kleintheater Schlösslekeller"},"address":{"city": "Vaduz", "city:de": "VaduzD", "city:hu": "VaduzHU", "other1": "This", "other2": "That", "other1:de": "Dies", "other2:de": "Das", "other3": null},"postcode":"9490","country_code":"li","addresslines":[{"place_id":106180,"rank_address":26,"isaddress":true},{"place_id":105903,"rank_address":16,"isaddress":true}, {"place_id":106289,"rank_address":12,"isaddress":true}],"centroid":[9.52394930,47.12904370]}}""");
 
         var importer = readJson();
 
@@ -248,7 +280,8 @@ class JsonReaderTest {
 
     @Test
     void testGoodHeader() throws IOException {
-        inBuffer.append("{\"type\":\"NominatimDumpFile\",\"content\":{\"version\":\"0.1.0\",\"generator\":\"nominatim-5.1.0\",\"database_version\":\"5.1.0-0\",\"features\":{\"sorted_by_country\":true,\"has_addresslines\":true},\"data_timestamp\":\"2021-01-06T15:53:42+00:00\"}}");
+        inBuffer.append("""
+                {"type":"NominatimDumpFile","content":{"version":"0.1.0","generator":"nominatim-5.1.0","database_version":"5.1.0-0","features":{"sorted_by_country":true,"has_addresslines":true},"data_timestamp":"2021-01-06T15:53:42+00:00"}}""");
 
         var reader = new JsonReader(inBufferAsStream());
 
@@ -382,7 +415,8 @@ class JsonReaderTest {
 
     @Test
     void testCustomKeyValuePreferred() throws IOException {
-        input.println("{\"type\":\"Place\",\"content\":{\"osm_key\" : \"house\", \"osm_value\" : \"public\", \"categories\" : [\"osm.amenity.theatre\"],\"name\":{\"name\": \"Kleintheater Schlösslekeller\"}}}");
+        input.println("""
+                {"type":"Place","content":{"osm_key" : "house", "osm_value" : "public", "categories" : ["osm.amenity.theatre"],"name":{"name": "Kleintheater Schlösslekeller"}}}""");
         var importer = readJson();
 
         assertThat(importer).singleElement()
@@ -393,7 +427,8 @@ class JsonReaderTest {
 
     @Test
     void testCustomKeyValueAfterCategoriesPreferred() throws IOException {
-        input.println("{\"type\":\"Place\",\"content\":{\"categories\" : [\"osm.amenity.theatre\"],\"osm_key\" : \"house\", \"osm_value\" : \"public\", \"name\":{\"name\": \"Kleintheater Schlösslekeller\"}}}");
+        input.println("""
+                {"type":"Place","content":{"categories" : ["osm.amenity.theatre"],"osm_key" : "house", "osm_value" : "public", "name":{"name": "Kleintheater Schlösslekeller"}}}""");
         var importer = readJson();
 
         assertThat(importer).singleElement()
@@ -404,7 +439,8 @@ class JsonReaderTest {
 
     @Test
     void testKeyValueFallbackCategories() throws IOException {
-        input.println("{\"type\":\"Place\",\"content\":{\"categories\" : [\"osm.amenity.theatre\"], \"name\":{\"name\": \"Kleintheater Schlösslekeller\"}}}");
+        input.println("""
+                {"type":"Place","content":{"categories" : ["osm.amenity.theatre"], "name":{"name": "Kleintheater Schlösslekeller"}}}""");
         var importer = readJson();
 
         assertThat(importer).singleElement()
@@ -415,7 +451,8 @@ class JsonReaderTest {
 
     @Test
     void testKeyValueNoInformation() throws IOException {
-        input.println("{\"type\":\"Place\",\"content\":{\"name\":{\"name\": \"Kleintheater Schlösslekeller\"}}}");
+        input.println("""
+                {"type":"Place","content":{"name":{"name": "Kleintheater Schlösslekeller"}}}""");
         var importer = readJson();
 
         assertThat(importer).singleElement()

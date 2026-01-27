@@ -58,4 +58,8 @@ public class OsmlineTestRow {
     public Long getPlaceId() {
         return this.placeId;
     }
+
+    public String getPlaceString() {
+        return Long.toString(this.placeId);
+    }
 }

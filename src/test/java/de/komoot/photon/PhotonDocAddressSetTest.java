@@ -14,7 +14,7 @@ import static org.assertj.core.api.Assertions.*;
 
 class PhotonDocAddressSetTest {
     private final PhotonDoc baseDoc = new PhotonDoc()
-            .placeId(10000).osmType("N").osmId(123).tagKey("place").tagValue("house")
+            .placeId("10000").osmType("N").osmId(123).tagKey("place").tagValue("house")
             .countryCode("de");
 
     @BeforeEach
@@ -28,7 +28,7 @@ class PhotonDocAddressSetTest {
                 () -> assertNotSame(baseDoc, doc),
                 () -> assertEquals("place", doc.getTagKey()),
                 () -> assertEquals("house", doc.getTagValue()),
-                () -> assertEquals(10000, doc.getPlaceId()),
+                () -> assertEquals("10000", doc.getPlaceId()),
                 () -> assertEquals("N", doc.getOsmType()),
                 () -> assertEquals(123, doc.getOsmId()),
                 () -> assertEquals(housenumber, doc.getHouseNumber())

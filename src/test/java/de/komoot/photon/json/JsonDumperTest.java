@@ -83,7 +83,7 @@ class JsonDumperTest {
     }
 
     private String filterByPlaceId(List<String> results, long placeID) {
-        return results.stream().filter(s -> s.contains(String.format("\"place_id\":%d,", placeID))).findFirst().orElse(null);
+        return results.stream().filter(s -> s.contains(String.format("\"place_id\":\"%d\",", placeID))).findFirst().orElse(null);
     }
 
     private JsonMapAssert assertThatPlaceDocument(List<String> results, long placeID) {
@@ -176,8 +176,8 @@ class JsonDumperTest {
                 .containsEntry("type", NominatimPlaceDocument.DOCUMENT_TYPE)
                 .node("content")
                 .isEqualTo(List.of(
-                        Map.of("place_id", osmline.getPlaceId(), "housenumber", "45"),
-                        Map.of("place_id", osmline.getPlaceId(), "housenumber", "46")
+                        Map.of("place_id", osmline.getPlaceString(), "housenumber", "45"),
+                        Map.of("place_id", osmline.getPlaceString(), "housenumber", "46")
                 ));
     }
 

@@ -27,7 +27,7 @@ class QueryFilterLayerTest extends ESBaseTester {
         int[] docRanks = {10, 13, 14, 22}; // state, city * 2, locality
         for (int rank : docRanks) {
             instance.add(List.of(new PhotonDoc()
-                            .placeId(id).osmType("W").osmId(++id).tagKey("place").tagValue("value")
+                            .placeId(Integer.toString(id)).osmType("W").osmId(++id).tagKey("place").tagValue("value")
                             .names(makeDocNames("name", "berlin"))
                             .centroid(makePoint(10, 10))
 

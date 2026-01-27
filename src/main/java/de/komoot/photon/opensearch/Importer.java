@@ -23,7 +23,7 @@ public class Importer implements de.komoot.photon.Importer {
 
     @Override
     public void add(Iterable<PhotonDoc> docs) {
-        Long placeID = null;
+        String placeID = null;
         int objectId = 0;
         for (var doc : docs) {
             if (objectId == 0) {

@@ -26,7 +26,7 @@ class ApiDedupeTest extends ApiBaseTester {
         instance.add(
             List.of(
                 new PhotonDoc()
-                    .placeId(1000)
+                    .placeId("1000")
                     .osmType("W")
                     .osmId(1000)
                     .tagKey("highway")
@@ -40,7 +40,7 @@ class ApiDedupeTest extends ApiBaseTester {
         instance.add(
             List.of(
                 new PhotonDoc()
-                    .placeId(1001)
+                    .placeId("1001")
                     .osmType("W")
                     .osmId(1001)
                     .tagKey("highway")

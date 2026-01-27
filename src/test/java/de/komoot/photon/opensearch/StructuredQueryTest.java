@@ -45,13 +45,13 @@ public class StructuredQueryTest extends ESBaseTester {
         setUpES(dataDirectory);
         Importer instance = makeImporter();
 
-        var country = new PhotonDoc(0, "R", 0, "place", "country")
+        var country = new PhotonDoc("0", "R", 0, "place", "country")
                 .names(makeDocNames("name", "Germany"))
                 .countryCode(COUNTRY_CODE)
                 .importance(1.0)
                 .rankAddress(getRank(AddressType.COUNTRY));
 
-        var city = new PhotonDoc(1, "R", 1, "place", "city")
+        var city = new PhotonDoc("1", "R", 1, "place", "city")
                 .names(makeDocNames("name", CITY))
                 .countryCode(COUNTRY_CODE)
                 .postcode("12345")
@@ -60,7 +60,7 @@ public class StructuredQueryTest extends ESBaseTester {
 
         Map<String, String> address = new HashMap<>();
         address.put("city", CITY);
-        var suburb = new PhotonDoc(2, "N", 2, "place", "suburb")
+        var suburb = new PhotonDoc("2", "N", 2, "place", "suburb")
                 .names(makeDocNames("name", DISTRICT))
                 .countryCode(COUNTRY_CODE)
                 .postcode(DISTRICT_POST_CODE)
@@ -68,7 +68,7 @@ public class StructuredQueryTest extends ESBaseTester {
                 .importance(1.0)
                 .rankAddress(getRank(AddressType.DISTRICT));
 
-        var street = new PhotonDoc(3, "W", 3, "place", "street")
+        var street = new PhotonDoc("3", "W", 3, "place", "street")
                 .names(makeDocNames("name", STREET))
                 .countryCode(COUNTRY_CODE)
                 .postcode("12345")
@@ -77,7 +77,7 @@ public class StructuredQueryTest extends ESBaseTester {
                 .rankAddress(getRank(AddressType.STREET));
 
         address.put("street", STREET);
-        var house = new PhotonDoc(4, "R", 4, "place", "house")
+        var house = new PhotonDoc("4", "R", 4, "place", "house")
                 .countryCode(COUNTRY_CODE)
                 .postcode("12345")
                 .addAddresses(address, getProperties().getLanguages())
@@ -85,7 +85,7 @@ public class StructuredQueryTest extends ESBaseTester {
                 .importance(1.0)
                 .rankAddress(getRank(AddressType.HOUSE));
 
-        var busStop = new PhotonDoc(8, "N", 8, "highway", "house")
+        var busStop = new PhotonDoc("8", "N", 8, "highway", "house")
                 .names(makeDocNames("name", CITY + ' ' + STREET))
                 .countryCode(COUNTRY_CODE)
                 .postcode("12345")
@@ -262,7 +262,7 @@ public class StructuredQueryTest extends ESBaseTester {
         hamletAddress.put("city", CITY);
         hamletAddress.put("suburb", HAMLET);
 
-        var doc = new PhotonDoc(id, "R", id, "place", "house")
+        var doc = new PhotonDoc(Integer.toString(id), "R", id, "place", "house")
                 .countryCode(COUNTRY_CODE)
                 .addAddresses(hamletAddress, getProperties().getLanguages())
                 .houseNumber(houseNumber)

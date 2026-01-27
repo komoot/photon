@@ -30,7 +30,7 @@ class QueryRelevanceTest extends ESBaseTester {
 
     private PhotonDoc createDoc(String key, String value, long id, String... names) {
         return new PhotonDoc()
-                .placeId(id).osmType("N").osmId(id).tagKey(key).tagValue(value)
+                .placeId(Long.toString(id)).osmType("N").osmId(id).tagKey(key).tagValue(value)
                 .names(makeDocNames(names));
     }
 

@@ -157,7 +157,7 @@ public class PlacexTestRow {
     }
 
     public void assertEquals(PhotonDoc doc) throws ParseException {
-        Assertions.assertEquals(placeId, doc.getPlaceId());
+        Assertions.assertEquals(Long.toString(placeId), doc.getPlaceId());
         Assertions.assertEquals(osmType, doc.getOsmType());
         Assertions.assertEquals(osmId, (Long) doc.getOsmId());
         Assertions.assertEquals(key, doc.getTagKey());
@@ -171,6 +171,10 @@ public class PlacexTestRow {
 
     public Long getPlaceId() {
         return this.placeId;
+    }
+
+    public String getPlaceString() {
+        return Long.toString(this.placeId);
     }
 
     public Map<String, String> getNames() {

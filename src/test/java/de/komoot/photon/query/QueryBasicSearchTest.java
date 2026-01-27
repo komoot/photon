@@ -34,7 +34,7 @@ class QueryBasicSearchTest extends ESBaseTester {
     private PhotonDoc createDoc(String... names) {
         ++testDocId;
         return new PhotonDoc()
-                .placeId(testDocId).osmType("N").osmId(testDocId).tagKey("place").tagValue("city")
+                .placeId(Integer.toString(testDocId)).osmType("N").osmId(testDocId).tagKey("place").tagValue("city")
                 .names(makeDocNames(names));
     }
 

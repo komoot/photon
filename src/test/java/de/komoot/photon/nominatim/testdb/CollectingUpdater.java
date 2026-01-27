@@ -11,7 +11,7 @@ import static org.assertj.core.api.Assertions.*;
 
 public class CollectingUpdater implements Updater {
     private final List<PhotonDoc> created = new ArrayList<>();
-    private final List<Long> deleted = new ArrayList<>();
+    private final List<String> deleted = new ArrayList<>();
     private int finishCalled = 0;
 
     @Override
@@ -23,7 +23,7 @@ public class CollectingUpdater implements Updater {
     }
 
     @Override
-    public void delete(long docId) {
+    public void delete(String docId) {
         deleted.add(docId);
     }
 
@@ -34,7 +34,7 @@ public class CollectingUpdater implements Updater {
         return finishCalled;
     }
 
-    public ListAssert<Long> assertThatDeleted() {
+    public ListAssert<String> assertThatDeleted() {
         return assertThat(deleted);
     }
 

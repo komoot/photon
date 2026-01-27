@@ -34,7 +34,7 @@ class ApiLanguageSelectionTest extends ApiBaseTester {
         Importer instance = makeImporter();
 
         instance.add(List.of(new PhotonDoc()
-                        .placeId(1000).osmType("N").osmId(23).tagKey("place").tagValue("city")
+                        .placeId("1000").osmType("N").osmId(23).tagKey("place").tagValue("city")
                         .centroid(makePoint(34.0, 2.0))
                         .names(makeDocNames(
                                 "name", "this",

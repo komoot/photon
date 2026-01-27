@@ -10,7 +10,7 @@ import static org.assertj.core.api.Assertions.*;
 class PhotonDocTest {
 
     private PhotonDoc simplePhotonDoc() {
-        return new PhotonDoc(1, "W", 2, "highway", "residential").houseNumber("4");
+        return new PhotonDoc("1", "W", 2, "highway", "residential").houseNumber("4");
     }
 
     @Test
@@ -37,7 +37,7 @@ class PhotonDocTest {
 
     @Test
     void testAddCountryCode() {
-        PhotonDoc doc = new PhotonDoc(1, "W", 2, "highway", "residential").countryCode("de");
+        PhotonDoc doc = new PhotonDoc("1", "W", 2, "highway", "residential").countryCode("de");
 
         assertThat(doc.getCountryCode())
                 .isEqualTo("DE");

@@ -33,7 +33,7 @@ class ImporterTest extends ESBaseTester {
         Importer instance = makeImporter();
 
         instance.add(List.of(
-                new PhotonDoc(1234, "N", 1000, "place", "city")
+                new PhotonDoc("1234", "N", 1000, "place", "city")
                         .geometry(new WKTReader().read("MULTIPOLYGON (((6.111933 51.2659309, 6.1119417 51.2659247, 6.1119554 51.2659249, 6.1119868 51.2659432, 6.111964 51.2659591, 6.1119333 51.2659391, 6.111933 51.2659309)))"))
                         .extraTags(Collections.singletonMap("maxspeed", "100"))));
         instance.finish();
@@ -55,8 +55,8 @@ class ImporterTest extends ESBaseTester {
         Importer instance = makeImporter();
 
         instance.add(List.of(
-                new PhotonDoc(4432, "N", 100, "building", "yes").houseNumber("34"),
-                new PhotonDoc(4432, "N", 100, "building", "yes").houseNumber("35")));
+                new PhotonDoc("4432", "N", 100, "building", "yes").houseNumber("34"),
+                new PhotonDoc("4432", "N", 100, "building", "yes").houseNumber("35")));
         instance.finish();
 
         PhotonResult response = getById("4432");
@@ -91,10 +91,10 @@ class ImporterTest extends ESBaseTester {
         extratags.put("source", "survey");
 
         instance.add(List.of(
-                new PhotonDoc(1234, "N", 1000, "place", "city")
+                new PhotonDoc("1234", "N", 1000, "place", "city")
                         .extraTags(extratags)));
         instance.add(List.of(
-                new PhotonDoc(1235, "N", 1001, "place", "city")
+                new PhotonDoc("1235", "N", 1001, "place", "city")
                         .extraTags(Collections.singletonMap("wikidata", "100"))));
         instance.finish();
 
@@ -119,11 +119,11 @@ class ImporterTest extends ESBaseTester {
         Importer instance = makeImporter();
 
         instance.add(List.of(
-                new PhotonDoc(113344, "N", 1, "place", "yes")
+                new PhotonDoc("113344", "N", 1, "place", "yes")
         ));
         // Photon will log an error here and ignore the offending document.
         instance.add(List.of(
-                new PhotonDoc(113344, "N", 2, "place", "yes")
+                new PhotonDoc("113344", "N", 2, "place", "yes")
         ));
         instance.finish();
 

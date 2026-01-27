@@ -14,7 +14,7 @@ public class OsmlineRowMapper implements RowMapper<PhotonDoc> {
     @NotNull
     public PhotonDoc mapRow(ResultSet rs, int rowNum) throws SQLException {
         return new PhotonDoc(
-                rs.getLong("place_id"),
+                Long.toString(rs.getLong("place_id")),
                 "W", rs.getLong("osm_id"),
                 "place", "house_number")
                 .countryCode(rs.getString("country_code"))

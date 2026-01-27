@@ -29,7 +29,7 @@ class QueryByClassificationTest extends ESBaseTester {
     private PhotonDoc createDoc(String key, String value, String name) {
         ++testDocId;
         return new PhotonDoc()
-                .placeId(testDocId).osmType("W").osmId(testDocId)
+                .placeId(Integer.toString(testDocId)).osmType("W").osmId(testDocId)
                 .tagKey(key).tagValue(value)
                 .categories(List.of(String.join(".", "osm", key, value)))
                 .names(makeDocNames("name", name));

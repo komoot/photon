@@ -43,7 +43,7 @@ class QueryFilterTagValueTest extends ESBaseTester {
         for (var entry : TAGS) {
             for (int j = 0; j < 2; ++j) {
                 instance.add(List.of(new PhotonDoc()
-                        .placeId(i).osmType("N").osmId(i).tagKey(entry.getKey()).tagValue(entry.getValue())
+                        .placeId(Integer.toString(i)).osmType("N").osmId(i).tagKey(entry.getKey()).tagValue(entry.getValue())
                         .centroid(makePoint(lon, lat))
                         .names(makeDocNames("name", "myPlace"))));
                 lon += 0.00004;
