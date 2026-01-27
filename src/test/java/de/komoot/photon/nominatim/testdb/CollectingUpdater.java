@@ -3,12 +3,14 @@ package de.komoot.photon.nominatim.testdb;
 import de.komoot.photon.PhotonDoc;
 import de.komoot.photon.Updater;
 import org.assertj.core.api.ListAssert;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
 
+@NullMarked
 public class CollectingUpdater implements Updater {
     private final List<PhotonDoc> created = new ArrayList<>();
     private final List<String> deleted = new ArrayList<>();

@@ -3,11 +3,13 @@ package de.komoot.photon.opensearch;
 import de.komoot.photon.PhotonDoc;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jspecify.annotations.NullMarked;
 import org.opensearch.client.opensearch.OpenSearchClient;
 import org.opensearch.client.opensearch.core.BulkRequest;
 
 import java.io.IOException;
 
+@NullMarked
 public class Updater implements de.komoot.photon.Updater {
     private static final Logger LOGGER = LogManager.getLogger();
 
