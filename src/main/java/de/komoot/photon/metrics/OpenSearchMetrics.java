@@ -6,18 +6,20 @@ import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.binder.MeterBinder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import org.opensearch.client.opensearch.OpenSearchClient;
 import org.opensearch.client.opensearch._types.HealthStatus;
 
+@NullMarked
 public class OpenSearchMetrics implements MeterBinder {
     private static final Logger LOGGER = LogManager.getLogger();
     private static final long CACHE_TTL_MS = 30_000;
 
     private final OpenSearchClient client;
-    private volatile CachedStats cache;
+    @Nullable private volatile CachedStats cache;
 
-    public OpenSearchMetrics(@NotNull OpenSearchClient client) {
+    public OpenSearchMetrics(OpenSearchClient client) {
         this.client = client;
     }
 
@@ -41,7 +43,7 @@ public class OpenSearchMetrics implements MeterBinder {
     }
 
     @Override
-    public void bindTo(@NotNull MeterRegistry registry) {
+    public void bindTo(MeterRegistry registry) {
         Gauge.builder("opensearch.documents.count", client, this::getDocumentCount)
                 .tag("index", PhotonIndex.NAME).register(registry);
         Gauge.builder("opensearch.index.size.bytes", client, this::getIndexSizeBytes)
@@ -60,7 +62,6 @@ public class OpenSearchMetrics implements MeterBinder {
         Gauge.builder("opensearch.cluster.health.status", client, this::getHealthStatus).register(registry);
     }
 
-    @NotNull
     private CachedStats getCache() {
         CachedStats current = cache;
         if (current == null || current.isExpired()) {
@@ -75,7 +76,6 @@ public class OpenSearchMetrics implements MeterBinder {
         return current != null ? current : createEmptyCache();
     }
 
-    @NotNull
     private CachedStats createEmptyCache() {
         return new CachedStats(System.currentTimeMillis(), 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
     }
