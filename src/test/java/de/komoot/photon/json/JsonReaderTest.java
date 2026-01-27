@@ -125,7 +125,24 @@ class JsonReaderTest {
 
         assertThat(importer).singleElement()
                 .hasFieldOrPropertyWithValue("placeId", "X45D4");
+    }
 
+    @Test
+    void testPlaceIDTooLong() {
+        input.println(TEST_SIMPLE_STREAM.replaceFirst("100818", "1".repeat(61)));
+
+        assertThatIOException()
+                .isThrownBy(() -> readJson())
+                .withMessageContaining("exceed 60 char");
+    }
+
+    @Test
+    void testPlaceIDInvalidCharacters() {
+        input.println(TEST_SIMPLE_STREAM.replaceFirst("100818", "\"a b@\""));
+
+        assertThatIOException()
+                .isThrownBy(() -> readJson())
+                .withMessageContaining("must only consist of letters");
     }
 
     @Test
