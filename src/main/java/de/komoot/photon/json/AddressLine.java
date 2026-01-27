@@ -10,9 +10,6 @@ public class AddressLine {
     @JsonProperty("rank_address")
     public int rankAddress;
 
-    @JsonProperty("fromarea")
-    public boolean fromArea;
-
     @JsonProperty("isaddress")
     public boolean isAddress;
 }
