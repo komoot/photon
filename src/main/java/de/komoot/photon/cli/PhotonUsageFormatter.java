@@ -4,11 +4,14 @@ import com.beust.jcommander.IUsageFormatter;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameters;
 import de.komoot.photon.config.*;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Arrays;
 
 import static java.lang.Boolean.FALSE;
 
+@NullMarked
 public class PhotonUsageFormatter implements IUsageFormatter {
     private static final String[] OPTION_GROUPS = {
             GeneralConfig.GROUP,
@@ -53,7 +56,7 @@ public class PhotonUsageFormatter implements IUsageFormatter {
     }
 
     @Override
-    public void usage(String command, StringBuilder stringBuilder, String indent) {
+    public void usage(@Nullable String command, StringBuilder stringBuilder, String indent) {
         if (command == null) {
             generalHelp(stringBuilder, indent);
         } else {
@@ -74,6 +77,7 @@ public class PhotonUsageFormatter implements IUsageFormatter {
     }
 
     @Override
+    @Nullable
     public String getCommandDescription(String command) {
         var jc = commander.findCommandByAlias(command);
 

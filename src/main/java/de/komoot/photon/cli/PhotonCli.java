@@ -5,7 +5,10 @@ import com.beust.jcommander.ParameterException;
 import de.komoot.photon.config.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
+@NullMarked
 public class PhotonCli {
     private static final Logger LOGGER = LogManager.getLogger();
 
@@ -58,6 +61,7 @@ public class PhotonCli {
         jCommander.setUsageFormatter(new PhotonUsageFormatter(jCommander));
     }
 
+    @Nullable
     public Commands parse(String[] args) {
         try {
             jCommander.parse(args);
