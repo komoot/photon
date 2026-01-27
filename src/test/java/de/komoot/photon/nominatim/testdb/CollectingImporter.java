@@ -4,6 +4,7 @@ import org.assertj.core.api.ListAssert;
 import org.assertj.core.api.ObjectAssert;
 import de.komoot.photon.Importer;
 import de.komoot.photon.PhotonDoc;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.AbstractList;
 import java.util.ArrayList;
@@ -11,6 +12,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
 
+@NullMarked
 public class CollectingImporter extends AbstractList<PhotonDoc> implements Importer {
     private final List<PhotonDoc> docs = new ArrayList<>();
     private int finishCalled = 0;
@@ -44,7 +46,7 @@ public class CollectingImporter extends AbstractList<PhotonDoc> implements Impor
     }
 
     public ObjectAssert<PhotonDoc> assertThatByPlaceId(String placeId) {
-        return assertThat(docs.stream().filter(d -> d.getPlaceId().equals(placeId)))
+        return assertThat(docs.stream().filter(d -> placeId.equals(d.getPlaceId())))
                 .hasSize(1)
                 .first();
     }
@@ -55,13 +57,13 @@ public class CollectingImporter extends AbstractList<PhotonDoc> implements Impor
     }
 
     public ListAssert<PhotonDoc> assertThatAllByRow(OsmlineTestRow row) {
-        return assertThat(docs.stream().filter(d -> d.getPlaceId().equals(row.getPlaceString())))
+        return assertThat(docs.stream().filter(d -> row.getPlaceString().equals(d.getPlaceId())))
                 .isNotEmpty()
                 .allSatisfy(row::assertEquals);
     }
 
     public ListAssert<PhotonDoc> assertThatAllByRow(PlacexTestRow row) {
-        return assertThat(docs.stream().filter(d -> d.getPlaceId().equals(row.getPlaceString())))
+        return assertThat(docs.stream().filter(d -> row.getPlaceString().equals(d.getPlaceId())))
                 .isNotEmpty()
                 .allSatisfy(row::assertEquals);
     }
