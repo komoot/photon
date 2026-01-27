@@ -5,11 +5,8 @@ import de.komoot.photon.config.PostgresqlConfig;
 import de.komoot.photon.nominatim.model.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jetbrains.annotations.NotNull;
 import org.locationtech.jts.geom.Geometry;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 
 import java.util.*;
 import java.util.concurrent.locks.ReentrantLock;
@@ -109,7 +106,6 @@ public class NominatimUpdater extends NominatimConnector {
         osmlineBaseSQL = osmlineRowMapper.makeBaseQuery(dataAdapter);
         osmlineToNominatimResult = (rs, rownum) -> {
             PhotonDoc doc = osmlineRowMapper.mapRow(rs, rownum);
-            assert doc != null;
 
             if (rs.getString("parent_class") != null) {
                 doc.addAddresses(List.of(AddressRow.make(
@@ -147,12 +143,9 @@ public class NominatimUpdater extends NominatimConnector {
 
     public void initUpdates(String updateUser) {
         LOGGER.info("Creating tracking tables");
-        txTemplate.execute(new TransactionCallbackWithoutResult() {
-            @Override
-            protected void doInTransactionWithoutResult(@NotNull TransactionStatus status) {
+        txTemplate.executeWithoutResult((t) -> {
                 template.execute(TRIGGER_SQL);
                 template.execute("GRANT SELECT, DELETE ON photon_updates TO \"" + updateUser + '"');
-            }
         });
     }
 
