@@ -41,7 +41,7 @@ public class ImportFilterConfig {
     }
 
     public String[] getCountryCodes() {
-        return this.countryCodes.toArray(new String[0]);
+        return this.countryCodes.toArray(String[]::new);
     }
 
     public ConfigExtraTags getExtraTags() {

@@ -16,6 +16,8 @@ import io.javalin.Javalin;
 import io.javalin.http.ContentType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import org.locationtech.jts.geom.Envelope;
 
 import java.io.File;
@@ -30,10 +32,11 @@ import static de.komoot.photon.metrics.MetricsConfig.setupMetrics;
 /**
  * Main Photon application.
  */
+@NullMarked
 public class App {
     private static final Logger LOGGER = LogManager.getLogger();
-    private static final AtomicReference<Server> esServer = new AtomicReference<>();
-    private static Javalin photonServer;
+    private static final AtomicReference<@Nullable Server> esServer = new AtomicReference<>();
+    @Nullable private static Javalin photonServer;
 
     public static void main(String[] rawArgs) throws Exception {
         PhotonCli cli = new PhotonCli();
@@ -78,26 +81,27 @@ public class App {
         }
 
         LOGGER.info("Start up database cluster, this might take some time.");
-        esServer.set(new Server(cli.getPhotonDBConfig(), command == Commands.CMD_IMPORT));
+        var server = new Server(cli.getPhotonDBConfig(), command == Commands.CMD_IMPORT);
+        esServer.set(server);
         LOGGER.info("Database cluster is now ready.");
 
         if (command == Commands.CMD_IMPORT) {
-            startNominatimImport(cli, esServer.get());
+            startNominatimImport(cli, server);
             return true;
         }
 
         if (command == Commands.CMD_UPDATE) {
             startNominatimUpdate(
-                    setupNominatimUpdater(cli.getPostgresqlConfig(), cli.getImportFilterConfig(), esServer.get()),
-                    esServer.get());
+                    setupNominatimUpdater(cli.getPostgresqlConfig(), cli.getImportFilterConfig(), server),
+                    server);
             return true;
         }
 
         // No special action specified -> normal mode: start search API
         startApi(
                 cli.getApiServerConfig(),
-                esServer.get(),
-                cli.getApiServerConfig().isEnableUpdateApi() ? setupNominatimUpdater(cli.getPostgresqlConfig(), cli.getImportFilterConfig(), esServer.get()) : null);
+                server,
+                cli.getApiServerConfig().isEnableUpdateApi() ? setupNominatimUpdater(cli.getPostgresqlConfig(), cli.getImportFilterConfig(), server) : null);
 
         return false;
     }
@@ -177,6 +181,7 @@ public class App {
         LOGGER.info("Database has been successfully set up with the following properties:\n{}", dbProperties);
     }
 
+    @Nullable
     private static Date importFromDatabase(PostgresqlConfig postgresqlConfig, int numThreads, String[] filterCountries,
                                            ImportThread importThread, DatabaseProperties dbProperties) {
         LOGGER.info("Connecting to {}", postgresqlConfig.toString());
@@ -186,7 +191,7 @@ public class App {
 
         String[] countries;
 
-        if (filterCountries == null || filterCountries.length == 0) {
+        if (filterCountries.length == 0) {
             countries = connector.getCountriesFromDatabase();
         } else {
             countries = Arrays.stream(filterCountries)
@@ -240,6 +245,7 @@ public class App {
         return connector.getLastImportDate();
     }
 
+    @Nullable
     private static Date importFromFile(ImportFileConfig importFileConfig, ImportFilterConfig args, ImportThread importerThread) throws IOException {
         JsonReader reader;
         final String importFile = importFileConfig.getImportFile();
@@ -306,13 +312,13 @@ public class App {
     /**
      * Start API server to accept search requests via http.
      */
-    private static void startApi(ApiServerConfig args, Server server, NominatimUpdater updater) throws IOException {
+    private static void startApi(ApiServerConfig args, Server server, @Nullable NominatimUpdater updater) throws IOException {
         // Get database properties and ensure that the version is compatible.
         DatabaseProperties dbProperties = server.loadFromDatabase();
 
         // Update the index settings in case there are any changes.
-        esServer.get().updateIndexSettings(args.getSynonymFile());
-        esServer.get().refreshIndexes();
+        server.updateIndexSettings(args.getSynonymFile());
+        server.refreshIndexes();
 
         LOGGER.info("""
                         Starting API with the following settings:
