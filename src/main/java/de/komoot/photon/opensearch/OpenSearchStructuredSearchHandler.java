@@ -3,6 +3,7 @@ package de.komoot.photon.opensearch;
 import de.komoot.photon.searcher.PhotonResult;
 import de.komoot.photon.query.StructuredSearchRequest;
 import de.komoot.photon.searcher.SearchHandler;
+import org.jspecify.annotations.NullMarked;
 import org.opensearch.client.opensearch.OpenSearchClient;
 import org.opensearch.client.opensearch._types.SearchType;
 import org.opensearch.client.opensearch._types.query_dsl.Query;
@@ -15,6 +16,7 @@ import java.io.IOException;
 /**
  * Execute a structured forward lookup on an Elasticsearch database.
  */
+@NullMarked
 public class OpenSearchStructuredSearchHandler implements SearchHandler<StructuredSearchRequest> {
     private final OpenSearchClient client;
     private final String queryTimeout;

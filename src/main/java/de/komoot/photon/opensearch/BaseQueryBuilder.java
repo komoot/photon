@@ -1,6 +1,7 @@
 package de.komoot.photon.opensearch;
 
 import de.komoot.photon.searcher.TagFilter;
+import org.jspecify.annotations.NullMarked;
 import org.opensearch.client.opensearch._types.FieldValue;
 import org.opensearch.client.opensearch._types.query_dsl.BoolQuery;
 import org.opensearch.client.opensearch._types.query_dsl.Query;
@@ -13,6 +14,7 @@ import java.util.stream.Collectors;
  * Provides the basic query structure as well as functions to
  * add sub-queries for the common query parameters.
  */
+@NullMarked
 public class BaseQueryBuilder {
     protected final BoolQuery.Builder outerQuery = new BoolQuery.Builder();
 

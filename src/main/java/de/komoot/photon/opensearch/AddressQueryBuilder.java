@@ -1,12 +1,15 @@
 package de.komoot.photon.opensearch;
 
 import de.komoot.photon.Constants;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import org.opensearch.client.opensearch._types.FieldValue;
 import org.opensearch.client.opensearch._types.query_dsl.*;
 import org.opensearch.common.unit.Fuzziness;
 
 import java.util.Objects;
 
+@NullMarked
 public class AddressQueryBuilder {
     private static final float STATE_BOOST = 0.1f; // state is unreliable - some locations have e.g. "NY", some "New York".
     private static final float COUNTY_BOOST = 4.0f;
@@ -16,11 +19,11 @@ public class AddressQueryBuilder {
     private static final float STREET_BOOST = 5.0f; // we filter streets in the wrong city / district / ... so we can use a high boost value
     private static final float HOUSE_NUMBER_BOOST = 10.0f;
 
-    private BoolQuery.Builder query = QueryBuilders.bool();
+    private final BoolQuery.Builder query = QueryBuilders.bool();
 
-    private BoolQuery.Builder cityFilter;
+    private BoolQuery.@Nullable Builder cityFilter;
 
-    private boolean lenient;
+    private final boolean lenient;
 
     public AddressQueryBuilder(boolean lenient) {
         this.lenient = lenient;
@@ -30,7 +33,7 @@ public class AddressQueryBuilder {
         return query.build().toQuery();
     }
 
-    public AddressQueryBuilder addCountryCode(String countryCode, boolean hasMoreDetails) {
+    public AddressQueryBuilder addCountryCode(@Nullable String countryCode, boolean hasMoreDetails) {
         if (countryCode == null) return this;
 
         query.filter(QueryBuilders.term().field(Constants.COUNTRYCODE).value(FieldValue.of(countryCode.toUpperCase())).build().toQuery());
@@ -46,7 +49,7 @@ public class AddressQueryBuilder {
         return this;
     }
 
-    public AddressQueryBuilder addState(String state, boolean hasMoreDetails) {
+    public AddressQueryBuilder addState(@Nullable String state, boolean hasMoreDetails) {
         if (state == null) return this;
 
         var stateQuery = getNameOrFieldQuery(Constants.STATE, state, STATE_BOOST, "state", hasMoreDetails);
@@ -54,14 +57,14 @@ public class AddressQueryBuilder {
         return this;
     }
 
-    public AddressQueryBuilder addCounty(String county, boolean hasMoreDetails) {
+    public AddressQueryBuilder addCounty(@Nullable String county, boolean hasMoreDetails) {
         if (county == null) return this;
 
         addNameOrFieldQuery(Constants.COUNTY, county, COUNTY_BOOST, "county", hasMoreDetails);
         return this;
     }
 
-    public AddressQueryBuilder addCity(String city, boolean hasDistrict, boolean hasStreet, boolean hasPostCode) {
+    public AddressQueryBuilder addCity(@Nullable String city, boolean hasDistrict, boolean hasStreet, boolean hasPostCode) {
         if (city == null) return this;
 
         Query combinedQuery;
@@ -122,7 +125,7 @@ public class AddressQueryBuilder {
         cityFilter.should(query);
     }
 
-    public AddressQueryBuilder addPostalCode(String postalCode) {
+    public AddressQueryBuilder addPostalCode(@Nullable String postalCode) {
         if (postalCode == null) return this;
 
         Fuzziness fuzziness = lenient ? Fuzziness.AUTO : Fuzziness.ZERO;
@@ -152,14 +155,14 @@ public class AddressQueryBuilder {
         return this;
     }
 
-    public AddressQueryBuilder addDistrict(String district, boolean hasMoreDetails) {
+    public AddressQueryBuilder addDistrict(@Nullable String district, boolean hasMoreDetails) {
         if (district == null) return this;
 
         addNameOrFieldQuery(Constants.DISTRICT, district, DISTRICT_BOOST, "district", hasMoreDetails);
         return this;
     }
 
-    public AddressQueryBuilder addStreetAndHouseNumber(String street, String houseNumber) {
+    public AddressQueryBuilder addStreetAndHouseNumber(@Nullable String street, @Nullable String houseNumber) {
         if (street == null) {
             if (houseNumber != null) {
                 // some hamlets have no street name and only number the buildings
