@@ -1,6 +1,7 @@
 package de.komoot.photon.nominatim.model;
 
 import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Map;
 
@@ -11,10 +12,10 @@ import java.util.Map;
 public class AddressRow {
     private final NameMap name;
     private final ContextMap context;
-    private final AddressType addressType;
+    @Nullable private final AddressType addressType;
     private final boolean isPostCode;
 
-    private AddressRow(NameMap name, ContextMap context, AddressType addressType, boolean isPostCode) {
+    private AddressRow(NameMap name, ContextMap context, @Nullable AddressType addressType, boolean isPostCode) {
         this.name = name;
         this.context = context;
         this.addressType = addressType;
@@ -30,7 +31,7 @@ public class AddressRow {
             return new AddressRow(
                     new NameMap().setName("ref", name, "ref"),
                     context,
-                    AddressType.fromRank(rankAddress, AddressType.OTHER),
+                    AddressType.fromRank(rankAddress),
                     true
             );
         } else {
@@ -41,10 +42,11 @@ public class AddressRow {
         return new AddressRow(
                 new NameMap().setLocaleNames(name, languages),
                 context,
-                AddressType.fromRank(rankAddress, AddressType.OTHER),
+                AddressType.fromRank(rankAddress),
                 false);
     }
 
+    @Nullable
     public AddressType getAddressType() {
         return addressType;
     }

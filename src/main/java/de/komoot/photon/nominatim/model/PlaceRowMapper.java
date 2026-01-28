@@ -8,6 +8,7 @@ import org.springframework.jdbc.core.RowMapper;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Pattern;
 
 /**
@@ -49,7 +50,7 @@ public class PlaceRowMapper implements RowMapper<PhotonDoc> {
                 .categories(List.of(String.format("osm.%s.%s", osmKey, osmValue)))
                 .bbox(dbutils.extractGeometry(rs, "bbox"))
                 .countryCode(rs.getString("country_code"))
-                .centroid(dbutils.extractGeometry(rs, "centroid"))
+                .centroid(Objects.requireNonNull(dbutils.extractGeometry(rs, "centroid")))
                 .rankAddress(rs.getInt("rank_address"))
                 .postcode(rs.getString("postcode"));
 

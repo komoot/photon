@@ -54,12 +54,6 @@ public enum AddressType {
         return null;
     }
 
-    public static AddressType fromRank(int addressRank, AddressType defaultValue) {
-        var atype = fromRank(addressRank);
-
-        return atype == null ? defaultValue : atype;
-    }
-
     /**
      * Check if the given address rank is mapped to the given address type.
      *

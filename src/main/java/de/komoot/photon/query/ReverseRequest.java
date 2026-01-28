@@ -42,8 +42,10 @@ public class ReverseRequest extends RequestBase {
         }
     }
 
-    public void setQueryStringFilter(String queryStringFilter) {
-        this.queryStringFilter = queryStringFilter;
+    public void setQueryStringFilter(@Nullable String queryStringFilter) {
+        if (queryStringFilter != null) {
+            this.queryStringFilter = queryStringFilter;
+        }
     }
 
     public void setLocationDistanceSort(boolean locationDistanceSort) {

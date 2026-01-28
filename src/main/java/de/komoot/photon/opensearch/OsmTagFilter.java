@@ -43,16 +43,22 @@ public class OsmTagFilter {
 
     private void addOsmTagFilter(TagFilter filter) {
         if (filter.kind() == TagFilterKind.EXCLUDE_VALUE) {
+            assert filter.key() != null;
+            assert filter.value() != null;
             appendIncludeTerm(BoolQuery.of(q -> q
                     .must(makeTermsQuery("osm_key", filter.key()))
                     .mustNot(makeTermsQuery("osm_value", filter.value()))).toQuery());
         } else {
             Query query;
             if (filter.isKeyOnly()) {
+                assert filter.key() != null;
                 query = makeTermsQuery("osm_key", filter.key());
             } else if (filter.isValueOnly()) {
+                assert filter.value() != null;
                 query = makeTermsQuery("osm_value", filter.value());
             } else {
+                assert filter.key() != null;
+                assert filter.value() != null;
                 query = BoolQuery.of(q -> q
                         .must(makeTermsQuery("osm_key", filter.key()))
                         .must(makeTermsQuery("osm_value", filter.value()))).toQuery();

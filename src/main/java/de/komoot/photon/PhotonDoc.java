@@ -233,7 +233,11 @@ public class PhotonDoc {
         final AddressType doctype = getAddressType();
         for (AddressRow address : addresses) {
             if (address.isPostcode()) {
-                this.postcode = address.getName().getOrDefault("ref", this.postcode);
+                if (this.postcode == null) {
+                    this.postcode = address.getName().get("ref");
+                } else {
+                    this.postcode = address.getName().getOrDefault("ref", this.postcode);
+                }
             } else {
                 if (!address.getName().isEmpty()) {
                     final AddressType atype = address.getAddressType();
