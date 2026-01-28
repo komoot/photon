@@ -22,7 +22,10 @@ public class BaseQueryBuilder {
 
     public void addOsmTagFilter(List<TagFilter> filters) {
         if (!filters.isEmpty()) {
-            outerQuery.filter(new OsmTagFilter().withOsmTagFilters(filters).build());
+            var query = new OsmTagFilter().withOsmTagFilters(filters).build();
+            if (query != null) {
+                outerQuery.filter(query);
+            }
         }
     }
 

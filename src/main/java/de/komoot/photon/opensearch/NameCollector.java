@@ -1,5 +1,7 @@
 package de.komoot.photon.opensearch;
 
+import org.jspecify.annotations.NullMarked;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -9,6 +11,7 @@ import java.util.stream.Collectors;
  * Collects strings with a priorities, discarding duplicate strings while
  * keeping the highest priority.
  */
+@NullMarked
 public class NameCollector {
 
     private final Map<String, Integer> terms = new HashMap<>();

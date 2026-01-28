@@ -2,6 +2,8 @@ package de.komoot.photon.opensearch;
 
 import de.komoot.photon.searcher.TagFilter;
 import de.komoot.photon.searcher.TagFilterKind;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import org.opensearch.client.opensearch._types.FieldValue;
 import org.opensearch.client.opensearch._types.query_dsl.BoolQuery;
 import org.opensearch.client.opensearch._types.query_dsl.Query;
@@ -10,9 +12,10 @@ import org.opensearch.client.opensearch._types.query_dsl.TermsQuery;
 import java.util.Collections;
 import java.util.List;
 
+@NullMarked
 public class OsmTagFilter {
-    private BoolQuery.Builder includeTagQueryBuilder = null;
-    private BoolQuery.Builder excludeTagQueryBuilder = null;
+    private BoolQuery.@Nullable Builder includeTagQueryBuilder = null;
+    private BoolQuery.@Nullable Builder excludeTagQueryBuilder = null;
 
     public OsmTagFilter withOsmTagFilters(List<TagFilter> filters) {
         for (var filter : filters) {
@@ -21,6 +24,7 @@ public class OsmTagFilter {
         return this;
     }
 
+    @Nullable
     public Query build() {
         if (includeTagQueryBuilder != null || excludeTagQueryBuilder != null) {
             return BoolQuery.of(q -> {

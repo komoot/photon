@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import de.komoot.photon.*;
 import de.komoot.photon.nominatim.model.AddressType;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.io.geojson.GeoJsonWriter;
 
@@ -12,6 +14,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
+@NullMarked
 public class PhotonDocSerializer extends StdSerializer<PhotonDoc> {
     private final DatabaseProperties dbProperties;
 
@@ -134,7 +137,7 @@ public class PhotonDocSerializer extends StdSerializer<PhotonDoc> {
         gen.writeEndObject();
     }
 
-    private static void writeExtent(JsonGenerator gen, Envelope bbox) throws IOException {
+    private static void writeExtent(JsonGenerator gen, @Nullable Envelope bbox) throws IOException {
         if (bbox == null || bbox.getArea() == 0.) return;
 
         //https://opensearch.org/docs/latest/field-types/supported-field-types/geo-shape/#envelope
