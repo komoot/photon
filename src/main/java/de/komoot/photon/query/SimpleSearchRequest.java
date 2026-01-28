@@ -1,16 +1,20 @@
 package de.komoot.photon.query;
 
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
+
 /**
  * Collection of query parameters for a search request.
  */
+@NullMarked
 public class SimpleSearchRequest extends SearchRequestBase {
-    private String query;
+    @Nullable private String query;
 
-    public String getQuery() {
+    @Nullable public String getQuery() {
         return query;
     }
 
-    public void setQuery(String query) {
+    public void setQuery(@Nullable String query) {
         this.query = query;
     }
 }

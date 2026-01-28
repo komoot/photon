@@ -1,17 +1,21 @@
 package de.komoot.photon.query;
 
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import org.locationtech.jts.geom.Point;
 
 /**
  * Collection of query parameters for a reverse request.
  */
+@NullMarked
 public class ReverseRequest extends RequestBase {
-    private Point location;
+    private final Point location;
     private double radius = 1.0;
-    private String queryStringFilter;
+    @Nullable private String queryStringFilter;
     private boolean locationDistanceSort = true;
 
-    public ReverseRequest() {
+    public ReverseRequest(Point location) {
+        this.location = location;
         setLimit(1, 1);
     }
 
@@ -23,6 +27,7 @@ public class ReverseRequest extends RequestBase {
         return radius;
     }
 
+    @Nullable
     public String getQueryStringFilter() {
         return queryStringFilter;
     }
@@ -31,11 +36,7 @@ public class ReverseRequest extends RequestBase {
         return locationDistanceSort;
     }
 
-    public void setLocation(Point location) {
-        this.location = location;
-    }
-
-    public void setRadius(Double radius) {
+    public void setRadius(@Nullable Double radius) {
         if (radius != null) {
             this.radius = radius;
         }
@@ -45,9 +46,7 @@ public class ReverseRequest extends RequestBase {
         this.queryStringFilter = queryStringFilter;
     }
 
-    public void setLocationDistanceSort(Boolean locationDistanceSort) {
-        if (locationDistanceSort != null) {
-            this.locationDistanceSort = locationDistanceSort;
-        }
+    public void setLocationDistanceSort(boolean locationDistanceSort) {
+        this.locationDistanceSort = locationDistanceSort;
     }
 }

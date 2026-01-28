@@ -53,8 +53,7 @@ class QueryFilterLayerTest extends ESBaseTester {
     }
 
     private List<PhotonResult> reverse(String... layers) {
-        ReverseRequest request = new ReverseRequest();
-        request.setLocation(FACTORY.createPoint(new Coordinate(10, 10)));
+        ReverseRequest request = new ReverseRequest(FACTORY.createPoint(new Coordinate(10, 10)));
         request.setLimit(15, 15);
         request.addLayerFilters(Arrays.stream(layers).collect(Collectors.toSet()));
 

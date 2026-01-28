@@ -1,16 +1,20 @@
 package de.komoot.photon.query;
 
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import org.locationtech.jts.geom.Envelope;
 
 /**
  * Converter which transforms a bbox parameter into an Envelope and performs format checking.
  */
+@NullMarked
 public class BoundingBoxParamConverter {
 
     public static final String INVALID_BBOX_ERROR_MESSAGE = "Invalid number of supplied coordinates for parameter 'bbox', expected format is: minLon,minLat,maxLon,maxLat";
     public static final String INVALID_BBOX_BOUNDS_MESSAGE = "Invalid bounds for parameter 'bbox', expected values minLat, maxLat element [-90,90], minLon, maxLon element [-180,180]";
 
-    public static Envelope apply(String bboxParam) {
+    @Nullable
+    public static Envelope apply(@Nullable String bboxParam) {
         if (bboxParam == null) {
             return null;
         }

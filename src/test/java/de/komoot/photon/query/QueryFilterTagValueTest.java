@@ -73,8 +73,7 @@ class QueryFilterTagValueTest extends ESBaseTester {
     }
 
     private List<PhotonResult> reverseWithTags(String[] params) {
-        ReverseRequest request = new ReverseRequest();
-        request.setLocation(FACTORY.createPoint(new Coordinate(13.38886, 52.51704)));
+        ReverseRequest request = new ReverseRequest(FACTORY.createPoint(new Coordinate(13.38886, 52.51704)));
         request.setLimit(50, 50);
 
         for (String param : params) {

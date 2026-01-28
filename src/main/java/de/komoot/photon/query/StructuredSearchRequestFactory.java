@@ -1,12 +1,14 @@
 package de.komoot.photon.query;
 
 import io.javalin.http.Context;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+@NullMarked
 public class StructuredSearchRequestFactory extends SearchRequestFactoryBase implements RequestFactory<StructuredSearchRequest> {
     private static final List<String> STRUCTURED_ADDRESS_FIELDS = List.of(
             "countrycode", "state", "county", "city",

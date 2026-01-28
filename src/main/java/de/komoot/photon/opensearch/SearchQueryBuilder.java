@@ -17,7 +17,7 @@ public class SearchQueryBuilder extends BaseQueryBuilder {
     double importance_factor = 40.0;
 
     public SearchQueryBuilder(String query, boolean lenient, boolean suggestAddresses) {
-        if (query.isEmpty()) {
+        if (query == null) {
             // Empty query is used for category-only searches (e.g. /api?include=osm.place.city),
             // see SimpleSearchRequestFactory.create
             innerQuery.query(q -> q.matchAll(ma -> ma));
