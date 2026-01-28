@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.komoot.photon.Constants;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -13,6 +15,7 @@ import java.util.Map;
 /**
  * Format a database result into a Photon GeocodeJson response.
  */
+@NullMarked
 public class GeocodeJsonFormatter implements ResultFormatter {
     private static final String[] KEYS_LANG_UNSPEC = {Constants.OSM_TYPE, Constants.OSM_ID, Constants.OSM_KEY, Constants.OSM_VALUE, Constants.OBJECT_TYPE, Constants.POSTCODE, Constants.HOUSENUMBER, Constants.COUNTRYCODE};
     private static final String[] KEYS_LANG_SPEC = {Constants.NAME, Constants.COUNTRY, Constants.CITY, Constants.DISTRICT, Constants.LOCALITY, Constants.STREET, Constants.STATE, Constants.COUNTY};
@@ -20,7 +23,7 @@ public class GeocodeJsonFormatter implements ResultFormatter {
     private final ObjectMapper mapper = new ObjectMapper();
 
     @Override
-    public String formatError(String msg) {
+    public String formatError(@Nullable String msg) {
         try {
             return mapper.writeValueAsString(
                     Map.of("message", msg == null ? "Unknown error." : msg));
@@ -31,7 +34,8 @@ public class GeocodeJsonFormatter implements ResultFormatter {
 
     @Override
     public String convert(List<PhotonResult> results, String language,
-                          boolean withGeometry, boolean withDebugInfo, String queryDebugInfo) throws IOException {
+                          boolean withGeometry, boolean withDebugInfo,
+                          @Nullable String queryDebugInfo) throws IOException {
         final var writer = new StringWriter();
 
         try (var gen = mapper.createGenerator(writer)) {
@@ -101,7 +105,7 @@ public class GeocodeJsonFormatter implements ResultFormatter {
     }
 
 
-    private void put(JsonGenerator gen, String key, Object value) throws IOException {
+    private void put(JsonGenerator gen, String key, @Nullable Object value) throws IOException {
         if (value != null) {
             gen.writeObjectField(key, value);
         }

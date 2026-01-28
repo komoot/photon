@@ -1,20 +1,23 @@
 package de.komoot.photon.opensearch;
 
 import de.komoot.photon.searcher.PhotonResult;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Map;
 
+@NullMarked
 public class OpenSearchResult implements PhotonResult {
     private static final String[] NAME_PRECEDENCE = {"default", "housename", "int", "loc", "reg", "alt", "old"};
 
     private double score = 0.0;
-    private final double[] extent;
+    private final double @Nullable [] extent;
     private final double[] coordinates;
-    private final String geometry;
+    @Nullable private final String geometry;
     private final Map<String, Object> infos;
     private final Map<String, Map<String, String>> localeTags;
 
-    OpenSearchResult(double[] extent, double[] coordinates, Map<String, Object> infos, Map<String, Map<String, String>> localeTags, String geometry) {
+    OpenSearchResult(double @Nullable [] extent, double[] coordinates, Map<String, Object> infos, Map<String, Map<String, String>> localeTags, @Nullable String geometry) {
         this.extent = extent;
         this.coordinates = coordinates;
         this.infos = infos;
@@ -22,17 +25,18 @@ public class OpenSearchResult implements PhotonResult {
         this.geometry = geometry;
     }
 
-    public OpenSearchResult setScore(double score) {
+    public void setScore(double score) {
         this.score = score;
-        return this;
     }
 
     @Override
+    @Nullable
     public Object get(String key) {
         return infos.get(key);
     }
 
     @Override
+    @Nullable
     public String getLocalised(String key, String language) {
         final var map = getMap(key);
         if (map == null) return null;
@@ -53,6 +57,7 @@ public class OpenSearchResult implements PhotonResult {
     }
 
     @Override
+    @Nullable
     public Map<String, String> getMap(String key) {
         return localeTags.get(key);
     }
@@ -62,18 +67,14 @@ public class OpenSearchResult implements PhotonResult {
         return coordinates;
     }
 
+    @Nullable
     public String getGeometry() {
         return geometry;
     }
 
     @Override
-    public double[] getExtent() {
+    public double @Nullable [] getExtent() {
         return extent;
-    }
-
-    @Override
-    public double getScore() {
-        return score;
     }
 
     @Override

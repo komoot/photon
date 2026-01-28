@@ -1,8 +1,12 @@
 package de.komoot.photon.searcher;
 
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
+
 import java.util.HashMap;
 import java.util.Map;
 
+@NullMarked
 public class MockPhotonResult implements PhotonResult {
 
     final Map<String, Object> data = new HashMap<>();
@@ -12,18 +16,21 @@ public class MockPhotonResult implements PhotonResult {
     final Map<String, String> localized = new HashMap<>();
 
     @Override
+    @Nullable
     public Object get(String key) {
-        return data.getOrDefault(key, null);
+        return data.get(key);
     }
 
     @Override
+    @Nullable
     public String getLocalised(String key, String language) {
-        return localized.getOrDefault(key + "||" + language, null);
+        return localized.get(key + "||" + language);
     }
 
     @Override
+    @Nullable
     public Map<String, String> getMap(String key) {
-        return (Map<String, String>) data.getOrDefault(key, null);
+        return (Map<String, String>) data.get(key);
     }
 
     @Override
@@ -37,13 +44,8 @@ public class MockPhotonResult implements PhotonResult {
     }
 
     @Override
-    public double[] getExtent() {
+    public double @Nullable [] getExtent() {
         return extent;
-    }
-
-    @Override
-    public double getScore() {
-        return 99;
     }
 
     @Override
