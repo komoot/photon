@@ -90,7 +90,10 @@ public class RequestFactoryBase {
         if (langHeader != null && !langHeader.isBlank()) {
             try {
                 var languages = Locale.LanguageRange.parse(langHeader);
-                return Locale.lookupTag(languages, supportedLanguages);
+                String lang = Locale.lookupTag(languages, supportedLanguages);
+                if (lang != null) {
+                    return lang;
+                }
             } catch (IllegalArgumentException e) {
                 // ignore
             }
