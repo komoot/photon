@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.komoot.photon.ConfigClassificationTerm;
 import de.komoot.photon.ConfigSynonyms;
 import de.komoot.photon.UsageException;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import org.opensearch.client.opensearch.OpenSearchClient;
 import org.opensearch.client.opensearch._types.analysis.CustomAnalyzer;
 import org.opensearch.client.opensearch.indices.IndexSettingsAnalysis;
@@ -14,6 +16,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@NullMarked
 public class IndexSettingBuilder {
     private static final String SYNONYM_FILTER = "extra_synonyms";
     private static final String CLASSIFICATION_FILTER = "classification_synonyms";
@@ -22,8 +25,8 @@ public class IndexSettingBuilder {
     private boolean hasSynonymFilter = false;
     private boolean hasClassificationFilter = false;
 
-    public IndexSettingBuilder setShards(Integer numShards) {
-        this.numShards = numShards == null ? 1 : numShards;
+    public IndexSettingBuilder setShards(int numShards) {
+        this.numShards = numShards;
         return this;
     }
 
@@ -50,7 +53,7 @@ public class IndexSettingBuilder {
         }
     }
 
-    public IndexSettingBuilder setSynonymFile(String synonymFile) throws IOException {
+    public IndexSettingBuilder setSynonymFile(@Nullable String synonymFile) throws IOException {
         if (synonymFile != null) {
             final var synonymConfig = new ObjectMapper()
                     .configure(DeserializationFeature.FAIL_ON_NULL_CREATOR_PROPERTIES, true)
