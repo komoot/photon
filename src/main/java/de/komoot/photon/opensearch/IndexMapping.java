@@ -7,10 +7,13 @@ import org.opensearch.client.opensearch._types.mapping.IndexOptions;
 import org.opensearch.client.opensearch.indices.PutMappingRequest;
 
 import java.io.IOException;
+import java.util.List;
 
 @NullMarked
 public class IndexMapping {
-    private static final String[] ADDRESS_FIELDS = new String[]{"name", "street", "city", "district", "county", "state", "country"};
+    private static final String[] ADDRESS_FIELDS = new String[]{
+            DocFields.NAME, DocFields.STREET, DocFields.CITY,
+            DocFields.DISTRICT, DocFields.COUNTY, DocFields.STATE, DocFields.COUNTRY};
 
     private PutMappingRequest.Builder mappings;
 
@@ -26,19 +29,19 @@ public class IndexMapping {
         mappings = new PutMappingRequest.Builder();
 
         mappings.dynamic(DynamicMapping.False)
-                .source(s -> s.excludes("collector", "categories"));
+                .source(s -> s.excludes(DocFields.COLLECTOR, DocFields.CATEGORIES));
 
         // Only list fields here that need an index in some form. All other fields will
-        // be passive fields saved in and retrivable by _source.
+        // be passive fields saved in and retrievable by _source.
 
-        for (var field : new String[]{"osm_key", "osm_value", "type"}) {
+        for (var field : List.of(DocFields.OSM_KEY, DocFields.OSM_VALUE, DocFields.OBJECT_TYPE)) {
             mappings.properties(field, b -> b.keyword(p -> p
                     .index(true)
                     .docValues(false)
             ));
         }
 
-        mappings.properties("categories", b -> b.text(p -> p
+        mappings.properties(DocFields.CATEGORIES, b -> b.text(p -> p
                 .index(true)
                 .indexOptions(IndexOptions.Docs)
                 .norms(false)
@@ -46,16 +49,16 @@ public class IndexMapping {
                 .searchAnalyzer("keyword")
         ));
 
-        mappings.properties("coordinate", b -> b.geoPoint(p -> p));
-        mappings.properties("countrycode", b -> b.keyword(p -> p
+        mappings.properties(DocFields.COORDINATE, b -> b.geoPoint(p -> p));
+        mappings.properties(DocFields.COUNTRYCODE, b -> b.keyword(p -> p
                 .index(true)
                 .docValues(false)
         ));
-        mappings.properties("importance", b -> b.float_(p -> p
+        mappings.properties(DocFields.IMPORTANCE, b -> b.float_(p -> p
                 .index(false)
         ));
 
-        mappings.properties("housenumber", b -> b.text(p -> p
+        mappings.properties(DocFields.HOUSENUMBER, b -> b.text(p -> p
                 .index(true)
                 .indexOptions(IndexOptions.Docs)
                 .analyzer("index_housenumber")
@@ -68,14 +71,14 @@ public class IndexMapping {
                 ))
         ));
 
-        mappings.properties("postcode", b -> b.text(p -> p
+        mappings.properties(DocFields.POSTCODE, b -> b.text(p -> p
                 .index(true)
                 .norms(false)
                 .analyzer("index_raw")
         ));
 
         // General collectors.
-        mappings.properties("collector.all", b -> b.text(p -> p
+        mappings.properties(DocFields.COLLECTOR + ".all", b -> b.text(p -> p
                 .index(true)
                 .norms(false)
                 .indexOptions(IndexOptions.Freqs)
@@ -90,7 +93,7 @@ public class IndexMapping {
                 ))
         ));
 
-        mappings.properties("collector.name", b -> b.text(p -> p
+        mappings.properties(DocFields.COLLECTOR + ".name", b -> b.text(p -> p
                 .index(true)
                 .norms(false)
                 .indexOptions(IndexOptions.Freqs)
@@ -105,7 +108,7 @@ public class IndexMapping {
                 ))
         ));
 
-        mappings.properties("collector.parent", b -> b.text(p -> p
+        mappings.properties(DocFields.COLLECTOR + ".parent", b -> b.text(p -> p
                 .index(true)
                 .norms(false)
                 .indexOptions(IndexOptions.Docs)
@@ -114,7 +117,7 @@ public class IndexMapping {
         ));
 
         for (var field : ADDRESS_FIELDS) {
-            mappings.properties("collector.field." + field, b -> b.text(p -> p
+            mappings.properties(DocFields.COLLECTOR + ".field." + field, b -> b.text(p -> p
                     .index(true)
                     .norms(false)
                     .analyzer("index_raw")
