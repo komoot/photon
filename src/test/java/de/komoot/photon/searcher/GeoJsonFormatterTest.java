@@ -1,6 +1,6 @@
 package de.komoot.photon.searcher;
 
-import de.komoot.photon.Constants;
+import de.komoot.photon.opensearch.DocFields;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -62,20 +62,20 @@ class GeoJsonFormatterTest {
     private PhotonResult createDummyPointResult(String postCode, String name, String osmKey,
                                                 String osmValue) {
         return new MockPhotonResult()
-                .put(Constants.POSTCODE, postCode)
-                .putLocalized(Constants.NAME, "en", name)
-                .put(Constants.OSM_KEY, osmKey)
-                .put(Constants.OSM_VALUE, osmValue)
+                .put(DocFields.POSTCODE, postCode)
+                .putLocalized(DocFields.NAME, "en", name)
+                .put(DocFields.OSM_KEY, osmKey)
+                .put(DocFields.OSM_VALUE, osmValue)
                 .putGeometry("{\"type\":\"Point\", \"coordinates\": [42, 21]}");
     }
 
     private PhotonResult createDummyGeometryResult(String postCode, String name, String osmKey,
                                                    String osmValue) {
         return new MockPhotonResult()
-                .put(Constants.POSTCODE, postCode)
-                .putLocalized(Constants.NAME, "en", name)
-                .put(Constants.OSM_KEY, osmKey)
-                .put(Constants.OSM_VALUE, osmValue);
+                .put(DocFields.POSTCODE, postCode)
+                .putLocalized(DocFields.NAME, "en", name)
+                .put(DocFields.OSM_KEY, osmKey)
+                .put(DocFields.OSM_VALUE, osmValue);
     }
 
 }
