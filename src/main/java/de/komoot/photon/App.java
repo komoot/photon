@@ -10,7 +10,7 @@ import de.komoot.photon.nominatim.ImportThread;
 import de.komoot.photon.nominatim.NominatimImporter;
 import de.komoot.photon.nominatim.NominatimUpdater;
 import de.komoot.photon.query.*;
-import de.komoot.photon.searcher.GeocodeJsonFormatter;
+import de.komoot.photon.searcher.GeoJsonFormatter;
 import de.komoot.photon.searcher.TagFilter;
 import io.javalin.Javalin;
 import io.javalin.http.ContentType;
@@ -382,7 +382,7 @@ public class App {
         });
 
 
-        final var formatter = new GeocodeJsonFormatter();
+        final var formatter = new GeoJsonFormatter();
 
         photonServer.exception(Exception.class, (e, ctx) ->
                 ctx.status(400)

@@ -8,11 +8,11 @@ import java.util.List;
 
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 
-class GeocodeJsonFormatterTest {
+class GeoJsonFormatterTest {
 
     @Test
     void testConvertPointToGeojson() throws IOException {
-        GeocodeJsonFormatter formatter = new GeocodeJsonFormatter();
+        GeoJsonFormatter formatter = new GeoJsonFormatter();
 
         final var allPointResults = List.of(
             createDummyPointResult("99999", "Park Foo", "leisure", "park"),
@@ -43,7 +43,7 @@ class GeocodeJsonFormatterTest {
 
     @Test
     void testConvertGeometryToGeojson() throws IOException {
-        GeocodeJsonFormatter formatter = new GeocodeJsonFormatter();
+        GeoJsonFormatter formatter = new GeoJsonFormatter();
 
         final var allResults = List.of(
                 createDummyGeometryResult("99999", "Park Foo", "leisure", "park"));
