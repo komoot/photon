@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import de.komoot.photon.Constants;
 import de.komoot.photon.searcher.PhotonResult;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
@@ -26,15 +25,15 @@ public class OpenSearchResultDeserializer extends StdDeserializer<OpenSearchResu
     public OpenSearchResult deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
         final var node = (ObjectNode) p.getCodec().readTree(p);
 
-        final double[] extent = extractExtent((ObjectNode) node.get("extent"));
-        final double[] coordinates = extractCoordinate((ObjectNode) node.get("coordinate"));
+        final double[] extent = extractExtent((ObjectNode) node.get(DocFields.EXTENT));
+        final double[] coordinates = extractCoordinate((ObjectNode) node.get(DocFields.COORDINATE));
 
         final Map<String, Object> tags = new HashMap<>();
         final Map<String, Map<String, String>> localeTags = new HashMap<>();
 
         String geometry = null;
-        if (node.get("geometry") != null) {
-            geometry = node.get("geometry").toString();
+        if (node.get(DocFields.GEOMETRY) != null) {
+            geometry = node.get(DocFields.GEOMETRY).toString();
         }
 
         var fieldNames = node.fieldNames();
@@ -86,6 +85,6 @@ public class OpenSearchResultDeserializer extends StdDeserializer<OpenSearchResu
             return PhotonResult.INVALID_COORDINATES;
         }
 
-        return new double[]{node.get(Constants.LON).doubleValue(), node.get(Constants.LAT).doubleValue()};
+        return new double[]{node.get("lon").doubleValue(), node.get("lat").doubleValue()};
     }
 }
