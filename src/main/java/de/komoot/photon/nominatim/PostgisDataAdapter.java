@@ -3,10 +3,11 @@ package de.komoot.photon.nominatim;
 import net.postgis.jdbc.PGgeometry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.io.ParseException;
 import org.locationtech.jts.io.WKTReader;
-import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -16,6 +17,7 @@ import java.util.Map;
 /**
  * Utility functions to parse data from and create SQL for PostgreSQL/PostGIS.
  */
+@NullMarked
 public class PostgisDataAdapter implements DBDataAdapter {
     private static final Logger LOGGER = LogManager.getLogger();
 
@@ -30,6 +32,7 @@ public class PostgisDataAdapter implements DBDataAdapter {
     }
 
     @Override
+    @Nullable
     public Geometry extractGeometry(ResultSet rs, String columnName) throws SQLException {
         PGgeometry wkt = (PGgeometry) rs.getObject(columnName);
         if (wkt != null) {
@@ -47,13 +50,6 @@ public class PostgisDataAdapter implements DBDataAdapter {
         }
 
         return null;
-    }
-
-    @Override
-    public boolean hasColumn(JdbcTemplate template, String table, String column) {
-        return template.query("SELECT count(*) FROM information_schema.columns WHERE table_name = ? and column_name = ?",
-                (ResultSet resultSet, int i) -> resultSet.getInt(1) > 0,
-                table, column).getFirst();
     }
 
     @Override

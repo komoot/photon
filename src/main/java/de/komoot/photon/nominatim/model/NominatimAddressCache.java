@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.komoot.photon.nominatim.DBDataAdapter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowCallbackHandler;
 
@@ -14,6 +16,7 @@ import java.util.stream.Collectors;
 /**
  * Container for caching information about address parts.
  */
+@NullMarked
 public class NominatimAddressCache {
     private static final Logger LOGGER = LogManager.getLogger();
 
@@ -41,7 +44,7 @@ public class NominatimAddressCache {
     }
 
     public void loadCountryAddresses(JdbcTemplate template, String countryCode) {
-        if ("".equals(countryCode)) {
+        if (countryCode.isEmpty()) {
             template.query(BASE_COUNTRY_QUERY + " AND country_code is null", rowMapper);
         } else {
             template.query(BASE_COUNTRY_QUERY + " AND country_code = ?", rowMapper, countryCode);
@@ -52,7 +55,7 @@ public class NominatimAddressCache {
         }
     }
 
-    public List<AddressRow> getOrLoadAddressList(JdbcTemplate template, String json) {
+    public List<AddressRow> getOrLoadAddressList(JdbcTemplate template, @Nullable String json) {
         if (json == null || json.isBlank()) {
             return List.of();
         }
@@ -71,7 +74,7 @@ public class NominatimAddressCache {
         return makeAddressList(placeIDs);
     }
 
-    public List<AddressRow> getAddressList(String json) {
+    public List<AddressRow> getAddressList(@Nullable String json) {
         if (json == null || json.isBlank()) {
             return List.of();
         }
@@ -79,7 +82,7 @@ public class NominatimAddressCache {
         return makeAddressList(parsePlaceIdArray(json));
     }
 
-    private List<AddressRow> makeAddressList(Long[] placeIDs) {
+    private List<AddressRow> makeAddressList(@Nullable Long[] placeIDs) {
         return Arrays.stream(placeIDs)
                 .map(addresses::get)
                 .filter(Objects::nonNull)

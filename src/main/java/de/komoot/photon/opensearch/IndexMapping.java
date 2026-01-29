@@ -1,5 +1,6 @@
 package de.komoot.photon.opensearch;
 
+import org.jspecify.annotations.NullMarked;
 import org.opensearch.client.opensearch.OpenSearchClient;
 import org.opensearch.client.opensearch._types.mapping.DynamicMapping;
 import org.opensearch.client.opensearch._types.mapping.IndexOptions;
@@ -7,6 +8,7 @@ import org.opensearch.client.opensearch.indices.PutMappingRequest;
 
 import java.io.IOException;
 
+@NullMarked
 public class IndexMapping {
     private static final String[] ADDRESS_FIELDS = new String[]{"name", "street", "city", "district", "county", "state", "country"};
 

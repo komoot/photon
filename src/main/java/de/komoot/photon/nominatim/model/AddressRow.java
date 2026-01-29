@@ -1,17 +1,21 @@
 package de.komoot.photon.nominatim.model;
 
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
+
 import java.util.Map;
 
 /**
  * Representation of an address as returned by Nominatim's get_addressdata PL/pgSQL function.
  */
+@NullMarked
 public class AddressRow {
     private final NameMap name;
     private final ContextMap context;
-    private final AddressType addressType;
+    @Nullable private final AddressType addressType;
     private final boolean isPostCode;
 
-    private AddressRow(NameMap name, ContextMap context, AddressType addressType, boolean isPostCode) {
+    private AddressRow(NameMap name, ContextMap context, @Nullable AddressType addressType, boolean isPostCode) {
         this.name = name;
         this.context = context;
         this.addressType = addressType;
@@ -42,6 +46,7 @@ public class AddressRow {
                 false);
     }
 
+    @Nullable
     public AddressType getAddressType() {
         return addressType;
     }

@@ -1,5 +1,6 @@
 package de.komoot.photon.opensearch;
 
+import org.jspecify.annotations.NullMarked;
 import org.opensearch.client.opensearch._types.FieldValue;
 import org.opensearch.client.opensearch._types.query_dsl.Query;
 
@@ -7,6 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@NullMarked
 public class CategoryFilter {
     private final List<FieldValue> categories;
 

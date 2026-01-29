@@ -3,6 +3,7 @@ package de.komoot.photon.opensearch;
 import de.komoot.photon.query.SimpleSearchRequest;
 import de.komoot.photon.searcher.PhotonResult;
 import de.komoot.photon.searcher.SearchHandler;
+import org.jspecify.annotations.NullMarked;
 import org.opensearch.client.opensearch.OpenSearchClient;
 import org.opensearch.client.opensearch._types.SearchType;
 import org.opensearch.client.opensearch._types.query_dsl.Query;
@@ -12,6 +13,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+@NullMarked
 public class OpenSearchSearchHandler implements SearchHandler<SimpleSearchRequest> {
     private final OpenSearchClient client;
     private final String queryTimeout;

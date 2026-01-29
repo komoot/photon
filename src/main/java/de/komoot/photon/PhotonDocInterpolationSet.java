@@ -1,6 +1,6 @@
 package de.komoot.photon;
 
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NullMarked;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.linearref.LengthIndexedLine;
 
@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+@NullMarked
 public class PhotonDocInterpolationSet implements Iterable<PhotonDoc> {
 
     private final List<PhotonDoc> docs = new ArrayList<>();
@@ -33,7 +34,7 @@ public class PhotonDocInterpolationSet implements Iterable<PhotonDoc> {
     }
 
     @Override
-    public @NotNull Iterator<PhotonDoc> iterator() {
+    public Iterator<PhotonDoc> iterator() {
         return docs.iterator();
     }
 }

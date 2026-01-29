@@ -2,7 +2,8 @@ package de.komoot.photon;
 
 import io.javalin.http.Context;
 import io.javalin.http.Handler;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.LinkedHashMap;
@@ -10,6 +11,7 @@ import java.util.Map;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
+@NullMarked
 public class StatusRequestHandler implements Handler {
     private final Server server;
     private final String version;
@@ -23,7 +25,7 @@ public class StatusRequestHandler implements Handler {
     }
 
     @Override
-    public void handle(@NotNull Context context) throws IOException {
+    public void handle(Context context) throws IOException {
         DatabaseProperties dbProperties = server.loadFromDatabase();
         String importDateStr = "";
         if (dbProperties.getImportDate() != null) {
@@ -37,7 +39,7 @@ public class StatusRequestHandler implements Handler {
         context.json(response);
     }
 
-    private Attributes readManifestAttributes() {
+    @Nullable private Attributes readManifestAttributes() {
         try {
             var resource = getClass().getResource("/META-INF/MANIFEST.MF");
             if (resource != null) {
@@ -51,7 +53,7 @@ public class StatusRequestHandler implements Handler {
         return null;
     }
 
-    private String getManifestAttribute(Attributes attributes, String name) {
+    private String getManifestAttribute(@Nullable Attributes attributes, String name) {
         if (attributes != null) {
             String value = attributes.getValue(name);
             if (value != null) {

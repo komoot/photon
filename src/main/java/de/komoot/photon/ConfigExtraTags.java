@@ -1,6 +1,7 @@
 package de.komoot.photon;
 
 import com.fasterxml.jackson.core.JsonGenerator;
+import org.jspecify.annotations.NullMarked;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -9,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@NullMarked
 public class ConfigExtraTags {
 
     private final boolean allowAll;
@@ -21,7 +23,7 @@ public class ConfigExtraTags {
 
     public ConfigExtraTags(List<String> tags) {
         this.allowAll = tags.size() == 1 && "ALL".equals(tags.getFirst());
-        this.tags = allowAll ? null : tags.toArray(new String[0]);
+        this.tags = allowAll ? new String[0] : tags.toArray(String[]::new);
     }
 
     public void writeFilteredExtraTags(JsonGenerator writer, String fieldName, Map<String, String> sourceTags) throws IOException  {

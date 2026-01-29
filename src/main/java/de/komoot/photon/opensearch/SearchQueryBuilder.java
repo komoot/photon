@@ -2,6 +2,8 @@ package de.komoot.photon.opensearch;
 
 import de.komoot.photon.Constants;
 import de.komoot.photon.query.StructuredSearchRequest;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Point;
 import org.opensearch.client.json.JsonData;
@@ -12,12 +14,13 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@NullMarked
 public class SearchQueryBuilder extends BaseQueryBuilder {
     public FunctionScoreQuery.Builder innerQuery = new FunctionScoreQuery.Builder();
     double importance_factor = 40.0;
 
-    public SearchQueryBuilder(String query, boolean lenient, boolean suggestAddresses) {
-        if (query.isEmpty()) {
+    public SearchQueryBuilder(@Nullable String query, boolean lenient, boolean suggestAddresses) {
+        if (query == null) {
             // Empty query is used for category-only searches (e.g. /api?include=osm.place.city),
             // see SimpleSearchRequestFactory.create
             innerQuery.query(q -> q.matchAll(ma -> ma));
@@ -200,7 +203,7 @@ public class SearchQueryBuilder extends BaseQueryBuilder {
         }
     }
 
-    public void addLocationBias(Point point, double scale, int zoom) {
+    public void addLocationBias(@Nullable Point point, double scale, int zoom) {
         if (point == null || zoom < 4) return;
 
         if (zoom > 18) {
@@ -220,7 +223,7 @@ public class SearchQueryBuilder extends BaseQueryBuilder {
                                 .scale(JsonData.of(radius + "km")))));
     }
 
-    public void addBoundingBox(Envelope bbox) {
+    public void addBoundingBox(@Nullable Envelope bbox) {
         if (bbox != null) {
             outerQuery.filter(q -> q.geoBoundingBox(bb -> bb
                     .field("coordinate")

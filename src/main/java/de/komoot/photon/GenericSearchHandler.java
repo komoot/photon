@@ -7,10 +7,11 @@ import de.komoot.photon.searcher.SearchHandler;
 import de.komoot.photon.searcher.StreetDupesRemover;
 import io.javalin.http.Context;
 import io.javalin.http.Handler;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NullMarked;
 
 import java.io.IOException;
 
+@NullMarked
 public class GenericSearchHandler<T extends RequestBase> implements Handler {
     private final RequestFactory<T> requestFactory;
     private final SearchHandler<T> requestHandler;
@@ -24,7 +25,7 @@ public class GenericSearchHandler<T extends RequestBase> implements Handler {
     }
 
     @Override
-    public void handle(@NotNull Context context) {
+    public void handle(Context context) {
         final T searchRequest = requestFactory.create(context);
 
         var results = requestHandler.search(searchRequest);

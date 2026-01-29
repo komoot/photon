@@ -1,6 +1,7 @@
 package de.komoot.photon.searcher;
 
 import de.komoot.photon.Constants;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -9,6 +10,7 @@ import java.util.List;
 /**
  * Filter out duplicate streets from the list.
  */
+@NullMarked
 public class StreetDupesRemover {
     private final String language;
 

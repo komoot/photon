@@ -1,11 +1,16 @@
 package de.komoot.photon.searcher;
 
+import de.komoot.photon.query.BadRequestException;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
+
 import java.util.Objects;
 
 /**
  * Filter description for a single filter by OSM key or key/value.
  */
-public record TagFilter(TagFilterKind kind, String key, String value) {
+@NullMarked
+public record TagFilter(TagFilterKind kind, @Nullable String key, @Nullable String value) {
 
     public boolean isKeyOnly() {
         return value == null;
@@ -19,7 +24,8 @@ public record TagFilter(TagFilterKind kind, String key, String value) {
      * Create a new tag filter from a osm-tag filter description.
      *
      * @param filter Tag filter description.
-     * @return The appropriate tag filter object or null if the filter string has an invalid format.
+     * @return The appropriate tag filter object.
+     * @throws BadRequestException when the format of the value is wrong.
      */
     public static TagFilter buildOsmTagFilter(String filter) {
         TagFilterKind kind = null;
@@ -55,7 +61,11 @@ public record TagFilter(TagFilterKind kind, String key, String value) {
             }
         }
 
-        return (kind == null) ? null : new TagFilter(kind, key, value);
+        if (kind == null) {
+            throw new BadRequestException(400, "Invalid format for osm_tag parameter.");
+        }
+
+        return new TagFilter(kind, key, value);
     }
 
     @Override

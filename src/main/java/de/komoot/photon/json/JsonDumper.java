@@ -9,6 +9,7 @@ import de.komoot.photon.nominatim.model.AddressType;
 import de.komoot.photon.nominatim.model.NameMap;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jspecify.annotations.NullMarked;
 import org.locationtech.jts.io.geojson.GeoJsonWriter;
 
 import java.io.File;
@@ -16,6 +17,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+@NullMarked
 public class JsonDumper implements Importer {
     private static final Logger LOGGER = LogManager.getLogger();
 
@@ -107,6 +109,10 @@ public class JsonDumper implements Importer {
     }
 
     public void writeNominatimDocument(PhotonDoc doc) throws IOException {
+        if (doc.getCentroid() == null) {
+            return; // ignore documents without coordinates
+        }
+
         writer.writeStartObject();
         if (doc.getPlaceId() != null) {
             writer.writeStringField(DumpFields.PLACE_ID, doc.getPlaceId());

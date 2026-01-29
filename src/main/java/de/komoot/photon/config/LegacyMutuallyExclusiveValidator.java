@@ -2,12 +2,14 @@ package de.komoot.photon.config;
 
 import com.beust.jcommander.IParametersValidator;
 import com.beust.jcommander.ParameterException;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.List;
 import java.util.Map;
 
 import static java.lang.Boolean.TRUE;
 
+@NullMarked
 public class LegacyMutuallyExclusiveValidator implements IParametersValidator {
     @Override
     public void validate(Map<String, Object> parameters) throws ParameterException {

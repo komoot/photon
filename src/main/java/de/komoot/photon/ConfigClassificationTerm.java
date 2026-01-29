@@ -1,38 +1,29 @@
 package de.komoot.photon;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
+
+import java.util.Arrays;
+import java.util.Objects;
 import java.util.regex.Pattern;
 
-public class ConfigClassificationTerm {
+@NullMarked
+public record ConfigClassificationTerm(String key, String value, String[] terms) {
     private static final Pattern LABEL_PATTERN = Pattern.compile(
             String.format("[%s]+", PhotonDoc.CATEGORY_VALID_CHARS)
     );
 
-    private String key;
-    private String value;
-    private String[] terms;
-
-    public String getKey() {
-        return key;
-    }
-
-    public void setKey(String key) {
+    @JsonCreator
+    public ConfigClassificationTerm(
+            @JsonProperty("key") String key,
+            @JsonProperty("value") String value,
+            @JsonProperty("terms") @Nullable String[] terms
+    ) {
         this.key = key;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
-    public void setValue(String value) {
         this.value = value;
-    }
-
-    public String[] getTerms() {
-        return terms;
-    }
-
-    public void setTerms(String[] terms) {
-        this.terms = terms;
+        this.terms = Arrays.stream(terms).filter(Objects::nonNull).toArray(String[]::new);
     }
 
     public boolean isValidCategory() {

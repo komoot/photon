@@ -1,5 +1,6 @@
 package de.komoot.photon.searcher;
 
+import de.komoot.photon.query.BadRequestException;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -7,16 +8,20 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
+
+import static org.assertj.core.api.Assertions.*;
 
 class TagFilterTest {
 
     @ParameterizedTest
     @MethodSource("validOsmTagFilterValueProvider")
     void testBuildOsmTagFilterOk(String filter, TagFilterKind kind, String key, String value) {
-        assertEquals(new TagFilter(kind, key, value),
-                TagFilter.buildOsmTagFilter(filter));
+        assertThat(TagFilter.buildOsmTagFilter(filter))
+                .hasFieldOrPropertyWithValue("kind", kind)
+                .hasFieldOrPropertyWithValue("key", key)
+                .hasFieldOrPropertyWithValue("value", value)
+        ;
     }
 
     static Stream<Arguments> validOsmTagFilterValueProvider() {
@@ -37,7 +42,8 @@ class TagFilterTest {
     @ParameterizedTest
     @ValueSource(strings = {"", ":", "addr:housenumber:1", "shop:"})
     void testBuildOsmTagFilterInvalid(String filter) {
-        assertNull(TagFilter.buildOsmTagFilter(filter));
+        assertThatExceptionOfType(BadRequestException.class)
+                .isThrownBy(() -> TagFilter.buildOsmTagFilter(filter));
     }
 
 }

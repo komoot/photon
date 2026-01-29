@@ -5,11 +5,13 @@ import de.komoot.photon.config.PostgresqlConfig;
 import de.komoot.photon.nominatim.model.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import org.locationtech.jts.geom.Geometry;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionCallback;
 
 import java.util.*;
 import java.util.concurrent.locks.ReentrantLock;
@@ -17,6 +19,7 @@ import java.util.concurrent.locks.ReentrantLock;
 /**
  * Importer for updates from a Nominatim database.
  */
+@NullMarked
 public class NominatimUpdater extends NominatimConnector {
     private static final Logger LOGGER = LogManager.getLogger();
 
@@ -48,12 +51,12 @@ public class NominatimUpdater extends NominatimConnector {
                EXECUTE FUNCTION photon_update_func()
         """;
 
-    private Updater updater;
+    @Nullable private Updater updater;
 
     /**
      * Map a row from location_property_osmline (address interpolation lines) to a photon doc.
      */
-    private final RowMapper<Iterable<PhotonDoc>> osmlineToNominatimResult;
+    private final RowMapper<@Nullable Iterable<PhotonDoc>> osmlineToNominatimResult;
     /**
      * Maps a placex row in nominatim to a photon doc.
      * Some attributes are still missing and can be derived by connected address items.
@@ -82,7 +85,6 @@ public class NominatimUpdater extends NominatimConnector {
 
         placeToNominatimResult = (rs, rowNum) -> {
             final PhotonDoc doc = placeRowMapper.mapRow(rs, rowNum);
-            assert (doc != null);
 
             if (rs.getInt("rank_search") == 30 && rs.getString("parent_class") != null) {
                 doc.addAddresses(List.of(AddressRow.make(
@@ -99,6 +101,7 @@ public class NominatimUpdater extends NominatimConnector {
             final var address = dbutils.getMap(rs, "address");
             doc.addAddresses(address, dbProperties.getLanguages());
 
+            assert countryNames != null;
             doc.setCountry(countryNames.get(rs.getString("country_code")));
 
             return new PhotonDocAddressSet(doc, address);
@@ -109,7 +112,6 @@ public class NominatimUpdater extends NominatimConnector {
         osmlineBaseSQL = osmlineRowMapper.makeBaseQuery(dataAdapter);
         osmlineToNominatimResult = (rs, rownum) -> {
             PhotonDoc doc = osmlineRowMapper.mapRow(rs, rownum);
-            assert doc != null;
 
             if (rs.getString("parent_class") != null) {
                 doc.addAddresses(List.of(AddressRow.make(
@@ -122,9 +124,14 @@ public class NominatimUpdater extends NominatimConnector {
             doc.addAddresses(
                     addressCache.getOrLoadAddressList(template, rs.getString("addresslines")));
             doc.addAddresses(dbutils.getMap(rs, "address"), dbProperties.getLanguages());
+            assert countryNames != null;
             doc.setCountry(countryNames.get(rs.getString("country_code")));
 
             Geometry geometry = dbutils.extractGeometry(rs, "linegeo");
+
+            if (geometry == null) {
+                return null;
+            }
 
             return new PhotonDocInterpolationSet(
                     doc, rs.getLong("startnumber"), rs.getLong("endnumber"),
@@ -147,16 +154,15 @@ public class NominatimUpdater extends NominatimConnector {
 
     public void initUpdates(String updateUser) {
         LOGGER.info("Creating tracking tables");
-        txTemplate.execute(new TransactionCallbackWithoutResult() {
-            @Override
-            protected void doInTransactionWithoutResult(@NotNull TransactionStatus status) {
+        txTemplate.executeWithoutResult((t) -> {
                 template.execute(TRIGGER_SQL);
                 template.execute("GRANT SELECT, DELETE ON photon_updates TO \"" + updateUser + '"');
-            }
         });
     }
 
     public void update() {
+        assert updater != null;
+
         if (updateLock.tryLock()) {
             try {
                 loadCountryNames(dbProperties.getLanguages());
@@ -173,14 +179,16 @@ public class NominatimUpdater extends NominatimConnector {
     }
 
     private void updateFromPlacex() {
+        assert updater != null;
+
         LOGGER.info("Starting place updates");
         int updatedPlaces = 0;
         int deletedPlaces = 0;
 
         for (UpdateRow place : getPlaces("placex")) {
-            long placeId = place.getPlaceId();
+            long placeId = place.placeId();
 
-            if (place.isToDelete()) {
+            if (place.toDelete()) {
                 ++deletedPlaces;
                 updater.delete(Long.toString(placeId));
             } else {
@@ -199,13 +207,14 @@ public class NominatimUpdater extends NominatimConnector {
     private void updateFromInterpolations() {
         // .isUsefulForIndex() should always return true for documents
         // created from interpolations so no need to check them
+        assert updater != null;
         LOGGER.info("Starting interpolations");
         int updatedInterpolations = 0;
         int deletedInterpolations = 0;
         for (UpdateRow place : getPlaces("location_property_osmline")) {
-            long placeId = place.getPlaceId();
+            long placeId = place.placeId();
 
-            if (place.isToDelete()) {
+            if (place.toDelete()) {
                 ++deletedInterpolations;
                 updater.delete(Long.toString(placeId));
             } else {
@@ -219,29 +228,33 @@ public class NominatimUpdater extends NominatimConnector {
     }
 
     private List<UpdateRow> getPlaces(String table) {
-        return txTemplate.execute(status -> {
-            List<UpdateRow> results = template.query(dbutils.deleteReturning(
-                            "DELETE FROM photon_updates WHERE rel = ?", "place_id, operation, indexed_date"),
-                    (rs, rowNum) -> {
-                        boolean isDelete = "DELETE".equals(rs.getString("operation"));
-                        return new UpdateRow(rs.getLong("place_id"), isDelete, rs.getTimestamp("indexed_date"));
-                    }, table);
+        return txTemplate.execute(new TransactionCallback<>() {
+            @Override
+            @NonNull
+            public List<UpdateRow> doInTransaction(TransactionStatus status) {
+                List<UpdateRow> results = template.query(dbutils.deleteReturning(
+                                "DELETE FROM photon_updates WHERE rel = ?", "place_id, operation, indexed_date"),
+                        (rs, rowNum) -> {
+                            boolean isDelete = "DELETE".equals(rs.getString("operation"));
+                            return new UpdateRow(rs.getLong("place_id"), isDelete, rs.getTimestamp("indexed_date"));
+                        }, table);
 
-            // For each place only keep the newest item.
-            // Order doesn't really matter because updates of each place are independent now.
-            results.sort(Comparator.comparing(UpdateRow::getPlaceId).thenComparing(
-                    Comparator.comparing(UpdateRow::getUpdateDate).reversed()));
+                // For each place only keep the newest item.
+                // Order doesn't really matter because updates of each place are independent now.
+                results.sort(Comparator.comparing(UpdateRow::placeId).thenComparing(
+                        Comparator.comparing(UpdateRow::updateDate).reversed()));
 
-            ArrayList<UpdateRow> todo = new ArrayList<>();
-            long prevId = -1;
-            for (UpdateRow row : results) {
-                if (row.getPlaceId() != prevId) {
-                    prevId = row.getPlaceId();
-                    todo.add(row);
+                ArrayList<UpdateRow> todo = new ArrayList<>();
+                long prevId = -1;
+                for (UpdateRow row : results) {
+                    if (row.placeId() != prevId) {
+                        prevId = row.placeId();
+                        todo.add(row);
+                    }
                 }
-            }
 
-            return todo;
+                return todo;
+            }
         });
     }
 
@@ -262,6 +275,6 @@ public class NominatimUpdater extends NominatimConnector {
                 osmlineBaseSQL + " AND p.place_id = ? and p.indexed_status = 0",
                 osmlineToNominatimResult, placeId);
 
-        return result.isEmpty() ? List.of() : result.getFirst();
+        return (result.isEmpty() || result.getFirst() == null) ? List.of() : result.getFirst();
     }
 }

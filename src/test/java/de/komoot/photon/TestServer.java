@@ -5,41 +5,34 @@ import de.komoot.photon.opensearch.OpenSearchResult;
 import de.komoot.photon.opensearch.PhotonIndex;
 import de.komoot.photon.searcher.PhotonResult;
 import org.codelibs.opensearch.runner.OpenSearchRunner;
-import org.opensearch.common.settings.Settings;
+import org.opensearch.client.opensearch.core.search.Hit;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class TestServer extends Server {
+public class TestServer {
     public static final String TEST_CLUSTER_NAME = "photon-test";
 
-    private OpenSearchRunner runner;
-    private String instanceDir;
+    private final OpenSearchRunner runner;
+    private final Server testServer;
 
-    public TestServer(String mainDirectory) {
-        instanceDir = mainDirectory;
-    }
-
-    public void startTestServer(String clusterName) throws IOException {
+    public TestServer(String mainDirectory, String clusterName) throws IOException {
         runner = new OpenSearchRunner();
-        runner.onBuild(new OpenSearchRunner.Builder() {
-            @Override
-            public void build(final int number, final Settings.Builder settingsBuilder) {
-                settingsBuilder.put("http.cors.enabled", true);
-                settingsBuilder.put("http.cors.allow-origin", "*");
-                settingsBuilder.put("discovery.type", "single-node");
-                settingsBuilder.putList("discovery.seed_hosts", "127.0.0.1:9201");
-                settingsBuilder.put("logger.org.opensearch.cluster.metadata", "TRACE");
-                settingsBuilder.put("cluster.search.request.slowlog.level", "TRACE");
-                settingsBuilder.put("cluster.search.request.slowlog.threshold.warn", "0ms");
-                settingsBuilder.put("cluster.search.request.slowlog.threshold.info", "0ms");
-                settingsBuilder.put("cluster.search.request.slowlog.threshold.debug", "0ms");
-                settingsBuilder.put("cluster.search.request.slowlog.threshold.trace", "0ms");
+        runner.onBuild((number, settingsBuilder) -> {
+            settingsBuilder.put("http.cors.enabled", true);
+            settingsBuilder.put("http.cors.allow-origin", "*");
+            settingsBuilder.put("discovery.type", "single-node");
+            settingsBuilder.putList("discovery.seed_hosts", "127.0.0.1:9201");
+            settingsBuilder.put("logger.org.opensearch.cluster.metadata", "TRACE");
+            settingsBuilder.put("cluster.search.request.slowlog.level", "TRACE");
+            settingsBuilder.put("cluster.search.request.slowlog.threshold.warn", "0ms");
+            settingsBuilder.put("cluster.search.request.slowlog.threshold.info", "0ms");
+            settingsBuilder.put("cluster.search.request.slowlog.threshold.debug", "0ms");
+            settingsBuilder.put("cluster.search.request.slowlog.threshold.trace", "0ms");
 
-            }
-            }).build(OpenSearchRunner.newConfigs()
-                .basePath(instanceDir)
+        }).build(OpenSearchRunner.newConfigs()
+                .basePath(mainDirectory)
                 .clusterName(clusterName)
                 .numOfNode(1)
                 .baseHttpPort(9200));
@@ -47,12 +40,27 @@ public class TestServer extends Server {
         // wait for yellow status
         runner.ensureYellow();
 
-        var config = new PhotonDBConfig(instanceDir, clusterName, List.of("127.0.0.1:" + runner.node().settings().get("http.port")));
-        start(config, true);
+        var config = new PhotonDBConfig(mainDirectory, clusterName, List.of("127.0.0.1:" + runner.node().settings().get("http.port")));
+
+        testServer = new Server(config, true);
+    }
+
+    public void reloadDBProperties(DatabaseProperties dbProperties) throws IOException {
+        testServer.recreateIndex(dbProperties);
+        testServer.refreshIndexes();
+
+    }
+
+    public Importer createImporter(DatabaseProperties dbProperties) {
+        return testServer.createImporter(dbProperties);
+    }
+
+    public Updater createUpdater(DatabaseProperties dbProperties) {
+        return testServer.createUpdater(dbProperties);
     }
 
     public void stopTestServer() {
-        shutdown();
+        testServer.shutdown();
         try {
             runner.close();
         } catch (IOException e) {
@@ -61,13 +69,17 @@ public class TestServer extends Server {
         runner.clean();
     }
 
+    public Server getServer() {
+        return testServer;
+    }
+
     public String getHttpPort() {
         return runner.node().settings().get("http.port");
     }
 
     public void refreshTestServer() {
         try {
-            refreshIndexes();
+            testServer.refreshIndexes();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -75,7 +87,7 @@ public class TestServer extends Server {
 
     public PhotonResult getByID(String id) {
         try {
-            final var response = client.get(fn -> fn
+            final var response = testServer.getClient().get(fn -> fn
                     .index(PhotonIndex.NAME)
                     .id(id), OpenSearchResult.class);
 
@@ -91,10 +103,10 @@ public class TestServer extends Server {
 
     public List<PhotonResult> getAll() {
         try {
-            final var response = client.search(s -> s.size(1000), OpenSearchResult.class);
+            final var response = testServer.getClient().search(s -> s.size(1000), OpenSearchResult.class);
 
             return response.hits().hits()
-                    .stream().map(h -> h.source())
+                    .stream().map(Hit::source)
                     .collect(Collectors.toList());
         } catch (IOException e) {
             //ignore

@@ -8,11 +8,14 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import de.komoot.photon.Constants;
 import de.komoot.photon.searcher.PhotonResult;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+@NullMarked
 public class OpenSearchResultDeserializer extends StdDeserializer<OpenSearchResult> {
 
     public OpenSearchResultDeserializer() {
@@ -64,7 +67,8 @@ public class OpenSearchResultDeserializer extends StdDeserializer<OpenSearchResu
         return new OpenSearchResult(extent, coordinates, tags, localeTags, geometry);
     }
 
-    private double[] extractExtent(ObjectNode node) {
+
+    private double @Nullable [] extractExtent(@Nullable ObjectNode node) {
         if (node == null || !node.has("coordinates")) {
             return null;
         }
@@ -77,7 +81,7 @@ public class OpenSearchResultDeserializer extends StdDeserializer<OpenSearchResu
                             se.get(0).doubleValue(), se.get(1).doubleValue()};
     }
 
-    private double[] extractCoordinate(ObjectNode node) {
+    private double[] extractCoordinate(@Nullable ObjectNode node) {
         if (node == null) {
             return PhotonResult.INVALID_COORDINATES;
         }

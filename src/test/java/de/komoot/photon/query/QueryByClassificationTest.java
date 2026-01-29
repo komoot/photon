@@ -2,13 +2,18 @@ package de.komoot.photon.query;
 
 import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import de.komoot.photon.*;
 import de.komoot.photon.searcher.PhotonResult;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
@@ -152,5 +157,30 @@ class QueryByClassificationTest extends ESBaseTester {
         assertThat(search("king's cross Station"))
                 .element(0)
                 .satisfies(p -> assertThat(p.get("osm_id")).isEqualTo(testDocId));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+            """
+            {"classification_terms": [{"key": null, "value": "a", "terms":[]}]}
+            """,
+            """
+            {"classification_terms": [{"key": "a", "value": null, "terms":[]}]}
+            """,
+            """
+            {"classification_terms": [{"key": "a", "value": "a", "terms":null}]}
+            """
+    })
+    void testSynonymFileWithMissingField(String json) throws IOException {
+        Importer instance = makeImporter();
+        instance.finish();
+        refresh();
+
+        Path synonymPath = sharedTempDir.resolve("synonym.json");
+
+        Files.write(synonymPath, List.of(json), StandardCharsets.UTF_8);
+
+        assertThatExceptionOfType(MismatchedInputException.class)
+                .isThrownBy(() -> getServer().updateIndexSettings(synonymPath.toString()));
     }
 }

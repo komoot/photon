@@ -5,6 +5,8 @@ import de.komoot.photon.config.PostgresqlConfig;
 import de.komoot.photon.nominatim.model.AddressRow;
 import de.komoot.photon.nominatim.model.NameMap;
 import org.apache.commons.dbcp2.BasicDataSource;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -17,12 +19,13 @@ import java.util.Map;
 /**
  * Base class for workers connecting to a Nominatim database
  */
+@NullMarked
 public class NominatimConnector {
     protected final DBDataAdapter dbutils;
     protected final DatabaseProperties dbProperties;
     protected final JdbcTemplate template;
     protected final TransactionTemplate txTemplate;
-    protected Map<String, NameMap> countryNames;
+    @Nullable protected Map<String, NameMap> countryNames;
 
     protected NominatimConnector(PostgresqlConfig cfg, DBDataAdapter dataAdapter, DatabaseProperties dbProperties) {
         BasicDataSource dataSource = new BasicDataSource();
@@ -46,6 +49,7 @@ public class NominatimConnector {
         this.dbProperties = dbProperties;
     }
 
+    @Nullable
     public Date getLastImportDate() {
         List<Date> importDates = template.query(
                 "SELECT lastimportdate FROM import_status ORDER BY lastimportdate DESC LIMIT 1",

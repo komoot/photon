@@ -1,7 +1,9 @@
 package de.komoot.photon.config;
 
 import com.beust.jcommander.Parameter;
+import org.jspecify.annotations.NullMarked;
 
+@NullMarked
 public class GeneralConfig {
     public static final String GROUP="General options";
 

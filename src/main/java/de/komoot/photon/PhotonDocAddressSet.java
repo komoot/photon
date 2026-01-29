@@ -1,11 +1,12 @@
 package de.komoot.photon;
 
 import de.komoot.photon.nominatim.model.AddressType;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.*;
 import java.util.regex.Pattern;
 
+@NullMarked
 public class PhotonDocAddressSet implements Iterable<PhotonDoc> {
     private static final Pattern HOUSENUMBER_CHECK = Pattern.compile("(\\A|.*,)[^\\d,]{3,}(,.*|\\Z)");
     private static final Pattern HOUSENUMBER_SPLIT = Pattern.compile("\\s*[;,]\\s*");
@@ -27,11 +28,11 @@ public class PhotonDocAddressSet implements Iterable<PhotonDoc> {
     }
 
     @Override
-    public @NotNull Iterator<PhotonDoc> iterator() {
+    public Iterator<PhotonDoc> iterator() {
         return docs.iterator();
     }
 
-    private void addPlaceAddress(PhotonDoc base, Map<String, String> address, String key) {
+    private void addPlaceAddress(PhotonDoc base, Map<String, String> address, @SuppressWarnings("SameParameterValue") String key) {
         final String place = address.get("place");
         if (place != null && !place.isBlank()) {
             Map<AddressType, Map<String, String>> placeAddress = null;
@@ -45,7 +46,7 @@ public class PhotonDocAddressSet implements Iterable<PhotonDoc> {
         }
     }
 
-    private void addStreetAddress(PhotonDoc base, Map<String, String> address, String key) {
+    private void addStreetAddress(PhotonDoc base, Map<String, String> address, @SuppressWarnings("SameParameterValue") String key) {
         if (address.containsKey("street")) {
             for (String hnr : splitHousenumber(address, key)) {
                 docs.add(new PhotonDoc(base).houseNumber(hnr));
@@ -53,7 +54,7 @@ public class PhotonDocAddressSet implements Iterable<PhotonDoc> {
         }
     }
 
-    private void addGenericAddress(PhotonDoc base, Map<String, String> address, String key) {
+    private void addGenericAddress(PhotonDoc base, Map<String, String> address, @SuppressWarnings("SameParameterValue") String key) {
         Map<AddressType, Map<String, String>> placeAddress = null;
         for (String hnr : splitHousenumber(address, key)) {
             if (placeAddress == null) {

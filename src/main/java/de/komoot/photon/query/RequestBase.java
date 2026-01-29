@@ -1,9 +1,12 @@
 package de.komoot.photon.query;
 
 import de.komoot.photon.searcher.TagFilter;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 
+@NullMarked
 public class RequestBase {
     private String language = "default";
     private int limit = 15;
@@ -53,33 +56,25 @@ public class RequestBase {
     }
 
     public void setLanguage(String language) {
-        if (language != null) {
-            this.language = language;
-        }
+        this.language = language;
     }
 
-    public void setLimit(Integer limit, int maxLimit) {
+    public void setLimit(@Nullable Integer limit, int maxLimit) {
         if (limit != null) {
             this.limit = Integer.max(1, Integer.min(maxLimit, limit));
         }
     }
 
-    public void setDebug(Boolean debug) {
-        if (debug != null) {
-            this.debug = debug;
-        }
+    public void setDebug(boolean debug) {
+        this.debug = debug;
     }
 
-    public void setDedupe(Boolean dedupe) {
-        if (dedupe != null) {
-            this.dedupe = dedupe;
-        }
+    public void setDedupe(boolean dedupe) {
+        this.dedupe = dedupe;
     }
 
-    public void setReturnGeometry(Boolean returnGeometry) {
-        if (returnGeometry != null) {
-            this.returnGeometry = returnGeometry;
-        }
+    public void setReturnGeometry(boolean returnGeometry) {
+        this.returnGeometry = returnGeometry;
     }
 
     void addOsmTagFilter(TagFilter filter) {

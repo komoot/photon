@@ -1,12 +1,15 @@
 package de.komoot.photon.query;
 
 import io.javalin.http.Context;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+@NullMarked
 public class ReverseRequestFactory extends RequestFactoryBase implements RequestFactory<ReverseRequest> {
     private static final Set<String> REVERSE_PARAMETERS =
             Stream.concat(BASE_PARAMETERS.stream(),
@@ -20,10 +23,9 @@ public class ReverseRequestFactory extends RequestFactoryBase implements Request
     public ReverseRequest create(Context context) {
         checkParams(context, REVERSE_PARAMETERS);
 
-        final var request = new ReverseRequest();
+        final var request = new ReverseRequest(Objects.requireNonNull(parseLatLon(context, true)));
 
         completeBaseRequest(request, context);
-        request.setLocation(parseLatLon(context, true));
         request.setRadius(context.queryParamAsClass("radius", Double.class).allowNullable().get());
         request.setQueryStringFilter(context.queryParam("query_string_filter"));
         request.setLocationDistanceSort(context.queryParamAsClass("distance_sort", Boolean.class).getOrDefault(true));

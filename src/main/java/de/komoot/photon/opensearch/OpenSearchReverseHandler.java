@@ -3,6 +3,8 @@ package de.komoot.photon.opensearch;
 import de.komoot.photon.query.ReverseRequest;
 import de.komoot.photon.searcher.PhotonResult;
 import de.komoot.photon.searcher.SearchHandler;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import org.locationtech.jts.geom.Point;
 import org.opensearch.client.opensearch.OpenSearchClient;
 import org.opensearch.client.opensearch._types.SearchType;
@@ -13,8 +15,10 @@ import org.opensearch.client.opensearch.core.search.Hit;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
+@NullMarked
 public class OpenSearchReverseHandler implements SearchHandler<ReverseRequest> {
     private final OpenSearchClient client;
     private final String queryTimeout;
@@ -39,6 +43,7 @@ public class OpenSearchReverseHandler implements SearchHandler<ReverseRequest> {
 
         return results.hits().hits().stream()
                 .map(Hit::source)
+                .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }
 
@@ -47,7 +52,7 @@ public class OpenSearchReverseHandler implements SearchHandler<ReverseRequest> {
         return "{}";
     }
 
-    private SearchResponse<OpenSearchResult> search(Query query, int limit, Point location) {
+    private SearchResponse<OpenSearchResult> search(Query query, int limit, @Nullable Point location) {
         try {
             return client.search(s -> {
                 s.index(PhotonIndex.NAME)

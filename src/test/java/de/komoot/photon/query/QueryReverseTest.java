@@ -55,8 +55,7 @@ class QueryReverseTest extends ESBaseTester {
     }
 
     private List<PhotonResult> reverse(double lon, double lat, double radius, Integer limit) {
-        final var request = new ReverseRequest();
-        request.setLocation(FACTORY.createPoint(new Coordinate(lon, lat)));
+        final var request = new ReverseRequest(FACTORY.createPoint(new Coordinate(lon, lat)));
         request.setRadius(radius);
         if (limit != null) {
             request.setLimit(limit, limit);

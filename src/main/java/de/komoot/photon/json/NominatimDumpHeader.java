@@ -5,21 +5,24 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import de.komoot.photon.UsageException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+@NullMarked
 public class NominatimDumpHeader {
     private static final Logger LOGGER = LogManager.getLogger();
 
     public static final String DOCUMENT_TYPE = "NominatimDumpFile";
     public static final String EXPECTED_VERSION = "0.1.0";
 
-    private String generator;
-    private Date dataTimestamp;
-    private NominatimDumpFileFeatures features;
-    private Map<String, String> extraProperties = new HashMap<>();
+    @Nullable private String generator;
+    @Nullable private Date dataTimestamp;
+    @Nullable private NominatimDumpFileFeatures features;
+    private final Map<String, String> extraProperties = new HashMap<>();
 
     @JsonProperty(DumpFields.HEADER_VERSION)
     void setVersion(String version) {
@@ -43,6 +46,7 @@ public class NominatimDumpHeader {
     @JsonProperty(DumpFields.HEADER_FEATURES)
     void setFeatures(NominatimDumpFileFeatures features) { this.features = features; }
 
+    @Nullable
     public Date getDataTimestamp() {
         return dataTimestamp;
     }

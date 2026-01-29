@@ -9,5 +9,5 @@ public enum TagFilterKind {
     // Do not include an object if it matches the given filter parameters.
     EXCLUDE,
     // Do not include an object when it matches the value parameter.
-    EXCLUDE_VALUE;
+    EXCLUDE_VALUE
 }

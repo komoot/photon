@@ -1,5 +1,8 @@
 package de.komoot.photon.nominatim.model;
 
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -10,6 +13,7 @@ import java.util.stream.Collectors;
  * The different types correspond to the address parts available in GeocodeJSON. This type also defines
  * the mapping toward Nominatim's address ranks.
  */
+@NullMarked
 public enum AddressType {
     HOUSE("house", 29, 30, 3),
     STREET("street", 26, 28, 2),
@@ -39,6 +43,7 @@ public enum AddressType {
      * @param addressRank Nominatim address rank.
      * @return The corresponding address type or null if not covered.
      */
+    @Nullable
     public static AddressType fromRank(int addressRank) {
         for (AddressType a : AddressType.values()) {
             if (a.coversRank(addressRank)) {

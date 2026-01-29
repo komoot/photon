@@ -12,23 +12,25 @@ import org.apache.hc.core5.http.HttpHost;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codelibs.opensearch.runner.OpenSearchRunner;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import org.opensearch.client.json.JsonData;
 import org.opensearch.client.json.jackson.JacksonJsonpMapper;
 import org.opensearch.client.opensearch.OpenSearchClient;
 import org.opensearch.client.opensearch._types.HealthStatus;
 import org.opensearch.client.opensearch._types.OpenSearchException;
 import org.opensearch.client.transport.httpclient5.ApacheHttpClient5TransportBuilder;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
 
+@NullMarked
 public class Server {
     /**
      * Database version created by new imports with the current code.
-     *
+     * <p>
      * Format must be: major.minor.patch-dev
-     *
+     * <p>
      * Increase to next to be released version when the database layout
      * changes in an incompatible way. If it is already at the next released
      * version, increase the dev version.
@@ -38,9 +40,9 @@ public class Server {
     private static final Logger LOGGER = LogManager.getLogger();
 
     protected OpenSearchClient client;
-    private OpenSearchRunner runner = null;
+    @Nullable private OpenSearchRunner runner = null;
 
-    public void start(PhotonDBConfig config, boolean create) throws IOException {
+    public Server(PhotonDBConfig config, boolean create) throws IOException {
         final File dataDirectory = new File(config.getDataDirectory(), "photon_data");
         if (!create && config.getTransportAddresses().isEmpty()) {
             if (!dataDirectory.isDirectory()) {
@@ -143,7 +145,7 @@ public class Server {
         saveToDatabase(dbProperties);
     }
 
-    public void updateIndexSettings(String synonymFile) throws IOException {
+    public void updateIndexSettings(@Nullable String synonymFile) throws IOException {
         // This ensures we are on the right version. Do not mess with the
         // database if the version does not fit.
         var dbProperties = loadFromDatabase();
@@ -163,12 +165,10 @@ public class Server {
     }
 
     private void closeClientQuietly() {
-        if (client != null) {
-            try {
-                client._transport().close();
-            } catch (Exception e) {
-                LOGGER.warn("Error closing OpenSearch client transport", e);
-            }
+        try {
+            client._transport().close();
+        } catch (Exception e) {
+            LOGGER.warn("Error closing OpenSearch client transport", e);
         }
     }
 
@@ -214,7 +214,6 @@ public class Server {
         return new OpenSearchReverseHandler(client, queryTimeoutSec);
     }
 
-    @NotNull
     protected OpenSearchClient getClient() {
         return client;
     }

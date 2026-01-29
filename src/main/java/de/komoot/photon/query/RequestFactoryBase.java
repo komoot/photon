@@ -5,12 +5,16 @@ import de.komoot.photon.nominatim.model.AddressType;
 import de.komoot.photon.searcher.TagFilter;
 import io.javalin.http.Context;
 import io.javalin.http.Header;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import org.locationtech.jts.geom.*;
 
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
+@SuppressWarnings("ConstantValue")
+@NullMarked
 public class RequestFactoryBase {
     protected static final Set<String> BASE_PARAMETERS = Set.of(
         "lang", "limit", "debug", "dedupe", "geometry", "osm_tag", "layer", "include", "exclude");
@@ -41,31 +45,23 @@ public class RequestFactoryBase {
         request.setDedupe(context.queryParamAsClass("dedupe", Boolean.class).getOrDefault(true));
 
         request.addLayerFilters(context.queryParamsAsClass("layer", String.class)
-                .allowNullable()
                 .check(AVAILABLE_LAYERS::containsAll,
                         "Unknown layer type. Available layers: " + AVAILABLE_LAYERS)
                 .get());
 
-        final var tagFilters = context.queryParamsAsClass("osm_tag", TagFilter.class)
-                .allowNullable().get();
+        final var tagFilters = context.queryParamsAsClass("osm_tag", TagFilter.class).get();
 
-        if (tagFilters != null) {
-            for (var filter: tagFilters) {
-                if (filter != null) {
-                    request.addOsmTagFilter(filter);
-                }
-            }
+        for (var filter : tagFilters) {
+            request.addOsmTagFilter(filter);
         }
 
         request.addIncludeCategories(context.queryParamsAsClass("include", String.class)
-                .allowNullable()
                 .check(l -> l.stream()
                                 .allMatch(s -> PhotonDoc.CATEGORY_PATTERN.matcher(s).matches()),
                         "Invalid category pattern in 'include'.")
                 .get());
 
         request.addExcludeCategories(context.queryParamsAsClass("exclude", String.class)
-                .allowNullable()
                 .check(l -> l.stream()
                                 .allMatch(s -> PhotonDoc.CATEGORY_PATTERN.matcher(s).matches()),
                         "Invalid category pattern in 'exclude'.")
@@ -94,7 +90,10 @@ public class RequestFactoryBase {
         if (langHeader != null && !langHeader.isBlank()) {
             try {
                 var languages = Locale.LanguageRange.parse(langHeader);
-                return Locale.lookupTag(languages, supportedLanguages);
+                String lang = Locale.lookupTag(languages, supportedLanguages);
+                if (lang != null) {
+                    return lang;
+                }
             } catch (IllegalArgumentException e) {
                 // ignore
             }
@@ -104,6 +103,7 @@ public class RequestFactoryBase {
         return defaultLangauge;
     }
 
+    @Nullable
     protected Point parseLatLon(Context context, boolean mandatory) {
         Double lat, lon;
         if (mandatory) {
