@@ -86,8 +86,8 @@ public class ImportThread {
 
         @Override
         public void run() {
+	        List<Iterable<PhotonDoc>> batch = new ArrayList<>();
             while (true) {
-				List<Iterable<PhotonDoc>> batch = new ArrayList<>();
 				if (documents.drainTo(batch) == 0) {
 					try {
 						batch.add(documents.take());
@@ -104,6 +104,7 @@ public class ImportThread {
 					}
 					importer.add(docs);
 				}
+				batch.clear();
             }
         }
     }
