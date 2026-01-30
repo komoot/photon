@@ -78,16 +78,22 @@ public class Importer implements de.komoot.photon.Importer {
                 for (BulkResponseItem bri: response.items()) {
                     if (bri.status() != 201) {
                         LOGGER.error("Error during bulk import: {}", bri.toJsonString());
+                        int loggedErrors = 0;
                         for (var op : request.operations()) {
                             if (op.isCreate() && bri.id() != null && bri.id().equals(op.create().id())) {
+                                if (++loggedErrors > 10) {
+                                    LOGGER.error("And other bad documents.");
+                                    break;
+                                }
                                 LOGGER.error("Bad document: {}", op.create().document());
                             }
                         }
                     }
                 }
+                throw new RuntimeException("Error inserting new documents");
             }
         } catch (IOException e) {
-            LOGGER.error("Error during bulk import", e);
+            throw new RuntimeException("Error during bulk import", e);
         }
 
         bulkRequest = new BulkRequest.Builder();

@@ -121,15 +121,14 @@ class ImporterTest extends ESBaseTester {
         instance.add(List.of(
                 new PhotonDoc("113344", "N", 1, "place", "yes")
         ));
-        // Photon will log an error here and ignore the offending document.
+        // Photon will bail out on an existing place ID.
         instance.add(List.of(
                 new PhotonDoc("113344", "N", 2, "place", "yes")
         ));
-        instance.finish();
 
-        assertThat(getById(113344))
-                .extracting(p -> p.get("osm_id"))
-                .isEqualTo(1);
+        assertThatRuntimeException()
+                .isThrownBy(() -> instance.finish())
+                .withMessageContaining("Error inserting new documents");
     }
 
     @Test
