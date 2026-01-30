@@ -3,7 +3,7 @@ package de.komoot.photon.searcher;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.komoot.photon.Constants;
+import de.komoot.photon.opensearch.DocFields;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
@@ -16,9 +16,15 @@ import java.util.Map;
  * Format a database result into a Photon GeocodeJson response.
  */
 @NullMarked
-public class GeocodeJsonFormatter implements ResultFormatter {
-    private static final String[] KEYS_LANG_UNSPEC = {Constants.OSM_TYPE, Constants.OSM_ID, Constants.OSM_KEY, Constants.OSM_VALUE, Constants.OBJECT_TYPE, Constants.POSTCODE, Constants.HOUSENUMBER, Constants.COUNTRYCODE};
-    private static final String[] KEYS_LANG_SPEC = {Constants.NAME, Constants.COUNTRY, Constants.CITY, Constants.DISTRICT, Constants.LOCALITY, Constants.STREET, Constants.STATE, Constants.COUNTY};
+public class GeoJsonFormatter implements ResultFormatter {
+    private static final String[] KEYS_LANG_UNSPEC = {
+            GeoJsonFields.OSM_TYPE, GeoJsonFields.OSM_ID,
+            GeoJsonFields.OSM_KEY, GeoJsonFields.OSM_VALUE, GeoJsonFields.OBJECT_TYPE,
+            GeoJsonFields.POSTCODE, GeoJsonFields.HOUSENUMBER, GeoJsonFields.COUNTRYCODE};
+    private static final String[] KEYS_LANG_SPEC = {
+            GeoJsonFields.NAME, GeoJsonFields.STREET, GeoJsonFields.LOCALITY,
+            GeoJsonFields.DISTRICT, GeoJsonFields.CITY, GeoJsonFields.COUNTY,
+            GeoJsonFields.STATE, GeoJsonFields.COUNTRY};
 
     private final ObjectMapper mapper = new ObjectMapper();
 
@@ -44,14 +50,14 @@ public class GeocodeJsonFormatter implements ResultFormatter {
             }
 
             gen.writeStartObject();
-            gen.writeStringField("type", "FeatureCollection");
-            gen.writeArrayFieldStart("features");
+            gen.writeStringField(GeoJsonFields.GEOJSON_KEY_TYPE, GeoJsonFields.GEOJSON_TYPE_FEATURECOLLECTION);
+            gen.writeArrayFieldStart(GeoJsonFields.GEOJSON_KEY_FEATURES);
 
             for (PhotonResult result : results) {
                 gen.writeStartObject();
-                gen.writeStringField("type", "Feature");
+                gen.writeStringField(GeoJsonFields.GEOJSON_KEY_TYPE, GeoJsonFields.GEOJSON_TYPE_FEATURE);
 
-                gen.writeObjectFieldStart("properties");
+                gen.writeObjectFieldStart(GeoJsonFields.GEOJSON_KEY_PROPERTIES);
 
                 for (String key : KEYS_LANG_UNSPEC) {
                     put(gen, key, result.get(key));
@@ -61,18 +67,18 @@ public class GeocodeJsonFormatter implements ResultFormatter {
                     put(gen, key, result.getLocalised(key, language));
                 }
 
-                put(gen, "extent", result.getExtent());
+                put(gen, GeoJsonFields.EXTENT, result.getExtent());
 
-                put(gen, "extra", result.getMap("extra"));
+                put(gen, GeoJsonFields.EXTRA, result.getMap(DocFields.EXTRA));
 
                 gen.writeEndObject();
 
                 if (withGeometry && result.getGeometry() != null) {
-                    gen.writeFieldName("geometry");
+                    gen.writeFieldName(GeoJsonFields.GEOJSON_KEY_GEOMETRY);
                     gen.writeRawValue(result.getGeometry());
                 } else {
-                    gen.writeObjectFieldStart("geometry");
-                    gen.writeStringField("type", "Point");
+                    gen.writeObjectFieldStart(GeoJsonFields.GEOJSON_KEY_GEOMETRY);
+                    gen.writeStringField(GeoJsonFields.GEOJSON_KEY_TYPE, GeoJsonFields.GEOJSON_GEOMETRY_POINT);
                     gen.writeObjectField("coordinates", result.getCoordinates());
                     gen.writeEndObject();
                 }
@@ -83,7 +89,7 @@ public class GeocodeJsonFormatter implements ResultFormatter {
             gen.writeEndArray();
 
             if (withDebugInfo || queryDebugInfo != null) {
-                gen.writeObjectFieldStart("properties");
+                gen.writeObjectFieldStart(GeoJsonFields.GEOJSON_KEY_PROPERTIES);
                 if (queryDebugInfo != null) {
                     gen.writeFieldName("debug");
                     gen.writeRawValue(queryDebugInfo);

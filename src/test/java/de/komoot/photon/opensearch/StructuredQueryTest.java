@@ -1,7 +1,6 @@
 package de.komoot.photon.opensearch;
 
 import de.komoot.photon.query.StructuredSearchRequest;
-import de.komoot.photon.Constants;
 import de.komoot.photon.ESBaseTester;
 import de.komoot.photon.Importer;
 import de.komoot.photon.PhotonDoc;
@@ -120,7 +119,7 @@ public class StructuredQueryTest extends ESBaseTester {
         request.setDistrict(DISTRICT + DISTRICT.charAt(DISTRICT.length() - 1));
 
         var result = search(request);
-        Assertions.assertEquals(2, result.get(Constants.OSM_ID));
+        Assertions.assertEquals(2, result.get(DocFields.OSM_ID));
     }
 
     @Test
@@ -131,7 +130,7 @@ public class StructuredQueryTest extends ESBaseTester {
         request.setPostCode(DISTRICT_POST_CODE);
 
         var result = search(request);
-        Assertions.assertEquals(request.getPostCode(), result.get(Constants.POSTCODE));
+        Assertions.assertEquals(request.getPostCode(), result.get(DocFields.POSTCODE));
     }
 
     @Test
@@ -144,7 +143,7 @@ public class StructuredQueryTest extends ESBaseTester {
         var results = queryHandler.search(request);
         assertEquals(1, results.size());
         var result = results.get(0);
-        assertEquals(request.getHouseNumber(), result.get(Constants.HOUSENUMBER));
+        assertEquals(request.getHouseNumber(), result.get(DocFields.HOUSENUMBER));
     }
 
     @Test
@@ -157,7 +156,7 @@ public class StructuredQueryTest extends ESBaseTester {
         var results = queryHandler.search(request);
         for (var result : results)
         {
-            assertNotEquals(5, result.get(Constants.OSM_ID));
+            assertNotEquals(5, result.get(DocFields.OSM_ID));
         }
     }
 
@@ -169,7 +168,7 @@ public class StructuredQueryTest extends ESBaseTester {
         var results = queryHandler.search(request);
         assertEquals(1, results.size());
         var result = results.get(0);
-        assertEquals(0, result.get(Constants.OSM_ID));
+        assertEquals(0, result.get(DocFields.OSM_ID));
     }
 
     @Test
@@ -182,8 +181,8 @@ public class StructuredQueryTest extends ESBaseTester {
         var results = queryHandler.search(request);
 
         for (var result : results) {
-            assertNull(result.getLocalised(Constants.STREET, LANGUAGE));
-            assertNull(result.get(Constants.HOUSENUMBER));
+            assertNull(result.getLocalised(DocFields.STREET, LANGUAGE));
+            assertNull(result.get(DocFields.HOUSENUMBER));
         }
     }
 
@@ -196,8 +195,8 @@ public class StructuredQueryTest extends ESBaseTester {
         request.setHouseNumber(HOUSE_NUMBER);
 
         var result = search(request);
-        assertNull(result.getLocalised(Constants.STREET, LANGUAGE));
-        Assertions.assertEquals(request.getCity(), result.getLocalised(Constants.NAME, LANGUAGE));
+        assertNull(result.getLocalised(DocFields.STREET, LANGUAGE));
+        Assertions.assertEquals(request.getCity(), result.getLocalised(DocFields.NAME, LANGUAGE));
     }
 
     @Test
@@ -206,8 +205,8 @@ public class StructuredQueryTest extends ESBaseTester {
         request.setCountryCode(COUNTRY_CODE);
         request.setCity(DISTRICT);
         var result = search(request);
-        Assertions.assertEquals(CITY, result.getLocalised(Constants.CITY, LANGUAGE));
-        Assertions.assertEquals(request.getCity(), result.getLocalised(Constants.NAME, LANGUAGE));
+        Assertions.assertEquals(CITY, result.getLocalised(DocFields.CITY, LANGUAGE));
+        Assertions.assertEquals(request.getCity(), result.getLocalised(DocFields.NAME, LANGUAGE));
     }
 
     @Test
@@ -218,9 +217,9 @@ public class StructuredQueryTest extends ESBaseTester {
         request.setStreet(STREET);
         request.setHouseNumber("1");
         var result = search(request);
-        assertNull(result.getLocalised(Constants.HOUSENUMBER, LANGUAGE));
-        Assertions.assertEquals(request.getStreet(), result.getLocalised(Constants.NAME, LANGUAGE));
-        Assertions.assertEquals(request.getCity(), result.getLocalised(Constants.CITY, LANGUAGE));
+        assertNull(result.getLocalised(DocFields.HOUSENUMBER, LANGUAGE));
+        Assertions.assertEquals(request.getStreet(), result.getLocalised(DocFields.NAME, LANGUAGE));
+        Assertions.assertEquals(request.getCity(), result.getLocalised(DocFields.CITY, LANGUAGE));
     }
 
     @Test
@@ -231,9 +230,9 @@ public class StructuredQueryTest extends ESBaseTester {
         request.setStreet("does not exist");
         request.setHouseNumber("1");
         var result = search(request);
-        assertNull(result.getLocalised(Constants.HOUSENUMBER, LANGUAGE));
-        assertNull(result.getLocalised(Constants.STREET, LANGUAGE));
-        Assertions.assertEquals(request.getCity(), result.getLocalised(Constants.NAME, LANGUAGE));
+        assertNull(result.getLocalised(DocFields.HOUSENUMBER, LANGUAGE));
+        assertNull(result.getLocalised(DocFields.STREET, LANGUAGE));
+        Assertions.assertEquals(request.getCity(), result.getLocalised(DocFields.NAME, LANGUAGE));
     }
 
     @Test
@@ -245,9 +244,9 @@ public class StructuredQueryTest extends ESBaseTester {
         request.setHouseNumber(HOUSE_NUMBER);
 
         var result = search(request);
-        Assertions.assertEquals(request.getCity(), result.getLocalised(Constants.CITY, LANGUAGE));
-        Assertions.assertEquals(request.getStreet(), result.getLocalised(Constants.STREET, LANGUAGE));
-        Assertions.assertEquals(request.getHouseNumber(), result.get(Constants.HOUSENUMBER));
+        Assertions.assertEquals(request.getCity(), result.getLocalised(DocFields.CITY, LANGUAGE));
+        Assertions.assertEquals(request.getStreet(), result.getLocalised(DocFields.STREET, LANGUAGE));
+        Assertions.assertEquals(request.getHouseNumber(), result.get(DocFields.HOUSENUMBER));
     }
 
     private PhotonResult search(StructuredSearchRequest request) {

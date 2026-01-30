@@ -1,6 +1,5 @@
 package de.komoot.photon.opensearch;
 
-import de.komoot.photon.Constants;
 import de.komoot.photon.ESBaseTester;
 import de.komoot.photon.Importer;
 import de.komoot.photon.PhotonDoc;
@@ -121,8 +120,8 @@ class SuggestAddressesTest extends ESBaseTester {
         var results = handler.search(request);
 
         assertEquals(1, results.size());
-        assertEquals(STREET_NAME, results.getFirst().getLocalised(Constants.NAME, "en"));
-        assertNull(results.getFirst().get(Constants.HOUSENUMBER));
+        assertEquals(STREET_NAME, results.getFirst().getLocalised(DocFields.NAME, "en"));
+        assertNull(results.getFirst().get(DocFields.HOUSENUMBER));
     }
 
     @Test
@@ -135,7 +134,7 @@ class SuggestAddressesTest extends ESBaseTester {
         var results = handler.search(request);
 
         assertEquals(2, results.size());
-        assertEquals("42", results.get(1).get(Constants.HOUSENUMBER));
+        assertEquals("42", results.get(1).get(DocFields.HOUSENUMBER));
     }
 
     @Test
@@ -151,7 +150,7 @@ class SuggestAddressesTest extends ESBaseTester {
         var results = handler.search(request);
 
         assertEquals(1, results.size());
-        assertEquals("42", results.getFirst().get(Constants.HOUSENUMBER));
+        assertEquals("42", results.getFirst().get(DocFields.HOUSENUMBER));
     }
 
     @Test
@@ -166,9 +165,9 @@ class SuggestAddressesTest extends ESBaseTester {
         var results = handler.search(request);
 
         assertEquals(1, results.size(), "Expected only Triesen result, got: " + results);
-        assertEquals("16", results.getFirst().get(Constants.HOUSENUMBER));
+        assertEquals("16", results.getFirst().get(DocFields.HOUSENUMBER));
         // City is stored in localised format
-        assertEquals("Triesen", results.getFirst().getLocalised(Constants.CITY, "en"));
+        assertEquals("Triesen", results.getFirst().getLocalised(DocFields.CITY, "en"));
     }
 
     @Test
@@ -183,8 +182,8 @@ class SuggestAddressesTest extends ESBaseTester {
         var results = handler.search(request);
 
         assertEquals(2, results.size(), "Expected street and address, got: " + results);
-        assertEquals("Romsdalsveien", results.getFirst().getLocalised(Constants.NAME, "en"));
-        assertEquals("10", results.get(1).get(Constants.HOUSENUMBER));
+        assertEquals("Romsdalsveien", results.getFirst().getLocalised(DocFields.NAME, "en"));
+        assertEquals("10", results.get(1).get(DocFields.HOUSENUMBER));
     }
 
     @Test
@@ -198,7 +197,7 @@ class SuggestAddressesTest extends ESBaseTester {
         var results = handler.search(request);
 
         assertEquals(2, results.size(), "Expected street and address, got: " + results);
-        assertEquals("Nils Gotlands veg", results.getFirst().getLocalised(Constants.NAME, "en"));
-        assertEquals("5", results.get(1).get(Constants.HOUSENUMBER));
+        assertEquals("Nils Gotlands veg", results.getFirst().getLocalised(DocFields.NAME, "en"));
+        assertEquals("5", results.get(1).get(DocFields.HOUSENUMBER));
     }
 }

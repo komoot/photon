@@ -1,6 +1,5 @@
 package de.komoot.photon.opensearch;
 
-import de.komoot.photon.Constants;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import org.opensearch.client.opensearch._types.FieldValue;
@@ -36,11 +35,11 @@ public class AddressQueryBuilder {
     public AddressQueryBuilder addCountryCode(@Nullable String countryCode, boolean hasMoreDetails) {
         if (countryCode == null) return this;
 
-        query.filter(QueryBuilders.term().field(Constants.COUNTRYCODE).value(FieldValue.of(countryCode.toUpperCase())).build().toQuery());
+        query.filter(QueryBuilders.term().field(DocFields.COUNTRYCODE).value(FieldValue.of(countryCode.toUpperCase())).build().toQuery());
         if(!hasMoreDetails)
         {
             query.filter(QueryBuilders.term()
-                    .field(Constants.OBJECT_TYPE)
+                    .field(DocFields.OBJECT_TYPE)
                     .value(FieldValue.of("country"))
                     .build()
                     .toQuery());
@@ -52,7 +51,7 @@ public class AddressQueryBuilder {
     public AddressQueryBuilder addState(@Nullable String state, boolean hasMoreDetails) {
         if (state == null) return this;
 
-        var stateQuery = getNameOrFieldQuery(Constants.STATE, state, STATE_BOOST, "state", hasMoreDetails);
+        var stateQuery = getNameOrFieldQuery(DocFields.STATE, state, STATE_BOOST, "state", hasMoreDetails);
         query.should(stateQuery);
         return this;
     }
@@ -60,7 +59,7 @@ public class AddressQueryBuilder {
     public AddressQueryBuilder addCounty(@Nullable String county, boolean hasMoreDetails) {
         if (county == null) return this;
 
-        addNameOrFieldQuery(Constants.COUNTY, county, COUNTY_BOOST, "county", hasMoreDetails);
+        addNameOrFieldQuery(DocFields.COUNTY, county, COUNTY_BOOST, "county", hasMoreDetails);
         return this;
     }
 
@@ -71,7 +70,7 @@ public class AddressQueryBuilder {
         Query nameQuery = getFuzzyNameQueryBuilder(city, "city").boost(CITY_BOOST)
                 .build()
                 .toQuery();
-        Query fieldQuery = getFuzzyQuery(Constants.CITY, city, CITY_BOOST);
+        Query fieldQuery = getFuzzyQuery(DocFields.CITY, city, CITY_BOOST);
 
         if (!hasDistrict) {
             var districtNameQuery = getFuzzyNameQueryBuilder(city, "district").boost(0.95f * CITY_BOOST)
@@ -84,7 +83,7 @@ public class AddressQueryBuilder {
                     .build()
                     .toQuery();
 
-            var districtFieldQuery = getFuzzyQuery(Constants.DISTRICT, city, 0.95f * CITY_BOOST);
+            var districtFieldQuery = getFuzzyQuery(DocFields.DISTRICT, city, 0.95f * CITY_BOOST);
             fieldQuery = QueryBuilders.bool()
                     .should(fieldQuery)
                     .should(districtFieldQuery)
@@ -133,7 +132,7 @@ public class AddressQueryBuilder {
         Query query;
         if (postalCode.contains(" ")) {
             query = QueryBuilders.match()
-                    .field(Constants.POSTCODE)
+                    .field(DocFields.POSTCODE)
                     .query(FieldValue.of(postalCode))
                     .fuzziness(fuzziness.asString())
                     .boost(POSTAL_CODE_BOOST)
@@ -141,7 +140,7 @@ public class AddressQueryBuilder {
                     .toQuery();
         } else {
             query = QueryBuilders.fuzzy()
-                    .field(Constants.POSTCODE)
+                    .field(DocFields.POSTCODE)
                     .value(FieldValue.of(postalCode))
                     .fuzziness(fuzziness.asString())
                     .boost(POSTAL_CODE_BOOST)
@@ -158,7 +157,7 @@ public class AddressQueryBuilder {
     public AddressQueryBuilder addDistrict(@Nullable String district, boolean hasMoreDetails) {
         if (district == null) return this;
 
-        addNameOrFieldQuery(Constants.DISTRICT, district, DISTRICT_BOOST, "district", hasMoreDetails);
+        addNameOrFieldQuery(DocFields.DISTRICT, district, DISTRICT_BOOST, "district", hasMoreDetails);
         return this;
     }
 
@@ -167,9 +166,9 @@ public class AddressQueryBuilder {
             if (houseNumber != null) {
                 // some hamlets have no street name and only number the buildings
                 var houseNumberQuery = QueryBuilders.bool()
-                        .mustNot(QueryBuilders.exists().field(Constants.STREET).build().toQuery())
+                        .mustNot(QueryBuilders.exists().field(DocFields.STREET).build().toQuery())
                         .must(QueryBuilders.matchPhrase()
-                                .field(Constants.HOUSENUMBER)
+                                .field(DocFields.HOUSENUMBER)
                                 .query(houseNumber)
                                 .build()
                                 .toQuery());
@@ -188,30 +187,30 @@ public class AddressQueryBuilder {
                 streetQuery = nameFieldQuery.boost(STREET_BOOST).build().toQuery();
             } else {
                 streetQuery = QueryBuilders.bool()
-                        .should(getFuzzyQuery(Constants.STREET, street))
+                        .should(getFuzzyQuery(DocFields.STREET, street))
                         .should(nameFieldQuery.build().toQuery())
                         .minimumShouldMatch("1")
                         .boost(STREET_BOOST).build().toQuery();
             }
         } else {
-            streetQuery = getFuzzyQuery(Constants.STREET, street, STREET_BOOST);
+            streetQuery = getFuzzyQuery(DocFields.STREET, street, STREET_BOOST);
         }
 
         if (houseNumber != null) {
             var houseNumberMatchQuery = QueryBuilders.bool().must(QueryBuilders.matchPhrase()
-                    .field(Constants.HOUSENUMBER)
+                    .field(DocFields.HOUSENUMBER)
                     .query(houseNumber)
                     .build()
                     .toQuery());
 
-            houseNumberMatchQuery.filter(getFuzzyQuery(Constants.STREET, street));
+            houseNumberMatchQuery.filter(getFuzzyQuery(DocFields.STREET, street));
             if (cityFilter != null) {
                 houseNumberMatchQuery.filter(cityFilter.build().toQuery());
             }
 
             BoolQuery.Builder houseNumberQuery = QueryBuilders.bool()
                     .should(houseNumberMatchQuery.build().toQuery())
-                    .should(QueryBuilders.bool().mustNot(QueryBuilders.exists().field(Constants.HOUSENUMBER).build().toQuery()).build().toQuery())
+                    .should(QueryBuilders.bool().mustNot(QueryBuilders.exists().field(DocFields.HOUSENUMBER).build().toQuery()).build().toQuery())
                     .boost(HOUSE_NUMBER_BOOST);
 
             query.must(houseNumberQuery.build().toQuery());
@@ -253,14 +252,14 @@ public class AddressQueryBuilder {
 
         return or.minimumShouldMatch("1")
                 .filter(QueryBuilders.term()
-                        .field(Constants.OBJECT_TYPE)
+                        .field(DocFields.OBJECT_TYPE)
                         .value(FieldValue.of(objectType))
                         .build()
                         .toQuery());
     }
 
     private static boolean isCityRelatedField(String name) {
-        return Objects.equals(name, Constants.POSTCODE) || Objects.equals(name, Constants.CITY) || Objects.equals(name, Constants.DISTRICT);
+        return Objects.equals(name, DocFields.POSTCODE) || Objects.equals(name, DocFields.CITY) || Objects.equals(name, DocFields.DISTRICT);
     }
 
     private void addNameOrFieldQuery(String field, String value, float boost, String objectType, boolean hasMoreDetails) {

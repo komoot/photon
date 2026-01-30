@@ -1,6 +1,5 @@
 package de.komoot.photon.opensearch;
 
-import de.komoot.photon.Constants;
 import de.komoot.photon.query.StructuredSearchRequest;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
@@ -31,7 +30,7 @@ public class SearchQueryBuilder extends BaseQueryBuilder {
         }
 
         innerQuery.functions(fvf -> fvf.fieldValueFactor(fvfb -> fvfb
-                        .field("importance")
+                        .field(DocFields.IMPORTANCE)
                         .factor((float) importance_factor)
                         .missing(0.00001)))
                 .scoreMode(FunctionScoreMode.Sum)
@@ -45,10 +44,10 @@ public class SearchQueryBuilder extends BaseQueryBuilder {
         innerQuery.query(q -> q.bool(b -> {
             b.should(prefixMatch -> prefixMatch.match(nmb -> nmb
                     .query(queryField)
-                    .field("collector.name.prefix")));
+                    .field(DocFields.COLLECTOR + ".name.prefix")));
 
             b.should(fullMatch -> fullMatch.match(fzq -> fzq
-                    .field("collector.field.name.full")
+                    .field(DocFields.COLLECTOR + ".field.name.full")
                     .query(queryField)
                     .fuzziness(qlen < 4 ? "0" : "AUTO")
                     .prefixLength(qlen <= 6 ? 1 : 2)
@@ -57,7 +56,7 @@ public class SearchQueryBuilder extends BaseQueryBuilder {
             if (lenient) {
                 b.should(iq2 -> iq2.match(nmb -> nmb
                         .query(queryField)
-                        .field("collector.name")
+                        .field(DocFields.COLLECTOR + ".name")
                         .fuzziness("AUTO")
                         .prefixLength(2)
                         .boost(0.2f)));
@@ -70,7 +69,7 @@ public class SearchQueryBuilder extends BaseQueryBuilder {
                 .weight(0.4f)
                 .filter(fbool -> fbool.bool(c -> c
                         .mustNot(fp -> fp.term(tp -> tp
-                                .field(Constants.OBJECT_TYPE)
+                                .field(DocFields.OBJECT_TYPE)
                                 .value(FieldValue.of("other"))))))
         );
 
@@ -84,7 +83,7 @@ public class SearchQueryBuilder extends BaseQueryBuilder {
         innerQuery.query(coreQuery -> coreQuery.bool(coreBuilder -> {
             coreBuilder.must(fullMatch -> fullMatch.match(fmb -> {
                 fmb.query(queryField);
-                fmb.field("collector.all.ngram");
+                fmb.field(DocFields.COLLECTOR + ".all.ngram");
                 fmb.boost(0.1f);
 
                 if (lenient) {
@@ -100,7 +99,7 @@ public class SearchQueryBuilder extends BaseQueryBuilder {
                     .boost(0.2f)
                     .queries(builder -> builder.match(q -> q
                             .query(queryField)
-                            .field("collector.name")
+                            .field(DocFields.COLLECTOR + ".name")
                             .fuzziness(lenient ? "AUTO" : "0")
                             .prefixLength(2)
                             .boost(isAlphabetic ? 1.5f : 1.0f)
@@ -114,13 +113,13 @@ public class SearchQueryBuilder extends BaseQueryBuilder {
                                                 .match(m1 -> m1
                                                         .query(queryField)
                                                         .boost(0.6f)
-                                                        .field("housenumber")
+                                                        .field(DocFields.HOUSENUMBER)
                                                 ))
                                         .functions(fullHnr -> fullHnr
                                                 .weight(1.0f)
                                                 .filter(hmrExact -> hmrExact
                                                         .terms(t -> t
-                                                                .field("housenumber.full")
+                                                                .field(DocFields.HOUSENUMBER + ".full")
                                                                 .boost(2f)
                                                                 .terms(tf -> tf.value(
                                                                         Arrays.stream(query.toLowerCase().split("[ ,;]+"))
@@ -134,15 +133,15 @@ public class SearchQueryBuilder extends BaseQueryBuilder {
 
                                 if (suggestAddresses) {
                                     b.should(hnrQuery);
-                                    b.must(m -> m.exists(e -> e.field(Constants.HOUSENUMBER)));
-                                    b.mustNot(m -> m.exists(e -> e.field(Constants.NAME)));
+                                    b.must(m -> m.exists(e -> e.field(DocFields.HOUSENUMBER)));
+                                    b.mustNot(m -> m.exists(e -> e.field(DocFields.NAME)));
                                 } else {
                                     b.must(hnrQuery);
                                 }
                                 return b.must(parent -> parent
                                         .match(m2 -> m2
                                                 .query(queryField)
-                                                .field("collector.parent")
+                                                .field(DocFields.COLLECTOR + ".parent")
                                                 .fuzziness(lenient ? "AUTO" : "0")
                                                 .prefixLength(2)
                                         ));
@@ -151,12 +150,12 @@ public class SearchQueryBuilder extends BaseQueryBuilder {
             ));
             coreBuilder.should(fullWord -> fullWord.match(fwm -> fwm
                     .query(queryField)
-                    .field("collector.all")
+                    .field(DocFields.COLLECTOR + ".all")
             ));
             if (!lenient && query.indexOf(',') < 0) {
                 coreBuilder.should(prefixMatch -> prefixMatch.match(nmb -> nmb
                         .query(queryField)
-                        .field("collector.name.prefix")
+                        .field(DocFields.COLLECTOR + ".name.prefix")
                         .boost(isAlphabetic ? 0.1f : 0.01f)
                 ));
             }
@@ -180,9 +179,9 @@ public class SearchQueryBuilder extends BaseQueryBuilder {
                 .addStreetAndHouseNumber(request.getStreet(), request.getHouseNumber())
                 .getQuery());
 
-        var hasHouseNumberQuery = QueryBuilders.exists().field(Constants.HOUSENUMBER).build().toQuery();
-        var isHouseQuery = QueryBuilders.term().field(Constants.OBJECT_TYPE).value(FieldValue.of("house")).build().toQuery();
-        var typeOtherQuery = QueryBuilders.term().field(Constants.OBJECT_TYPE).value(FieldValue.of("other")).build().toQuery();
+        var hasHouseNumberQuery = QueryBuilders.exists().field(DocFields.HOUSENUMBER).build().toQuery();
+        var isHouseQuery = QueryBuilders.term().field(DocFields.OBJECT_TYPE).value(FieldValue.of("house")).build().toQuery();
+        var typeOtherQuery = QueryBuilders.term().field(DocFields.OBJECT_TYPE).value(FieldValue.of("other")).build().toQuery();
 
         if (!request.hasHouseNumber()) {
             outerQuery.filter(fn -> fn.bool(b -> b
@@ -215,7 +214,7 @@ public class SearchQueryBuilder extends BaseQueryBuilder {
         innerQuery.functions(fn1 -> fn1
                 .weight((float) (38.0 * (1.0 - fnscale)))
                 .exp(ex -> ex
-                        .field("coordinate")
+                        .field(DocFields.COORDINATE)
                         .placement(p -> p
                                 .origin(JsonData.of(Map.of("lon", point.getX(), "lat", point.getY())))
                                 .decay(0.8)
@@ -226,7 +225,7 @@ public class SearchQueryBuilder extends BaseQueryBuilder {
     public void addBoundingBox(@Nullable Envelope bbox) {
         if (bbox != null) {
             outerQuery.filter(q -> q.geoBoundingBox(bb -> bb
-                    .field("coordinate")
+                    .field(DocFields.COORDINATE)
                     .boundingBox(b -> b.coords(c -> c
                             .top(bbox.getMaxY())
                             .bottom(bbox.getMinY())

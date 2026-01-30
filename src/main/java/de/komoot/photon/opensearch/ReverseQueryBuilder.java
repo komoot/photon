@@ -10,7 +10,7 @@ public class ReverseQueryBuilder extends BaseQueryBuilder {
     public ReverseQueryBuilder(Point location, double radius) {
         outerQuery.filter(fq -> fq
                     .geoDistance(gd -> gd
-                            .field("coordinate")
+                            .field(DocFields.COORDINATE)
                             .location(l -> l.latlon(ll -> ll.lat(location.getY()).lon(location.getX())))
                             .distance(radius + "km")));
     }
