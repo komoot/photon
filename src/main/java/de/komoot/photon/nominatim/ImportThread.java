@@ -26,10 +26,15 @@ public class ImportThread {
     private final Importer importer;
     private final Thread thread;
     private final long startMillis;
+    private volatile boolean exceptionInThread = false;
 
     public ImportThread(Importer importer) {
         this.importer = importer;
         this.thread = new Thread(new ImportRunnable());
+        this.thread.setUncaughtExceptionHandler((t, ex) -> {
+            LOGGER.error("Import error.", ex);
+            exceptionInThread = true;
+        });
         this.thread.start();
         this.startMillis = System.currentTimeMillis();
     }
@@ -40,6 +45,10 @@ public class ImportThread {
      * @param docs Fully filled nominatim document.
      */
     public void addDocument(@Nullable Iterable<PhotonDoc> docs) {
+        if (exceptionInThread) {
+            throw new RuntimeException("Import thread failed.");
+        }
+
         if (docs == null || !docs.iterator().hasNext()) {
             return;
         }
@@ -77,8 +86,10 @@ public class ImportThread {
                 Thread.currentThread().interrupt();
             }
         }
-        LOGGER.info("Finished import of {} photon documents. (Total processing time: {}s)",
-                    counter.longValue(), (System.currentTimeMillis() - startMillis)/1000);
+        if (!exceptionInThread) {
+            LOGGER.info("Finished import of {} photon documents. (Total processing time: {}s)",
+                    counter.longValue(), (System.currentTimeMillis() - startMillis) / 1000);
+        }
     }
 
     private class ImportRunnable implements Runnable {
