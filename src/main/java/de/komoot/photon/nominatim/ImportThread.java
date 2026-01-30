@@ -7,9 +7,10 @@ import org.apache.logging.log4j.Logger;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -21,7 +22,7 @@ public class ImportThread {
 
     private static final int PROGRESS_INTERVAL = 50000;
     private static final List<PhotonDoc> FINAL_DOCUMENT = List.of();
-    private final BlockingQueue<Iterable<PhotonDoc>> documents = new LinkedBlockingDeque<>(100);
+    private final BlockingQueue<Iterable<PhotonDoc>> documents = new LinkedBlockingQueue<>(100);
     private final AtomicLong counter = new AtomicLong();
     private final Importer importer;
     private final Thread thread;
@@ -85,20 +86,26 @@ public class ImportThread {
 
         @Override
         public void run() {
+	        List<Iterable<PhotonDoc>> batch = new ArrayList<>();
             while (true) {
-                try {
-                    final var docs = documents.take();
-                    if (!docs.iterator().hasNext()) {
-                        break;
-                    }
-                    importer.add(docs);
-                } catch (InterruptedException e) {
-                    LOGGER.info("Interrupted exception", e);
-                    // Restore interrupted state.
-                    Thread.currentThread().interrupt();
-                }
+				if (documents.drainTo(batch) == 0) {
+					try {
+						batch.add(documents.take());
+					} catch (InterruptedException e) {
+						LOGGER.info("Interrupted exception", e);
+						// Restore interrupted state.
+						Thread.currentThread().interrupt();
+					}
+				}
+				for (Iterable<PhotonDoc> docs : batch) {
+					if (docs == FINAL_DOCUMENT) {
+						importer.finish();
+						return;
+					}
+					importer.add(docs);
+				}
+				batch.clear();
             }
-            importer.finish();
         }
     }
 
