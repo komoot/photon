@@ -3,6 +3,7 @@ plugins {
   id 'application'
   id 'jacoco'
   id 'org.sonarqube' version '6.2.0.5505'
+  id 'maven-publish'
 }
 
 apply from: rootProject.file('buildSrc/shared.gradle')
@@ -64,4 +65,24 @@ shadowJar {
     // JndiLookup from the fat jar. This is the recommended course of action
     // when you cannot upgrade as per https://logging.apache.org/log4j/2.x/security.html
     exclude 'org/apache/logging/log4j/core/lookup/JndiLookup.class'
+}
+
+publishing {
+    publications {
+        shadow(MavenPublication) { publication ->
+            project.shadow.component(publication)
+            artifactId = 'photon-opensearch'
+        }
+    }
+    repositories {
+        maven {
+            name = 'nexus'
+            url = System.getenv('NEXUS_URL') ?: ''
+            allowInsecureProtocol = true
+            credentials {
+                username = System.getenv('NEXUS_USER') ?: ''
+                password = System.getenv('NEXUS_PASS') ?: ''
+            }
+        }
+    }
 }

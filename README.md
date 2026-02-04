@@ -10,6 +10,18 @@ an efficient, powerful and highly scalable search platform.
 _photon_ was started by [komoot](http://www.komoot.de) who also provide the
 public demo server at [photon.komoot.io](https://photon.komoot.io).
 
+## Publish to internal Nexus
+
+Set environment variables:
+```shell
+export NEXUS_URL=https://nexus.example.com/repository/maven-releases/                                                                                                             
+export NEXUS_USER=deployer                                                                                                                                                        
+export NEXUS_PASS=secret
+```
+Upload to Nexus:
+```shell
+./gradlew app:opensearch:publish      
+```
 ## Features
 
 - high performance
