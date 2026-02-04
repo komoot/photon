@@ -3,7 +3,7 @@ photon_data/
 dependency-reduced-pom.xml
 .gradle/
 app/*/build
-
+build
 .idea/
 *.iml
 *.~*
@@ -17,3 +17,5 @@ nbactions.xml
 .classpath
 .project
 .settings/
+
+CLAUDE.md
