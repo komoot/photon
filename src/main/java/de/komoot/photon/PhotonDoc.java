@@ -159,18 +159,6 @@ public class PhotonDoc {
     public PhotonDoc extraTags(@Nullable Map<String, String> extratags) {
         this.extratags = extratags == null ? Map.of() : extratags;
 
-        if (extratags != null) {
-            String place = extratags.get("place");
-            if (place == null) {
-                place = extratags.get("linked_place");
-            }
-            if (place != null) {
-                // take more specific extra tag information
-                tagKey = "place";
-                tagValue = place;
-            }
-        }
-
         return this;
     }
 
