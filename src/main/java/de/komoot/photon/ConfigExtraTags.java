@@ -26,7 +26,7 @@ public class ConfigExtraTags {
         this.tags = allowAll ? new String[0] : tags.toArray(String[]::new);
     }
 
-    public void writeFilteredExtraTags(JsonGenerator writer, String fieldName, Map<String, String> sourceTags) throws IOException  {
+    public void writeFilteredExtraTags(JsonGenerator writer, String fieldName, Map<String, Object> sourceTags) throws IOException  {
          if (!sourceTags.isEmpty()) {
             if (allowAll) {
                 writer.writeObjectField(fieldName, sourceTags);
@@ -34,13 +34,13 @@ public class ConfigExtraTags {
                 boolean foundTag = false;
 
                 for (String tag : tags) {
-                    String value = sourceTags.get(tag);
+                    Object value = sourceTags.get(tag);
                     if (value != null) {
                         if (!foundTag) {
                             writer.writeObjectFieldStart(fieldName);
                             foundTag = true;
                         }
-                        writer.writeStringField(tag, value);
+                        writer.writeObjectField(tag, value);
                     }
                 }
 
@@ -51,7 +51,7 @@ public class ConfigExtraTags {
         }
     }
 
-    public Map<String, String> filterExtraTags(Map<String, String> sourceTags) {
+    public Map<String, Object> filterExtraTags(Map<String, Object> sourceTags) {
         if (allowAll || sourceTags.isEmpty()) {
             return sourceTags;
         }
@@ -60,7 +60,7 @@ public class ConfigExtraTags {
             return Map.of();
         }
 
-        final Map<String, String> newMap = new HashMap<>();
+        final Map<String, Object> newMap = new HashMap<>();
         for (var key : tags) {
             final var value = sourceTags.get(key);
             if (value != null) {

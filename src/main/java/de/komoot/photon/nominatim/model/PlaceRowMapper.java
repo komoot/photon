@@ -7,9 +7,7 @@ import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Pattern;
 
 /**
@@ -59,7 +57,7 @@ public class PlaceRowMapper implements RowMapper<PhotonDoc> {
                 rs.getString("osm_type"), rs.getLong("osm_id"),
                 osmKey, osmValue)
                 .names(NameMap.makeForPlace(dbutils.getMap(rs, "name"), languages))
-                .extraTags(extratags)
+                .extraTags(Collections.unmodifiableMap(extratags))
                 .categories(List.of(String.format("osm.%s.%s", osmKey, osmValue)))
                 .bbox(dbutils.extractGeometry(rs, "bbox"))
                 .countryCode(rs.getString("country_code"))

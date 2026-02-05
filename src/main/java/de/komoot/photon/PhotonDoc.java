@@ -53,7 +53,7 @@ public class PhotonDoc {
 
     private NameMap name = new NameMap();
     @Nullable private String postcode = null;
-    private Map<String, String> extratags = Map.of();
+    private Map<String, Object> extratags = Map.of();
     private Set<String> categorySet = Set.of();
     @Nullable private Envelope bbox = null;
     private double importance = 0;
@@ -156,7 +156,7 @@ public class PhotonDoc {
         return this;
     }
 
-    public PhotonDoc extraTags(@Nullable Map<String, String> extratags) {
+    public PhotonDoc extraTags(@Nullable Map<String, Object> extratags) {
         this.extratags = extratags == null ? Map.of() : extratags;
 
         return this;
@@ -340,7 +340,7 @@ public class PhotonDoc {
         return this.postcode;
     }
 
-    public Map<String, String> getExtratags() {
+    public Map<String, Object> getExtratags() {
         return this.extratags;
     }
 

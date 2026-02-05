@@ -194,7 +194,7 @@ public class NominatimPlaceDocument {
     }
 
     @JsonProperty(DumpFields.PLACE_EXTRA_TAGS)
-    void setExtratags(@Nullable Map<String, String> extratags) {
+    void setExtratags(@Nullable Map<String, Object> extratags) {
         if (extratags != null) {
             //noinspection ConstantValue
             extratags.values().removeIf(Objects::isNull);

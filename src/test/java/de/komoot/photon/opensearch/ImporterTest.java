@@ -85,10 +85,10 @@ class ImporterTest extends ESBaseTester {
         getProperties().setExtraTags(List.of("maxspeed", "website"));
         Importer instance = makeImporter();
 
-        Map<String, String> extratags = new HashMap<>();
+        Map<String, Object> extratags = new HashMap<>();
         extratags.put("website", "foo");
-        extratags.put("maxspeed", "100 mph");
-        extratags.put("source", "survey");
+        extratags.put("maxspeed", 100);
+        extratags.put("source", List.of("survey", "aerial"));
 
         instance.add(List.of(
                 new PhotonDoc("1234", "N", 1000, "place", "city")
@@ -101,11 +101,11 @@ class ImporterTest extends ESBaseTester {
         PhotonResult response = getById(1234);
         assertNotNull(response);
 
-        Map<String, String> extra = response.getMap("extra");
+        Map<String, Object> extra = response.getMap("extra");
         assertNotNull(extra);
 
         assertEquals(2, extra.size());
-        assertEquals("100 mph", extra.get("maxspeed"));
+        assertEquals(100, extra.get("maxspeed"));
         assertEquals("foo", extra.get("website"));
 
         response = getById(1235);
