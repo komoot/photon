@@ -33,6 +33,50 @@ OpenSearch nodes. It takes a comma-separated list of node addresses.
 photon uses to the 'photon' cluster by default. This can be changed with the
 **-cluster** parameter if necessary.
 
+## Securing the OpenSearch Connection
+
+When connecting to an external OpenSearch cluster, photon supports basic
+authentication and SSL/TLS encryption.
+
+### Basic authentication
+
+To enable basic authentication, provide credentials with the
+**-opensearch-user** and **-opensearch-password** parameters:
+
+    java -jar photon.jar serve \
+        -transport-addresses opensearch.example.com:9200 \
+        -opensearch-user photon \
+        -opensearch-password secret
+
+### SSL/TLS with a custom CA
+
+To enable SSL/TLS, add the **-opensearch-ssl** flag. By default, photon
+uses the JVM default trust store for certificate validation. When the
+cluster uses a self-signed certificate or a private CA, provide a PKCS12
+trust store with **-opensearch-truststore** and optionally
+**-opensearch-truststore-password**:
+
+    java -jar photon.jar serve \
+        -transport-addresses opensearch.example.com:9200 \
+        -opensearch-ssl \
+        -opensearch-user photon \
+        -opensearch-password secret \
+        -opensearch-truststore /path/to/truststore.p12 \
+        -opensearch-truststore-password changeit
+
+### Mutual TLS (mTLS)
+
+For mutual TLS, provide a client certificate via **-opensearch-keystore**
+and **-opensearch-keystore-password** in addition to the trust store:
+
+    java -jar photon.jar serve \
+        -transport-addresses opensearch.example.com:9200 \
+        -opensearch-ssl \
+        -opensearch-truststore /path/to/truststore.p12 \
+        -opensearch-truststore-password changeit \
+        -opensearch-keystore /path/to/client-keystore.p12 \
+        -opensearch-keystore-password clientpass
+
 ## Running a photon server
 
 When you already have a database, either because you downloaded a database

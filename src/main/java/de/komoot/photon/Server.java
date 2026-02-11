@@ -59,17 +59,6 @@ public class Server {
             }
         }
 
-        HttpHost[] hosts;
-        if (config.getTransportAddresses().isEmpty()) {
-            hosts = startInternal(dataDirectory, config.getCluster());
-        } else {
-            hosts = config.getTransportAddresses().stream()
-                    .map(addr -> addr.split(":", 2))
-                    .map(parts -> new HttpHost("http", parts[0],
-                        parts.length > 1 ? Integer.parseInt(parts[1]) : 9201))
-                    .toArray(HttpHost[]::new);
-        }
-
         final var module = new SimpleModule("PhotonResultDeserializer",
                 new Version(1, 0, 0, null, null, null));
         module.addDeserializer(OpenSearchResult.class, new OpenSearchResultDeserializer());
@@ -77,12 +66,19 @@ public class Server {
         final var mapper = new JacksonJsonpMapper();
         mapper.objectMapper().registerModule(module);
 
-        final var transport = ApacheHttpClient5TransportBuilder
-                .builder(hosts)
-                .setMapper(mapper)
-                .build();
-
-        client = new OpenSearchClient(transport);
+        if (config.getTransportAddresses().isEmpty()) {
+            final var hosts = startInternal(dataDirectory, config.getCluster());
+            final var transport = ApacheHttpClient5TransportBuilder
+                    .builder(hosts).setMapper(mapper).build();
+            client = new OpenSearchClient(transport);
+        } else {
+            try {
+                final var transport = new OpenSearchTransportBuilder(config, mapper).build();
+                client = new OpenSearchClient(transport);
+            } catch (java.security.GeneralSecurityException e) {
+                throw new IOException("Failed to configure SSL for OpenSearch connection", e);
+            }
+        }
 
         waitForReady();
     }
