@@ -175,6 +175,17 @@ class QueryRelevanceTest extends ESBaseTester {
                 .containsExactly(1000, 1001);
     }
 
+    @Test
+    void testExactDiacriticsOverFolded() {
+        setupDocs(
+                createDoc("place", "city", 1000, "name", "Lærdal"),
+                createDoc("place", "city", 1001, "name", "Lardal")
+        );
+
+        assertSearchOsmIds("Lærdal", 1000, 1001);
+        assertSearchOsmIds("Lardal", 1001, 1000);
+    }
+
     @ParameterizedTest
     @ValueSource(doubles = {0.8, 0.6, 0.4, 0.2})
     void testLocationPreferenceScaleForLocation(double scale) {
