@@ -25,8 +25,9 @@ public class OpenSearchSearchHandler implements SearchHandler<SimpleSearchReques
 
     @Override
     public List<PhotonResult> search(SimpleSearchRequest request) {
-        final int limit = request.getLimit();
-        final int extLimit = limit > 1 ? (int) Math.round(limit * 1.5) : 1;
+        // Have it return more result candidates than results requested,
+        // will be reranked and filtered later.
+        final int extLimit = Math.max(5, (int) Math.round(request.getLimit() * 1.5));
 
         var results = sendQuery(buildQuery(request, false), extLimit);
 
