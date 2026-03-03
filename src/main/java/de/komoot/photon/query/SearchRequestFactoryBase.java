@@ -23,15 +23,14 @@ public class SearchRequestFactoryBase extends RequestFactoryBase {
         completeBaseRequest(request, context);
 
         request.setZoom(context.queryParamAsClass("zoom", Integer.class)
-                .allowNullable().get());
+                .getOrNull());
 
         request.setScale(context.queryParamAsClass("location_bias_scale", Double.class)
-                .allowNullable()
-                .get());
+                .getOrNull());
 
         request.setLocationForBias(parseLatLon(context, false));
         request.setBbox(context.queryParamAsClass("bbox", Envelope.class)
-                .allowNullable().get());
+                .getOrNull());
         request.setSuggestAddresses(context.queryParamAsClass("suggest_addresses", Boolean.class)
                 .getOrDefault(false));
     }

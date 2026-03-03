@@ -1,5 +1,5 @@
 plugins {
-  id 'com.gradleup.shadow' version '9.3.1'
+  id 'com.gradleup.shadow' version '9.3.2'
   id 'application'
   id 'jacoco'
   id 'org.sonarqube' version '7.2.2.6593'
@@ -42,7 +42,7 @@ dependencies {
     implementation 'org.opensearch.client:opensearch-java:3.5.0'
     implementation 'org.apache.httpcomponents.client5:httpclient5:5.5.1'
 
-    implementation('org.codelibs.opensearch:opensearch-runner:3.4.0.0') {
+    implementation('org.codelibs.opensearch:opensearch-runner:3.5.0.0') {
         exclude(module: 'repository-url')
         exclude(module: 'reindex-client')
         exclude(module: 'rank-eval-client')
@@ -61,33 +61,33 @@ dependencies {
 
     implementation 'org.apache.logging.log4j:log4j-core:2.25.3'
     implementation 'org.apache.logging.log4j:log4j-api:2.25.3'
-    implementation 'org.postgresql:postgresql:42.7.9'
+    implementation 'org.postgresql:postgresql:42.7.10'
     implementation 'org.apache.logging.log4j:log4j-slf4j2-impl:2.25.3'
     implementation 'org.jcommander:jcommander:3.0'
-    implementation 'org.springframework:spring-jdbc:7.0.3'
+    implementation 'org.springframework:spring-jdbc:7.0.5'
     implementation ('org.apache.commons:commons-dbcp2:2.14.0') {
         exclude(module: 'commons-logging')
     }
     implementation 'org.locationtech.jts:jts-core:1.20.0'
     implementation 'org.locationtech.jts.io:jts-io-common:1.20.0'
-    implementation 'io.javalin:javalin:6.7.0'
-    implementation 'io.javalin:javalin-micrometer:6.7.0'
-    implementation 'io.micrometer:micrometer-registry-prometheus:1.16.2'
+    implementation 'io.javalin:javalin:7.0.1'
+    implementation 'io.javalin:javalin-micrometer:7.0.1'
+    implementation 'io.micrometer:micrometer-registry-prometheus:1.16.3'
     implementation 'net.postgis:postgis-jdbc:2025.1.1'
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.21.0'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.21.1'
 
     testImplementation 'com.h2database:h2:2.4.240'
-    testImplementation 'org.junit.jupiter:junit-jupiter:6.0.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter:6.0.3'
     testImplementation 'org.assertj:assertj-core:3.27.7'
     testImplementation 'net.javacrumbs.json-unit:json-unit-assertj:5.1.0'
 
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher:6.0.2'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher:6.0.3'
 }
 
 configurations.configureEach {
     resolutionStrategy.eachDependency { details ->
         if (details.requested.group == 'io.netty') {
-            details.useVersion '4.2.8.Final'
+            details.useVersion '4.2.10.Final'
             details.because 'force latest version to fix CVE-2025-67735'
         }
     }
@@ -124,12 +124,13 @@ shadowJar {
 
     mergeServiceFiles()
 
-    filesMatching("META-INF/*") {
+    filesMatching("META-INF/**") {
       duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     }
 
-    filesMatching("META-INF/spring/aot.factories") {
-      duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    // Override for paths merged by transformers (mergeServiceFiles, Log4j2PluginsCacheFileTransformer)
+    filesMatching(["META-INF/services/**", "META-INF/org/apache/logging/log4j/**"]) {
+      duplicatesStrategy = DuplicatesStrategy.INCLUDE
     }
 
     filesMatching("org/apache/commons/logging/**") {
