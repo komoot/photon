@@ -383,27 +383,27 @@ public class App {
 
         final var formatter = new GeoJsonFormatter();
 
-        photonServer.exception(Exception.class, (e, ctx) ->
+        photonServer.unsafe.routes.exception(Exception.class, (e, ctx) ->
                 ctx.status(400)
                         .result(formatter.formatError(e.getMessage()))
         );
-        photonServer.exception(BadRequestException.class, (e, ctx) ->
+        photonServer.unsafe.routes.exception(BadRequestException.class, (e, ctx) ->
                 ctx.status(e.getHttpStatus())
                         .result(formatter.formatError(e.getMessage()))
         );
 
-        photonServer.events(event -> event.serverStopped(() -> {
+        photonServer.unsafe.events.serverStopped(() -> {
             final Server temp = esServer.getAndSet(null);
             if (temp != null) {
                 LOGGER.info("Server has been stopped. Shutting down node.");
                 temp.shutdown();
             }
-        }));
+        });
 
-        photonServer.get("/status", new StatusRequestHandler(server));
+        photonServer.unsafe.routes.get("/status", new StatusRequestHandler(server));
 
         if (!dbProperties.getReverseOnly()) {
-           photonServer.get("/api", new GenericSearchHandler<>(
+           photonServer.unsafe.routes.get("/api", new GenericSearchHandler<>(
                     new SimpleSearchRequestFactory(
                             dbProperties.getLanguages(),
                             args.getDefaultLanguage(),
@@ -412,7 +412,7 @@ public class App {
                     server.createSearchHandler(args.getQueryTimeout()),
                     formatter));
 
-            photonServer.get("/structured", new GenericSearchHandler<>(
+            photonServer.unsafe.routes.get("/structured", new GenericSearchHandler<>(
                     new StructuredSearchRequestFactory(
                             dbProperties.getLanguages(),
                             args.getDefaultLanguage(),
@@ -422,7 +422,7 @@ public class App {
                     formatter));
         }
 
-        photonServer.get("/reverse", new GenericSearchHandler<>(
+        photonServer.unsafe.routes.get("/reverse", new GenericSearchHandler<>(
                 new ReverseRequestFactory(
                         dbProperties.getLanguages(),
                         args.getDefaultLanguage(),
@@ -438,17 +438,17 @@ public class App {
                 throw new UsageException("Update API enabled, but Nominatim database is not prepared. Run -nominatim-update-init-for first.");
             }
 
-            photonServer.get("/nominatim-update/status", ctx ->
+            photonServer.unsafe.routes.get("/nominatim-update/status", ctx ->
                     ctx.status(200).json(updater.isBusy() ? "BUSY" : "OK")
             );
-            photonServer.get("/nominatim-update", ctx -> {
+            photonServer.unsafe.routes.get("/nominatim-update", ctx -> {
                 new Thread(() -> App.startNominatimUpdate(updater, server)).start();
                 ctx.status(200).json("nominatim update started (more information in console output) ...");
             });
         }
 
         if (metrics.isEnabled()) {
-            photonServer.get(metrics.getPath(), ctx -> {
+            photonServer.unsafe.routes.get(metrics.getPath(), ctx -> {
                 String contentType = "text/plain; version=0.0.4; charset=utf-8";
                 ctx.contentType(contentType).result(metrics.getRegistry().scrape());
             });
