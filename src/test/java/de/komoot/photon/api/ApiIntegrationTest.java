@@ -11,7 +11,6 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.FieldSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Date;
 import java.util.List;
@@ -24,6 +23,7 @@ import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
  */
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class ApiIntegrationTest extends ApiBaseTester {
+    @SuppressWarnings("unused")
     private static final String[] BASE_URLS = {
             "/api?q=Berlin", "/reverse?lat=52.54714&lon=13.39026"};
     private static final Date TEST_DATE = new Date();
@@ -42,12 +42,14 @@ class ApiIntegrationTest extends ApiBaseTester {
                 .geometry(makeDocGeometry("POINT(13.38886 52.51704)"))
                 .names(makeDocNames("name", "berlin"))
         ));
+        var suburbGeometry = makeDocGeometry("POLYGON ((6.4440619 52.1969454, 6.4441094 52.1969158, 6.4441408 52.1969347, 6.4441138 52.1969516, 6.4440933 52.1969643, 6.4440619 52.1969454))");
         instance.add(List.of(new PhotonDoc()
                 .placeId("1001").osmType("R").osmId(1001).tagKey("place").tagValue("suburb")
                 .categories(List.of("osm.place.suburb"))
                 .importance(0.3).addressType(AddressType.DISTRICT)
                 .centroid(makePoint(13.39026, 52.54714))
-                .geometry(makeDocGeometry("POLYGON ((6.4440619 52.1969454, 6.4441094 52.1969158, 6.4441408 52.1969347, 6.4441138 52.1969516, 6.4440933 52.1969643, 6.4440619 52.1969454))"))
+                .geometry(suburbGeometry)
+                .bbox(suburbGeometry.getEnvelope())
                 .names(makeDocNames("name", "berlin"))
         ));
         instance.add(List.of(new PhotonDoc()

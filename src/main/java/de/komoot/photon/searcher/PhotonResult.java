@@ -16,17 +16,18 @@ public interface PhotonResult {
     Object get(String key);
 
     @Nullable
-    String getLocalised(String key, String language);
-
-    @Nullable
-    Map<String, String> getMap(String key);
+    String getLocalised(String key, String language, String... altNames);
 
     double[] getCoordinates();
 
     @Nullable
-    String getGeometry();
+    Object getGeometry();
 
     double @Nullable [] getExtent();
+
+    double getScore();
+
+    void adjustScore(double difference);
 
     Map<String, Object> getRawData();
 }

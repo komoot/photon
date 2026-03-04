@@ -101,7 +101,7 @@ class ImporterTest extends ESBaseTester {
         PhotonResult response = getById(1234);
         assertNotNull(response);
 
-        Map<String, Object> extra = response.getMap("extra");
+        var extra = (Map<String, String>) response.get("extra");
         assertNotNull(extra);
 
         assertEquals(2, extra.size());
@@ -127,7 +127,7 @@ class ImporterTest extends ESBaseTester {
         ));
 
         assertThatRuntimeException()
-                .isThrownBy(() -> instance.finish())
+                .isThrownBy(instance::finish)
                 .withMessageContaining("Error inserting new documents");
     }
 

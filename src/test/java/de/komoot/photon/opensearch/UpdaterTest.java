@@ -45,9 +45,8 @@ class UpdaterTest extends ESBaseTester {
         PhotonResult response = getById(1234);
         assertNotNull(response);
 
-        Map<String, String> outNames = response.getMap("name");
-        assertEquals("Foo", outNames.get("default"));
-        assertEquals("Enfoo", outNames.get("en"));
+        assertEquals("Foo", response.getLocalised("name", "default"));
+        assertEquals("Enfoo", response.getLocalised("name", "en"));
     }
 
     @Test
@@ -69,9 +68,8 @@ class UpdaterTest extends ESBaseTester {
         PhotonResult response = getById(1234);
         assertNotNull(response);
 
-        Map<String, String> outNames = response.getMap("name");
-        assertFalse(outNames.containsKey("default"));
-        assertEquals("Enfoo", outNames.get("en"));
+        assertNull(response.getLocalised("name","default"));
+        assertEquals("Enfoo", response.getLocalised("name","en"));
     }
 
     @Test
@@ -99,7 +97,7 @@ class UpdaterTest extends ESBaseTester {
         response = getById(1234);
         assertNotNull(response);
 
-        Map<String, String> extra = response.getMap("extra");
+        var extra = (Map<String, String>) response.get("extra");
 
         assertNotNull(extra);
         assertEquals(Map.of("website", "http://site.foo"), extra);

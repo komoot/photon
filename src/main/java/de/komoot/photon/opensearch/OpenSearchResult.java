@@ -1,32 +1,51 @@
 package de.komoot.photon.opensearch;
 
+import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import de.komoot.photon.searcher.PhotonResult;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @NullMarked
 public class OpenSearchResult implements PhotonResult {
-    private static final String[] NAME_PRECEDENCE = {"default", "housename", "int", "loc", "reg", "alt", "old"};
+    private static final List<String> KEYS_WITH_LOCALE = List.of(
+            DocFields.NAME, DocFields.STREET, DocFields.LOCALITY,
+            DocFields.DISTRICT, DocFields.CITY, DocFields.COUNTY,
+            DocFields.STATE, DocFields.COUNTRY
+    );
 
     private double score = 0.0;
-    private final double @Nullable [] extent;
-    private final double[] coordinates;
-    @Nullable private final String geometry;
-    private final Map<String, Object> infos;
-    private final Map<String, Map<String, String>> localeTags;
+    private double @Nullable [] extent = null;
+    private double[] coordinates = INVALID_COORDINATES;
+    @Nullable private Object geometry = null;
+    private final Map<String, Object> infos = new HashMap<>();
+    private final Map<String, Map<String, String>> localeTags = new HashMap<>();
 
-    OpenSearchResult(double @Nullable [] extent, double[] coordinates, Map<String, Object> infos, Map<String, Map<String, String>> localeTags, @Nullable String geometry) {
-        this.extent = extent;
-        this.coordinates = coordinates;
-        this.infos = infos;
-        this.localeTags = localeTags;
-        this.geometry = geometry;
+
+    record ExtentCoordinates (@JsonProperty("coordinates") double[][] coordinates) {
+        public double[] getNW() {
+            return coordinates[0];
+        }
+
+        public double[] getSE() {
+            return coordinates[1];
+        }
     }
 
-    public void setScore(double score) {
-        this.score = score;
+    record Point (@JsonProperty("lat") double lat, @JsonProperty("lon") double lon) {}
+
+    @Override
+    public double getScore() {
+        return this.score;
+    }
+
+    @Override
+    public void adjustScore(double difference) {
+        this.score += difference;
     }
 
     @Override
@@ -37,29 +56,27 @@ public class OpenSearchResult implements PhotonResult {
 
     @Override
     @Nullable
-    public String getLocalised(String key, String language) {
-        final var map = getMap(key);
+    public String getLocalised(String key, String language, String... altNames) {
+        final var map = localeTags.get(key);
         if (map == null) return null;
 
-        if (map.get(language) != null) {
-            // language specific field
-            return map.get(language);
+        String name = map.get(language);
+        if (name != null) {
+            return name;
         }
-
-        if ("name".equals(key)) {
-            for (String name : NAME_PRECEDENCE) {
-                if (map.containsKey(name))
-                    return map.get(name);
+        name = map.get("default");
+        if (name != null) {
+            return name;
+        }
+        for (var nameKey : altNames) {
+            name = map.get(nameKey);
+            if (name != null) {
+                return name;
             }
+
         }
 
-        return map.get("default");
-    }
-
-    @Override
-    @Nullable
-    public Map<String, String> getMap(String key) {
-        return localeTags.get(key);
+        return null;
     }
 
     @Override
@@ -68,7 +85,7 @@ public class OpenSearchResult implements PhotonResult {
     }
 
     @Nullable
-    public String getGeometry() {
+    public Object getGeometry() {
         return geometry;
     }
 
@@ -83,5 +100,41 @@ public class OpenSearchResult implements PhotonResult {
                 "score", score,
                 "infos", infos,
                 "localeTags", localeTags);
+    }
+
+
+    @JsonProperty(DocFields.COORDINATE)
+    void setCoordinates(Point pt) {
+        coordinates = new double[]{pt.lon, pt.lat};
+    }
+
+    @JsonProperty(DocFields.EXTENT)
+    void setExtent(ExtentCoordinates coords) {
+        final var nw = coords.getNW();
+        final var se = coords.getSE();
+
+        extent = new double[]{nw[0], nw[1], se[0], se[1]};
+    }
+
+    @JsonProperty(DocFields.GEOMETRY)
+    void setGeometry(Object geometry) {
+        this.geometry = geometry;
+    }
+
+    @JsonAnySetter
+    void setProperties(String key, Object value) {
+        if (KEYS_WITH_LOCALE.contains(key)) {
+            if (value instanceof Map<?,?>) {
+                var names = new HashMap<String, String>();
+                for (var entry : ((Map<?, ?>) value).entrySet()) {
+                    if (entry.getKey() instanceof String && entry.getValue() instanceof String) {
+                        names.put((String) entry.getKey(), (String) entry.getValue());
+                    }
+                }
+                localeTags.put(key, names);
+            }
+        } else {
+            infos.put(key, value);
+        }
     }
 }
