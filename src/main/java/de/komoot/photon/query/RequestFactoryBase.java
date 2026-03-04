@@ -37,8 +37,7 @@ public class RequestFactoryBase {
         request.setLanguage(parseLanguage(context));
 
         request.setLimit(context.queryParamAsClass("limit", Integer.class)
-                                .allowNullable()
-                                .get(), maxResults);
+                                .getOrNull(), maxResults);
 
         request.setDebug(context.queryParamAsClass("debug", Boolean.class).getOrDefault(false));
 
@@ -68,18 +67,17 @@ public class RequestFactoryBase {
                 .get());
 
         request.setReturnGeometry(context.queryParamAsClass("geometry", Boolean.class)
-                        .check(g -> !g || supportGeometries,
+                        .check(g -> g == null || !g || supportGeometries,
                                 "Geometry output requested but not available in database.")
                         .getOrDefault(false));
     }
 
     private String parseLanguage(Context context) {
         final String langParam = context.queryParamAsClass("lang", String.class)
-                .allowNullable()
                 .check(l -> l == null || "default".equals(l) || supportedLanguages.contains(l),
                         "Language is not supported. Supported are: default, "
                                 + String.join(", ", supportedLanguages))
-                .get();
+                .getOrNull();
 
         if (langParam != null) {
             return langParam;
@@ -118,20 +116,18 @@ public class RequestFactoryBase {
                     .get();
         } else {
             lat = context.queryParamAsClass("lat", Double.class)
-                    .allowNullable()
                     .check(l -> l == null || (l >= -90.0 && l <= 90.0),
                             "Invalid value for 'lat' parameter.")
                     .check(l -> l == null || context.queryParam("lon") != null,
                             "Missing parameter 'lon'.")
-                    .get();
+                    .getOrNull();
 
             lon = context.queryParamAsClass("lon", Double.class)
-                    .allowNullable()
                     .check(l -> l == null || (l >= -180.0 && l <= 180.0),
                             "Invalid value for 'lon' parameter.")
                     .check(l -> l == null || lat != null,
                             "Missing parameter 'lat'.")
-                    .get();
+                    .getOrNull();
         }
 
         if (lat == null || lon == null) {
