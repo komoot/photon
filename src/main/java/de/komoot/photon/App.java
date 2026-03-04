@@ -329,6 +329,7 @@ public class App {
                 dbProperties.getLanguages(), dbProperties.getImportDate(), dbProperties.getSupportGeometries());
 
         MetricsConfig metrics = setupMetrics(args.getMetrics(), server.getClient());
+        final var formatter = new GeoJsonFormatter();
 
         photonServer = Javalin.create(config -> {
             config.router.ignoreTrailingSlashes = true;
@@ -378,79 +379,75 @@ public class App {
                 }
                 return null;
             });
-        });
 
-
-        final var formatter = new GeoJsonFormatter();
-
-        photonServer.unsafe.routes.exception(Exception.class, (e, ctx) ->
-                ctx.status(400)
-                        .result(formatter.formatError(e.getMessage()))
-        );
-        photonServer.unsafe.routes.exception(BadRequestException.class, (e, ctx) ->
-                ctx.status(e.getHttpStatus())
-                        .result(formatter.formatError(e.getMessage()))
-        );
-
-        photonServer.unsafe.events.serverStopped(() -> {
-            final Server temp = esServer.getAndSet(null);
-            if (temp != null) {
-                LOGGER.info("Server has been stopped. Shutting down node.");
-                temp.shutdown();
-            }
-        });
-
-        photonServer.unsafe.routes.get("/status", new StatusRequestHandler(server));
-
-        photonServer.unsafe.routes.get("/api", new GenericSearchHandler<>(
-                new SimpleSearchRequestFactory(
-                        dbProperties.getLanguages(),
-                        args.getDefaultLanguage(),
-                        args.getMaxResults(),
-                        dbProperties.getSupportGeometries()),
-                server.createSearchHandler(args.getQueryTimeout()),
-                formatter));
-
-        photonServer.unsafe.routes.get("/structured", new GenericSearchHandler<>(
-                new StructuredSearchRequestFactory(
-                        dbProperties.getLanguages(),
-                        args.getDefaultLanguage(),
-                        args.getMaxResults(),
-                        dbProperties.getSupportGeometries()),
-                server.createStructuredSearchHandler(args.getQueryTimeout()),
-                formatter));
-
-        photonServer.unsafe.routes.get("/reverse", new GenericSearchHandler<>(
-                new ReverseRequestFactory(
-                        dbProperties.getLanguages(),
-                        args.getDefaultLanguage(),
-                        args.getMaxReverseResults(),
-                        dbProperties.getSupportGeometries()),
-                server.createReverseHandler(args.getQueryTimeout()),
-                formatter));
-
-
-        if (updater != null) {
-            // setup update API
-            if (!updater.isSetUpForUpdates()) {
-                throw new UsageException("Update API enabled, but Nominatim database is not prepared. Run -nominatim-update-init-for first.");
-            }
-
-            photonServer.unsafe.routes.get("/nominatim-update/status", ctx ->
-                    ctx.status(200).json(updater.isBusy() ? "BUSY" : "OK")
+            config.routes.exception(Exception.class, (e, ctx) ->
+                    ctx.status(400)
+                            .result(formatter.formatError(e.getMessage()))
             );
-            photonServer.unsafe.routes.get("/nominatim-update", ctx -> {
-                new Thread(() -> App.startNominatimUpdate(updater, server)).start();
-                ctx.status(200).json("nominatim update started (more information in console output) ...");
-            });
-        }
+            config.routes.exception(BadRequestException.class, (e, ctx) ->
+                    ctx.status(e.getHttpStatus())
+                            .result(formatter.formatError(e.getMessage()))
+            );
 
-        if (metrics.isEnabled()) {
-            photonServer.unsafe.routes.get(metrics.getPath(), ctx -> {
-                String contentType = "text/plain; version=0.0.4; charset=utf-8";
-                ctx.contentType(contentType).result(metrics.getRegistry().scrape());
+            config.events.serverStopped(() -> {
+                final Server temp = esServer.getAndSet(null);
+                if (temp != null) {
+                    LOGGER.info("Server has been stopped. Shutting down node.");
+                    temp.shutdown();
+                }
             });
-        }
+
+            config.routes.get("/status", new StatusRequestHandler(server));
+
+            config.routes.get("/api", new GenericSearchHandler<>(
+                    new SimpleSearchRequestFactory(
+                            dbProperties.getLanguages(),
+                            args.getDefaultLanguage(),
+                            args.getMaxResults(),
+                            dbProperties.getSupportGeometries()),
+                    server.createSearchHandler(args.getQueryTimeout()),
+                    formatter));
+
+            config.routes.get("/structured", new GenericSearchHandler<>(
+                    new StructuredSearchRequestFactory(
+                            dbProperties.getLanguages(),
+                            args.getDefaultLanguage(),
+                            args.getMaxResults(),
+                            dbProperties.getSupportGeometries()),
+                    server.createStructuredSearchHandler(args.getQueryTimeout()),
+                    formatter));
+
+            config.routes.get("/reverse", new GenericSearchHandler<>(
+                    new ReverseRequestFactory(
+                            dbProperties.getLanguages(),
+                            args.getDefaultLanguage(),
+                            args.getMaxReverseResults(),
+                            dbProperties.getSupportGeometries()),
+                    server.createReverseHandler(args.getQueryTimeout()),
+                    formatter));
+
+            if (updater != null) {
+                // setup update API
+                if (!updater.isSetUpForUpdates()) {
+                    throw new UsageException("Update API enabled, but Nominatim database is not prepared. Run -nominatim-update-init-for first.");
+                }
+
+                config.routes.get("/nominatim-update/status", ctx ->
+                        ctx.status(200).json(updater.isBusy() ? "BUSY" : "OK")
+                );
+                config.routes.get("/nominatim-update", ctx -> {
+                    new Thread(() -> App.startNominatimUpdate(updater, server)).start();
+                    ctx.status(200).json("nominatim update started (more information in console output) ...");
+                });
+            }
+
+            if (metrics.isEnabled()) {
+                config.routes.get(metrics.getPath(), ctx -> {
+                    String contentType = "text/plain; version=0.0.4; charset=utf-8";
+                    ctx.contentType(contentType).result(metrics.getRegistry().scrape());
+                });
+            }
+        });
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             LOGGER.info("Shutdown requested.");
