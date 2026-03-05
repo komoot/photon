@@ -1,6 +1,7 @@
 package de.komoot.photon;
 
 import com.fasterxml.jackson.core.Version;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import de.komoot.photon.config.PhotonDBConfig;
 import de.komoot.photon.opensearch.*;
@@ -76,6 +77,8 @@ public class Server {
 
         final var mapper = new JacksonJsonpMapper();
         mapper.objectMapper().registerModule(module);
+        mapper.objectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
 
         final var transport = ApacheHttpClient5TransportBuilder
                 .builder(hosts)
