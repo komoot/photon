@@ -89,8 +89,9 @@ public class GeoJsonFormatter implements ResultFormatter {
 
                 gen.writeEndObject();
 
-                if (withGeometry && result.getGeometry() != null) {
-                    gen.writeObjectField(GeoJsonFields.GEOJSON_KEY_GEOMETRY, result.getGeometry());
+                final var geometry = result.get(DocFields.GEOMETRY);
+                if (withGeometry && geometry != null) {
+                    gen.writeObjectField(GeoJsonFields.GEOJSON_KEY_GEOMETRY, geometry);
                 } else {
                     gen.writeObjectFieldStart(GeoJsonFields.GEOJSON_KEY_GEOMETRY);
                     gen.writeStringField(GeoJsonFields.GEOJSON_KEY_TYPE, GeoJsonFields.GEOJSON_GEOMETRY_POINT);

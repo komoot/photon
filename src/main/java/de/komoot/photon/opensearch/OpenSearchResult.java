@@ -21,7 +21,6 @@ public class OpenSearchResult implements PhotonResult {
     private double score = 0.0;
     private double @Nullable [] extent = null;
     private double[] coordinates = INVALID_COORDINATES;
-    @Nullable private Object geometry = null;
     private final Map<String, Object> infos = new HashMap<>();
     private final Map<String, Map<String, String>> localeTags = new HashMap<>();
 
@@ -84,11 +83,6 @@ public class OpenSearchResult implements PhotonResult {
         return coordinates;
     }
 
-    @Nullable
-    public Object getGeometry() {
-        return geometry;
-    }
-
     @Override
     public double @Nullable [] getExtent() {
         return extent;
@@ -114,11 +108,6 @@ public class OpenSearchResult implements PhotonResult {
         final var se = coords.getSE();
 
         extent = new double[]{nw[0], nw[1], se[0], se[1]};
-    }
-
-    @JsonProperty(DocFields.GEOMETRY)
-    void setGeometry(Object geometry) {
-        this.geometry = geometry;
     }
 
     @JsonAnySetter

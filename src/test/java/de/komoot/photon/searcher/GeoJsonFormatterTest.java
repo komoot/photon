@@ -75,7 +75,8 @@ class GeoJsonFormatterTest {
                 .put(DocFields.POSTCODE, postCode)
                 .putLocalized(DocFields.NAME, "en", name)
                 .put(DocFields.OSM_KEY, osmKey)
-                .put(DocFields.OSM_VALUE, osmValue);
+                .put(DocFields.OSM_VALUE, osmValue)
+                .putGeometry("{\"type\":\"MultiPolygon\",\"coordinates\":[[[[-100.0,40.0],[-100.0,45.0],[-90.0,45.0],[-90.0,40.0],[-100.0,40.0]]],[[[-80.0,35.0],[-80.0,40.0],[-70.0,40.0],[-70.0,35.0],[-80.0,35.0]]]]}");
     }
 
 }

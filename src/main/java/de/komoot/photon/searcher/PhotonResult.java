@@ -20,9 +20,6 @@ public interface PhotonResult {
 
     double[] getCoordinates();
 
-    @Nullable
-    Object getGeometry();
-
     double @Nullable [] getExtent();
 
     double getScore();
