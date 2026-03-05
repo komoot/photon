@@ -14,6 +14,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import java.nio.file.Path;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 
@@ -31,6 +32,7 @@ class ApiIntegrationTest extends ApiBaseTester {
     @BeforeAll
     void setUp(@TempDir Path dataDirectory) throws Exception {
         getProperties().setSupportGeometries(true);
+        getProperties().setExtraTags(List.of("ALL"));
         getProperties().setImportDate(TEST_DATE);
         setUpES(dataDirectory);
         Importer instance = makeImporter();
@@ -59,6 +61,20 @@ class ApiIntegrationTest extends ApiBaseTester {
                 .centroid(makePoint(13.39026, 52.54714))
                 .geometry(makeDocGeometry("LINESTRING (30 10, 10 30, 40 40)"))
                 .names(makeDocNames("name", "berlin"))
+        ));
+        instance.add(List.of(new PhotonDoc()
+                .placeId("5100").osmType("N").osmId(105100).tagKey("highway").tagValue("bus_stop")
+                .categories(List.of("osm.highway.bus_stop"))
+                .importance(0.3).addressType(AddressType.HOUSE)
+                .centroid(makePoint(12.5, -44.345))
+                .names(makeDocNames("name", "MyBusStop"))
+                .extraTags(Map.of(
+                        "number", 56.7,
+                        "boolean", true,
+                        "array", List.of(1, 2, 3),
+                        "object", Map.of("foo", "bar"),
+                        "string", "Foo"
+                ))
         ));
 
         instance.finish();
@@ -96,6 +112,22 @@ class ApiIntegrationTest extends ApiBaseTester {
                 .containsEntry("osm_key", "place")
                 .containsEntry("osm_value", osmValue)
                 .containsEntry("name", "berlin");
+    }
+
+    @Test
+    void testComplexExtratags() throws Exception {
+        assertThatJson(readURL("/api?q=MyBusStop")).isObject()
+                .node("features").isArray().hasSize(1)
+                .element(0).isObject()
+                .node("properties").isObject()
+                .node("extra").isObject()
+                .hasSize(5)
+                .containsEntry("number", 56.7)
+                .containsEntry("boolean", true)
+                .containsEntry("object", Map.of("foo", "bar"))
+                .containsEntry("string", "Foo")
+                .node("array").isArray()
+                .containsExactly(1, 2, 3);
     }
 
     @Test
