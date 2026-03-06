@@ -3,6 +3,7 @@ package de.komoot.photon.query;
 import de.komoot.photon.ESBaseTester;
 import de.komoot.photon.Importer;
 import de.komoot.photon.PhotonDoc;
+import de.komoot.photon.opensearch.DocFields;
 import de.komoot.photon.searcher.PhotonResult;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -51,7 +52,7 @@ class QueryGeometryTest extends ESBaseTester {
         assertThat(search())
                 .element(0)
                 .satisfies(p ->
-                        assertThatJson(p.getGeometry()).isObject()
+                        assertThatJson(p.get(DocFields.GEOMETRY)).isObject()
                                 .containsEntry("type", "Polygon"));
     }
 
@@ -65,7 +66,7 @@ class QueryGeometryTest extends ESBaseTester {
         assertThat(search())
                 .element(0)
                 .satisfies(p ->
-                        assertThatJson(p.getGeometry()).isObject()
+                        assertThatJson(p.get(DocFields.GEOMETRY)).isObject()
                                 .containsEntry("type", "LineString"));
     }
 }

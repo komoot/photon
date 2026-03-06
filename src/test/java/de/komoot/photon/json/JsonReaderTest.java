@@ -401,6 +401,29 @@ class JsonReaderTest {
     }
 
     @Test
+    void testComplexExtraTags() throws IOException {
+        configExtraTags = new ConfigExtraTags(List.of("ALL"));
+        input.println(TEST_SIMPLE_STREAM.replace("\"boat\": \"no\"",
+                """
+                        "number": 56.7,
+                        "boolean": true,
+                        "array": [1, 2, 3],
+                        "object": {"foo": "bar"}
+                        """));
+
+        var importer = readJson();
+
+        assertThat(importer).singleElement()
+                .hasFieldOrPropertyWithValue("extratags", Map.of(
+                        "number", 56.7,
+                        "boolean", true,
+                        "array", List.of(1, 2, 3),
+                        "object", Map.of("foo", "bar")
+                ));
+    }
+
+
+    @Test
     void testNullExtraIgnored() throws IOException {
         configExtraTags = new ConfigExtraTags(List.of("ALL"));
         input.println(TEST_SIMPLE_STREAM.replace("{\"boat\": \"no\"}", "null"));

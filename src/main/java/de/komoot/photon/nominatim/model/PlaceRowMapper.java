@@ -7,9 +7,7 @@ import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Pattern;
 
 /**
@@ -43,12 +41,23 @@ public class PlaceRowMapper implements RowMapper<PhotonDoc> {
         } else if (!CATEGORY_PATTERN.matcher(osmValue).matches()) {
             osmValue = "yes";
         }
+        var extratags = dbutils.getMap(rs, "extratags");
+        String place = extratags.get("place");
+        if (place == null) {
+            place = extratags.get("linked_place");
+        }
+        if (place != null && CATEGORY_PATTERN.matcher(place).matches()) {
+            // take more specific extra tag information
+            osmKey = "place";
+            osmValue = place;
+        }
+
         var addressType = AddressType.fromRank(rs.getInt("rank_address"));
         PhotonDoc doc = new PhotonDoc(Long.toString(rs.getLong("place_id")),
                 rs.getString("osm_type"), rs.getLong("osm_id"),
                 osmKey, osmValue)
                 .names(NameMap.makeForPlace(dbutils.getMap(rs, "name"), languages))
-                .extraTags(dbutils.getMap(rs, "extratags"))
+                .extraTags(Collections.unmodifiableMap(extratags))
                 .categories(List.of(String.format("osm.%s.%s", osmKey, osmValue)))
                 .bbox(dbutils.extractGeometry(rs, "bbox"))
                 .countryCode(rs.getString("country_code"))

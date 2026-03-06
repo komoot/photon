@@ -17,7 +17,6 @@ import org.codelibs.opensearch.runner.OpenSearchRunner;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import org.opensearch.client.json.JsonData;
-import org.opensearch.client.json.JsonpMapper;
 import org.opensearch.client.json.jackson.JacksonJsonpMapper;
 import org.opensearch.client.opensearch.OpenSearchClient;
 import org.opensearch.client.opensearch._types.HealthStatus;
@@ -73,12 +72,8 @@ public class Server {
                     .toArray(HttpHost[]::new);
         }
 
-        final var module = new SimpleModule("PhotonResultDeserializer",
-                new Version(1, 0, 0, null, null, null));
-        module.addDeserializer(OpenSearchResult.class, new OpenSearchResultDeserializer());
-
         final var mapper = new JacksonJsonpMapper();
-        mapper.objectMapper().registerModule(module);
+        mapper.objectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
         final var transport = ApacheHttpClient5TransportBuilder
                 .builder(hosts)

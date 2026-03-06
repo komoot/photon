@@ -11,10 +11,10 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.FieldSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 
@@ -24,6 +24,7 @@ import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
  */
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class ApiIntegrationTest extends ApiBaseTester {
+    @SuppressWarnings("unused")
     private static final String[] BASE_URLS = {
             "/api?q=Berlin", "/reverse?lat=52.54714&lon=13.39026"};
     private static final Date TEST_DATE = new Date();
@@ -31,6 +32,7 @@ class ApiIntegrationTest extends ApiBaseTester {
     @BeforeAll
     void setUp(@TempDir Path dataDirectory) throws Exception {
         getProperties().setSupportGeometries(true);
+        getProperties().setExtraTags(List.of("ALL"));
         getProperties().setImportDate(TEST_DATE);
         setUpES(dataDirectory);
         Importer instance = makeImporter();
@@ -42,12 +44,14 @@ class ApiIntegrationTest extends ApiBaseTester {
                 .geometry(makeDocGeometry("POINT(13.38886 52.51704)"))
                 .names(makeDocNames("name", "berlin"))
         ));
+        var suburbGeometry = makeDocGeometry("POLYGON ((6.4440619 52.1969454, 6.4441094 52.1969158, 6.4441408 52.1969347, 6.4441138 52.1969516, 6.4440933 52.1969643, 6.4440619 52.1969454))");
         instance.add(List.of(new PhotonDoc()
                 .placeId("1001").osmType("R").osmId(1001).tagKey("place").tagValue("suburb")
                 .categories(List.of("osm.place.suburb"))
                 .importance(0.3).addressType(AddressType.DISTRICT)
                 .centroid(makePoint(13.39026, 52.54714))
-                .geometry(makeDocGeometry("POLYGON ((6.4440619 52.1969454, 6.4441094 52.1969158, 6.4441408 52.1969347, 6.4441138 52.1969516, 6.4440933 52.1969643, 6.4440619 52.1969454))"))
+                .geometry(suburbGeometry)
+                .bbox(suburbGeometry.getEnvelope())
                 .names(makeDocNames("name", "berlin"))
         ));
         instance.add(List.of(new PhotonDoc()
@@ -57,6 +61,20 @@ class ApiIntegrationTest extends ApiBaseTester {
                 .centroid(makePoint(13.39026, 52.54714))
                 .geometry(makeDocGeometry("LINESTRING (30 10, 10 30, 40 40)"))
                 .names(makeDocNames("name", "berlin"))
+        ));
+        instance.add(List.of(new PhotonDoc()
+                .placeId("5100").osmType("N").osmId(105100).tagKey("highway").tagValue("bus_stop")
+                .categories(List.of("osm.highway.bus_stop"))
+                .importance(0.3).addressType(AddressType.HOUSE)
+                .centroid(makePoint(12.5, -44.345))
+                .names(makeDocNames("name", "MyBusStop"))
+                .extraTags(Map.of(
+                        "number", 56.7,
+                        "boolean", true,
+                        "array", List.of(1, 2, 3),
+                        "object", Map.of("foo", "bar"),
+                        "string", "Foo"
+                ))
         ));
 
         instance.finish();
@@ -94,6 +112,22 @@ class ApiIntegrationTest extends ApiBaseTester {
                 .containsEntry("osm_key", "place")
                 .containsEntry("osm_value", osmValue)
                 .containsEntry("name", "berlin");
+    }
+
+    @Test
+    void testComplexExtratags() throws Exception {
+        assertThatJson(readURL("/api?q=MyBusStop")).isObject()
+                .node("features").isArray().hasSize(1)
+                .element(0).isObject()
+                .node("properties").isObject()
+                .node("extra").isObject()
+                .hasSize(5)
+                .containsEntry("number", 56.7)
+                .containsEntry("boolean", true)
+                .containsEntry("object", Map.of("foo", "bar"))
+                .containsEntry("string", "Foo")
+                .node("array").isArray()
+                .containsExactly(1, 2, 3);
     }
 
     @Test

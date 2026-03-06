@@ -1,5 +1,7 @@
 package de.komoot.photon.searcher;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
@@ -11,9 +13,21 @@ public class MockPhotonResult implements PhotonResult {
 
     final Map<String, Object> data = new HashMap<>();
     final double[] coordinates = new double[]{42, 21};
-    String geometry = "{\"type\":\"MultiPolygon\",\"coordinates\":[[[[-100.0,40.0],[-100.0,45.0],[-90.0,45.0],[-90.0,40.0],[-100.0,40.0]]],[[[-80.0,35.0],[-80.0,40.0],[-70.0,40.0],[-70.0,35.0],[-80.0,35.0]]]]}";
     final double[] extent = new double[]{0, 1, 2, 3};
     final Map<String, String> localized = new HashMap<>();
+    double score = 0.0;
+
+    ObjectMapper mapper = new ObjectMapper();
+
+    @Override
+    public double getScore() {
+        return score;
+    }
+
+    @Override
+    public void adjustScore(double difference) {
+        score += difference;
+    }
 
     @Override
     @Nullable
@@ -23,24 +37,13 @@ public class MockPhotonResult implements PhotonResult {
 
     @Override
     @Nullable
-    public String getLocalised(String key, String language) {
+    public String getLocalised(String key, String language, String... altNames) {
         return localized.get(key + "||" + language);
-    }
-
-    @Override
-    @Nullable
-    public Map<String, String> getMap(String key) {
-        return (Map<String, String>) data.get(key);
     }
 
     @Override
     public double[] getCoordinates() {
         return coordinates;
-    }
-
-    @Override
-    public String getGeometry() {
-        return geometry;
     }
 
     @Override
@@ -64,7 +67,11 @@ public class MockPhotonResult implements PhotonResult {
     }
 
     public MockPhotonResult putGeometry(String geometry) {
-        this.geometry = geometry;
+        try {
+            data.put("geometry", mapper.readValue(geometry, Map.class));
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
         return this;
     }
 }

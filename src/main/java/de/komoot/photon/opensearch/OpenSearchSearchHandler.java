@@ -40,7 +40,7 @@ public class OpenSearchSearchHandler implements SearchHandler<SimpleSearchReques
             var source = hit.source();
             if (source != null) {
                 if (score != null) {
-                    source.setScore(score);
+                    source.adjustScore(score);
                 }
                 ret.add(source);
             }

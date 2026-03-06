@@ -54,7 +54,7 @@ public class OpenSearchStructuredSearchHandler implements SearchHandler<Structur
             var score = hit.score();
             if (source != null) {
                 if (score != null) {
-                    source.setScore(score);
+                    source.adjustScore(score);
                 }
                 ret.add(source);
             }

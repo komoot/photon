@@ -17,14 +17,26 @@ import java.util.Map;
  */
 @NullMarked
 public class GeoJsonFormatter implements ResultFormatter {
-    private static final String[] KEYS_LANG_UNSPEC = {
-            GeoJsonFields.OSM_TYPE, GeoJsonFields.OSM_ID,
-            GeoJsonFields.OSM_KEY, GeoJsonFields.OSM_VALUE, GeoJsonFields.OBJECT_TYPE,
-            GeoJsonFields.POSTCODE, GeoJsonFields.HOUSENUMBER, GeoJsonFields.COUNTRYCODE};
-    private static final String[] KEYS_LANG_SPEC = {
-            GeoJsonFields.NAME, GeoJsonFields.STREET, GeoJsonFields.LOCALITY,
-            GeoJsonFields.DISTRICT, GeoJsonFields.CITY, GeoJsonFields.COUNTY,
-            GeoJsonFields.STATE, GeoJsonFields.COUNTRY};
+    private static final String[] NAME_PRECEDENCE = {"housename", "int", "loc", "reg", "alt", "old"};
+    private static final List<List<String>> KEYS_LANG_UNSPEC = List.of(
+            List.of(DocFields.OSM_TYPE, GeoJsonFields.OSM_TYPE),
+            List.of(DocFields.OSM_ID, GeoJsonFields.OSM_ID),
+            List.of(DocFields.OSM_KEY, GeoJsonFields.OSM_KEY),
+            List.of(DocFields.OSM_VALUE, GeoJsonFields.OSM_VALUE),
+            List.of(DocFields.OBJECT_TYPE, GeoJsonFields.OBJECT_TYPE),
+            List.of(DocFields.HOUSENUMBER, GeoJsonFields.HOUSENUMBER));
+    private static final List<List<String>> KEYS_LANG_SPEC = List.of(
+            List.of(DocFields.STREET, GeoJsonFields.STREET),
+            List.of(DocFields.LOCALITY, GeoJsonFields.LOCALITY),
+            List.of(DocFields.DISTRICT, GeoJsonFields.DISTRICT),
+            List.of(DocFields.CITY, GeoJsonFields.CITY),
+            List.of(DocFields.COUNTY, GeoJsonFields.COUNTY),
+            List.of(DocFields.STATE, GeoJsonFields.STATE),
+            List.of(DocFields.COUNTRY, GeoJsonFields.COUNTRY));
+    private static final List<List<String>> KEYS_POST_ADDRESS = List.of(
+            List.of(DocFields.POSTCODE, GeoJsonFields.POSTCODE),
+            List.of(DocFields.COUNTRYCODE, GeoJsonFields.COUNTRYCODE),
+            List.of(DocFields.EXTRA, GeoJsonFields.EXTRA));
 
     private final ObjectMapper mapper = new ObjectMapper();
 
@@ -59,23 +71,27 @@ public class GeoJsonFormatter implements ResultFormatter {
 
                 gen.writeObjectFieldStart(GeoJsonFields.GEOJSON_KEY_PROPERTIES);
 
-                for (String key : KEYS_LANG_UNSPEC) {
-                    put(gen, key, result.get(key));
+                for (var line : KEYS_LANG_UNSPEC) {
+                    put(gen, line.get(1), result.get(line.get(0)));
                 }
 
-                for (String key : KEYS_LANG_SPEC) {
-                    put(gen, key, result.getLocalised(key, language));
+                put(gen, GeoJsonFields.NAME, result.getLocalised(DocFields.NAME, language, NAME_PRECEDENCE));
+
+                for (var line : KEYS_LANG_SPEC) {
+                    put(gen, line.get(1), result.getLocalised(line.get(0), language));
+                }
+
+                for (var line : KEYS_POST_ADDRESS) {
+                    put(gen, line.get(1), result.get(line.get(0)));
                 }
 
                 put(gen, GeoJsonFields.EXTENT, result.getExtent());
 
-                put(gen, GeoJsonFields.EXTRA, result.getMap(DocFields.EXTRA));
-
                 gen.writeEndObject();
 
-                if (withGeometry && result.getGeometry() != null) {
-                    gen.writeFieldName(GeoJsonFields.GEOJSON_KEY_GEOMETRY);
-                    gen.writeRawValue(result.getGeometry());
+                final var geometry = result.get(DocFields.GEOMETRY);
+                if (withGeometry && geometry != null) {
+                    gen.writeObjectField(GeoJsonFields.GEOJSON_KEY_GEOMETRY, geometry);
                 } else {
                     gen.writeObjectFieldStart(GeoJsonFields.GEOJSON_KEY_GEOMETRY);
                     gen.writeStringField(GeoJsonFields.GEOJSON_KEY_TYPE, GeoJsonFields.GEOJSON_GEOMETRY_POINT);
