@@ -231,6 +231,12 @@ public class IndexSettingBuilder {
                 .filter(NORMALIZATION_FILTERS)
         ));
 
+        settings.analyzer("search_raw", f -> f.custom(d -> d
+                .tokenizer("keyword")
+                .filter("keep_alphanum",
+                        "lowercase")
+        ));
+
         // Collector analyzers.
         settings.tokenizer("collection_split", b -> b.definition(d -> d
                 .simplePatternSplit(p -> p.pattern(";"))
@@ -307,6 +313,14 @@ public class IndexSettingBuilder {
                 .filter("keep_alphanum")
                 .filter(NORMALIZATION_FILTERS)
                 .filter("unique")
+        ));
+
+        settings.analyzer("index_name_raw", f -> f.custom(d -> d
+                .tokenizer("collection_split")
+                .filter("delimited_term_freq",
+                        "keep_alphanum",
+                        "lowercase",
+                        "unique")
         ));
 
         settings.analyzer("index_housenumber", f -> f.custom(d -> d
