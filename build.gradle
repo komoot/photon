@@ -7,7 +7,7 @@ plugins {
 }
 
 group = 'de.komoot.photon'
-version = '1.0.0'
+version = '1.0.1'
 description = "Geocoder for OSM data (OpenSearch-based version)"
 
 distZip.enabled = false
