@@ -15,6 +15,11 @@ public interface PhotonResult {
     @Nullable
     Object get(String key);
 
+    default String getOrDefault(String key, String defValue) {
+        String value = (String) get(key);
+        return value == null ? defValue : value;
+    }
+
     @Nullable
     String getLocalised(String key, String language, String... altNames);
 

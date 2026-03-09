@@ -3,41 +3,52 @@ package de.komoot.photon.searcher;
 import de.komoot.photon.opensearch.DocFields;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
-
 import static org.assertj.core.api.Assertions.*;
 
 class StreetDupesRemoverTest {
 
     @Test
     void testDeduplicatesStreets() {
-        StreetDupesRemover streetDupesRemover = new StreetDupesRemover("en");
-        var allResults = List.of(
-            createDummyResult("99999", "Main Street", "highway", "Unclassified"),
-            createDummyResult("99999", "Main Street", "highway", "Unclassified"));
-
-        assertThat(streetDupesRemover.execute(allResults))
-                .hasSize(1);
+        assertThat(new StreetDupesRemover())
+                .accepts(highway("99999", "Main Street", "unclassified", "de"))
+                .rejects(highway("99999", "Main Street", "unclassified", "de"))
+                .accepts(highway("99999", "Sub Street", "unclassified", "de"))
+                .accepts(highway("99999", "Main Street", "unclassified", "ch"));
     }
 
     @Test
     void testStreetAndBusStopNotDeduplicated() {
-        StreetDupesRemover streetDupesRemover = new StreetDupesRemover("en");
-        var allResults = List.of(
-            createDummyResult("99999", "Main Street", "highway", "bus_stop"),
-            createDummyResult("99999", "Main Street", "highway", "Unclassified"));
+        assertThat(new StreetDupesRemover())
+                .accepts(highway("99999", "Main Street", "bus_stop", "de"))
+                .accepts(highway("99999", "Main Street", "unclassified", "de"));
+    }
 
-        assertThat(streetDupesRemover.execute(allResults))
-                .hasSize(2);
+    @Test
+    void testNLStreet() {
+        assertThat(new StreetDupesRemover())
+                .accepts(highway("2345 XZ", "Main Street", "unclassified", "nl"))
+                .accepts(highway("2346 AB", "Main Street", "unclassified", "nl"))
+                .rejects(highway("2345 AB", "Main Street", "unclassified", "nl"))
+                .accepts(highway("2", "Main Street", "unclassified", "nl"));
+    }
+
+    @Test
+    void testGBStreet() {
+        assertThat(new StreetDupesRemover())
+                .accepts(highway("WN8 6LT", "Main Street", "unclassified", "gb"))
+                .accepts(highway("WN8 4LT", "Main Street", "unclassified", "gb"))
+                .rejects(highway("WN8 634", "Main Street", "unclassified", "gb"))
+                .accepts(highway("W", "Main Street", "unclassified", "gb"));
+
     }
     
-    private PhotonResult createDummyResult(String postCode, String name, String osmKey,
-                    String osmValue) {
+    private PhotonResult highway(String postCode, String name, String osmValue, String countryCode) {
         return new MockPhotonResult()
                 .put(DocFields.POSTCODE, postCode)
-                .putLocalized(DocFields.NAME, "en", name)
-                .put(DocFields.OSM_KEY, osmKey)
-                .put(DocFields.OSM_VALUE, osmValue);
+                .putLocalized(DocFields.NAME, "default", name)
+                .put(DocFields.OSM_KEY, "highway")
+                .put(DocFields.OSM_VALUE, osmValue)
+                .put(DocFields.COUNTRYCODE, countryCode.toUpperCase());
     }
 
 }
