@@ -53,6 +53,10 @@ public class SearchQueryBuilder extends BaseQueryBuilder {
                     .prefixLength(qlen <= 6 ? 1 : 2)
             ));
 
+            b.should(rawMatch -> rawMatch.match(nmb -> nmb
+                    .query(queryField)
+                    .field(DocFields.COLLECTOR + ".name.raw")));
+
             if (lenient) {
                 b.should(iq2 -> iq2.match(nmb -> nmb
                         .query(queryField)
@@ -152,6 +156,9 @@ public class SearchQueryBuilder extends BaseQueryBuilder {
                     .query(queryField)
                     .field(DocFields.COLLECTOR + ".all")
             ));
+            coreBuilder.should(rawMatch -> rawMatch.match(em -> em
+                    .query(queryField)
+                    .field(DocFields.COLLECTOR + ".name.raw")));
             if (!lenient && query.indexOf(',') < 0) {
                 coreBuilder.should(prefixMatch -> prefixMatch.match(nmb -> nmb
                         .query(queryField)

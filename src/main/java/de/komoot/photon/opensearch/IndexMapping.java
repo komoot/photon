@@ -108,6 +108,13 @@ public class IndexMapping {
                             .analyzer("index_name_prefix")
                             .searchAnalyzer("search_prefix")
                     ))
+                    .fields("raw", rawField -> rawField.text(p1 -> p1
+                            .index(true)
+                            .norms(false)
+                            .indexOptions(IndexOptions.Freqs)
+                            .analyzer("index_name_raw")
+                            .searchAnalyzer("search_raw")
+                    ))
             ));
 
             mappings.properties(DocFields.COLLECTOR + ".parent", b -> b.text(p -> p
