@@ -53,4 +53,17 @@ public class BaseQueryBuilder {
             outerQuery.filter(new CategoryFilter(term).buildExcludeQuery());
         }
     }
+
+    public void addCountryCodeFilter(Collection<String> countryCodes) {
+        if (!countryCodes.isEmpty()) {
+            outerQuery.filter(f -> f.terms(t -> t
+                    .field(DocFields.COUNTRYCODE)
+                    .terms(tm -> tm.value(
+                            countryCodes.stream()
+                                    .map(c -> FieldValue.of(c.toUpperCase()))
+                                    .collect(Collectors.toList())
+                    ))
+            ));
+        }
+    }
 }

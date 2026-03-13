@@ -57,6 +57,7 @@ public class OpenSearchSearchHandler implements SearchHandler<SimpleSearchReques
 
     private Query buildQuery(SimpleSearchRequest request, boolean lenient) {
         final var query = new SearchQueryBuilder(request.getQuery(), lenient, request.getSuggestAddresses());
+        query.addCountryCodeFilter(request.getCountryCodes());
         query.addOsmTagFilter(request.getOsmTagFilters());
         query.addLayerFilter(request.getLayerFilters());
         query.addLocationBias(request.getLocationForBias(), request.getScaleForBias(), request.getZoomForBias());
