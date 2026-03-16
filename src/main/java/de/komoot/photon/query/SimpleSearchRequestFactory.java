@@ -10,7 +10,7 @@ import java.util.stream.Stream;
 @NullMarked
 public class SimpleSearchRequestFactory extends SearchRequestFactoryBase implements RequestFactory<SimpleSearchRequest> {
     private static final Set<String> FREE_SEARCH_PARAMETERS =
-            Stream.concat(SEARCH_PARAMETERS.stream(), Stream.of("q"))
+            Stream.concat(SEARCH_PARAMETERS.stream(), Stream.of("q", "countrycode"))
                     .collect(Collectors.toSet());
 
     public SimpleSearchRequestFactory(Set<String> supportedLanguages, String defaultLanguage, int maxResults, boolean supportGeometries) {
@@ -22,6 +22,7 @@ public class SimpleSearchRequestFactory extends SearchRequestFactoryBase impleme
 
         final var request = new SimpleSearchRequest();
         completeSearchRequest(request, context);
+        request.setCountryCodes(context.queryParamsAsClass("countrycode", String.class).get());
 
         var query = context.queryParamAsClass("q", String.class).getOrDefault("");
         if (query.isBlank()) {
