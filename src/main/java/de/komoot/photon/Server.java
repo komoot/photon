@@ -41,6 +41,8 @@ public class Server {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
+    /** Number of shards for the photon index. */
+    public static final int NUM_SHARDS = 5;
     protected OpenSearchClient client;
     @Nullable private OpenSearchRunner runner = null;
 
@@ -136,7 +138,7 @@ public class Server {
             client.indices().delete(d -> d.index(PhotonIndex.NAME));
         }
 
-        new IndexSettingBuilder().setShards(5).createIndex(client, PhotonIndex.NAME);
+        new IndexSettingBuilder().setShards(NUM_SHARDS).createIndex(client, PhotonIndex.NAME);
 
         new IndexMapping(dbProperties.getReverseOnly()).putMapping(client, PhotonIndex.NAME);
 
