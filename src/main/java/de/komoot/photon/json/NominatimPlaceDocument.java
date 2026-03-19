@@ -10,10 +10,7 @@ import de.komoot.photon.nominatim.model.AddressType;
 import de.komoot.photon.nominatim.model.NameMap;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.Point;
-import org.locationtech.jts.geom.PrecisionModel;
+import org.locationtech.jts.geom.*;
 import org.locationtech.jts.io.ParseException;
 import org.locationtech.jts.io.geojson.GeoJsonReader;
 
@@ -229,14 +226,12 @@ public class NominatimPlaceDocument {
     @JsonProperty(DumpFields.PLACE_BBOX)
     void setBbox(Double @Nullable [] coordinates) throws IOException {
         if (coordinates != null) {
-            //noinspection ConstantValue
-            if (coordinates.length != 4 || Arrays.stream(coordinates).anyMatch(Objects::isNull)) {
+            if (coordinates.length != 4
+                    || coordinates[0] == null || coordinates[1] == null
+                    || coordinates[2] == null || coordinates[3] == null) {
                 throw new IOException("Invalid bbox. Must be an array of four doubles.");
             }
-            doc.bbox(factory.createMultiPoint(new Point[]{
-                    factory.createPoint(new Coordinate(coordinates[0], coordinates[1])),
-                    factory.createPoint(new Coordinate(coordinates[2], coordinates[3]))
-            }));
+            doc.bbox(new Envelope(coordinates[0], coordinates[2], coordinates[1], coordinates[3]));
         }
     }
 
@@ -258,13 +253,18 @@ public class NominatimPlaceDocument {
 
     public void completeAddressLines(Map<String, AddressRow> addressCache) {
         if (addressLines != null) {
-            doc.addAddresses(
-                Arrays.stream(addressLines)
-                        .filter(l -> l.isAddress)
-                        .filter(l -> l.placeId != null)
-                        .map(l -> addressCache.get(l.placeId))
-                        .filter(Objects::nonNull)
-                        .toList());
+            List<AddressRow> rows = new ArrayList<>();
+            for (AddressLine line : addressLines) {
+                if (line.isAddress && line.placeId != null) {
+                    AddressRow row = addressCache.get(line.placeId);
+                    if (row != null) {
+                        rows.add(row);
+                    }
+                }
+            }
+            if (!rows.isEmpty()) {
+                doc.addAddresses(rows);
+            }
        }
     }
 

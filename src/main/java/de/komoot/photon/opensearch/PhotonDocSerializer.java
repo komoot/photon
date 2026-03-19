@@ -47,9 +47,7 @@ public class PhotonDocSerializer extends StdSerializer<PhotonDoc> {
         }
 
         if (value.getGeometry() != null && !value.getGeometry().getGeometryType().equals("Point")) {
-            // Convert JTS Geometry to GeoJSON
-            GeoJsonWriter geoJsonWriter = new GeoJsonWriter();
-            String geoJson = geoJsonWriter.write(value.getGeometry());
+            String geoJson = new GeoJsonWriter().write(value.getGeometry());
 
             gen.writeFieldName(DocFields.GEOMETRY);
             gen.writeRawValue(geoJson);
