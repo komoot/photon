@@ -78,14 +78,7 @@ public class ImportThread {
      */
     public void finish() {
         producerDone = true;
-        executor.shutdown();
-        try {
-            executor.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS);
-        } catch (InterruptedException e) {
-            LOGGER.warn("Thread interrupted while waiting for import threads.");
-            // Restore interrupted state.
-            Thread.currentThread().interrupt();
-        }
+        executor.close();
         if (!exceptionInThread) {
             LOGGER.info("Finished import of {} photon documents. (Total processing time: {}s)",
                     counter.longValue(), (System.currentTimeMillis() - startMillis) / 1000);
@@ -117,7 +110,7 @@ public class ImportThread {
                         break;
                     }
                     try {
-                        var item = documents.poll(100, TimeUnit.MILLISECONDS);
+                        var item = documents.poll(500, TimeUnit.MILLISECONDS);
                         if (item != null) {
                             batch.add(item);
                         } else {
