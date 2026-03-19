@@ -9,9 +9,7 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -25,7 +23,7 @@ public class ImportThread {
 	private static final int MAX_QUEUE_SIZE = 10_000;
     private final BlockingQueue<Iterable<PhotonDoc>> documents = new ArrayBlockingQueue<>(MAX_QUEUE_SIZE);
     private final AtomicLong counter = new AtomicLong();
-    private final List<Thread> threads;
+    private final ExecutorService executor;
     private final long startMillis;
     private volatile boolean producerDone = false;
     private volatile boolean exceptionInThread = false;
@@ -35,15 +33,9 @@ public class ImportThread {
     }
 
     public ImportThread(List<Importer> importers) {
-        this.threads = new ArrayList<>(importers.size());
+        this.executor = Executors.newFixedThreadPool(importers.size());
         for (var imp : importers) {
-            var thread = new Thread(new ImportRunnable(imp));
-            thread.setUncaughtExceptionHandler((t, ex) -> {
-                LOGGER.error("Import error.", ex);
-                exceptionInThread = true;
-            });
-            thread.start();
-            this.threads.add(thread);
+            executor.execute(new ImportRunnable(imp));
         }
         this.startMillis = System.currentTimeMillis();
     }
@@ -86,17 +78,13 @@ public class ImportThread {
      */
     public void finish() {
         producerDone = true;
-        for (var thread : threads) {
-            while (true) {
-                try {
-                    thread.join();
-                    break;
-                } catch (InterruptedException e) {
-                    LOGGER.warn("Thread interrupted while waiting for import thread.");
-                    // Restore interrupted state.
-                    Thread.currentThread().interrupt();
-                }
-            }
+        executor.shutdown();
+        try {
+            executor.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS);
+        } catch (InterruptedException e) {
+            LOGGER.warn("Thread interrupted while waiting for import threads.");
+            // Restore interrupted state.
+            Thread.currentThread().interrupt();
         }
         if (!exceptionInThread) {
             LOGGER.info("Finished import of {} photon documents. (Total processing time: {}s)",
@@ -113,6 +101,15 @@ public class ImportThread {
 
         @Override
         public void run() {
+            try {
+                runImport();
+            } catch (Exception e) {
+                LOGGER.error("Import error.", e);
+                exceptionInThread = true;
+            }
+        }
+
+        private void runImport() {
             List<Iterable<PhotonDoc>> batch = new ArrayList<>(MAX_QUEUE_SIZE);
             while (true) {
                 if (documents.drainTo(batch) == 0) {
