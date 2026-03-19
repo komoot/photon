@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 
 @NullMarked
 public class PhotonDocSerializer extends StdSerializer<PhotonDoc> {
+    private static final GeoJsonWriter GEOJSON_WRITER = new GeoJsonWriter();
     private final DatabaseProperties dbProperties;
 
     public PhotonDocSerializer(DatabaseProperties dbProperties) {
@@ -47,9 +48,7 @@ public class PhotonDocSerializer extends StdSerializer<PhotonDoc> {
         }
 
         if (value.getGeometry() != null && !value.getGeometry().getGeometryType().equals("Point")) {
-            // Convert JTS Geometry to GeoJSON
-            GeoJsonWriter geoJsonWriter = new GeoJsonWriter();
-            String geoJson = geoJsonWriter.write(value.getGeometry());
+            String geoJson = GEOJSON_WRITER.write(value.getGeometry());
 
             gen.writeFieldName(DocFields.GEOMETRY);
             gen.writeRawValue(geoJson);

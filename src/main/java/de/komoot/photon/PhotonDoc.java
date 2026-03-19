@@ -24,26 +24,26 @@ public class PhotonDoc {
             String.format("[%1$s]+(\\.[%1$s]+)+(,[%1$s]+(\\.[%1$s]+)+)*", PhotonDoc.CATEGORY_VALID_CHARS));
     public static final String DEFAULT_OSM_KEY = "place";
     public static final String DEFAULT_OSM_VALUE = "yes";
-    private static final List<Map.Entry<AddressType, String>> ADDRESS_TYPE_TAG_MAP = List.of(
-            Map.entry(AddressType.STREET, "street"),
-            Map.entry(AddressType.CITY, "city"),
-            Map.entry(AddressType.DISTRICT, "suburb"),
-            Map.entry(AddressType.LOCALITY, "neighbourhood"),
-            Map.entry(AddressType.COUNTY, "county"),
-            Map.entry(AddressType.STATE, "state"),
-            Map.entry(AddressType.STATE, "province"),
-            Map.entry(AddressType.OTHER, "other"),
-            Map.entry(AddressType.OTHER, "district"),
-            Map.entry(AddressType.OTHER, "hamlet"),
-            Map.entry(AddressType.OTHER, "subdistrict"),
-            Map.entry(AddressType.OTHER, "municipality"),
-            Map.entry(AddressType.OTHER, "region"),
-            Map.entry(AddressType.OTHER, "ward"),
-            Map.entry(AddressType.OTHER, "village"),
-            Map.entry(AddressType.OTHER, "subward"),
-            Map.entry(AddressType.OTHER, "block"),
-            Map.entry(AddressType.OTHER, "quarter")
-            );
+    private static final Map<String, AddressType> ADDRESS_TYPE_LOOKUP = Map.ofEntries(
+            Map.entry("street", AddressType.STREET),
+            Map.entry("city", AddressType.CITY),
+            Map.entry("suburb", AddressType.DISTRICT),
+            Map.entry("neighbourhood", AddressType.LOCALITY),
+            Map.entry("county", AddressType.COUNTY),
+            Map.entry("state", AddressType.STATE),
+            Map.entry("province", AddressType.STATE),
+            Map.entry("other", AddressType.OTHER),
+            Map.entry("district", AddressType.OTHER),
+            Map.entry("hamlet", AddressType.OTHER),
+            Map.entry("subdistrict", AddressType.OTHER),
+            Map.entry("municipality", AddressType.OTHER),
+            Map.entry("region", AddressType.OTHER),
+            Map.entry("ward", AddressType.OTHER),
+            Map.entry("village", AddressType.OTHER),
+            Map.entry("subward", AddressType.OTHER),
+            Map.entry("block", AddressType.OTHER),
+            Map.entry("quarter", AddressType.OTHER)
+    );
 
     @Nullable private String placeId = null;
     @Nullable private String osmType = null;
@@ -136,6 +136,11 @@ public class PhotonDoc {
         if (geom != null) {
             this.bbox = geom.getEnvelopeInternal();
         }
+        return this;
+    }
+
+    public PhotonDoc bbox(@Nullable Envelope envelope) {
+        this.bbox = envelope;
         return this;
     }
 
@@ -250,30 +255,29 @@ public class PhotonDoc {
                 if (key.equals("postcode")) {
                     postcode = value;
                 } else {
-                    ADDRESS_TYPE_TAG_MAP
-                            .stream()
-                            .filter(e -> key.startsWith(e.getValue()))
-                            .findFirst()
-                            .ifPresent(e -> {
-                                var atype = e.getKey();
-                                if (atype == AddressType.OTHER) {
-                                    context.addNameFromPrefix(key, value, languages);
-                                } else {
-                                    int prefixLen = e.getValue().length();
-                                    if (key.length() == prefixLen) {
-                                        if (overlay.computeIfAbsent(atype, k -> new HashMap<>()).putIfAbsent("default", value) != null) {
-                                            context.addNameFromPrefix(key, value, languages);
-                                        }
-                                    } else if (key.charAt(prefixLen) == ':') {
-                                        final String intKey = key.substring(prefixLen + 1);
-                                        if (languages.contains(intKey)) {
+                int colonIdx = key.indexOf(':');
+                String baseKey = colonIdx >= 0 ? key.substring(0, colonIdx) : key;
+                AddressType atype = ADDRESS_TYPE_LOOKUP.get(baseKey);
+                // Handle numbered "other" keys like "other1", "other2"
+                if (atype == null && baseKey.startsWith("other")) {
+                    atype = AddressType.OTHER;
+                }
+                if (atype != null) {
+                    if (atype == AddressType.OTHER) {
+                        context.addNameFromPrefix(key, entry.getValue(), languages);
+                    } else if (colonIdx < 0) {
+                        if (overlay.computeIfAbsent(atype, k -> new HashMap<>()).putIfAbsent("default", entry.getValue()) != null) {
+                            context.addNameFromPrefix(key, entry.getValue(), languages);
+                        }
+                    } else {
+                        final String intKey = key.substring(colonIdx + 1);
+                        if (languages.contains(intKey)) {
                                             if (overlay.computeIfAbsent(atype, k -> new HashMap<>()).putIfAbsent(intKey, value) != null) {
                                                 context.addNameFromPrefix(key, value, languages);
-                                            }
-                                        }
-                                    }
-                                }
-                            });
+                            }
+                        }
+                    }
+                }
                 }
             }
         }

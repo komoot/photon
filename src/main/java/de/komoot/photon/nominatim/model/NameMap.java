@@ -4,14 +4,27 @@ import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 @NullMarked
 public class NameMap extends AbstractMap<String, String> {
-    private final Set<Entry<String, String>> entries = new HashSet<>();
+    private final LinkedHashMap<String, String> entries = new LinkedHashMap<>();
+
+    private static final Map<String, String[]> LOCALE_KEYS = new ConcurrentHashMap<>();
 
     @Override
     public Set<Entry<String, String>> entrySet() {
-        return entries;
+        return entries.entrySet();
+    }
+
+    @Override
+    public boolean containsKey(Object key) {
+        return entries.containsKey(key);
+    }
+
+    @Override
+    public String get(Object key) {
+        return entries.get(key);
     }
 
     public static NameMap makeForPlace(Map<String, @Nullable String> source, Iterable<String> languages) {
@@ -28,18 +41,22 @@ public class NameMap extends AbstractMap<String, String> {
     NameMap setLocaleNames(Map<String, @Nullable String> source, Iterable<String> languages) {
         setName("default", source, "_place_name", "name");
         for (var lang : languages) {
-            setName(lang, source, "_place_name:" + lang, "name:" + lang);
+            String[] keys = LOCALE_KEYS.computeIfAbsent(lang,
+                    l -> new String[]{"_place_name:" + l, "name:" + l});
+            setName(lang, source, keys);
         }
         return this;
     }
 
     NameMap setName(String field, Map<String, @Nullable String> source, String... keys) {
-        if (!containsKey(field)) {
-            Arrays.stream(keys)
-                    .map(source::get)
-                    .filter(s -> s != null && !s.isBlank())
-                    .findFirst()
-                    .ifPresent(k -> entries.add(new SimpleImmutableEntry<>(field, k.strip())));
+        if (!entries.containsKey(field)) {
+            for (String key : keys) {
+                String val = source.get(key);
+                if (val != null) {
+                    entries.put(field, val);
+                    break;
+                }
+            }
         }
         return this;
     }
