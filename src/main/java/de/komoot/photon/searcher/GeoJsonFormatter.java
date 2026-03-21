@@ -17,7 +17,7 @@ import java.util.Map;
  */
 @NullMarked
 public class GeoJsonFormatter implements ResultFormatter {
-    private static final String[] NAME_PRECEDENCE = {"housename", "int", "loc", "reg", "alt", "old"};
+    public static final String[] NAME_PRECEDENCE = {"housename", "int", "loc", "reg", "alt", "old"};
     private static final List<List<String>> KEYS_LANG_UNSPEC = List.of(
             List.of(DocFields.OSM_TYPE, GeoJsonFields.OSM_TYPE),
             List.of(DocFields.OSM_ID, GeoJsonFields.OSM_ID),

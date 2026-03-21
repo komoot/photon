@@ -2,6 +2,7 @@ package de.komoot.photon.opensearch;
 
 import de.komoot.photon.query.SimpleSearchRequest;
 import de.komoot.photon.searcher.PhotonResult;
+import de.komoot.photon.searcher.QueryReranker;
 import de.komoot.photon.searcher.SearchHandler;
 import org.jspecify.annotations.NullMarked;
 import org.opensearch.client.opensearch.OpenSearchClient;
@@ -35,9 +36,15 @@ public class OpenSearchSearchHandler implements SearchHandler<SimpleSearchReques
             results = sendQuery(buildQuery(request, true), extLimit);
         }
 
-        return ResultScorer.hitsToResultStream(results, SearchQueryBuilder.IMPORTANCE_FACTOR)
+        var stream =  ResultScorer.hitsToResultStream(results, SearchQueryBuilder.IMPORTANCE_FACTOR)
                 .peek(r -> r.adjustScore(r.getImportance() * request.getScaleForBias()))
-                .map(r -> r);
+                .map(r -> (PhotonResult) r);
+
+        if (request.getQuery() != null) {
+            stream = stream.peek(new QueryReranker(request.getQuery(), request.getLanguage()));
+        }
+
+        return stream;
     }
 
     @Override
