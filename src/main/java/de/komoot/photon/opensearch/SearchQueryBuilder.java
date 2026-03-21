@@ -199,17 +199,16 @@ public class SearchQueryBuilder extends BaseQueryBuilder {
         }
     }
 
-    public void addLocationBias(@Nullable Point point, double scale, int zoom) {
+    public void addLocationBias(@Nullable Point point, float scale, int zoom) {
         if (point == null || zoom < 4) return;
 
         if (zoom > 18) {
             zoom = 18;
         }
-        double radius = (1 << (18 - zoom)) * 0.25;
-        final double fnscale = Double.min(1.0, Double.max(0.0, scale));
+        float radius = (1 << (18 - zoom)) * 0.25f;
 
         innerQuery.functions(fn1 -> fn1
-                .weight((float) (38.0 * (1.0 - fnscale)))
+                .weight(IMPORTANCE_FACTOR * 0.95f * (1.0f - scale))
                 .exp(ex -> ex
                         .field(DocFields.COORDINATE)
                         .placement(p -> p

@@ -36,7 +36,7 @@ public class OpenSearchSearchHandler implements SearchHandler<SimpleSearchReques
         }
 
         return ResultScorer.hitsToResultStream(results, SearchQueryBuilder.IMPORTANCE_FACTOR)
-                .peek(r -> r.adjustScore(r.getImportance()))
+                .peek(r -> r.adjustScore(r.getImportance() * request.getScaleForBias()))
                 .map(r -> r);
     }
 
