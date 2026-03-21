@@ -14,9 +14,9 @@ import org.opensearch.client.opensearch.core.SearchResponse;
 import org.opensearch.client.opensearch.core.search.Hit;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @NullMarked
 public class OpenSearchReverseHandler implements SearchHandler<ReverseRequest> {
@@ -29,7 +29,7 @@ public class OpenSearchReverseHandler implements SearchHandler<ReverseRequest> {
     }
 
     @Override
-    public List<PhotonResult> search(ReverseRequest request) {
+    public Stream<PhotonResult> search(ReverseRequest request) {
         final var queryBuilder = new ReverseQueryBuilder(request.getLocation(), request.getRadius());
         queryBuilder.addQueryFilter(request.getQueryStringFilter());
         queryBuilder.addLayerFilter(request.getLayerFilters());
@@ -42,9 +42,8 @@ public class OpenSearchReverseHandler implements SearchHandler<ReverseRequest> {
                 request.getLocationDistanceSort() ? request.getLocation() : null);
 
         return results.hits().hits().stream()
-                .map(Hit::source)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
+                .map(h -> (PhotonResult) h.source())
+                .filter(Objects::nonNull);
     }
 
     @Override

@@ -9,9 +9,8 @@ import org.opensearch.client.opensearch._types.SearchType;
 import org.opensearch.client.opensearch._types.query_dsl.Query;
 import org.opensearch.client.opensearch.core.SearchResponse;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.io.IOException;
+import java.util.stream.Stream;
 
 /**
  * Execute a structured forward lookup.
@@ -27,7 +26,7 @@ public class OpenSearchStructuredSearchHandler implements SearchHandler<Structur
     }
 
     @Override
-    public List<PhotonResult> search(StructuredSearchRequest photonRequest) {
+    public Stream<PhotonResult> search(StructuredSearchRequest photonRequest) {
         // for the case of deduplication we need a bit more results, #300
         int limit = photonRequest.getLimit();
         int extLimit = limit > 1 ? (int) Math.round(photonRequest.getLimit() * 1.5) : 1;
@@ -48,7 +47,7 @@ public class OpenSearchStructuredSearchHandler implements SearchHandler<Structur
             }
         }
 
-        List<PhotonResult> ret = new ArrayList<>();
+        Stream.Builder<PhotonResult> ret = Stream.builder();
         for (var hit : results.hits().hits()) {
             var source = hit.source();
             var score = hit.score();
@@ -60,7 +59,7 @@ public class OpenSearchStructuredSearchHandler implements SearchHandler<Structur
             }
         }
 
-        return ret;
+        return ret.build();
     }
 
     @Override

@@ -10,8 +10,7 @@ import org.opensearch.client.opensearch._types.query_dsl.Query;
 import org.opensearch.client.opensearch.core.SearchResponse;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.stream.Stream;
 
 @NullMarked
 public class OpenSearchSearchHandler implements SearchHandler<SimpleSearchRequest> {
@@ -24,8 +23,8 @@ public class OpenSearchSearchHandler implements SearchHandler<SimpleSearchReques
     }
 
     @Override
-    public List<PhotonResult> search(SimpleSearchRequest request) {
-        // Have it return more result candidates than results requested,
+    public Stream<PhotonResult> search(SimpleSearchRequest request) {
+        // Return more result candidates than results requested,
         // will be reranked and filtered later.
         final int extLimit = Math.max(5, (int) Math.round(request.getLimit() * 1.5));
 
@@ -35,7 +34,7 @@ public class OpenSearchSearchHandler implements SearchHandler<SimpleSearchReques
             results = sendQuery(buildQuery(request, true), extLimit);
         }
 
-        List<PhotonResult> ret = new ArrayList<>();
+        Stream.Builder<PhotonResult> ret = Stream.builder();
         for (var hit : results.hits().hits()) {
             var score = hit.score();
             var source = hit.source();
@@ -47,7 +46,7 @@ public class OpenSearchSearchHandler implements SearchHandler<SimpleSearchReques
             }
         }
 
-        return ret;
+        return ret.build();
     }
 
     @Override

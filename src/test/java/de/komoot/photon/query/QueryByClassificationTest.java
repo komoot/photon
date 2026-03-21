@@ -44,7 +44,7 @@ class QueryByClassificationTest extends ESBaseTester {
         final var request = new SimpleSearchRequest();
         request.setQuery(query);
 
-        return getServer().createSearchHandler(1).search(request);
+        return getServer().createSearchHandler(1).search(request).toList();
     }
 
     private void updateClassification(String key, String value, String... terms) throws IOException {

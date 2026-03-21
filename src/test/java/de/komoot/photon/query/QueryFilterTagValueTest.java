@@ -69,7 +69,7 @@ class QueryFilterTagValueTest extends ESBaseTester {
             request.addOsmTagFilter(TagFilter.buildOsmTagFilter(param));
         }
 
-        return getServer().createSearchHandler(1).search(request);
+        return getServer().createSearchHandler(1).search(request).toList();
     }
 
     private List<PhotonResult> reverseWithTags(String[] params) {
@@ -79,7 +79,7 @@ class QueryFilterTagValueTest extends ESBaseTester {
         for (String param : params) {
             request.addOsmTagFilter(TagFilter.buildOsmTagFilter(param));
         }
-        return getServer().createReverseHandler(1).search(request);
+        return getServer().createReverseHandler(1).search(request).toList();
     }
 
     @ParameterizedTest

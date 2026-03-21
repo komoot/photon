@@ -118,7 +118,7 @@ class SuggestAddressesTest extends ESBaseTester {
         request.setQuery(STREET_NAME);
 
         var handler = getServer().createSearchHandler(1);
-        var results = handler.search(request);
+        var results = handler.search(request).toList();
 
         assertEquals(1, results.size());
         assertEquals(STREET_NAME, results.getFirst().getLocalised(DocFields.NAME, "en"));
@@ -132,7 +132,7 @@ class SuggestAddressesTest extends ESBaseTester {
         request.setSuggestAddresses(true);
 
         var handler = getServer().createSearchHandler(1);
-        var results = handler.search(request);
+        var results = handler.search(request).toList();
 
         assertEquals(2, results.size());
         assertEquals("42", results.get(1).get(DocFields.HOUSENUMBER));
@@ -148,7 +148,7 @@ class SuggestAddressesTest extends ESBaseTester {
         request.setSuggestAddresses(true);
 
         var handler = getServer().createSearchHandler(1);
-        var results = handler.search(request);
+        var results = handler.search(request).toList();
 
         assertEquals(1, results.size());
         assertEquals("42", results.getFirst().get(DocFields.HOUSENUMBER));
@@ -163,7 +163,7 @@ class SuggestAddressesTest extends ESBaseTester {
         request.setSuggestAddresses(true);
 
         var handler = getServer().createSearchHandler(10);
-        var results = handler.search(request);
+        var results = handler.search(request).toList();
 
         assertEquals(1, results.size(), "Expected only Triesen result, got: " + results);
         assertEquals("16", results.getFirst().get(DocFields.HOUSENUMBER));
@@ -180,7 +180,7 @@ class SuggestAddressesTest extends ESBaseTester {
         request.setSuggestAddresses(true);
 
         var handler = getServer().createSearchHandler(10);
-        var results = handler.search(request);
+        var results = handler.search(request).toList();
 
         assertEquals(2, results.size(), "Expected street and address, got: " + results);
         assertEquals("Romsdalsveien", results.getFirst().getLocalised(DocFields.NAME, "en"));
@@ -195,7 +195,7 @@ class SuggestAddressesTest extends ESBaseTester {
         request.setSuggestAddresses(true);
 
         var handler = getServer().createSearchHandler(10);
-        var results = handler.search(request);
+        var results = handler.search(request).toList();
 
         assertEquals(2, results.size(), "Expected street and address, got: " + results);
         assertEquals("Nils Gotlands veg", results.getFirst().getLocalised(DocFields.NAME, "en"));

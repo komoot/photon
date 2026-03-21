@@ -61,7 +61,7 @@ class QueryReverseTest extends ESBaseTester {
             request.setLimit(limit, limit);
         }
 
-        return getServer().createReverseHandler(1).search(request);
+        return getServer().createReverseHandler(1).search(request).toList();
     }
 
     @Test
