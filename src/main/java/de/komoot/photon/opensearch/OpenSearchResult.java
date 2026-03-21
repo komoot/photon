@@ -18,6 +18,7 @@ public class OpenSearchResult implements PhotonResult {
             DocFields.STATE, DocFields.COUNTRY
     );
 
+    private double opensearchScore = 0.0;
     private double score = 0.0;
     private double @Nullable [] extent = null;
     private double[] coordinates = INVALID_COORDINATES;
@@ -45,6 +46,19 @@ public class OpenSearchResult implements PhotonResult {
     @Override
     public void adjustScore(double difference) {
         this.score += difference;
+    }
+
+    public void setOpensearchScore(double opensearchScore) {
+        this.opensearchScore = opensearchScore;
+    }
+
+    public double getOpensearchScore() {
+        return opensearchScore;
+    }
+
+    public double getImportance() {
+        Double importance = (Double) infos.get(DocFields.IMPORTANCE);
+        return importance == null ? 0.00000001 : importance;
     }
 
     @Override

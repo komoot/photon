@@ -30,23 +30,14 @@ public class OpenSearchSearchHandler implements SearchHandler<SimpleSearchReques
 
         var results = sendQuery(buildQuery(request, false), extLimit);
 
-        if (results.hits().hits().isEmpty()) {
+        var total = results.hits().total();
+        if (total == null || total.value() == 0) {
             results = sendQuery(buildQuery(request, true), extLimit);
         }
 
-        Stream.Builder<PhotonResult> ret = Stream.builder();
-        for (var hit : results.hits().hits()) {
-            var score = hit.score();
-            var source = hit.source();
-            if (source != null) {
-                if (score != null) {
-                    source.adjustScore(score);
-                }
-                ret.add(source);
-            }
-        }
-
-        return ret.build();
+        return ResultScorer.hitsToResultStream(results, SearchQueryBuilder.IMPORTANCE_FACTOR)
+                .peek(r -> r.adjustScore(r.getImportance()))
+                .map(r -> r);
     }
 
     @Override

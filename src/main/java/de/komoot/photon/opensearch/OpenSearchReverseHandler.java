@@ -11,11 +11,8 @@ import org.opensearch.client.opensearch._types.SearchType;
 import org.opensearch.client.opensearch._types.SortOrder;
 import org.opensearch.client.opensearch._types.query_dsl.Query;
 import org.opensearch.client.opensearch.core.SearchResponse;
-import org.opensearch.client.opensearch.core.search.Hit;
 
 import java.io.IOException;
-import java.util.Objects;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @NullMarked
@@ -41,9 +38,10 @@ public class OpenSearchReverseHandler implements SearchHandler<ReverseRequest> {
                 request.getLimit(),
                 request.getLocationDistanceSort() ? request.getLocation() : null);
 
+        var scorer = new ResultScorer(0);
         return results.hits().hits().stream()
-                .map(h -> (PhotonResult) h.source())
-                .filter(Objects::nonNull);
+                .mapMulti(scorer::hitToResult)
+                .map(r -> r);
     }
 
     @Override
