@@ -22,7 +22,7 @@ The **q** parameter contains the term to search for. It is mandatory unless
 filtering via include/exclude parameters is in place.
 
 Apart from the [common parameters](#parameters-common-to-search-and-reverse)
-the `/api` endpoints accepts the following paramters:
+the `/api` endpoints accepts the following parameters:
 
 #### Location Bias
 
@@ -51,6 +51,17 @@ http://localhost:2322/api?q=berlin&bbox=9.5,51.5,11.5,53.5
 
 The **bbox** parameter restricts results to the given area.
 The expected format for the bounding box is minLon,minLat,maxLon,maxLat.
+
+#### Filter results by country code
+
+```
+http://localhost:2322/api?q=berlin&countrycode=DE
+```
+
+The **countrycode** parameter restricts results to the given countries. 
+The country code parameter can be used multiple times.
+The expected format for the country code is the 2 letter code for the country 
+also known as ISO 3166-2.
 
 ## Structured Search
 
