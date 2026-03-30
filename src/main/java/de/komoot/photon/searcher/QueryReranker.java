@@ -2,10 +2,10 @@ package de.komoot.photon.searcher;
 
 import de.komoot.photon.opensearch.DocFields;
 import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
@@ -23,7 +23,9 @@ public class QueryReranker implements Consumer<PhotonResult> {
 
     @Override
     public void accept(PhotonResult result) {
-        result.adjustScore(rescore(result));
+        if (!query.isEmpty()) {
+            result.adjustScore(rescore(result));
+        }
     }
 
     private double rescore(PhotonResult result) {
@@ -52,10 +54,10 @@ public class QueryReranker implements Consumer<PhotonResult> {
                         result.getLocalised(DocFields.COUNTRY, language),
                         result.getLocalised(DocFields.STATE, language),
                         result.getLocalised(DocFields.COUNTY, language),
-                        result.getLocalised(DocFields.DISTRICT, language))
-                .filter(Objects::nonNull)
-                .map(this::normalize)
-                .filter(s -> !s.isBlank())
+                        result.getLocalised(DocFields.DISTRICT, language),
+                        result.getLocalised(DocFields.NAME, "default"),
+                        result.getLocalised(DocFields.NAME, "alt"))
+                .mapMulti(this::mapNames)
                 .toList();
 
         double matches = 0.0;
@@ -92,6 +94,17 @@ public class QueryReranker implements Consumer<PhotonResult> {
     }
 
     private String normalize(String in) {
-        return WORD_BREAK_PATTERN.matcher(in.toLowerCase()).replaceAll(" ");
+        return WORD_BREAK_PATTERN.matcher(in.toLowerCase()).replaceAll(" ").strip();
+    }
+
+    private void mapNames(@Nullable String in, Consumer<String> consumer) {
+        if (in != null) {
+            for (var s : in.split(";")) {
+                var finname = normalize(s);
+                if (!finname.isEmpty()) {
+                    consumer.accept(finname);
+                }
+            }
+        }
     }
 }
