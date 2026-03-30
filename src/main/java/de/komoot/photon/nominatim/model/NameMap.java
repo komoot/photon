@@ -37,9 +37,9 @@ public class NameMap extends AbstractMap<String, String> {
         if (!containsKey(field)) {
             Arrays.stream(keys)
                     .map(source::get)
-                    .filter(Objects::nonNull)
+                    .filter(s -> s != null && !s.isBlank())
                     .findFirst()
-                    .ifPresent(k -> entries.add(new SimpleImmutableEntry<>(field, k)));
+                    .ifPresent(k -> entries.add(new SimpleImmutableEntry<>(field, k.strip())));
         }
         return this;
     }

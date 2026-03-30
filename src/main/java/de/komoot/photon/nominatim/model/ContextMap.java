@@ -22,8 +22,8 @@ public class ContextMap extends AbstractMap<String, Set<String>> {
     }
 
     public void addName(String key, @Nullable String name) {
-        if (name != null) {
-            entries.computeIfAbsent(key, k -> new HashSet<>()).add(name);
+        if (name != null && !name.isBlank()) {
+            entries.computeIfAbsent(key, k -> new HashSet<>()).add(name.strip());
         }
     }
 
