@@ -30,7 +30,7 @@ public class GenericSearchHandler<T extends RequestBase> implements Handler {
     public void handle(Context context) {
         final T searchRequest = requestFactory.create(context);
 
-        var results = requestHandler.search(searchRequest).stream()
+        var results = requestHandler.search(searchRequest)
                 .sorted(Comparator.comparingDouble(PhotonResult::getScore).reversed());
 
         if (searchRequest.getDedupe()) {

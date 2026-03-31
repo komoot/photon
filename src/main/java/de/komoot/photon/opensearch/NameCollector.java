@@ -24,10 +24,12 @@ public class NameCollector {
     }
 
     public void add(String term, int searchPrio) {
-        final var cleaned = term.replace("|", " ");
-        final var currentPrio = terms.get(cleaned);
-        if (currentPrio == null || currentPrio < searchPrio) {
-            terms.put(cleaned, Integer.max(searchPrio, 1));
+        final var cleaned = term.replace("|", " ").strip();
+        if (!cleaned.isEmpty()) {
+            final var currentPrio = terms.get(cleaned);
+            if (currentPrio == null || currentPrio < searchPrio) {
+                terms.put(cleaned, Integer.max(searchPrio, 1));
+            }
         }
     }
 

@@ -253,34 +253,37 @@ public class PhotonDoc {
         Map<AddressType, Map<String, String>> overlay = new EnumMap<>(AddressType.class);
         for (var entry : addressEntries) {
             final String key = entry.getKey();
+            final String value = entry.getValue().strip();
 
-            if (key.equals("postcode")) {
-                postcode = entry.getValue();
-            } else {
-                ADDRESS_TYPE_TAG_MAP
-                        .stream()
-                        .filter(e -> key.startsWith(e.getValue()))
-                        .findFirst()
-                        .ifPresent(e -> {
-                            var atype = e.getKey();
-                            if (atype == AddressType.OTHER) {
-                                context.addNameFromPrefix(key, entry.getValue(), languages);
-                            } else {
-                                int prefixLen = e.getValue().length();
-                                if (key.length() == prefixLen) {
-                                    if (overlay.computeIfAbsent(atype, k -> new HashMap<>()).putIfAbsent("default", entry.getValue()) != null) {
-                                        context.addNameFromPrefix(key, entry.getValue(), languages);
-                                    }
-                                } else if (key.charAt(prefixLen) == ':') {
-                                    final String intKey = key.substring(prefixLen + 1);
-                                    if (languages.contains(intKey)) {
-                                        if (overlay.computeIfAbsent(atype, k -> new HashMap<>()).putIfAbsent(intKey, entry.getValue()) != null) {
-                                            context.addNameFromPrefix(key, entry.getValue(), languages);
+            if (!value.isEmpty()) {
+                if (key.equals("postcode")) {
+                    postcode = value;
+                } else {
+                    ADDRESS_TYPE_TAG_MAP
+                            .stream()
+                            .filter(e -> key.startsWith(e.getValue()))
+                            .findFirst()
+                            .ifPresent(e -> {
+                                var atype = e.getKey();
+                                if (atype == AddressType.OTHER) {
+                                    context.addNameFromPrefix(key, value, languages);
+                                } else {
+                                    int prefixLen = e.getValue().length();
+                                    if (key.length() == prefixLen) {
+                                        if (overlay.computeIfAbsent(atype, k -> new HashMap<>()).putIfAbsent("default", value) != null) {
+                                            context.addNameFromPrefix(key, value, languages);
+                                        }
+                                    } else if (key.charAt(prefixLen) == ':') {
+                                        final String intKey = key.substring(prefixLen + 1);
+                                        if (languages.contains(intKey)) {
+                                            if (overlay.computeIfAbsent(atype, k -> new HashMap<>()).putIfAbsent(intKey, value) != null) {
+                                                context.addNameFromPrefix(key, value, languages);
+                                            }
                                         }
                                     }
                                 }
-                            }
-                        });
+                            });
+                }
             }
         }
 

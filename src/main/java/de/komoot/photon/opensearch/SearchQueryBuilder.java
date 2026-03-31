@@ -15,8 +15,9 @@ import java.util.stream.Collectors;
 
 @NullMarked
 public class SearchQueryBuilder extends BaseQueryBuilder {
+    public static final float IMPORTANCE_FACTOR = 30f;
+
     public FunctionScoreQuery.Builder innerQuery = new FunctionScoreQuery.Builder();
-    double importance_factor = 40.0;
 
     public SearchQueryBuilder(@Nullable String query, boolean lenient, boolean suggestAddresses) {
         if (query == null) {
@@ -24,20 +25,20 @@ public class SearchQueryBuilder extends BaseQueryBuilder {
             // see SimpleSearchRequestFactory.create
             innerQuery.query(q -> q.matchAll(ma -> ma));
         } else if (!suggestAddresses && (query.length() < 4 || query.matches("^\\p{IsAlphabetic}+$"))) {
-            importance_factor = setupShortQuery(query, lenient);
+            setupShortQuery(query, lenient);
         } else {
-            importance_factor = setupFullQuery(query, lenient, suggestAddresses);
+            setupFullQuery(query, lenient, suggestAddresses);
         }
 
         innerQuery.functions(fvf -> fvf.fieldValueFactor(fvfb -> fvfb
                         .field(DocFields.IMPORTANCE)
-                        .factor((float) importance_factor)
+                        .factor(IMPORTANCE_FACTOR)
                         .missing(0.00001)))
                 .scoreMode(FunctionScoreMode.Sum)
                 .boostMode(FunctionBoostMode.Sum);
     }
 
-    public double setupShortQuery(String query, boolean lenient) {
+    public void setupShortQuery(String query, boolean lenient) {
         final int qlen = query.length();
         final var queryField = FieldValue.of(f -> f.stringValue(query));
 
@@ -72,11 +73,9 @@ public class SearchQueryBuilder extends BaseQueryBuilder {
                                 .field(DocFields.OBJECT_TYPE)
                                 .value(FieldValue.of("other"))))))
         );
-
-        return 40.0;
     }
 
-    public double setupFullQuery(String query, boolean lenient, boolean suggestAddresses) {
+    public void setupFullQuery(String query, boolean lenient, boolean suggestAddresses) {
         final var queryField = FieldValue.of(f -> f.stringValue(query));
         final boolean isAlphabetic = query.matches("[\\p{IsAlphabetic} ]+");
 
@@ -162,8 +161,6 @@ public class SearchQueryBuilder extends BaseQueryBuilder {
 
             return coreBuilder;
         }));
-
-        return isAlphabetic ? 40.0 : 20.0;
     }
 
     public SearchQueryBuilder(StructuredSearchRequest request, boolean lenient) {
@@ -202,17 +199,16 @@ public class SearchQueryBuilder extends BaseQueryBuilder {
         }
     }
 
-    public void addLocationBias(@Nullable Point point, double scale, int zoom) {
+    public void addLocationBias(@Nullable Point point, float scale, int zoom) {
         if (point == null || zoom < 4) return;
 
         if (zoom > 18) {
             zoom = 18;
         }
-        double radius = (1 << (18 - zoom)) * 0.25;
-        final double fnscale = Double.min(1.0, Double.max(0.0, scale));
+        float radius = (1 << (18 - zoom)) * 0.25f;
 
         innerQuery.functions(fn1 -> fn1
-                .weight((float) (38.0 * (1.0 - fnscale)))
+                .weight(IMPORTANCE_FACTOR * 0.95f * (1.0f - scale))
                 .exp(ex -> ex
                         .field(DocFields.COORDINATE)
                         .placement(p -> p

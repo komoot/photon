@@ -9,9 +9,8 @@ import org.opensearch.client.opensearch._types.SearchType;
 import org.opensearch.client.opensearch._types.query_dsl.Query;
 import org.opensearch.client.opensearch.core.SearchResponse;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.io.IOException;
+import java.util.stream.Stream;
 
 /**
  * Execute a structured forward lookup.
@@ -27,17 +26,19 @@ public class OpenSearchStructuredSearchHandler implements SearchHandler<Structur
     }
 
     @Override
-    public List<PhotonResult> search(StructuredSearchRequest photonRequest) {
+    public Stream<PhotonResult> search(StructuredSearchRequest photonRequest) {
         // for the case of deduplication we need a bit more results, #300
         int limit = photonRequest.getLimit();
         int extLimit = limit > 1 ? (int) Math.round(photonRequest.getLimit() * 1.5) : 1;
 
         var results = sendQuery(buildQuery(photonRequest, false), extLimit);
 
-        if (results.hits().total() != null && results.hits().total().value() == 0) {
+        var total = results.hits().total();
+        if (total == null || total.value() == 0) {
             results = sendQuery(buildQuery(photonRequest, true), extLimit);
 
-            if (results.hits().total() != null && results.hits().total().value() == 0 && photonRequest.hasStreet()) {
+            total = results.hits().total();
+            if (total != null && total.value() == 0 && photonRequest.hasStreet()) {
                 var street = photonRequest.getStreet();
                 var houseNumber = photonRequest.getHouseNumber();
                 photonRequest.setStreet(null);
@@ -48,19 +49,8 @@ public class OpenSearchStructuredSearchHandler implements SearchHandler<Structur
             }
         }
 
-        List<PhotonResult> ret = new ArrayList<>();
-        for (var hit : results.hits().hits()) {
-            var source = hit.source();
-            var score = hit.score();
-            if (source != null) {
-                if (score != null) {
-                    source.adjustScore(score);
-                }
-                ret.add(source);
-            }
-        }
-
-        return ret;
+        return ResultScorer.hitsToResultStream(results, 0)
+                .map(r -> r);
     }
 
     @Override

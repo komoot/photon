@@ -131,7 +131,7 @@ public class StructuredQueryTest extends ESBaseTester {
         request.setHouseNumber("2");
 
         var queryHandler = getServer().createStructuredSearchHandler(1);
-        var results = queryHandler.search(request);
+        var results = queryHandler.search(request).toList();
         assertEquals(1, results.size());
         var result = results.getFirst();
         assertEquals(request.getHouseNumber(), result.get(DocFields.HOUSENUMBER));
@@ -144,7 +144,7 @@ public class StructuredQueryTest extends ESBaseTester {
         request.setCity(CITY);
         request.setStreet(STREET);
         var queryHandler = getServer().createStructuredSearchHandler(1);
-        var results = queryHandler.search(request);
+        var results = queryHandler.search(request).toList();
         for (var result : results)
         {
             assertNotEquals(5, result.get(DocFields.OSM_ID));
@@ -156,7 +156,7 @@ public class StructuredQueryTest extends ESBaseTester {
         var request = new StructuredSearchRequest();
         request.setCountryCode(COUNTRY_CODE);
         var queryHandler = getServer().createStructuredSearchHandler(1);
-        var results = queryHandler.search(request);
+        var results = queryHandler.search(request).toList();
         assertEquals(1, results.size());
         var result = results.getFirst();
         assertEquals(0, result.get(DocFields.OSM_ID));
@@ -169,7 +169,7 @@ public class StructuredQueryTest extends ESBaseTester {
         request.setCity(CITY);
 
         var queryHandler = getServer().createStructuredSearchHandler(1);
-        var results = queryHandler.search(request);
+        var results = queryHandler.search(request).toList();
 
         for (var result : results) {
             assertNull(result.getLocalised(DocFields.STREET, LANGUAGE));
@@ -244,7 +244,7 @@ public class StructuredQueryTest extends ESBaseTester {
         var queryHandler = getServer().createStructuredSearchHandler(1);
         var results = queryHandler.search(request);
 
-        return results.getFirst();
+        return results.findFirst().orElseThrow();
     }
 
     private void addHamletHouse(Importer instance, int id, String houseNumber) {

@@ -8,7 +8,7 @@ import org.locationtech.jts.geom.Point;
 @NullMarked
 public class SearchRequestBase extends RequestBase {
     @Nullable private Point locationForBias;
-    private double scale = 0.2;
+    private float scale = 0.2f;
     private int zoom = 14;
     @Nullable private Envelope bbox;
     private boolean suggestAddresses = false;
@@ -23,8 +23,8 @@ public class SearchRequestBase extends RequestBase {
         return locationForBias;
     }
 
-    public double getScaleForBias() {
-        return scale;
+    public float getScaleForBias() {
+        return locationForBias == null ? 1.0f : scale;
     }
 
     public int getZoomForBias() {
@@ -39,7 +39,7 @@ public class SearchRequestBase extends RequestBase {
 
     void setScale(@Nullable Double scale) {
         if (scale != null) {
-            this.scale = Double.max(Double.min(scale, 1.0), 0.0);
+            this.scale = (float) Double.max(Double.min(scale, 1.0), 0.0);
         }
     }
 

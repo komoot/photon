@@ -3,7 +3,7 @@ package de.komoot.photon.searcher;
 import de.komoot.photon.query.RequestBase;
 import org.jspecify.annotations.NullMarked;
 
-import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * Interface for a handler of search geocoding requests.
@@ -11,7 +11,7 @@ import java.util.List;
 @NullMarked
 public interface SearchHandler<T extends RequestBase> {
 
-    List<PhotonResult> search(T searchRequest);
+    Stream<PhotonResult> search(T searchRequest);
 
     String dumpQuery(T searchRequest);
 }

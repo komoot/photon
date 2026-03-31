@@ -2,6 +2,7 @@ package de.komoot.photon.opensearch;
 
 import de.komoot.photon.query.SimpleSearchRequest;
 import de.komoot.photon.searcher.PhotonResult;
+import de.komoot.photon.searcher.QueryReranker;
 import de.komoot.photon.searcher.SearchHandler;
 import org.jspecify.annotations.NullMarked;
 import org.opensearch.client.opensearch.OpenSearchClient;
@@ -10,8 +11,7 @@ import org.opensearch.client.opensearch._types.query_dsl.Query;
 import org.opensearch.client.opensearch.core.SearchResponse;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.stream.Stream;
 
 @NullMarked
 public class OpenSearchSearchHandler implements SearchHandler<SimpleSearchRequest> {
@@ -24,30 +24,27 @@ public class OpenSearchSearchHandler implements SearchHandler<SimpleSearchReques
     }
 
     @Override
-    public List<PhotonResult> search(SimpleSearchRequest request) {
-        // Have it return more result candidates than results requested,
+    public Stream<PhotonResult> search(SimpleSearchRequest request) {
+        // Return more result candidates than results requested,
         // will be reranked and filtered later.
-        final int extLimit = Math.max(5, (int) Math.round(request.getLimit() * 1.5));
+        final int extLimit = (int) Math.round(Math.max(6, request.getLimit()) * 1.5);
 
         var results = sendQuery(buildQuery(request, false), extLimit);
 
-        if (results.hits().hits().isEmpty()) {
+        var total = results.hits().total();
+        if (total == null || total.value() == 0) {
             results = sendQuery(buildQuery(request, true), extLimit);
         }
 
-        List<PhotonResult> ret = new ArrayList<>();
-        for (var hit : results.hits().hits()) {
-            var score = hit.score();
-            var source = hit.source();
-            if (source != null) {
-                if (score != null) {
-                    source.adjustScore(score);
-                }
-                ret.add(source);
-            }
+        var stream =  ResultScorer.hitsToResultStream(results, SearchQueryBuilder.IMPORTANCE_FACTOR)
+                .peek(r -> r.adjustScore(r.getImportance() * request.getScaleForBias()))
+                .map(r -> (PhotonResult) r);
+
+        if (request.getQuery() != null) {
+            stream = stream.peek(new QueryReranker(request.getQuery(), request.getLanguage()));
         }
 
-        return ret;
+        return stream;
     }
 
     @Override
