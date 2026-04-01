@@ -39,19 +39,20 @@ public class App {
     private static final AtomicReference<@Nullable Server> esServer = new AtomicReference<>();
     @Nullable private static Javalin photonServer;
 
-    private static String buildAccessLogQuery(Context ctx) {
+    private static String buildAccessLogQuery(Context ctx, ApiServerConfig args) {
         final String path = ctx.path();
         String params = ctx.queryString();
-
+        
         if (path.startsWith("/structured") || path.startsWith("/api") || path.startsWith("/reverse") ) {
-            // do not log any parameters when performing (reverse)geocoding
+            if (args.isDisabledAuditLogPrivacy() == false) {
+                // do not log any parameters when performing (reverse)geocoding
+                params = "";
+            }
+        }
+        if ( params == null || params.isBlank() ) {
             params = "";
         } else {
-            if ( params == null || params.isBlank() || params == "" ) {
-                params = "";
-            } else {
-                params = "?" + params;
-            }
+            params = "?" + params;
         }
         return params;
     }
@@ -344,23 +345,27 @@ public class App {
                          Languages: {}
                          Import Date: {}
                          Support Structured Queries: true
-                         Support Geometries: {}""",
-                dbProperties.getLanguages(), dbProperties.getImportDate(), dbProperties.getSupportGeometries());
+                         Support Geometries: {}
+                         Audit Logging: {},
+                         Audit Logging Privacy Disabled: {}""",
+                dbProperties.getLanguages(), dbProperties.getImportDate(), dbProperties.getSupportGeometries(), args.isEnabledAuditLog(), args.isDisabledAuditLogPrivacy());
 
         MetricsConfig metrics = setupMetrics(args.getMetrics(), server.getClient());
         final var formatter = new GeoJsonFormatter();
 
         photonServer = Javalin.create(config -> {
-            config.requestLogger.http((ctx, ms) -> {
-                ACCESS_LOG.info(
-                    "{} {}{} status={} tookMs={}",
-                    ctx.method(),
-                    ctx.path(),
-                    buildAccessLogQuery(ctx),
-                    ctx.status(),
-                    ms
-                );
-            });
+            if (args.isEnabledAuditLog()) {
+                config.requestLogger.http((ctx, ms) -> {
+                    ACCESS_LOG.info(
+                        "{} {}{} status={} tookMs={}",
+                        ctx.method(),
+                        ctx.path(),
+                        buildAccessLogQuery(ctx, args),
+                        ctx.status(),
+                        ms
+                    );
+                });
+            }
 
             config.router.ignoreTrailingSlashes = true;
             config.http.defaultContentType = ContentType.APPLICATION_JSON.toString();

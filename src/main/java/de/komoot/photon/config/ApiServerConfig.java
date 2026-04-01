@@ -39,6 +39,18 @@ public class ApiServerConfig {
             """)
     private boolean enableUpdateApi = false;
 
+    @Parameter(names = "-enable-audit-log", category = GROUP, description = """
+            Enable logging of incoming requests. No query parameters are logged
+            for coding requests.
+            """)
+    private boolean enableAuditLog = false;
+
+    @Parameter(names = "-audit-log-no-privacy", category = GROUP, description = """
+            When enabled, all request parameters are logged, even for coding requests.
+            Be cautious, this can contain personal information.
+            """)
+    private boolean disableAuditLogPrivacy = false;
+
     @Parameter(names = "-max-results", category = GROUP, placeholder = "NUM", description = """
             Maximum possible value for the 'limit' parameter for forward geocoding searches
             """)
@@ -91,6 +103,14 @@ public class ApiServerConfig {
         return this.enableUpdateApi;
     }
 
+    public boolean isEnabledAuditLog() {
+        return this.enableAuditLog;
+    }
+
+    public boolean isDisabledAuditLogPrivacy() {
+        return this.disableAuditLogPrivacy;
+    }
+    
     public int getMaxReverseResults() {
         return maxReverseResults;
     }

@@ -136,6 +136,11 @@ sure you have a JDK installed. Then run:
 
 This will build and test photon. The final jar can be found in the `target` directory.
 
+## Audit Logging
+
+By default incoming requests are not logged. To enable logging of all incoming requests via
+the API, use the parameter `-enable-audit-log`.
+Requests used for (reverse)geocoding will not contain the actual query, unless the additional parameter `-audit-log-no-privacy` is set.
 
 ## Contributing
 
