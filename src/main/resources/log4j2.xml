@@ -1,17 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration status="error">
-    <Appenders>
-        <Console name="stderr" target="SYSTEM_ERR">
-            <PatternLayout pattern="%d [%t] %-5p %c - %m%n" />
-        </Console>
-        <Async name="ASYNC" bufferSize="500">
-            <AppenderRef ref="stderr"/>
-        </Async>
-    </Appenders>
-    <Loggers>
-        <Logger name="de.komoot.photon" level="info"/>
-        <Root level="warn">
-            <AppenderRef ref="ASYNC" />
-        </Root>
-    </Loggers>
+  <Appenders>
+    <Console name="stdout" target="SYSTEM_OUT">
+      <PatternLayout pattern="%d [%t] %-5p %c - %m%n" />
+      <LevelRangeFilter minLevel="TRACE" maxLevel="INFO"
+                        onMatch="ACCEPT" onMismatch="DENY"/>
+    </Console>
+
+    <Console name="stderr" target="SYSTEM_ERR">
+      <PatternLayout pattern="%d [%t] %-5p %c - %m%n" />
+      <ThresholdFilter level="WARN"
+                       onMatch="ACCEPT" onMismatch="DENY"/>
+    </Console>
+  </Appenders>
+
+  <Loggers>
+    <Logger name="de.komoot.photon.access" level="info" additivity="false">
+      <AppenderRef ref="stdout"/>
+    </Logger>
+
+    <Logger name="de.komoot.photon" level="info" additivity="false">
+      <AppenderRef ref="stdout"/>
+      <AppenderRef ref="stderr"/>
+    </Logger>
+
+    <Root level="warn">
+      <AppenderRef ref="stderr"/>
+    </Root>
+  </Loggers>
 </Configuration>

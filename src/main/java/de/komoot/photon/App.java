@@ -1,5 +1,6 @@
 package de.komoot.photon;
 
+import io.javalin.http.Context;
 import de.komoot.photon.cli.Commands;
 import de.komoot.photon.cli.PhotonCli;
 import de.komoot.photon.config.*;
@@ -34,8 +35,26 @@ import static de.komoot.photon.metrics.MetricsConfig.setupMetrics;
 @NullMarked
 public class App {
     private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger ACCESS_LOG = LogManager.getLogger("de.komoot.photon.access");
     private static final AtomicReference<@Nullable Server> esServer = new AtomicReference<>();
     @Nullable private static Javalin photonServer;
+
+    private static String buildAccessLogQuery(Context ctx) {
+        final String path = ctx.path();
+        String params = ctx.queryString();
+
+        if (path.startsWith("/structured") || path.startsWith("/api") || path.startsWith("/reverse") ) {
+            // do not log any parameters when performing (reverse)geocoding
+            params = "";
+        } else {
+            if ( params == null || params.isBlank() || params == "" ) {
+                params = "";
+            } else {
+                params = "?" + params;
+            }
+        }
+        return params;
+    }
 
     public static void main(String[] rawArgs) throws Exception {
         PhotonCli cli = new PhotonCli();
@@ -332,6 +351,17 @@ public class App {
         final var formatter = new GeoJsonFormatter();
 
         photonServer = Javalin.create(config -> {
+            config.requestLogger.http((ctx, ms) -> {
+                ACCESS_LOG.info(
+                    "{} {}{} status={} tookMs={}",
+                    ctx.method(),
+                    ctx.path(),
+                    buildAccessLogQuery(ctx),
+                    ctx.status(),
+                    ms
+                );
+            });
+
             config.router.ignoreTrailingSlashes = true;
             config.http.defaultContentType = ContentType.APPLICATION_JSON.toString();
             if (metrics.isEnabled()) {
