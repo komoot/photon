@@ -181,6 +181,11 @@ public class App {
             return;
         } finally {
             importThread.finish();
+            try {
+                esServer.finalizeImport();
+            } catch (IOException ex) {
+                LOGGER.error("Error during index optimization", ex);
+            }
         }
 
         LOGGER.info("Database has been successfully set up with the following properties:\n{}", dbProperties);
