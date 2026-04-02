@@ -55,13 +55,17 @@ public class ImportThread {
         }
 
         while (true) {
+            if (exceptionInThread) {
+                throw new RuntimeException("Import thread failed.");
+            }
             try {
-                documents.put(docs);
-                break;
+                if (documents.offer(docs, 500, TimeUnit.MILLISECONDS)) {
+                    break;
+                }
             } catch (InterruptedException e) {
                 LOGGER.warn("Thread interrupted while placing document in queue.");
-                // Restore interrupted state.
                 Thread.currentThread().interrupt();
+                throw new RuntimeException("Import interrupted.", e);
             }
         }
 
@@ -103,32 +107,34 @@ public class ImportThread {
         }
 
         private void runImport() {
-            List<Iterable<PhotonDoc>> batch = new ArrayList<>(MAX_QUEUE_SIZE);
-            while (true) {
-                if (documents.drainTo(batch) == 0) {
-                    if (producerDone && documents.isEmpty()) {
-                        break;
-                    }
-                    try {
-                        var item = documents.poll(500, TimeUnit.MILLISECONDS);
-                        if (item != null) {
-                            batch.add(item);
-                        } else {
-                            continue;
+            try {
+                List<Iterable<PhotonDoc>> batch = new ArrayList<>(MAX_QUEUE_SIZE);
+                while (true) {
+                    if (documents.drainTo(batch) == 0) {
+                        if (producerDone && documents.isEmpty()) {
+                            break;
                         }
-                    } catch (InterruptedException e) {
-                        LOGGER.info("Interrupted exception", e);
-                        // Restore interrupted state.
-                        Thread.currentThread().interrupt();
-                        break;
+                        try {
+                            var item = documents.poll(500, TimeUnit.MILLISECONDS);
+                            if (item != null) {
+                                batch.add(item);
+                            } else {
+                                continue;
+                            }
+                        } catch (InterruptedException e) {
+                            LOGGER.info("Interrupted exception", e);
+                            Thread.currentThread().interrupt();
+                            break;
+                        }
                     }
+                    for (Iterable<PhotonDoc> docs : batch) {
+                        importer.add(docs);
+                    }
+                    batch.clear();
                 }
-                for (Iterable<PhotonDoc> docs : batch) {
-                    importer.add(docs);
-                }
-                batch.clear();
+            } finally {
+                importer.finish();
             }
-            importer.finish();
         }
     }
 
