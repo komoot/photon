@@ -9,12 +9,11 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * Worker thread for bulk importing data from a Nominatim database.
+ * Worker thread(s) for bulk importing data into a Photon database.
  */
 @NullMarked
 public class ImportThread {
@@ -22,22 +21,22 @@ public class ImportThread {
 
     private static final int PROGRESS_INTERVAL = 50000;
 	private static final int MAX_QUEUE_SIZE = 10_000;
-    private static final List<PhotonDoc> FINAL_DOCUMENT = List.of();
     private final BlockingQueue<Iterable<PhotonDoc>> documents = new ArrayBlockingQueue<>(MAX_QUEUE_SIZE);
     private final AtomicLong counter = new AtomicLong();
-    private final Importer importer;
-    private final Thread thread;
+    private final ExecutorService executor;
     private final long startMillis;
+    private volatile boolean producerDone = false;
     private volatile boolean exceptionInThread = false;
 
     public ImportThread(Importer importer) {
-        this.importer = importer;
-        this.thread = new Thread(new ImportRunnable());
-        this.thread.setUncaughtExceptionHandler((t, ex) -> {
-            LOGGER.error("Import error.", ex);
-            exceptionInThread = true;
-        });
-        this.thread.start();
+        this(List.of(importer));
+    }
+
+    public ImportThread(List<Importer> importers) {
+        this.executor = Executors.newFixedThreadPool(importers.size());
+        for (var imp : importers) {
+            executor.execute(new ImportRunnable(imp));
+        }
         this.startMillis = System.currentTimeMillis();
     }
 
@@ -56,38 +55,34 @@ public class ImportThread {
         }
 
         while (true) {
+            if (exceptionInThread) {
+                throw new RuntimeException("Import thread failed.");
+            }
             try {
-                documents.put(docs);
-                break;
+                if (documents.offer(docs, 500, TimeUnit.MILLISECONDS)) {
+                    break;
+                }
             } catch (InterruptedException e) {
                 LOGGER.warn("Thread interrupted while placing document in queue.");
-                // Restore interrupted state.
                 Thread.currentThread().interrupt();
+                throw new RuntimeException("Import interrupted.", e);
             }
         }
 
-        if (counter.incrementAndGet() % PROGRESS_INTERVAL == 0) {
-            final double documentsPerSecond = 1000d * counter.longValue() / (System.currentTimeMillis() - startMillis);
-            LOGGER.info("Imported {} documents [{}/second]", counter.longValue(), documentsPerSecond);
+        final long count = counter.incrementAndGet();
+        if (count % PROGRESS_INTERVAL == 0) {
+            final double documentsPerSecond = 1000d * count / (System.currentTimeMillis() - startMillis);
+            LOGGER.info("Imported {} documents [{}/second]", count, documentsPerSecond);
         }
     }
 
     /**
      * Finalize the import.
-     * Sends an end marker to the import thread and then waits for it to join.
+     * Signals consumer threads to stop and waits for them to complete.
      */
     public void finish() {
-        while (true) {
-            try {
-                documents.put(FINAL_DOCUMENT);
-                thread.join();
-                break;
-            } catch (InterruptedException e) {
-                LOGGER.warn("Thread interrupted while placing document in queue.");
-                // Restore interrupted state.
-                Thread.currentThread().interrupt();
-            }
-        }
+        producerDone = true;
+        executor.close();
         if (!exceptionInThread) {
             LOGGER.info("Finished import of {} photon documents. (Total processing time: {}s)",
                     counter.longValue(), (System.currentTimeMillis() - startMillis) / 1000);
@@ -95,28 +90,50 @@ public class ImportThread {
     }
 
     private class ImportRunnable implements Runnable {
+        private final Importer importer;
+
+        ImportRunnable(Importer importer) {
+            this.importer = importer;
+        }
 
         @Override
         public void run() {
-            List<Iterable<PhotonDoc>> batch = new ArrayList<>(MAX_QUEUE_SIZE);
-            while (true) {
-                if (documents.drainTo(batch) == 0) {
-                    try {
-                        batch.add(documents.take());
-                    } catch (InterruptedException e) {
-                        LOGGER.info("Interrupted exception", e);
-                        // Restore interrupted state.
-                        Thread.currentThread().interrupt();
+            try {
+                runImport();
+            } catch (Exception e) {
+                LOGGER.error("Import error.", e);
+                exceptionInThread = true;
+            }
+        }
+
+        private void runImport() {
+            try {
+                List<Iterable<PhotonDoc>> batch = new ArrayList<>(MAX_QUEUE_SIZE);
+                while (true) {
+                    if (documents.drainTo(batch) == 0) {
+                        if (producerDone && documents.isEmpty()) {
+                            break;
+                        }
+                        try {
+                            var item = documents.poll(500, TimeUnit.MILLISECONDS);
+                            if (item != null) {
+                                batch.add(item);
+                            } else {
+                                continue;
+                            }
+                        } catch (InterruptedException e) {
+                            LOGGER.info("Interrupted exception", e);
+                            Thread.currentThread().interrupt();
+                            break;
+                        }
                     }
-                }
-                for (Iterable<PhotonDoc> docs : batch) {
-                    if (docs == FINAL_DOCUMENT) {
-                        importer.finish();
-                        return;
+                    for (Iterable<PhotonDoc> docs : batch) {
+                        importer.add(docs);
                     }
-                    importer.add(docs);
+                    batch.clear();
                 }
-                batch.clear();
+            } finally {
+                importer.finish();
             }
         }
     }
