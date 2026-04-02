@@ -1,31 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration status="error">
   <Appenders>
+
     <Console name="stdout" target="SYSTEM_OUT">
       <PatternLayout pattern="%d [%t] %-5p %c - %m%n" />
-      <LevelRangeFilter minLevel="TRACE" maxLevel="INFO"
-                        onMatch="ACCEPT" onMismatch="DENY"/>
+      <LevelRangeFilter minLevel="TRACE" maxLevel="INFO" onMatch="ACCEPT" onMismatch="DENY"/>
     </Console>
+    <Async name="ASYNC_stdout" bufferSize="500">
+      <AppenderRef ref="stdout" />
+    </Async>
 
     <Console name="stderr" target="SYSTEM_ERR">
       <PatternLayout pattern="%d [%t] %-5p %c - %m%n" />
-      <ThresholdFilter level="WARN"
-                       onMatch="ACCEPT" onMismatch="DENY"/>
+      <ThresholdFilter level="WARN" onMatch="ACCEPT" onMismatch="DENY"/>
     </Console>
+    <Async name="ASYNC_stderr" bufferSize="500">
+      <AppenderRef ref="stderr" />
+    </Async>
+
   </Appenders>
 
   <Loggers>
+
     <Logger name="de.komoot.photon.access" level="info" additivity="false">
-      <AppenderRef ref="stdout"/>
+      <AppenderRef ref="ASYNC_stdout"/>
     </Logger>
 
     <Logger name="de.komoot.photon" level="info" additivity="false">
-      <AppenderRef ref="stdout"/>
-      <AppenderRef ref="stderr"/>
+      <AppenderRef ref="ASYNC_stdout"/>
+      <AppenderRef ref="ASYNC_stderr"/>
     </Logger>
 
     <Root level="warn">
-      <AppenderRef ref="stderr"/>
+      <AppenderRef ref="ASYNC_stderr"/>
     </Root>
+
   </Loggers>
 </Configuration>
