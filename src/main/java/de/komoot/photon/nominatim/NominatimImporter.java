@@ -31,7 +31,7 @@ public class NominatimImporter extends NominatimConnector {
 
 
     /**
-     * Parse every relevant row in placex and location_osmline
+     * Parse every relevant row in placex, location_osmline and location_postcodes
      * for the given country. Also imports place from country-less places.
      */
     public void readCountry(String countryCode, ImportThread importThread) {
@@ -106,6 +106,7 @@ public class NominatimImporter extends NominatimConnector {
                     importThread.addDocument(new PhotonDocAddressSet(doc, address));
                 });
 
+        // Interpolation table
         final OsmlineRowMapper osmlineRowMapper = new OsmlineRowMapper();
         template.query(String.format("%s  AND p.%s ORDER BY p.geometry_sector, p.parent_place_id",
                                      osmlineRowMapper.makeBaseQuery(dbutils), countrySQL),
@@ -138,6 +139,31 @@ public class NominatimImporter extends NominatimConnector {
                     }
                 });
 
+        // Postcodes
+        final NominatimTableAccessor postcodeRowMapper =
+                hasPostcodeTablesWithGeometry() ?
+                        new PostcodeRowMapper(dbutils, dbProperties.getSupportGeometries())
+                        : new PostcodeOldStyleRowMapper(dbutils);
+        if (!countryCode.isEmpty()) {
+            template.query(postcodeRowMapper.makeBaseQuery(countrySQL),
+                    sqlArgs, sqlArgTypes, rs -> {
+                        final PhotonDoc doc = postcodeRowMapper.rowToDoc(rs);
+
+                        if (rs.getString("parent_class") != null) {
+                            doc.addAddresses(List.of(AddressRow.make(
+                                    dbutils.getMap(rs, "parent_name"),
+                                    rs.getString("parent_class"),
+                                    rs.getString("parent_type"),
+                                    AddressType.fromRank(rs.getInt("parent_rank_address")),
+                                    dbProperties.getLanguages())));
+                        }
+
+                        doc.addAddresses(addressCache.getAddressList(rs.getString("addresslines")));
+                        doc.setCountry(cnames);
+
+                        importThread.addDocument(List.of(doc));
+                    });
+        }
     }
 
 

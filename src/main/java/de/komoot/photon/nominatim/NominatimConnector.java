@@ -24,6 +24,7 @@ public class NominatimConnector {
     protected final JdbcTemplate template;
     protected final TransactionTemplate txTemplate;
     @Nullable protected Map<String, NameMap> countryNames;
+    @Nullable private Boolean hasNewPostcodeLocationsTable;
 
     protected NominatimConnector(PostgresqlConfig cfg, DBDataAdapter dataAdapter, DatabaseProperties dbProperties) {
         BasicDataSource dataSource = new BasicDataSource();
@@ -45,6 +46,7 @@ public class NominatimConnector {
 
         dbutils = dataAdapter;
         this.dbProperties = dbProperties;
+
     }
 
     @Nullable
@@ -76,4 +78,15 @@ public class NominatimConnector {
         return countryNames;
     }
 
+    public boolean hasPostcodeTablesWithGeometry() {
+        if (hasNewPostcodeLocationsTable == null) {
+            var numTables = template.queryForObject("""
+                    SELECT count(*) FROM information_schema.tables
+                    WHERE table_name = 'location_postcodes'
+                    """, Integer.class);
+            hasNewPostcodeLocationsTable = numTables != null && numTables > 0;
+        }
+
+        return hasNewPostcodeLocationsTable;
+    }
 }

@@ -83,3 +83,15 @@ CREATE TABLE import_status (
     lastimportdate timestamp with TIME ZONE NOT NULL,
     indexed boolean
 );
+
+CREATE TABLE location_postcodes (
+    place_id BIGINT,
+    parent_place_id BIGINT,
+    osm_id BIGINT,
+    rank_search SMALLINT,
+    indexed_status SMALLINT,
+    country_code VARCHAR(2),
+    postcode TEXT,
+    centroid GEOMETRY,
+    geometry GEOMETRY
+);
