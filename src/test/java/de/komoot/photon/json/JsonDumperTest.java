@@ -10,6 +10,7 @@ import de.komoot.photon.nominatim.model.NameMap;
 import de.komoot.photon.nominatim.testdb.H2DataAdapter;
 import de.komoot.photon.nominatim.testdb.OsmlineTestRow;
 import de.komoot.photon.nominatim.testdb.PlacexTestRow;
+import de.komoot.photon.nominatim.testdb.PostcodeLocationTestRow;
 import net.javacrumbs.jsonunit.assertj.JsonMapAssert;
 import org.assertj.core.api.InstanceOfAssertFactories;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,6 +23,9 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import java.io.*;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -43,7 +47,7 @@ class JsonDumperTest {
 
     @BeforeEach
     void setup() {
-        EmbeddedDatabase db = new EmbeddedDatabaseBuilder()
+        var db = new EmbeddedDatabaseBuilder()
                 .setType(EmbeddedDatabaseType.H2)
                 .generateUniqueName(true)
                 .addScript("/test-schema.sql")
@@ -130,6 +134,97 @@ class JsonDumperTest {
                 .containsEntry("name", Map.of(
                         "name", "Spot",
                         "name:de", "Sport"));
+    }
+
+    @Test
+    void testPostcodeArtificialDump() throws IOException {
+        configGeometryColumn = true;
+        var postcode = new PostcodeLocationTestRow("51234", "us")
+                .rank(15)
+                .centroid(6.1, -7.7)
+                .geometryBox(6.1, 7.7, 0.0001)
+                .add(jdbc);
+
+        var results = readEntireDatabase();
+
+        assertThat(results).hasSize(1);
+
+        assertThatPlaceDocument(results, postcode.getPlaceId())
+                .containsEntry("place_id", postcode.getPlaceString())
+                .containsEntry("osm_key", "place")
+                .containsEntry("osm_value", "postcode")
+                .containsEntry("categories", List.of("osm.place.postcode"))
+                .containsEntry("importance", 0.20001)
+                .containsEntry("country_code", "us")
+                .doesNotContainKeys("object_type", "object_id", "postcode", "extra")
+                .containsEntry("name", Map.of("name", "51234"))
+                .containsKey("bbox")
+                .doesNotContainKey("geometry");
+
+        assertThatPlaceDocument(results, postcode.getPlaceId()).node("centroid")
+                .isArray().containsExactly(6.1, -7.7);
+    }
+
+    @Test
+    void testPostcodeArtificialDumpOldStyle() throws IOException, URISyntaxException {
+        var sql = Files.readString(Paths.get(getClass().getClassLoader().getResource("test-old-style-postcode-table.sql").toURI()));
+        jdbc.execute(sql);
+        configGeometryColumn = true;
+        var postcode = new PostcodeLocationTestRow("51234", "us")
+                .rank(15)
+                .centroid(6.1, -7.7)
+                .addOldStyle(jdbc);
+
+        var results = readEntireDatabase();
+
+        assertThat(results).hasSize(1);
+
+        assertThatPlaceDocument(results, postcode.getPlaceId())
+                .containsEntry("place_id", postcode.getPlaceString())
+                .containsEntry("osm_key", "place")
+                .containsEntry("osm_value", "postcode")
+                .containsEntry("categories", List.of("osm.place.postcode"))
+                .containsEntry("importance", 0.20001)
+                .containsEntry("country_code", "us")
+                .doesNotContainKeys("object_type", "object_id", "postcode", "extra")
+                .containsEntry("name", Map.of("name", "51234"))
+                .containsKey("bbox")
+                .doesNotContainKey("geometry");
+
+        assertThatPlaceDocument(results, postcode.getPlaceId()).node("centroid")
+                .isArray().containsExactly(6.1, -7.7);
+    }
+
+    @Test
+    void testPostcodeAreaDump() throws IOException {
+        configGeometryColumn = true;
+        var postcode = new PostcodeLocationTestRow("51234", "us")
+                .rank(15)
+                .relation(69341)
+                .centroid(6.1, -7.7)
+                .geometry("POLYGON ((6.009 -7.699, 6.008 -7.7002, 6.1004 -7.7, 6.009 -7.699))")
+                .add(jdbc);
+
+        var results = readEntireDatabase();
+
+        assertThat(results).hasSize(1);
+
+        assertThatPlaceDocument(results, postcode.getPlaceId())
+                .containsEntry("place_id", postcode.getPlaceString())
+                .containsEntry("osm_key", "place")
+                .containsEntry("osm_value", "postcode")
+                .containsEntry("object_type", "R")
+                .containsEntry("object_id", 69341)
+                .containsEntry("categories", List.of("osm.place.postcode"))
+                .containsEntry("importance", 0.20001)
+                .containsEntry("country_code", "us")
+                .doesNotContainKeys("postcode", "extra")
+                .containsEntry("name", Map.of("name", "51234"))
+                .containsKey("geometry")
+                .doesNotContainKey("bbox");
+
+        assertThatPlaceDocument(results, postcode.getPlaceId()).node("centroid")
+                .isArray().containsExactly(6.1, -7.7);
     }
 
     @Test

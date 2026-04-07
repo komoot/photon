@@ -495,7 +495,7 @@ class NominatimConnectorDBTest {
 
         readEntireDatabase();
 
-        importer.assertThatByPlaceId(postcode.getPlaceId())
+        importer.assertThatByPlaceId(postcode.getPlaceString())
                 .hasFieldOrPropertyWithValue("osmId", 55L)
                 .hasFieldOrPropertyWithValue("tagKey", "place")
                 .hasFieldOrPropertyWithValue("tagValue", "postcode")

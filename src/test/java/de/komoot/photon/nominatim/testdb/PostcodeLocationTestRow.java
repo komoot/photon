@@ -14,12 +14,13 @@ public class PostcodeLocationTestRow {
     private final String country_code;
     private final String postcode;
     private String centroid = "POINT (1.0 34.0)";
-    private String geometry = "POLYGON ((0.999 33.999, 0.999 34.001, 1.001 34.001, 1.001 33.999, 0.999 33.999))";
+    private String geometry;
 
     public PostcodeLocationTestRow(String postcode, String country_code) {
         placeId = placeIdSequence++;
         this.postcode = postcode;
         this.country_code = country_code;
+        geometryBox(1.0, 34.0, 0.0001);
     }
 
     public PostcodeLocationTestRow add(JdbcTemplate jdbc) {
@@ -32,6 +33,20 @@ public class PostcodeLocationTestRow {
                 placeId, parentPlaceId, osmId, rank_search, indexed_status,
                 country_code, postcode, centroid, geometry
                 );
+
+        return this;
+    }
+
+    public PostcodeLocationTestRow addOldStyle(JdbcTemplate jdbc) {
+        jdbc.update("""
+                INSERT INTO location_postcode
+                    (place_id, parent_place_id, rank_search, rank_address,
+                    indexed_status, country_code, postcode, geometry)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                placeId, parentPlaceId, rank_search, rank_search,
+                indexed_status, country_code, postcode, centroid
+        );
 
         return this;
     }
@@ -51,13 +66,28 @@ public class PostcodeLocationTestRow {
         return this;
     }
 
+    public PostcodeLocationTestRow geometryBox(double x, double y, double extent) {
+        geometry = String.format("POLYGON ((%.4f %.4f, %.4f %.4f, %.4f %.4f, %.4f %.4f, %.4f %.4f))",
+                x - extent,y - extent, x - extent, y + extent,
+                x + extent, y + extent, x + extent, y - extent, x - extent,y - extent);
+        return this;
+    }
+
+    public PostcodeLocationTestRow rank(int rank) {
+        this.rank_search = rank;
+        return this;
+    }
+
     public PostcodeLocationTestRow geometry(String geometry) {
         this.geometry = geometry;
         return this;
     }
 
+    public long getPlaceId() {
+        return placeId;
+    }
 
-    public String getPlaceId() {
+    public String getPlaceString() {
         return Long.toString(placeId);
     }
 }

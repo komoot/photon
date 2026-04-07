@@ -34,7 +34,8 @@ public class PostcodeOldStyleRowMapper implements NominatimTableAccessor {
                 .centroid(centroid)
                 .countryCode(rs.getString("country_code"))
                 .categories(List.of("osm.place.postcode"))
-                .bbox(centroid);
+                .bbox(centroid)
+                .importance(0.40001 - rs.getInt("rank_search") / 75d);
     }
 
     public String makeBaseQuery(String countrySQLWhere) {

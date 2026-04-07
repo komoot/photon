@@ -37,7 +37,8 @@ public class PostcodeRowMapper implements NominatimTableAccessor {
                 .names(NameMap.makeForPlace(Map.of("name", rs.getString("postcode")), List.of()))
                 .centroid(Objects.requireNonNull(dbutils.extractGeometry(rs, "centroid")))
                 .countryCode(rs.getString("country_code"))
-                .categories(List.of("osm.place.postcode"));
+                .categories(List.of("osm.place.postcode"))
+                .importance(0.40001 - rs.getInt("rank_search") / 75d);
 
         if (useGeometryColumn && osmId != null) {
             // exact geometries are only available for postcode relations
@@ -53,7 +54,7 @@ public class PostcodeRowMapper implements NominatimTableAccessor {
     public String makeBaseQuery(String countrySQLWhere) {
         return """
                 SELECT p.place_id, p.parent_place_id, p.osm_id, p.postcode,
-                       p.country_code, p.centroid, p.geometry,
+                       p.country_code, p.centroid, p.geometry, p.rank_search,
                        parent.class as parent_class, parent.type as parent_type,
                        parent.rank_address as parent_rank_address, parent.name as parent_name,
                 """

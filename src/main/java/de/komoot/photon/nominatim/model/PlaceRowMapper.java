@@ -74,7 +74,7 @@ public class PlaceRowMapper implements RowMapper<PhotonDoc> {
         }
 
         double importance = rs.getDouble("importance");
-        doc.importance(rs.wasNull() ? (0.75 - rs.getInt("rank_search") / 40d) : importance);
+        doc.importance(rs.wasNull() ? (0.40001 - rs.getInt("rank_search") / 75d) : importance);
 
         return doc;
     }
