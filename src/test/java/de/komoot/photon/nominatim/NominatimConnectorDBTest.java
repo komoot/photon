@@ -1,8 +1,11 @@
 package de.komoot.photon.nominatim;
 
 import de.komoot.photon.DatabaseProperties;
+import de.komoot.photon.PhotonDoc;
 import de.komoot.photon.config.PostgresqlConfig;
 import de.komoot.photon.nominatim.testdb.*;
+import org.assertj.core.api.InstanceOfAssertFactories;
+import org.assertj.core.data.Percentage;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.locationtech.jts.geom.Coordinate;
@@ -124,12 +127,14 @@ class NominatimConnectorDBTest {
 
     @Test
     void testImportance() {
-        PlacexTestRow place1 = new PlacexTestRow("amenity", "cafe").name("Spot").rankSearch(10).add(jdbc);
+        PlacexTestRow place1 = new PlacexTestRow("amenity", "cafe").name("Spot").rankSearch(15).add(jdbc);
         PlacexTestRow place2 = new PlacexTestRow("amenity", "cafe").name("Spot").importance(0.3).add(jdbc);
 
         readEntireDatabase();
 
-        importer.assertThatByRow(place1).hasFieldOrPropertyWithValue("importance", 0.5);
+        importer.assertThatByRow(place1)
+                .extracting("importance", InstanceOfAssertFactories.DOUBLE)
+                .isCloseTo(0.20001, Percentage.withPercentage(0.001));
         importer.assertThatByRow(place2).hasFieldOrPropertyWithValue("importance", 0.3);
     }
 
@@ -430,24 +435,6 @@ class NominatimConnectorDBTest {
 
         importer.assertThatByRow(place)
                 .hasFieldOrPropertyWithValue("postcode", "AA 44XH");
-    }
-
-    @Test
-    void testPreferPostcodeFromPostcodeRelations() {
-        PlacexTestRow parent = PlacexTestRow.make_street("Main St").add(jdbc);
-        PlacexTestRow place = new PlacexTestRow("building", "yes")
-                .addr("housenumber", "34")
-                .postcode("XXX")
-                .parent(parent).add(jdbc);
-        PlacexTestRow postcode = new PlacexTestRow("boundary", "postal_code")
-                .name("ref", "1234XZ").ranks(11).add(jdbc);
-
-        parent.addAddresslines(jdbc, postcode);
-
-        readEntireDatabase();
-
-        importer.assertThatByRow(place)
-                .hasFieldOrPropertyWithValue("postcode", "1234XZ");
     }
 
     @Test

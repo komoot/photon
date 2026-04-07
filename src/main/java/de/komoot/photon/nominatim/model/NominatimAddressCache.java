@@ -20,9 +20,17 @@ import java.util.stream.Collectors;
 public class NominatimAddressCache {
     private static final Logger LOGGER = LogManager.getLogger();
 
+    // Currently excluding postcode objects for Nominatim versions < 5.2.
+    // Can be removed in due time.
     private static final String BASE_COUNTRY_QUERY =
-            "SELECT place_id, name, class, type, rank_address FROM placex" +
-            " WHERE rank_address between 5 and 25 AND linked_place_id is null";
+            """
+            SELECT place_id, name, class, type, rank_address
+            FROM placex
+            WHERE rank_address between 5 and 25
+              AND linked_place_id is null
+              AND NOT (class = 'place' and type = 'postcode')
+              AND NOT (class = 'boundary' and type = 'postal_code')
+            """;
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
     private final Map<Long, AddressRow> addresses = new HashMap<>();
@@ -36,6 +44,7 @@ public class NominatimAddressCache {
                     rs.getString("type"),
                     AddressType.fromRank(rs.getInt("rank_address")),
                     languages);
+
             if (!row.getName().isEmpty()) {
                 addresses.put(
                         rs.getLong("place_id"), row);

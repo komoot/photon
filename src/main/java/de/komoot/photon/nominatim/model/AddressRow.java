@@ -14,50 +14,29 @@ public class AddressRow {
     private final NameMap name;
     private final ContextMap context;
     @Nullable private final AddressType addressType;
-    private final boolean isPostCode;
 
-    private AddressRow(NameMap name, ContextMap context, @Nullable AddressType addressType, boolean isPostCode) {
+    private AddressRow(NameMap name, ContextMap context, @Nullable AddressType addressType) {
         this.name = name;
         this.context = context;
         this.addressType = addressType;
-        this.isPostCode = isPostCode;
     }
 
     public static AddressRow make(Map<String, String> name, String osmKey, String osmValue,
                                   AddressType addressType, Set<String> languages) {
         ContextMap context = new ContextMap();
 
-        if (("place".equals(osmKey) && "postcode".equals(osmValue))
-                || ("boundary".equals(osmKey) && "postal_code".equals(osmValue))) {
-            return new AddressRow(
-                    new NameMap().setName("ref", name, "ref"),
-                    context,
-                    addressType,
-                    true
-            );
-        } else {
-            // Makes US state abbreviations searchable.
-            context.addName("default", name.get("ISO3166-2"));
-        }
+        // Makes US state abbreviations searchable.
+        context.addName("default", name.get("ISO3166-2"));
 
         return new AddressRow(
                 new NameMap().setLocaleNames(name, languages),
                 context,
-                addressType,
-                false);
+                addressType);
     }
 
     @Nullable
     public AddressType getAddressType() {
         return addressType;
-    }
-
-    public boolean isPostcode() {
-        return isPostCode;
-    }
-
-    public boolean isUsefulForContext() {
-        return !name.isEmpty() && !isPostcode();
     }
 
     public NameMap getName() {

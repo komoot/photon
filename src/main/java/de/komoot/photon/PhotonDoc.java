@@ -215,27 +215,18 @@ public class PhotonDoc {
     public void addAddresses(List<AddressRow> addresses) {
         final AddressType doctype = getAddressType();
         for (AddressRow address : addresses) {
-            if (address.isPostcode()) {
-                if (this.postcode == null) {
-                    this.postcode = address.getName().get("ref");
-                } else {
-                    this.postcode = address.getName().getOrDefault("ref", this.postcode);
-                }
-            } else {
-                if (!address.getName().isEmpty()) {
-                    final AddressType atype = address.getAddressType();
+            if (!address.getName().isEmpty()) {
+                final AddressType atype = address.getAddressType();
 
-                    if (atype != null
-                            && (atype == doctype || !setAddressPartIfNew(atype, address.getName()))
-                            && address.isUsefulForContext()) {
-                        // if address level already exists but item still looks interesting,
-                        // add to context
-                        context.addAll(address.getName());
-                    }
+                if (atype != null
+                        && (atype == doctype || !setAddressPartIfNew(atype, address.getName()))) {
+                    // if address level already exists but item still looks interesting,
+                    // add to context
+                    context.addAll(address.getName());
                 }
-
-                context.addAll(address.getContext());
             }
+
+            context.addAll(address.getContext());
         }
     }
 
