@@ -165,13 +165,14 @@ public class SearchQueryBuilder extends BaseQueryBuilder {
 
     public SearchQueryBuilder(StructuredSearchRequest request, boolean lenient) {
         var hasSubStateField = request.hasCounty() || request.hasCityOrPostCode() || request.hasDistrict() || request.hasStreet();
+        var postcodeIsSubField = request.hasHouseNumber() || request.hasStreet() || request.hasCity() || request.hasDistrict() || request.hasCounty() || request.hasState();
 
         innerQuery.query(new AddressQueryBuilder(lenient)
                 .addCountryCode(request.getCountryCode(), request.hasState() || hasSubStateField)
                 .addState(request.getState(), hasSubStateField)
                 .addCounty(request.getCounty(), request.hasCityOrPostCode() || request.hasDistrict() || request.hasStreet())
                 .addCity(request.getCity(), request.hasDistrict(), request.hasStreet(), request.hasPostCode())
-                .addPostalCode(request.getPostCode())
+                .addPostalCode(request.getPostCode(), postcodeIsSubField)
                 .addDistrict(request.getDistrict(), request.hasStreet())
                 .addStreetAndHouseNumber(request.getStreet(), request.getHouseNumber())
                 .getQuery());
@@ -180,22 +181,24 @@ public class SearchQueryBuilder extends BaseQueryBuilder {
         var isHouseQuery = QueryBuilders.term().field(DocFields.OBJECT_TYPE).value(FieldValue.of("house")).build().toQuery();
         var typeOtherQuery = QueryBuilders.term().field(DocFields.OBJECT_TYPE).value(FieldValue.of("other")).build().toQuery();
 
-        if (!request.hasHouseNumber()) {
-            outerQuery.filter(fn -> fn.bool(b -> b
-                    .mustNot(hasHouseNumberQuery)
-                    .mustNot(isHouseQuery)
-                    .mustNot(typeOtherQuery)
-            ));
-        } else {
-            var noHouseOrHouseNumber = QueryBuilders.bool().should(hasHouseNumberQuery)
-                    .should(QueryBuilders.bool().mustNot(isHouseQuery).build().toQuery())
-                    .build()
-                    .toQuery();
+        if (postcodeIsSubField) {
+            if (!request.hasHouseNumber()) {
+                outerQuery.filter(fn -> fn.bool(b -> b
+                        .mustNot(hasHouseNumberQuery)
+                        .mustNot(isHouseQuery)
+                        .mustNot(typeOtherQuery)
+                ));
+            } else {
+                var noHouseOrHouseNumber = QueryBuilders.bool().should(hasHouseNumberQuery)
+                        .should(QueryBuilders.bool().mustNot(isHouseQuery).build().toQuery())
+                        .build()
+                        .toQuery();
 
-            outerQuery.filter(fn -> fn.bool(b -> b
-                    .must(noHouseOrHouseNumber)
-                    .mustNot(typeOtherQuery)
-            ));
+                outerQuery.filter(fn -> fn.bool(b -> b
+                        .must(noHouseOrHouseNumber)
+                        .mustNot(typeOtherQuery)
+                ));
+            }
         }
     }
 

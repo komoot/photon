@@ -124,31 +124,44 @@ public class AddressQueryBuilder {
         cityFilter.should(query);
     }
 
-    public AddressQueryBuilder addPostalCode(@Nullable String postalCode) {
+    public AddressQueryBuilder addPostalCode(@Nullable String postalCode, boolean hasMoreDetails) {
         if (postalCode == null) return this;
 
         Fuzziness fuzziness = lenient ? Fuzziness.AUTO : Fuzziness.ZERO;
 
         Query query;
-        if (postalCode.contains(" ")) {
-            query = QueryBuilders.match()
-                    .field(DocFields.POSTCODE)
-                    .query(FieldValue.of(postalCode))
-                    .fuzziness(fuzziness.asString())
-                    .boost(POSTAL_CODE_BOOST)
-                    .build()
-                    .toQuery();
+        if (hasMoreDetails) {
+            if (postalCode.contains(" ")) {
+                query = QueryBuilders.match()
+                        .field(DocFields.POSTCODE)
+                        .query(FieldValue.of(postalCode))
+                        .fuzziness(fuzziness.asString())
+                        .boost(POSTAL_CODE_BOOST)
+                        .build()
+                        .toQuery();
+            } else {
+                query = QueryBuilders.fuzzy()
+                        .field(DocFields.POSTCODE)
+                        .value(FieldValue.of(postalCode))
+                        .fuzziness(fuzziness.asString())
+                        .boost(POSTAL_CODE_BOOST)
+                        .build()
+                        .toQuery();
+            }
+            addToCityFilter(query);
         } else {
-            query = QueryBuilders.fuzzy()
-                    .field(DocFields.POSTCODE)
-                    .value(FieldValue.of(postalCode))
-                    .fuzziness(fuzziness.asString())
-                    .boost(POSTAL_CODE_BOOST)
+            query = QueryBuilders.matchPhrase()
+                    .field("collector.field.name")
+                    .query(postalCode)
                     .build()
                     .toQuery();
+            this.query.filter(QueryBuilders.term()
+                            .field(DocFields.CATEGORIES)
+                            .value(FieldValue.of("osm.place.postcode"))
+                            .build()
+                            .toQuery());
         }
 
-        addToCityFilter(query);
         this.query.must(query);
 
         return this;
