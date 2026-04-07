@@ -19,8 +19,6 @@ import java.util.Map;
 public class GeoJsonFormatter implements ResultFormatter {
     public static final String[] NAME_PRECEDENCE = {"housename", "int", "loc", "reg", "alt", "old"};
     private static final List<List<String>> KEYS_LANG_UNSPEC = List.of(
-            List.of(DocFields.OSM_TYPE, GeoJsonFields.OSM_TYPE),
-            List.of(DocFields.OSM_ID, GeoJsonFields.OSM_ID),
             List.of(DocFields.OSM_KEY, GeoJsonFields.OSM_KEY),
             List.of(DocFields.OSM_VALUE, GeoJsonFields.OSM_VALUE),
             List.of(DocFields.OBJECT_TYPE, GeoJsonFields.OBJECT_TYPE),
@@ -70,6 +68,12 @@ public class GeoJsonFormatter implements ResultFormatter {
                 gen.writeStringField(GeoJsonFields.GEOJSON_KEY_TYPE, GeoJsonFields.GEOJSON_TYPE_FEATURE);
 
                 gen.writeObjectFieldStart(GeoJsonFields.GEOJSON_KEY_PROPERTIES);
+
+                var osmType = result.get(DocFields.OSM_TYPE);
+                if (osmType != null) {
+                    gen.writeObjectField(GeoJsonFields.OSM_TYPE, osmType);
+                    gen.writeObjectField(GeoJsonFields.OSM_ID, result.get(DocFields.OSM_ID));
+                }
 
                 for (var line : KEYS_LANG_UNSPEC) {
                     put(gen, line.get(1), result.get(line.get(0)));
