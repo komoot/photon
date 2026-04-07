@@ -38,7 +38,7 @@ public class PostcodeOldStyleRowMapper implements NominatimTableAccessor {
                 .importance(0.40001 - rs.getInt("rank_search") / 75d);
     }
 
-    public String makeBaseQuery(String countrySQLWhere) {
+    public String makeBaseQuery(String sqlWhere) {
         return """
                 SELECT p.place_id, p.parent_place_id, p.postcode, p.rank_search,
                        p.country_code, p.geometry,
@@ -54,7 +54,7 @@ public class PostcodeOldStyleRowMapper implements NominatimTableAccessor {
                   as addresslines FROM location_postcode p
                                      LEFT JOIN placex parent ON p.parent_place_id = parent.place_id
                   """
-                + " WHERE p." + countrySQLWhere;
+                + " WHERE " + sqlWhere;
     }
 
 }

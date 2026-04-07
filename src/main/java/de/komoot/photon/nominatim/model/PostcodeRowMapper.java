@@ -3,6 +3,7 @@ package de.komoot.photon.nominatim.model;
 import de.komoot.photon.PhotonDoc;
 import de.komoot.photon.nominatim.DBDataAdapter;
 import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -51,7 +52,7 @@ public class PostcodeRowMapper implements NominatimTableAccessor {
     }
 
     @Override
-    public String makeBaseQuery(String countrySQLWhere) {
+    public String makeBaseQuery(String sqlWhere) {
         return """
                 SELECT p.place_id, p.parent_place_id, p.osm_id, p.postcode,
                        p.country_code, p.centroid, p.geometry, p.rank_search,
@@ -67,6 +68,6 @@ public class PostcodeRowMapper implements NominatimTableAccessor {
                   as addresslines FROM location_postcodes p
                    LEFT JOIN placex parent ON p.parent_place_id = parent.place_id
                   """
-                + " WHERE p." + countrySQLWhere;
+                + " WHERE " + sqlWhere;
     }
 }

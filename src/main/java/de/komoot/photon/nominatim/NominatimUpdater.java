@@ -49,7 +49,25 @@ public class NominatimUpdater extends NominatimConnector {
             CREATE OR REPLACE TRIGGER photon_trigger_delete_interpolation
                AFTER DELETE ON location_property_osmline FOR EACH ROW
                EXECUTE FUNCTION photon_update_func()
-        """;
+            """;
+    private static final String TRIGGER_SQL_POSTCODE = """
+            CREATE OR REPLACE TRIGGER photon_trigger_update_postcode
+               AFTER UPDATE ON %s FOR EACH ROW
+               WHEN (OLD.indexed_status > 0 AND NEW.indexed_status = 0)
+               EXECUTE FUNCTION photon_update_func();
+            CREATE OR REPLACE TRIGGER photon_trigger_delete_postcode
+               AFTER DELETE ON %s FOR EACH ROW
+               EXECUTE FUNCTION photon_update_func()
+            """;
+
+    static class ChangeCounter {
+        int updated = 0;
+        int deleted = 0;
+
+        void logState(String objectType) {
+            LOGGER.info("{} {} created or updated, {} deleted", updated, objectType, deleted);
+        }
+    }
 
     @Nullable private Updater updater;
 
@@ -70,6 +88,7 @@ public class NominatimUpdater extends NominatimConnector {
 
     private final String placeBaseSQL;
     private final String osmlineBaseSQL;
+    private final NominatimAddressCache addressCache;
 
     public NominatimUpdater(PostgresqlConfig config, DatabaseProperties dbProperties) {
         this(config, new PostgisDataAdapter(), dbProperties);
@@ -78,7 +97,7 @@ public class NominatimUpdater extends NominatimConnector {
     public NominatimUpdater(PostgresqlConfig config, DBDataAdapter dataAdapter, DatabaseProperties dbProperties) {
         super(config, dataAdapter, dbProperties);
 
-        final NominatimAddressCache addressCache = new NominatimAddressCache(dataAdapter, dbProperties.getLanguages());
+        addressCache = new NominatimAddressCache(dataAdapter, dbProperties.getLanguages());
 
         final var placeRowMapper = new PlaceRowMapper(dbutils, dbProperties.getLanguages(), dbProperties.getSupportGeometries());
         placeBaseSQL = placeRowMapper.makeBaseSelect();
@@ -154,8 +173,10 @@ public class NominatimUpdater extends NominatimConnector {
 
     public void initUpdates(String updateUser) {
         LOGGER.info("Creating tracking tables");
+        String postcodeTable = hasPostcodeTablesWithGeometry() ? "location_postcodes" : "location_postcode";
         txTemplate.executeWithoutResult((t) -> {
                 template.execute(TRIGGER_SQL);
+                template.execute(String.format(TRIGGER_SQL_POSTCODE, postcodeTable, postcodeTable));
                 template.execute("GRANT SELECT, DELETE ON photon_updates TO \"" + updateUser + '"');
         });
     }
@@ -168,6 +189,7 @@ public class NominatimUpdater extends NominatimConnector {
                 loadCountryNames(dbProperties.getLanguages());
                 updateFromPlacex();
                 updateFromInterpolations();
+                updateFromPostcodes();
                 updater.finish();
                 LOGGER.info("Finished updating");
             } finally {
@@ -182,23 +204,22 @@ public class NominatimUpdater extends NominatimConnector {
         assert updater != null;
 
         LOGGER.info("Starting place updates");
-        int updatedPlaces = 0;
-        int deletedPlaces = 0;
+        final var changes = new ChangeCounter();
 
         for (UpdateRow place : getPlaces("placex")) {
             long placeId = place.placeId();
 
             if (place.toDelete()) {
-                ++deletedPlaces;
+                changes.deleted++;
                 updater.delete(Long.toString(placeId));
             } else {
                 updater.addOrUpdate(getByPlaceId(placeId));
-                ++updatedPlaces;
+                changes.updated++;
             }
 
         }
 
-        LOGGER.info("{} places created or updated, {} deleted", updatedPlaces, deletedPlaces);
+        changes.logState("places");
     }
 
     /**
@@ -209,22 +230,72 @@ public class NominatimUpdater extends NominatimConnector {
         // created from interpolations so no need to check them
         assert updater != null;
         LOGGER.info("Starting interpolations");
-        int updatedInterpolations = 0;
-        int deletedInterpolations = 0;
+        final var changes = new ChangeCounter();
+
         for (UpdateRow place : getPlaces("location_property_osmline")) {
             long placeId = place.placeId();
 
             if (place.toDelete()) {
-                ++deletedInterpolations;
+                changes.deleted++;
                 updater.delete(Long.toString(placeId));
             } else {
                 updater.addOrUpdate(getInterpolationsByPlaceId(placeId));
-                ++updatedInterpolations;
+                changes.updated++;
             }
 
         }
 
-        LOGGER.info("{} interpolations created or updated, {} deleted", updatedInterpolations, deletedInterpolations);
+        changes.logState("interpolations");
+    }
+
+    private void updateFromPostcodes() {
+        NominatimTableAccessor postcodeMapper;
+        String tableName;
+        if (hasPostcodeTablesWithGeometry()) {
+            postcodeMapper = new PostcodeRowMapper(dbutils, dbProperties.getSupportGeometries());
+            tableName = "location_postcodes";
+        } else {
+            postcodeMapper = new PostcodeOldStyleRowMapper(dbutils);
+            tableName = "location_postcode";
+        }
+        assert updater != null;
+        LOGGER.info("Starting postcodes");
+        final var changes = new ChangeCounter();
+
+        for (UpdateRow place : getPlaces(tableName)) {
+            long placeId = place.placeId();
+
+            if (place.toDelete()) {
+                changes.deleted++;
+                updater.delete(Long.toString(placeId));
+            } else {
+                template.query(
+                        postcodeMapper.makeBaseQuery("p.place_id = ? and p.indexed_status = 0"),
+                        rs -> {
+                            var doc = postcodeMapper.rowToDoc(rs);
+
+                            if (rs.getString("parent_class") != null) {
+                                doc.addAddresses(List.of(AddressRow.make(
+                                        dbutils.getMap(rs, "parent_name"),
+                                        rs.getString("parent_class"),
+                                        rs.getString("parent_type"),
+                                        AddressType.fromRank(rs.getInt("parent_rank_address")),
+                                        dbProperties.getLanguages())));
+                            }
+
+                            doc.addAddresses(
+                                    addressCache.getOrLoadAddressList(template, rs.getString("addresslines")));
+                            assert countryNames != null;
+                            doc.setCountry(countryNames.get(rs.getString("country_code")));
+
+                            updater.addOrUpdate(List.of(doc));
+                            changes.updated++;
+                        }, placeId);
+            }
+
+        }
+
+        changes.logState("postcodes");
     }
 
     private List<UpdateRow> getPlaces(String table) {
@@ -277,4 +348,5 @@ public class NominatimUpdater extends NominatimConnector {
 
         return (result.isEmpty() || result.getFirst() == null) ? List.of() : result.getFirst();
     }
+
 }

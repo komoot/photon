@@ -145,7 +145,7 @@ public class NominatimImporter extends NominatimConnector {
                         new PostcodeRowMapper(dbutils, dbProperties.getSupportGeometries())
                         : new PostcodeOldStyleRowMapper(dbutils);
         if (!countryCode.isEmpty()) {
-            template.query(postcodeRowMapper.makeBaseQuery(countrySQL),
+            template.query(postcodeRowMapper.makeBaseQuery("p." + countrySQL),
                     sqlArgs, sqlArgTypes, rs -> {
                         final PhotonDoc doc = postcodeRowMapper.rowToDoc(rs);
 
