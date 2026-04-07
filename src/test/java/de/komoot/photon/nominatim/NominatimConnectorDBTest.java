@@ -2,6 +2,7 @@ package de.komoot.photon.nominatim;
 
 import de.komoot.photon.DatabaseProperties;
 import de.komoot.photon.config.PostgresqlConfig;
+import de.komoot.photon.nominatim.testdb.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.locationtech.jts.geom.Coordinate;
@@ -10,10 +11,6 @@ import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.PrecisionModel;
 import de.komoot.photon.ReflectionTestUtil;
 import de.komoot.photon.nominatim.model.AddressType;
-import de.komoot.photon.nominatim.testdb.CollectingImporter;
-import de.komoot.photon.nominatim.testdb.H2DataAdapter;
-import de.komoot.photon.nominatim.testdb.OsmlineTestRow;
-import de.komoot.photon.nominatim.testdb.PlacexTestRow;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -29,6 +26,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import static org.assertj.core.api.Assertions.*;
 
 class NominatimConnectorDBTest {
+
     private static final GeometryFactory FACTORY = new GeometryFactory(new PrecisionModel(), 4326);
     private NominatimImporter connector;
     private CollectingImporter importer;
@@ -480,5 +478,35 @@ class NominatimConnectorDBTest {
         var importDate = new Date();
         jdbc.update("INSERT INTO import_status(lastimportdate, indexed) VALUES(?, ?)", importDate, true);
         assertThat(connector.getLastImportDate()).hasSameTimeAs(importDate);
+    }
+
+    @Test
+    void testPostcodeArea() {
+        var parent = new PlacexTestRow("place", "city").name("Rio")
+                .ranks(16)
+                .country("us")
+                .add(jdbc);
+        var postcode = new PostcodeLocationTestRow("33456", "us")
+                .geometry("POLYGON((-10.999 33.999, -11.001 34.001, -11.001 33.999, -10.999 33.999))")
+                .centroid(-11, 34)
+                .relation(55)
+                .parent(parent.getPlaceId())
+                .add(jdbc);
+
+        readEntireDatabase();
+
+        importer.assertThatByPlaceId(postcode.getPlaceId())
+                .hasFieldOrPropertyWithValue("osmId", 55L)
+                .hasFieldOrPropertyWithValue("tagKey", "place")
+                .hasFieldOrPropertyWithValue("tagValue", "postcode")
+                .hasFieldOrPropertyWithValue("postcode", null)
+                .hasFieldOrPropertyWithValue("name", Map.of("default", "33456"))
+                .hasFieldOrPropertyWithValue("centroid", makePoint(-11, 34))
+                .hasFieldOrPropertyWithValue("countryCode", "US")
+                .hasFieldOrPropertyWithValue("addressParts", Map.of(
+                        AddressType.CITY, Map.of("default", "Rio"),
+                        AddressType.COUNTRY, Map.of("default", "USA", "en", "United States")
+                ));
+
     }
 }

@@ -82,7 +82,7 @@ public class NominatimConnector {
         if (hasNewPostcodeLocationsTable == null) {
             var numTables = template.queryForObject("""
                     SELECT count(*) FROM information_schema.tables
-                    WHERE table_name = 'location_postcodes'
+                    WHERE lower(table_name) = 'location_postcodes'
                     """, Integer.class);
             hasNewPostcodeLocationsTable = numTables != null && numTables > 0;
         }
