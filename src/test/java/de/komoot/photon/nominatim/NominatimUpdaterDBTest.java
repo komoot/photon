@@ -16,6 +16,10 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.*;
@@ -227,6 +231,72 @@ class NominatimUpdaterDBTest {
                 .allSatisfy(osmline::assertEquals)
                 .extracting("houseNumber")
                 .containsExactlyInAnyOrder("6", "7", "8");
+    }
+
+
+    @Test
+    void testInsertPostcodeArea() {
+        var parent = new PlacexTestRow("place", "city").name("Rio")
+                .ranks(16)
+                .country("us")
+                .add(jdbc);
+        var postcode = new PostcodeLocationTestRow("33456", "us")
+                .geometry("POLYGON((-10.999 33.999, -11.001 34.001, -11.001 33.999, -10.999 33.999))")
+                .centroid(-11, 34)
+                .relation(55)
+                .parent(parent.getPlaceId())
+                .add(jdbc);
+
+        new PhotonUpdateRow("location_postcodes", postcode.getPlaceId(), "UPDATE").add(jdbc);
+
+        connector.update();
+        updater.assertThatDeleted().isEmpty();
+        updater.assertThatCreated()
+                .singleElement()
+                .hasFieldOrPropertyWithValue("osmId", 55L)
+                .hasFieldOrPropertyWithValue("tagKey", "place")
+                .hasFieldOrPropertyWithValue("tagValue", "postcode")
+                .hasFieldOrPropertyWithValue("postcode", null)
+                .hasFieldOrPropertyWithValue("name", Map.of("default", "33456"))
+                .hasFieldOrPropertyWithValue("countryCode", "US")
+                .hasFieldOrPropertyWithValue("addressParts", Map.of(
+                        AddressType.CITY, Map.of("default", "Rio"),
+                        AddressType.COUNTRY, Map.of("default", "USA", "en", "United States")
+                ));
+    }
+
+
+    @Test
+    void testInsertComputedPostcodeOld() throws URISyntaxException, IOException {
+        var sql = Files.readString(Paths.get(getClass().getClassLoader().getResource("test-old-style-postcode-table.sql").toURI()));
+        jdbc.execute(sql);
+
+        var parent = new PlacexTestRow("place", "city").name("Rio")
+                .ranks(16)
+                .country("us")
+                .add(jdbc);
+        var postcode = new PostcodeLocationTestRow("33456", "us")
+                .centroid(-11, 34)
+                .parent(parent.getPlaceId())
+                .addOldStyle(jdbc);
+
+        new PhotonUpdateRow("location_postcode", postcode.getPlaceId(), "UPDATE").add(jdbc);
+
+        connector.update();
+        updater.assertThatDeleted().isEmpty();
+        updater.assertThatCreated()
+                .singleElement()
+                .hasFieldOrPropertyWithValue("osmType", null)
+                .hasFieldOrPropertyWithValue("osmId", -1L)
+                .hasFieldOrPropertyWithValue("tagKey", "place")
+                .hasFieldOrPropertyWithValue("tagValue", "postcode")
+                .hasFieldOrPropertyWithValue("postcode", null)
+                .hasFieldOrPropertyWithValue("name", Map.of("default", "33456"))
+                .hasFieldOrPropertyWithValue("countryCode", "US")
+                .hasFieldOrPropertyWithValue("addressParts", Map.of(
+                        AddressType.CITY, Map.of("default", "Rio"),
+                        AddressType.COUNTRY, Map.of("default", "USA", "en", "United States")
+                ));
     }
 
 

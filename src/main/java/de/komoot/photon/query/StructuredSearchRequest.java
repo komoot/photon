@@ -94,6 +94,8 @@ public class StructuredSearchRequest extends SearchRequestBase {
 
     public boolean hasCityOrPostCode() { return (city != null && !city.isBlank()) || hasPostCode(); }
 
+    public boolean hasCity() { return (city != null && !city.isBlank()); }
+
     public boolean hasCounty() { return county != null && !county.isBlank(); }
 
     public boolean hasStreet() { return (street != null && !street.isBlank()) || hasHouseNumber(); }

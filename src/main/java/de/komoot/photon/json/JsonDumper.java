@@ -117,8 +117,10 @@ public class JsonDumper implements Importer {
         if (doc.getPlaceId() != null) {
             writer.writeStringField(DumpFields.PLACE_ID, doc.getPlaceId());
         }
-        writer.writeStringField(DumpFields.PLACE_OBJECT_TYPE, doc.getOsmType());
-        writer.writeNumberField(DumpFields.PLACE_OBJECT_ID, doc.getOsmId());
+        if (doc.getOsmType() != null) {
+            writer.writeStringField(DumpFields.PLACE_OBJECT_TYPE, doc.getOsmType());
+            writer.writeNumberField(DumpFields.PLACE_OBJECT_ID, doc.getOsmId());
+        }
 
         writer.writeStringField(DumpFields.PLACE_OSM_KEY, doc.getTagKey());
         writer.writeStringField(DumpFields.PLACE_OSM_VALUE, doc.getTagValue());

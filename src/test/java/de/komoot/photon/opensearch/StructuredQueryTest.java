@@ -84,11 +84,29 @@ public class StructuredQueryTest extends ESBaseTester {
                 .importance(1.0)
                 .addressType(AddressType.HOUSE);
 
+        var postcode = new PhotonDoc("10", null, -1, "place", "postcode")
+                .names(makeDocNames("name", DISTRICT_POST_CODE))
+                .countryCode(COUNTRY_CODE)
+                .addAddresses(Map.of("city", CITY), getProperties().getLanguages())
+                .importance(0.2)
+                .categories(List.of("osm.place.postcode"))
+                .addressType(AddressType.OTHER);
+
+        var postcode2 = new PhotonDoc("11", null, -1, "place", "postcode")
+                .names(makeDocNames("name", "44512"))
+                .countryCode(COUNTRY_CODE)
+                .addAddresses(Map.of("city", CITY), getProperties().getLanguages())
+                .importance(0.2)
+                .categories(List.of("osm.place.postcode"))
+                .addressType(AddressType.OTHER);
+
         instance.add(List.of(country));
         instance.add(List.of(city));
         instance.add(List.of(suburb));
         instance.add(List.of(street));
         instance.add(List.of(house));
+        instance.add(List.of(postcode));
+        instance.add(List.of(postcode2));
         addHamletHouse(instance, 5, "1");
         addHamletHouse(instance, 6, "2");
         addHamletHouse(instance, 7, "3");
@@ -111,6 +129,17 @@ public class StructuredQueryTest extends ESBaseTester {
 
         var result = search(request);
         Assertions.assertEquals(2, result.get(DocFields.OSM_ID));
+    }
+
+    @Test
+    void findsPostcode() {
+        var request = new StructuredSearchRequest();
+        request.setCountryCode(COUNTRY_CODE);
+        request.setPostCode(DISTRICT_POST_CODE);
+
+        var result = search(request);
+        Assertions.assertEquals("postcode", result.get(DocFields.OSM_VALUE));
+        Assertions.assertEquals(DISTRICT_POST_CODE, result.getLocalised("name", "default"));
     }
 
     @Test
