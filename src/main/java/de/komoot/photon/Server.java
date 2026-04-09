@@ -10,9 +10,7 @@ import de.komoot.photon.query.ReverseRequest;
 import de.komoot.photon.query.SimpleSearchRequest;
 import de.komoot.photon.query.StructuredSearchRequest;
 import de.komoot.photon.searcher.SearchHandler;
-import org.apache.hc.client5.http.config.RequestConfig;
 import org.apache.hc.core5.http.HttpHost;
-import org.apache.hc.core5.util.Timeout;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codelibs.opensearch.runner.OpenSearchRunner;
@@ -84,10 +82,6 @@ public class Server {
         final var transport = ApacheHttpClient5TransportBuilder
                 .builder(hosts)
                 .setMapper(mapper)
-                .setHttpClientConfigCallback(b -> b
-                        .setDefaultRequestConfig(RequestConfig.custom()
-                                .setResponseTimeout(Timeout.ofMinutes(10))
-                                .build()))
                 .build();
 
         client = new OpenSearchClient(transport);
@@ -146,7 +140,7 @@ public class Server {
             client.indices().delete(d -> d.index(PhotonIndex.NAME));
         }
 
-        new IndexSettingBuilder().setShards(NUM_SHARDS).setImportMode(true).createIndex(client, PhotonIndex.NAME);
+        new IndexSettingBuilder().setShards(NUM_SHARDS).createIndex(client, PhotonIndex.NAME);
 
         new IndexMapping(dbProperties.getReverseOnly()).putMapping(client, PhotonIndex.NAME);
 
@@ -154,12 +148,6 @@ public class Server {
     }
 
     public void finalizeImport() throws IOException {
-        LOGGER.info("Restoring production index settings...");
-        client.indices().putSettings(req -> req
-                .index(PhotonIndex.NAME)
-                .settings(s -> s
-                        .refreshInterval(t -> t.time("1s"))));
-
         LOGGER.info("Optimizing index (force merge)...");
         client.indices().forcemerge(f -> f.index(PhotonIndex.NAME).maxNumSegments(MAX_SEGMENTS_AFTER_IMPORT));
         LOGGER.info("Index optimization complete.");

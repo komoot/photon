@@ -22,7 +22,6 @@ public class IndexSettingBuilder {
     private static final String CLASSIFICATION_FILTER = "classification_synonyms";
     private final IndexSettingsAnalysis.Builder settings = new IndexSettingsAnalysis.Builder();
     private int numShards = 1;
-    private boolean importMode = false;
     private boolean hasSynonymFilter = false;
     private boolean hasClassificationFilter = false;
 
@@ -31,25 +30,14 @@ public class IndexSettingBuilder {
         return this;
     }
 
-    public IndexSettingBuilder setImportMode(boolean importMode) {
-        this.importMode = importMode;
-        return this;
-    }
-
     public void createIndex(OpenSearchClient client, String indexName) throws IOException {
         addDefaultSettings();
 
         client.indices().create(r -> r
                 .index(indexName)
-                .settings(s -> {
-                        s.numberOfShards(numShards)
-                         .analysis(settings.build());
-                        if (importMode) {
-                            s.numberOfReplicas(0)
-                             .refreshInterval(t -> t.time("-1"));
-                        }
-                        return s;
-                }));
+                .settings(s -> s
+                        .numberOfShards(numShards)
+                        .analysis(settings.build())));
     }
 
     public void updateIndex(OpenSearchClient client, String indexName) throws IOException {
