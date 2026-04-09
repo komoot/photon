@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Worker thread(s) for bulk importing data into a Photon database.
@@ -26,7 +27,7 @@ public class ImportThread {
     private final ExecutorService executor;
     private final long startMillis;
     private volatile boolean producerDone = false;
-    private volatile boolean exceptionInThread = false;
+    private final AtomicReference<Exception> threadException = new AtomicReference<>();
 
     public ImportThread(Importer importer) {
         this(List.of(importer));
@@ -46,8 +47,9 @@ public class ImportThread {
      * @param docs Fully filled nominatim document.
      */
     public void addDocument(@Nullable Iterable<PhotonDoc> docs) {
-        if (exceptionInThread) {
-            throw new RuntimeException("Import thread failed.");
+        var ex = threadException.get();
+        if (ex != null) {
+            throw new RuntimeException("Import thread failed.", ex);
         }
 
         if (docs == null || !docs.iterator().hasNext()) {
@@ -55,8 +57,9 @@ public class ImportThread {
         }
 
         while (true) {
-            if (exceptionInThread) {
-                throw new RuntimeException("Import thread failed.");
+            ex = threadException.get();
+            if (ex != null) {
+                throw new RuntimeException("Import thread failed.", ex);
             }
             try {
                 if (documents.offer(docs, 500, TimeUnit.MILLISECONDS)) {
@@ -83,7 +86,7 @@ public class ImportThread {
     public void finish() {
         producerDone = true;
         executor.close();
-        if (!exceptionInThread) {
+        if (threadException.get() == null) {
             LOGGER.info("Finished import of {} photon documents. (Total processing time: {}s)",
                     counter.longValue(), (System.currentTimeMillis() - startMillis) / 1000);
         }
@@ -102,7 +105,7 @@ public class ImportThread {
                 runImport();
             } catch (Exception e) {
                 LOGGER.error("Import error.", e);
-                exceptionInThread = true;
+                threadException.compareAndSet(null, e);
             }
         }
 
