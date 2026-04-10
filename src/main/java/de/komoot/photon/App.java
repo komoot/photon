@@ -154,8 +154,8 @@ public class App {
             return;
         }
 
-        // One consumer thread per shard for optimal bulk indexing throughput.
-        final int numConsumers = Server.NUM_SHARDS;
+        // numConsumers == Server.NUM_SHARDS yields optimal bulk indexing throughput.
+        final int numConsumers = Math.max(1, cli.getGeneralConfig().getThreads());
         List<Importer> importers = new ArrayList<>(numConsumers);
         for (int i = 0; i < numConsumers; i++) {
             importers.add(esServer.createImporter(dbProperties));
