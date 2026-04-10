@@ -4,13 +4,10 @@ import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 @NullMarked
 public class NameMap extends AbstractMap<String, String> {
-    private final LinkedHashMap<String, String> entries = new LinkedHashMap<>();
-
-    private static final Map<String, String[]> LOCALE_KEYS = new ConcurrentHashMap<>();
+    private final HashMap<String, String> entries = new HashMap<>();
 
     @Override
     public Set<Entry<String, String>> entrySet() {
@@ -41,9 +38,7 @@ public class NameMap extends AbstractMap<String, String> {
     NameMap setLocaleNames(Map<String, @Nullable String> source, Iterable<String> languages) {
         setName("default", source, "_place_name", "name");
         for (var lang : languages) {
-            String[] keys = LOCALE_KEYS.computeIfAbsent(lang,
-                    l -> new String[]{"_place_name:" + l, "name:" + l});
-            setName(lang, source, keys);
+            setName(lang, source, "_place_name:" + lang, "name:" + lang);
         }
         return this;
     }
