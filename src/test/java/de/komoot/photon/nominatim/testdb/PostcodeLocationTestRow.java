@@ -1,5 +1,6 @@
 package de.komoot.photon.nominatim.testdb;
 
+import java.util.Locale;
 import org.jspecify.annotations.NullMarked;
 import org.springframework.jdbc.core.JdbcTemplate;
 
@@ -67,7 +68,7 @@ public class PostcodeLocationTestRow {
     }
 
     public PostcodeLocationTestRow geometryBox(double x, double y, double extent) {
-        geometry = String.format("POLYGON ((%.4f %.4f, %.4f %.4f, %.4f %.4f, %.4f %.4f, %.4f %.4f))",
+        geometry = String.format(Locale.ROOT, "POLYGON ((%.4f %.4f, %.4f %.4f, %.4f %.4f, %.4f %.4f, %.4f %.4f))",
                 x - extent,y - extent, x - extent, y + extent,
                 x + extent, y + extent, x + extent, y - extent, x - extent,y - extent);
         return this;
