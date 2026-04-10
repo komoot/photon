@@ -11,12 +11,14 @@ public class ContextMap extends AbstractMap<String, Set<String>> {
 
     public void addNameFromPrefix(String fullKey, @Nullable String name, Set<String> languageList) {
         if (name != null) {
-            final String[] parts = fullKey.split(":", 0);
-            final String intKey = parts[parts.length - 1];
-            if (parts.length == 1) {
+            int colonPos = fullKey.lastIndexOf(':');
+            if (colonPos < 0) {
                 addName("default", name);
-            } else if (languageList.contains(intKey)) {
-                addName(intKey, name);
+            } else {
+                String intKey = fullKey.substring(colonPos + 1);
+                if (languageList.contains(intKey)) {
+                    addName(intKey, name);
+                }
             }
         }
     }
