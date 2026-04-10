@@ -1,15 +1,16 @@
 package de.komoot.photon.config;
 
 import com.beust.jcommander.Parameter;
+import de.komoot.photon.Server;
 import org.jspecify.annotations.NullMarked;
 
 @NullMarked
 public class GeneralConfig {
     public static final String GROUP="General options";
 
-    @Parameter(names = "-j", category = GROUP, description = """
-            Use given number of threads in parallel where possible
-            """)
+    @Parameter(names = "-j", category = GROUP, description =
+            "Use given number of threads in parallel where possible. " +
+            "Set to " + Server.NUM_SHARDS + " to match the number of shards for optimal import performance.")
     private int threads = 1;
 
     @Parameter(names = "-h", category = GROUP, description = "Show help/usage")

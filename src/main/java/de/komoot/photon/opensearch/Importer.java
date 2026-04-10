@@ -61,12 +61,6 @@ public class Importer implements de.komoot.photon.Importer {
         if (todoDocuments > 0) {
             saveDocuments();
         }
-
-        try {
-            client.indices().refresh(r -> r.index(PhotonIndex.NAME));
-        } catch (IOException e) {
-            LOGGER.warn("Refresh of database failed", e);
-        }
     }
 
     private void saveDocuments() {

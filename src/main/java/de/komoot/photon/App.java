@@ -154,7 +154,13 @@ public class App {
             return;
         }
 
-        final var importThread = new ImportThread(esServer.createImporter(dbProperties));
+        // numConsumers == Server.NUM_SHARDS yields optimal bulk indexing throughput.
+        final int numConsumers = Math.max(1, cli.getGeneralConfig().getThreads());
+        List<Importer> importers = new ArrayList<>(numConsumers);
+        for (int i = 0; i < numConsumers; i++) {
+            importers.add(esServer.createImporter(dbProperties));
+        }
+        final var importThread = new ImportThread(importers);
 
         try {
             Date importDate;
@@ -175,6 +181,13 @@ public class App {
             return;
         } finally {
             importThread.finish();
+        }
+
+        try {
+            esServer.refreshIndexes();
+        } catch (IOException ex) {
+            LOGGER.error("Failed to refresh index after import", ex);
+            return;
         }
 
         LOGGER.info("Database has been successfully set up with the following properties:\n{}", dbProperties);
