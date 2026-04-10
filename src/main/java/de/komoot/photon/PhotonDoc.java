@@ -255,29 +255,29 @@ public class PhotonDoc {
                 if (key.equals("postcode")) {
                     postcode = value;
                 } else {
-                int colonIdx = key.indexOf(':');
-                String baseKey = colonIdx >= 0 ? key.substring(0, colonIdx) : key;
-                AddressType atype = ADDRESS_TYPE_LOOKUP.get(baseKey);
-                // Handle numbered "other" keys like "other1", "other2"
-                if (atype == null && baseKey.startsWith("other")) {
-                    atype = AddressType.OTHER;
-                }
-                if (atype != null) {
-                    if (atype == AddressType.OTHER) {
-                        context.addNameFromPrefix(key, entry.getValue(), languages);
-                    } else if (colonIdx < 0) {
-                        if (overlay.computeIfAbsent(atype, k -> new HashMap<>()).putIfAbsent("default", entry.getValue()) != null) {
-                            context.addNameFromPrefix(key, entry.getValue(), languages);
-                        }
-                    } else {
-                        final String intKey = key.substring(colonIdx + 1);
-                        if (languages.contains(intKey)) {
-                                            if (overlay.computeIfAbsent(atype, k -> new HashMap<>()).putIfAbsent(intKey, value) != null) {
-                                                context.addNameFromPrefix(key, value, languages);
+                    int colonIdx = key.indexOf(':');
+                    String baseKey = colonIdx >= 0 ? key.substring(0, colonIdx) : key;
+                    AddressType atype = ADDRESS_TYPE_LOOKUP.get(baseKey);
+                    // Handle numbered "other" keys like "other1", "other2"
+                    if (atype == null && baseKey.startsWith("other")) {
+                        atype = AddressType.OTHER;
+                    }
+                    if (atype != null) {
+                        if (atype == AddressType.OTHER) {
+                            context.addNameFromPrefix(key, value, languages);
+                        } else if (colonIdx < 0) {
+                            if (overlay.computeIfAbsent(atype, k -> new HashMap<>()).putIfAbsent("default", value) != null) {
+                                context.addNameFromPrefix(key, value, languages);
+                            }
+                        } else {
+                            final String intKey = key.substring(colonIdx + 1);
+                            if (languages.contains(intKey)) {
+                                if (overlay.computeIfAbsent(atype, k -> new HashMap<>()).putIfAbsent(intKey, value) != null) {
+                                    context.addNameFromPrefix(key, value, languages);
+                                }
                             }
                         }
                     }
-                }
                 }
             }
         }

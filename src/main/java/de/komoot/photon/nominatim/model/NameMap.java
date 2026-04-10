@@ -52,8 +52,8 @@ public class NameMap extends AbstractMap<String, String> {
         if (!entries.containsKey(field)) {
             for (String key : keys) {
                 String val = source.get(key);
-                if (val != null) {
-                    entries.put(field, val);
+                if (val != null && !val.isBlank()) {
+                    entries.put(field, val.strip());
                     break;
                 }
             }
