@@ -10,6 +10,8 @@ photon provides the following endpoints:
   see [Usage/updates](usage.md#running-updates-via-the-api)
 * (optional) `/metrics` for providing performance metrics for Prometheus
 
+An [OpenAPI file](openapi.json) for the main endpoints is available as well.
+
 ## Search
 
 A simple forward search for a place looks like this:

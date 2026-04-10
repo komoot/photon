@@ -1,0 +1,553 @@
+{
+  "openapi": "3.0.1",
+  "externalDocs": {
+    "url": "https://github.com/komoot/photon"
+  },
+  "info": {
+    "title": "Photon Geocoding API",
+    "summary": "photon is an open source geocoder built for OpenStreetMap data. It is based on elasticsearch/OpenSearch - an efficient, powerful and highly scalable search platform.",
+    "version": "1.0.0",
+    "license": {
+      "name": "Apache-2.0",
+      "url": "https://opensource.org/licenses/Apache-2.0"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://photon.komoot.io/",
+      "description": "Public instance sponsored by Komoot"
+    }
+  ],
+  "paths": {
+    "/api": {
+      "get": {
+        "tags": [
+          "Photon Geocoding"
+        ],
+        "summary": "\"Forward\" geocoding: adress -> coordinates",
+        "operationId": "geocoding",
+        "description": "Get coordinates for a given address or POI",
+        "parameters": [
+          {
+            "name": "q",
+            "description": "The `q` parameter contains the term to search for. It is mandatory unless filtering via include/exclude parameters is in place.<br/><br/>",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "Düsseldorf"
+          },
+          {
+            "name": "limit",
+            "description": "The `limit` parameter sets the number of results - server *may* return less results.<br/><br/>",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number"
+            },
+            "example": "10"
+          },
+          {
+            "name": "osm_tag",
+            "description": "**Filter results by tags and values**<br/><br/> Note: the filter only works on principal OSM tags and not all OSM tag/value combinations can be searched. The actual list depends on the import style used for the Nominatim database (e.g. settings/import-full.style). All tag/value combinations with a property 'main' are included in the photon database.<br/><br/> If one or many query parameters named osm_tag are present, photon will attempt to filter results by those tags. In general, here is the expected format (syntax) for the value of osm_tag request parameters. <br/><br/> Include places with tag: `osm_tag=key:value`<br/>Exclude places with tag: `osm_tag=!key:value`<br/>Include places with tag key: `osm_tag=key`<br/>Include places with tag value: `osm_tag=:value`<br/>Exclude places with tag key: `osm_tag=!key`<br/>Exclude places with tag value: `osm_tag=:!value`<br/><br/>For example, to search for all places named berlin with tag of tourism=museum, one should construct url as follows:<br/> `http://localhost:2322/api?q=berlin&osm_tag=tourism:museum`<br/><br/>",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "example": "tourism:museum"
+          },
+          {
+            "name": "lang",
+            "description": "Force a language bias - if unset defaults to HTTP header `accept-language`.<br/><br/>",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "example": "de"
+          },
+          {
+            "name": "location_bias_scale",
+            "description": "The `location_bias_scale` describes how much the prominence of a result should still be taken into account. Sensible values go from 0.0 (ignore prominence almost completely) to 1.0 (prominence has approximately the same influence). The default is 0.2. <br/><br/> Use the `lat` and `lon` parameters to set a focus point for the search where results should be preferred.<br/><br/>",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number"
+            },
+            "example": "0.2"
+          },
+          {
+            "name": "zoom",
+            "description": "`zoom` describes the radius around the center to focus on. This is a number that should roughly correspond to the map zoom parameter of a corresponding map. The default zoom is 16.<br/><br/>",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number"
+            },
+            "example": "16"
+          },
+          {
+            "name": "lat",
+            "description": "Use the `lat` and `lon` parameters to set a focus point for the search where results should be preferred. See also `location_bias_scale` and `zoom`.<br/><br/>",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number"
+            },
+            "example": "51.217"
+          },
+          {
+            "name": "lon",
+            "description": "Use the `lat` and `lon` parameters to set a focus point for the search where results should be preferred. See also `location_bias_scale` and `zoom`.<br/><br/>",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number"
+            },
+            "example": "6.761"
+          },
+          {
+            "name": "bbox",
+            "in": "query",
+            "description": "The `bbox` parameter _restricts results to the given area_. The expected format for the bounding box is `minLon,minLat,maxLon,maxLat`.<br/><br/>",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "example": "6.5,50.5,9.5,52.5"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PhotonFeatureCollection"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/reverse": {
+      "get": {
+        "tags": [
+          "Photon Geocoding"
+        ],
+        "summary": "\"Reverse\" geocoding: coordinates -> adress/entity",        
+        "operationId": "reverse",
+        "description": "Get address for coordinates",
+        "parameters": [
+          {
+            "name": "lon",
+            "description": "The mandatory `lat` and `lon` parameters describe the coordinate which to look up the location description for.<br/><br/>",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "number"
+            },
+            "example": "6.7615465"
+          },
+          {
+            "name": "lat",
+            "description": "The mandatory `lat` and `lon` parameters describe the coordinate which to look up the location description for.",            
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "number"
+            },
+            "example": "51.2179383"
+          },
+          {
+            "name": "limit",
+            "description": "The `limit` parameter sets the number of results - server *may* return less results.<br/><br/>",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number"
+            },
+            "example": "5"
+          },
+          {
+            "name": "radius",
+            "description": "The optional `radius` parameter can be used to specify a value _in kilometers_ to reverse geocode within. The value has to be between 0 and 5000 km<br/><br/>",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number"
+            },
+            "example": "5000"
+          },
+          {
+            "name": "osm_tag",
+            "description": "**Filter results by tags and values**<br/><br/> Note: the filter only works on principal OSM tags and not all OSM tag/value combinations can be searched. The actual list depends on the import style used for the Nominatim database (e.g. settings/import-full.style). All tag/value combinations with a property 'main' are included in the photon database.<br/><br/> If one or many query parameters named osm_tag are present, photon will attempt to filter results by those tags. In general, here is the expected format (syntax) for the value of osm_tag request parameters. <br/><br/> Include places with tag: `osm_tag=key:value`<br/>Exclude places with tag: `osm_tag=!key:value`<br/>Include places with tag key: `osm_tag=key`<br/>Include places with tag value: `osm_tag=:value`<br/>Exclude places with tag key: `osm_tag=!key`<br/>Exclude places with tag value: `osm_tag=:!value`<br/><br/> You can also use this feature for reverse geocoding. Want to see the 5 pharmacies closest to a location:<br/> `http://localhost:2322/reverse?lon=6.77&lat=51.22&osm_tag=amenity:pharmacy&limit=5`<br/><br/>",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "example": "amenity:pharmacy"
+          },          
+          {
+            "name": "distance_sort",
+            "description": "If `distance_sort` is set to true (which is the default) the reverce geocoding results are based on the distance to the input point.<br/><br/>",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": true
+            },
+            "example": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PhotonFeatureCollection"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/structured": {
+      "get": {
+        "tags": [
+          "Photon Geocoding"
+        ],
+        "summary": "Structured geocoding",
+        "operationId": "structures",
+        "description": "Structured search works similar to forward search but the query term is split up into address parts. Sometimes this gives more targeted results when geocoding addresses. In addition to the parameters for the regular forward search he following query parameters are supported: `countrycode`, `state`, `county`, `city`, `postcode`, `district` (as in city district or suburb), `street` and `housenumber`. The country code has to be a valid ISO 3166-1 alpha-2 code.<br/><br/>",
+        "parameters": [
+          {
+            "name": "countrycode",
+            "description": "The `countrycode` parameter contains a countrycode to look up. It has to be a valid ISO 3166-1 alpha-2 code.<br/><br/>",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "example": "DE"
+          },
+          {
+            "name": "state",
+            "description": "The `state` parameter contains a state to look up.<br/><br/>",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "county",
+            "description": "The `county` parameter contains a county to look up.<br/><br/>",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "city",
+            "description": "The `city` parameter contains a city to look up.<br/><br/>",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "example": "Düsseldorf"
+          },
+          {
+            "name": "postcode",
+            "description": "The `postcode` parameter contains a postcode to look up.<br/><br/>",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "example": "40468"
+          },
+          {
+            "name": "street",
+            "description": "The `street` parameter contains a street to look up.<br/><br/>",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "example": "Klaus-Bungert-Straße"
+          },               
+          {
+            "name": "housenumber",
+            "description": "The `housenumber` parameter contains a housenumber to look up.<br/><br/>",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "example": "4"
+          },                    
+          {
+            "name": "limit",
+            "description": "The `limit` parameter sets the number of results - server *may* return less results.<br/><br/>",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number"
+            },
+            "example": "10"
+          },
+          {
+            "name": "osm_tag",
+            "description": "**Filter results by tags and values**<br/><br/> Note: the filter only works on principal OSM tags and not all OSM tag/value combinations can be searched. The actual list depends on the import style used for the Nominatim database (e.g. settings/import-full.style). All tag/value combinations with a property 'main' are included in the photon database.<br/><br/> If one or many query parameters named osm_tag are present, photon will attempt to filter results by those tags. In general, here is the expected format (syntax) for the value of osm_tag request parameters. <br/><br/> Include places with tag: `osm_tag=key:value`<br/>Exclude places with tag: `osm_tag=!key:value`<br/>Include places with tag key: `osm_tag=key`<br/>Include places with tag value: `osm_tag=:value`<br/>Exclude places with tag key: `osm_tag=!key`<br/>Exclude places with tag value: `osm_tag=:!value`<br/><br/>For example, to search for all places named berlin with tag of tourism=museum, one should construct url as follows:<br/> `http://localhost:2322/api?q=berlin&osm_tag=tourism:museum`<br/><br/>",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "example": "tourism:museum"
+          },
+          {
+            "name": "lang",
+            "description": "Force a language bias - if unset defaults to HTTP header `accept-language`.<br/><br/>",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "example": "de"
+          },
+          {
+            "name": "location_bias_scale",
+            "description": "The `location_bias_scale` describes how much the prominence of a result should still be taken into account. Sensible values go from 0.0 (ignore prominence almost completely) to 1.0 (prominence has approximately the same influence). The default is 0.2. <br/><br/> Use the `lat` and `lon` parameters to set a focus point for the search where results should be preferred.<br/><br/>",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number"
+            },
+            "example": "0.2"
+          },
+          {
+            "name": "zoom",
+            "description": "`zoom` describes the radius around the center to focus on. This is a number that should roughly correspond to the map zoom parameter of a corresponding map. The default zoom is 16.<br/><br/>",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number"
+            },
+            "example": "16"
+          },
+          {
+            "name": "lat",
+            "description": "Use the `lat` and `lon` parameters to set a focus point for the search where results should be preferred. See also `location_bias_scale` and `zoom`.<br/><br/>",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number"
+            },
+            "example": "51.217"
+          },
+          {
+            "name": "lon",
+            "description": "Use the `lat` and `lon` parameters to set a focus point for the search where results should be preferred. See also `location_bias_scale` and `zoom`.<br/><br/>",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number"
+            },
+            "example": "6.761"
+          },
+          {
+            "name": "bbox",
+            "in": "query",
+            "description": "The `bbox` parameter _restricts results to the given area_. The expected format for the bounding box is `minLon,minLat,maxLon,maxLat`.",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "example": "9.5,51.5,11.5,53.5"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PhotonFeatureCollection"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/status": {
+      "get": {
+        "tags": [
+          "Photon Geocoding"
+        ],
+        "operationId": "status",
+        "description": "Get service status and import date of database",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "PhotonFeature": {
+        "type": "object",
+        "required": [
+          "type",
+          "geometry",
+          "properties"
+        ],
+        "properties": {
+          "type": {
+            "oneOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "Feature"
+                ]
+              }
+            ]
+          },
+          "geometry": {
+            "type": "object",
+            "required": [
+              "type",
+              "coordinates"
+            ],
+            "properties": {
+              "type": {
+                "oneOf": [
+                  {
+                    "type": "string",
+                    "enum": [
+                      "Point"
+                    ]
+                  }
+                ]
+              },
+              "coordinates": {
+                "type": "array",
+                "minItems": 2,
+                "maxItems": 2,
+                "items": {
+                  "type": "number"
+                }
+              }
+            }
+          },
+          "properties": {
+            "type": "object",
+            "required": [
+              "osm_id",
+              "osm_type"
+            ],
+            "properties": {
+              "osm_id": {
+                "type": "integer",
+                "format": "int32"
+              },
+              "osm_type": {
+                "type": "string"
+              },
+              "extent": {
+                "type": "array",
+                "items": {
+                  "type": "number"
+                }
+              },
+              "country": {
+                "type": "string"
+              },
+              "osm_key": {
+                "type": "string"
+              },
+              "city": {
+                "type": "string"
+              },
+              "osm_value": {
+                "type": "string"
+              },
+              "postcode": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "state": {
+                "type": "string"
+              },
+              "street": {
+                "type": "string"
+              },
+              "housenumber": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "PhotonFeatureCollection": {
+        "type": "object",
+        "required": [
+          "type",
+          "features"
+        ],
+        "properties": {
+          "type": {
+            "oneOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "FeatureCollection"
+                ]
+              }
+            ]
+          },
+          "features": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PhotonFeature"
+            }
+          }
+        }
+      },
+      "Status": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "example": "Ok"
+          },
+          "import_date": {
+            "type": "string",
+            "example": "2024-06-02T01:01:31Z"
+          }
+        }
+      }
+    }
+  }
+}
