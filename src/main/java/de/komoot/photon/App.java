@@ -183,6 +183,13 @@ public class App {
             importThread.finish();
         }
 
+        try {
+            esServer.refreshIndexes();
+        } catch (IOException ex) {
+            LOGGER.error("Failed to refresh index after import", ex);
+            return;
+        }
+
         LOGGER.info("Database has been successfully set up with the following properties:\n{}", dbProperties);
     }
 
