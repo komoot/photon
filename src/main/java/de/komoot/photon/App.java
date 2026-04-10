@@ -154,7 +154,13 @@ public class App {
             return;
         }
 
-        final var importThread = new ImportThread(esServer.createImporter(dbProperties));
+        // One consumer thread per shard for optimal bulk indexing throughput.
+        final int numConsumers = Server.NUM_SHARDS;
+        List<Importer> importers = new ArrayList<>(numConsumers);
+        for (int i = 0; i < numConsumers; i++) {
+            importers.add(esServer.createImporter(dbProperties));
+        }
+        final var importThread = new ImportThread(importers);
 
         try {
             Date importDate;
@@ -175,6 +181,12 @@ public class App {
             return;
         } finally {
             importThread.finish();
+        }
+
+        try {
+            esServer.finalizeImport();
+        } catch (IOException ex) {
+            LOGGER.error("Error during index optimization", ex);
         }
 
         LOGGER.info("Database has been successfully set up with the following properties:\n{}", dbProperties);
