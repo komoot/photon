@@ -45,6 +45,7 @@ public class Server {
     public static final int NUM_SHARDS = 5;
     protected OpenSearchClient client;
     @Nullable private OpenSearchRunner runner = null;
+    private volatile boolean serializerRegistered = false;
 
     public Server(PhotonDBConfig config, boolean create) throws IOException {
         final File dataDirectory = new File(config.getDataDirectory(), "photon_data");
@@ -221,10 +222,14 @@ public class Server {
     }
 
     private void registerPhotonDocSerializer(DatabaseProperties dbProperties) {
+        if (serializerRegistered) {
+            return;
+        }
         final var module = new SimpleModule("PhotonDocSerializer",
                 new Version(1, 0, 0, null, null, null));
         module.addSerializer(PhotonDoc.class, new PhotonDocSerializer(dbProperties));
 
         ((JacksonJsonpMapper) client._transport().jsonpMapper()).objectMapper().registerModule(module);
+        serializerRegistered = true;
     }
 }

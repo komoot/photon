@@ -52,7 +52,17 @@ public class TestServer {
     }
 
     public Importer createImporter(DatabaseProperties dbProperties) {
-        return testServer.createImporter(dbProperties);
+        var inner = testServer.createImporter(dbProperties);
+        return new Importer() {
+            @Override
+            public void add(Iterable<PhotonDoc> docs) { inner.add(docs); }
+
+            @Override
+            public void finish() {
+                inner.finish();
+                refreshTestServer();
+            }
+        };
     }
 
     public Updater createUpdater(DatabaseProperties dbProperties) {
