@@ -100,7 +100,7 @@ class ApiIntegrationTest extends ApiBaseTester {
     @ParameterizedTest
     @CsvSource({
             "city, /api?q=berlin&limit=1",                                    // basic search
-            "suburb, /api?q=berlin&limit=1&lat=52.54714&lon=13.39026&zoom=16",  // search with location bias
+            "suburb, /api?q=berlin&limit=1&lat=52.54714&lon=13.39026&zoom=18",  // search with location bias
             "city, /api?q=berlin&limit=1&lat=52.54714&lon=13.39026&zoom=10&location_bias_scale=0.6",  // search with large location bias
             "city, /reverse/?lon=13.38886&lat=52.51704" // basic reverse
     })

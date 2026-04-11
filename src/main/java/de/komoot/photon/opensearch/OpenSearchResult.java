@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import de.komoot.photon.searcher.PhotonResult;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
+import org.locationtech.jts.geom.Point;
 
 import java.util.HashMap;
 import java.util.List;
@@ -12,13 +13,15 @@ import java.util.Map;
 
 @NullMarked
 public class OpenSearchResult implements PhotonResult {
+    private static final double EARTH_RADIUS_KM = 2 * 6371;
+
     private static final List<String> KEYS_WITH_LOCALE = List.of(
             DocFields.NAME, DocFields.STREET, DocFields.LOCALITY,
             DocFields.DISTRICT, DocFields.CITY, DocFields.COUNTY,
             DocFields.STATE, DocFields.COUNTRY
     );
 
-    private double opensearchScore = 0.0;
+    @Nullable private Double opensearchScore;
     private double score = 0.0;
     private double @Nullable [] extent = null;
     private double[] coordinates = INVALID_COORDINATES;
@@ -36,7 +39,7 @@ public class OpenSearchResult implements PhotonResult {
         }
     }
 
-    record Point (@JsonProperty("lat") double lat, @JsonProperty("lon") double lon) {}
+    record JsonPoint(@JsonProperty("lat") double lat, @JsonProperty("lon") double lon) {}
 
     @Override
     public double getScore() {
@@ -48,12 +51,47 @@ public class OpenSearchResult implements PhotonResult {
         this.score += difference;
     }
 
-    public void setOpensearchScore(double opensearchScore) {
+    public void setOpensearchScore(@Nullable Double opensearchScore) {
         this.opensearchScore = opensearchScore;
     }
 
+    public void adjustScoreByImportance(double osScoreWeight) {
+        double importance = getImportance();
+        if (opensearchScore != null) {
+            opensearchScore -= importance * osScoreWeight;
+        }
+        score += importance;
+    }
+
+    public void adjustScoreByLocationBias(Point pt, double osScoreFactor, double weight,
+                                          double biasRadius, double negDecayFactor) {
+        double bias = 0.0;
+        if (coordinates != INVALID_COORDINATES) {
+            // compute haversine distance
+            double cosY1 = Math.cos(Math.toRadians(pt.getY()));
+            double cosY2 = Math.cos(Math.toRadians(coordinates[1]));
+            double sinXDist = Math.sin(Math.toRadians(pt.getX() - coordinates[0]) / 2);
+            double sinYDist = Math.sin(Math.toRadians(pt.getY() - coordinates[1]) / 2);
+            double a = sinYDist * sinYDist + cosY1 * cosY2 * sinXDist * sinXDist;
+            double dist = EARTH_RADIUS_KM * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+            if (dist < biasRadius) {
+                bias = 1.0;
+            } else {
+                bias = Math.exp((dist - biasRadius) * negDecayFactor);
+            }
+        }
+        bias *= weight;
+
+        if (opensearchScore != null) {
+            opensearchScore -= bias * osScoreFactor;
+        }
+
+        score += bias;
+    }
+
     public double getOpensearchScore() {
-        return opensearchScore;
+        return opensearchScore == null ? 0.0 : opensearchScore;
     }
 
     public double getImportance() {
@@ -112,7 +150,7 @@ public class OpenSearchResult implements PhotonResult {
 
 
     @JsonProperty(DocFields.COORDINATE)
-    void setCoordinates(Point pt) {
+    void setCoordinates(JsonPoint pt) {
         coordinates = new double[]{pt.lon, pt.lat};
     }
 

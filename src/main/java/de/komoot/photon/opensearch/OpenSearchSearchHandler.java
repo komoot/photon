@@ -17,6 +17,7 @@ import java.util.stream.Stream;
 @NullMarked
 public class OpenSearchSearchHandler implements SearchHandler<SimpleSearchRequest> {
     private static final float IMPORTANCE_FACTOR = 30f;
+    private static final double NEG_DECAY_FACTOR = Math.log(0.5);
     private final OpenSearchClient client;
     private final String queryTimeout;
 
@@ -38,15 +39,29 @@ public class OpenSearchSearchHandler implements SearchHandler<SimpleSearchReques
             results = sendQuery(buildQuery(request, true), extLimit);
         }
 
-        var stream =  ResultScorer.hitsToResultStream(results, IMPORTANCE_FACTOR)
-                .peek(r -> r.adjustScore(r.getImportance() * request.getImportanceWeight()))
-                .map(r -> (PhotonResult) r);
+        var stream = ResultScorer.hitsToResultStream(results)
+                .peek(r -> r.adjustScoreByImportance(IMPORTANCE_FACTOR * request.getImportanceWeight()));
+
+        if (request.hasLocationBias()) {
+            double decay = NEG_DECAY_FACTOR / request.getDecayRadiusForBias();
+            stream = stream.peek(r -> {
+                assert request.getLocationForBias() != null;
+                r.adjustScoreByLocationBias(
+                        request.getLocationForBias(),
+                        IMPORTANCE_FACTOR,
+                        1 - request.getImportanceWeight(),
+                        request.getRadiusForBias(),
+                        decay
+                );
+            });
+        }
 
         if (request.getQuery() != null) {
             stream = stream.peek(new QueryReranker(request.getQuery(), request.getLanguage()));
         }
 
-        return stream.sorted(Comparator.comparingDouble(PhotonResult::getScore).reversed());
+        return ResultScorer.adjustByNormalizedOpenSearchScore(stream)
+                .sorted(Comparator.comparingDouble(PhotonResult::getScore).reversed());
     }
 
     @Override

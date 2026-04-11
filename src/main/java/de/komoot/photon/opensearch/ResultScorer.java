@@ -1,61 +1,46 @@
 package de.komoot.photon.opensearch;
 
+import de.komoot.photon.searcher.PhotonResult;
 import org.jspecify.annotations.NullMarked;
-import org.opensearch.client.opensearch.core.search.Hit;
 import org.opensearch.client.opensearch.core.search.SearchResult;
 
-import java.util.function.Consumer;
+import java.util.Comparator;
 import java.util.stream.Stream;
 
 @NullMarked
 public class ResultScorer {
-    private final double importanceWeight;
-
     private double maxScore = 10.0;
 
-    public ResultScorer(double importanceWeight) {
-        this.importanceWeight = importanceWeight;
+    public static Stream<OpenSearchResult> hitsToResultStream(SearchResult<OpenSearchResult> results) {
+        Stream.Builder<OpenSearchResult> builder = Stream.builder();
+        for (var hit: results.hits().hits()) {
+            var result = hit.source();
+            if (result != null) {
+                result.setOpensearchScore(hit.score());
+                builder.add(result);
+            }
+        }
+
+        return builder.build();
     }
 
-    public static Stream<OpenSearchResult> hitsToResultStream(SearchResult<OpenSearchResult> results,
-                                                          double importanceWeight) {
-        var scorer = new ResultScorer(importanceWeight);
-        return results.hits().hits().stream()
-                .mapMulti(scorer::hitToResult)
-                .toList().stream()  // go through all results once before normalizing
+    static public Stream<PhotonResult> adjustByNormalizedOpenSearchScore(Stream<OpenSearchResult> results) {
+        var scorer = new ResultScorer();
+        return results.sorted(Comparator.comparingDouble(OpenSearchResult::getOpensearchScore).reversed())
                 .map(scorer::normalizeScore);
     }
 
-     public void hitToResult(Hit<OpenSearchResult> hit, Consumer<OpenSearchResult> consumer) {
-        var result = hit.source();
-        if (result != null) {
-            var score = hit.score();
-            if (score != null) {
-                if (importanceWeight > 0) {
-                    score -= result.getImportance() * importanceWeight;
-                }
-                if (score > maxScore) {
-                    maxScore = score;
-                }
-                result.setOpensearchScore(score);
-            }
-
-            consumer.accept(result);
-        }
-     }
-
-     private OpenSearchResult normalizeScore(OpenSearchResult result) {
+     private PhotonResult normalizeScore(OpenSearchResult result) {
         var osScore = result.getOpensearchScore();
 
-        if (maxScore < 20) {
-            osScore /= maxScore;
-        } else if (osScore <= maxScore - 20) {
-            osScore = 0;
-        } else {
-            osScore = (osScore - maxScore + 20) / 20;
+        if (osScore >= maxScore) {
+            maxScore = osScore;
+            result.adjustScore(1.0);
+        } else if (maxScore < 20) {
+            result.adjustScore(osScore / maxScore);
+        } else if (osScore > maxScore - 20) {
+            result.adjustScore((osScore - maxScore + 20) / 20);
         }
-
-        result.adjustScore(osScore);
 
         return result;
      }

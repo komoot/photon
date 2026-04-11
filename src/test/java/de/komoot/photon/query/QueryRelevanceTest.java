@@ -58,7 +58,7 @@ class QueryRelevanceTest extends ESBaseTester {
     {
         SimpleSearchRequest result = new SimpleSearchRequest();
         result.setQuery("ham");
-        result.setLocationForBias(FACTORY.createPoint(new Coordinate(-9.999, -10)));
+        result.setLocationForBias(FACTORY.createPoint(new Coordinate(-9.9999, -10)));
         return result;
     }
 
@@ -143,7 +143,7 @@ class QueryRelevanceTest extends ESBaseTester {
     void testLocationPreferenceForHigherImportance() {
         setupDocs(
                 createDoc("place", "hamlet", 1000, "name", "Ham")
-                        .importance(0.8)
+                        .importance(0.85)
                         .centroid(FACTORY.createPoint(new Coordinate(10, 10))),
                 createDoc("place", "hamlet", 1001, "name", "Ham")
                         .importance(0.01)
@@ -159,7 +159,7 @@ class QueryRelevanceTest extends ESBaseTester {
     void testLocationPreferenceScaleForImportance(double scale) {
         setupDocs(
                 createDoc("place", "hamlet", 1000, "name", "Ham")
-                        .importance(1.0 - scale)
+                        .importance(1.05 - scale)
                         .centroid(FACTORY.createPoint(new Coordinate(10, 10))),
                 createDoc("place", "hamlet", 1001, "name", "Ham")
                         .importance(0.01)

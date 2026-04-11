@@ -38,9 +38,7 @@ public class OpenSearchReverseHandler implements SearchHandler<ReverseRequest> {
                 request.getLimit(),
                 request.getLocationDistanceSort() ? request.getLocation() : null);
 
-        var scorer = new ResultScorer(0);
-        return results.hits().hits().stream()
-                .mapMulti(scorer::hitToResult)
+        return ResultScorer.hitsToResultStream(results)
                 .map(r -> r);
     }
 
