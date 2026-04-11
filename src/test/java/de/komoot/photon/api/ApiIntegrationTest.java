@@ -208,7 +208,7 @@ class ApiIntegrationTest extends ApiBaseTester {
     void testDebugOutput(String baseUrl) throws Exception {
         assertThatJson(readURL(baseUrl + "&debug=1")).isObject()
                 .node("properties").isObject()
-                .containsKeys("debug", "raw_data");
+                .containsKeys("raw_data");
     }
 
     @ParameterizedTest

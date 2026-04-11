@@ -4,6 +4,7 @@ import de.komoot.photon.searcher.PhotonResult;
 import de.komoot.photon.query.StructuredSearchRequest;
 import de.komoot.photon.searcher.SearchHandler;
 import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import org.opensearch.client.opensearch.OpenSearchClient;
 import org.opensearch.client.opensearch._types.SearchType;
 import org.opensearch.client.opensearch._types.query_dsl.Query;
@@ -54,8 +55,8 @@ public class OpenSearchStructuredSearchHandler implements SearchHandler<Structur
     }
 
     @Override
-    public String dumpQuery(StructuredSearchRequest searchRequest) {
-        return "{}";
+    public @Nullable String dumpQuery(StructuredSearchRequest searchRequest) {
+        return null;
     }
 
     public Query buildQuery(StructuredSearchRequest photonRequest, boolean lenient) {

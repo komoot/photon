@@ -2,6 +2,7 @@ package de.komoot.photon.searcher;
 
 import de.komoot.photon.query.RequestBase;
 import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 import java.util.stream.Stream;
 
@@ -13,5 +14,5 @@ public interface SearchHandler<T extends RequestBase> {
 
     Stream<PhotonResult> search(T searchRequest);
 
-    String dumpQuery(T searchRequest);
+    @Nullable String dumpQuery(T searchRequest);
 }

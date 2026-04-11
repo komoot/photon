@@ -45,8 +45,8 @@ public class OpenSearchReverseHandler implements SearchHandler<ReverseRequest> {
     }
 
     @Override
-    public String dumpQuery(ReverseRequest photonRequest) {
-        return "{}";
+    public @Nullable String dumpQuery(ReverseRequest photonRequest) {
+        return null;
     }
 
     private SearchResponse<OpenSearchResult> search(Query query, int limit, @Nullable Point location) {
