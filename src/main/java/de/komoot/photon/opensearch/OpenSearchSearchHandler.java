@@ -11,6 +11,7 @@ import org.opensearch.client.opensearch._types.query_dsl.Query;
 import org.opensearch.client.opensearch.core.SearchResponse;
 
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.stream.Stream;
 
 @NullMarked
@@ -44,7 +45,7 @@ public class OpenSearchSearchHandler implements SearchHandler<SimpleSearchReques
             stream = stream.peek(new QueryReranker(request.getQuery(), request.getLanguage()));
         }
 
-        return stream;
+        return stream.sorted(Comparator.comparingDouble(PhotonResult::getScore).reversed());
     }
 
     @Override

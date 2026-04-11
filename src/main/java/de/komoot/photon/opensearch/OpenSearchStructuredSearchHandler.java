@@ -11,6 +11,7 @@ import org.opensearch.client.opensearch._types.query_dsl.Query;
 import org.opensearch.client.opensearch.core.SearchResponse;
 
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.stream.Stream;
 
 /**
@@ -51,6 +52,7 @@ public class OpenSearchStructuredSearchHandler implements SearchHandler<Structur
         }
 
         return ResultScorer.hitsToResultStream(results, 0)
+                .sorted(Comparator.comparingDouble(PhotonResult::getScore).reversed())
                 .map(r -> r);
     }
 

@@ -58,7 +58,7 @@ class QueryRelevanceTest extends ESBaseTester {
     {
         SimpleSearchRequest result = new SimpleSearchRequest();
         result.setQuery("ham");
-        result.setLocationForBias(FACTORY.createPoint(new Coordinate(-9.9, -10)));
+        result.setLocationForBias(FACTORY.createPoint(new Coordinate(-9.999, -10)));
         return result;
     }
 
@@ -85,7 +85,7 @@ class QueryRelevanceTest extends ESBaseTester {
     void testShortNameMissSpellingOverPartialWithImportance() {
         setupDocs(
                 createDoc("place", "city", 1000, "name", "Oslo")
-                        .importance(0.5),
+                        .importance(0.7),
                 createDoc("place", "town", 1001, "name", "Olsokava")
                         .importance(0.1)
         );
@@ -120,7 +120,7 @@ class QueryRelevanceTest extends ESBaseTester {
                 createDoc("place", "hamlet", 1000, "name", "Ham")
                         .importance(0.1),
                 createDoc("place", "city", 1001, "name", "Hamburg")
-                        .importance(0.5));
+                        .importance(0.7));
 
         assertSearchOsmIds("ham", 1001, 1000);
     }
