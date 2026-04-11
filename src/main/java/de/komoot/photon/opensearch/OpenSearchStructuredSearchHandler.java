@@ -19,6 +19,7 @@ import java.util.stream.Stream;
  */
 @NullMarked
 public class OpenSearchStructuredSearchHandler implements SearchHandler<StructuredSearchRequest> {
+    private static final float LOCATION_BIAS_FACTOR = 30f;
     private final OpenSearchClient client;
     private final String queryTimeout;
 
@@ -65,7 +66,17 @@ public class OpenSearchStructuredSearchHandler implements SearchHandler<Structur
         final var query = new SearchQueryBuilder(photonRequest, lenient);
         query.addOsmTagFilter(photonRequest.getOsmTagFilters());
         query.addLayerFilter(photonRequest.getLayerFilters());
-        query.addLocationBias(photonRequest.getLocationForBias(), photonRequest.getScaleForBias(), photonRequest.getZoomForBias());
+
+        if (photonRequest.hasLocationBias()) {
+            assert photonRequest.getLocationForBias() != null;
+            query.addLocationBias(
+                    photonRequest.getLocationForBias(),
+                    LOCATION_BIAS_FACTOR * (1.0f - photonRequest.getImportanceWeight()),
+                    photonRequest.getRadiusForBias(),
+                    photonRequest.getDecayRadiusForBias());
+
+        }
+
         query.includeCategories(photonRequest.getIncludeCategories());
         query.excludeCategories(photonRequest.getExcludeCategories());
         query.addBoundingBox(photonRequest.getBbox());

@@ -9,13 +9,22 @@ import org.locationtech.jts.geom.Point;
 public class SearchRequestBase extends RequestBase {
     @Nullable private Point locationForBias;
     private float scale = 0.2f;
-    private int zoom = 14;
+    private int zoom = 12;
+    private double biasRadius = zoomToRadius(zoom);
     @Nullable private Envelope bbox;
     private boolean suggestAddresses = false;
+
+    private static double zoomToRadius(int zoom) {
+        return Math.pow(2.2, 18 - zoom) * 0.1;
+    }
 
     @Nullable
     public Envelope getBbox() {
         return bbox;
+    }
+
+    public boolean hasLocationBias() {
+        return locationForBias != null && zoom > 4;
     }
 
     @Nullable
@@ -23,12 +32,16 @@ public class SearchRequestBase extends RequestBase {
         return locationForBias;
     }
 
-    public float getScaleForBias() {
-        return locationForBias == null ? 1.0f : scale;
+    public double getRadiusForBias() {
+        return biasRadius;
     }
 
-    public int getZoomForBias() {
-        return zoom;
+    public double getDecayRadiusForBias() {
+        return biasRadius * (zoom - 4);
+    }
+
+    public float getImportanceWeight() {
+        return hasLocationBias() ? scale : 1.0f;
     }
 
     void setLocationForBias(@Nullable Point locationForBias) {
@@ -46,6 +59,7 @@ public class SearchRequestBase extends RequestBase {
     void setZoom(@Nullable Integer zoom) {
         if (zoom != null) {
             this.zoom = Integer.max(Integer.min(zoom, 18), 0);
+            biasRadius = zoomToRadius(this.zoom);
         }
     }
 

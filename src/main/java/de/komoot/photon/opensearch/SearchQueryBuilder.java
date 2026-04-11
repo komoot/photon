@@ -202,23 +202,16 @@ public class SearchQueryBuilder extends BaseQueryBuilder {
         }
     }
 
-    public void addLocationBias(@Nullable Point point, float scale, int zoom) {
-        if (point == null || zoom < 4) return;
-
-        if (zoom > 18) {
-            zoom = 18;
-        }
-        float radius = (1 << (18 - zoom)) * 0.25f;
-
+    public void addLocationBias(Point point, float weight, double radius, double decayRadius) {
         innerQuery.functions(fn1 -> fn1
-                .weight(IMPORTANCE_FACTOR * 0.95f * (1.0f - scale))
+                .weight(weight)
                 .exp(ex -> ex
                         .field(DocFields.COORDINATE)
                         .placement(p -> p
                                 .origin(JsonData.of(Map.of("lon", point.getX(), "lat", point.getY())))
-                                .decay(0.8)
-                                .offset(JsonData.of(radius / 10 + "km"))
-                                .scale(JsonData.of(radius + "km")))));
+                                .decay(0.5)
+                                .offset(JsonData.of(radius + "km"))
+                                .scale(JsonData.of(decayRadius + "km")))));
     }
 
     public void addBoundingBox(@Nullable Envelope bbox) {

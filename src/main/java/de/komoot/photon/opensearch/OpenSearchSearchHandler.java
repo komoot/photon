@@ -16,6 +16,7 @@ import java.util.stream.Stream;
 
 @NullMarked
 public class OpenSearchSearchHandler implements SearchHandler<SimpleSearchRequest> {
+    private static final float IMPORTANCE_FACTOR = 30f;
     private final OpenSearchClient client;
     private final String queryTimeout;
 
@@ -38,7 +39,7 @@ public class OpenSearchSearchHandler implements SearchHandler<SimpleSearchReques
         }
 
         var stream =  ResultScorer.hitsToResultStream(results, SearchQueryBuilder.IMPORTANCE_FACTOR)
-                .peek(r -> r.adjustScore(r.getImportance() * request.getScaleForBias()))
+                .peek(r -> r.adjustScore(r.getImportance() * request.getImportanceWeight()))
                 .map(r -> (PhotonResult) r);
 
         if (request.getQuery() != null) {
@@ -58,7 +59,17 @@ public class OpenSearchSearchHandler implements SearchHandler<SimpleSearchReques
         query.addCountryCodeFilter(request.getCountryCodes());
         query.addOsmTagFilter(request.getOsmTagFilters());
         query.addLayerFilter(request.getLayerFilters());
-        query.addLocationBias(request.getLocationForBias(), request.getScaleForBias(), request.getZoomForBias());
+
+        if (request.hasLocationBias()) {
+            assert request.getLocationForBias() != null;
+            query.addLocationBias(
+                    request.getLocationForBias(),
+                    IMPORTANCE_FACTOR * (1.0f - request.getImportanceWeight()),
+                    request.getRadiusForBias(),
+                    request.getDecayRadiusForBias());
+
+        }
+
         query.includeCategories(request.getIncludeCategories());
         query.excludeCategories(request.getExcludeCategories());
         query.addBoundingBox(request.getBbox());
