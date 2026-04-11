@@ -38,7 +38,7 @@ public class OpenSearchSearchHandler implements SearchHandler<SimpleSearchReques
             results = sendQuery(buildQuery(request, true), extLimit);
         }
 
-        var stream =  ResultScorer.hitsToResultStream(results, SearchQueryBuilder.IMPORTANCE_FACTOR)
+        var stream =  ResultScorer.hitsToResultStream(results, IMPORTANCE_FACTOR)
                 .peek(r -> r.adjustScore(r.getImportance() * request.getImportanceWeight()))
                 .map(r -> (PhotonResult) r);
 
@@ -59,6 +59,7 @@ public class OpenSearchSearchHandler implements SearchHandler<SimpleSearchReques
         query.addCountryCodeFilter(request.getCountryCodes());
         query.addOsmTagFilter(request.getOsmTagFilters());
         query.addLayerFilter(request.getLayerFilters());
+        query.addImportance(IMPORTANCE_FACTOR * request.getImportanceWeight());
 
         if (request.hasLocationBias()) {
             assert request.getLocationForBias() != null;

@@ -15,9 +15,9 @@ import java.util.stream.Collectors;
 
 @NullMarked
 public class SearchQueryBuilder extends BaseQueryBuilder {
-    public static final float IMPORTANCE_FACTOR = 30f;
-
-    public FunctionScoreQuery.Builder innerQuery = new FunctionScoreQuery.Builder();
+    public FunctionScoreQuery.Builder innerQuery = new FunctionScoreQuery.Builder()
+            .scoreMode(FunctionScoreMode.Sum)
+            .boostMode(FunctionBoostMode.Sum);
 
     public SearchQueryBuilder(@Nullable String query, boolean lenient, boolean suggestAddresses) {
         if (query == null) {
@@ -29,13 +29,6 @@ public class SearchQueryBuilder extends BaseQueryBuilder {
         } else {
             setupFullQuery(query, lenient, suggestAddresses);
         }
-
-        innerQuery.functions(fvf -> fvf.fieldValueFactor(fvfb -> fvfb
-                        .field(DocFields.IMPORTANCE)
-                        .factor(IMPORTANCE_FACTOR)
-                        .missing(0.00001)))
-                .scoreMode(FunctionScoreMode.Sum)
-                .boostMode(FunctionBoostMode.Sum);
     }
 
     public void setupShortQuery(String query, boolean lenient) {
@@ -200,6 +193,13 @@ public class SearchQueryBuilder extends BaseQueryBuilder {
                 ));
             }
         }
+    }
+
+    public void addImportance(float weight) {
+        innerQuery.functions(fvf -> fvf.fieldValueFactor(fvfb -> fvfb
+                        .field(DocFields.IMPORTANCE)
+                        .factor(weight)
+                        .missing(0.00001)));
     }
 
     public void addLocationBias(Point point, float weight, double radius, double decayRadius) {
