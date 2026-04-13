@@ -7,11 +7,21 @@ import java.util.*;
 
 @NullMarked
 public class NameMap extends AbstractMap<String, String> {
-    private final Set<Entry<String, String>> entries = new HashSet<>();
+    private final HashMap<String, String> entries = new HashMap<>();
 
     @Override
     public Set<Entry<String, String>> entrySet() {
-        return entries;
+        return entries.entrySet();
+    }
+
+    @Override
+    public boolean containsKey(Object key) {
+        return entries.containsKey(key);
+    }
+
+    @Override
+    public @Nullable String get(Object key) {
+        return entries.get(key);
     }
 
     public static NameMap makeForPlace(Map<String, @Nullable String> source, Iterable<String> languages) {
@@ -34,12 +44,14 @@ public class NameMap extends AbstractMap<String, String> {
     }
 
     NameMap setName(String field, Map<String, @Nullable String> source, String... keys) {
-        if (!containsKey(field)) {
-            Arrays.stream(keys)
-                    .map(source::get)
-                    .filter(s -> s != null && !s.isBlank())
-                    .findFirst()
-                    .ifPresent(k -> entries.add(new SimpleImmutableEntry<>(field, k.strip())));
+        if (!entries.containsKey(field)) {
+            for (String key : keys) {
+                String val = source.get(key);
+                if (val != null && !val.isBlank()) {
+                    entries.put(field, val.strip());
+                    break;
+                }
+            }
         }
         return this;
     }

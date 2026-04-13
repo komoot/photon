@@ -24,6 +24,19 @@ public enum AddressType {
     COUNTRY("country", 4, 4, 2),
     OTHER("other", 0, 0, 1);
 
+    private static final AddressType[] RANK_LOOKUP;
+    static {
+        RANK_LOOKUP = new AddressType[31];
+        Arrays.fill(RANK_LOOKUP, OTHER);
+        for (AddressType a : values()) {
+            for (int r = a.minRank; r <= a.maxRank; r++) {
+                if (r >= 0 && r < RANK_LOOKUP.length) {
+                    RANK_LOOKUP[r] = a;
+                }
+            }
+        }
+    }
+
     private final String name;
     private final int minRank;
     private final int maxRank;
@@ -43,10 +56,7 @@ public enum AddressType {
      * @return The corresponding address type or Other if not covered.
      */
     public static AddressType fromRank(int addressRank) {
-        return Arrays.stream(AddressType.values())
-                .filter(a -> addressRank >= a.minRank && addressRank <= a.maxRank)
-                .findFirst()
-                .orElse(OTHER);
+        return (addressRank >= 0 && addressRank < RANK_LOOKUP.length) ? RANK_LOOKUP[addressRank] : OTHER;
     }
 
     public String getName() {
