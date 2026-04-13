@@ -8,7 +8,7 @@ import org.locationtech.jts.geom.Point;
 @NullMarked
 public class SearchRequestBase extends RequestBase {
     @Nullable private Point locationForBias;
-    private float scale = 0.2f;
+    private float scale = 0.4f;
     private int zoom = 12;
     private double biasRadius = zoomToRadius(zoom);
     @Nullable private Envelope bbox;
