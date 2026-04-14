@@ -39,7 +39,7 @@ public class QueryReranker implements Consumer<PhotonResult> {
                 if (localeName.charAt(query.length()) == ' ') {
                     return 0.9;
                 }
-                return Math.min(0.7, (double) query.length() / localeName.length());
+                return 0.7;
             }
         }
 
@@ -65,32 +65,29 @@ public class QueryReranker implements Consumer<PhotonResult> {
         var rematchWords = new ArrayList<String>();
         // first try to match the full words, keep address parts that do not match
         for (var term : resultTerms) {
-            var idx = todo.indexOf(" " + term);
+            var idx = todo.indexOf(" " + term + " ");
             if (idx >= 0) {
-                if (todo.charAt(idx + term.length() + 1) == ' ') {
-                    matches += term.length();
-                    todo.delete(idx + 1, idx + term.length() + 2);
-                    if (todo.toString().isBlank()) {
-                        return matches / query.length();
-                    }
-                    continue;
+                matches += term.length();
+                todo.delete(idx + 1, idx + term.length() + 2);
+                if (todo.toString().isBlank()) {
+                    return 0.7 * matches / query.length();
                 }
+                continue;
             }
             rematchWords.addAll(Arrays.asList(term.split(" ")));
         }
 
         // still query left to do, try prefix matching on remaining parts
-        matches += Arrays.stream(todo.toString().strip().split(" +"))
-                .mapToDouble(w -> {
-                    for (var term : rematchWords) {
-                        if (term.startsWith(w)) {
-                            return Double.min(0.7, (double) w.length() / term.length()) * w.length();
-                        }
-                    }
-                    return 0.0;
-                }).sum();
+        for (var w : todo.toString().strip().split(" +")) {
+            for (var term : rematchWords) {
+                if (term.startsWith(w)) {
+                    matches += 0.7 * w.length();
+                    break;
+                }
+            }
+        }
 
-        return matches / query.length();
+        return 0.7 * matches / query.length();
     }
 
     private String normalize(String in) {

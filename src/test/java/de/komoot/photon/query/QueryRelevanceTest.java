@@ -85,9 +85,9 @@ class QueryRelevanceTest extends ESBaseTester {
     void testShortNameMissSpellingOverPartialWithImportance() {
         setupDocs(
                 createDoc("place", "city", 1000, "name", "Oslo")
-                        .importance(0.7),
+                        .importance(1.0),
                 createDoc("place", "town", 1001, "name", "Olsokava")
-                        .importance(0.1)
+                        .importance(0.25)
         );
 
         assertSearchOsmIds("olso", 1000, 1001);
