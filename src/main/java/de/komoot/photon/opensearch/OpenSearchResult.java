@@ -76,18 +76,18 @@ public class OpenSearchResult implements PhotonResult {
             double dist = EARTH_RADIUS_KM * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
             if (dist < biasRadius) {
-                bias = 1.0;
+                bias = weight;
+                // adjust score with linear decay so closer objects are higher ranked
+                score += (1.0 - 0.1 * dist / biasRadius) * weight;
             } else {
-                bias = Math.exp((dist - biasRadius) * negDecayFactor);
+                bias = Math.exp((dist - biasRadius) * negDecayFactor) * weight;
+                score += 0.9 * bias;
             }
         }
-        bias *= weight;
 
         if (opensearchScore != null) {
             opensearchScore -= bias * osScoreFactor;
         }
-
-        score += bias;
     }
 
     public double getOpensearchScore() {
