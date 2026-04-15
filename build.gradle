@@ -32,6 +32,7 @@ repositories {
 }
 
 dependencies {
+    def opensearchVersion = project.properties['osVersion'] ?: '3.6.0.0'
     constraints {
         implementation('commons-io:commons-io') {
             version { require('[2.20.0,)') }
@@ -42,7 +43,7 @@ dependencies {
     implementation 'org.opensearch.client:opensearch-java:3.8.0'
     implementation 'org.apache.httpcomponents.client5:httpclient5:5.6'
 
-    implementation('org.codelibs.opensearch:opensearch-runner:3.6.0.0') {
+    implementation('org.codelibs.opensearch:opensearch-runner:' + opensearchVersion) {
         exclude(module: 'repository-url')
         exclude(module: 'reindex-client')
         exclude(module: 'rank-eval-client')
