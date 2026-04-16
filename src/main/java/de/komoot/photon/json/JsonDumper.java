@@ -226,6 +226,14 @@ public class JsonDumper implements Importer {
             return base;
         }
 
-        return String.format("%s:%s", base, inKey);
+        if ("housename".equals(inKey)) {
+            return "addr:housename";
+        }
+
+        if (dbProperties.getLanguages().contains(inKey)) {
+            return base + ":" + inKey;
+        }
+
+        return inKey + "_" + base;
     }
 }
