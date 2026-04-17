@@ -39,7 +39,7 @@ public class QueryReranker implements Consumer<PhotonResult> {
             }
             if (localeName.startsWith(query)) {
                 if (localeName.charAt(query.length()) == ' ') {
-                    return 0.9;
+                    return 0.8;
                 }
                 return 0.7;
             }
@@ -72,7 +72,7 @@ public class QueryReranker implements Consumer<PhotonResult> {
                 matches += term.length();
                 todo.delete(idx + 1, idx + term.length() + 2);
                 if (todo.toString().isBlank()) {
-                    return 0.7 * matches / query.length();
+                    return 0.9 * matches / query.length();
                 }
                 continue;
             }
@@ -89,7 +89,7 @@ public class QueryReranker implements Consumer<PhotonResult> {
             }
         }
 
-        return 0.7 * matches / query.length();
+        return 0.9 * matches / query.length();
     }
 
     private String normalize(String in) {
