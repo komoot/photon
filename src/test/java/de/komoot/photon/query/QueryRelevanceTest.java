@@ -130,8 +130,10 @@ class QueryRelevanceTest extends ESBaseTester {
     void testLocationPreferenceForEqualImportance(String placeName) {
         setupDocs(
                 createDoc("place", "hamlet", 1000, "name", "Ham")
+                        .importance(0.5)
                         .centroid(FACTORY.createPoint(new Coordinate(10, 10))),
                 createDoc("place", "hamlet", 1001, "name", placeName)
+                        .importance(0.5)
                         .centroid(FACTORY.createPoint(new Coordinate(-10, -10))));
 
         assertThat(search(createBiasedRequest()))

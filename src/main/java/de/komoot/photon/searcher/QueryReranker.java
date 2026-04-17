@@ -16,11 +16,13 @@ public class QueryReranker implements Consumer<PhotonResult> {
     private final String query;
     private final String language;
     private final boolean isMultiTermQuery;
+    private final boolean isFullQuery;
 
     public QueryReranker(String query, String language) {
         this.query = normalize(query);
         this.language = language;
         this.isMultiTermQuery = query.indexOf(',') >= 0;
+        this.isFullQuery = query.endsWith(" ");
     }
 
     @Override
@@ -39,9 +41,11 @@ public class QueryReranker implements Consumer<PhotonResult> {
             }
             if (localeName.startsWith(query)) {
                 if (localeName.charAt(query.length()) == ' ') {
+                    return 0.9;
+                }
+                if (!isFullQuery) {
                     return 0.8;
                 }
-                return 0.7;
             }
         }
 
@@ -72,7 +76,7 @@ public class QueryReranker implements Consumer<PhotonResult> {
                 matches += term.length();
                 todo.delete(idx + 1, idx + term.length() + 2);
                 if (todo.toString().isBlank()) {
-                    return 0.9 * matches / query.length();
+                    return 0.8 * matches / query.length();
                 }
                 continue;
             }
@@ -89,7 +93,7 @@ public class QueryReranker implements Consumer<PhotonResult> {
             }
         }
 
-        return 0.9 * matches / query.length();
+        return 0.8 * matches / query.length();
     }
 
     private String normalize(String in) {

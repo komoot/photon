@@ -24,10 +24,13 @@ public class SearchQueryBuilder extends BaseQueryBuilder {
             // Empty query is used for category-only searches (e.g. /api?include=osm.place.city),
             // see SimpleSearchRequestFactory.create
             innerQuery.query(q -> q.matchAll(ma -> ma));
-        } else if (!suggestAddresses && (query.length() < 4 || query.matches("^\\p{IsAlphabetic}+$"))) {
-            setupShortQuery(query, lenient);
         } else {
-            setupFullQuery(query, lenient, suggestAddresses);
+            var stripped = query.strip();
+            if (!suggestAddresses && (stripped.length() < 4 || stripped.matches("^\\p{IsAlphabetic}+$"))) {
+                setupShortQuery(stripped, lenient);
+            } else {
+                setupFullQuery(stripped, lenient, suggestAddresses);
+            }
         }
     }
 
