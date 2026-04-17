@@ -114,6 +114,8 @@ class JsonDumperTest {
                 .name("name:fi", "Spott")
                 .name("name:de", "Sport")
                 .name("odd_name", "Dot")
+                .name("old_name", "Past Spott")
+                .name("addr:housename", "House")
                 .add(jdbc);
 
         var results = readEntireDatabase();
@@ -133,7 +135,9 @@ class JsonDumperTest {
                 .doesNotContainKeys("parent_place_id", "postcode", "extra")
                 .containsEntry("name", Map.of(
                         "name", "Spot",
-                        "name:de", "Sport"));
+                        "name:de", "Sport",
+                        "old_name", "Past Spott",
+                        "addr:housename", "House"));
     }
 
     @Test
