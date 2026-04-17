@@ -37,7 +37,7 @@ public class SearchRequestBase extends RequestBase {
     }
 
     public double getDecayRadiusForBias() {
-        return biasRadius * (zoom - 4);
+        return Math.max(8, biasRadius * (zoom - 3));
     }
 
     public float getImportanceWeight() {
