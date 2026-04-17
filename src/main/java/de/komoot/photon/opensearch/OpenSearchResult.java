@@ -13,7 +13,7 @@ import java.util.Map;
 
 @NullMarked
 public class OpenSearchResult implements PhotonResult {
-    private static final double EARTH_RADIUS_KM = 2 * 6371;
+    private static final double EARTH_DIAMETER_KM = 2 * 6371;
 
     private static final List<String> KEYS_WITH_LOCALE = List.of(
             DocFields.NAME, DocFields.STREET, DocFields.LOCALITY,
@@ -73,7 +73,7 @@ public class OpenSearchResult implements PhotonResult {
             double sinXDist = Math.sin(Math.toRadians(pt.getX() - coordinates[0]) / 2);
             double sinYDist = Math.sin(Math.toRadians(pt.getY() - coordinates[1]) / 2);
             double a = sinYDist * sinYDist + cosY1 * cosY2 * sinXDist * sinXDist;
-            double dist = EARTH_RADIUS_KM * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            double dist = EARTH_DIAMETER_KM * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
             if (dist < biasRadius) {
                 bias = weight;
