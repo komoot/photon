@@ -93,6 +93,11 @@ public class QueryReranker implements Consumer<PhotonResult> {
             }
         }
 
+        if (matches == 0.0) {
+            // Not matching at all, still give it a slight boost when it is important.
+            return 0.5 * result.getImportance();
+        }
+
         return 0.8 * matches / query.length();
     }
 
