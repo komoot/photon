@@ -73,6 +73,8 @@ dependencies {
     implementation 'org.locationtech.jts.io:jts-io-common:1.20.0'
     implementation 'io.javalin:javalin:7.1.0'
     implementation 'io.javalin:javalin-micrometer:7.1.0'
+    implementation 'io.javalin.community.openapi:javalin-openapi-plugin:7.1.0'
+    annotationProcessor 'io.javalin.community.openapi:openapi-annotation-processor:7.1.0'
     implementation 'io.micrometer:micrometer-registry-prometheus:1.16.4'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.21.2'
 

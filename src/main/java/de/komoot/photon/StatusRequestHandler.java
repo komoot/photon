@@ -2,6 +2,10 @@ package de.komoot.photon;
 
 import io.javalin.http.Context;
 import io.javalin.http.Handler;
+import io.javalin.openapi.HttpMethod;
+import io.javalin.openapi.OpenApi;
+import io.javalin.openapi.OpenApiContent;
+import io.javalin.openapi.OpenApiResponse;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
@@ -24,6 +28,17 @@ public class StatusRequestHandler implements Handler {
         this.gitCommit = getManifestAttribute(manifestAttributes, "Git-Commit");
     }
 
+    @OpenApi(
+        path = "/status",
+        methods = {HttpMethod.GET},
+        summary = "Server status",
+        description = "Returns the current status of the Photon server including version and import date.",
+        tags = {"Status"},
+        responses = {
+            @OpenApiResponse(status = "200", description = "Server status information",
+                content = @OpenApiContent(type = "application/json"))
+        }
+    )
     @Override
     public void handle(Context context) throws IOException {
         DatabaseProperties dbProperties = server.loadFromDatabase();
