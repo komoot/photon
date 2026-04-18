@@ -46,7 +46,7 @@ description of the API, see the [API documentation](api-v1.md).
 
 To enable CORS (cross-site requests), use the switch **-cors-any** to allow
 requests from any origin or set the parameter **-cors-origin** to one or
-more specific origin. By default, CORS support is disabled.
+more specific origins. By default, CORS support is disabled.
 
 **-max-results** (for '/api' searches) and **-max-reverse-results**
 (for '/reverse' searches) can be used to change the maximum
@@ -111,7 +111,7 @@ before starting the import with the following command:
 
 Adapt the database name as required.
 
-### Importing from a Dump File
+### Importing from a dump file
 
 To load the photon database from a dump file (for example from the
 [export server](https://download1.graphhopper.com/public/)), use the
@@ -151,6 +151,12 @@ _Hint: if these filtering options are not sufficient, it is always possible
 to preprocess the json dump before feeding it to photon. Have a look at the
 [dump spec](json-dump-format-0.1.0.md) to learn about the format of this
 file._
+
+### Reverse-only mode
+
+By using the parameter `-reverse-only` the database can be set up, so that
+only the `/reverse` endpoint is available. Such a database is significantly
+smaller than a fully searchable photon database and also faster to import.
 
 ## Updating Data
 
