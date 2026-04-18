@@ -2,7 +2,6 @@ package de.komoot.photon;
 
 import de.komoot.photon.query.RequestBase;
 import de.komoot.photon.query.RequestFactory;
-import de.komoot.photon.searcher.PhotonResult;
 import de.komoot.photon.searcher.ResultFormatter;
 import de.komoot.photon.searcher.SearchHandler;
 import de.komoot.photon.searcher.StreetDupesRemover;
@@ -11,7 +10,6 @@ import io.javalin.http.Handler;
 import org.jspecify.annotations.NullMarked;
 
 import java.io.IOException;
-import java.util.Comparator;
 
 @NullMarked
 public class GenericSearchHandler<T extends RequestBase> implements Handler {
@@ -30,8 +28,7 @@ public class GenericSearchHandler<T extends RequestBase> implements Handler {
     public void handle(Context context) {
         final T searchRequest = requestFactory.create(context);
 
-        var results = requestHandler.search(searchRequest)
-                .sorted(Comparator.comparingDouble(PhotonResult::getScore).reversed());
+        var results = requestHandler.search(searchRequest);
 
         if (searchRequest.getDedupe()) {
             results = results.filter(new StreetDupesRemover());

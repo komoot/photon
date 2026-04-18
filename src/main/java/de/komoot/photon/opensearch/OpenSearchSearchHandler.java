@@ -11,10 +11,13 @@ import org.opensearch.client.opensearch._types.query_dsl.Query;
 import org.opensearch.client.opensearch.core.SearchResponse;
 
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.stream.Stream;
 
 @NullMarked
 public class OpenSearchSearchHandler implements SearchHandler<SimpleSearchRequest> {
+    private static final float IMPORTANCE_FACTOR = 30f;
+    private static final double NEG_DECAY_FACTOR = Math.log(0.5);
     private final OpenSearchClient client;
     private final String queryTimeout;
 
@@ -36,15 +39,29 @@ public class OpenSearchSearchHandler implements SearchHandler<SimpleSearchReques
             results = sendQuery(buildQuery(request, true), extLimit);
         }
 
-        var stream =  ResultScorer.hitsToResultStream(results, SearchQueryBuilder.IMPORTANCE_FACTOR)
-                .peek(r -> r.adjustScore(r.getImportance() * request.getScaleForBias()))
-                .map(r -> (PhotonResult) r);
+        var stream = ResultScorer.hitsToResultStream(results)
+                .peek(r -> r.adjustScoreByImportance(IMPORTANCE_FACTOR * request.getImportanceWeight()));
+
+        if (request.hasLocationBias()) {
+            double decay = NEG_DECAY_FACTOR / request.getDecayRadiusForBias();
+            stream = stream.peek(r -> {
+                assert request.getLocationForBias() != null;
+                r.adjustScoreByLocationBias(
+                        request.getLocationForBias(),
+                        IMPORTANCE_FACTOR,
+                        1 - request.getImportanceWeight(),
+                        request.getRadiusForBias(),
+                        decay
+                );
+            });
+        }
 
         if (request.getQuery() != null) {
             stream = stream.peek(new QueryReranker(request.getQuery(), request.getLanguage()));
         }
 
-        return stream;
+        return ResultScorer.adjustByNormalizedOpenSearchScore(stream)
+                .sorted(Comparator.comparingDouble(PhotonResult::getScore).reversed());
     }
 
     @Override
@@ -57,7 +74,18 @@ public class OpenSearchSearchHandler implements SearchHandler<SimpleSearchReques
         query.addCountryCodeFilter(request.getCountryCodes());
         query.addOsmTagFilter(request.getOsmTagFilters());
         query.addLayerFilter(request.getLayerFilters());
-        query.addLocationBias(request.getLocationForBias(), request.getScaleForBias(), request.getZoomForBias());
+        query.addImportance(IMPORTANCE_FACTOR * request.getImportanceWeight());
+
+        if (request.hasLocationBias()) {
+            assert request.getLocationForBias() != null;
+            query.addLocationBias(
+                    request.getLocationForBias(),
+                    IMPORTANCE_FACTOR * (1.0f - request.getImportanceWeight()),
+                    request.getRadiusForBias(),
+                    request.getDecayRadiusForBias());
+
+        }
+
         query.includeCategories(request.getIncludeCategories());
         query.excludeCategories(request.getExcludeCategories());
         query.addBoundingBox(request.getBbox());

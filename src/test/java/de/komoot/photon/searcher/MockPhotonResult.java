@@ -36,6 +36,11 @@ public class MockPhotonResult implements PhotonResult {
     }
 
     @Override
+    public double getImportance() {
+        return 0.5;
+    }
+
+    @Override
     @Nullable
     public String getLocalised(String key, String language, String... altNames) {
         return localized.get(key + "||" + language);

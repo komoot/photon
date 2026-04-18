@@ -58,7 +58,7 @@ class QueryRelevanceTest extends ESBaseTester {
     {
         SimpleSearchRequest result = new SimpleSearchRequest();
         result.setQuery("ham");
-        result.setLocationForBias(FACTORY.createPoint(new Coordinate(-9.9, -10)));
+        result.setLocationForBias(FACTORY.createPoint(new Coordinate(-9.9999, -10)));
         return result;
     }
 
@@ -85,9 +85,9 @@ class QueryRelevanceTest extends ESBaseTester {
     void testShortNameMissSpellingOverPartialWithImportance() {
         setupDocs(
                 createDoc("place", "city", 1000, "name", "Oslo")
-                        .importance(0.5),
+                        .importance(1.0),
                 createDoc("place", "town", 1001, "name", "Olsokava")
-                        .importance(0.1)
+                        .importance(0.25)
         );
 
         assertSearchOsmIds("olso", 1000, 1001);
@@ -120,7 +120,7 @@ class QueryRelevanceTest extends ESBaseTester {
                 createDoc("place", "hamlet", 1000, "name", "Ham")
                         .importance(0.1),
                 createDoc("place", "city", 1001, "name", "Hamburg")
-                        .importance(0.5));
+                        .importance(0.7));
 
         assertSearchOsmIds("ham", 1001, 1000);
     }
@@ -130,8 +130,10 @@ class QueryRelevanceTest extends ESBaseTester {
     void testLocationPreferenceForEqualImportance(String placeName) {
         setupDocs(
                 createDoc("place", "hamlet", 1000, "name", "Ham")
+                        .importance(0.5)
                         .centroid(FACTORY.createPoint(new Coordinate(10, 10))),
                 createDoc("place", "hamlet", 1001, "name", placeName)
+                        .importance(0.5)
                         .centroid(FACTORY.createPoint(new Coordinate(-10, -10))));
 
         assertThat(search(createBiasedRequest()))
@@ -143,7 +145,7 @@ class QueryRelevanceTest extends ESBaseTester {
     void testLocationPreferenceForHigherImportance() {
         setupDocs(
                 createDoc("place", "hamlet", 1000, "name", "Ham")
-                        .importance(0.8)
+                        .importance(0.85)
                         .centroid(FACTORY.createPoint(new Coordinate(10, 10))),
                 createDoc("place", "hamlet", 1001, "name", "Ham")
                         .importance(0.01)
@@ -159,7 +161,7 @@ class QueryRelevanceTest extends ESBaseTester {
     void testLocationPreferenceScaleForImportance(double scale) {
         setupDocs(
                 createDoc("place", "hamlet", 1000, "name", "Ham")
-                        .importance(1.0 - scale)
+                        .importance(1.05 - scale)
                         .centroid(FACTORY.createPoint(new Coordinate(10, 10))),
                 createDoc("place", "hamlet", 1001, "name", "Ham")
                         .importance(0.01)

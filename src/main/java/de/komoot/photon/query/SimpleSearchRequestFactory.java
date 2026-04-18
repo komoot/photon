@@ -30,7 +30,7 @@ public class SimpleSearchRequestFactory extends SearchRequestFactoryBase impleme
                 throw new BadRequestException(400, "q parameter is required when no include categories are specified");
             }
         } else {
-            request.setQuery(query.strip());
+            request.setQuery(query);
         }
 
         return request;

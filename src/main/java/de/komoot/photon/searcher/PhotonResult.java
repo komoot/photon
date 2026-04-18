@@ -29,6 +29,8 @@ public interface PhotonResult {
 
     double getScore();
 
+    double getImportance();
+
     void adjustScore(double difference);
 
     Map<String, Object> getRawData();

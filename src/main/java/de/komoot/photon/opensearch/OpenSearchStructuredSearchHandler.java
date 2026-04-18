@@ -4,12 +4,14 @@ import de.komoot.photon.searcher.PhotonResult;
 import de.komoot.photon.query.StructuredSearchRequest;
 import de.komoot.photon.searcher.SearchHandler;
 import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import org.opensearch.client.opensearch.OpenSearchClient;
 import org.opensearch.client.opensearch._types.SearchType;
 import org.opensearch.client.opensearch._types.query_dsl.Query;
 import org.opensearch.client.opensearch.core.SearchResponse;
 
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.stream.Stream;
 
 /**
@@ -17,6 +19,8 @@ import java.util.stream.Stream;
  */
 @NullMarked
 public class OpenSearchStructuredSearchHandler implements SearchHandler<StructuredSearchRequest> {
+    private static final float LOCATION_BIAS_FACTOR = 30f;
+    private static final double NEG_DECAY_FACTOR = Math.log(0.5);
     private final OpenSearchClient client;
     private final String queryTimeout;
 
@@ -49,20 +53,46 @@ public class OpenSearchStructuredSearchHandler implements SearchHandler<Structur
             }
         }
 
-        return ResultScorer.hitsToResultStream(results, 0)
-                .map(r -> r);
+        var stream = ResultScorer.hitsToResultStream(results);
+
+        if (photonRequest.hasLocationBias()) {
+            double decay = NEG_DECAY_FACTOR / photonRequest.getDecayRadiusForBias();
+            stream = stream.peek(r -> {
+                assert photonRequest.getLocationForBias() != null;
+                r.adjustScoreByLocationBias(
+                        photonRequest.getLocationForBias(),
+                        LOCATION_BIAS_FACTOR,
+                        1 - photonRequest.getImportanceWeight(),
+                        photonRequest.getRadiusForBias(),
+                        decay
+                );
+            });
+        }
+
+        return ResultScorer.adjustByNormalizedOpenSearchScore(stream)
+                .sorted(Comparator.comparingDouble(PhotonResult::getScore).reversed());
     }
 
     @Override
-    public String dumpQuery(StructuredSearchRequest searchRequest) {
-        return "{}";
+    public @Nullable String dumpQuery(StructuredSearchRequest searchRequest) {
+        return null;
     }
 
     public Query buildQuery(StructuredSearchRequest photonRequest, boolean lenient) {
         final var query = new SearchQueryBuilder(photonRequest, lenient);
         query.addOsmTagFilter(photonRequest.getOsmTagFilters());
         query.addLayerFilter(photonRequest.getLayerFilters());
-        query.addLocationBias(photonRequest.getLocationForBias(), photonRequest.getScaleForBias(), photonRequest.getZoomForBias());
+
+        if (photonRequest.hasLocationBias()) {
+            assert photonRequest.getLocationForBias() != null;
+            query.addLocationBias(
+                    photonRequest.getLocationForBias(),
+                    LOCATION_BIAS_FACTOR * (1.0f - photonRequest.getImportanceWeight()),
+                    photonRequest.getRadiusForBias(),
+                    photonRequest.getDecayRadiusForBias());
+
+        }
+
         query.includeCategories(photonRequest.getIncludeCategories());
         query.excludeCategories(photonRequest.getExcludeCategories());
         query.addBoundingBox(photonRequest.getBbox());

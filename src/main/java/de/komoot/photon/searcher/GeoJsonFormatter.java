@@ -110,16 +110,16 @@ public class GeoJsonFormatter implements ResultFormatter {
 
             if (withDebugInfo || queryDebugInfo != null) {
                 gen.writeObjectFieldStart(GeoJsonFields.GEOJSON_KEY_PROPERTIES);
-                if (queryDebugInfo != null) {
-                    gen.writeFieldName("debug");
-                    gen.writeRawValue(queryDebugInfo);
-                }
                 if (withDebugInfo) {
                     gen.writeArrayFieldStart("raw_data");
                     for (var res : results) {
                         gen.writePOJO(res.getRawData());
                     }
                     gen.writeEndArray();
+                }
+                if (queryDebugInfo != null) {
+                    gen.writeFieldName("debug");
+                    gen.writeRawValue(queryDebugInfo);
                 }
                 gen.writeEndObject();
             }

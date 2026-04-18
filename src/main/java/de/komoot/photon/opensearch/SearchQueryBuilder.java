@@ -15,27 +15,23 @@ import java.util.stream.Collectors;
 
 @NullMarked
 public class SearchQueryBuilder extends BaseQueryBuilder {
-    public static final float IMPORTANCE_FACTOR = 30f;
-
-    public FunctionScoreQuery.Builder innerQuery = new FunctionScoreQuery.Builder();
+    public FunctionScoreQuery.Builder innerQuery = new FunctionScoreQuery.Builder()
+            .scoreMode(FunctionScoreMode.Sum)
+            .boostMode(FunctionBoostMode.Sum);
 
     public SearchQueryBuilder(@Nullable String query, boolean lenient, boolean suggestAddresses) {
         if (query == null) {
             // Empty query is used for category-only searches (e.g. /api?include=osm.place.city),
             // see SimpleSearchRequestFactory.create
             innerQuery.query(q -> q.matchAll(ma -> ma));
-        } else if (!suggestAddresses && (query.length() < 4 || query.matches("^\\p{IsAlphabetic}+$"))) {
-            setupShortQuery(query, lenient);
         } else {
-            setupFullQuery(query, lenient, suggestAddresses);
+            var stripped = query.strip();
+            if (!suggestAddresses && (stripped.length() < 4 || stripped.matches("^\\p{IsAlphabetic}+$"))) {
+                setupShortQuery(stripped, lenient);
+            } else {
+                setupFullQuery(stripped, lenient, suggestAddresses);
+            }
         }
-
-        innerQuery.functions(fvf -> fvf.fieldValueFactor(fvfb -> fvfb
-                        .field(DocFields.IMPORTANCE)
-                        .factor(IMPORTANCE_FACTOR)
-                        .missing(0.00001)))
-                .scoreMode(FunctionScoreMode.Sum)
-                .boostMode(FunctionBoostMode.Sum);
     }
 
     public void setupShortQuery(String query, boolean lenient) {
@@ -202,23 +198,23 @@ public class SearchQueryBuilder extends BaseQueryBuilder {
         }
     }
 
-    public void addLocationBias(@Nullable Point point, float scale, int zoom) {
-        if (point == null || zoom < 4) return;
+    public void addImportance(float weight) {
+        innerQuery.functions(fvf -> fvf.fieldValueFactor(fvfb -> fvfb
+                        .field(DocFields.IMPORTANCE)
+                        .factor(weight)
+                        .missing(0.00001)));
+    }
 
-        if (zoom > 18) {
-            zoom = 18;
-        }
-        float radius = (1 << (18 - zoom)) * 0.25f;
-
+    public void addLocationBias(Point point, float weight, double radius, double decayRadius) {
         innerQuery.functions(fn1 -> fn1
-                .weight(IMPORTANCE_FACTOR * 0.95f * (1.0f - scale))
+                .weight(weight)
                 .exp(ex -> ex
                         .field(DocFields.COORDINATE)
                         .placement(p -> p
                                 .origin(JsonData.of(Map.of("lon", point.getX(), "lat", point.getY())))
-                                .decay(0.8)
-                                .offset(JsonData.of(radius / 10 + "km"))
-                                .scale(JsonData.of(radius + "km")))));
+                                .decay(0.5)
+                                .offset(JsonData.of(radius + "km"))
+                                .scale(JsonData.of(decayRadius + "km")))));
     }
 
     public void addBoundingBox(@Nullable Envelope bbox) {
