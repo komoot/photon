@@ -193,8 +193,12 @@ public class Server {
     }
 
     public Importer createImporter(DatabaseProperties dbProperties) {
+        return createImporter(dbProperties, 1);
+    }
+
+    public Importer createImporter(DatabaseProperties dbProperties, int maxConcurrentRequests) {
         registerPhotonDocSerializer(dbProperties);
-        return new de.komoot.photon.opensearch.Importer(client);
+        return new de.komoot.photon.opensearch.Importer(client, maxConcurrentRequests);
     }
 
     public Updater createUpdater(DatabaseProperties dbProperties) {

@@ -30,6 +30,11 @@ public class ImportThread {
     private final long startMillis;
     private volatile boolean exceptionInThread = false;
 
+    /** True after finish() if any error occurred during the import. */
+    public boolean hasErrors() {
+        return exceptionInThread;
+    }
+
     public ImportThread(Importer importer) {
         this.importer = importer;
         this.thread = new Thread(new ImportRunnable());
@@ -88,6 +93,14 @@ public class ImportThread {
                 Thread.currentThread().interrupt();
             }
         }
+        // Defensive: the consumer thread may have died before processing FINAL_DOCUMENT
+        // (uncaught exception in importer.add). Importer.finish() is idempotent.
+        try {
+            importer.finish();
+        } catch (Throwable t) {
+            LOGGER.error("Importer finish failed.", t);
+            exceptionInThread = true;
+        }
         if (!exceptionInThread) {
             LOGGER.info("Finished import of {} photon documents. (Total processing time: {}s)",
                     counter.longValue(), (System.currentTimeMillis() - startMillis) / 1000);
@@ -111,7 +124,8 @@ public class ImportThread {
                 }
                 for (Iterable<PhotonDoc> docs : batch) {
                     if (docs == FINAL_DOCUMENT) {
-                        importer.finish();
+                        // importer.finish() is invoked from ImportThread.finish() on the
+                        // calling thread, so it runs even if this consumer thread dies.
                         return;
                     }
                     importer.add(docs);
