@@ -7,6 +7,7 @@ import de.komoot.photon.json.JsonDumper;
 import de.komoot.photon.json.JsonReader;
 import de.komoot.photon.metrics.MetricsConfig;
 import de.komoot.photon.nominatim.ImportThread;
+import io.javalin.openapi.plugin.OpenApiPlugin;
 import de.komoot.photon.nominatim.NominatimImporter;
 import de.komoot.photon.nominatim.NominatimUpdater;
 import de.komoot.photon.query.*;
@@ -334,6 +335,16 @@ public class App {
         photonServer = Javalin.create(config -> {
             config.router.ignoreTrailingSlashes = true;
             config.http.defaultContentType = ContentType.APPLICATION_JSON.toString();
+            config.registerPlugin(new OpenApiPlugin(openApiConfig -> openApiConfig
+                    .withDocumentationPath("/openapi")
+                    .withDefinitionConfiguration((version, builder) -> builder
+                            .info(info -> info
+                                    .title("Photon Geocoder API")
+                                    .version("1.1.0")
+                                    .description("Forward and reverse geocoder built on OpenStreetMap data.")
+                            )
+                    )
+            ));
             if (metrics.isEnabled()) {
                 config.registerPlugin(metrics.getPlugin());
             }
@@ -400,33 +411,33 @@ public class App {
             config.routes.get("/status", new StatusRequestHandler(server));
 
             if (!dbProperties.getReverseOnly()) {
-                config.routes.get("/api", new GenericSearchHandler<>(
+                config.routes.get("/api", new ApiSearchHandler(new GenericSearchHandler<>(
                         new SimpleSearchRequestFactory(
                                 dbProperties.getLanguages(),
                                 args.getDefaultLanguage(),
                                 args.getMaxResults(),
                                 dbProperties.getSupportGeometries()),
                         server.createSearchHandler(args.getQueryTimeout()),
-                        formatter));
+                        formatter)));
 
-                config.routes.get("/structured", new GenericSearchHandler<>(
+                config.routes.get("/structured", new StructuredSearchHandler(new GenericSearchHandler<>(
                         new StructuredSearchRequestFactory(
                                 dbProperties.getLanguages(),
                                 args.getDefaultLanguage(),
                                 args.getMaxResults(),
                                 dbProperties.getSupportGeometries()),
                         server.createStructuredSearchHandler(args.getQueryTimeout()),
-                        formatter));
+                        formatter)));
             }
 
-            config.routes.get("/reverse", new GenericSearchHandler<>(
+            config.routes.get("/reverse", new ReverseSearchHandler(new GenericSearchHandler<>(
                     new ReverseRequestFactory(
                             dbProperties.getLanguages(),
                             args.getDefaultLanguage(),
                             args.getMaxReverseResults(),
                             dbProperties.getSupportGeometries()),
                     server.createReverseHandler(args.getQueryTimeout()),
-                    formatter));
+                    formatter)));
 
             if (updater != null) {
                 // setup update API
