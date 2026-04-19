@@ -340,7 +340,7 @@ public class App {
                     .withDefinitionConfiguration((version, builder) -> builder
                             .info(info -> info
                                     .title("Photon Geocoder API")
-                                    .version("1.0.0")
+                                    .version("1.1.0")
                                     .description("Forward and reverse geocoder built on OpenStreetMap data.")
                             )
                     )

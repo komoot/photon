@@ -36,12 +36,12 @@ where results should be preferred.
 There are two optional parameters to influence the location bias. **zoom**
 describes the radius around the center to focus on. This is a number that
 should correspond roughly to the map zoom parameter of a corresponding map.
-The default zoom is 16.
+The default zoom is 12.
 
 The **location_bias_scale** describes how much the prominence of a result should
 still be taken into account. Sensible values go from 0.0 (ignore prominence
 almost completely) to 1.0 (prominence has approximately the same influence).
-The default is 0.2.
+The default is 0.4.
 
 #### Filter results by bounding box
 

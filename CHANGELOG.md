@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.1.0] - 2026-04-18
+
+* add special reverse-only mode creating a smaller DB with on search capability
+* allow arbitrary json data types in extra fields
+* improve handling of postcodes in deduplication
+* add countrycode filter to search (thanks @tsamaya)
+* add rescoring of the OpenSearch result set (adding rematching against query)
+* add postcodes from Nominatim's location_postcodes table to imported data
+* various small performance optimisations (thanks @otbuz, @henrik242)
+* fix dumping of alternative names like alt_name
+* improve scoring of location bias
+
+## [1.0.1] - 2026-03-09
+
+* tolerate adding new properties in future versions
+
 ## [1.0.0] - 2026-02-09
 
 * remove ElasticSearch backend

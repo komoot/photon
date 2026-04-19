@@ -3,6 +3,7 @@ photon_data/
 dependency-reduced-pom.xml
 .gradle/
 build
+bin
 
 .idea/
 *.iml
