@@ -1,5 +1,6 @@
 package de.komoot.photon;
 
+import de.komoot.photon.openapi.PhotonFeatureCollection;
 import de.komoot.photon.query.ReverseRequest;
 import io.javalin.http.Context;
 import io.javalin.http.Handler;
@@ -45,7 +46,7 @@ public class ReverseSearchHandler implements Handler {
         },
         responses = {
             @OpenApiResponse(status = "200", description = "GeoJSON FeatureCollection with reverse geocoding results.",
-                content = @OpenApiContent(type = "application/json")),
+                content = @OpenApiContent(from = PhotonFeatureCollection.class, type = "application/json")),
             @OpenApiResponse(status = "400", description = "Bad request — invalid or missing query parameters.")
         }
     )

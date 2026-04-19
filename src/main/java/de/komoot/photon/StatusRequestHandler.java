@@ -1,5 +1,6 @@
 package de.komoot.photon;
 
+import de.komoot.photon.openapi.PhotonStatus;
 import io.javalin.http.Context;
 import io.javalin.http.Handler;
 import io.javalin.openapi.HttpMethod;
@@ -36,7 +37,7 @@ public class StatusRequestHandler implements Handler {
         tags = {"Status"},
         responses = {
             @OpenApiResponse(status = "200", description = "Server status information",
-                content = @OpenApiContent(type = "application/json"))
+                content = @OpenApiContent(from = PhotonStatus.class, type = "application/json"))
         }
     )
     @Override
