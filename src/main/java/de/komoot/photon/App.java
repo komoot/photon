@@ -154,10 +154,11 @@ public class App {
             return;
         }
 
-        final var importThread = new ImportThread(esServer.createImporter(dbProperties));
+        final int maxConcurrentBulks = Math.max(1, cli.getGeneralConfig().getThreads());
+        final var importThread = new ImportThread(esServer.createImporter(dbProperties, maxConcurrentBulks));
 
+        Date importDate = null;
         try {
-            Date importDate;
             if (cli.getImportFileConfig().isEnabled()) {
                 importDate = importFromFile(cli.getImportFileConfig(), importFilterConfig, importThread);
             } else {
@@ -168,13 +169,23 @@ public class App {
                         importThread,
                         dbProperties);
             }
-            dbProperties.setImportDate(importDate);
-            esServer.saveToDatabase(dbProperties);
         } catch (IOException ex) {
             LOGGER.error("IO error while importing", ex);
             return;
         } finally {
             importThread.finish();
+        }
+
+        if (importThread.hasErrors()) {
+            return;
+        }
+
+        dbProperties.setImportDate(importDate);
+        try {
+            esServer.saveToDatabase(dbProperties);
+        } catch (IOException ex) {
+            LOGGER.error("Failed to save database properties after import", ex);
+            return;
         }
 
         LOGGER.info("Database has been successfully set up with the following properties:\n{}", dbProperties);

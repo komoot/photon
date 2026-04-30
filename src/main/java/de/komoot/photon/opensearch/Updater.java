@@ -87,13 +87,11 @@ public class Updater implements de.komoot.photon.Updater {
     private void updateDocuments() {
         if (todoDocuments > 0) {
             try {
-                var response = client.bulk(bulkRequest.build());
-
-                if (response.errors()) {
-                    LOGGER.error("Errors during bulk update.");
-                }
-            } catch (IOException e) {
-                LOGGER.error("IO error during bulk update", e);
+                BulkRetryHelper.sendWithRetry(client, bulkRequest.build());
+            } catch (RuntimeException e) {
+                // Preserves the pre-existing silent-continue behaviour on hard failure;
+                // adds 429/circuit-breaker retry resilience via BulkRetryHelper.
+                LOGGER.error("Errors during bulk update.", e);
             }
 
             bulkRequest = new BulkRequest.Builder();
