@@ -2,8 +2,8 @@ plugins {
   id 'com.gradleup.shadow' version '9.4.1'
   id 'application'
   id 'jacoco'
-  id 'org.sonarqube' version '7.2.3.7755'
-  id 'com.github.ben-manes.versions' version '0.53.0'
+  id 'org.sonarqube' version '7.3.0.8198'
+  id 'com.github.ben-manes.versions' version '0.54.0'
 }
 
 group = 'de.komoot.photon'
@@ -41,7 +41,7 @@ dependencies {
     }
 
     implementation 'org.opensearch.client:opensearch-java:3.8.0'
-    implementation 'org.apache.httpcomponents.client5:httpclient5:5.6'
+    implementation 'org.apache.httpcomponents.client5:httpclient5:5.6.1'
 
     implementation('org.codelibs.opensearch:opensearch-runner:' + opensearchVersion) {
         exclude(module: 'repository-url')
@@ -71,10 +71,10 @@ dependencies {
     }
     implementation 'org.locationtech.jts:jts-core:1.20.0'
     implementation 'org.locationtech.jts.io:jts-io-common:1.20.0'
-    implementation 'io.javalin:javalin:7.1.0'
-    implementation 'io.javalin:javalin-micrometer:7.1.0'
+    implementation 'io.javalin:javalin:7.2.0'
+    implementation 'io.javalin:javalin-micrometer:7.2.0'
     implementation 'io.micrometer:micrometer-registry-prometheus:1.16.5'
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.21.2'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.21.3'
 
     testImplementation 'com.h2database:h2:2.4.240'
     testImplementation 'org.junit.jupiter:junit-jupiter:6.0.3'
