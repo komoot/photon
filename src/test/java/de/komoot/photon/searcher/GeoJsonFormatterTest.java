@@ -58,6 +58,49 @@ class GeoJsonFormatterTest {
                 .node("geometry").isObject()
                 .containsEntry("type", "MultiPolygon");
     }
+
+    @Test
+    void testFallbackLanguageForLocalisedFields() throws IOException {
+        GeoJsonFormatter formatter = new GeoJsonFormatter();
+
+        final var result = new MockPhotonResult()
+                .putLocalized(DocFields.NAME, "default", "Αθήνα")
+                .putLocalized(DocFields.NAME, "en", "Athens")
+                .putLocalized(DocFields.COUNTRY, "default", "Ελλάδα")
+                .putLocalized(DocFields.COUNTRY, "en", "Greece")
+                .put(DocFields.OSM_KEY, "place")
+                .put(DocFields.OSM_VALUE, "city")
+                .putGeometry("{\"type\":\"Point\", \"coordinates\": [42, 21]}");
+
+        String geojsonString = formatter.convert(List.of(result), "nl", "en", false, false, null);
+
+        assertThatJson(geojsonString).isObject()
+                .node("features").isArray().hasSize(1)
+                .element(0).isObject()
+                .node("properties").isObject()
+                .containsEntry("name", "Athens")
+                .containsEntry("country", "Greece");
+    }
+
+    @Test
+    void testLocalLanguageFallbackWhenFallbackLanguageIsUnset() throws IOException {
+        GeoJsonFormatter formatter = new GeoJsonFormatter();
+
+        final var result = new MockPhotonResult()
+                .putLocalized(DocFields.NAME, "default", "Αθήνα")
+                .putLocalized(DocFields.NAME, "en", "Athens")
+                .put(DocFields.OSM_KEY, "place")
+                .put(DocFields.OSM_VALUE, "city")
+                .putGeometry("{\"type\":\"Point\", \"coordinates\": [42, 21]}");
+
+        String geojsonString = formatter.convert(List.of(result), "nl", false, false, null);
+
+        assertThatJson(geojsonString).isObject()
+                .node("features").isArray().hasSize(1)
+                .element(0).isObject()
+                .node("properties").isObject()
+                .containsEntry("name", "Αθήνα");
+    }
     
     private PhotonResult createDummyPointResult(String postCode, String name, String osmKey,
                                                 String osmValue) {
