@@ -61,6 +61,13 @@ public class ApiServerConfig {
             """)
     private String defaultLanguage = "default";
 
+    @Parameter(names = "-fallback-language", category = GROUP, placeholder = "LANG", description = """
+            Language to return results in when no translation for the requested language exists;
+            either one of the languages configured on import or 'default' to return the local
+            language
+            """)
+    @Nullable private String fallbackLanguage = null;
+
     @Parameter(names = "-synonym-file", category = GROUP, placeholder = "FILE", description = """
             File with synonym and classification terms
             """)
@@ -105,6 +112,10 @@ public class ApiServerConfig {
 
     public String getDefaultLanguage() {
         return this.defaultLanguage;
+    }
+
+    @Nullable public String getFallbackLanguage() {
+        return this.fallbackLanguage;
     }
 
     @Nullable public String getSynonymFile() {

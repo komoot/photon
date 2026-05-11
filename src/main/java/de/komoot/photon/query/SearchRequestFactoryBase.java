@@ -2,6 +2,7 @@ package de.komoot.photon.query;
 
 import io.javalin.http.Context;
 import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import org.locationtech.jts.geom.Envelope;
 
 import java.util.Set;
@@ -17,6 +18,11 @@ public class SearchRequestFactoryBase extends RequestFactoryBase {
 
     protected SearchRequestFactoryBase(Set<String> supportedLanguages, String defaultLanguage, int maxResults, boolean supportGeometries) {
         super(supportedLanguages, defaultLanguage, maxResults, supportGeometries);
+    }
+
+    protected SearchRequestFactoryBase(Set<String> supportedLanguages, String defaultLanguage, @Nullable String fallbackLanguage,
+                                       int maxResults, boolean supportGeometries) {
+        super(supportedLanguages, defaultLanguage, fallbackLanguage, maxResults, supportGeometries);
     }
 
     protected void completeSearchRequest(SearchRequestBase request, Context context) {

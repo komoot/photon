@@ -325,6 +325,7 @@ public class App {
     private static void startApi(ApiServerConfig args, Server server, @Nullable NominatimUpdater updater) throws IOException {
         // Get database properties and ensure that the version is compatible.
         DatabaseProperties dbProperties = server.loadFromDatabase();
+        validateFallbackLanguage(dbProperties, args.getFallbackLanguage());
 
         // Update the index settings in case there are any changes.
         server.updateIndexSettings(args.getSynonymFile());
@@ -415,6 +416,7 @@ public class App {
                         new SimpleSearchRequestFactory(
                                 dbProperties.getLanguages(),
                                 args.getDefaultLanguage(),
+                                args.getFallbackLanguage(),
                                 args.getMaxResults(),
                                 dbProperties.getSupportGeometries()),
                         server.createSearchHandler(args.getQueryTimeout()),
@@ -424,6 +426,7 @@ public class App {
                         new StructuredSearchRequestFactory(
                                 dbProperties.getLanguages(),
                                 args.getDefaultLanguage(),
+                                args.getFallbackLanguage(),
                                 args.getMaxResults(),
                                 dbProperties.getSupportGeometries()),
                         server.createStructuredSearchHandler(args.getQueryTimeout()),
@@ -434,6 +437,7 @@ public class App {
                     new ReverseRequestFactory(
                             dbProperties.getLanguages(),
                             args.getDefaultLanguage(),
+                            args.getFallbackLanguage(),
                             args.getMaxReverseResults(),
                             dbProperties.getSupportGeometries()),
                     server.createReverseHandler(args.getQueryTimeout()),
@@ -468,5 +472,16 @@ public class App {
         }));
 
         photonServer.start(args.getIp(), args.getPort());
+    }
+
+    static void validateFallbackLanguage(DatabaseProperties dbProperties, @Nullable String fallbackLanguage) {
+        if (fallbackLanguage == null
+                || "default".equals(fallbackLanguage)
+                || dbProperties.getLanguages().contains(fallbackLanguage)) {
+            return;
+        }
+
+        throw new UsageException("Fallback language is not supported. Supported are: default, "
+                + String.join(", ", dbProperties.getLanguages()));
     }
 }

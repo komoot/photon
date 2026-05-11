@@ -9,6 +9,7 @@ import java.util.*;
 @NullMarked
 public class RequestBase {
     private String language = "default";
+    @Nullable private String fallbackLanguage = null;
     private int limit = 15;
     private boolean debug = false;
     private boolean dedupe = true;
@@ -21,6 +22,11 @@ public class RequestBase {
 
     public String getLanguage() {
         return language;
+    }
+
+    @Nullable
+    public String getFallbackLanguage() {
+        return fallbackLanguage;
     }
 
     public int getLimit() {
@@ -57,6 +63,10 @@ public class RequestBase {
 
     public void setLanguage(String language) {
         this.language = language;
+    }
+
+    public void setFallbackLanguage(@Nullable String fallbackLanguage) {
+        this.fallbackLanguage = fallbackLanguage;
     }
 
     public void setLimit(@Nullable Integer limit, int maxLimit) {

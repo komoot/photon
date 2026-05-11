@@ -108,12 +108,24 @@ public class OpenSearchResult implements PhotonResult {
     @Override
     @Nullable
     public String getLocalised(String key, String language, String... altNames) {
+        return getLocalisedWithFallback(key, language, null, altNames);
+    }
+
+    @Override
+    @Nullable
+    public String getLocalisedWithFallback(String key, String language, @Nullable String fallbackLanguage, String... altNames) {
         final var map = localeTags.get(key);
         if (map == null) return null;
 
         String name = map.get(language);
         if (name != null) {
             return name;
+        }
+        if (fallbackLanguage != null && !fallbackLanguage.equals(language)) {
+            name = map.get(fallbackLanguage);
+            if (name != null) {
+                return name;
+            }
         }
         name = map.get("default");
         if (name != null) {

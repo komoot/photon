@@ -45,6 +45,7 @@ public class GenericSearchHandler<T extends RequestBase> implements Handler {
             context.status(200)
                     .result(formatter.convert(
                             results.toList(), searchRequest.getLanguage(),
+                            searchRequest.getFallbackLanguage(),
                             searchRequest.getReturnGeometry(),
                             searchRequest.getDebug(), debugInfo));
         } catch (IOException e) {

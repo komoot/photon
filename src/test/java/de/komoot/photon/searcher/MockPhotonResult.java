@@ -43,7 +43,21 @@ public class MockPhotonResult implements PhotonResult {
     @Override
     @Nullable
     public String getLocalised(String key, String language, String... altNames) {
-        return localized.get(key + "||" + language);
+        return getLocalisedWithFallback(key, language, null, altNames);
+    }
+
+    @Override
+    @Nullable
+    public String getLocalisedWithFallback(String key, String language, @Nullable String fallbackLanguage, String... altNames) {
+        var name = localized.get(key + "||" + language);
+        if (name != null) {
+            return name;
+        }
+        if (fallbackLanguage != null && !fallbackLanguage.equals(language)) {
+            name = localized.get(key + "||" + fallbackLanguage);
+            return name;
+        }
+        return null;
     }
 
     @Override

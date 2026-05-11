@@ -23,18 +23,26 @@ public class RequestFactoryBase {
 
     private final Set<String> supportedLanguages;
     private final String defaultLangauge;
+    @Nullable private final String fallbackLanguage;
     private final int maxResults;
     private final boolean supportGeometries;
 
     protected RequestFactoryBase(Set<String> supportedLanguages, String defaultLanguage, int maxResults, boolean supportGeometries) {
+        this(supportedLanguages, defaultLanguage, null, maxResults, supportGeometries);
+    }
+
+    protected RequestFactoryBase(Set<String> supportedLanguages, String defaultLanguage, @Nullable String fallbackLanguage,
+                                 int maxResults, boolean supportGeometries) {
         this.supportedLanguages = supportedLanguages;
         this.defaultLangauge = defaultLanguage;
+        this.fallbackLanguage = fallbackLanguage;
         this.maxResults = maxResults;
         this.supportGeometries = supportGeometries;
     }
 
     protected void completeBaseRequest(RequestBase request, Context context) {
         request.setLanguage(parseLanguage(context));
+        request.setFallbackLanguage(fallbackLanguage);
 
         request.setLimit(context.queryParamAsClass("limit", Integer.class)
                                 .getOrNull(), maxResults);
