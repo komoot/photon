@@ -55,7 +55,19 @@ public class MockPhotonResult implements PhotonResult {
         }
         if (fallbackLanguage != null && !fallbackLanguage.equals(language)) {
             name = localized.get(key + "||" + fallbackLanguage);
+            if (name != null) {
+                return name;
+            }
+        }
+        name = localized.get(key + "||default");
+        if (name != null) {
             return name;
+        }
+        for (var nameKey : altNames) {
+            name = localized.get(key + "||" + nameKey);
+            if (name != null) {
+                return name;
+            }
         }
         return null;
     }

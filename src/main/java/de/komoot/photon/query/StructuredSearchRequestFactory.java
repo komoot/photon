@@ -2,7 +2,6 @@ package de.komoot.photon.query;
 
 import io.javalin.http.Context;
 import org.jspecify.annotations.NullMarked;
-import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 import java.util.Set;
@@ -21,11 +20,6 @@ public class StructuredSearchRequestFactory extends SearchRequestFactoryBase imp
 
     public StructuredSearchRequestFactory(Set<String> supportedLanguages, String defaultLanguage, int maxResults, boolean supportGeometries) {
         super(supportedLanguages, defaultLanguage, maxResults, supportGeometries);
-    }
-
-    public StructuredSearchRequestFactory(Set<String> supportedLanguages, String defaultLanguage, @Nullable String fallbackLanguage,
-                                          int maxResults, boolean supportGeometries) {
-        super(supportedLanguages, defaultLanguage, fallbackLanguage, maxResults, supportGeometries);
     }
 
     public StructuredSearchRequest create(Context context) {

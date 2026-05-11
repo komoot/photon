@@ -2,7 +2,6 @@ package de.komoot.photon.query;
 
 import io.javalin.http.Context;
 import org.jspecify.annotations.NullMarked;
-import org.jspecify.annotations.Nullable;
 
 import java.util.Objects;
 import java.util.Set;
@@ -18,11 +17,6 @@ public class ReverseRequestFactory extends RequestFactoryBase implements Request
 
     public ReverseRequestFactory(Set<String> supportedLanguages, String defaultLanguage, int maxResults, boolean supportGeometries) {
         super(supportedLanguages, defaultLanguage, maxResults, supportGeometries);
-    }
-
-    public ReverseRequestFactory(Set<String> supportedLanguages, String defaultLanguage, @Nullable String fallbackLanguage,
-                                 int maxResults, boolean supportGeometries) {
-        super(supportedLanguages, defaultLanguage, fallbackLanguage, maxResults, supportGeometries);
     }
 
     public ReverseRequest create(Context context) {

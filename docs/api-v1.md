@@ -118,8 +118,8 @@ http://localhost:2322/api?q=berlin&lang=it
 
 The **lang** parameter defines in which language results should be returned
 if possible. Only one language can be given here. If no translation for the
-language exists and the server was started with **-fallback-language**, then
-the server will try that fallback language before returning the local language.
+language exists, the server will try the language configured via
+**-default-language** before returning the local language.
 When the parameter is omitted the
 ['accept-language' HTTP header](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Language)
 will be used (browsers set this by default).

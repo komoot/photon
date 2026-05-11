@@ -114,32 +114,25 @@ class ApiLanguageSelectionTest extends ApiBaseTester {
 
     @ParameterizedTest
     @FieldSource("BASE_URLS")
-    void testLanguageByParameterUnsupported(String baseUrl) throws Exception {
-        startAPI();
-        assertHttpResponseCode(baseUrl + "&lang=fr", 400);
+    void testLanguageByParameterUnsupportedFallsBackToDefault(String baseUrl) throws Exception {
+        startAPI("-default-language", "en");
+        firstResultProperties(baseUrl, "fr", null)
+                .containsEntry("name", "englishName");
     }
 
     @ParameterizedTest
     @FieldSource("BASE_URLS")
-    void testFallbackLanguageByParameter(String baseUrl) throws Exception {
-        startAPI("-fallback-language", "en");
+    void testFallbackToDefaultLanguageByParameter(String baseUrl) throws Exception {
+        startAPI("-default-language", "en");
         firstResultProperties(baseUrl,"nl", null)
                 .containsEntry("name", "englishName");
     }
 
     @ParameterizedTest
     @FieldSource("BASE_URLS")
-    void testFallbackLanguageByHeader(String baseUrl) throws Exception {
-        startAPI("-fallback-language", "en");
+    void testFallbackToDefaultLanguageByHeader(String baseUrl) throws Exception {
+        startAPI("-default-language", "en");
         firstResultProperties(baseUrl,null, "nl")
-                .containsEntry("name", "englishName");
-    }
-
-    @ParameterizedTest
-    @FieldSource("BASE_URLS")
-    void testFallbackLanguageByDefaultLanguage(String baseUrl) throws Exception {
-        startAPI("-default-language", "nl", "-fallback-language", "en");
-        firstResultProperties(baseUrl,null, null)
                 .containsEntry("name", "englishName");
     }
 

@@ -2,7 +2,6 @@ package de.komoot.photon.query;
 
 import io.javalin.http.Context;
 import org.jspecify.annotations.NullMarked;
-import org.jspecify.annotations.Nullable;
 
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -16,11 +15,6 @@ public class SimpleSearchRequestFactory extends SearchRequestFactoryBase impleme
 
     public SimpleSearchRequestFactory(Set<String> supportedLanguages, String defaultLanguage, int maxResults, boolean supportGeometries) {
         super(supportedLanguages, defaultLanguage, maxResults, supportGeometries);
-    }
-
-    public SimpleSearchRequestFactory(Set<String> supportedLanguages, String defaultLanguage, @Nullable String fallbackLanguage,
-                                      int maxResults, boolean supportGeometries) {
-        super(supportedLanguages, defaultLanguage, fallbackLanguage, maxResults, supportGeometries);
     }
 
     public SimpleSearchRequest create(Context context) {

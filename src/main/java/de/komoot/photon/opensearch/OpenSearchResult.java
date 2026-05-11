@@ -113,7 +113,7 @@ public class OpenSearchResult implements PhotonResult {
 
     @Override
     @Nullable
-    public String getLocalisedWithFallback(String key, String language, @Nullable String fallbackLanguage, String... altNames) {
+    public String getLocalisedWithFallback(String key, String language, @Nullable String defaultLanguage, String... altNames) {
         final var map = localeTags.get(key);
         if (map == null) return null;
 
@@ -121,8 +121,8 @@ public class OpenSearchResult implements PhotonResult {
         if (name != null) {
             return name;
         }
-        if (fallbackLanguage != null && !fallbackLanguage.equals(language)) {
-            name = map.get(fallbackLanguage);
+        if (defaultLanguage != null && !defaultLanguage.equals(language)) {
+            name = map.get(defaultLanguage);
             if (name != null) {
                 return name;
             }

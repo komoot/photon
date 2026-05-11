@@ -23,26 +23,19 @@ public class RequestFactoryBase {
 
     private final Set<String> supportedLanguages;
     private final String defaultLangauge;
-    @Nullable private final String fallbackLanguage;
     private final int maxResults;
     private final boolean supportGeometries;
 
     protected RequestFactoryBase(Set<String> supportedLanguages, String defaultLanguage, int maxResults, boolean supportGeometries) {
-        this(supportedLanguages, defaultLanguage, null, maxResults, supportGeometries);
-    }
-
-    protected RequestFactoryBase(Set<String> supportedLanguages, String defaultLanguage, @Nullable String fallbackLanguage,
-                                 int maxResults, boolean supportGeometries) {
         this.supportedLanguages = supportedLanguages;
         this.defaultLangauge = defaultLanguage;
-        this.fallbackLanguage = fallbackLanguage;
         this.maxResults = maxResults;
         this.supportGeometries = supportGeometries;
     }
 
     protected void completeBaseRequest(RequestBase request, Context context) {
         request.setLanguage(parseLanguage(context));
-        request.setFallbackLanguage(fallbackLanguage);
+        request.setDefaultLanguage(defaultLangauge);
 
         request.setLimit(context.queryParamAsClass("limit", Integer.class)
                                 .getOrNull(), maxResults);
@@ -81,13 +74,10 @@ public class RequestFactoryBase {
     }
 
     private String parseLanguage(Context context) {
-        final String langParam = context.queryParamAsClass("lang", String.class)
-                .check(l -> l == null || "default".equals(l) || supportedLanguages.contains(l),
-                        "Language is not supported. Supported are: default, "
-                                + String.join(", ", supportedLanguages))
-                .getOrNull();
+        final String langParam = context.queryParam("lang");
 
-        if (langParam != null) {
+        if (langParam != null
+                && ("default".equals(langParam) || supportedLanguages.contains(langParam))) {
             return langParam;
         }
 

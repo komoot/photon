@@ -56,13 +56,9 @@ The default is 50 results for both endpoints.
 
 **-default-language** allows to change in which language results are returned
 when the user hasn't explicitly (or implicitly via the Accept-Language header)
-chosen a language. The default is to return all results in the local language.
-
-**-fallback-language** allows to choose a fallback language for results when
-the selected language is missing for a place or address field. The fallback
-language must be either `default` or one of the languages configured during
-import with **-languages**. When this option is not set, photon falls back
-directly to the local language.
+chosen a language, or when no translation for the requested language exists for
+a place or address field. The default is to return all results in the local
+language.
 
 To protect against bogus user queries, photon sets a maximum execution time
 for each query to the OpenSearch instance. The default is 7 seconds and can
