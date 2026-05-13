@@ -20,6 +20,17 @@ import java.util.stream.Collectors;
 public class IndexSettingBuilder {
     private static final String SYNONYM_FILTER = "extra_synonyms";
     private static final String CLASSIFICATION_FILTER = "classification_synonyms";
+
+    /** Apostrophe variants we fold to ASCII ' before any tokenization or
+     *  word-delimiter filter runs, so curly apostrophes in input data tokenize
+     *  the same way as ASCII ones. */
+    private static final String[] APOSTROPHE_VARIANTS = {
+            "’",   // U+2019 RIGHT SINGLE QUOTATION MARK
+            "‘",   // U+2018 LEFT SINGLE QUOTATION MARK
+            "ʼ",   // U+02BC MODIFIER LETTER APOSTROPHE
+            "ʻ"    // U+02BB MODIFIER LETTER TURNED COMMA
+    };
+
     private final IndexSettingsAnalysis.Builder settings = new IndexSettingsAnalysis.Builder();
     private int numShards = 1;
     private boolean hasSynonymFilter = false;
@@ -121,7 +132,7 @@ public class IndexSettingBuilder {
                         .preserveOriginal(false))
         ));
 
-        builder.charFilter("punctuationgreedy");
+        builder.charFilter("normalize_apostrophes");
         builder.tokenizer("search_tokenizer");
         builder.filter(normFilters);
 
@@ -159,6 +170,7 @@ public class IndexSettingBuilder {
                 )
         ));
 
+        builder.charFilter("normalize_apostrophes");
         builder.tokenizer("collection_split");
         builder.filter("delimited_term_freq", "multiplexer_" + name, "drop_empty_tokens", "unique");
 
@@ -211,7 +223,15 @@ public class IndexSettingBuilder {
                 .length(l -> l.min(1).max(500))
         ));
 
-        // Search analyzers
+        // Apostrophe folding: applied to both the index and the search side so that
+        // typographic and modifier apostrophe variants tokenize identically to ASCII '.
+        final var apostropheMappings = Arrays.stream(APOSTROPHE_VARIANTS)
+                .map(v -> v + " => '")
+                .toList();
+        settings.charFilter("normalize_apostrophes", f -> f.definition(d -> d
+                .mapping(m -> m.mappings(apostropheMappings))
+        ));
+
         settings.charFilter("punctuationgreedy", f -> f.definition(d -> d
                 .patternReplace(p -> p.pattern("'").replacement(" "))
         ));
@@ -226,6 +246,7 @@ public class IndexSettingBuilder {
         settings.analyzer("search", f -> f.custom(buildSearchAnalyzer(NORMALIZATION_FILTERS)));
 
         settings.analyzer("search_prefix", f -> f.custom(d -> d
+                .charFilter("normalize_apostrophes")
                 .tokenizer("keyword")
                 .filter("keep_alphanum")
                 .filter(NORMALIZATION_FILTERS)
@@ -285,6 +306,7 @@ public class IndexSettingBuilder {
         ));
 
         settings.analyzer("index_name_ngram", f -> f.custom(d -> d
+                .charFilter("normalize_apostrophes")
                 .tokenizer("collection_split")
                 .filter("delimited_term_freq",
                         "delimiter_whitespace",
@@ -295,6 +317,7 @@ public class IndexSettingBuilder {
         ));
 
         settings.analyzer("index_name_prefix", f -> f.custom(d -> d
+                .charFilter("normalize_apostrophes")
                 .tokenizer("collection_split")
                 .filter("delimited_term_freq",
                         "keep_alphanum")
@@ -303,6 +326,7 @@ public class IndexSettingBuilder {
         ));
 
         settings.analyzer("index_name_full", f -> f.custom(d -> d
+                .charFilter("normalize_apostrophes")
                 .tokenizer("keyword")
                 .filter("keep_alphanum")
                 .filter(NORMALIZATION_FILTERS)
@@ -321,7 +345,7 @@ public class IndexSettingBuilder {
         ));
 
         settings.analyzer("index_raw", f -> f.custom(d -> d
-                .charFilter("punctuationgreedy")
+                .charFilter("normalize_apostrophes", "punctuationgreedy")
                 .tokenizer("standard")
                 .filter(NORMALIZATION_FILTERS)
         ));
