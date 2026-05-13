@@ -254,6 +254,13 @@ public class IndexSettingBuilder {
                         .catenateAll(true))
         ));
 
+        settings.filter("delimiter_name_ngram", f -> f.definition(d -> d
+                .wordDelimiterGraph(w -> w
+                        .preserveOriginal(false)
+                        .stemEnglishPossessive(true)
+                        .catenateAll(true))
+        ));
+
         settings.filter("delimiter_alphanum", f -> f.definition(d -> d
                 .wordDelimiterGraph(w -> w
                         .preserveOriginal(false)
@@ -288,7 +295,7 @@ public class IndexSettingBuilder {
                 .tokenizer("collection_split")
                 .filter("delimited_term_freq",
                         "delimiter_whitespace",
-                        "delimiter_terms",
+                        "delimiter_name_ngram",
                         "name_edge_ngram")
                 .filter(NORMALIZATION_FILTERS)
                 .filter("unique")
