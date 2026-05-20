@@ -6,6 +6,7 @@ import de.komoot.photon.opensearch.PhotonIndex;
 import de.komoot.photon.searcher.PhotonResult;
 import org.codelibs.opensearch.runner.OpenSearchRunner;
 import org.opensearch.client.opensearch.core.search.Hit;
+import org.opensearch.client.opensearch.indices.analyze.AnalyzeToken;
 
 import java.io.IOException;
 import java.util.List;
@@ -99,6 +100,18 @@ public class TestServer {
         }
 
         return null;
+    }
+
+    public List<String> analyze(String analyzer, String text) {
+        try {
+            var response = testServer.getClient().indices().analyze(a -> a
+                    .index(PhotonIndex.NAME)
+                    .analyzer(analyzer)
+                    .text(text));
+            return response.tokens().stream().map(AnalyzeToken::token).collect(Collectors.toList());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public List<PhotonResult> getAll() {

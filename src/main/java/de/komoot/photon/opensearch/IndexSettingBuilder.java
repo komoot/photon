@@ -275,6 +275,12 @@ public class IndexSettingBuilder {
                         .catenateAll(true))
         ));
 
+        settings.charFilter("expand_possessive", f -> f.definition(d -> d
+                .patternReplace(p -> p
+                        .pattern("(\\p{L}+)'s\\b")
+                        .replacement("$1 $1s"))
+        ));
+
         settings.filter("delimiter_alphanum", f -> f.definition(d -> d
                 .wordDelimiterGraph(w -> w
                         .preserveOriginal(false)
@@ -306,7 +312,7 @@ public class IndexSettingBuilder {
         ));
 
         settings.analyzer("index_name_ngram", f -> f.custom(d -> d
-                .charFilter("normalize_apostrophes")
+                .charFilter("normalize_apostrophes", "expand_possessive")
                 .tokenizer("collection_split")
                 .filter("delimited_term_freq",
                         "delimiter_whitespace",
