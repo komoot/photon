@@ -92,14 +92,10 @@ public class TestServer {
                     .index(PhotonIndex.NAME)
                     .id(id), OpenSearchResult.class);
 
-            if (response.found()) {
-                return response.source();
-            }
+            return response.found() ? response.source() : null;
         } catch (IOException e) {
-            // ignore
+            throw new RuntimeException(e);
         }
-
-        return null;
     }
 
     public List<String> analyze(String analyzer, String text) {
@@ -122,9 +118,7 @@ public class TestServer {
                     .stream().map(Hit::source)
                     .collect(Collectors.toList());
         } catch (IOException e) {
-            //ignore
+            throw new RuntimeException(e);
         }
-
-        return List.of();
     }
 }
