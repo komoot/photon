@@ -29,7 +29,11 @@ class PossessiveTokenizationTest extends ESBaseTester {
                 doc(2, "Lio's Cafe Bar"),
                 doc(3, "O'Connor"),
                 doc(4, "L'Etoile"),
-                doc(5, "Oslo S")
+                doc(5, "Oslo S"),
+                doc(6, "L'Eglise"),
+                doc(7, "O'Reillys"),
+                doc(8, "Saint-Jean d'Acre"),
+                doc(9, "O' Sole Mio")
         ));
         importer.finish();
         refresh();
@@ -60,6 +64,17 @@ class PossessiveTokenizationTest extends ESBaseTester {
     @Test
     void indexNameNgramAnalyzerOutput() {
         assertThat(getTestServer().analyze("index_name_ngram", "lio's")).contains("lio", "lios").doesNotContain("s");
+        assertThat(getTestServer().analyze("index_name_ngram", "o's")).contains("o", "os").doesNotContain("s");
+        assertThat(getTestServer().analyze("index_name_ngram", "Côte d'Or")).contains("cote", "or", "dor");
+        assertThat(getTestServer().analyze("index_name_ngram", "L'Étoile")).contains("letoile", "etoile").doesNotContain("l");
+        assertThat(getTestServer().analyze("index_name_ngram", "L'Église")).contains("leglise", "eglise").doesNotContain("l");
+        assertThat(getTestServer().analyze("index_name_ngram", "L'Été Bar")).contains("lete", "ete", "bar").doesNotContain("l");
+        assertThat(getTestServer().analyze("index_name_ngram", "l'eglise")).contains("eglise", "leglise").doesNotContain("l");
+        assertThat(getTestServer().analyze("index_name_ngram", "o'reillys")).contains("reillys", "oreillys").doesNotContain("o");
+        assertThat(getTestServer().analyze("index_name_ngram", "MainStreet")).contains("main", "street", "mainstreet");
+        assertThat(getTestServer().analyze("index_name_ngram", "d'acre")).contains("dacre", "acre").doesNotContain("d");
+        assertThat(getTestServer().analyze("index_name_ngram", "d'Acre")).contains("acre", "dacre");
+        assertThat(getTestServer().analyze("index_name_ngram", "Saint-Jean d'Acre")).contains("acre", "dacre");
     }
 
     @Test
@@ -77,7 +92,14 @@ class PossessiveTokenizationTest extends ESBaseTester {
             "'Connor',     'O''Connor'",
             "'O Connor',   'O''Connor'",
             "'L''Etoile',  'L''Etoile'",
-            "'Etoile',     'L''Etoile'"
+            "'Etoile',     'L''Etoile'",
+            "'Acre',       'Saint-Jean d''Acre'",
+            "'Saint-Jean', 'Saint-Jean d''Acre'",
+            "'d''Acre',    'Saint-Jean d''Acre'",
+            "'o''so',      'O'' Sole Mio'",
+            "'o''sol',     'O'' Sole Mio'",
+            "'o'' sol',    'O'' Sole Mio'",
+            "'o''sole',    'O'' Sole Mio'"
     })
     void queryFindsExpectedHit(String query, String expectedName) {
         assertThat(hitNames(query)).contains(expectedName);

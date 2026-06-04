@@ -277,8 +277,14 @@ public class IndexSettingBuilder {
 
         settings.charFilter("expand_possessive", f -> f.definition(d -> d
                 .patternReplace(p -> p
-                        .pattern("(\\p{L}+)'s\\b")
-                        .replacement("$1 $1s"))
+                        .pattern("(?U)(\\p{L}{2,})'(\\p{L}{1,2})\\b|(\\p{L})'(\\p{L})\\b")
+                        .replacement("$1$3 $1$2$3$4"))
+        ));
+
+        settings.charFilter("expand_prefix_contraction", f -> f.definition(d -> d
+                .patternReplace(p -> p
+                        .pattern("(?U)\\b(\\p{L})'(\\p{L}{2,})\\b")
+                        .replacement("$1$2 $2"))
         ));
 
         settings.filter("delimiter_alphanum", f -> f.definition(d -> d
@@ -312,7 +318,7 @@ public class IndexSettingBuilder {
         ));
 
         settings.analyzer("index_name_ngram", f -> f.custom(d -> d
-                .charFilter("normalize_apostrophes", "expand_possessive")
+                .charFilter("normalize_apostrophes", "expand_possessive", "expand_prefix_contraction")
                 .tokenizer("collection_split")
                 .filter("delimited_term_freq",
                         "delimiter_whitespace",
