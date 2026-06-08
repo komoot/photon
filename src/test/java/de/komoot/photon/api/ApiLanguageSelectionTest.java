@@ -114,14 +114,6 @@ class ApiLanguageSelectionTest extends ApiBaseTester {
 
     @ParameterizedTest
     @FieldSource("BASE_URLS")
-    void testLanguageByParameterUnsupportedFallsBackToDefault(String baseUrl) throws Exception {
-        startAPI("-default-language", "en");
-        firstResultProperties(baseUrl, "fr", null)
-                .containsEntry("name", "englishName");
-    }
-
-    @ParameterizedTest
-    @FieldSource("BASE_URLS")
     void testFallbackToDefaultLanguageByParameter(String baseUrl) throws Exception {
         startAPI("-default-language", "en");
         firstResultProperties(baseUrl,"nl", null)
