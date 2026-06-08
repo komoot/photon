@@ -222,9 +222,29 @@ class JsonReaderTest {
 
     @ParameterizedTest
     @ValueSource(strings = {TEST_SIMPLE_STREAM, TEST_SIMPLE_ARRAY_STREAM})
+    void testSimpleImportCoutrylessPlace(String doc) throws IOException {
+        input.println(doc.replaceAll(",\"country_code\":\"at\"", ""));
+        var importer = readJson();
+
+        assertThat(importer).singleElement()
+                .hasFieldOrPropertyWithValue("countryCode", null);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {TEST_SIMPLE_STREAM, TEST_SIMPLE_ARRAY_STREAM})
     void testSimpleImportCountryFilterPositive(String doc) throws IOException {
         configCountries = new String[]{"de", "li"};
         input.println(doc);
+        var importer = readJson();
+
+        assertThat(importer.size()).isEqualTo(0);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {TEST_SIMPLE_STREAM, TEST_SIMPLE_ARRAY_STREAM})
+    void testSimpleImportCountryFilterAgainstCoutrylessPlace(String doc) throws IOException {
+        configCountries = new String[]{"de", "li"};
+        input.println(doc.replaceAll(",\"country_code\":\"at\"", ""));
         var importer = readJson();
 
         assertThat(importer.size()).isEqualTo(0);
