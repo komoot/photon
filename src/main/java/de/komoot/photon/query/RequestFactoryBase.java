@@ -74,7 +74,11 @@ public class RequestFactoryBase {
     }
 
     private String parseLanguage(Context context) {
-        final String langParam = context.queryParam("lang");
+        final String langParam = context.queryParamAsClass("lang", String.class)
+                .check(l -> l == null || "default".equals(l) || supportedLanguages.contains(l),
+                        "Language is not supported. Supported are: default, "
+                                + String.join(", ", supportedLanguages))
+                .getOrNull();
 
         if (langParam != null) {
             return langParam;
