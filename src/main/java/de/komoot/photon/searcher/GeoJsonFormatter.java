@@ -131,13 +131,6 @@ public class GeoJsonFormatter implements ResultFormatter {
         return writer.toString();
     }
 
-    public String convert(List<PhotonResult> results, String language,
-                          boolean withGeometry, boolean withDebugInfo,
-                          @Nullable String queryDebugInfo) throws IOException {
-        return convert(results, language, null, withGeometry, withDebugInfo, queryDebugInfo);
-    }
-
-
     private void put(JsonGenerator gen, String key, @Nullable Object value) throws IOException {
         if (value != null) {
             gen.writeObjectField(key, value);

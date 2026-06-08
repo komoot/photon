@@ -18,7 +18,7 @@ class GeoJsonFormatterTest {
             createDummyPointResult("99999", "Park Foo", "leisure", "park"),
             createDummyPointResult("88888", "Bar Park", "amenity", "bar"));
 
-        String geojsonString = formatter.convert(allPointResults, "en", false, false, null);
+        String geojsonString = formatter.convert(allPointResults, "en", null,false, false, null);
 
         var features = assertThatJson(geojsonString).isObject()
                 .containsEntry("type", "FeatureCollection")
@@ -48,7 +48,7 @@ class GeoJsonFormatterTest {
         final var allResults = List.of(
                 createDummyGeometryResult("99999", "Park Foo", "leisure", "park"));
 
-        String geojsonString = formatter.convert(allResults, "en", true, false, null);
+        String geojsonString = formatter.convert(allResults, "en", null,true, false, null);
 
         assertThatJson(geojsonString).isObject()
                 .containsEntry("type", "FeatureCollection")
@@ -93,7 +93,7 @@ class GeoJsonFormatterTest {
                 .put(DocFields.OSM_VALUE, "city")
                 .putGeometry("{\"type\":\"Point\", \"coordinates\": [42, 21]}");
 
-        String geojsonString = formatter.convert(List.of(result), "nl", false, false, null);
+        String geojsonString = formatter.convert(List.of(result), "nl",  null,false, false, null);
 
         assertThatJson(geojsonString).isObject()
                 .node("features").isArray().hasSize(1)
