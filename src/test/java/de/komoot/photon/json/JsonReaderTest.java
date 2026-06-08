@@ -33,6 +33,8 @@ class JsonReaderTest {
             {"place_id":100818,"object_type":"W","object_id":223306798,"categories" : ["osm.waterway.stream"], "rank_address" : 0, "rank_search" : 22, "importance" : 0.10667666666666664,"name":{"name": "Spiersbach", "name:de": "Spiersbach", "alt_name": "Spirsbach"},"extra":{"boat": "no"},"country_code":"at","centroid":[9.53713454,47.27052526],"geometry":{"type":"LineString","coordinates":[[9.5461636,47.2415541],[9.5558108,47.2955234],[9.556083,47.2962812],[9.554958,47.2966235]]}}""";
     private static final String TEST_SIMPLE_STREAM =
             "{\"type\":\"Place\",\"content\":" + TEST_SIMPLE_CONTENT + "}";
+    private static final String TEST_SIMPLE_ARRAY_STREAM =
+            "{\"type\":\"Place\",\"content\": [" + TEST_SIMPLE_CONTENT + "]}";
 
     private InputStream inBufferAsStream() {
         return new ByteArrayInputStream(inBuffer.getBuffer().toString().getBytes(StandardCharsets.UTF_8));
@@ -117,9 +119,10 @@ class JsonReaderTest {
                 .containsExactly(223306798L, 223306799L);
     }
 
-    @Test
-    void testPlaceIDAsString() throws IOException {
-        input.println(TEST_SIMPLE_STREAM.replaceFirst("100818", "\"X45D4\""));
+    @ParameterizedTest
+    @ValueSource(strings = {TEST_SIMPLE_STREAM, TEST_SIMPLE_ARRAY_STREAM})
+    void testPlaceIDAsString(String doc) throws IOException {
+        input.println(doc.replaceFirst("100818", "\"X45D4\""));
 
         var importer = readJson();
 
@@ -127,28 +130,31 @@ class JsonReaderTest {
                 .hasFieldOrPropertyWithValue("placeId", "X45D4");
     }
 
-    @Test
-    void testPlaceIDTooLong() {
-        input.println(TEST_SIMPLE_STREAM.replaceFirst("100818", "1".repeat(61)));
+    @ParameterizedTest
+    @ValueSource(strings = {TEST_SIMPLE_STREAM, TEST_SIMPLE_ARRAY_STREAM})
+    void testPlaceIDTooLong(String doc) {
+        input.println(doc.replaceFirst("100818", "1".repeat(61)));
 
         assertThatIOException()
                 .isThrownBy(this::readJson)
                 .withMessageContaining("exceed 60 char");
     }
 
-    @Test
-    void testPlaceIDInvalidCharacters() {
-        input.println(TEST_SIMPLE_STREAM.replaceFirst("100818", "\"a b@\""));
+    @ParameterizedTest
+    @ValueSource(strings = {TEST_SIMPLE_STREAM, TEST_SIMPLE_ARRAY_STREAM})
+    void testPlaceIDInvalidCharacters(String doc) {
+        input.println(doc.replaceFirst("100818", "\"a b@\""));
 
         assertThatIOException()
                 .isThrownBy(this::readJson)
                 .withMessageContaining("must only consist of letters");
     }
 
-    @Test
-    void testSimpleImportWithGeometry() throws IOException {
+    @ParameterizedTest
+    @ValueSource(strings = {TEST_SIMPLE_STREAM, TEST_SIMPLE_ARRAY_STREAM})
+    void testSimpleImportWithGeometry(String doc) throws IOException {
         configGeometryColumn = true;
-        input.println(TEST_SIMPLE_STREAM);
+        input.println(doc);
         var importer = readJson();
 
         assertThat(importer).singleElement()
@@ -164,11 +170,12 @@ class JsonReaderTest {
 
     }
 
-    @Test
-    void testImportWithCountryInfo() throws IOException {
+    @ParameterizedTest
+    @ValueSource(strings = {TEST_SIMPLE_STREAM, TEST_SIMPLE_ARRAY_STREAM})
+    void testImportWithCountryInfo(String doc) throws IOException {
         input.println("""
                 {"type":"CountryInfo","content":[{"country_code":"at","name":{"name": "Österreich", "name:ab": "Австриа", "name:de": "Österreich", "name:dv": "އޮސްޓްރިއާ", "name:dz": "ཨས་ཊི་ཡ", "name:ee": "Austria", "name:el": "Αυστρία", "name:en": "Austria"}}]}""");
-        input.println(TEST_SIMPLE_STREAM);
+        input.println(doc);
         var importer = readJson();
 
         assertThat(importer).singleElement()
@@ -177,10 +184,11 @@ class JsonReaderTest {
                 ));
     }
 
-    @Test
-    void testSimpleImportAllExtraTags() throws IOException {
+    @ParameterizedTest
+    @ValueSource(strings = {TEST_SIMPLE_STREAM, TEST_SIMPLE_ARRAY_STREAM})
+    void testSimpleImportAllExtraTags(String doc) throws IOException {
         configExtraTags = new ConfigExtraTags(List.of("ALL"));
-        input.println(TEST_SIMPLE_STREAM);
+        input.println(doc);
         var importer = readJson();
 
         assertThat(importer).singleElement()
@@ -188,10 +196,11 @@ class JsonReaderTest {
                 .hasFieldOrPropertyWithValue("extratags", Map.of("boat", "no"));
     }
 
-    @Test
-    void testSimpleImportSomeExtraTagsPositive() throws IOException {
+    @ParameterizedTest
+    @ValueSource(strings = {TEST_SIMPLE_STREAM, TEST_SIMPLE_ARRAY_STREAM})
+    void testSimpleImportSomeExtraTagsPositive(String doc) throws IOException {
         configExtraTags = new ConfigExtraTags(List.of("maxspeed", "boat"));
-        input.println(TEST_SIMPLE_STREAM);
+        input.println(doc);
         var importer = readJson();
 
         assertThat(importer).singleElement()
@@ -199,10 +208,11 @@ class JsonReaderTest {
                 .hasFieldOrPropertyWithValue("extratags", Map.of("boat", "no"));
     }
 
-    @Test
-    void testSimpleImportSomeExtraTagsNegative() throws IOException {
+    @ParameterizedTest
+    @ValueSource(strings = {TEST_SIMPLE_STREAM, TEST_SIMPLE_ARRAY_STREAM})
+    void testSimpleImportSomeExtraTagsNegative(String doc) throws IOException {
         configExtraTags = new ConfigExtraTags(List.of("maxspeed", "surface"));
-        input.println(TEST_SIMPLE_STREAM);
+        input.println(doc);
         var importer = readJson();
 
         assertThat(importer).singleElement()
@@ -210,19 +220,41 @@ class JsonReaderTest {
                 .hasFieldOrPropertyWithValue("extratags", Map.of());
     }
 
-    @Test
-    void testSimpleImportCountryFilterPositive() throws IOException {
+    @ParameterizedTest
+    @ValueSource(strings = {TEST_SIMPLE_STREAM, TEST_SIMPLE_ARRAY_STREAM})
+    void testSimpleImportCoutrylessPlace(String doc) throws IOException {
+        input.println(doc.replaceAll(",\"country_code\":\"at\"", ""));
+        var importer = readJson();
+
+        assertThat(importer).singleElement()
+                .hasFieldOrPropertyWithValue("countryCode", null);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {TEST_SIMPLE_STREAM, TEST_SIMPLE_ARRAY_STREAM})
+    void testSimpleImportCountryFilterPositive(String doc) throws IOException {
         configCountries = new String[]{"de", "li"};
-        input.println(TEST_SIMPLE_STREAM);
+        input.println(doc);
         var importer = readJson();
 
         assertThat(importer.size()).isEqualTo(0);
     }
 
-    @Test
-    void testSimpleImportCountryFilterNegative() throws IOException {
+    @ParameterizedTest
+    @ValueSource(strings = {TEST_SIMPLE_STREAM, TEST_SIMPLE_ARRAY_STREAM})
+    void testSimpleImportCountryFilterAgainstCoutrylessPlace(String doc) throws IOException {
+        configCountries = new String[]{"de", "li"};
+        input.println(doc.replaceAll(",\"country_code\":\"at\"", ""));
+        var importer = readJson();
+
+        assertThat(importer.size()).isEqualTo(0);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {TEST_SIMPLE_STREAM, TEST_SIMPLE_ARRAY_STREAM})
+    void testSimpleImportCountryFilterNegative(String doc) throws IOException {
         configCountries = new String[]{"at", "li"};
-        input.println(TEST_SIMPLE_STREAM);
+        input.println(doc);
         var importer = readJson();
 
         assertThat(importer.size()).isEqualTo(1);
@@ -301,18 +333,20 @@ class JsonReaderTest {
 
     }
 
-    @Test
-    void testNullPlaceIdIgnored() throws IOException {
-        input.println(TEST_SIMPLE_STREAM.replace("100818", "null"));
+    @ParameterizedTest
+    @ValueSource(strings = {TEST_SIMPLE_STREAM, TEST_SIMPLE_ARRAY_STREAM})
+    void testNullPlaceIdIgnored(String doc) throws IOException {
+        input.println(doc.replace("100818", "null"));
         var importer = readJson();
 
         assertThat(importer).singleElement()
                 .hasFieldOrPropertyWithValue("placeId", null);
     }
 
-    @Test
-    void testOmitOsmTypeId() throws IOException {
-        input.println(TEST_SIMPLE_STREAM.replace("\"object_type\":\"W\",\"object_id\":223306798,", ""));
+    @ParameterizedTest
+    @ValueSource(strings = {TEST_SIMPLE_STREAM, TEST_SIMPLE_ARRAY_STREAM})
+    void testOmitOsmTypeId(String doc) throws IOException {
+        input.println(doc.replace("\"object_type\":\"W\",\"object_id\":223306798,", ""));
         var importer = readJson();
 
         assertThat(importer).singleElement()
@@ -320,9 +354,10 @@ class JsonReaderTest {
                 .hasFieldOrPropertyWithValue("osmId", -1L);
     }
 
-    @Test
-    void testNullCategories() throws IOException {
-        input.println(TEST_SIMPLE_STREAM.replace("[\"osm.waterway.stream\"]", "null"));
+    @ParameterizedTest
+    @ValueSource(strings = {TEST_SIMPLE_STREAM, TEST_SIMPLE_ARRAY_STREAM})
+    void testNullCategories(String doc) throws IOException {
+        input.println(doc.replace("[\"osm.waterway.stream\"]", "null"));
         var importer = readJson();
 
         assertThat(importer).singleElement()
@@ -331,9 +366,10 @@ class JsonReaderTest {
                 .hasFieldOrPropertyWithValue("categories", Set.of());
     }
 
-    @Test
-    void testNullCategory() throws IOException {
-        input.println(TEST_SIMPLE_STREAM.replace("[\"osm.waterway.stream\"]", "[null, \"osm.waterway.stream\"]"));
+    @ParameterizedTest
+    @ValueSource(strings = {TEST_SIMPLE_STREAM, TEST_SIMPLE_ARRAY_STREAM})
+    void testNullCategory(String doc) throws IOException {
+        input.println(doc.replace("[\"osm.waterway.stream\"]", "[null, \"osm.waterway.stream\"]"));
         var importer = readJson();
 
         assertThat(importer).singleElement()
@@ -342,9 +378,10 @@ class JsonReaderTest {
                 .hasFieldOrPropertyWithValue("categories", Set.of("osm.waterway.stream"));
     }
 
-    @Test
-    void testInvalidCategories() throws IOException {
-        input.println(TEST_SIMPLE_STREAM.replace("[\"osm.waterway.stream\"]",
+    @ParameterizedTest
+    @ValueSource(strings = {TEST_SIMPLE_STREAM, TEST_SIMPLE_ARRAY_STREAM})
+    void testInvalidCategories(String doc) throws IOException {
+        input.println(doc.replace("[\"osm.waterway.stream\"]",
                 "[\"osm.\", \"foo.bar\", \"foo\", \"34,2\", \"ty.#23\", \"number.3-4\", \"ab.c d\", \"-_-.---_-\"]"));
         var importer = readJson();
 
@@ -352,27 +389,30 @@ class JsonReaderTest {
                 .hasFieldOrPropertyWithValue("categories", Set.of("foo.bar", "number.3-4", "-_-.---_-"));
     }
 
-    @Test
-    void testNullRankAddressIgnored() throws IOException {
-        input.println(TEST_SIMPLE_STREAM.replace("\"rank_address\" : 0", "\"rank_address\" : null"));
+    @ParameterizedTest
+    @ValueSource(strings = {TEST_SIMPLE_STREAM, TEST_SIMPLE_ARRAY_STREAM})
+    void testNullRankAddressIgnored(String doc) throws IOException {
+        input.println(doc.replace("\"rank_address\" : 0", "\"rank_address\" : null"));
         var importer = readJson();
 
         assertThat(importer).singleElement()
                 .hasFieldOrPropertyWithValue("addressType", AddressType.OTHER);
     }
 
-    @Test
-    void testNullImportanceIgnored() throws IOException {
-        input.println(TEST_SIMPLE_STREAM.replace("0.10667666666666664", "null"));
+    @ParameterizedTest
+    @ValueSource(strings = {TEST_SIMPLE_STREAM, TEST_SIMPLE_ARRAY_STREAM})
+    void testNullImportanceIgnored(String doc) throws IOException {
+        input.println(doc.replace("0.10667666666666664", "null"));
         var importer = readJson();
 
         assertThat(importer).singleElement()
                 .hasFieldOrPropertyWithValue("importance", 0.0);
     }
 
-    @Test
-    void testNullNamesIgnored() throws IOException {
-        input.println(TEST_SIMPLE_STREAM.replace("{\"name\": \"Spiersbach\", \"name:de\": \"Spiersbach\", \"alt_name\": \"Spirsbach\"}", "null,\"housenumber\": \"1\""));
+    @ParameterizedTest
+    @ValueSource(strings = {TEST_SIMPLE_STREAM, TEST_SIMPLE_ARRAY_STREAM})
+    void testNullNamesIgnored(String doc) throws IOException {
+        input.println(doc.replace("{\"name\": \"Spiersbach\", \"name:de\": \"Spiersbach\", \"alt_name\": \"Spirsbach\"}", "null,\"housenumber\": \"1\""));
         var importer = readJson();
 
         assertThat(importer).singleElement()
@@ -380,9 +420,10 @@ class JsonReaderTest {
                 .hasFieldOrPropertyWithValue("houseNumber", "1");
     }
 
-    @Test
-    void testNullInNamesIgnored() throws IOException {
-        input.println(TEST_SIMPLE_STREAM.replace("\"Spirsbach\"", "null"));
+    @ParameterizedTest
+    @ValueSource(strings = {TEST_SIMPLE_STREAM, TEST_SIMPLE_ARRAY_STREAM})
+    void testNullInNamesIgnored(String doc) throws IOException {
+        input.println(doc.replace("\"Spirsbach\"", "null"));
         var importer = readJson();
 
         assertThat(importer).singleElement()
@@ -400,10 +441,11 @@ class JsonReaderTest {
 
     }
 
-    @Test
-    void testComplexExtraTags() throws IOException {
+    @ParameterizedTest
+    @ValueSource(strings = {TEST_SIMPLE_STREAM, TEST_SIMPLE_ARRAY_STREAM})
+    void testComplexExtraTags(String doc) throws IOException {
         configExtraTags = new ConfigExtraTags(List.of("ALL"));
-        input.println(TEST_SIMPLE_STREAM.replace("\"boat\": \"no\"",
+        input.println(doc.replace("\"boat\": \"no\"",
                 """
                         "number": 56.7,
                         "boolean": true,
@@ -423,10 +465,11 @@ class JsonReaderTest {
     }
 
 
-    @Test
-    void testNullExtraIgnored() throws IOException {
+    @ParameterizedTest
+    @ValueSource(strings = {TEST_SIMPLE_STREAM, TEST_SIMPLE_ARRAY_STREAM})
+    void testNullExtraIgnored(String doc) throws IOException {
         configExtraTags = new ConfigExtraTags(List.of("ALL"));
-        input.println(TEST_SIMPLE_STREAM.replace("{\"boat\": \"no\"}", "null"));
+        input.println(doc.replace("{\"boat\": \"no\"}", "null"));
 
         var importer = readJson();
 
@@ -435,10 +478,11 @@ class JsonReaderTest {
     }
 
 
-    @Test
-    void testNullInExtraIgnored() throws IOException {
+    @ParameterizedTest
+    @ValueSource(strings = {TEST_SIMPLE_STREAM, TEST_SIMPLE_ARRAY_STREAM})
+    void testNullInExtraIgnored(String doc) throws IOException {
         configExtraTags = new ConfigExtraTags(List.of("ALL"));
-        input.println(TEST_SIMPLE_STREAM.replace("\"boat\": \"no\"", "\"access\": \"yes\", \"foot\": null"));
+        input.println(doc.replace("\"boat\": \"no\"", "\"access\": \"yes\", \"foot\": null"));
 
         var importer = readJson();
 
@@ -494,9 +538,10 @@ class JsonReaderTest {
 
     }
 
-    @Test
-    void testAddressType() throws IOException {
-        input.println(TEST_SIMPLE_STREAM.replace("\"rank_address\" : 0", "\"address_type\" : \"house\""));
+    @ParameterizedTest
+    @ValueSource(strings = {TEST_SIMPLE_STREAM, TEST_SIMPLE_ARRAY_STREAM})
+    void testAddressType(String doc) throws IOException {
+        input.println(doc.replace("\"rank_address\" : 0", "\"address_type\" : \"house\""));
         var importer = readJson();
 
         assertThat(importer).singleElement()

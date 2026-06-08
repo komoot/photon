@@ -113,7 +113,9 @@ public class JsonReader {
                         parseDoc = parsePlaceDocument();
                         final var doc = parseDoc.asSimpleDoc(languages);
                         if (doc.isUsefulForIndex()
-                                && (countryFilter == null || Arrays.binarySearch(countryFilter, doc.getCountryCode()) >= 0)) {
+                                && (countryFilter == null
+                                    || (doc.getCountryCode() != null
+                                        && Arrays.binarySearch(countryFilter, doc.getCountryCode()) >= 0))) {
                             docList.add(doc);
                         }
                     }
