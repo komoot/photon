@@ -15,12 +15,14 @@ public class QueryReranker implements Consumer<PhotonResult> {
     private static final Pattern WORD_BREAK_PATTERN = Pattern.compile("[-,: ]+");
     private final String query;
     private final String language;
+    @Nullable private final String fallbackLanguage;
     private final boolean isMultiTermQuery;
     private final boolean isFullQuery;
 
-    public QueryReranker(String query, String language) {
+    public QueryReranker(String query, String language, @Nullable String fallbackLanguage) {
         this.query = normalize(query);
         this.language = language;
+        this.fallbackLanguage = fallbackLanguage;
         this.isMultiTermQuery = query.indexOf(',') >= 0;
         this.isFullQuery = query.endsWith(" ");
     }
@@ -33,7 +35,7 @@ public class QueryReranker implements Consumer<PhotonResult> {
     }
 
     private double rescore(PhotonResult result) {
-        var localeName = result.getLocalised("name", language, GeoJsonFormatter.NAME_PRECEDENCE);
+        var localeName = result.getLocalisedWithFallback("name", language, fallbackLanguage, GeoJsonFormatter.NAME_PRECEDENCE);
         if (!isMultiTermQuery && localeName != null) {
             localeName = normalize(localeName);
             if (query.equals(localeName)) {
