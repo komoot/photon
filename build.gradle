@@ -87,8 +87,8 @@ dependencies {
 configurations.configureEach {
     resolutionStrategy.eachDependency { details ->
         if (details.requested.group == 'io.netty') {
-            details.useVersion '4.2.13.Final'
-            details.because 'force latest version to fix CVE-2026-42587'
+            details.useVersion '4.2.15.Final'
+            details.because 'force latest version to fix CVE-2026-45416 and more'
         }
     }
 }
