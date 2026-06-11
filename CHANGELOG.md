@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.2.0] - 2026-06-11
+
+* fix NPE in imports with country filter enabled
+* improve search of partial exact matches (thanks @henrik242)
+* improve import pipeline, now fully supporting parallel processing (thanks @henrik242)
+* improve handling of words with apostrophes (thanks @henrik242)
+* fall back to '-default-language' for display names when requested
+  language is not available (thanks @tjvanderende)
+* documentation improvements (thanks @romanpickl)
+
 ## [1.1.0] - 2026-04-18
 
 * add special reverse-only mode creating a smaller DB with on search capability
