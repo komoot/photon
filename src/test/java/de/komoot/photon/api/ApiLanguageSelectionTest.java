@@ -30,7 +30,7 @@ class ApiLanguageSelectionTest extends ApiBaseTester {
 
     @BeforeAll
     void setUp(@TempDir Path dataDirectory) throws Exception {
-        getProperties().setLanguages(Set.of("en", "de", "it"));
+        getProperties().setLanguages(Set.of("en", "de", "it", "nl"));
         setUpES(dataDirectory);
         Importer instance = makeImporter();
 
@@ -106,6 +106,13 @@ class ApiLanguageSelectionTest extends ApiBaseTester {
 
     @ParameterizedTest
     @FieldSource("BASE_URLS")
+    void testLanguageByParameterUnsupported(String baseUrl) throws Exception {
+        startAPI();
+        assertHttpResponseCode(baseUrl + "&lang=fr", 400);
+    }
+
+    @ParameterizedTest
+    @FieldSource("BASE_URLS")
     void testLanguageByParameterDefault(String baseUrl) throws Exception {
         startAPI("-default-language", "en");
         firstResultProperties(baseUrl,"default", "en")
@@ -114,9 +121,18 @@ class ApiLanguageSelectionTest extends ApiBaseTester {
 
     @ParameterizedTest
     @FieldSource("BASE_URLS")
-    void testLanguageByParameterUnsupported(String baseUrl) throws Exception {
-        startAPI();
-        assertHttpResponseCode(baseUrl + "&lang=fr", 400);
+    void testFallbackToDefaultLanguageByParameter(String baseUrl) throws Exception {
+        startAPI("-default-language", "en");
+        firstResultProperties(baseUrl,"nl", null)
+                .containsEntry("name", "englishName");
+    }
+
+    @ParameterizedTest
+    @FieldSource("BASE_URLS")
+    void testFallbackToDefaultLanguageByHeader(String baseUrl) throws Exception {
+        startAPI("-default-language", "en");
+        firstResultProperties(baseUrl,null, "nl")
+                .containsEntry("name", "englishName");
     }
 
     @ParameterizedTest

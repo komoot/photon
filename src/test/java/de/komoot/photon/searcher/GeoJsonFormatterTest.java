@@ -18,7 +18,7 @@ class GeoJsonFormatterTest {
             createDummyPointResult("99999", "Park Foo", "leisure", "park"),
             createDummyPointResult("88888", "Bar Park", "amenity", "bar"));
 
-        String geojsonString = formatter.convert(allPointResults, "en", false, false, null);
+        String geojsonString = formatter.convert(allPointResults, "en", null,false, false, null);
 
         var features = assertThatJson(geojsonString).isObject()
                 .containsEntry("type", "FeatureCollection")
@@ -48,7 +48,7 @@ class GeoJsonFormatterTest {
         final var allResults = List.of(
                 createDummyGeometryResult("99999", "Park Foo", "leisure", "park"));
 
-        String geojsonString = formatter.convert(allResults, "en", true, false, null);
+        String geojsonString = formatter.convert(allResults, "en", null,true, false, null);
 
         assertThatJson(geojsonString).isObject()
                 .containsEntry("type", "FeatureCollection")
@@ -57,6 +57,49 @@ class GeoJsonFormatterTest {
                 .containsEntry("type", "Feature")
                 .node("geometry").isObject()
                 .containsEntry("type", "MultiPolygon");
+    }
+
+    @Test
+    void testFallbackLanguageForLocalisedFields() throws IOException {
+        GeoJsonFormatter formatter = new GeoJsonFormatter();
+
+        final var result = new MockPhotonResult()
+                .putLocalized(DocFields.NAME, "default", "Αθήνα")
+                .putLocalized(DocFields.NAME, "en", "Athens")
+                .putLocalized(DocFields.COUNTRY, "default", "Ελλάδα")
+                .putLocalized(DocFields.COUNTRY, "en", "Greece")
+                .put(DocFields.OSM_KEY, "place")
+                .put(DocFields.OSM_VALUE, "city")
+                .putGeometry("{\"type\":\"Point\", \"coordinates\": [42, 21]}");
+
+        String geojsonString = formatter.convert(List.of(result), "nl", "en", false, false, null);
+
+        assertThatJson(geojsonString).isObject()
+                .node("features").isArray().hasSize(1)
+                .element(0).isObject()
+                .node("properties").isObject()
+                .containsEntry("name", "Athens")
+                .containsEntry("country", "Greece");
+    }
+
+    @Test
+    void testLocalLanguageFallbackWhenFallbackLanguageIsUnset() throws IOException {
+        GeoJsonFormatter formatter = new GeoJsonFormatter();
+
+        final var result = new MockPhotonResult()
+                .putLocalized(DocFields.NAME, "default", "Αθήνα")
+                .putLocalized(DocFields.NAME, "en", "Athens")
+                .put(DocFields.OSM_KEY, "place")
+                .put(DocFields.OSM_VALUE, "city")
+                .putGeometry("{\"type\":\"Point\", \"coordinates\": [42, 21]}");
+
+        String geojsonString = formatter.convert(List.of(result), "nl",  null,false, false, null);
+
+        assertThatJson(geojsonString).isObject()
+                .node("features").isArray().hasSize(1)
+                .element(0).isObject()
+                .node("properties").isObject()
+                .containsEntry("name", "Αθήνα");
     }
     
     private PhotonResult createDummyPointResult(String postCode, String name, String osmKey,

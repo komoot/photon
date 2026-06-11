@@ -23,6 +23,9 @@ public interface PhotonResult {
     @Nullable
     String getLocalised(String key, String language, String... altNames);
 
+    @Nullable
+    String getLocalisedWithFallback(String key, String language, @Nullable String fallbackLanguage, String... altNames);
+
     double[] getCoordinates();
 
     double @Nullable [] getExtent();

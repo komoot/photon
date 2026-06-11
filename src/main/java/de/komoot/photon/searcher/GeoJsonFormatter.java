@@ -50,6 +50,7 @@ public class GeoJsonFormatter implements ResultFormatter {
 
     @Override
     public String convert(List<PhotonResult> results, String language,
+                          @Nullable String fallbackLanguage,
                           boolean withGeometry, boolean withDebugInfo,
                           @Nullable String queryDebugInfo) throws IOException {
         final var writer = new StringWriter();
@@ -79,10 +80,10 @@ public class GeoJsonFormatter implements ResultFormatter {
                     put(gen, line.get(1), result.get(line.get(0)));
                 }
 
-                put(gen, GeoJsonFields.NAME, result.getLocalised(DocFields.NAME, language, NAME_PRECEDENCE));
+                put(gen, GeoJsonFields.NAME, result.getLocalisedWithFallback(DocFields.NAME, language, fallbackLanguage, NAME_PRECEDENCE));
 
                 for (var line : KEYS_LANG_SPEC) {
-                    put(gen, line.get(1), result.getLocalised(line.get(0), language));
+                    put(gen, line.get(1), result.getLocalisedWithFallback(line.get(0), language, fallbackLanguage));
                 }
 
                 for (var line : KEYS_POST_ADDRESS) {
@@ -129,7 +130,6 @@ public class GeoJsonFormatter implements ResultFormatter {
 
         return writer.toString();
     }
-
 
     private void put(JsonGenerator gen, String key, @Nullable Object value) throws IOException {
         if (value != null) {

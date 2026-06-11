@@ -57,7 +57,7 @@ public class OpenSearchSearchHandler implements SearchHandler<SimpleSearchReques
         }
 
         if (request.getQuery() != null) {
-            stream = stream.peek(new QueryReranker(request.getQuery(), request.getLanguage()));
+            stream = stream.peek(new QueryReranker(request.getQuery(), request.getLanguage(), request.getDefaultLanguage()));
         }
 
         return ResultScorer.adjustByNormalizedOpenSearchScore(stream)

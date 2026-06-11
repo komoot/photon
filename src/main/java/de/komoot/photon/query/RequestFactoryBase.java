@@ -35,6 +35,7 @@ public class RequestFactoryBase {
 
     protected void completeBaseRequest(RequestBase request, Context context) {
         request.setLanguage(parseLanguage(context));
+        request.setDefaultLanguage(defaultLangauge);
 
         request.setLimit(context.queryParamAsClass("limit", Integer.class)
                                 .getOrNull(), maxResults);
