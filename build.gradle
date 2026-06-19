@@ -32,7 +32,7 @@ repositories {
 }
 
 dependencies {
-    def opensearchVersion = project.properties['osVersion'] ?: '3.6.0.0'
+    def opensearchVersion = project.properties['osVersion'] ?: '3.7.0.0'
     constraints {
         implementation('commons-io:commons-io') {
             version { require('[2.20.0,)') }
