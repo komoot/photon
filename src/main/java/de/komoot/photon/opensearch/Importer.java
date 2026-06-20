@@ -25,8 +25,27 @@ import java.util.concurrent.atomic.AtomicReference;
 public class Importer implements de.komoot.photon.Importer {
     private static final Logger LOGGER = LogManager.getLogger();
 
-    /** Documents per bulk request. */
+    /** Upper bound on documents per bulk request. A bulk may flush earlier once {@link #MAX_BULK_BYTES} is reached. */
     private static final int BULK_SIZE = 10000;
+
+    /**
+     * Soft cap on the estimated serialized size of a bulk request body, in bytes. With
+     * {@code -full-geometry} a single document can carry a large polygon, so the document
+     * count alone no longer bounds the request size. Kept well below OpenSearch's default
+     * {@code http.max_content_length} (100 MB) to leave room for estimation slack and the
+     * per-operation action metadata that NDJSON adds on top of the documents.
+     */
+    private static final long MAX_BULK_BYTES = 50L * 1024 * 1024;
+
+    /**
+     * Estimated bytes per geometry coordinate in the GeoJSON encoding (two formatted doubles
+     * plus brackets and separators). Deliberately generous so the byte estimate runs high and
+     * we flush early rather than risk a 413.
+     */
+    static final int BYTES_PER_GEOMETRY_POINT = 40;
+
+    /** Generous flat allowance for a document's non-geometry fields plus its bulk action line. */
+    static final int BASE_DOC_BYTES = 1024;
 
     /** Fallback refresh_interval if the original value cannot be read. Matches the OpenSearch default. */
     private static final String FALLBACK_REFRESH_INTERVAL = "1s";
@@ -52,6 +71,7 @@ public class Importer implements de.komoot.photon.Importer {
     private static final class Bulk {
         BulkRequest.Builder builder = new BulkRequest.Builder();
         int todo = 0;
+        long bytes = 0;
     }
 
     public Importer(OpenSearchClient client, int maxConcurrentRequests, boolean tuneRefresh) {
@@ -96,10 +116,26 @@ public class Importer implements de.komoot.photon.Importer {
                 final String uuid = PhotonDoc.makeUid(placeID, objectId++);
                 b.builder.operations(op -> op.create(i -> i.index(PhotonIndex.NAME).id(uuid).document(doc)));
             }
-            if (++b.todo >= BULK_SIZE) {
+            b.bytes += estimateSize(doc);
+            // A single doc over MAX_BULK_BYTES still flushes on its own; an oversized request
+            // can't be split any smaller anyway.
+            if (++b.todo >= BULK_SIZE || b.bytes >= MAX_BULK_BYTES) {
                 flush(b);
             }
         }
+    }
+
+    /**
+     * Rough estimate of a document's serialized size, dominated by its full geometry. Used only
+     * to decide when to flush a bulk; it errs on the high side so we stay under the HTTP body limit.
+     */
+    static long estimateSize(PhotonDoc doc) {
+        long size = BASE_DOC_BYTES;
+        final var geom = doc.getGeometry();
+        if (geom != null) {
+            size += (long) geom.getNumPoints() * BYTES_PER_GEOMETRY_POINT;
+        }
+        return size;
     }
 
     @Override
@@ -151,6 +187,7 @@ public class Importer implements de.komoot.photon.Importer {
         final BulkRequest req = b.builder.build();
         b.builder = new BulkRequest.Builder();
         b.todo = 0;
+        b.bytes = 0;
 
         try {
             bulkQueue.put(req);
