@@ -131,11 +131,9 @@ for example the local name for Tokyo is 東京都.
 
 #### Filter results by [tags and values](https://taginfo.openstreetmap.org/projects/nominatim#tags)
 
-_Note: the filter only works on principal OSM tags and not all
-OSM tag/value combinations can be searched. The actual list depends on the
-import style used for the Nominatim database
-(e.g. [settings/import-full.style](https://github.com/osm-search/Nominatim/blob/master/settings/import-full.style)).
-All tag/value combinations with a property 'main' are included in the photon database._
+_Deprecated: the OSM tag is now present as a category 'osm.<osm_key>.<osm_value>'.
+Preferably use the 'include'/'exclude' category filters with the 'osm' category
+instead of the direct osm tag filters here._
 
 If one or many query parameters named **osm_tag** are present, photon will
 attempt to filter results by those tags. In general, here is the expected
@@ -166,6 +164,13 @@ You can also use this feature for reverse geocoding. Want to see the 5 pharmacie
 ```
 http://localhost:2322/reverse?lon=10&lat=52&osm_tag=amenity:pharmacy&limit=5
 ```
+
+_Note: the filter only works on principal OSM tags and not all
+OSM tag/value combinations can be searched. The actual list depends on the
+import style used for the Nominatim database
+(e.g. MAIN_TAGS definition in  [presents.lua](https://github.com/osm-search/Nominatim/blob/master/lib-lua/themes/nominatim/presets.lua)).
+All tag/value combinations with a property 'main' are included in the photon database._
+
 
 #### Filter results by layer
 
