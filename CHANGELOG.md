@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.2.1] - 2026-06-30
+
+* fix "Request Entity Too Large" error on import with geometry (thanks @henrik242)
+
 ## [1.2.0] - 2026-06-11
 
 * fix NPE in imports with country filter enabled
