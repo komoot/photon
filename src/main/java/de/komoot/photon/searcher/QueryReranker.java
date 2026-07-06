@@ -78,18 +78,18 @@ public class QueryReranker implements Consumer<PhotonResult> {
             }
         }
 
+        matches += matchCountry(todo, result);
+
         if (todo.toString().isBlank()) {
             return 0.8 * matches / query.length();
         }
 
         // address parts, we want to rematch in the query
         mapNames(result.getLocalised(DocFields.CITY, language), resultTerms);
-        mapNames((String) result.get(DocFields.COUNTRYCODE), resultTerms);
-        mapNames((String) result.get(DocFields.POSTCODE), resultTerms);
-        mapNames(result.getLocalised(DocFields.COUNTRY, language), resultTerms);
         mapNames(result.getLocalised(DocFields.STATE, language), resultTerms);
         mapNames(result.getLocalised(DocFields.COUNTY, language), resultTerms);
         mapNames(result.getLocalised(DocFields.DISTRICT, language), resultTerms);
+        mapNames((String) result.get(DocFields.POSTCODE), resultTerms);
 
         var rematchWords = new ArrayList<String>();
         // first try to match the full words, keep address parts that do not match
@@ -169,6 +169,28 @@ public class QueryReranker implements Consumer<PhotonResult> {
                     todo.delete(idx + 1, idx + spaceIdx + 1);
                     return 0.5 * spaceIdx;
                 }
+            }
+        }
+
+        return 0.0;
+    }
+
+    private double matchCountry(StringBuilder todo, PhotonResult result) {
+        var cc = (String) result.get(DocFields.COUNTRYCODE);
+        if (cc != null) {
+            var idx = todo.indexOf(" " + cc + " ");
+            if (idx == 0 || idx + cc.length() + 2 >= todo.length()) {
+                todo.delete(idx + 1, idx + cc.length() + 2);
+                return cc.length();
+            }
+        }
+
+        cc = result.getLocalised(DocFields.COUNTRY, language);
+        if (cc != null) {
+            var idx = todo.indexOf(" " + cc + " ");
+            if (idx == 0 || idx + cc.length() + 2 >= todo.length()) {
+                todo.delete(idx + 1, idx + cc.length() + 2);
+                return cc.length();
             }
         }
 
