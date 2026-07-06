@@ -6,9 +6,9 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
-import java.util.stream.Stream;
 
 @NullMarked
 public class QueryReranker implements Consumer<PhotonResult> {
@@ -51,31 +51,52 @@ public class QueryReranker implements Consumer<PhotonResult> {
             }
         }
 
-        // address parts, we want to rematch in the query
-        var resultTerms = Stream.of(
-                        localeName,
-                        (String) result.get(DocFields.HOUSENUMBER),
-                        result.getLocalised(DocFields.STREET, language),
-                        result.getLocalised(DocFields.CITY, language),
-                        (String) result.get(DocFields.COUNTRYCODE),
-                        (String) result.get(DocFields.POSTCODE),
-                        result.getLocalised(DocFields.COUNTRY, language),
-                        result.getLocalised(DocFields.STATE, language),
-                        result.getLocalised(DocFields.COUNTY, language),
-                        result.getLocalised(DocFields.DISTRICT, language),
-                        result.getLocalised(DocFields.NAME, "default"),
-                        result.getLocalised(DocFields.NAME, "alt"))
-                .mapMulti(this::mapNames)
-                .toList();
-
         double matches = 0.0;
         var todo = new StringBuilder(" " + query + " ");
+        var resultTerms = new ArrayList<String>();
+
+        var hnrMatchScore = matchHousenumber(todo, result);
+        var streetName = result.getLocalised(DocFields.STREET, language);
+        if (hnrMatchScore > 0.0) {
+            matches += hnrMatchScore;
+            matches += matchMainTerm(todo, streetName);
+            if (localeName != null) {
+                resultTerms.add(localeName);
+            }
+            resultTerms.addAll(secondaryNames(result));
+        } else {
+            var mainMatch = matchMainTerm(todo, localeName);
+            for (var name: secondaryNames(result)) {
+                if (mainMatch > 0.0) {
+                    break;  // only one of the names can be a match
+                }
+                mainMatch = matchMainTerm(todo, name) * 0.9;
+            }
+            matches += mainMatch;
+            if (streetName != null) {
+                resultTerms.add(streetName);
+            }
+        }
+
+        if (todo.toString().isBlank()) {
+            return 0.8 * matches / query.length();
+        }
+
+        // address parts, we want to rematch in the query
+        mapNames(result.getLocalised(DocFields.CITY, language), resultTerms);
+        mapNames((String) result.get(DocFields.COUNTRYCODE), resultTerms);
+        mapNames((String) result.get(DocFields.POSTCODE), resultTerms);
+        mapNames(result.getLocalised(DocFields.COUNTRY, language), resultTerms);
+        mapNames(result.getLocalised(DocFields.STATE, language), resultTerms);
+        mapNames(result.getLocalised(DocFields.COUNTY, language), resultTerms);
+        mapNames(result.getLocalised(DocFields.DISTRICT, language), resultTerms);
+
         var rematchWords = new ArrayList<String>();
         // first try to match the full words, keep address parts that do not match
         for (var term : resultTerms) {
             var idx = todo.indexOf(" " + term + " ");
             if (idx >= 0) {
-                matches += term.length();
+                matches += 0.8 * term.length();
                 todo.delete(idx + 1, idx + term.length() + 2);
                 if (todo.toString().isBlank()) {
                     return 0.8 * matches / query.length();
@@ -89,7 +110,7 @@ public class QueryReranker implements Consumer<PhotonResult> {
         for (var w : todo.toString().strip().split(" +")) {
             for (var term : rematchWords) {
                 if (term.startsWith(w)) {
-                    matches += 0.7 * w.length();
+                    matches += 0.4 * w.length();
                     break;
                 }
             }
@@ -103,18 +124,79 @@ public class QueryReranker implements Consumer<PhotonResult> {
         return 0.8 * matches / query.length();
     }
 
+    private double matchMainTerm(StringBuilder todo, @Nullable String name) {
+        if (name == null) {
+            return 0.0;
+        }
+
+        var idx = todo.indexOf(" " + name + " ");
+        if (idx >= 0) {
+            todo.delete(idx + 1, idx + name.length() + 2);
+            return name.length();
+        }
+
+        var rematchWords = name.split(" +");
+        double matches = 0.0;
+
+        if (rematchWords.length > 1) {
+            for (var term : rematchWords) {
+                idx = todo.indexOf(" " + term + " ");
+                if (idx >= 0) {
+                    todo.delete(idx + 1, idx + term.length() + 2);
+                    matches += term.length();
+                }
+            }
+        }
+
+        return matches * 0.6;
+    }
+
+    private double matchHousenumber(StringBuilder todo, PhotonResult result) {
+        var hnr = (String) result.get(DocFields.HOUSENUMBER);
+
+        if (hnr != null) {
+            var norm = normalize(hnr);
+            var idx = todo.indexOf(" " + norm + " ");
+            if (idx > 0) {
+                todo.delete(idx + 1, idx + norm.length() + 2);
+                return norm.length();
+            }
+
+            var spaceIdx = norm.indexOf(' ');
+            if (spaceIdx > 0) {
+                idx = todo.indexOf(" " + norm.substring(0, spaceIdx + 1));
+                if (idx > 0) {
+                    todo.delete(idx + 1, idx + spaceIdx + 1);
+                    return 0.5 * spaceIdx;
+                }
+            }
+        }
+
+        return 0.0;
+    }
+
     private String normalize(String in) {
         return WORD_BREAK_PATTERN.matcher(in.toLowerCase()).replaceAll(" ").strip();
     }
 
-    private void mapNames(@Nullable String in, Consumer<String> consumer) {
+    private List<String> secondaryNames(PhotonResult result) {
+        var out = new ArrayList<String>();
+
+        mapNames(result.getLocalised(DocFields.NAME, "default"), out);
+        mapNames(result.getLocalised(DocFields.NAME, "alt"), out);
+
+        return out;
+    }
+
+    private void mapNames(@Nullable String in, ArrayList<String> list) {
         if (in != null) {
             for (var s : in.split(";")) {
                 var finname = normalize(s);
                 if (!finname.isEmpty()) {
-                    consumer.accept(finname);
+                    list.add(finname);
                 }
             }
         }
     }
+
 }
