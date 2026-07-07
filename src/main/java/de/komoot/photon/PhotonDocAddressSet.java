@@ -16,9 +16,6 @@ public class PhotonDocAddressSet implements Iterable<PhotonDoc> {
    
     public PhotonDocAddressSet(PhotonDoc base, Map<String, String> address) {
         addPlaceAddress(base, address, "conscriptionnumber");
-        // addStreetAddress(base, address, "streetnumber");
-
-        // nově: plný tvar 2531/80 na ulici
         addStreetAddress(base, address, "housenumber");
 
 
