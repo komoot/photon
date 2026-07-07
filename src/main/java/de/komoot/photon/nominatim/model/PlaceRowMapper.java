@@ -74,7 +74,23 @@ public class PlaceRowMapper implements RowMapper<PhotonDoc> {
         }
 
         double importance = rs.getDouble("importance");
-        doc.importance(rs.wasNull() ? (0.40001 - rs.getInt("rank_search") / 75d) : importance);
+        if (rs.wasNull()) {
+            int rank = rs.getInt("rank_search");
+            doc.importance(0.40001 - rank / 75d);
+        } else if (importance < 0.4) {
+            doc.importance(importance);
+        } else {
+            // Nominatim has relatively large importances for POIs of
+            // headquarters of organisations. This scales the importance
+            // by search rank to reduce the influence.
+            int rank = rs.getInt("rank_search");
+            double limit = 0.4 + 0.6 * (1 - rank / 30d);
+            if (importance > limit) {
+                doc.importance(limit + (importance - limit) / 2);
+            } else {
+                doc.importance(importance);
+            }
+        }
 
         return doc;
     }
