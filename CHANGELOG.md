@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [Unreleased]
+
+* fix missing HTTP request-latency histogram buckets in Prometheus metrics: the
+  `http.server.requests` timer now publishes percentile histograms, so
+  `http_server_requests_seconds_bucket` and `histogram_quantile()` p95/p99
+  panels work again
+* note: a previous Javalin upgrade renamed the request timer from
+  `jetty.server.requests` to `http.server.requests`; repoint dashboards and
+  alerts from `jetty_server_requests_seconds*` to `http_server_requests_seconds*`
+
 ## [1.2.1] - 2026-06-30
 
 * fix "Request Entity Too Large" error on import with geometry (thanks @henrik242)

@@ -36,7 +36,10 @@ public class MetricsConfig {
         registry.config().meterFilter(new MeterFilter() {
             @Override
             public DistributionStatisticConfig configure(Meter.Id id, DistributionStatisticConfig config) {
-                if (id.getName().equals("jetty.server.requests")) {
+                // Enable percentile histograms for the HTTP request-latency timer only, so we don't
+                // add high-cardinality buckets to unrelated timers (JVM GC pauses, OpenSearch client
+                // timers, etc.).
+                if (id.getName().equals("http.server.requests")) {
                     return DistributionStatisticConfig.builder()
                             .percentilesHistogram(true)
                             .build()

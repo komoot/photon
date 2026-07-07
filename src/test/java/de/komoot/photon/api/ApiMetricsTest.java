@@ -68,4 +68,30 @@ class ApiMetricsTest extends ApiBaseTester {
         var conn = connect("/metrics");
         assertThat(conn.getResponseCode()).isEqualTo(404);
     }
+
+    /**
+     * Regression test for the missing HTTP request-latency histogram buckets: Javalin's
+     * MicrometerPlugin records request timings under the "http.server.requests" meter, and the
+     * metrics filter must enable percentile histograms for it. Without the buckets (and their "le"
+     * label) any Grafana panel using histogram_quantile() for p95/p99 latency returns nothing.
+     * A future rename of the emitted meter makes this fail loudly instead of silently dropping
+     * the buckets.
+     */
+    @Test
+    void testMetricsEndpointExposesHttpRequestLatencyHistogram() throws Exception {
+        startAPI("-metrics-enable", "prometheus");
+
+        // Drive real requests so the http.server.requests timer records observations before scraping.
+        readURL("/api?q=berlin");
+        readURL("/reverse?lat=52.54714&lon=13.39026");
+
+        String metrics = readURL("/metrics");
+
+        // A bucket line carrying an "le" label is what histogram_quantile() consumes.
+        assertThat(metrics).containsPattern("http_server_requests_seconds_bucket\\{[^}]*le=\"");
+
+        // The summary series must still be exposed alongside the buckets.
+        assertThat(metrics).contains("http_server_requests_seconds_count");
+        assertThat(metrics).contains("http_server_requests_seconds_sum");
+    }
 }
