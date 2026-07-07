@@ -42,6 +42,14 @@ public class ImportFilterConfig {
             Set up database for reverse geocoding only""")
     private boolean reverseOnly = false;
 
+    @Parameter(names = "-street-housenumber-full", category = GROUP, description = """
+            Index street-based addresses with the full combined house number (the 'housenumber'
+            value, e.g. the Czech/Slovak conscription/orientation form '2531/80') instead of the
+            plain street number. Only affects addresses that carry a separate street number.
+            Disabled by default.
+            """)
+    private boolean streetHousenumberFull = false;
+
     public Set<String> getLanguages() {
         return new HashSet<>(languages);
     }
@@ -60,6 +68,10 @@ public class ImportFilterConfig {
         return importGeometryColumn;
     }
 
+    public boolean getStreetHousenumberFull() {
+        return streetHousenumberFull;
+    }
+
     public DatabaseProperties getDatabaseProperties() {
         final var dbProps = new DatabaseProperties();
         if (!languages.isEmpty()) {
@@ -67,6 +79,7 @@ public class ImportFilterConfig {
         }
         dbProps.setSupportGeometries(importGeometryColumn);
         dbProps.setReverseOnly(reverseOnly);
+        dbProps.setStreetHousenumberFull(streetHousenumberFull);
 
         if (extraTags != null) {
             dbProps.setExtraTags(extraTags);

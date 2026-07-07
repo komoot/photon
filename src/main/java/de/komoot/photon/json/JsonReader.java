@@ -33,6 +33,7 @@ public class JsonReader {
     private ConfigExtraTags extraTags = new ConfigExtraTags();
     private String @Nullable [] countryFilter = null;
     private Set<String> languages = Set.of();
+    private boolean streetHousenumberFull = false;
 
     public JsonReader(File inputFile) throws IOException {
         parser = configureObjectMapper().createParser(inputFile);
@@ -73,6 +74,10 @@ public class JsonReader {
         this.languages = languages;
     }
 
+    public void setStreetHousenumberFull(boolean enable) {
+        streetHousenumberFull = enable;
+    }
+
     public void readHeader() throws IOException {
         final String docType = readStartDocument();
 
@@ -106,7 +111,7 @@ public class JsonReader {
                 Iterable<PhotonDoc> docs;
                 if (parser.isExpectedStartObjectToken()) {
                     parseDoc = parsePlaceDocument();
-                    docs = parseDoc.asMultiAddressDocs(countryFilter, languages);
+                    docs = parseDoc.asMultiAddressDocs(countryFilter, languages, streetHousenumberFull);
                 } else if (parser.isExpectedStartArrayToken()) {
                     List<PhotonDoc> docList = new ArrayList<>();
                     while (parser.nextToken() != JsonToken.END_ARRAY) {

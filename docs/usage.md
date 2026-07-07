@@ -149,6 +149,19 @@ When available, photon can also import full geometries instead of just a
 centroid and bounding box. These geometries will then be returned with the
 response. To enable this, use the **-full-geometries** switch.
 
+In some countries a building carries two numbers: a conscription (descriptive)
+number and a street (orientation) number, which Nominatim exposes together as a
+combined house number such as `2531/80` (for example in Czechia and Slovakia).
+By default photon indexes street-based addresses with the plain street number
+only. Use the **-street-housenumber-full** switch to index them with the full
+combined house number instead. The house number analyzer splits the combined
+form on the delimiter, so the address can still be found by the street number,
+the conscription number or the full combined form. This only affects addresses
+that carry a separate street number; the place-based address variant continues
+to use the conscription number regardless of this setting. The switch is stored
+in the database properties so that follow-up updates keep using the same
+behaviour.
+
 _Hint: if these filtering options are not sufficient, it is always possible
 to preprocess the json dump before feeding it to photon. Have a look at the
 [dump spec](json-dump-format-0.1.0.md) to learn about the format of this

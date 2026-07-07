@@ -120,6 +120,30 @@ class PhotonDocAddressSetTest {
     }
 
     @Test
+    void testConscriptionAddressWithFullStreetHousenumber() {
+        assertThat(new PhotonDocAddressSet(baseDoc, Map.of(
+                "housenumber", "34/50",
+                "conscriptionnumber", "50",
+                "streetnumber", "34",
+                "place", "Nowhere",
+                "street", "Chaussee"), true))
+                .satisfiesExactly(
+                        d -> assertDocWithHnrAndStreet(d, "50", "Nowhere"),
+                        d2 -> assertDocWithHnrAndStreet(d2, "34/50", "Chaussee"));
+    }
+
+    @Test
+    void testFullStreetHousenumberIgnoredWithoutStreetNumber() {
+        // Ordinary address without a separate street number stays on the generic path,
+        // so enabling the switch must not change its behaviour.
+        assertThat(new PhotonDocAddressSet(baseDoc, Map.of(
+                "housenumber", "34",
+                "street", "Chaussee"), true))
+                .satisfiesExactly(
+                        d -> assertDocWithHnrAndStreet(d, "34", "Chaussee"));
+    }
+
+    @Test
     void testBlockAddress() {
         assertThat(new PhotonDocAddressSet(baseDoc, Map.of(
                 "housenumber", "1",

@@ -75,7 +75,7 @@ public class NominatimImporter extends NominatimConnector {
                     doc.addAddresses(address, dbProperties.getLanguages()); // take precedence over computed address
                     doc.setCountry(cnames);
 
-                    importThread.addDocument(new PhotonDocAddressSet(doc, address));
+                    importThread.addDocument(new PhotonDocAddressSet(doc, address, dbProperties.getStreetHousenumberFull()));
                 });
 
         // Next get all POIs/housenumbers.
@@ -103,7 +103,7 @@ public class NominatimImporter extends NominatimConnector {
                     doc.addAddresses(address, dbProperties.getLanguages()); // take precedence over computed address
                     doc.setCountry(cnames);
 
-                    importThread.addDocument(new PhotonDocAddressSet(doc, address));
+                    importThread.addDocument(new PhotonDocAddressSet(doc, address, dbProperties.getStreetHousenumberFull()));
                 });
 
         // Interpolation table

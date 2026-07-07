@@ -43,7 +43,7 @@ public class NominatimPlaceDocument {
         return doc;
     }
 
-    public Iterable<PhotonDoc> asMultiAddressDocs(String @Nullable [] countryFilter, Set<String> languages) {
+    public Iterable<PhotonDoc> asMultiAddressDocs(String @Nullable [] countryFilter, Set<String> languages, boolean streetHousenumberFull) {
         if (!names.isEmpty()) {
             doc.names(NameMap.makeForPlace(names, languages));
         }
@@ -57,7 +57,7 @@ public class NominatimPlaceDocument {
             doc.addAddresses(address.get(), languages);
         }
 
-        return new PhotonDocAddressSet(doc, address == null ? Map.of() : address.getMainAddress());
+        return new PhotonDocAddressSet(doc, address == null ? Map.of() : address.getMainAddress(), streetHousenumberFull);
     }
 
     @Nullable

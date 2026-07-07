@@ -123,7 +123,7 @@ public class NominatimUpdater extends NominatimConnector {
             assert countryNames != null;
             doc.setCountry(countryNames.get(rs.getString("country_code")));
 
-            return new PhotonDocAddressSet(doc, address);
+            return new PhotonDocAddressSet(doc, address, dbProperties.getStreetHousenumberFull());
         };
 
         // Setup handling of interpolation table.
