@@ -26,6 +26,7 @@ public class DatabaseProperties {
     private boolean synonymsInstalled = false;
     private ConfigExtraTags extraTags = new ConfigExtraTags();
     private boolean reverseOnly = false;
+    private boolean streetHousenumberFull = false;
 
     @SuppressWarnings("unused")
     public void setDatabaseVersion(String version) {
@@ -120,6 +121,7 @@ public class DatabaseProperties {
                 ", supportGeometries=" + supportGeometries +
                 ", synonymsInstalled=" + synonymsInstalled +
                 ", extraTags=" + extraTags +
+                ", streetHousenumberFull=" + streetHousenumberFull +
                 '}';
     }
 
@@ -129,5 +131,20 @@ public class DatabaseProperties {
 
     public boolean getReverseOnly() {
         return reverseOnly;
+    }
+
+    /**
+     * Whether street-based addresses that carry a separate street number should be indexed with
+     * the full combined house number (the {@code housenumber} value, e.g. the Czech/Slovak
+     * conscription/orientation form {@code 2531/80}) instead of the plain street number.
+     *
+     * @return {@code true} if the full combined house number is used, {@code false} otherwise.
+     */
+    public boolean getStreetHousenumberFull() {
+        return streetHousenumberFull;
+    }
+
+    public void setStreetHousenumberFull(boolean streetHousenumberFull) {
+        this.streetHousenumberFull = streetHousenumberFull;
     }
 }

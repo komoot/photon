@@ -14,8 +14,27 @@ public class PhotonDocAddressSet implements Iterable<PhotonDoc> {
     private final List<PhotonDoc> docs = new ArrayList<>();
 
     public PhotonDocAddressSet(PhotonDoc base, Map<String, String> address) {
+        this(base, address, false);
+    }
+
+    /**
+     * Build the set of address documents for a place.
+     *
+     * @param base                  The document the addresses are derived from.
+     * @param address               The address key/value pairs of the place.
+     * @param streetHousenumberFull When {@code true}, street-based addresses that carry a
+     *                              separate street number (i.e. the conscription/orientation
+     *                              split used in countries such as Czechia and Slovakia) are
+     *                              indexed with the full combined house number (the
+     *                              {@code housenumber} key, e.g. {@code 2531/80}) instead of the
+     *                              plain street number. The house number analyzer still splits
+     *                              the combined form, so the street number and the conscription
+     *                              number stay searchable on their own. When {@code false} (the
+     *                              default) the plain street number is used.
+     */
+    public PhotonDocAddressSet(PhotonDoc base, Map<String, String> address, boolean streetHousenumberFull) {
         addPlaceAddress(base, address, "conscriptionnumber");
-        addStreetAddress(base, address, "streetnumber");
+        addStreetAddress(base, address, streetHousenumberFull);
 
         if (docs.isEmpty()) {
             addGenericAddress(base, address, "housenumber");
@@ -46,11 +65,22 @@ public class PhotonDocAddressSet implements Iterable<PhotonDoc> {
         }
     }
 
-    private void addStreetAddress(PhotonDoc base, Map<String, String> address, @SuppressWarnings("SameParameterValue") String key) {
-        if (address.containsKey("street")) {
-            for (String hnr : splitHousenumber(address, key)) {
-                docs.add(new PhotonDoc(base).houseNumber(hnr));
-            }
+    private void addStreetAddress(PhotonDoc base, Map<String, String> address, boolean streetHousenumberFull) {
+        if (!address.containsKey("street")) {
+            return;
+        }
+
+        // Addresses that split the house number into a street (orientation) number and a
+        // conscription number (e.g. in Czechia and Slovakia) also carry the two joined as a
+        // combined house number such as "2531/80". When requested, index that combined form
+        // instead of the plain street number. The house number analyzer splits it on the
+        // delimiter, so the street number and the conscription number remain searchable on
+        // their own. Ordinary addresses without a separate street number are left untouched.
+        final String key = streetHousenumberFull && address.containsKey("streetnumber")
+                ? "housenumber" : "streetnumber";
+
+        for (String hnr : splitHousenumber(address, key)) {
+            docs.add(new PhotonDoc(base).houseNumber(hnr));
         }
     }
 

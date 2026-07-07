@@ -269,6 +269,7 @@ public class App {
         reader.setExtraTags(args.getExtraTags());
         reader.setCountryFilter(args.getCountryCodes());
         reader.setLanguages(args.getLanguages());
+        reader.setStreetHousenumberFull(args.getStreetHousenumberFull());
 
         reader.readHeader();
         final var importDate = reader.getImportDate();
