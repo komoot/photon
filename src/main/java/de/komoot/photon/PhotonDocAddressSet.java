@@ -13,16 +13,20 @@ public class PhotonDocAddressSet implements Iterable<PhotonDoc> {
 
     private final List<PhotonDoc> docs = new ArrayList<>();
 
+   
     public PhotonDocAddressSet(PhotonDoc base, Map<String, String> address) {
         addPlaceAddress(base, address, "conscriptionnumber");
-        addStreetAddress(base, address, "streetnumber");
+        // addStreetAddress(base, address, "streetnumber");
+
+        // nově: plný tvar 2531/80 na ulici
+        addStreetAddress(base, address, "housenumber");
+
 
         if (docs.isEmpty()) {
             addGenericAddress(base, address, "housenumber");
         }
 
         if (docs.isEmpty() && base.isUsefulForIndex()) {
-            // Doesn't have housenumbers, so add the original document as the single document
             docs.add(base);
         }
     }
