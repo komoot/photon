@@ -109,14 +109,14 @@ class PhotonDocAddressSetTest {
     @Test
     void testConscriptionAddress() {
         assertThat(new PhotonDocAddressSet(baseDoc, Map.of(
-            "housenumber", "34/50",
-            "conscriptionnumber", "50",
-            "streetnumber", "34",
-            "place", "Nowhere",
-            "street", "Chaussee")))
-            .satisfiesExactly(
-                    d  -> assertDocWithHnrAndStreet(d, "50", "Nowhere"),
-                    d2 -> assertDocWithHnrAndStreet(d2, "34/50", "Chaussee"));
+                "housenumber", "34/50",
+                "conscriptionnumber", "50",
+                "streetnumber", "34",
+                "place", "Nowhere",
+                "street", "Chaussee")))
+                .satisfiesExactly(
+                        d  -> assertDocWithHnrAndStreet(d, "50", "Nowhere"),
+                        d2 -> assertDocWithHnrAndStreet(d2, "34/50", "Chaussee"));
 }
 
     @Test
