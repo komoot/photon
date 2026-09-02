@@ -28,6 +28,11 @@ public class StructuredQueryTest extends ESBaseTester {
     private static final String HAMLET = "Hamlet";
     private static final String STREET = "Some street";
     public static final String DISTRICT_POST_CODE = "12346";
+    private static final String COMPOUND_HOUSE_NUMBER = "275/118";
+    private static final String HYPHENATED_POSTCODE_STREET = "Rua Bom Jardim";
+    private static final String HYPHENATED_POSTCODE = "68685-000";
+    private static final String ALPHANUMERIC_POSTCODE_STREET = "Hwy 4109";
+    private static final String ALPHANUMERIC_POSTCODE = "B5A5B1";
 
     @BeforeAll
     void setUp(@TempDir Path dataDirectory) throws Exception {
@@ -111,6 +116,41 @@ public class StructuredQueryTest extends ESBaseTester {
         addHamletHouse(instance, 6, "2");
         addHamletHouse(instance, 7, "3");
         instance.add(List.of(busStop));
+
+        // A house whose number analyses into two tokens, as in Slovakia, Czechia,
+        // Japan or Switzerland ("275/118", "400-2", "13 a"), and a house whose
+        // postcode carries a hyphen, as in Brazil, Portugal or Poland.
+        var compoundNumberHouse = new PhotonDoc("20", "N", 20, "building", "yes")
+                .countryCode(COUNTRY_CODE)
+                .postcode("12345")
+                .addAddresses(address, getProperties().getLanguages())
+                .houseNumber(COMPOUND_HOUSE_NUMBER)
+                .importance(1.0)
+                .addressType(AddressType.HOUSE);
+        instance.add(List.of(compoundNumberHouse));
+        var hyphenatedPostcodeAddress = new HashMap<String, String>();
+        hyphenatedPostcodeAddress.put("city", CITY);
+        hyphenatedPostcodeAddress.put("street", HYPHENATED_POSTCODE_STREET);
+        var hyphenatedPostcodeHouse = new PhotonDoc("21", "N", 21, "building", "yes")
+                .countryCode(COUNTRY_CODE)
+                .postcode(HYPHENATED_POSTCODE)
+                .addAddresses(hyphenatedPostcodeAddress, getProperties().getLanguages())
+                .houseNumber("7")
+                .importance(1.0)
+                .addressType(AddressType.HOUSE);
+        instance.add(List.of(hyphenatedPostcodeHouse));
+        // A Canadian-style postcode: letters and digits, no space, upper case.
+        var alphanumericPostcodeAddress = new HashMap<String, String>();
+        alphanumericPostcodeAddress.put("city", CITY);
+        alphanumericPostcodeAddress.put("street", ALPHANUMERIC_POSTCODE_STREET);
+        var alphanumericPostcodeHouse = new PhotonDoc("22", "N", 22, "building", "yes")
+                .countryCode(COUNTRY_CODE)
+                .postcode(ALPHANUMERIC_POSTCODE)
+                .addAddresses(alphanumericPostcodeAddress, getProperties().getLanguages())
+                .houseNumber("1")
+                .importance(1.0)
+                .addressType(AddressType.HOUSE);
+        instance.add(List.of(alphanumericPostcodeHouse));
         instance.finish();
         refresh();
     }
@@ -267,6 +307,54 @@ public class StructuredQueryTest extends ESBaseTester {
         Assertions.assertEquals(request.getCity(), result.getLocalised(DocFields.CITY, LANGUAGE));
         Assertions.assertEquals(request.getStreet(), result.getLocalised(DocFields.STREET, LANGUAGE));
         Assertions.assertEquals(request.getHouseNumber(), result.get(DocFields.HOUSENUMBER));
+    }
+
+    @Test
+    void findsHouseWithCompoundHouseNumber() {
+        // Two tokens after analysis. This used to fail the whole search with
+        // "all shards failed": a phrase query on a field indexed without positions.
+        var request = new StructuredSearchRequest();
+        request.setCountryCode(COUNTRY_CODE);
+        request.setCity(CITY);
+        request.setStreet(STREET);
+        request.setHouseNumber(COMPOUND_HOUSE_NUMBER);
+
+        var result = search(request);
+
+        Assertions.assertEquals(20, result.get(DocFields.OSM_ID));
+        Assertions.assertEquals(COMPOUND_HOUSE_NUMBER, result.get(DocFields.HOUSENUMBER));
+    }
+
+    @Test
+    void findsHouseWithHyphenatedPostcode() {
+        // The postcode is indexed as two tokens; the query must be analysed the
+        // same way. This used to come back empty for every hyphenated postcode.
+        var request = new StructuredSearchRequest();
+        request.setCountryCode(COUNTRY_CODE);
+        request.setPostCode(HYPHENATED_POSTCODE);
+        request.setStreet(HYPHENATED_POSTCODE_STREET);
+        request.setHouseNumber("7");
+
+        var result = search(request);
+
+        Assertions.assertEquals(21, result.get(DocFields.OSM_ID));
+        Assertions.assertEquals(HYPHENATED_POSTCODE, result.get(DocFields.POSTCODE));
+    }
+
+    @Test
+    void findsHouseWithAlphanumericPostcode() {
+        // Indexed lower-cased by the field analyzer; the previous term-level
+        // query compared the upper-case string as given and never matched.
+        var request = new StructuredSearchRequest();
+        request.setCountryCode(COUNTRY_CODE);
+        request.setPostCode(ALPHANUMERIC_POSTCODE);
+        request.setStreet(ALPHANUMERIC_POSTCODE_STREET);
+        request.setHouseNumber("1");
+
+        var result = search(request);
+
+        Assertions.assertEquals(22, result.get(DocFields.OSM_ID));
+        Assertions.assertEquals(ALPHANUMERIC_POSTCODE, result.get(DocFields.POSTCODE));
     }
 
     private PhotonResult search(StructuredSearchRequest request) {

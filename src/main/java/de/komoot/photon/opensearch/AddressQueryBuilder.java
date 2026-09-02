@@ -131,23 +131,19 @@ public class AddressQueryBuilder {
 
         Query query;
         if (hasMoreDetails) {
-            if (postalCode.contains(" ")) {
-                query = QueryBuilders.match()
-                        .field(DocFields.POSTCODE)
-                        .query(FieldValue.of(postalCode))
-                        .fuzziness(fuzziness.asString())
-                        .boost(POSTAL_CODE_BOOST)
-                        .build()
-                        .toQuery();
-            } else {
-                query = QueryBuilders.fuzzy()
-                        .field(DocFields.POSTCODE)
-                        .value(FieldValue.of(postalCode))
-                        .fuzziness(fuzziness.asString())
-                        .boost(POSTAL_CODE_BOOST)
-                        .build()
-                        .toQuery();
-            }
+            // A match query, so the postcode is analysed with the field's own
+            // analyzer ("index_raw": standard tokenizer, lowercased). The previous
+            // fuzzy term query compared the raw string with the indexed tokens:
+            // "68685-000" is indexed as [68685, 000], "B5A5B1" as [b5a5b1], so a
+            // hyphenated or upper-case postcode could never match, whatever the
+            // fuzziness -- and the whole structured query came back empty.
+            query = QueryBuilders.match()
+                    .field(DocFields.POSTCODE)
+                    .query(FieldValue.of(postalCode))
+                    .fuzziness(fuzziness.asString())
+                    .boost(POSTAL_CODE_BOOST)
+                    .build()
+                    .toQuery();
             addToCityFilter(query);
         } else {
             query = QueryBuilders.matchPhrase()
@@ -180,11 +176,7 @@ public class AddressQueryBuilder {
                 // some hamlets have no street name and only number the buildings
                 var houseNumberQuery = QueryBuilders.bool()
                         .mustNot(QueryBuilders.exists().field(DocFields.STREET).build().toQuery())
-                        .must(QueryBuilders.matchPhrase()
-                                .field(DocFields.HOUSENUMBER)
-                                .query(houseNumber)
-                                .build()
-                                .toQuery());
+                        .must(houseNumberMatch(houseNumber));
 
                 query.must(houseNumberQuery.build().toQuery());
             }
@@ -210,11 +202,7 @@ public class AddressQueryBuilder {
         }
 
         if (houseNumber != null) {
-            var houseNumberMatchQuery = QueryBuilders.bool().must(QueryBuilders.matchPhrase()
-                    .field(DocFields.HOUSENUMBER)
-                    .query(houseNumber)
-                    .build()
-                    .toQuery());
+            var houseNumberMatchQuery = QueryBuilders.bool().must(houseNumberMatch(houseNumber));
 
             houseNumberMatchQuery.filter(getFuzzyQuery(DocFields.STREET, street));
             if (cityFilter != null) {
@@ -232,6 +220,23 @@ public class AddressQueryBuilder {
         query.must(streetQuery);
 
         return this;
+    }
+
+    /**
+     * All tokens of the house number must match, in any order. The house number
+     * field is indexed with index_options=docs (no positions), so a phrase query
+     * -- what was used here before -- fails with "all shards failed" as soon as
+     * the number analyses into two tokens: "275/118", "400-2", "12 a". Those are
+     * the standard forms in Slovakia, Czechia, Japan and Switzerland, among
+     * others; every structured lookup of such an address was an error.
+     */
+    private static Query houseNumberMatch(String houseNumber) {
+        return QueryBuilders.match()
+                .field(DocFields.HOUSENUMBER)
+                .query(FieldValue.of(houseNumber))
+                .operator(Operator.And)
+                .build()
+                .toQuery();
     }
 
     private Query getFuzzyQuery(String name, String value) {
