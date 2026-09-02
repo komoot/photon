@@ -137,9 +137,12 @@ public class AddressQueryBuilder {
             // "68685-000" is indexed as [68685, 000], "B5A5B1" as [b5a5b1], so a
             // hyphenated or upper-case postcode could never match, whatever the
             // fuzziness -- and the whole structured query came back empty.
+            // Every token must match: "68685-000" must not be satisfied by a
+            // postcode that merely shares the "000" suffix.
             query = QueryBuilders.match()
                     .field(DocFields.POSTCODE)
                     .query(FieldValue.of(postalCode))
+                    .operator(Operator.And)
                     .fuzziness(fuzziness.asString())
                     .boost(POSTAL_CODE_BOOST)
                     .build()

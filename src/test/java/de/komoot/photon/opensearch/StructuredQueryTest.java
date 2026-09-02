@@ -31,6 +31,7 @@ public class StructuredQueryTest extends ESBaseTester {
     private static final String COMPOUND_HOUSE_NUMBER = "275/118";
     private static final String HYPHENATED_POSTCODE_STREET = "Rua Bom Jardim";
     private static final String HYPHENATED_POSTCODE = "68685-000";
+    private static final String SAME_SUFFIX_POSTCODE = "99999-000";
     private static final String ALPHANUMERIC_POSTCODE_STREET = "Hwy 4109";
     private static final String ALPHANUMERIC_POSTCODE = "B5A5B1";
 
@@ -139,6 +140,16 @@ public class StructuredQueryTest extends ESBaseTester {
                 .importance(1.0)
                 .addressType(AddressType.HOUSE);
         instance.add(List.of(hyphenatedPostcodeHouse));
+        // Same street and number, a postcode that shares only the "000" suffix:
+        // a postcode match that accepted any one token would confuse the two.
+        var sameSuffixPostcodeHouse = new PhotonDoc("23", "N", 23, "building", "yes")
+                .countryCode(COUNTRY_CODE)
+                .postcode(SAME_SUFFIX_POSTCODE)
+                .addAddresses(hyphenatedPostcodeAddress, getProperties().getLanguages())
+                .houseNumber("7")
+                .importance(1.0)
+                .addressType(AddressType.HOUSE);
+        instance.add(List.of(sameSuffixPostcodeHouse));
         // A Canadian-style postcode: letters and digits, no space, upper case.
         var alphanumericPostcodeAddress = new HashMap<String, String>();
         alphanumericPostcodeAddress.put("city", CITY);
@@ -339,6 +350,22 @@ public class StructuredQueryTest extends ESBaseTester {
 
         Assertions.assertEquals(21, result.get(DocFields.OSM_ID));
         Assertions.assertEquals(HYPHENATED_POSTCODE, result.get(DocFields.POSTCODE));
+    }
+
+    @Test
+    void hyphenatedPostcodeMustMatchAllTokens() {
+        // Two houses on the same street with the same number, postcodes
+        // 68685-000 and 99999-000. Each query must return its own.
+        var request = new StructuredSearchRequest();
+        request.setCountryCode(COUNTRY_CODE);
+        request.setStreet(HYPHENATED_POSTCODE_STREET);
+        request.setHouseNumber("7");
+
+        request.setPostCode(SAME_SUFFIX_POSTCODE);
+        Assertions.assertEquals(23, search(request).get(DocFields.OSM_ID));
+
+        request.setPostCode(HYPHENATED_POSTCODE);
+        Assertions.assertEquals(21, search(request).get(DocFields.OSM_ID));
     }
 
     @Test
