@@ -61,6 +61,23 @@ class ApiMetricsTest extends ApiBaseTester {
         assertThat(metrics).contains("jvm_threads");
     }
 
+    /**
+     * The numeric encoding of opensearch_cluster_health_status is the inverse of the widely used
+     * elasticsearch_exporter convention: here a higher value means healthier, there it means worse.
+     * A scrape therefore looks identical whether the cluster is permanently red or permanently
+     * green, and readers have guessed wrong in both directions. The HELP text is the only place the
+     * scale is stated, so it must survive refactoring of the gauge registration.
+     */
+    @Test
+    void testClusterHealthStatusDocumentsItsEncoding() throws Exception {
+        startAPI("-metrics-enable", "prometheus");
+
+        String metrics = readURL("/metrics");
+
+        assertThat(metrics).containsPattern(
+                "# HELP opensearch_cluster_health_status .*2 = green.*1 = yellow.*0 = red");
+    }
+
     @Test
     void testMetricsEndpointReturns404WhenDisabled() throws Exception {
         startAPI();

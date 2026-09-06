@@ -45,21 +45,31 @@ public class OpenSearchMetrics implements MeterBinder {
     @Override
     public void bindTo(MeterRegistry registry) {
         Gauge.builder("opensearch.documents.count", client, this::getDocumentCount)
+                .description("Documents in the Photon index")
                 .tag("index", PhotonIndex.NAME).register(registry);
         Gauge.builder("opensearch.index.size.bytes", client, this::getIndexSizeBytes)
+                .description("Store size of the Photon index primaries")
                 .tag("index", PhotonIndex.NAME).baseUnit("bytes").register(registry);
         Gauge.builder("opensearch.search", client, this::getSearchTotal)
+                .description("Search queries served by the Photon index primaries")
                 .tag("index", PhotonIndex.NAME).register(registry);
         Gauge.builder("opensearch.search.time.millis", client, this::getSearchTimeMillis)
+                .description("Cumulative time spent serving search queries")
                 .tag("index", PhotonIndex.NAME).baseUnit("milliseconds").register(registry);
         Gauge.builder("opensearch.indexing", client, this::getIndexingTotal)
+                .description("Documents indexed by the Photon index primaries")
                 .tag("index", PhotonIndex.NAME).register(registry);
         Gauge.builder("opensearch.indexing.time.millis", client, this::getIndexingTimeMillis)
+                .description("Cumulative time spent indexing documents")
                 .tag("index", PhotonIndex.NAME).baseUnit("milliseconds").register(registry);
-        Gauge.builder("opensearch.cluster.shards.active", client, this::getActiveShards).register(registry);
-        Gauge.builder("opensearch.cluster.shards.relocating", client, this::getRelocatingShards).register(registry);
-        Gauge.builder("opensearch.cluster.shards.unassigned", client, this::getUnassignedShards).register(registry);
-        Gauge.builder("opensearch.cluster.health.status", client, this::getHealthStatus).register(registry);
+        Gauge.builder("opensearch.cluster.shards.active", client, this::getActiveShards)
+                .description("Active shards in the cluster").register(registry);
+        Gauge.builder("opensearch.cluster.shards.relocating", client, this::getRelocatingShards)
+                .description("Relocating shards in the cluster").register(registry);
+        Gauge.builder("opensearch.cluster.shards.unassigned", client, this::getUnassignedShards)
+                .description("Unassigned shards in the cluster").register(registry);
+        Gauge.builder("opensearch.cluster.health.status", client, this::getHealthStatus)
+                .description("Cluster health status: 2 = green, 1 = yellow, 0 = red").register(registry);
     }
 
     private CachedStats getCache() {
@@ -105,6 +115,8 @@ public class OpenSearchMetrics implements MeterBinder {
             activeShards = health.activeShards();
             relocatingShards = health.relocatingShards();
             unassignedShards = health.unassignedShards();
+            // Higher is healthier. This is the inverse of the elasticsearch_exporter convention,
+            // so the encoding is spelled out in the gauge description exposed as the HELP text.
             healthStatus = health.status() == HealthStatus.Green ? 2 : health.status() == HealthStatus.Yellow ? 1 : 0;
         } catch (Exception e) {
             LOGGER.warn("Failed to refresh cache", e);
