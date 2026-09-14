@@ -12,6 +12,7 @@ import org.opensearch.client.opensearch.core.SearchResponse;
 
 import java.io.IOException;
 import java.util.Comparator;
+import java.util.Map;
 import java.util.stream.Stream;
 
 @NullMarked
@@ -20,10 +21,16 @@ public class OpenSearchSearchHandler implements SearchHandler<SimpleSearchReques
     private static final double NEG_DECAY_FACTOR = Math.log(0.5);
     private final OpenSearchClient client;
     private final String queryTimeout;
+    private final Map<String, String> synonyms;
 
     public OpenSearchSearchHandler(OpenSearchClient client, int queryTimeout) {
+        this(client, queryTimeout, Map.of());
+    }
+
+    public OpenSearchSearchHandler(OpenSearchClient client, int queryTimeout, Map<String, String> synonyms) {
         this.client = client;
         this.queryTimeout = queryTimeout + "s";
+        this.synonyms = synonyms;
     }
 
     @Override
@@ -57,7 +64,8 @@ public class OpenSearchSearchHandler implements SearchHandler<SimpleSearchReques
         }
 
         if (request.getQuery() != null) {
-            stream = stream.peek(new QueryReranker(request.getQuery(), request.getLanguage(), request.getDefaultLanguage()));
+            stream = stream.peek(new QueryReranker(request.getQuery(), request.getLanguage(),
+                    request.getDefaultLanguage(), synonyms));
         }
 
         return ResultScorer.adjustByNormalizedOpenSearchScore(stream)

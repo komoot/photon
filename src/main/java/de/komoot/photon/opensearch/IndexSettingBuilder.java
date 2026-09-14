@@ -76,6 +76,11 @@ public class IndexSettingBuilder {
         return this;
     }
 
+    @Nullable
+    public List<String> getSearchSynonyms() {
+        return synonymConfig == null ? null : synonymConfig.getSearchSynonyms();
+    }
+
     private void updateSynonymFilters() {
         final var synonyms = synonymConfig == null ? null : synonymConfig.getSearchSynonyms();
         if (synonyms != null && !synonyms.isEmpty()) {

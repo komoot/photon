@@ -8,13 +8,16 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
 @NullMarked
 public class QueryReranker implements Consumer<PhotonResult> {
     private static final Pattern WORD_BREAK_PATTERN = Pattern.compile("[-,.: ]+");
+    private final Map<String, String> synonyms;
     private final String query;
     private final String language;
     @Nullable private final String fallbackLanguage;
@@ -22,11 +25,40 @@ public class QueryReranker implements Consumer<PhotonResult> {
     private final boolean isFullQuery;
 
     public QueryReranker(String query, String language, @Nullable String fallbackLanguage) {
+        this(query, language, fallbackLanguage, Map.of());
+    }
+
+    public QueryReranker(String query, String language, @Nullable String fallbackLanguage,
+                         Map<String, String> synonyms) {
+        this.synonyms = synonyms;
         this.query = normalize(query);
         this.language = language;
         this.fallbackLanguage = fallbackLanguage;
         this.isMultiTermQuery = query.indexOf(',') >= 0;
         this.isFullQuery = query.endsWith(" ");
+    }
+
+    public static Map<String, String> synonymMap(@Nullable List<String> rules) {
+        if (rules == null) {
+            return Map.of();
+        }
+
+        var map = new HashMap<String, String>();
+        for (var rule : rules) {
+            String canonical = null;
+            for (var term : rule.split(",")) {
+                var norm = breakWords(term);
+                if (norm.isEmpty() || norm.indexOf(' ') >= 0) {
+                    continue;
+                }
+                if (canonical == null) {
+                    canonical = norm;
+                }
+                map.put(norm, canonical);
+            }
+        }
+
+        return map;
     }
 
     @Override
@@ -220,6 +252,23 @@ public class QueryReranker implements Consumer<PhotonResult> {
     }
 
     private String normalize(String in) {
+        var base = breakWords(in);
+        if (synonyms.isEmpty() || base.isEmpty()) {
+            return base;
+        }
+
+        var out = new StringBuilder(base.length());
+        for (var term : base.split(" ")) {
+            if (!out.isEmpty()) {
+                out.append(' ');
+            }
+            out.append(synonyms.getOrDefault(term, term));
+        }
+
+        return out.toString();
+    }
+
+    private static String breakWords(String in) {
         return WORD_BREAK_PATTERN.matcher(fold(in.toLowerCase())).replaceAll(" ").strip();
     }
 

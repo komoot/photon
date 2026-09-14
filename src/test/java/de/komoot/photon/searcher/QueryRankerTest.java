@@ -20,6 +20,40 @@ public class QueryRankerTest {
 
     }
 
+    @Test
+    void testSynonymTermCountsAsAMatch() {
+        QueryReRankerAssert.assertThat("karl johans gt", "no", "gt,gt.,gate,gata")
+                .scoresResultEqualTo(1.0, new MockPhotonResult().putName("no", "Karl Johans gate"));
+
+        QueryReRankerAssert.assertThat("karl johans gt.", "no", "gt,gt.,gate,gata")
+                .scoresResultEqualTo(1.0, new MockPhotonResult().putName("no", "Karl Johans gate"));
+    }
+
+    @Test
+    void testSynonymMatchOutranksPartialMatch() {
+        QueryReRankerAssert.assertThat("askvoll kirke", "no", "kirke,kyrkje")
+                .ranksResultsInOrder(
+                        new MockPhotonResult().putName("no", "Askvoll kyrkje"),
+                        new MockPhotonResult().putName("no", "Askvoll skule"));
+    }
+
+    @Test
+    void testWithoutSynonymsTermIsNotCredited() {
+        QueryReRankerAssert.assertThat("karl johans gt", "no")
+                .ranksResultsInOrder(
+                        new MockPhotonResult().putName("no", "Karl Johans gt"),
+                        new MockPhotonResult().putName("no", "Karl Johans gate"));
+    }
+
+    @Test
+    void testSynonymMapIgnoresMultiWordTerms() {
+        assertThat(QueryReranker.synonymMap(java.util.List.of("st hanshaugen,sankthanshaugen")))
+                .containsOnlyKeys("sankthanshaugen");
+        assertThat(QueryReranker.synonymMap(java.util.List.of("gt,gt.,gate")))
+                .containsOnlyKeys("gt", "gate");
+        assertThat(QueryReranker.synonymMap(null)).isEmpty();
+    }
+
     @ParameterizedTest
     @ValueSource(strings = {"Bo sjukeheim", "bø sjukeheim", "BO SJUKEHEIM"})
     void testFoldedQueryMatchesDiacriticName(String query) {

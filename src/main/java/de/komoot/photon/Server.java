@@ -9,6 +9,7 @@ import de.komoot.photon.opensearch.*;
 import de.komoot.photon.query.ReverseRequest;
 import de.komoot.photon.query.SimpleSearchRequest;
 import de.komoot.photon.query.StructuredSearchRequest;
+import de.komoot.photon.searcher.QueryReranker;
 import de.komoot.photon.searcher.SearchHandler;
 import org.apache.hc.core5.http.HttpHost;
 import org.apache.logging.log4j.LogManager;
@@ -25,6 +26,7 @@ import org.opensearch.client.transport.httpclient5.ApacheHttpClient5TransportBui
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
 import java.util.List;
 
 @NullMarked
@@ -43,6 +45,7 @@ public class Server {
     private static final Logger LOGGER = LogManager.getLogger();
 
     protected OpenSearchClient client;
+    private Map<String, String> searchSynonyms = Map.of();
     @Nullable private OpenSearchRunner runner = null;
 
     public Server(PhotonDBConfig config, boolean create) throws IOException {
@@ -168,7 +171,9 @@ public class Server {
             }
 
             try {
-                (new IndexSettingBuilder()).setSynonymFile(synonymFile).updateIndex(client, PhotonIndex.NAME);
+                final var settings = new IndexSettingBuilder().setSynonymFile(synonymFile);
+                settings.updateIndex(client, PhotonIndex.NAME);
+                searchSynonyms = QueryReranker.synonymMap(settings.getSearchSynonyms());
             } catch (OpenSearchException ex) {
                 closeClientQuietly();
                 throw new UsageException("Could not install synonyms: " + ex.getMessage());
@@ -230,7 +235,7 @@ public class Server {
     }
 
     public SearchHandler<SimpleSearchRequest> createSearchHandler(int queryTimeoutSec) {
-        return new OpenSearchSearchHandler(client, queryTimeoutSec);
+        return new OpenSearchSearchHandler(client, queryTimeoutSec, searchSynonyms);
     }
 
     public SearchHandler<StructuredSearchRequest> createStructuredSearchHandler(int queryTimeoutSec) {

@@ -11,6 +11,11 @@ public class QueryReRankerAssert extends AbstractAssert<QueryReRankerAssert, Que
         return new QueryReRankerAssert(new QueryReranker(query, language, null));
     }
 
+    public static QueryReRankerAssert assertThat(String query, String language, String... synonymRules) {
+        return new QueryReRankerAssert(new QueryReranker(query, language, null,
+                QueryReranker.synonymMap(java.util.List.of(synonymRules))));
+    }
+
     public QueryReRankerAssert ranksResultsInOrder(PhotonResult... results) {
         isNotNull();
 
