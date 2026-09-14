@@ -2,6 +2,7 @@ package de.komoot.photon.searcher;
 
 import de.komoot.photon.nominatim.model.PostcodeUtils;
 import de.komoot.photon.opensearch.DocFields;
+import org.apache.lucene.analysis.miscellaneous.ASCIIFoldingFilter;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
@@ -13,7 +14,7 @@ import java.util.regex.Pattern;
 
 @NullMarked
 public class QueryReranker implements Consumer<PhotonResult> {
-    private static final Pattern WORD_BREAK_PATTERN = Pattern.compile("[-,: ]+");
+    private static final Pattern WORD_BREAK_PATTERN = Pattern.compile("[-,.: ]+");
     private final String query;
     private final String language;
     @Nullable private final String fallbackLanguage;
@@ -219,7 +220,13 @@ public class QueryReranker implements Consumer<PhotonResult> {
     }
 
     private String normalize(String in) {
-        return WORD_BREAK_PATTERN.matcher(in.toLowerCase()).replaceAll(" ").strip();
+        return WORD_BREAK_PATTERN.matcher(fold(in.toLowerCase())).replaceAll(" ").strip();
+    }
+
+    private static String fold(String in) {
+        final var src = in.toCharArray();
+        final var out = new char[src.length * 4];
+        return new String(out, 0, ASCIIFoldingFilter.foldToASCII(src, 0, out, 0, src.length));
     }
 
     private List<String> secondaryNames(PhotonResult result) {

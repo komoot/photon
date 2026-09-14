@@ -21,6 +21,27 @@ public class QueryRankerTest {
     }
 
     @ParameterizedTest
+    @ValueSource(strings = {"Bo sjukeheim", "bø sjukeheim", "BO SJUKEHEIM"})
+    void testFoldedQueryMatchesDiacriticName(String query) {
+        QueryReRankerAssert.assertThat(query, "no")
+                .scoresResultEqualTo(1.0, new MockPhotonResult().putName("no", "Bø sjukeheim"));
+    }
+
+    @Test
+    void testTrailingPeriodIsNotPartOfTheTerm() {
+        QueryReRankerAssert.assertThat("st. olavs plass", "no")
+                .scoresResultEqualTo(1.0, new MockPhotonResult().putName("no", "St. Olavs plass"));
+    }
+
+    @Test
+    void testFoldedQueryOutranksUnrelatedName() {
+        QueryReRankerAssert.assertThat("bo sjukeheim", "no")
+                .ranksResultsInOrder(
+                        new MockPhotonResult().putName("no", "Bø sjukeheim"),
+                        new MockPhotonResult().putName("no", "Borgen sykehjem"));
+    }
+
+    @ParameterizedTest
     @ValueSource(strings = {"en", "default", "alt"})
     void testPartialNameMatchIsLessThanFullMatch(String lang) {
         QueryReRankerAssert.assertThat("munich main", "en")
