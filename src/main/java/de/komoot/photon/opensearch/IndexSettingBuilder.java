@@ -124,8 +124,9 @@ public class IndexSettingBuilder {
         }
     }
 
-    private CustomAnalyzer buildSearchAnalyzer(List<String> normFilters) {
+    private CustomAnalyzer buildSearchAnalyzer(List<String> normFilters, boolean withSynonyms) {
         final var builder = new CustomAnalyzer.Builder();
+        final var name = withSynonyms ? "search" : "search_nosyn";
 
         settings.tokenizer("search_tokenizer", t -> t.definition(d -> d
                 .simplePatternSplit(p -> p
@@ -143,14 +144,14 @@ public class IndexSettingBuilder {
         builder.tokenizer("search_tokenizer");
         builder.filter(normFilters);
 
-        settings.filter("multiplexer_search", f -> f.definition(d -> d
+        settings.filter("multiplexer_" + name, f -> f.definition(d -> d
                 .multiplexer(m -> m
                         .preserveOriginal(false)
-                        .filters("drop_classification,drop_empty_tokens,"
-                                + SYNONYM_FILTER + ",delimiter_search")
+                        .filters("drop_classification,drop_empty_tokens"
+                                + (withSynonyms ? "," + SYNONYM_FILTER : "") + ",delimiter_search")
                         .filters(CLASSIFICATION_FILTER + ",keep_classification,drop_empty_tokens"))
         ));
-        builder.filter("multiplexer_search");
+        builder.filter("multiplexer_" + name);
 
         return builder.build();
     }
@@ -237,7 +238,9 @@ public class IndexSettingBuilder {
                         .flags(""))
         ));
 
-        settings.analyzer("search", f -> f.custom(buildSearchAnalyzer(normalizationFilters)));
+        settings.analyzer("search", f -> f.custom(buildSearchAnalyzer(normalizationFilters, true)));
+
+        settings.analyzer("search_nosyn", f -> f.custom(buildSearchAnalyzer(normalizationFilters, false)));
 
         settings.analyzer("search_prefix", f -> f.custom(d -> d
                 .charFilter("normalize_apostrophes")

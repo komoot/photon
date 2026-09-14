@@ -66,6 +66,7 @@ public class SearchQueryBuilder extends BaseQueryBuilder {
                 b.should(iq2 -> iq2.match(nmb -> nmb
                         .query(queryField)
                         .field(DocFields.COLLECTOR + ".name")
+                        .analyzer("search_nosyn")
                         .fuzziness("AUTO")
                         .prefixLength(2)
                         .boost(0.2f)));
