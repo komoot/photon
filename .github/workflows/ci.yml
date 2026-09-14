@@ -102,7 +102,8 @@ jobs:
       - name: Download dependencies
         run: |
             if [ ! -f Nominatim/data/country_osm_grid.sql.gz ]; then
-                wget --no-verbose -O Nominatim/data/country_osm_grid.sql.gz https://www.nominatim.org/data/country_grid.sql.gz
+                wget --no-verbose -O Nominatim/data/country_osm_grid.sql.gz https://www.nominatim.org/data/country_grid.sql.gz # supply-chain:ignore (verified via sha256 checksum)
+                echo "09d85801a625079b7007fda0f2fb880db62dcea09f17f8e12e5c1b485e60794e  Nominatim/data/country_osm_grid.sql.gz" | sha256sum -c -
             fi
         shell: bash
 
@@ -116,7 +117,10 @@ jobs:
       - name: Prepare import environment
         run: |
             if [ ! -f monaco-latest.osm.pbf ]; then
-                wget --no-verbose https://download.geofabrik.de/europe/monaco-latest.osm.pbf
+                wget --no-verbose https://download.geofabrik.de/europe/monaco-latest.osm.pbf.md5 # supply-chain:ignore (checksum file)
+                wget --no-verbose https://download.geofabrik.de/europe/monaco-latest.osm.pbf # supply-chain:ignore (verified via publisher checksum)
+                md5sum -c monaco-latest.osm.pbf.md5
+                rm -f monaco-latest.osm.pbf.md5
             fi
             mkdir data-env
         shell: bash
@@ -180,10 +184,14 @@ jobs:
       - name: Download json dump and baseline Photon
         run: |
             if [ ! -f andorra.jsonl.zst ]; then
-              wget --no-verbose -O andorra.jsonl.zst https://download1.graphhopper.com/public/europe/andorra/photon-dump-andorra-1.0-latest.jsonl.zst
+              wget --no-verbose -O andorra.jsonl.zst.md5 https://download1.graphhopper.com/public/europe/andorra/photon-dump-andorra-1.0-latest.jsonl.zst.md5 # supply-chain:ignore (checksum file)
+              wget --no-verbose -O andorra.jsonl.zst https://download1.graphhopper.com/public/europe/andorra/photon-dump-andorra-1.0-latest.jsonl.zst # supply-chain:ignore (verified via publisher checksum)
+              echo "$(awk '{print $1}' andorra.jsonl.zst.md5)  andorra.jsonl.zst" | md5sum -c -
+              rm -f andorra.jsonl.zst.md5
             fi
             if [ ! -f photon-1.0.1.jar ]; then
-              wget --no-verbose -O photon-1.0.1.jar https://github.com/komoot/photon/releases/download/1.0.1/photon-1.0.1.jar
+              wget --no-verbose -O photon-1.0.1.jar https://github.com/komoot/photon/releases/download/1.0.1/photon-1.0.1.jar # supply-chain:ignore (verified via sha256 checksum)
+              echo "4ef937f7f33fb89fef403f825edae14299240a0115df756f8fad67b3dc266437  photon-1.0.1.jar" | sha256sum -c -
             fi
         shell: bash
 
