@@ -1,0 +1,51 @@
+[versions]
+opensearch-runner = "3.8.0.0"
+opensearch-java = "3.10.0"
+httpclient5 = "5.6.4"
+log4j = "2.26.1"
+postgresql = "42.7.13"
+jcommander = "3.0"
+spring-jdbc = "7.0.9"
+commons-dbcp2 = "2.14.0"
+jts = "1.20.0"
+javalin = "7.2.3"
+micrometer = "1.17.1"
+jackson = "2.22.3"
+netty = "4.2.17.Final"
+h2 = "2.5.252"
+junit = "6.1.3"
+assertj = "3.27.7"
+json-unit = "6.2.0"
+shadow = "9.6.1"
+sonarqube = "7.5.0.8588"
+
+[libraries]
+opensearch-runner = { module = "org.codelibs.opensearch:opensearch-runner", version.ref = "opensearch-runner" }
+opensearch-java = { module = "org.opensearch.client:opensearch-java", version.ref = "opensearch-java" }
+httpclient5 = { module = "org.apache.httpcomponents.client5:httpclient5", version.ref = "httpclient5" }
+log4j-core = { module = "org.apache.logging.log4j:log4j-core", version.ref = "log4j" }
+log4j-api = { module = "org.apache.logging.log4j:log4j-api", version.ref = "log4j" }
+log4j-slf4j2-impl = { module = "org.apache.logging.log4j:log4j-slf4j2-impl", version.ref = "log4j" }
+postgresql = { module = "org.postgresql:postgresql", version.ref = "postgresql" }
+jcommander = { module = "org.jcommander:jcommander", version.ref = "jcommander" }
+spring-jdbc = { module = "org.springframework:spring-jdbc", version.ref = "spring-jdbc" }
+commons-dbcp2 = { module = "org.apache.commons:commons-dbcp2", version.ref = "commons-dbcp2" }
+commons-io = { module = "commons-io:commons-io", version = { require = "[2.20.0,)" } }
+jts-core = { module = "org.locationtech.jts:jts-core", version.ref = "jts" }
+jts-io-common = { module = "org.locationtech.jts.io:jts-io-common", version.ref = "jts" }
+javalin = { module = "io.javalin:javalin", version.ref = "javalin" }
+javalin-micrometer = { module = "io.javalin:javalin-micrometer", version.ref = "javalin" }
+micrometer-registry-prometheus = { module = "io.micrometer:micrometer-registry-prometheus", version.ref = "micrometer" }
+jackson-databind = { module = "com.fasterxml.jackson.core:jackson-databind", version.ref = "jackson" }
+h2 = { module = "com.h2database:h2", version.ref = "h2" }
+junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit" }
+junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher", version.ref = "junit" }
+assertj-core = { module = "org.assertj:assertj-core", version.ref = "assertj" }
+json-unit-assertj = { module = "net.javacrumbs.json-unit:json-unit-assertj", version.ref = "json-unit" }
+
+[bundles]
+log4j = ["log4j-core", "log4j-api", "log4j-slf4j2-impl"]
+
+[plugins]
+shadow = { id = "com.gradleup.shadow", version.ref = "shadow" }
+sonarqube = { id = "org.sonarqube", version.ref = "sonarqube" }
