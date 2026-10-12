@@ -1,0 +1,61 @@
+publiccodeYmlVersion: 0.7.0
+name: Photon
+url: https://github.com/komoot/photon
+softwareVersion: 1.3.0
+releaseDate: 2026-08-07
+logo: https://github.com/komoot/photon/blob/master/website/photon/static/img/photon_logo.png
+platforms:
+  - windows
+  - mac
+  - linux
+categories:
+  - geographic-information-systems
+organisation:
+  uri: https://lonvia.de
+developmentStatus: stable
+softwareType: standalone/backend
+description:
+  en:
+    shortDescription: Place and address search with OpenStreetMap and custom data
+    longDescription: >-
+      Photon is an open source geocoder built for OpenStreetMap data. It is
+      based on OpenSearch - an efficient, powerful and highly scalable search
+      platform. It supports forward search (looking up places and addresses)
+      and reverse geocoding (describing the place given a coordinate). Next
+      to the standard functionality of a geocoder (type-ahead suggestions,
+      location bias, country and area filters), it also allows to define
+      custom filters and to add extra data to the output.
+
+
+      Photon can be easily installed and run as a self-hosted instance, both on
+      a simple laptop and in a high-availability server environment. We provide
+      weekly-updated ready-to-use database dumps with data from the
+      OpenStreetMap project. In addition, Photon is able to import data from
+      simple JSON file, which allows to customize the imported data or even
+      create import data from other sources.
+    apiDocumentation: https://github.com/komoot/photon/blob/master/docs/api-v1.md
+    features:
+      - Geocoding
+      - Reverse Geocoding
+      - Typeahead suggestion
+      - Typo tolerance
+      - Ready-to-use databases with OpenStreetMap data
+      - Easy data customization
+      - Multilingual
+      - Scalable
+legal:
+  license: Apache-2.0
+maintenance:
+  type: community
+  contacts:
+    - name: Sarah Hoffmann
+      email: sarah@lonvia.de
+      affiliation: Freelancer
+localisation:
+  localisationReady: true
+  availableLanguages:
+    - en
+    - de
+    - fr
+    - es
+
