@@ -1,13 +1,12 @@
 package de.komoot.photon;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,7 +22,6 @@ public class ConfigSynonyms {
     }
 
     @JsonProperty("search_synonyms")
-    @SuppressWarnings("unused")
     public void setSearchSynonyms(List<String> searchSynonyms) {
         for (var synonym : searchSynonyms) {
             if (synonym.matches(".*[ '-].*")) {
@@ -39,17 +37,17 @@ public class ConfigSynonyms {
     }
 
     @JsonProperty("classification_terms")
-    @SuppressWarnings("unused")
     public void setClassificationTerms(List<ConfigClassificationTerm> classificationTerms) {
         this.classificationTerms = classificationTerms.stream()
                 .filter(ConfigClassificationTerm::isValidCategory)
                 .collect(Collectors.toList());
     }
 
-    public static ConfigSynonyms loadFromFile(String synonymFile) throws IOException {
-        return new ObjectMapper()
+    public static ConfigSynonyms loadFromFile(String synonymFile) {
+        return JsonMapper.builder()
                 .configure(DeserializationFeature.FAIL_ON_NULL_CREATOR_PROPERTIES, true)
                 .configure(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES, true)
+                .build()
                 .readValue(new File(synonymFile), ConfigSynonyms.class);
     }
 }

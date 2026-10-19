@@ -1,9 +1,5 @@
 package de.komoot.photon.json;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonToken;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import de.komoot.photon.ConfigExtraTags;
 import de.komoot.photon.PhotonDoc;
 import de.komoot.photon.UsageException;
@@ -14,9 +10,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
+import tools.jackson.core.JsonParser;
+import tools.jackson.core.JsonToken;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 
@@ -34,22 +33,21 @@ public class JsonReader {
     private String @Nullable [] countryFilter = null;
     private Set<String> languages = Set.of();
 
-    public JsonReader(File inputFile) throws IOException {
+    public JsonReader(File inputFile) {
         parser = configureObjectMapper().createParser(inputFile);
         parser.nextToken();
     }
 
-    public JsonReader(InputStream inputStream) throws IOException {
+    public JsonReader(InputStream inputStream) {
         parser = configureObjectMapper().createParser(inputStream);
         parser.nextToken();
     }
 
-    private ObjectMapper configureObjectMapper() {
-        final var mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        mapper.configure(DeserializationFeature.FAIL_ON_NULL_CREATOR_PROPERTIES, true);
-
-        return mapper;
+    private JsonMapper configureObjectMapper() {
+        return JsonMapper.builder()
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+                .configure(DeserializationFeature.FAIL_ON_NULL_CREATOR_PROPERTIES, true)
+                .build();
     }
 
     public void setUseFullGeometries(boolean enable) {
@@ -73,7 +71,7 @@ public class JsonReader {
         this.languages = languages;
     }
 
-    public void readHeader() throws IOException {
+    public void readHeader() {
         final String docType = readStartDocument();
 
         if (!NominatimDumpHeader.DOCUMENT_TYPE.equals(docType)) {
@@ -95,7 +93,7 @@ public class JsonReader {
         return header.getDataTimestamp();
     }
 
-    public void readFile(ImportThread importThread) throws IOException {
+    public void readFile(ImportThread importThread) {
         String docType = readStartDocument();
         String currentCountry = "NONE";
         boolean isSortedByCountry = header != null && header.isSortedByCountry();
@@ -174,7 +172,7 @@ public class JsonReader {
         }
     }
 
-    private NominatimPlaceDocument parsePlaceDocument() throws IOException {
+    private NominatimPlaceDocument parsePlaceDocument() {
         final var doc = parser.readValueAs(NominatimPlaceDocument.class);
 
 
@@ -189,7 +187,7 @@ public class JsonReader {
     }
 
     @Nullable
-    private String readStartDocument() throws IOException {
+    private String readStartDocument() {
         if (!parser.hasCurrentToken()) {
             return null;
         }
@@ -199,14 +197,14 @@ public class JsonReader {
             throw new UsageException("Invalid dump file.");
         }
 
-        final String fieldName = parser.nextFieldName();
+        final String fieldName = parser.nextName();
         if (!DumpFields.DOCUMENT_TYPE.equals(fieldName)) {
             LOGGER.error("Unexpected field '{}' instead of '{}' at {}",
                     fieldName, DumpFields.DOCUMENT_TYPE, parser.currentLocation());
             throw new UsageException("Invalid dump file.");
         }
 
-        final String documentType = parser.nextTextValue();
+        final String documentType = parser.nextStringValue();
 
         while (parser.nextToken() != JsonToken.END_OBJECT) {
             if (DumpFields.DOCUMENT_CONTENT.equals(parser.currentName())) {
@@ -224,7 +222,7 @@ public class JsonReader {
         throw new UsageException("Invalid dump file.");
     }
 
-    private void readEndDocument() throws IOException {
+    private void readEndDocument() {
         while (parser.nextToken() != JsonToken.END_OBJECT) {
             if (!parser.isExpectedStartObjectToken()) {
                 LOGGER.error("Unexpected token while reading end of document at {}", parser.currentLocation());

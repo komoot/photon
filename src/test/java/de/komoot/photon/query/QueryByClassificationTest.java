@@ -1,14 +1,14 @@
 package de.komoot.photon.query;
 
-import com.fasterxml.jackson.core.JsonEncoding;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import de.komoot.photon.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import tools.jackson.core.JsonEncoding;
+import tools.jackson.databind.exc.MismatchedInputException;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -38,20 +38,19 @@ class QueryByClassificationTest extends BaseTesterQuery {
     }
 
     private void updateClassification(String key, String value, String... terms) throws IOException {
-        final var mapper = new ObjectMapper();
         final var synonymPath = sharedTempDir.resolve("synonym.json");
 
-        final var writer = mapper.createGenerator(synonymPath.toFile(), JsonEncoding.UTF8);
-        writer.writeStartObject();
-        writer.writeArrayFieldStart("classification_terms");
-        writer.writeStartObject();
-        writer.writeStringField("key", key);
-        writer.writeStringField("value", value);
-        writer.writeObjectField("terms", terms);
-        writer.writeEndObject();
-        writer.writeEndArray();
-        writer.writeEndObject();
-        writer.close();
+        try (var writer = JsonMapper.shared().createGenerator(synonymPath.toFile(), JsonEncoding.UTF8)) {
+            writer.writeStartObject();
+            writer.writeArrayPropertyStart("classification_terms");
+            writer.writeStartObject();
+            writer.writeStringProperty("key", key);
+            writer.writeStringProperty("value", value);
+            writer.writePOJOProperty("terms", terms);
+            writer.writeEndObject();
+            writer.writeEndArray();
+            writer.writeEndObject();
+        }
 
         getServer().updateIndexSettings(ConfigSynonyms.loadFromFile(synonymPath.toString()));
         getServer().waitForReady();
@@ -97,7 +96,7 @@ class QueryByClassificationTest extends BaseTesterQuery {
 
         Path synonymPath = sharedTempDir.resolve("synonym.json");
 
-        new ObjectMapper().writeValue(synonymPath.toFile(), Map.of(
+        JsonMapper.shared().writeValue(synonymPath.toFile(), Map.of(
                 "classification_terms", List.of(
                         Map.of(
                                 "key", "railway",

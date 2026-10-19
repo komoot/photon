@@ -1,13 +1,13 @@
 package de.komoot.photon.searcher;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import de.komoot.photon.opensearch.DocFields;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.json.JsonMapper;
 
-import java.io.IOException;
 import java.io.StringWriter;
 import java.util.List;
 import java.util.Map;
@@ -36,14 +36,12 @@ public class GeoJsonFormatter implements ResultFormatter {
             List.of(DocFields.COUNTRYCODE, GeoJsonFields.COUNTRYCODE),
             List.of(DocFields.EXTRA, GeoJsonFields.EXTRA));
 
-    private final ObjectMapper mapper = new ObjectMapper();
-
     @Override
     public String formatError(@Nullable String msg) {
         try {
-            return mapper.writeValueAsString(
+            return JsonMapper.shared().writeValueAsString(
                     Map.of("message", msg == null ? "Unknown error." : msg));
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             return "{}";
         }
     }
@@ -52,28 +50,34 @@ public class GeoJsonFormatter implements ResultFormatter {
     public String convert(List<PhotonResult> results, String language,
                           @Nullable String fallbackLanguage,
                           boolean withGeometry, boolean withDebugInfo,
-                          @Nullable String queryDebugInfo) throws IOException {
+                          @Nullable String queryDebugInfo) {
         final var writer = new StringWriter();
 
-        try (var gen = mapper.createGenerator(writer)) {
-            if (withDebugInfo) {
-                gen.useDefaultPrettyPrinter();
-            }
+        JsonMapper mapper;
 
+        if (withDebugInfo) {
+            mapper = JsonMapper.builder()
+                    .configure(SerializationFeature.INDENT_OUTPUT, true)
+                    .build();
+        } else {
+            mapper = JsonMapper.shared();
+        }
+
+        try (var gen = mapper.createGenerator(writer)) {
             gen.writeStartObject();
-            gen.writeStringField(GeoJsonFields.GEOJSON_KEY_TYPE, GeoJsonFields.GEOJSON_TYPE_FEATURECOLLECTION);
-            gen.writeArrayFieldStart(GeoJsonFields.GEOJSON_KEY_FEATURES);
+            gen.writeStringProperty(GeoJsonFields.GEOJSON_KEY_TYPE, GeoJsonFields.GEOJSON_TYPE_FEATURECOLLECTION);
+            gen.writeArrayPropertyStart(GeoJsonFields.GEOJSON_KEY_FEATURES);
 
             for (PhotonResult result : results) {
                 gen.writeStartObject();
-                gen.writeStringField(GeoJsonFields.GEOJSON_KEY_TYPE, GeoJsonFields.GEOJSON_TYPE_FEATURE);
+                gen.writeStringProperty(GeoJsonFields.GEOJSON_KEY_TYPE, GeoJsonFields.GEOJSON_TYPE_FEATURE);
 
-                gen.writeObjectFieldStart(GeoJsonFields.GEOJSON_KEY_PROPERTIES);
+                gen.writeObjectPropertyStart(GeoJsonFields.GEOJSON_KEY_PROPERTIES);
 
                 var osmType = result.get(DocFields.OSM_TYPE);
                 if (osmType != null) {
-                    gen.writeObjectField(GeoJsonFields.OSM_TYPE, osmType);
-                    gen.writeObjectField(GeoJsonFields.OSM_ID, result.get(DocFields.OSM_ID));
+                    gen.writePOJOProperty(GeoJsonFields.OSM_TYPE, osmType);
+                    gen.writePOJOProperty(GeoJsonFields.OSM_ID, result.get(DocFields.OSM_ID));
                 }
 
                 for (var line : KEYS_LANG_UNSPEC) {
@@ -96,11 +100,11 @@ public class GeoJsonFormatter implements ResultFormatter {
 
                 final var geometry = result.get(DocFields.GEOMETRY);
                 if (withGeometry && geometry != null) {
-                    gen.writeObjectField(GeoJsonFields.GEOJSON_KEY_GEOMETRY, geometry);
+                    gen.writePOJOProperty(GeoJsonFields.GEOJSON_KEY_GEOMETRY, geometry);
                 } else {
-                    gen.writeObjectFieldStart(GeoJsonFields.GEOJSON_KEY_GEOMETRY);
-                    gen.writeStringField(GeoJsonFields.GEOJSON_KEY_TYPE, GeoJsonFields.GEOJSON_GEOMETRY_POINT);
-                    gen.writeObjectField("coordinates", result.getCoordinates());
+                    gen.writeObjectPropertyStart(GeoJsonFields.GEOJSON_KEY_GEOMETRY);
+                    gen.writeStringProperty(GeoJsonFields.GEOJSON_KEY_TYPE, GeoJsonFields.GEOJSON_GEOMETRY_POINT);
+                    gen.writePOJOProperty("coordinates", result.getCoordinates());
                     gen.writeEndObject();
                 }
 
@@ -110,16 +114,16 @@ public class GeoJsonFormatter implements ResultFormatter {
             gen.writeEndArray();
 
             if (withDebugInfo || queryDebugInfo != null) {
-                gen.writeObjectFieldStart(GeoJsonFields.GEOJSON_KEY_PROPERTIES);
+                gen.writeObjectPropertyStart(GeoJsonFields.GEOJSON_KEY_PROPERTIES);
                 if (withDebugInfo) {
-                    gen.writeArrayFieldStart("raw_data");
+                    gen.writeArrayPropertyStart("raw_data");
                     for (var res : results) {
                         gen.writePOJO(res.getRawData());
                     }
                     gen.writeEndArray();
                 }
                 if (queryDebugInfo != null) {
-                    gen.writeFieldName("debug");
+                    gen.writeName("debug");
                     gen.writeRawValue(queryDebugInfo);
                 }
                 gen.writeEndObject();
@@ -131,9 +135,9 @@ public class GeoJsonFormatter implements ResultFormatter {
         return writer.toString();
     }
 
-    private void put(JsonGenerator gen, String key, @Nullable Object value) throws IOException {
+    private void put(JsonGenerator gen, String key, @Nullable Object value) {
         if (value != null) {
-            gen.writeObjectField(key, value);
+            gen.writePOJOProperty(key, value);
         }
     }
 }

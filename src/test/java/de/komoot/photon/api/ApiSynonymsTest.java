@@ -1,7 +1,5 @@
 package de.komoot.photon.api;
 
-import com.fasterxml.jackson.core.JsonEncoding;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import de.komoot.photon.App;
 import de.komoot.photon.Importer;
 import de.komoot.photon.PhotonDoc;
@@ -11,8 +9,9 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.io.TempDir;
+import tools.jackson.core.JsonEncoding;
+import tools.jackson.databind.json.JsonMapper;
 
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Date;
 import java.util.List;
@@ -60,24 +59,24 @@ public class ApiSynonymsTest extends ApiBaseTester {
         shutdownES();
     }
 
-    private void cfgSynonyms(Path synFile, String... synonyms) throws IOException {
-        try (var writer = new ObjectMapper().createGenerator(synFile.toFile(), JsonEncoding.UTF8)) {
+    private void cfgSynonyms(Path synFile, String... synonyms) {
+        try (var writer = JsonMapper.shared().createGenerator(synFile.toFile(), JsonEncoding.UTF8)) {
             writer.writeStartObject();
-            writer.writeObjectField("search_synonyms", synonyms);
+            writer.writePOJOProperty("search_synonyms", synonyms);
             writer.writeEndObject();
         }
     }
 
-    private void cfgCategories(Path synFile, String... terms) throws IOException {
-        try (var writer = new ObjectMapper().createGenerator(synFile.toFile(), JsonEncoding.UTF8)) {
+    private void cfgCategories(Path synFile, String... terms) {
+        try (var writer = JsonMapper.shared().createGenerator(synFile.toFile(), JsonEncoding.UTF8)) {
             writer.writeStartObject();
-            writer.writeArrayFieldStart("classification_terms");
+            writer.writeArrayPropertyStart("classification_terms");
             for (var term: terms) {
                 var parts = term.split(":");
                 writer.writeStartObject();
-                writer.writeStringField("key", parts[0]);
-                writer.writeStringField("value", parts[1]);
-                writer.writeObjectField("terms", parts[2].split(","));
+                writer.writeStringProperty("key", parts[0]);
+                writer.writeStringProperty("value", parts[1]);
+                writer.writePOJOProperty("terms", parts[2].split(","));
                 writer.writeEndObject();
             }
             writer.writeEndArray();
@@ -115,7 +114,7 @@ public class ApiSynonymsTest extends ApiBaseTester {
     }
 
     @Test
-    void testDisallowSpacesInSynonyms(@TempDir Path dataDir) throws Exception {
+    void testDisallowSpacesInSynonyms(@TempDir Path dataDir) {
         var synonymFile = dataDir.resolve("synonyms.json");
         cfgSynonyms(synonymFile, "berlin,haupt stadt");
 

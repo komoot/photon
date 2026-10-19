@@ -1,7 +1,6 @@
 package de.komoot.photon.json;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.JsonNode;
 import de.komoot.photon.ConfigExtraTags;
 import de.komoot.photon.PhotonDoc;
 import de.komoot.photon.PhotonDocAddressSet;
@@ -13,6 +12,7 @@ import org.jspecify.annotations.Nullable;
 import org.locationtech.jts.geom.*;
 import org.locationtech.jts.io.ParseException;
 import org.locationtech.jts.io.geojson.GeoJsonReader;
+import tools.jackson.databind.JsonNode;
 
 import java.io.IOException;
 import java.util.*;
@@ -224,7 +224,7 @@ public class NominatimPlaceDocument {
     }
 
     @JsonProperty(DumpFields.PLACE_BBOX)
-    void setBbox(Double @Nullable [] coordinates) throws IOException {
+    void setBbox(@Nullable Double @Nullable [] coordinates) throws IOException {
         if (coordinates != null) {
             if (coordinates.length != 4
                     || coordinates[0] == null || coordinates[1] == null

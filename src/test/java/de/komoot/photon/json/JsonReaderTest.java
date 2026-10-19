@@ -135,7 +135,7 @@ class JsonReaderTest {
     void testPlaceIDTooLong(String doc) {
         input.println(doc.replaceFirst("100818", "1".repeat(61)));
 
-        assertThatIOException()
+        assertThatRuntimeException()
                 .isThrownBy(this::readJson)
                 .withMessageContaining("exceed 60 char");
     }
@@ -145,7 +145,7 @@ class JsonReaderTest {
     void testPlaceIDInvalidCharacters(String doc) {
         input.println(doc.replaceFirst("100818", "\"a b@\""));
 
-        assertThatIOException()
+        assertThatRuntimeException()
                 .isThrownBy(this::readJson)
                 .withMessageContaining("must only consist of letters");
     }

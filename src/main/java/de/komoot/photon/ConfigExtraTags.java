@@ -1,9 +1,9 @@
 package de.komoot.photon;
 
-import com.fasterxml.jackson.core.JsonGenerator;
 import org.jspecify.annotations.NullMarked;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.json.JsonMapper;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -26,10 +26,12 @@ public class ConfigExtraTags {
         this.tags = allowAll ? new String[0] : tags.toArray(String[]::new);
     }
 
-    public void writeFilteredExtraTags(JsonGenerator writer, String fieldName, Map<String, Object> sourceTags) throws IOException  {
-         if (!sourceTags.isEmpty()) {
+    public void writeFilteredExtraTags(JsonGenerator writer, String fieldName, Map<String, Object> sourceTags)  {
+        var mapper = JsonMapper.shared();
+        if (!sourceTags.isEmpty()) {
             if (allowAll) {
-                writer.writeObjectField(fieldName, sourceTags);
+                writer.writeName(fieldName);
+                mapper.writeValue(writer, sourceTags);
             } else if (tags.length > 0) {
                 boolean foundTag = false;
 
@@ -37,10 +39,11 @@ public class ConfigExtraTags {
                     Object value = sourceTags.get(tag);
                     if (value != null) {
                         if (!foundTag) {
-                            writer.writeObjectFieldStart(fieldName);
+                            writer.writeObjectPropertyStart(fieldName);
                             foundTag = true;
                         }
-                        writer.writeObjectField(tag, value);
+                        writer.writeName(tag);
+                        mapper.writeValue(writer, value);
                     }
                 }
 

@@ -1,9 +1,5 @@
 package de.komoot.photon;
 
-import com.fasterxml.jackson.core.Version;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 import de.komoot.photon.config.PhotonDBConfig;
 import de.komoot.photon.opensearch.*;
 import de.komoot.photon.query.ReverseRequest;
@@ -17,11 +13,14 @@ import org.codelibs.opensearch.runner.OpenSearchRunner;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import org.opensearch.client.json.JsonData;
-import org.opensearch.client.json.jackson.JacksonJsonpMapper;
+import org.opensearch.client.json.jackson3.JacksonJsonpMapper;
 import org.opensearch.client.opensearch.OpenSearchClient;
 import org.opensearch.client.opensearch._types.HealthStatus;
 import org.opensearch.client.opensearch._types.OpenSearchException;
 import org.opensearch.client.transport.httpclient5.ApacheHttpClient5TransportBuilder;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.module.SimpleModule;
 
 import java.io.File;
 import java.io.IOException;
@@ -41,6 +40,8 @@ public class Server {
     public static final String DATABASE_VERSION = "1.0.0-4";
 
     private static final Logger LOGGER = LogManager.getLogger();
+
+    final PhotonDocSerializer photonDocSerializer = new PhotonDocSerializer();
 
     protected OpenSearchClient client;
     @Nullable private OpenSearchRunner runner = null;
@@ -73,12 +74,15 @@ public class Server {
                     .toArray(HttpHost[]::new);
         }
 
-        final var mapper = new JacksonJsonpMapper();
-        mapper.objectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        final var mapper = JsonMapper.builder()
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+                .configure(DeserializationFeature.FAIL_ON_TRAILING_TOKENS, false)
+                .addModule(new SimpleModule().addSerializer(photonDocSerializer))
+                .build();
 
         final var transport = ApacheHttpClient5TransportBuilder
                 .builder(hosts)
-                .setMapper(mapper)
+                .setMapper(new JacksonJsonpMapper(mapper))
                 .build();
 
         client = new OpenSearchClient(transport);
@@ -204,8 +208,9 @@ public class Server {
             throw new UsageException("Cannot access property meta data. Database too old?");
         }
 
-        final var mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        final var mapper = JsonMapper.builder()
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+                .build();
         return meta.get(PhotonIndex.META_DB_PROPERTIES).to(DatabaseProperties.class, new JacksonJsonpMapper(mapper));
     }
 
@@ -220,12 +225,12 @@ public class Server {
     }
 
     private Importer createImporter(DatabaseProperties dbProperties, int maxConcurrentRequests, boolean tuneRefresh) {
-        registerPhotonDocSerializer(dbProperties);
+        photonDocSerializer.configureFromDBProperties(dbProperties);
         return new de.komoot.photon.opensearch.Importer(client, maxConcurrentRequests, tuneRefresh);
     }
 
     public Updater createUpdater(DatabaseProperties dbProperties) {
-        registerPhotonDocSerializer(dbProperties);
+        photonDocSerializer.configureFromDBProperties(dbProperties);
         return new de.komoot.photon.opensearch.Updater(client);
     }
 
@@ -243,13 +248,5 @@ public class Server {
 
     protected OpenSearchClient getClient() {
         return client;
-    }
-
-    private void registerPhotonDocSerializer(DatabaseProperties dbProperties) {
-        final var module = new SimpleModule("PhotonDocSerializer",
-                new Version(1, 0, 0, null, null, null));
-        module.addSerializer(PhotonDoc.class, new PhotonDocSerializer(dbProperties));
-
-        ((JacksonJsonpMapper) client._transport().jsonpMapper()).objectMapper().registerModule(module);
     }
 }
