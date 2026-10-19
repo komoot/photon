@@ -6,23 +6,7 @@ import org.jspecify.annotations.Nullable;
 import java.util.*;
 
 @NullMarked
-public class NameMap extends AbstractMap<String, String> {
-    private final HashMap<String, String> entries = new HashMap<>();
-
-    @Override
-    public Set<Entry<String, String>> entrySet() {
-        return entries.entrySet();
-    }
-
-    @Override
-    public boolean containsKey(Object key) {
-        return entries.containsKey(key);
-    }
-
-    @Override
-    public @Nullable String get(Object key) {
-        return entries.get(key);
-    }
+public class NameMap extends HashMap<String, String> {
 
     public static NameMap makeForPlace(Map<String, @Nullable String> source, Iterable<String> languages) {
         return new NameMap()
@@ -44,11 +28,11 @@ public class NameMap extends AbstractMap<String, String> {
     }
 
     NameMap setName(String field, Map<String, @Nullable String> source, String... keys) {
-        if (!entries.containsKey(field)) {
+        if (!containsKey(field)) {
             for (String key : keys) {
                 String val = source.get(key);
                 if (val != null && !val.isBlank()) {
-                    entries.put(field, val.strip());
+                    put(field, val.strip());
                     break;
                 }
             }

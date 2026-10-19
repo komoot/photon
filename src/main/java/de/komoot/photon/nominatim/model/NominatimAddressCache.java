@@ -1,7 +1,5 @@
 package de.komoot.photon.nominatim.model;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import de.komoot.photon.nominatim.DBDataAdapter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -9,6 +7,7 @@ import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowCallbackHandler;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -32,7 +31,6 @@ public class NominatimAddressCache {
               AND NOT (class = 'boundary' and type = 'postal_code')
             """;
 
-    private static final ObjectMapper objectMapper = new ObjectMapper();
     private final Map<Long, AddressRow> addresses = new HashMap<>();
     private final RowCallbackHandler rowMapper;
 
@@ -99,11 +97,6 @@ public class NominatimAddressCache {
     }
 
     private Long[] parsePlaceIdArray(String json) {
-        try {
-            return objectMapper.readValue(json, Long[].class);
-        } catch (JsonProcessingException e) {
-            LOGGER.error("Cannot parse database response.", e);
-            throw new RuntimeException("Parse error.");
-        }
+        return JsonMapper.shared().readValue(json, Long[].class);
     }
 }

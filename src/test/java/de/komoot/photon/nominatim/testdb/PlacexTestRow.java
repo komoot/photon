@@ -1,11 +1,10 @@
 package de.komoot.photon.nominatim.testdb;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.locationtech.jts.io.ParseException;
 import org.locationtech.jts.io.WKTReader;
 import de.komoot.photon.PhotonDoc;
 import org.springframework.jdbc.core.JdbcTemplate;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,7 +12,6 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.*;
 
 public class PlacexTestRow {
-    private static final ObjectMapper objectMapper = new ObjectMapper();
     private static long placeIdSequence = 10000;
     private final Long placeId;
     private Long parentPlaceId;
@@ -51,11 +49,7 @@ public class PlacexTestRow {
             return null;
         }
 
-        try {
-            return objectMapper.writeValueAsString(map);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
+        return JsonMapper.shared().writeValueAsString(map);
     }
 
     public PlacexTestRow name(String name) {

@@ -1,12 +1,11 @@
 package de.komoot.photon.nominatim.testdb;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import org.locationtech.jts.geom.Geometry;
 import de.komoot.photon.nominatim.DBDataAdapter;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -16,15 +15,11 @@ import java.util.Map;
 @NullMarked
 public class H2DataAdapter implements DBDataAdapter {
     private static final TypeReference<HashMap<String, String>> mapTypeRef = new TypeReference<>() {};
-    private static final ObjectMapper objectMapper = new ObjectMapper();
+
     @Override
     public Map<String, String> getMap(ResultSet rs, String columnName) throws SQLException {
         String json = rs.getString(columnName);
-        try {
-            return json == null ? Map.of() : objectMapper.readValue(rs.getString(columnName), mapTypeRef);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
+        return json == null ? Map.of() : JsonMapper.shared().readValue(rs.getString(columnName), mapTypeRef);
     }
 
     @Nullable

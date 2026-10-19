@@ -1,9 +1,5 @@
 package de.komoot.photon.json;
 
-import com.fasterxml.jackson.core.JsonEncoding;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import de.komoot.photon.*;
 import de.komoot.photon.nominatim.model.AddressType;
 import de.komoot.photon.nominatim.model.NameMap;
@@ -11,6 +7,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jspecify.annotations.NullMarked;
 import org.locationtech.jts.io.geojson.GeoJsonWriter;
+import tools.jackson.core.JsonEncoding;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,13 +28,10 @@ public class JsonDumper implements Importer {
     public JsonDumper(String filename, DatabaseProperties dbProps) throws IOException {
         this.dbProperties = dbProps;
 
-        final var mapper = new ObjectMapper();
-        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-
         if ("-".equals(filename)) {
-            writer = mapper.createGenerator(System.out);
+            writer = JsonMapper.shared().createGenerator(System.out);
         } else {
-            writer = mapper.createGenerator(new File(filename), JsonEncoding.UTF8);
+            writer = JsonMapper.shared().createGenerator(new File(filename), JsonEncoding.UTF8);
         }
 
         geojsonWriter.setEncodeCRS(false);
@@ -67,22 +63,18 @@ public class JsonDumper implements Importer {
 
     @Override
     public void finish() {
-        try {
-            writer.close();
-        } catch (IOException e) {
-            LOGGER.warn("Error while closing output file",  e);
-        }
+        writer.close();
     }
 
     public void writeHeader(Map<String, NameMap> countryNames) throws IOException {
         writeStartDocument(NominatimDumpHeader.DOCUMENT_TYPE);
 
         writer.writeStartObject();
-        writer.writeStringField(DumpFields.HEADER_VERSION, NominatimDumpHeader.EXPECTED_VERSION);
-        writer.writeStringField(DumpFields.HEADER_GENERATOR, "photon");
-        writer.writeStringField(DumpFields.HEADER_DB_VERSION, Server.DATABASE_VERSION);
-        writer.writeObjectField(DumpFields.HEADER_DB_TIME, dbProperties.getImportDate());
-        writer.writeObjectField(DumpFields.HEADER_FEATURES, new NominatimDumpFileFeatures());
+        writer.writeStringProperty(DumpFields.HEADER_VERSION, NominatimDumpHeader.EXPECTED_VERSION);
+        writer.writeStringProperty(DumpFields.HEADER_GENERATOR, "photon");
+        writer.writeStringProperty(DumpFields.HEADER_DB_VERSION, Server.DATABASE_VERSION);
+        writer.writePOJOProperty(DumpFields.HEADER_DB_TIME, dbProperties.getImportDate());
+        writer.writePOJOProperty(DumpFields.HEADER_FEATURES, new NominatimDumpFileFeatures());
         writer.writeEndObject();
         writeEndDocument();
 
@@ -92,10 +84,10 @@ public class JsonDumper implements Importer {
         for (var e : countryNames.entrySet()) {
             if (!e.getKey().isBlank()) {
                 writer.writeStartObject();
-                writer.writeObjectField("country_code", e.getKey());
-                writer.writeObjectFieldStart("name");
+                writer.writePOJOProperty("country_code", e.getKey());
+                writer.writeObjectPropertyStart("name");
                 for (var entry : e.getValue().entrySet()) {
-                    writer.writeStringField(
+                    writer.writeStringProperty(
                             convertNameKey(entry.getKey(), "name"),
                             entry.getValue());
                 }
@@ -115,24 +107,24 @@ public class JsonDumper implements Importer {
 
         writer.writeStartObject();
         if (doc.getPlaceId() != null) {
-            writer.writeStringField(DumpFields.PLACE_ID, doc.getPlaceId());
+            writer.writeStringProperty(DumpFields.PLACE_ID, doc.getPlaceId());
         }
         if (doc.getOsmType() != null) {
-            writer.writeStringField(DumpFields.PLACE_OBJECT_TYPE, doc.getOsmType());
-            writer.writeNumberField(DumpFields.PLACE_OBJECT_ID, doc.getOsmId());
+            writer.writeStringProperty(DumpFields.PLACE_OBJECT_TYPE, doc.getOsmType());
+            writer.writeNumberProperty(DumpFields.PLACE_OBJECT_ID, doc.getOsmId());
         }
 
-        writer.writeStringField(DumpFields.PLACE_OSM_KEY, doc.getTagKey());
-        writer.writeStringField(DumpFields.PLACE_OSM_VALUE, doc.getTagValue());
-        writer.writeObjectField(DumpFields.PLACE_CATEGORIES,doc.getCategories());
+        writer.writeStringProperty(DumpFields.PLACE_OSM_KEY, doc.getTagKey());
+        writer.writeStringProperty(DumpFields.PLACE_OSM_VALUE, doc.getTagValue());
+        writer.writePOJOProperty(DumpFields.PLACE_CATEGORIES,doc.getCategories());
 
-        writer.writeStringField(DumpFields.PLACE_ADDRESS_TYPE, doc.getAddressType().getName());
-        writer.writeNumberField(DumpFields.PLACE_IMPORTANCE, doc.getImportance());
+        writer.writeStringProperty(DumpFields.PLACE_ADDRESS_TYPE, doc.getAddressType().getName());
+        writer.writeNumberProperty(DumpFields.PLACE_IMPORTANCE, doc.getImportance());
 
         if (!doc.getName().isEmpty()) {
-            writer.writeObjectFieldStart(DumpFields.PLACE_NAMES);
+            writer.writeObjectPropertyStart(DumpFields.PLACE_NAMES);
             for (var entry : doc.getName().entrySet()) {
-                writer.writeStringField(
+                writer.writeStringProperty(
                         convertNameKey(entry.getKey(), "name"),
                         entry.getValue());
             }
@@ -140,7 +132,7 @@ public class JsonDumper implements Importer {
         }
 
         if (doc.getHouseNumber() != null) {
-            writer.writeStringField(DumpFields.PLACE_HOUSENUMBER, doc.getHouseNumber());
+            writer.writeStringProperty(DumpFields.PLACE_HOUSENUMBER, doc.getHouseNumber());
         }
 
         final Map<String, Object> addressNames = new HashMap<>();
@@ -172,28 +164,28 @@ public class JsonDumper implements Importer {
         }
 
         if (!addressNames.isEmpty()) {
-            writer.writeObjectField(DumpFields.PLACE_ADDRESS, addressNames);
+            writer.writePOJOProperty(DumpFields.PLACE_ADDRESS, addressNames);
         }
 
         dbProperties.configExtraTags().writeFilteredExtraTags(writer, DumpFields.PLACE_EXTRA_TAGS, doc.getExtratags());
 
         if (doc.getPostcode() != null) {
-            writer.writeStringField(DumpFields.PLACE_POSTCODE, doc.getPostcode());
+            writer.writeStringProperty(DumpFields.PLACE_POSTCODE, doc.getPostcode());
         }
 
         if (doc.getCountryCode() != null) {
-            writer.writeStringField(DumpFields.PLACE_COUNTRY_CODE, doc.getCountryCode().toLowerCase());
+            writer.writeStringProperty(DumpFields.PLACE_COUNTRY_CODE, doc.getCountryCode().toLowerCase());
         }
 
         final var coords = doc.getCentroid().getCoordinate();
-        writer.writeArrayFieldStart(DumpFields.PLACE_CENTROID);
+        writer.writeArrayPropertyStart(DumpFields.PLACE_CENTROID);
         writer.writeNumber(coords.x);
         writer.writeNumber(coords.y);
         writer.writeEndArray();
 
         final var bbox = doc.getBbox();
         if (bbox != null) {
-            writer.writeArrayFieldStart(DumpFields.PLACE_BBOX);
+            writer.writeArrayPropertyStart(DumpFields.PLACE_BBOX);
             writer.writeNumber(bbox.getMinX());
             writer.writeNumber(bbox.getMaxY());
             writer.writeNumber(bbox.getMaxX());
@@ -203,7 +195,7 @@ public class JsonDumper implements Importer {
 
         final var geom = doc.getGeometry();
         if (geom != null) {
-            writer.writeFieldName(DumpFields.PLACE_GEOMETRY);
+            writer.writeName(DumpFields.PLACE_GEOMETRY);
             writer.writeRawValue(geojsonWriter.write(geom));
         }
 
@@ -212,8 +204,8 @@ public class JsonDumper implements Importer {
 
     private void writeStartDocument(String type) throws IOException {
         writer.writeStartObject();
-        writer.writeStringField(DumpFields.DOCUMENT_TYPE, type);
-        writer.writeFieldName(DumpFields.DOCUMENT_CONTENT);
+        writer.writeStringProperty(DumpFields.DOCUMENT_TYPE, type);
+        writer.writeName(DumpFields.DOCUMENT_CONTENT);
     }
 
     private void writeEndDocument() throws IOException {

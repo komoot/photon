@@ -1,10 +1,9 @@
 package de.komoot.photon.searcher;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import de.komoot.photon.opensearch.DocFields;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,8 +17,6 @@ public class MockPhotonResult implements PhotonResult {
     final Map<String, String> localized = new HashMap<>();
     double importance = 0.5;
     double score = 0.0;
-
-    ObjectMapper mapper = new ObjectMapper();
 
     public MockPhotonResult() {}
 
@@ -111,11 +108,7 @@ public class MockPhotonResult implements PhotonResult {
     }
 
     public MockPhotonResult putGeometry(String geometry) {
-        try {
-            data.put("geometry", mapper.readValue(geometry, Map.class));
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
+        data.put("geometry", JsonMapper.shared().readValue(geometry, Map.class));
         return this;
     }
 

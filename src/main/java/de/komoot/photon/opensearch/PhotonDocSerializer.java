@@ -1,8 +1,6 @@
 package de.komoot.photon.opensearch;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.ser.std.StdSerializer;
+import de.komoot.photon.ConfigExtraTags;
 import de.komoot.photon.DatabaseProperties;
 import de.komoot.photon.PhotonDoc;
 import de.komoot.photon.nominatim.model.AddressType;
@@ -11,21 +9,32 @@ import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.io.geojson.GeoJsonWriter;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.SerializationContext;
+import tools.jackson.databind.ser.std.StdSerializer;
 
-import java.io.IOException;
-import java.util.stream.Collectors;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 @NullMarked
 public class PhotonDocSerializer extends StdSerializer<PhotonDoc> {
-    private final DatabaseProperties dbProperties;
+    private Set<String> primaryLanguages = Set.of("default");
+    private ConfigExtraTags configExtraTags = new ConfigExtraTags();
 
-    public PhotonDocSerializer(DatabaseProperties dbProperties) {
+    public PhotonDocSerializer() {
         super(PhotonDoc.class);
-        this.dbProperties = dbProperties;
+    }
+
+    public void configureFromDBProperties(DatabaseProperties props) {
+        primaryLanguages = new HashSet<>(props.getLanguages());
+        primaryLanguages.add("default");
+
+        configExtraTags = props.configExtraTags();
     }
 
     @Override
-    public void serialize(PhotonDoc value, JsonGenerator gen, SerializerProvider provider) throws IOException {
+    public void serialize(PhotonDoc value, JsonGenerator gen, SerializationContext context) {
         final var atype = value.getAddressType();
         final var isNamed = !value.getName().isEmpty();
         final var isAddress = value.getHouseNumber() != null;
@@ -33,34 +42,34 @@ public class PhotonDocSerializer extends StdSerializer<PhotonDoc> {
         final var nameCollector  = new NameCollector();
 
         gen.writeStartObject();
-        gen.writeNumberField(DocFields.OSM_ID, value.getOsmId());
-        gen.writeStringField(DocFields.OSM_TYPE, value.getOsmType());
-        gen.writeStringField(DocFields.OSM_KEY, value.getTagKey());
-        gen.writeStringField(DocFields.OSM_VALUE, value.getTagValue());
-        gen.writeStringField(DocFields.OBJECT_TYPE, atype.getName());
-        gen.writeNumberField(DocFields.IMPORTANCE, value.getImportance());
+        gen.writeNumberProperty(DocFields.OSM_ID, value.getOsmId());
+        gen.writeStringProperty(DocFields.OSM_TYPE, value.getOsmType());
+        gen.writeStringProperty(DocFields.OSM_KEY, value.getTagKey());
+        gen.writeStringProperty(DocFields.OSM_VALUE, value.getTagValue());
+        gen.writeStringProperty(DocFields.OBJECT_TYPE, atype.getName());
+        gen.writeNumberProperty(DocFields.IMPORTANCE, value.getImportance());
 
         if (value.getCentroid() != null) {
-            gen.writeObjectFieldStart(DocFields.COORDINATE);
-            gen.writeNumberField("lat", value.getCentroid().getY());
-            gen.writeNumberField("lon", value.getCentroid().getX());
+            gen.writeObjectPropertyStart(DocFields.COORDINATE);
+            gen.writeNumberProperty("lat", value.getCentroid().getY());
+            gen.writeNumberProperty("lon", value.getCentroid().getX());
             gen.writeEndObject();
         }
 
         if (value.getGeometry() != null && !value.getGeometry().getGeometryType().equals("Point")) {
             String geoJson = new GeoJsonWriter().write(value.getGeometry());
 
-            gen.writeFieldName(DocFields.GEOMETRY);
+            gen.writeName(DocFields.GEOMETRY);
             gen.writeRawValue(geoJson);
         }
 
         if (isAddress) {
-            gen.writeStringField(DocFields.HOUSENUMBER, value.getHouseNumber());
+            gen.writeStringProperty(DocFields.HOUSENUMBER, value.getHouseNumber());
             termCollector.add(value.getHouseNumber(), isNamed ? 4 : 5);
         }
 
         if (value.getPostcode() != null) {
-            gen.writeStringField(DocFields.POSTCODE, value.getPostcode());
+            gen.writeStringProperty(DocFields.POSTCODE, value.getPostcode());
             termCollector.add(value.getPostcode(), 2);
             var altPostcode = PostcodeUtils.postcodeAltName(value.getPostcode());
             if (altPostcode != null) {
@@ -69,12 +78,12 @@ public class PhotonDocSerializer extends StdSerializer<PhotonDoc> {
         }
 
         if (isNamed) {
-            gen.writeObjectField(DocFields.NAME, value.getName());
+            gen.writeName(DocFields.NAME);
+            context.writeValue(gen, value.getName());
 
             for (var entry : value.getName().entrySet()) {
-                final var key = entry.getKey();
                 final var name = entry.getValue();
-                final boolean isPrimaryName = "default".equals(key) || dbProperties.getLanguages().contains(key);
+                final boolean isPrimaryName = primaryLanguages.contains(entry.getKey());
                 termCollector.add(name, isPrimaryName ? 5 : 2);
                 nameCollector.add(name, isPrimaryName ? 2 : 1);
             }
@@ -86,17 +95,18 @@ public class PhotonDocSerializer extends StdSerializer<PhotonDoc> {
             final var values = entry.getValue();
             final var prio = (value.getHouseNumber() != null && type == AddressType.STREET) ? 5 : type.getSearchPrio();
 
-            gen.writeObjectField(type.getName(), values);
+            gen.writeName(type.getName());
+            context.writeValue(gen, values);
             termCollector.addAll(values.values(), prio);
         }
 
         String countryCode = value.getCountryCode();
         if (countryCode != null) {
-            gen.writeStringField(DocFields.COUNTRYCODE, countryCode);
+            gen.writeStringProperty(DocFields.COUNTRYCODE, countryCode);
             termCollector.add(countryCode, 2);
         }
 
-        dbProperties.configExtraTags().writeFilteredExtraTags(gen, DocFields.EXTRA, value.getExtratags());
+        configExtraTags.writeFilteredExtraTags(gen, DocFields.EXTRA, value.getExtratags());
         writeExtent(gen, value.getBbox());
 
         for (var contextVal : value.getContext().values()) {
@@ -104,33 +114,31 @@ public class PhotonDocSerializer extends StdSerializer<PhotonDoc> {
         }
 
         if (!value.getCategories().isEmpty()) {
-            gen.writeObjectField(DocFields.CATEGORIES, value.getCategories());
+            gen.writeName(DocFields.CATEGORIES);
+            context.writeValue(gen, value.getCategories());
             for (var cat : value.getCategories()) {
                 termCollector.add("#" + cat, 1);
             }
         }
 
-        gen.writeObjectFieldStart(DocFields.COLLECTOR);
-        gen.writeStringField("all", termCollector.toCollectorString());
+        gen.writeObjectPropertyStart(DocFields.COLLECTOR);
+        gen.writeStringProperty("all", termCollector.toCollectorString());
         if (isNamed) {
-            gen.writeStringField("name", nameCollector.toCollectorString());
+            gen.writeStringProperty("name", nameCollector.toCollectorString());
         }
         if (isAddress) {
             var parentNames = value.getAddressParts().get(AddressType.STREET);
             if (parentNames != null) {
-                gen.writeStringField("parent", new NameCollector(parentNames.values()).toCollectorString());
+                gen.writeStringProperty("parent", new NameCollector(parentNames.values()).toCollectorString());
             }
         }
 
-        gen.writeObjectFieldStart("field");
+        gen.writeObjectPropertyStart("field");
         if (isNamed) {
-            gen.writeObjectField(DocFields.NAME,
-                    value.getName().values().stream().distinct().collect(Collectors.toList()));
+            writeDistinctMapValuesAsList(gen, DocFields.NAME, value.getName());
         }
         for (var entry : value.getAddressParts().entrySet()) {
-            gen.writeObjectField(
-                    entry.getKey().getName(),
-                    entry.getValue().values().stream().distinct().collect(Collectors.toList()));
+            writeDistinctMapValuesAsList(gen, entry.getKey().getName(), entry.getValue());
         }
         gen.writeEndObject(); // collector.field
 
@@ -139,14 +147,14 @@ public class PhotonDocSerializer extends StdSerializer<PhotonDoc> {
         gen.writeEndObject();
     }
 
-    private static void writeExtent(JsonGenerator gen, @Nullable Envelope bbox) throws IOException {
+    private void writeExtent(JsonGenerator gen, @Nullable Envelope bbox) {
         if (bbox == null || bbox.getArea() == 0.) return;
 
         //https://opensearch.org/docs/latest/field-types/supported-field-types/geo-shape/#envelope
-        gen.writeObjectFieldStart(DocFields.EXTENT);
-        gen.writeStringField("type", "envelope");
+        gen.writeObjectPropertyStart(DocFields.EXTENT);
+        gen.writeStringProperty("type", "envelope");
 
-        gen.writeArrayFieldStart("coordinates");
+        gen.writeArrayPropertyStart("coordinates");
 
         gen.writeStartArray();
         gen.writeNumber(bbox.getMinX());
@@ -161,4 +169,17 @@ public class PhotonDocSerializer extends StdSerializer<PhotonDoc> {
         gen.writeEndObject();
     }
 
+    private void writeDistinctMapValuesAsList(JsonGenerator gen, String fieldName, Map<String, String> names) {
+        gen.writeName(fieldName);
+        gen.writeStartArray();
+
+        var seen = new HashSet<String>();
+        for (String name : names.values()) {
+            if (seen.add(name)) {
+                gen.writeString(name);
+            }
+        }
+
+        gen.writeEndArray();
+    }
 }

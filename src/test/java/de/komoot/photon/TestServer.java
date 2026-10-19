@@ -59,7 +59,9 @@ public class TestServer {
     }
 
     public Importer createImporter(DatabaseProperties dbProperties) {
-        return testServer.createImporter(dbProperties);
+        // Don't tune refresh_interval,
+        // or the explicit refresh() calls would no-op against refresh_interval=-1.
+        return testServer.createImporter(dbProperties, 1, false);
     }
 
     public Updater createUpdater(DatabaseProperties dbProperties) {
