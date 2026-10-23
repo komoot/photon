@@ -89,6 +89,11 @@ configurations.configureEach {
             details.useVersion '4.2.19.Final'
             details.because 'force latest version to fix CVE-2026-45416 and more'
         }
+        // Jackson 2 comes in via opensearch-java
+        if (details.requested.group.startsWith('com.fasterxml.jackson') && details.requested.name != 'jackson-annotations') {
+            details.useVersion '2.22.4'
+            details.because 'fix CVE-2026-89407, CVE-2026-91776 and more'
+        }
     }
 }
 
