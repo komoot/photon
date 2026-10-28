@@ -22,20 +22,20 @@ public class RequestFactoryBase {
     private static final GeometryFactory GEOMETRY_FACTORY = new GeometryFactory(new PrecisionModel(), 4326);
 
     private final Set<String> supportedLanguages;
-    private final String defaultLangauge;
+    private final String defaultLanguage;
     private final int maxResults;
     private final boolean supportGeometries;
 
     protected RequestFactoryBase(Set<String> supportedLanguages, String defaultLanguage, int maxResults, boolean supportGeometries) {
         this.supportedLanguages = supportedLanguages;
-        this.defaultLangauge = defaultLanguage;
+        this.defaultLanguage = defaultLanguage;
         this.maxResults = maxResults;
         this.supportGeometries = supportGeometries;
     }
 
     protected void completeBaseRequest(RequestBase request, Context context) {
         request.setLanguage(parseLanguage(context));
-        request.setDefaultLanguage(defaultLangauge);
+        request.setDefaultLanguage(defaultLanguage);
 
         request.setLimit(context.queryParamAsClass("limit", Integer.class)
                                 .getOrNull(), maxResults);
@@ -99,7 +99,7 @@ public class RequestFactoryBase {
         }
 
         // finally fall back to the default
-        return defaultLangauge;
+        return defaultLanguage;
     }
 
     @Nullable

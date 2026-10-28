@@ -28,7 +28,7 @@ public class PhotonUsageFormatter implements IUsageFormatter {
             Photon is an open source geocoder built for OpenStreetMap data.
             It is based on OpenSearch - an efficient, powerful and highly scalable search platform.
             
-            This command-line tool allows to import, export and update
+            This command-line tool allows you to import, export and update
             a Photon database and to run the Photon API server.
             
             Usage: photon [-h] [<command> <options>]
