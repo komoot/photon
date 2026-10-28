@@ -24,6 +24,7 @@ public class NominatimConnector {
     protected final TransactionTemplate txTemplate;
     @Nullable protected Map<String, NameMap> countryNames;
     @Nullable private Boolean hasNewPostcodeLocationsTable;
+    @Nullable private Boolean hasCategoriesColumn;
 
     protected NominatimConnector(PostgresqlConfig cfg, DBDataAdapter dataAdapter, DatabaseProperties dbProperties) {
         var dataSource = cfg.getDataSource();
@@ -76,5 +77,17 @@ public class NominatimConnector {
         }
 
         return hasNewPostcodeLocationsTable;
+    }
+
+    public boolean hasCategoriesColumn() {
+        if (hasCategoriesColumn == null) {
+            var numColumns = template.queryForObject("""
+                    SELECT count(*) FROM information_schema.columns
+                    WHERE lower(table_name) = 'placex' AND lower(column_name) = 'categories'
+                    """, Integer.class);
+            hasCategoriesColumn = numColumns != null && numColumns > 0;
+        }
+
+        return hasCategoriesColumn;
     }
 }
