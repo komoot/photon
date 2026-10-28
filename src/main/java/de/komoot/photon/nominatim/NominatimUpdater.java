@@ -86,7 +86,7 @@ public class NominatimUpdater extends NominatimConnector {
      */
     private final ReentrantLock updateLock = new ReentrantLock();
 
-    private final String placeBaseSQL;
+    @Nullable private PlaceRowMapper placeRowMapper;
     private final String osmlineBaseSQL;
     private final NominatimAddressCache addressCache;
 
@@ -99,11 +99,8 @@ public class NominatimUpdater extends NominatimConnector {
 
         addressCache = new NominatimAddressCache(dataAdapter, dbProperties.getLanguages());
 
-        final var placeRowMapper = new PlaceRowMapper(dbutils, dbProperties.getLanguages(), dbProperties.getSupportGeometries());
-        placeBaseSQL = placeRowMapper.makeBaseSelect();
-
         placeToNominatimResult = (rs, rowNum) -> {
-            final PhotonDoc doc = placeRowMapper.mapRow(rs, rowNum);
+            final PhotonDoc doc = getPlaceRowMapper().mapRow(rs, rowNum);
 
             if (rs.getInt("rank_search") == 30 && rs.getString("parent_class") != null) {
                 doc.addAddresses(List.of(AddressRow.make(
@@ -333,7 +330,7 @@ public class NominatimUpdater extends NominatimConnector {
 
     public Iterable<PhotonDoc> getByPlaceId(long placeId) {
         var result = template.query(
-                placeBaseSQL +
+                getPlaceRowMapper().makeBaseSelect() +
                         "     , parent.class as parent_class, parent.type as parent_type," +
                         "       parent.rank_address as parent_rank_address, parent.name as parent_name" +
                         " FROM placex p LEFT JOIN placex parent ON p.parent_place_id = parent.place_id" +
@@ -341,6 +338,14 @@ public class NominatimUpdater extends NominatimConnector {
                 placeToNominatimResult, placeId);
 
         return result.isEmpty() ? List.of() : result.getFirst();
+    }
+
+    private PlaceRowMapper getPlaceRowMapper() {
+        if (placeRowMapper == null) {
+            placeRowMapper = new PlaceRowMapper(dbutils, dbProperties.getLanguages(),
+                    dbProperties.getSupportGeometries(), hasCategoriesColumn());
+        }
+        return placeRowMapper;
     }
 
     public Iterable<PhotonDoc> getInterpolationsByPlaceId(long placeId) {

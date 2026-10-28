@@ -57,7 +57,7 @@ public class NominatimImporter extends NominatimConnector {
         NominatimAddressCache addressCache = new NominatimAddressCache(dbutils, dbProperties.getLanguages());
         addressCache.loadCountryAddresses(template, countryCode);
 
-        final PlaceRowMapper placeRowMapper = new PlaceRowMapper(dbutils, dbProperties.getLanguages(), dbProperties.getSupportGeometries());
+        final PlaceRowMapper placeRowMapper = new PlaceRowMapper(dbutils, dbProperties.getLanguages(), dbProperties.getSupportGeometries(), hasCategoriesColumn());
         final String baseSelect = placeRowMapper.makeBaseSelect();
 
         // First read ranks below 30, independent places
