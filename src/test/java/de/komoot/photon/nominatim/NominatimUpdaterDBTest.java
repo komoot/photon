@@ -21,6 +21,7 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Map;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -76,6 +77,20 @@ class NominatimUpdaterDBTest {
 
         updater.assertThatCreated().isEmpty();
         updater.assertThatDeleted().containsExactly(Long.toString(place_id));
+    }
+
+    @Test
+    void testUpdateCategoriesFromColumn() {
+        jdbc.execute("ALTER TABLE placex ADD COLUMN categories VARCHAR ARRAY");
+        PlacexTestRow place = new PlacexTestRow("amenity", "cafe").name("Spot")
+                .categories("osm.amenity.cafe", "osm.shop.coffee").add(jdbc);
+        new PhotonUpdateRow("placex", place.getPlaceId(), "UPDATE").add(jdbc);
+
+        connector.update();
+
+        updater.assertThatCreated().singleElement()
+                .hasFieldOrPropertyWithValue("categories",
+                        Set.of("osm.amenity.cafe", "osm.shop.coffee"));
     }
 
     @ParameterizedTest

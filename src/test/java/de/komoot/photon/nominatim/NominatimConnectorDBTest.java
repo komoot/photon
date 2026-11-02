@@ -611,4 +611,32 @@ class NominatimConnectorDBTest {
                 .hasFieldOrPropertyWithValue("extratags", Map.of("foo", "bar"));
 
     }
+
+    @Test
+    void testImportCategoriesFromColumn() {
+        jdbc.execute("ALTER TABLE placex ADD COLUMN categories VARCHAR ARRAY");
+        new PlacexTestRow("amenity", "restaurant").name("Spot")
+                .categories("osm.amenity.restaurant", "osm.tourism.hotel").add(jdbc);
+
+        readEntireDatabase();
+
+        assertThat(importer).singleElement()
+                .hasFieldOrPropertyWithValue("categories",
+                        Set.of("osm.amenity.restaurant", "osm.tourism.hotel"));
+    }
+
+    @Test
+    void testImportCategoriesFromColumnKeepsLinkedPlace() {
+        jdbc.execute("ALTER TABLE placex ADD COLUMN categories VARCHAR ARRAY");
+        new PlacexTestRow("boundary", "administrative").name("Town").ranks(16)
+                .extraTag("linked_place", "city")
+                .categories("osm.boundary.administrative").add(jdbc);
+
+        readEntireDatabase();
+
+        assertThat(importer).singleElement()
+                .hasFieldOrPropertyWithValue("categories",
+                        Set.of("osm.boundary.administrative", "osm.place.city"));
+    }
+
 }

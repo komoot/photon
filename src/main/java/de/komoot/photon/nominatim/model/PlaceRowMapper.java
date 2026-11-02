@@ -24,11 +24,13 @@ public class PlaceRowMapper implements RowMapper<PhotonDoc> {
     private final DBDataAdapter dbutils;
     private final Set<String> languages;
     private final boolean useGeometryColumn;
+    private final boolean useCategoriesColumn;
 
-    public PlaceRowMapper(DBDataAdapter dbutils, Set<String> languages, boolean useGeometryColumn) {
+    public PlaceRowMapper(DBDataAdapter dbutils, Set<String> languages, boolean useGeometryColumn, boolean useCategoriesColumn) {
         this.dbutils = dbutils;
         this.languages = languages;
         this.useGeometryColumn = useGeometryColumn;
+        this.useCategoriesColumn = useCategoriesColumn;
     }
 
     @Override
@@ -59,13 +61,24 @@ public class PlaceRowMapper implements RowMapper<PhotonDoc> {
             osmValue = place;
         }
 
+        var categories = new ArrayList<String>();
+        categories.add(String.format("osm.%s.%s", osmKey, osmValue));
+        if (useCategoriesColumn) {
+            var dbCategories = rs.getArray("categories");
+            if (dbCategories != null) {
+                for (Object cat : (Object[]) dbCategories.getArray()) {
+                    categories.add(String.valueOf(cat));
+                }
+            }
+        }
+
         var addressType = AddressType.fromRank(rs.getInt("rank_address"));
         PhotonDoc doc = new PhotonDoc(Long.toString(rs.getLong("place_id")),
                 rs.getString("osm_type"), rs.getLong("osm_id"),
                 osmKey, osmValue)
                 .names(NameMap.makeForPlace(dbutils.getMap(rs, "name"), languages))
                 .extraTags(Collections.unmodifiableMap(extratags))
-                .categories(List.of(String.format("osm.%s.%s", osmKey, osmValue)))
+                .categories(categories)
                 .bbox(dbutils.extractGeometry(rs, "bbox"))
                 .countryCode(rs.getString("country_code"))
                 .centroid(Objects.requireNonNull(dbutils.extractGeometry(rs, "centroid")))
@@ -116,6 +129,9 @@ public class PlaceRowMapper implements RowMapper<PhotonDoc> {
 
         if (useGeometryColumn) {
             sql += ", p.geometry";
+        }
+        if (useCategoriesColumn) {
+            sql += ", p.categories";
         }
 
         return sql;

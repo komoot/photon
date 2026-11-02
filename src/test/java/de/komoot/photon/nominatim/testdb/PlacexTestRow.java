@@ -30,6 +30,7 @@ public class PlacexTestRow {
     private String countryCode = "us";
     private int admin_level = 15;
     private Double importance = null;
+    private String[] categories;
 
     public PlacexTestRow(String key, String value) {
         placeId = placeIdSequence++;
@@ -65,6 +66,11 @@ public class PlacexTestRow {
     public PlacexTestRow extraTag(String key, String name) {
         extraTags.put(key, name);
 
+        return this;
+    }
+
+    public PlacexTestRow categories(String... categories) {
+        this.categories = categories;
         return this;
     }
 
@@ -146,6 +152,10 @@ public class PlacexTestRow {
                 key, value, rankSearch, rankAddress, admin_level,
                 centroid, geometry, asJson(names), asJson(extraTags), countryCode,
                 importance, asJson(address), postcode);
+
+        if (categories != null) {
+            jdbc.update("UPDATE placex SET categories = ? WHERE place_id = ?", categories, placeId);
+        }
         return this;
     }
 
