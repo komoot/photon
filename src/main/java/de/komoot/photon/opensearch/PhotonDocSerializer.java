@@ -129,7 +129,7 @@ public class PhotonDocSerializer extends StdSerializer<PhotonDoc> {
         if (isAddress) {
             var parentNames = value.getAddressParts().get(AddressType.STREET);
             if (parentNames != null) {
-                gen.writeStringProperty("parent", new NameCollector(parentNames.values()).toCollectorString());
+                gen.writeStringProperty("parent", NameCollector.toCollectorString(parentNames.values()));
             }
         }
 
