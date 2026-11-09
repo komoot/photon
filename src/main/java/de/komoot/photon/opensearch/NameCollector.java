@@ -2,34 +2,28 @@ package de.komoot.photon.opensearch;
 
 import org.jspecify.annotations.NullMarked;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.*;
 
 /**
- * Collects strings with a priorities, discarding duplicate strings while
+ * Collects strings with priorities, discarding duplicate strings while
  * keeping the highest priority.
  */
 @NullMarked
 public class NameCollector {
-
-    private final Map<String, Integer> terms = new HashMap<>();
+    public static final int MAXPRIO = 5;
+    private final List<String>[] prioList = new List[MAXPRIO + 1];
 
     public NameCollector() {
-    }
-
-    public NameCollector(Collection<String> termCollection) {
-        addAll(termCollection, 1);
+        for (int i = 0; i <= MAXPRIO; ++i) {
+            prioList[i] = new ArrayList<>();
+        }
     }
 
     public void add(String term, int searchPrio) {
-        final var cleaned = term.replace("|", " ").strip();
-        if (!cleaned.isEmpty()) {
-            final var currentPrio = terms.get(cleaned);
-            if (currentPrio == null || currentPrio < searchPrio) {
-                terms.put(cleaned, Integer.max(searchPrio, 1));
-            }
+        assert searchPrio >= 0 && searchPrio <= MAXPRIO;
+        var sanitized = term.replace("|", " ").strip();
+        if (!sanitized.isEmpty()) {
+            prioList[searchPrio].add(sanitized);
         }
     }
 
@@ -40,9 +34,33 @@ public class NameCollector {
     }
 
     public String toCollectorString() {
-        return terms.entrySet().stream()
-                .sorted((e1, e2) -> e2.getValue().compareTo(e1.getValue()))
-                .map(e -> e.getKey() + "|" + e.getValue())
-                .collect(Collectors.joining(";"));
+        var out = new StringBuilder();
+        var seen = new HashSet<String>();
+        for (var i = MAXPRIO; i >= 0; --i) {
+            for (var e : prioList[i]) {
+                if (seen.add(e)) {
+                    if (!out.isEmpty()) {
+                        out.append(';');
+                    }
+                    out.append(e).append('|').append(i);
+                }
+            }
+        }
+        return out.toString();
+    }
+
+    public static String toCollectorString(Collection<String> termCollection) {
+        var out = new StringBuilder();
+        var seen = new HashSet<String>();
+        for (var term : termCollection) {
+            var e = term.replace("|", " ").strip();
+            if (seen.add(e)) {
+                if (!out.isEmpty()) {
+                    out.append(';');
+                }
+                out.append(e).append("|1");
+            }
+        }
+        return out.toString();
     }
 }
