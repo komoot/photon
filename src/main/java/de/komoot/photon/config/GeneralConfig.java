@@ -16,7 +16,7 @@ public class GeneralConfig {
     private boolean usage = false;
 
     public int getThreads() {
-        return Integer.min(10, Integer.max(0, threads));
+        return Integer.min(10, Integer.max(1, threads));
     }
 
     public boolean isUsage() {

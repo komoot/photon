@@ -158,8 +158,8 @@ public class App {
             return;
         }
 
-        final int maxConcurrentBulks = Math.max(1, cli.getGeneralConfig().getThreads());
-        final var importThread = new ImportThread(esServer.createImporter(dbProperties, maxConcurrentBulks, true));
+        final var importThread = new ImportThread(
+                esServer.createImporter(dbProperties, cli.getGeneralConfig().getThreads(), true));
 
         Date importDate;
         try {

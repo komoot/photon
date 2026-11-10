@@ -74,9 +74,8 @@ public class Importer implements de.komoot.photon.Importer {
         long bytes = 0;
     }
 
-    public Importer(OpenSearchClient client, int maxConcurrentRequests, boolean tuneRefresh) {
+    public Importer(OpenSearchClient client, int threads, boolean tuneRefresh) {
         this.client = client;
-        final int threads = Math.max(1, maxConcurrentRequests);
         // One slot keeps a fast submitter from idling between builds. Larger buffers
         // multiply the live-bulk footprint and OOM the embedded OpenSearch under load.
         this.bulkQueue = new ArrayBlockingQueue<>(1);
