@@ -1,7 +1,6 @@
 package de.komoot.photon.api;
 
 import de.komoot.photon.App;
-import de.komoot.photon.Importer;
 import de.komoot.photon.PhotonDoc;
 import de.komoot.photon.nominatim.model.AddressType;
 import org.junit.jupiter.api.*;
@@ -35,50 +34,45 @@ class ApiIntegrationTest extends ApiBaseTester {
         getProperties().setExtraTags(List.of("ALL"));
         getProperties().setImportDate(TEST_DATE);
         setUpES(dataDirectory);
-        Importer instance = makeImporter();
-        instance.add(List.of(new PhotonDoc()
-                .placeId("1000").osmType("N").osmId(1000).tagKey("place").tagValue("city")
-                .categories(List.of("osm.place.city"))
-                .importance(0.6).addressType(AddressType.CITY)
-                .centroid(makePoint(13.38886, 52.51704))
-                .geometry(makeDocGeometry("POINT(13.38886 52.51704)"))
-                .names(makeDocNames("name", "berlin"))
-        ));
-        var suburbGeometry = makeDocGeometry("POLYGON ((6.4440619 52.1969454, 6.4441094 52.1969158, 6.4441408 52.1969347, 6.4441138 52.1969516, 6.4440933 52.1969643, 6.4440619 52.1969454))");
-        instance.add(List.of(new PhotonDoc()
-                .placeId("1001").osmType("R").osmId(1001).tagKey("place").tagValue("suburb")
-                .categories(List.of("osm.place.suburb"))
-                .importance(0.3).addressType(AddressType.DISTRICT)
-                .centroid(makePoint(13.39026, 52.54714))
-                .geometry(suburbGeometry)
-                .bbox(suburbGeometry.getEnvelope())
-                .names(makeDocNames("name", "berlin"))
-        ));
-        instance.add(List.of(new PhotonDoc()
-                .placeId("1002").osmType("W").osmId(1002).tagKey("place").tagValue("hamlet")
-                .categories(List.of("osm.place.hamlet"))
-                .importance(0.3).addressType(AddressType.LOCALITY)
-                .centroid(makePoint(13.39026, 52.54714))
-                .geometry(makeDocGeometry("LINESTRING (30 10, 10 30, 40 40)"))
-                .names(makeDocNames("name", "berlin"))
-        ));
-        instance.add(List.of(new PhotonDoc()
-                .placeId("5100").osmType("N").osmId(105100).tagKey("highway").tagValue("bus_stop")
-                .categories(List.of("osm.highway.bus_stop"))
-                .importance(0.3).addressType(AddressType.HOUSE)
-                .centroid(makePoint(12.5, -44.345))
-                .names(makeDocNames("name", "MyBusStop"))
-                .extraTags(Map.of(
-                        "number", 56.7,
-                        "boolean", true,
-                        "array", List.of(1, 2, 3),
-                        "object", Map.of("foo", "bar"),
-                        "string", "Foo"
-                ))
-        ));
 
-        instance.finish();
-        refresh();
+        var suburbGeometry = makeDocGeometry("POLYGON ((6.4440619 52.1969454, 6.4441094 52.1969158, 6.4441408 52.1969347, 6.4441138 52.1969516, 6.4440933 52.1969643, 6.4440619 52.1969454))");
+        setupDocs(new PhotonDoc()
+                        .placeId("1000").osmType("N").osmId(1000).tagKey("place").tagValue("city")
+                        .categories(List.of("osm.place.city"))
+                        .importance(0.6).addressType(AddressType.CITY)
+                        .centroid(makePoint(13.38886, 52.51704))
+                        .geometry(makeDocGeometry("POINT(13.38886 52.51704)"))
+                        .names(makeDocNames("name", "berlin")),
+                new PhotonDoc()
+                        .placeId("1001").osmType("R").osmId(1001).tagKey("place").tagValue("suburb")
+                        .categories(List.of("osm.place.suburb"))
+                        .importance(0.3).addressType(AddressType.DISTRICT)
+                        .centroid(makePoint(13.39026, 52.54714))
+                        .geometry(suburbGeometry)
+                        .bbox(suburbGeometry.getEnvelope())
+                        .names(makeDocNames("name", "berlin")),
+                new PhotonDoc()
+                        .placeId("1002").osmType("W").osmId(1002).tagKey("place").tagValue("hamlet")
+                        .categories(List.of("osm.place.hamlet"))
+                        .importance(0.3).addressType(AddressType.LOCALITY)
+                        .centroid(makePoint(13.39026, 52.54714))
+                        .geometry(makeDocGeometry("LINESTRING (30 10, 10 30, 40 40)"))
+                        .names(makeDocNames("name", "berlin")),
+                new PhotonDoc()
+                        .placeId("5100").osmType("N").osmId(105100).tagKey("highway").tagValue("bus_stop")
+                        .categories(List.of("osm.highway.bus_stop"))
+                        .importance(0.3).addressType(AddressType.HOUSE)
+                        .centroid(makePoint(12.5, -44.345))
+                        .names(makeDocNames("name", "MyBusStop"))
+                        .extraTags(Map.of(
+                                "number", 56.7,
+                                "boolean", true,
+                                "array", List.of(1, 2, 3),
+                                "object", Map.of("foo", "bar"),
+                                "string", "Foo"
+                        ))
+        );
+
         startAPI("-metrics-enable", "prometheus");
     }
 

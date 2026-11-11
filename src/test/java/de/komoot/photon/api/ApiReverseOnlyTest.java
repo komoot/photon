@@ -1,7 +1,6 @@
 package de.komoot.photon.api;
 
 import de.komoot.photon.App;
-import de.komoot.photon.Importer;
 import de.komoot.photon.PhotonDoc;
 import de.komoot.photon.nominatim.model.AddressType;
 import org.junit.jupiter.api.AfterAll;
@@ -27,31 +26,27 @@ public class ApiReverseOnlyTest extends ApiBaseTester {
         getProperties().setImportDate(new Date());
         getProperties().setReverseOnly(true);
         setUpES(dataDirectory);
-        Importer instance = makeImporter();
-        instance.add(List.of(new PhotonDoc()
-                .placeId("1000").osmType("N").osmId(1000).tagKey("place").tagValue("city")
-                .categories(List.of("osm.place.city"))
-                .importance(0.6).addressType(AddressType.CITY)
-                .centroid(makePoint(13.38886, 52.51704))
-                .names(makeDocNames("name", "berlin"))
-        ));
-        instance.add(List.of(new PhotonDoc()
-                .placeId("1001").osmType("R").osmId(1001).tagKey("place").tagValue("suburb")
-                .categories(List.of("osm.place.suburb"))
-                .importance(0.3).addressType(AddressType.DISTRICT)
-                .centroid(makePoint(13.39026, 52.54714))
-                .names(makeDocNames("name", "berlin"))
-        ));
-        instance.add(List.of(new PhotonDoc()
-                .placeId("1002").osmType("W").osmId(1002).tagKey("place").tagValue("hamlet")
-                .categories(List.of("osm.place.hamlet"))
-                .importance(0.3).addressType(AddressType.LOCALITY)
-                .centroid(makePoint(13.390261, 52.54714))
-                .names(makeDocNames("name", "berlin"))
-        ));
 
-        instance.finish();
-        refresh();
+        setupDocs(new PhotonDoc()
+                        .placeId("1000").osmType("N").osmId(1000).tagKey("place").tagValue("city")
+                        .categories(List.of("osm.place.city"))
+                        .importance(0.6).addressType(AddressType.CITY)
+                        .centroid(makePoint(13.38886, 52.51704))
+                        .names(makeDocNames("name", "berlin")),
+                new PhotonDoc()
+                        .placeId("1001").osmType("R").osmId(1001).tagKey("place").tagValue("suburb")
+                        .categories(List.of("osm.place.suburb"))
+                        .importance(0.3).addressType(AddressType.DISTRICT)
+                        .centroid(makePoint(13.39026, 52.54714))
+                        .names(makeDocNames("name", "berlin")),
+                new PhotonDoc()
+                        .placeId("1002").osmType("W").osmId(1002).tagKey("place").tagValue("hamlet")
+                        .categories(List.of("osm.place.hamlet"))
+                        .importance(0.3).addressType(AddressType.LOCALITY)
+                        .centroid(makePoint(13.390261, 52.54714))
+                        .names(makeDocNames("name", "berlin"))
+        );
+
         startAPI();
     }
 
