@@ -6,7 +6,6 @@ import de.komoot.photon.config.*;
 import de.komoot.photon.json.JsonDumper;
 import de.komoot.photon.json.JsonReader;
 import de.komoot.photon.metrics.MetricsConfig;
-import de.komoot.photon.nominatim.ImportThread;
 import de.komoot.photon.nominatim.NominatimImporter;
 import de.komoot.photon.nominatim.NominatimUpdater;
 import de.komoot.photon.opensearch.PhotonIndex;
@@ -125,14 +124,13 @@ public class App {
             final JsonDumper jsonDumper = new JsonDumper(filename, dbProps);
             jsonDumper.writeHeader(connector.loadCountryNames(dbProps.getLanguages()));
 
-            final var importThread = new ImportThread(jsonDumper);
             try {
                 importFromDatabase(cli.getPostgresqlConfig(),
                         cli.getImportFilterConfig().getCountryCodes(),
-                        importThread,
+                        jsonDumper,
                         dbProps);
             } finally {
-                importThread.finish();
+                jsonDumper.finish();
             }
             LOGGER.info("Json dump was created: {}", filename);
         } catch (IOException e) {
@@ -156,29 +154,24 @@ public class App {
             return;
         }
 
-        final var importThread = new ImportThread(
-                esServer.createImporter(dbProperties, cli.getGeneralConfig().getThreads(), true));
+        final var importer = esServer.createImporter(dbProperties, cli.getGeneralConfig().getThreads(), true);
 
         Date importDate;
         try {
             if (cli.getImportFileConfig().isEnabled()) {
-                importDate = importFromFile(cli.getImportFileConfig(), importFilterConfig, importThread);
+                importDate = importFromFile(cli.getImportFileConfig(), importFilterConfig, importer);
             } else {
                 importDate = importFromDatabase(
                         cli.getPostgresqlConfig(),
                         importFilterConfig.getCountryCodes(),
-                        importThread,
+                        importer,
                         dbProperties);
             }
         } catch (IOException ex) {
             LOGGER.error("IO error while importing", ex);
             return;
         } finally {
-            importThread.finish();
-        }
-
-        if (importThread.hasErrors()) {
-            return;
+            importer.finish();
         }
 
         dbProperties.setImportDate(importDate);
@@ -227,7 +220,7 @@ public class App {
 
     @Nullable
     private static Date importFromDatabase(PostgresqlConfig postgresqlConfig, String[] filterCountries,
-                                           ImportThread importThread, DatabaseProperties dbProperties) {
+                                           Importer importer, DatabaseProperties dbProperties) {
         LOGGER.info("Connecting to {}", postgresqlConfig.toString());
         final var connector = new NominatimImporter(postgresqlConfig, dbProperties);
         connector.prepareDatabase();
@@ -244,14 +237,14 @@ public class App {
         }
 
         for (var country : countries) {
-            connector.readCountry(country, importThread);
+            connector.readCountry(country, importer);
         }
 
         return connector.getLastImportDate();
     }
 
     @Nullable
-    private static Date importFromFile(ImportFileConfig importFileConfig, ImportFilterConfig args, ImportThread importerThread) throws IOException {
+    private static Date importFromFile(ImportFileConfig importFileConfig, ImportFilterConfig args, Importer importer) throws IOException {
         JsonReader reader;
         final String importFile = importFileConfig.getImportFile();
         if ("-".equals(importFile)) {
@@ -268,7 +261,7 @@ public class App {
         reader.readHeader();
         final var importDate = reader.getImportDate();
 
-        reader.readFile(importerThread);
+        reader.readFile(importer);
 
         return importDate;
     }

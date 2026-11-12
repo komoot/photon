@@ -1,9 +1,6 @@
 package de.komoot.photon.nominatim;
 
-import de.komoot.photon.DatabaseProperties;
-import de.komoot.photon.PhotonDoc;
-import de.komoot.photon.PhotonDocAddressSet;
-import de.komoot.photon.PhotonDocInterpolationSet;
+import de.komoot.photon.*;
 import de.komoot.photon.config.PostgresqlConfig;
 import de.komoot.photon.nominatim.model.*;
 import org.apache.logging.log4j.LogManager;
@@ -34,7 +31,7 @@ public class NominatimImporter extends NominatimConnector {
      * Parse every relevant row in placex, location_osmline and location_postcodes
      * for the given country. Also imports place from country-less places.
      */
-    public void readCountry(String countryCode, ImportThread importThread) {
+    public void readCountry(String countryCode, Importer importer) {
         final var cnames = loadCountryNames(dbProperties.getLanguages()).get(countryCode);
         if (cnames == null) {
             LOGGER.warn("Unknown country code {}. Skipping.", countryCode);
@@ -76,7 +73,7 @@ public class NominatimImporter extends NominatimConnector {
                     doc.postcode(rs.getString("postcode")); // ignore all other sources of postcode
                     doc.setCountry(cnames);
 
-                    importThread.addDocument(new PhotonDocAddressSet(doc, address));
+                    importer.add(new PhotonDocAddressSet(doc, address));
                 });
 
         // Next get all POIs/housenumbers.
@@ -105,7 +102,7 @@ public class NominatimImporter extends NominatimConnector {
                     doc.postcode(rs.getString("postcode")); // ignore all other sources of postcode
                     doc.setCountry(cnames);
 
-                    importThread.addDocument(new PhotonDocAddressSet(doc, address));
+                    importer.add(new PhotonDocAddressSet(doc, address));
                 });
 
         // Interpolation table
@@ -132,7 +129,7 @@ public class NominatimImporter extends NominatimConnector {
                     var geometry = dbutils.extractGeometry(rs, "linegeo");
 
                     if (geometry != null) {
-                        importThread.addDocument(new PhotonDocInterpolationSet(
+                        importer.add(new PhotonDocInterpolationSet(
                                 doc,
                                 rs.getLong("startnumber"),
                                 rs.getLong("endnumber"),
@@ -164,7 +161,7 @@ public class NominatimImporter extends NominatimConnector {
                         doc.addAddresses(addressCache.getAddressList(rs.getString("addresslines")));
                         doc.setCountry(cnames);
 
-                        importThread.addDocument(List.of(doc));
+                        importer.add(List.of(doc));
                     });
         }
     }

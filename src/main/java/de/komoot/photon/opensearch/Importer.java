@@ -16,8 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -50,6 +48,8 @@ public class Importer implements de.komoot.photon.Importer {
     /** Fallback refresh_interval if the original value cannot be read. Matches the OpenSearch default. */
     private static final String FALLBACK_REFRESH_INTERVAL = "1s";
 
+    private static final int PROGRESS_INTERVAL = 50000;
+
     private final OpenSearchClient client;
     private final BlockingQueue<BulkRequest> bulkQueue;
     // Compared by reference identity in submitLoop. The dummy delete is only there so
@@ -61,12 +61,12 @@ public class Importer implements de.komoot.photon.Importer {
     private final AtomicReference<@Nullable Throwable> firstFailure = new AtomicReference<>();
     private final AtomicBoolean hasPrintedNoUpdates = new AtomicBoolean(false);
     private final AtomicBoolean finished = new AtomicBoolean(false);
+    private final long startMillis;
+    private long counter = 0;
     private final boolean shouldRestoreRefresh;
     @Nullable private final String originalRefreshInterval;
 
-    // One accumulator per producer thread keeps add() lock-free across the
-    // multi-reader import path. Cross-thread handoff happens only at bulkQueue.put().
-    private final ConcurrentMap<Thread, Bulk> bulks = new ConcurrentHashMap<>();
+    private final Bulk bulk = new Bulk();
 
     private static final class Bulk {
         BulkRequest.Builder builder = new BulkRequest.Builder();
@@ -89,6 +89,8 @@ public class Importer implements de.komoot.photon.Importer {
         // Read before overwrite: the operator's value may not be the OS default.
         this.originalRefreshInterval = tuneRefresh ? readRefreshInterval() : null;
         this.shouldRestoreRefresh = tuneRefresh && setRefreshInterval("-1");
+
+        this.startMillis = System.currentTimeMillis();
     }
 
     @Override
@@ -97,8 +99,6 @@ public class Importer implements de.komoot.photon.Importer {
         if (f != null) {
             throw new RuntimeException("Error inserting new documents", f);
         }
-
-        final Bulk b = bulks.computeIfAbsent(Thread.currentThread(), k -> new Bulk());
 
         String placeID = null;
         int objectId = 0;
@@ -110,17 +110,23 @@ public class Importer implements de.komoot.photon.Importer {
                 if (hasPrintedNoUpdates.compareAndSet(false, true)) {
                     LOGGER.warn("Documents have no place_id. Updates will not be possible.");
                 }
-                b.builder.operations(op -> op.create(i -> i.index(PhotonIndex.NAME).document(doc)));
+                bulk.builder.operations(op -> op.create(i -> i.index(PhotonIndex.NAME).document(doc)));
             } else {
                 final String uuid = PhotonDoc.makeUid(placeID, objectId++);
-                b.builder.operations(op -> op.create(i -> i.index(PhotonIndex.NAME).id(uuid).document(doc)));
+                bulk.builder.operations(op -> op.create(i -> i.index(PhotonIndex.NAME).id(uuid).document(doc)));
             }
-            b.bytes += estimateSize(doc);
+            bulk.bytes += estimateSize(doc);
             // A single doc over MAX_BULK_BYTES still flushes on its own; an oversized request
             // can't be split any smaller anyway.
-            if (++b.todo >= BULK_SIZE || b.bytes >= MAX_BULK_BYTES) {
-                flush(b);
+            if (++bulk.todo >= BULK_SIZE || bulk.bytes >= MAX_BULK_BYTES) {
+                flush(bulk);
             }
+
+            if (++counter % PROGRESS_INTERVAL == 0) {
+                final double documentsPerSecond = 1000d * counter / (System.currentTimeMillis() - startMillis);
+                LOGGER.info("Imported {} documents [{}/second]", counter, documentsPerSecond);
+            }
+
         }
     }
 
@@ -144,12 +150,8 @@ public class Importer implements de.komoot.photon.Importer {
         }
 
         try {
-            // Safe to iterate without locking: finish() runs after all producer threads
-            // have joined, so no concurrent put into `bulks` is in flight.
-            for (Bulk b : bulks.values()) {
-                if (b.todo > 0) {
-                    flush(b);
-                }
+            if (bulk.todo > 0) {
+                flush(bulk);
             }
         } catch (Throwable t) {
             firstFailure.compareAndSet(null, t);
@@ -171,6 +173,10 @@ public class Importer implements de.komoot.photon.Importer {
             LOGGER.error("Import failed.", failure);
             throw new RuntimeException("Error inserting new documents", failure);
         }
+
+        LOGGER.info("Finished import of {} photon documents. (Total processing time: {}s)",
+                counter, (System.currentTimeMillis() - startMillis) / 1000);
+
 
         try {
             client.indices().refresh(r -> r.index(PhotonIndex.NAME));

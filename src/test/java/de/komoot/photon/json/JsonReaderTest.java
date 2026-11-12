@@ -2,7 +2,6 @@ package de.komoot.photon.json;
 
 import de.komoot.photon.ConfigExtraTags;
 import de.komoot.photon.UsageException;
-import de.komoot.photon.nominatim.ImportThread;
 import de.komoot.photon.nominatim.model.AddressType;
 import de.komoot.photon.nominatim.testdb.CollectingImporter;
 import org.junit.jupiter.api.Test;
@@ -42,7 +41,6 @@ class JsonReaderTest {
 
     private CollectingImporter readJson() throws IOException {
         var importer = new CollectingImporter();
-        var importThread = new ImportThread(importer);
 
         try {
             var reader = new JsonReader(inBufferAsStream());
@@ -54,9 +52,9 @@ class JsonReaderTest {
             reader.setCountryFilter(configCountries);
             reader.setLanguages(Set.of("en", "de"));
 
-            reader.readFile(importThread);
+            reader.readFile(importer);
         } finally {
-            importThread.finish();
+            importer.finish();
         }
 
         assertThat(importer.getFinishCalled()).isEqualTo(1);
