@@ -26,7 +26,6 @@ import org.opensearch.client.util.MissingRequiredPropertyException;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -129,7 +128,6 @@ public class App {
             final var importThread = new ImportThread(jsonDumper);
             try {
                 importFromDatabase(cli.getPostgresqlConfig(),
-                        cli.getGeneralConfig().getThreads(),
                         cli.getImportFilterConfig().getCountryCodes(),
                         importThread,
                         dbProps);
@@ -168,7 +166,6 @@ public class App {
             } else {
                 importDate = importFromDatabase(
                         cli.getPostgresqlConfig(),
-                        cli.getGeneralConfig().getThreads(),
                         importFilterConfig.getCountryCodes(),
                         importThread,
                         dbProperties);
@@ -229,7 +226,7 @@ public class App {
     }
 
     @Nullable
-    private static Date importFromDatabase(PostgresqlConfig postgresqlConfig, int numThreads, String[] filterCountries,
+    private static Date importFromDatabase(PostgresqlConfig postgresqlConfig, String[] filterCountries,
                                            ImportThread importThread, DatabaseProperties dbProperties) {
         LOGGER.info("Connecting to {}", postgresqlConfig.toString());
         final var connector = new NominatimImporter(postgresqlConfig, dbProperties);
@@ -246,49 +243,10 @@ public class App {
                     .filter(s -> !s.isBlank()).toArray(String[]::new);
         }
 
-        if (numThreads == 1) {
-            for (var country : countries) {
-                connector.readCountry(country, importThread);
-            }
-        } else {
-            final Queue<String> todolist = new ConcurrentLinkedQueue<>(List.of(countries));
-
-            final List<Thread> readerThreads = new ArrayList<>(numThreads);
-
-            for (int i = 0; i < numThreads; ++i) {
-                final NominatimImporter threadConnector;
-                if (i > 0) {
-                    threadConnector = new NominatimImporter(postgresqlConfig, dbProperties);
-                    threadConnector.loadCountryNames(dbProperties.getLanguages());
-                } else {
-                    threadConnector = connector;
-                }
-                final int threadno = i;
-                Runnable runner = () -> {
-                    String nextCc = todolist.poll();
-                    while (nextCc != null) {
-                        LOGGER.info("Thread {}: reading country '{}'", threadno, nextCc);
-                        threadConnector.readCountry(nextCc, importThread);
-                        nextCc = todolist.poll();
-                    }
-                };
-                Thread thread = new Thread(runner);
-                thread.start();
-                readerThreads.add(thread);
-            }
-            readerThreads.forEach(t -> {
-                while (true) {
-                    try {
-                        t.join();
-                        break;
-                    } catch (InterruptedException e) {
-                        LOGGER.warn("Thread interrupted:", e);
-                        // Restore interrupted state.
-                        Thread.currentThread().interrupt();
-                    }
-                }
-            });
+        for (var country : countries) {
+            connector.readCountry(country, importThread);
         }
+
         return connector.getLastImportDate();
     }
 
