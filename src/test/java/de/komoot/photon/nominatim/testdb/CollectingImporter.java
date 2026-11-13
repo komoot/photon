@@ -27,6 +27,9 @@ public class CollectingImporter extends AbstractList<PhotonDoc> implements Impor
     }
 
     @Override
+    public void flush() {}
+
+    @Override
     public void finish() {
         ++finishCalled;
     }

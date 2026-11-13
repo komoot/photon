@@ -62,6 +62,9 @@ public class JsonDumper implements Importer {
     }
 
     @Override
+    public void flush() {}
+
+    @Override
     public void finish() {
         writer.close();
     }

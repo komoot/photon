@@ -84,7 +84,7 @@ final class BulkRetryHelper {
         }
     }
 
-    private static int logAndCountItemErrors(BulkResponse response) {
+    public static int logAndCountItemErrors(BulkResponse response) {
         int count = 0;
         for (BulkResponseItem item : response.items()) {
             if (item.error() != null) {

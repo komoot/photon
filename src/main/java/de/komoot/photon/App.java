@@ -8,7 +8,6 @@ import de.komoot.photon.json.JsonReader;
 import de.komoot.photon.metrics.MetricsConfig;
 import de.komoot.photon.nominatim.NominatimImporter;
 import de.komoot.photon.nominatim.NominatimUpdater;
-import de.komoot.photon.opensearch.PhotonIndex;
 import de.komoot.photon.query.*;
 import de.komoot.photon.searcher.GeoJsonFormatter;
 import de.komoot.photon.searcher.TagFilter;
@@ -19,13 +18,10 @@ import org.apache.logging.log4j.Logger;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import org.locationtech.jts.geom.Envelope;
-import org.opensearch.client.opensearch.tasks.GroupBy;
-import org.opensearch.client.util.MissingRequiredPropertyException;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static de.komoot.photon.metrics.MetricsConfig.setupMetrics;
@@ -182,38 +178,7 @@ public class App {
             return;
         }
 
-        try {
-            LOGGER.info("Merging segments.");
-            try {
-                esServer.getClient().indices().forcemerge(m -> m
-                        .waitForCompletion(false)
-                        .index(PhotonIndex.NAME));
-            } catch (RuntimeException e) {
-                // Work around a bug in opensearch-java where the response
-                // isn't unpacked properly.
-                // https://github.com/opensearch-project/opensearch-java/issues/2147
-                if (!(e.getCause() instanceof MissingRequiredPropertyException)) {
-                    throw e;
-                }
-            }
-            while (true) {
-                var tasks = esServer.getClient().tasks().list(l -> l
-                        .groupBy(GroupBy.None)
-                        .actions("indices:admin/forcemerge")
-                        .waitForCompletion(false)).tasks();
-                if (tasks == null || tasks.groupedByNone().isEmpty()) {
-                    LOGGER.info("Forcemerge completed.");
-                    break;
-                } else {
-                    for (var ti : tasks.groupedByNone()) {
-                        LOGGER.info("Still running: {}", ti.action());
-                    }
-                    TimeUnit.SECONDS.sleep(1);
-                }
-            }
-        } catch (IOException | InterruptedException e) {
-            LOGGER.warn("Could not force-merge database.");
-        }
+        esServer.mergeSegments();
 
         LOGGER.info("Database has been successfully set up with the following properties:\n{}", dbProperties);
     }
