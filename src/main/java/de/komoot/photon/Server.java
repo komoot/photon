@@ -264,7 +264,7 @@ public class Server {
 
     public Updater createUpdater(DatabaseProperties dbProperties) {
         photonDocSerializer.configureFromDBProperties(dbProperties);
-        return new de.komoot.photon.opensearch.Updater(getClient());
+        return new de.komoot.photon.opensearch.Updater(transport);
     }
 
     public SearchHandler<SimpleSearchRequest> createSearchHandler(int queryTimeoutSec, @Nullable ConfigSynonyms synonyms) {
