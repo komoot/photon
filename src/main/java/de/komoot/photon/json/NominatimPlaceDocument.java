@@ -16,13 +16,10 @@ import tools.jackson.databind.JsonNode;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.regex.Pattern;
 
 @NullMarked
 public class NominatimPlaceDocument {
     public static final String DOCUMENT_TYPE = "Place";
-
-    private static final Pattern PLACEID_PATTERN = Pattern.compile("[0-9a-zA-Z_-]{1,60}");
 
     private final PhotonDoc doc = new PhotonDoc();
     @Nullable private AddressMap address = null;
@@ -93,7 +90,7 @@ public class NominatimPlaceDocument {
     @JsonProperty(DumpFields.PLACE_ID)
     void setPlaceIdAsString(@Nullable String placeId) throws IOException {
         if (placeId != null) {
-            if (!PLACEID_PATTERN.matcher(placeId).matches()) {
+            if (placeId.isEmpty() || placeId.length() > 60 || !PhotonDoc.isValidCategoryLabel(placeId)) {
                 throw new IOException("PlaceID must only consist of letters, numbers, dash and underscore and not exceed 60 characters.");
             }
             doc.placeId(placeId);
