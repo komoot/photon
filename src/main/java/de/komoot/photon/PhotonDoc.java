@@ -12,7 +12,6 @@ import de.komoot.photon.nominatim.model.AddressType;
 
 import java.util.*;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 /**
  * Denormalized document with all information needed for saving in the Photon database.
@@ -168,10 +167,12 @@ public class PhotonDoc {
     }
 
     public PhotonDoc categories(Collection<@Nullable String> collection) {
-        this.categorySet = collection.stream()
-                .filter(Objects::nonNull)
-                .filter(s -> CATEGORY_PATTERN.matcher(s).matches())
-                .collect(Collectors.toSet());
+        categorySet = new HashSet<>();
+        for (var item : collection) {
+            if (item != null && CATEGORY_PATTERN.matcher(item).matches()) {
+                categorySet.add(item);
+            }
+        }
 
         return this;
     }
