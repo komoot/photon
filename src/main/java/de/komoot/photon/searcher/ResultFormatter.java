@@ -15,5 +15,5 @@ public interface ResultFormatter {
     String convert(List<PhotonResult> results, String language, @Nullable String fallbackLanguage,
                    boolean withGeometry, boolean withDebugInfo, @Nullable String queryDebugInfo) throws IOException;
 
-    String formatError(String msg);
+    String formatError(Exception exception);
 }

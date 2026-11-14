@@ -295,7 +295,7 @@ public class App {
                 dbProperties.getLanguages(), dbProperties.getImportDate(), dbProperties.getSupportGeometries());
 
         MetricsConfig metrics = setupMetrics(args.getMetrics(), server.getClient());
-        final var formatter = new GeoJsonFormatter();
+        final var formatter = new GeoJsonFormatter(args.isDebugModeEnabled());
 
         photonServer = Javalin.create(config -> {
             config.router.ignoreTrailingSlashes = true;
@@ -348,11 +348,11 @@ public class App {
 
             config.routes.exception(Exception.class, (e, ctx) ->
                     ctx.status(400)
-                            .result(formatter.formatError(e.getMessage()))
+                            .result(formatter.formatError(e))
             );
             config.routes.exception(BadRequestException.class, (e, ctx) ->
                     ctx.status(e.getHttpStatus())
-                            .result(formatter.formatError(e.getMessage()))
+                            .result(formatter.formatError(e))
             );
 
             config.events.serverStopped(() -> {

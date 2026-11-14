@@ -3,7 +3,9 @@ package de.komoot.photon.searcher;
 import de.komoot.photon.opensearch.DocFields;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
-import tools.jackson.core.JacksonException;
+import org.opensearch.client.json.jackson3.JacksonJsonpGenerator;
+import org.opensearch.client.json.jackson3.JacksonJsonpMapper;
+import org.opensearch.client.opensearch._types.OpenSearchException;
 import tools.jackson.core.JsonGenerator;
 import tools.jackson.databind.SerializationFeature;
 import tools.jackson.databind.json.JsonMapper;
@@ -36,14 +38,44 @@ public class GeoJsonFormatter implements ResultFormatter {
             List.of(DocFields.COUNTRYCODE, GeoJsonFields.COUNTRYCODE),
             List.of(DocFields.EXTRA, GeoJsonFields.EXTRA));
 
+    private final boolean enableDebugMode;
+    private final JsonMapper prettyPrintMapper = JsonMapper.builder()
+                    .configure(SerializationFeature.INDENT_OUTPUT, true)
+                    .build();
+
+    public GeoJsonFormatter() {
+        this.enableDebugMode = false;
+    }
+
+    public GeoJsonFormatter(boolean enableDebugMode) {
+        this.enableDebugMode = enableDebugMode;
+    }
+
     @Override
-    public String formatError(@Nullable String msg) {
-        try {
+    public String formatError(Exception exception) {
+        final var writer = new StringWriter();
+
+        try (var gen = prettyPrintMapper.createGenerator(writer)) {
+            gen.writeStartObject();
+
+            var msg = exception.getMessage();
+            gen.writeStringProperty("message", msg == null ? "Unknown error." : msg);
+
+            if (enableDebugMode) {
+                if (exception instanceof OpenSearchException) {
+                    gen.writeName("details");
+                    ((OpenSearchException) exception).response().serialize(new JacksonJsonpGenerator(gen), new JacksonJsonpMapper(prettyPrintMapper));
+                }
+            }
+
+            gen.writeEndObject();
+        } catch (Exception e) {
             return JsonMapper.shared().writeValueAsString(
-                    Map.of("message", msg == null ? "Unknown error." : msg));
-        } catch (JacksonException e) {
-            return "{}";
+                    Map.of("message", e.getMessage() == null ? "Unknown failure." : e.getMessage())
+            );
         }
+
+        return writer.toString();
     }
 
     @Override
@@ -53,15 +85,7 @@ public class GeoJsonFormatter implements ResultFormatter {
                           @Nullable String queryDebugInfo) {
         final var writer = new StringWriter();
 
-        JsonMapper mapper;
-
-        if (withDebugInfo) {
-            mapper = JsonMapper.builder()
-                    .configure(SerializationFeature.INDENT_OUTPUT, true)
-                    .build();
-        } else {
-            mapper = JsonMapper.shared();
-        }
+        JsonMapper mapper = withDebugInfo ? prettyPrintMapper : JsonMapper.shared();
 
         try (var gen = mapper.createGenerator(writer)) {
             gen.writeStartObject();
