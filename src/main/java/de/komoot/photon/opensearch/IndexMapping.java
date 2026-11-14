@@ -62,7 +62,7 @@ public class IndexMapping {
 
             mappings.properties(DocFields.HOUSENUMBER, b -> b.text(p -> p
                     .index(true)
-                    .indexOptions(IndexOptions.Docs)
+                    .indexOptions(IndexOptions.Positions)
                     .analyzer("index_housenumber")
                     .searchAnalyzer("standard")
                     .fields("full", f -> f.text(full -> full

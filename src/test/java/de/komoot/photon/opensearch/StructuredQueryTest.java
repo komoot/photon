@@ -7,6 +7,8 @@ import de.komoot.photon.nominatim.model.AddressType;
 import de.komoot.photon.searcher.PhotonResult;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.nio.file.Path;
 import java.util.List;
@@ -83,6 +85,7 @@ public class StructuredQueryTest extends ESBaseTester {
     private final PhotonDoc hamletHouse1 = addHamletHouse(5, "1");
     private final PhotonDoc hamletHouse2 = addHamletHouse(6, "2");
     private final PhotonDoc hamletHouse3 = addHamletHouse(7, "3");
+    private final PhotonDoc hamletHouse4 = addHamletHouse(99, "5a");
 
 
     private PhotonDoc addHamletHouse(int id, String houseNumber) {
@@ -106,7 +109,7 @@ public class StructuredQueryTest extends ESBaseTester {
         setUpES(dataDirectory);
 
         setupDocs(country, city, suburb, street, house, postcode, postcode2, busStop,
-                hamletHouse1, hamletHouse2, hamletHouse3);
+                hamletHouse1, hamletHouse2, hamletHouse3, hamletHouse4);
     }
 
     @AfterAll
@@ -235,4 +238,15 @@ public class StructuredQueryTest extends ESBaseTester {
 
         assertThat(search(request)).singleElement(PHOTONRESULT).sameOsmID(house);
     }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"5A", "5 a"})
+    void testHouseNumberWithSpace(String hnr) {
+        var request = new StructuredSearchRequest();
+        request.setCity("Some City");
+        request.setHouseNumber(hnr);
+
+        assertThat(search(request)).singleElement(PHOTONRESULT).sameOsmID(hamletHouse4);
+    }
+
 }

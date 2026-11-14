@@ -71,6 +71,12 @@ public class ApiServerConfig {
             """)
     private int queryTimeout = 7;
 
+    @Parameter(names = "-debug-mode", category = GROUP, description = """
+            Enable extended debug output via API responses.
+            NEVER use in production as this may leak internal information!
+            """)
+    private boolean enableDebugMode;
+
     public int getPort() {
         return this.listenPort;
     }
@@ -89,6 +95,10 @@ public class ApiServerConfig {
 
     public boolean isEnableUpdateApi() {
         return this.enableUpdateApi;
+    }
+
+    public boolean isDebugModeEnabled() {
+        return this.enableDebugMode;
     }
 
     public int getMaxReverseResults() {
