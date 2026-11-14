@@ -69,13 +69,12 @@ class NominatimConnectorDBTest {
     private void readEntireDatabase() {
         setupImporter();
 
-        ImportThread importThread = new ImportThread(importer);
         try {
             for (var country: connector.getCountriesFromDatabase()) {
-                connector.readCountry(country, importThread);
+                connector.readCountry(country, importer);
             }
         } finally {
-            importThread.finish();
+            importer.finish();
         }
     }
 
@@ -111,13 +110,12 @@ class NominatimConnectorDBTest {
 
         setupImporter();
 
-        ImportThread importThread = new ImportThread(importer);
         try {
-            connector.readCountry("uk", importThread);
-            connector.readCountry("hu", importThread);
-            connector.readCountry("nl", importThread);
+            connector.readCountry("uk", importer);
+            connector.readCountry("hu", importer);
+            connector.readCountry("nl", importer);
         } finally {
-            importThread.finish();
+            importer.finish();
         }
 
         assertThat(importer.getFinishCalled()).isEqualTo(1);

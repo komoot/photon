@@ -1,7 +1,6 @@
 package de.komoot.photon.api;
 
 import de.komoot.photon.App;
-import de.komoot.photon.Importer;
 import de.komoot.photon.PhotonDoc;
 import de.komoot.photon.nominatim.model.AddressType;
 import org.junit.jupiter.api.AfterAll;
@@ -31,26 +30,22 @@ public class ApiSynonymsTest extends ApiBaseTester {
         getProperties().setExtraTags(List.of("ALL"));
         getProperties().setImportDate(TEST_DATE);
         setUpES(dataDirectory);
-        Importer instance = makeImporter();
-        instance.add(List.of(new PhotonDoc()
-                .placeId("1000").osmType("N").osmId(1000).tagKey("railway").tagValue("station")
-                .importance(0.2).addressType(AddressType.HOUSE)
-                .categories(List.of("osm.railway.station"))
-                .centroid(makePoint(13.38886, 52.51704))
-                .geometry(makeDocGeometry("POINT(13.38886 52.51704)"))
-                .names(makeDocNames("name", "Hauptbahnhof Berlin"))
-        ));
-        instance.add(List.of(new PhotonDoc()
-                .placeId("2000").osmType("N").osmId(1000).tagKey("place").tagValue("city")
-                .categories(List.of("osm.place.city"))
-                .importance(0.6).addressType(AddressType.CITY)
-                .centroid(makePoint(13.38886, 52.51704))
-                .geometry(makeDocGeometry("POINT(13.38886 52.51704)"))
-                .names(makeDocNames("name", "Berlin"))
-        ));
 
-        instance.finish();
-        refresh();
+        setupDocs(new PhotonDoc()
+                        .placeId("1000").osmType("N").osmId(1000).tagKey("railway").tagValue("station")
+                        .importance(0.2).addressType(AddressType.HOUSE)
+                        .categories(List.of("osm.railway.station"))
+                        .centroid(makePoint(13.38886, 52.51704))
+                        .geometry(makeDocGeometry("POINT(13.38886 52.51704)"))
+                        .names(makeDocNames("name", "Hauptbahnhof Berlin")),
+                new PhotonDoc()
+                        .placeId("2000").osmType("N").osmId(1000).tagKey("place").tagValue("city")
+                        .categories(List.of("osm.place.city"))
+                        .importance(0.6).addressType(AddressType.CITY)
+                        .centroid(makePoint(13.38886, 52.51704))
+                        .geometry(makeDocGeometry("POINT(13.38886 52.51704)"))
+                        .names(makeDocNames("name", "Berlin"))
+        );
     }
 
     @AfterAll

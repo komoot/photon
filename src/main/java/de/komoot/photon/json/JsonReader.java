@@ -1,9 +1,9 @@
 package de.komoot.photon.json;
 
 import de.komoot.photon.ConfigExtraTags;
+import de.komoot.photon.Importer;
 import de.komoot.photon.PhotonDoc;
 import de.komoot.photon.UsageException;
-import de.komoot.photon.nominatim.ImportThread;
 import de.komoot.photon.nominatim.model.AddressRow;
 import de.komoot.photon.nominatim.model.NameMap;
 import org.apache.logging.log4j.LogManager;
@@ -93,7 +93,7 @@ public class JsonReader {
         return header.getDataTimestamp();
     }
 
-    public void readFile(ImportThread importThread) {
+    public void readFile(Importer importThread) {
         String docType = readStartDocument();
         String currentCountry = "NONE";
         boolean isSortedByCountry = header != null && header.isSortedByCountry();
@@ -150,7 +150,7 @@ public class JsonReader {
 
                     }
 
-                    importThread.addDocument(docs);
+                    importThread.add(docs);
                 }
             } else if (CountryInfo.DOCUMENT_TYPE.equals(docType)) {
                 if (!parser.isExpectedStartArrayToken()) {

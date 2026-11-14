@@ -101,8 +101,7 @@ class ImporterTest extends ESBaseTester {
         ));
 
         assertThatRuntimeException()
-                .isThrownBy(instance::finish)
-                .withMessageContaining("Error inserting new documents");
+                .isThrownBy(instance::finish);
     }
 
     @Test

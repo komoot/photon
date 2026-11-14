@@ -189,10 +189,13 @@ public class NominatimUpdater extends NominatimConnector {
                 updateFromPlacex();
                 updateFromInterpolations();
                 updateFromPostcodes();
-                updater.finish();
-                LOGGER.info("Finished updating");
             } finally {
-                updateLock.unlock();
+                try {
+                    updater.finish();
+                    LOGGER.info("Finished updating");
+                } finally {
+                    updateLock.unlock();
+                }
             }
         } else {
             LOGGER.info("Update already in progress");

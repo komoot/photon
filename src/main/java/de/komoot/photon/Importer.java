@@ -15,6 +15,8 @@ public interface Importer {
      */
     void add(Iterable<PhotonDoc> docs);
 
+    void flush();
+
     /**
      * Finish up the import.
      */

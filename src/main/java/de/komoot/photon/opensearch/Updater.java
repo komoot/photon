@@ -6,6 +6,7 @@ import org.apache.logging.log4j.Logger;
 import org.jspecify.annotations.NullMarked;
 import org.opensearch.client.opensearch.OpenSearchClient;
 import org.opensearch.client.opensearch.core.BulkRequest;
+import org.opensearch.client.transport.OpenSearchTransport;
 
 import java.io.IOException;
 
@@ -14,11 +15,13 @@ public class Updater implements de.komoot.photon.Updater {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private final OpenSearchClient client;
+    private final BulkRequestPool requestPool;
     private BulkRequest.Builder bulkRequest = new BulkRequest.Builder();
     private int todoDocuments = 0;
 
-    public Updater(OpenSearchClient client) {
-        this.client = client;
+    public Updater(OpenSearchTransport transport) {
+        this.client = new OpenSearchClient(transport);
+        this.requestPool = new BulkRequestPool(transport, 1);
     }
 
     public void addOrUpdate(Iterable<PhotonDoc> docs) {
@@ -76,7 +79,12 @@ public class Updater implements de.komoot.photon.Updater {
 
     @Override
     public void finish() {
-        updateDocuments();
+        try {
+            updateDocuments();
+        } finally {
+            requestPool.drain();
+        }
+
         try {
             client.indices().refresh(r -> r.index(PhotonIndex.NAME));
         } catch (IOException e) {
@@ -86,14 +94,7 @@ public class Updater implements de.komoot.photon.Updater {
 
     private void updateDocuments() {
         if (todoDocuments > 0) {
-            try {
-                BulkRetryHelper.sendWithRetry(client, bulkRequest.build());
-            } catch (RuntimeException e) {
-                // Preserves the pre-existing silent-continue behaviour on hard failure;
-                // adds 429/circuit-breaker retry resilience via BulkRetryHelper.
-                LOGGER.error("Errors during bulk update.", e);
-            }
-
+            requestPool.submit(bulkRequest.build());
             bulkRequest = new BulkRequest.Builder();
             todoDocuments = 0;
         }

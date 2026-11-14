@@ -3,7 +3,6 @@ package de.komoot.photon.json;
 import de.komoot.photon.DatabaseProperties;
 import de.komoot.photon.ReflectionTestUtil;
 import de.komoot.photon.config.PostgresqlConfig;
-import de.komoot.photon.nominatim.ImportThread;
 import de.komoot.photon.nominatim.NominatimConnector;
 import de.komoot.photon.nominatim.NominatimImporter;
 import de.komoot.photon.nominatim.model.NameMap;
@@ -71,13 +70,12 @@ class JsonDumperTest {
         System.setOut(new PrintStream(outCapture));
         try {
             JsonDumper dumper = new JsonDumper("-", dbProps);
-            final var importThread = new ImportThread(dumper);
             try {
                 for (var country: configCountries == null ? connector.getCountriesFromDatabase() : configCountries) {
-                    connector.readCountry(country, importThread);
+                    connector.readCountry(country, dumper);
                 }
             } finally {
-                importThread.finish();
+                dumper.finish();
             }
         } finally {
             System.setOut(stdout);

@@ -4,7 +4,6 @@ import de.komoot.photon.App;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.io.TempDir;
 
-import de.komoot.photon.Importer;
 import de.komoot.photon.PhotonDoc;
 import org.junit.jupiter.api.Test;
 
@@ -33,13 +32,11 @@ class ApiLanguagesTest extends ApiBaseTester {
     private void importPlaces(String... languages) throws Exception {
         getProperties().setLanguages(Arrays.stream(languages).collect(Collectors.toSet()));
         setUpES(dataDirectory);
-        Importer instance = makeImporter();
-        instance.add(List.of(createDoc(1000, "city",
-                "name:en", "thething", "name:fr", "letruc", "name:ch", "dasding")));
-        instance.add(List.of(createDoc(1001, "town",
-                "name:ch", "thething", "name:fr", "letruc", "name:en", "dasding")));
-        instance.finish();
-        refresh();
+
+        setupDocs(createDoc(1000, "city",
+                        "name:en", "thething", "name:fr", "letruc", "name:ch", "dasding"),
+                createDoc(1001, "town",
+                        "name:ch", "thething", "name:fr", "letruc", "name:en", "dasding"));
     }
 
     @Test

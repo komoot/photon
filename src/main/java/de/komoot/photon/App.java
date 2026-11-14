@@ -6,10 +6,8 @@ import de.komoot.photon.config.*;
 import de.komoot.photon.json.JsonDumper;
 import de.komoot.photon.json.JsonReader;
 import de.komoot.photon.metrics.MetricsConfig;
-import de.komoot.photon.nominatim.ImportThread;
 import de.komoot.photon.nominatim.NominatimImporter;
 import de.komoot.photon.nominatim.NominatimUpdater;
-import de.komoot.photon.opensearch.PhotonIndex;
 import de.komoot.photon.query.*;
 import de.komoot.photon.searcher.GeoJsonFormatter;
 import de.komoot.photon.searcher.TagFilter;
@@ -20,14 +18,10 @@ import org.apache.logging.log4j.Logger;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import org.locationtech.jts.geom.Envelope;
-import org.opensearch.client.opensearch.tasks.GroupBy;
-import org.opensearch.client.util.MissingRequiredPropertyException;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static de.komoot.photon.metrics.MetricsConfig.setupMetrics;
@@ -126,15 +120,13 @@ public class App {
             final JsonDumper jsonDumper = new JsonDumper(filename, dbProps);
             jsonDumper.writeHeader(connector.loadCountryNames(dbProps.getLanguages()));
 
-            final var importThread = new ImportThread(jsonDumper);
             try {
                 importFromDatabase(cli.getPostgresqlConfig(),
-                        cli.getGeneralConfig().getThreads(),
                         cli.getImportFilterConfig().getCountryCodes(),
-                        importThread,
+                        jsonDumper,
                         dbProps);
             } finally {
-                importThread.finish();
+                jsonDumper.finish();
             }
             LOGGER.info("Json dump was created: {}", filename);
         } catch (IOException e) {
@@ -158,30 +150,24 @@ public class App {
             return;
         }
 
-        final int maxConcurrentBulks = Math.max(1, cli.getGeneralConfig().getThreads());
-        final var importThread = new ImportThread(esServer.createImporter(dbProperties, maxConcurrentBulks, true));
+        final var importer = esServer.createImporter(dbProperties, cli.getGeneralConfig().getThreads(), true);
 
         Date importDate;
         try {
             if (cli.getImportFileConfig().isEnabled()) {
-                importDate = importFromFile(cli.getImportFileConfig(), importFilterConfig, importThread);
+                importDate = importFromFile(cli.getImportFileConfig(), importFilterConfig, importer);
             } else {
                 importDate = importFromDatabase(
                         cli.getPostgresqlConfig(),
-                        cli.getGeneralConfig().getThreads(),
                         importFilterConfig.getCountryCodes(),
-                        importThread,
+                        importer,
                         dbProperties);
             }
         } catch (IOException ex) {
             LOGGER.error("IO error while importing", ex);
             return;
         } finally {
-            importThread.finish();
-        }
-
-        if (importThread.hasErrors()) {
-            return;
+            importer.finish();
         }
 
         dbProperties.setImportDate(importDate);
@@ -192,45 +178,14 @@ public class App {
             return;
         }
 
-        try {
-            LOGGER.info("Merging segments.");
-            try {
-                esServer.getClient().indices().forcemerge(m -> m
-                        .waitForCompletion(false)
-                        .index(PhotonIndex.NAME));
-            } catch (RuntimeException e) {
-                // Work around a bug in opensearch-java where the response
-                // isn't unpacked properly.
-                // https://github.com/opensearch-project/opensearch-java/issues/2147
-                if (!(e.getCause() instanceof MissingRequiredPropertyException)) {
-                    throw e;
-                }
-            }
-            while (true) {
-                var tasks = esServer.getClient().tasks().list(l -> l
-                        .groupBy(GroupBy.None)
-                        .actions("indices:admin/forcemerge")
-                        .waitForCompletion(false)).tasks();
-                if (tasks == null || tasks.groupedByNone().isEmpty()) {
-                    LOGGER.info("Forcemerge completed.");
-                    break;
-                } else {
-                    for (var ti : tasks.groupedByNone()) {
-                        LOGGER.info("Still running: {}", ti.action());
-                    }
-                    TimeUnit.SECONDS.sleep(1);
-                }
-            }
-        } catch (IOException | InterruptedException e) {
-            LOGGER.warn("Could not force-merge database.");
-        }
+        esServer.mergeSegments();
 
         LOGGER.info("Database has been successfully set up with the following properties:\n{}", dbProperties);
     }
 
     @Nullable
-    private static Date importFromDatabase(PostgresqlConfig postgresqlConfig, int numThreads, String[] filterCountries,
-                                           ImportThread importThread, DatabaseProperties dbProperties) {
+    private static Date importFromDatabase(PostgresqlConfig postgresqlConfig, String[] filterCountries,
+                                           Importer importer, DatabaseProperties dbProperties) {
         LOGGER.info("Connecting to {}", postgresqlConfig.toString());
         final var connector = new NominatimImporter(postgresqlConfig, dbProperties);
         connector.prepareDatabase();
@@ -246,54 +201,15 @@ public class App {
                     .filter(s -> !s.isBlank()).toArray(String[]::new);
         }
 
-        if (numThreads == 1) {
-            for (var country : countries) {
-                connector.readCountry(country, importThread);
-            }
-        } else {
-            final Queue<String> todolist = new ConcurrentLinkedQueue<>(List.of(countries));
-
-            final List<Thread> readerThreads = new ArrayList<>(numThreads);
-
-            for (int i = 0; i < numThreads; ++i) {
-                final NominatimImporter threadConnector;
-                if (i > 0) {
-                    threadConnector = new NominatimImporter(postgresqlConfig, dbProperties);
-                    threadConnector.loadCountryNames(dbProperties.getLanguages());
-                } else {
-                    threadConnector = connector;
-                }
-                final int threadno = i;
-                Runnable runner = () -> {
-                    String nextCc = todolist.poll();
-                    while (nextCc != null) {
-                        LOGGER.info("Thread {}: reading country '{}'", threadno, nextCc);
-                        threadConnector.readCountry(nextCc, importThread);
-                        nextCc = todolist.poll();
-                    }
-                };
-                Thread thread = new Thread(runner);
-                thread.start();
-                readerThreads.add(thread);
-            }
-            readerThreads.forEach(t -> {
-                while (true) {
-                    try {
-                        t.join();
-                        break;
-                    } catch (InterruptedException e) {
-                        LOGGER.warn("Thread interrupted:", e);
-                        // Restore interrupted state.
-                        Thread.currentThread().interrupt();
-                    }
-                }
-            });
+        for (var country : countries) {
+            connector.readCountry(country, importer);
         }
+
         return connector.getLastImportDate();
     }
 
     @Nullable
-    private static Date importFromFile(ImportFileConfig importFileConfig, ImportFilterConfig args, ImportThread importerThread) throws IOException {
+    private static Date importFromFile(ImportFileConfig importFileConfig, ImportFilterConfig args, Importer importer) throws IOException {
         JsonReader reader;
         final String importFile = importFileConfig.getImportFile();
         if ("-".equals(importFile)) {
@@ -310,7 +226,7 @@ public class App {
         reader.readHeader();
         final var importDate = reader.getImportDate();
 
-        reader.readFile(importerThread);
+        reader.readFile(importer);
 
         return importDate;
     }

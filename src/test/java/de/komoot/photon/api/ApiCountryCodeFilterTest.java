@@ -1,13 +1,11 @@
 package de.komoot.photon.api;
 
 import de.komoot.photon.App;
-import de.komoot.photon.Importer;
 import de.komoot.photon.PhotonDoc;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.io.TempDir;
 
 import java.nio.file.Path;
-import java.util.List;
 
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 
@@ -22,46 +20,24 @@ class ApiCountryCodeFilterTest extends ApiBaseTester {
     @BeforeAll
     void setUp(@TempDir Path dataDirectory) throws Exception {
         setUpES(dataDirectory);
-        Importer instance = makeImporter();
 
-        instance.add(
-            List.of(
+        setupDocs(new PhotonDoc()
+                        .placeId("1000").osmType("N").osmId(1000)
+                        .tagKey("place").tagValue("city")
+                        .names(makeDocNames("name", "Paris"))
+                        .countryCode("FR"),
                 new PhotonDoc()
-                    .placeId("1000")
-                    .osmType("N")
-                    .osmId(1000)
-                    .tagKey("place")
-                    .tagValue("city")
-                    .names(makeDocNames("name", "Paris"))
-                    .countryCode("FR")
-            )
-        );
-        instance.add(
-            List.of(
+                        .placeId("1001").osmType("N").osmId(1001)
+                        .tagKey("place").tagValue("city")
+                        .names(makeDocNames("name", "Paris"))
+                        .countryCode("US"),
                 new PhotonDoc()
-                    .placeId("1001")
-                    .osmType("N")
-                    .osmId(1001)
-                    .tagKey("place")
-                    .tagValue("city")
-                    .names(makeDocNames("name", "Paris"))
-                    .countryCode("US")
-            )
-        );
-        instance.add(
-            List.of(
-                new PhotonDoc()
-                        .placeId("1002")
-                        .osmType("N")
-                        .osmId(1002)
-                        .tagKey("place")
-                        .tagValue("city")
+                        .placeId("1002").osmType("N").osmId(1002)
+                        .tagKey("place").tagValue("city")
                         .names(makeDocNames("name", "Paris"))
                         .countryCode("DE")
-            )
         );
-        instance.finish();
-        refresh();
+
         startAPI();
     }
 

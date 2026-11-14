@@ -17,7 +17,10 @@ import org.opensearch.client.json.jackson3.JacksonJsonpMapper;
 import org.opensearch.client.opensearch.OpenSearchClient;
 import org.opensearch.client.opensearch._types.HealthStatus;
 import org.opensearch.client.opensearch._types.OpenSearchException;
+import org.opensearch.client.opensearch.tasks.GroupBy;
+import org.opensearch.client.transport.OpenSearchTransport;
 import org.opensearch.client.transport.httpclient5.ApacheHttpClient5TransportBuilder;
+import org.opensearch.client.util.MissingRequiredPropertyException;
 import tools.jackson.databind.DeserializationFeature;
 import tools.jackson.databind.json.JsonMapper;
 import tools.jackson.databind.module.SimpleModule;
@@ -25,6 +28,7 @@ import tools.jackson.databind.module.SimpleModule;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @NullMarked
 public class Server {
@@ -43,7 +47,7 @@ public class Server {
 
     final PhotonDocSerializer photonDocSerializer = new PhotonDocSerializer();
 
-    protected OpenSearchClient client;
+    private final OpenSearchTransport transport;
     @Nullable private OpenSearchRunner runner = null;
 
     public Server(PhotonDBConfig config, boolean create) throws IOException {
@@ -80,12 +84,10 @@ public class Server {
                 .addModule(new SimpleModule().addSerializer(photonDocSerializer))
                 .build();
 
-        final var transport = ApacheHttpClient5TransportBuilder
+        transport = ApacheHttpClient5TransportBuilder
                 .builder(hosts)
                 .setMapper(new JacksonJsonpMapper(mapper))
                 .build();
-
-        client = new OpenSearchClient(transport);
 
         waitForReady();
     }
@@ -116,12 +118,48 @@ public class Server {
     }
 
     public void waitForReady() throws IOException {
-        client.cluster().health(h -> h.waitForStatus(HealthStatus.Yellow));
+        getClient().cluster().health(h -> h.waitForStatus(HealthStatus.Yellow));
     }
 
     public void refreshIndexes() throws IOException {
         waitForReady();
-        client.indices().refresh(r -> r.index(PhotonIndex.NAME));
+        getClient().indices().refresh(r -> r.index(PhotonIndex.NAME));
+    }
+
+    public void mergeSegments() {
+        var client = getClient();
+        try {
+            LOGGER.info("Merging segments.");
+            try {
+                client.indices().forcemerge(m -> m
+                        .waitForCompletion(false)
+                        .index(PhotonIndex.NAME));
+            } catch (RuntimeException e) {
+                // Work around a bug in opensearch-java where the response
+                // isn't unpacked properly.
+                // https://github.com/opensearch-project/opensearch-java/issues/2147
+                if (!(e.getCause() instanceof MissingRequiredPropertyException)) {
+                    throw e;
+                }
+            }
+            while (true) {
+                var tasks = client.tasks().list(l -> l
+                        .groupBy(GroupBy.None)
+                        .actions("indices:admin/forcemerge")
+                        .waitForCompletion(false)).tasks();
+                if (tasks == null || tasks.groupedByNone().isEmpty()) {
+                    LOGGER.info("Forcemerge completed.");
+                    break;
+                } else {
+                    for (var ti : tasks.groupedByNone()) {
+                        LOGGER.info("Still running: {}", ti.action());
+                    }
+                    TimeUnit.SECONDS.sleep(1);
+                }
+            }
+            } catch (IOException | InterruptedException e) {
+            LOGGER.warn("Could not force-merge database.");
+        }
     }
 
     public void shutdown() {
@@ -137,6 +175,7 @@ public class Server {
 
     public void recreateIndex(DatabaseProperties dbProperties, List<String> normalizationFilters) throws IOException {
         // delete any existing data
+        var client = getClient();
         if (client.indices().exists(e -> e.index(PhotonIndex.NAME)).value()) {
             client.indices().delete(d -> d.index(PhotonIndex.NAME));
         }
@@ -172,7 +211,7 @@ public class Server {
             }
 
             try {
-                (new IndexSettingBuilder(synonyms)).updateIndex(client, PhotonIndex.NAME);
+                (new IndexSettingBuilder(synonyms)).updateIndex(getClient(), PhotonIndex.NAME);
             } catch (OpenSearchException ex) {
                 closeClientQuietly();
                 throw new UsageException("Could not install synonyms: " + ex.getMessage());
@@ -185,20 +224,20 @@ public class Server {
 
     private void closeClientQuietly() {
         try {
-            client._transport().close();
+            transport.close();
         } catch (Exception e) {
             LOGGER.warn("Error closing OpenSearch client transport", e);
         }
     }
 
     public void saveToDatabase(DatabaseProperties dbProperties) throws IOException {
-        client.indices().putMapping(m -> m
+        getClient().indices().putMapping(m -> m
                 .index(PhotonIndex.NAME)
                 .meta(PhotonIndex.META_DB_PROPERTIES, JsonData.of(dbProperties)));
     }
 
     public DatabaseProperties loadFromDatabase() throws IOException {
-        var meta = client.indices()
+        var meta = getClient().indices()
                 .getMapping(m -> m.index(PhotonIndex.NAME))
                 .get(PhotonIndex.NAME)
                 .mappings()
@@ -216,27 +255,31 @@ public class Server {
 
     public Importer createImporter(DatabaseProperties dbProperties, int maxConcurrentRequests, boolean tuneRefresh) {
         photonDocSerializer.configureFromDBProperties(dbProperties);
-        return new de.komoot.photon.opensearch.Importer(client, maxConcurrentRequests, tuneRefresh);
+        var importer = new OpenSearchImporter(transport, maxConcurrentRequests);
+        if (tuneRefresh) {
+            importer.disableRefresh();
+        }
+        return importer;
     }
 
     public Updater createUpdater(DatabaseProperties dbProperties) {
         photonDocSerializer.configureFromDBProperties(dbProperties);
-        return new de.komoot.photon.opensearch.Updater(client);
+        return new de.komoot.photon.opensearch.Updater(transport);
     }
 
     public SearchHandler<SimpleSearchRequest> createSearchHandler(int queryTimeoutSec, @Nullable ConfigSynonyms synonyms) {
-        return new OpenSearchSearchHandler(client, queryTimeoutSec, synonyms);
+        return new OpenSearchSearchHandler(getClient(), queryTimeoutSec, synonyms);
     }
 
     public SearchHandler<StructuredSearchRequest> createStructuredSearchHandler(int queryTimeoutSec) {
-        return new OpenSearchStructuredSearchHandler(client, queryTimeoutSec);
+        return new OpenSearchStructuredSearchHandler(getClient(), queryTimeoutSec);
     }
 
     public SearchHandler<ReverseRequest> createReverseHandler(int queryTimeoutSec) {
-        return new OpenSearchReverseHandler(client, queryTimeoutSec);
+        return new OpenSearchReverseHandler(getClient(), queryTimeoutSec);
     }
 
-    protected OpenSearchClient getClient() {
-        return client;
+    public OpenSearchClient getClient() {
+        return new OpenSearchClient(transport);
     }
 }
