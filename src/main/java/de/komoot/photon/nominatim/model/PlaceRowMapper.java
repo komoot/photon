@@ -8,7 +8,6 @@ import org.springframework.jdbc.core.RowMapper;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
-import java.util.regex.Pattern;
 
 /**
  * Maps the basic attributes of a placex table row to a PhotonDoc.
@@ -18,9 +17,6 @@ import java.util.regex.Pattern;
  */
 @NullMarked
 public class PlaceRowMapper implements RowMapper<PhotonDoc> {
-    private static final Pattern CATEGORY_PATTERN = Pattern.compile(
-            String.format("[%s]+", PhotonDoc.CATEGORY_VALID_CHARS));
-
     private final DBDataAdapter dbutils;
     private final Set<String> languages;
     private final boolean useGeometryColumn;
@@ -45,17 +41,17 @@ public class PlaceRowMapper implements RowMapper<PhotonDoc> {
             extratags.put("admin_level", String.valueOf(rs.getInt("admin_level")));
         }
 
-        if (!CATEGORY_PATTERN.matcher(osmKey).matches()) {
+        if (!PhotonDoc.isValidCategoryLabel(osmKey)) {
             osmKey = "place";
             osmValue = "yes";
-        } else if (!CATEGORY_PATTERN.matcher(osmValue).matches()) {
+        } else if (!PhotonDoc.isValidCategoryLabel(osmValue)) {
             osmValue = "yes";
         }
         String place = extratags.get("place");
         if (place == null) {
             place = extratags.get("linked_place");
         }
-        if (place != null && CATEGORY_PATTERN.matcher(place).matches()) {
+        if (place != null && PhotonDoc.isValidCategoryLabel(place)) {
             // take more specific extra tag information
             osmKey = "place";
             osmValue = place;

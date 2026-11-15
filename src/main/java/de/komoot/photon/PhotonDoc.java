@@ -12,16 +12,15 @@ import de.komoot.photon.nominatim.model.AddressType;
 
 import java.util.*;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 /**
  * Denormalized document with all information needed for saving in the Photon database.
  */
 @NullMarked
 public class PhotonDoc {
-    public static final String CATEGORY_VALID_CHARS = "a-zA-Z0-9_-";
-    public static final Pattern CATEGORY_PATTERN = Pattern.compile(
-            String.format("[%1$s]+(\\.[%1$s]+)+(,[%1$s]+(\\.[%1$s]+)+)*", PhotonDoc.CATEGORY_VALID_CHARS));
+    private static final String CATEGORY_VALID_CHARS = "a-zA-Z0-9_-";
+    public static final Pattern CATEGORY_LIST_PATTERN = Pattern.compile(
+            String.format("[%1$s]+(?:\\.[%1$s]+)+(?:,[%1$s]+(?:\\.[%1$s]+)+)*", CATEGORY_VALID_CHARS));
     public static final String DEFAULT_OSM_KEY = "place";
     public static final String DEFAULT_OSM_VALUE = "yes";
     private static final Map<String, AddressType> ADDRESS_TYPE_LOOKUP = Map.ofEntries(
@@ -168,12 +167,53 @@ public class PhotonDoc {
     }
 
     public PhotonDoc categories(Collection<@Nullable String> collection) {
-        this.categorySet = collection.stream()
-                .filter(Objects::nonNull)
-                .filter(s -> CATEGORY_PATTERN.matcher(s).matches())
-                .collect(Collectors.toSet());
+        categorySet = new HashSet<>();
+        for (var item : collection) {
+            if (item != null && isCategoryString(item)) {
+                categorySet.add(item);
+            }
+        }
 
         return this;
+    }
+
+    public static boolean isValidCategoryLabel(String s) {
+        if (s.isEmpty() || s.length() > 95) {
+            return false;
+        }
+
+        for (int i = 0; i < s.length(); ++i) {
+            var c = s.charAt(i);
+            if (!((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c == '-' || c == '_')) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static boolean isCategoryString(String s) {
+        if (s.isEmpty() || s.length() > 200) {
+            return false;
+        }
+
+        boolean needLabelChar = true;
+        int numParts = 1;
+        for (int i = 0; i < s.length(); ++i) {
+            var c = s.charAt(i);
+            if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c == '-' || c == '_') {
+                needLabelChar = false;
+            } else if (c == '.') {
+                if (needLabelChar || numParts > 4) {
+                    return false;
+                }
+                needLabelChar = true;
+                numParts++;
+            } else {
+                return false;
+            }
+        }
+
+        return !needLabelChar && numParts > 1;
     }
 
     public PhotonDoc importance(double importance) {

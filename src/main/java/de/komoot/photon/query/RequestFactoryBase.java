@@ -57,13 +57,13 @@ public class RequestFactoryBase {
 
         request.addIncludeCategories(context.queryParamsAsClass("include", String.class)
                 .check(l -> l.stream()
-                                .allMatch(s -> PhotonDoc.CATEGORY_PATTERN.matcher(s).matches()),
+                                .allMatch(s -> PhotonDoc.CATEGORY_LIST_PATTERN.matcher(s).matches()),
                         "Invalid category pattern in 'include'.")
                 .get());
 
         request.addExcludeCategories(context.queryParamsAsClass("exclude", String.class)
                 .check(l -> l.stream()
-                                .allMatch(s -> PhotonDoc.CATEGORY_PATTERN.matcher(s).matches()),
+                                .allMatch(s -> PhotonDoc.CATEGORY_LIST_PATTERN.matcher(s).matches()),
                         "Invalid category pattern in 'exclude'.")
                 .get());
 
