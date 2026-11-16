@@ -74,6 +74,7 @@ dependencies {
     implementation 'io.javalin:javalin-micrometer:7.2.3'
     implementation 'io.micrometer:micrometer-registry-prometheus:1.17.1'
     implementation 'tools.jackson.core:jackson-databind:3.2.3'
+    implementation 'com.ibm.icu:icu4j:79.1'
 
     testImplementation 'com.h2database:h2:2.5.252'
     testImplementation 'org.junit.jupiter:junit-jupiter:6.1.3'
