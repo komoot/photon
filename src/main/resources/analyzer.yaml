@@ -6,7 +6,7 @@ normalization:
     - "ß > 'ss'"
     - "[’‘׳`\\'] > 'ʼ'"
     - "[[:Punctuation:][:Symbol:] - [ʼ]]+  > ' '"
-language-defaults-per-country: /BUILTIN/ /default_languages.yaml
+language-defaults-per-country: /BUILTIN/ /language-defaults-per-country.yaml
 variants:
   - type: lexical
     rules:
