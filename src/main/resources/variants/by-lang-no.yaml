@@ -1,0 +1,13 @@
+# Source: https://wiki.openstreetmap.org/wiki/Name_finder:Abbreviations#Norsk_-_Norwegian
+# Also: https://sprakradet.no/godt-og-korrekt-sprak/rettskriving-og-grammatikk/forkortelser/
+- lang: "no"
+  words:
+    - doktor, dokter -> dr
+    - plass, plassen -> pl
+    - sving, svingen -> sv
+    # convert between Nynorsk and Bookmal
+    - vei, veg => v,vei,veg
+    - ~veien, ~vegen |=> vn,veien,vegen
+    # convert between the two female forms
+    - ~gaten, ~gata |=> gaten,gata,gt
+    - gate -> gt
