@@ -3,9 +3,11 @@ package de.komoot.photon.config;
 import com.beust.jcommander.Parameter;
 import de.komoot.photon.ConfigExtraTags;
 import de.komoot.photon.DatabaseProperties;
+import de.komoot.photon.analyzer.config.AnalyzerConfig;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -42,6 +44,13 @@ public class ImportFilterConfig {
             Set up database for reverse geocoding only""")
     private boolean reverseOnly = false;
 
+    @Parameter(names = "-analyzer", category = GROUP, placeholder = "FILE", description = """
+            Use custom configuration for name analysis (abbreviation and spelling variants).
+            """)
+    @Nullable private File analyzerConfigFile;
+
+    @Nullable private AnalyzerConfig cachedAnalyzerConfig;
+
     public Set<String> getLanguages() {
         return new HashSet<>(languages);
     }
@@ -67,11 +76,24 @@ public class ImportFilterConfig {
         }
         dbProps.setSupportGeometries(importGeometryColumn);
         dbProps.setReverseOnly(reverseOnly);
+        dbProps.setInputNormalizerRules(getAnalyzerConfig().getInputNormalizerRules());
 
         if (extraTags != null) {
             dbProps.setExtraTags(extraTags);
         }
 
         return dbProps;
+    }
+
+    public AnalyzerConfig getAnalyzerConfig() {
+        if (cachedAnalyzerConfig == null) {
+            if (analyzerConfigFile == null) {
+                cachedAnalyzerConfig = AnalyzerConfig.createDefault();
+            } else {
+                cachedAnalyzerConfig = AnalyzerConfig.createFromFile(analyzerConfigFile);
+            }
+        }
+
+        return cachedAnalyzerConfig;
     }
 }

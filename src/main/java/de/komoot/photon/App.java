@@ -1,6 +1,5 @@
 package de.komoot.photon;
 
-import de.komoot.photon.analyzer.config.AnalyzerConfig;
 import de.komoot.photon.analyzer.normalization.Normalizer;
 import de.komoot.photon.cli.Commands;
 import de.komoot.photon.cli.PhotonCli;
@@ -154,7 +153,7 @@ public class App {
 
         final var importer = esServer.createImporter(
                 dbProperties,
-                AnalyzerConfig.createDefault(),
+                cli.getImportFilterConfig().getAnalyzerConfig(),
                 cli.getGeneralConfig().getThreads(),
                 true);
 
@@ -274,7 +273,7 @@ public class App {
         }
 
         NominatimUpdater nominatimUpdater = new NominatimUpdater(postgresqlConfig, dbProperties);
-        nominatimUpdater.setUpdater(server.createUpdater(dbProperties, AnalyzerConfig.createDefault()));
+        nominatimUpdater.setUpdater(server.createUpdater(dbProperties, importFilterConfig.getAnalyzerConfig()));
         return nominatimUpdater;
     }
 
