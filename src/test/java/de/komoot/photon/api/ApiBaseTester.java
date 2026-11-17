@@ -23,6 +23,7 @@ public class ApiBaseTester extends ESBaseTester {
     public void setUpES(Path dataDirectory) throws IOException {
         super.setUpES(dataDirectory);
         photonDirectory = dataDirectory.toString();
+        setDefaultAnalyzerConfig();
     }
 
     protected void startAPI(String... extraParams) throws Exception {

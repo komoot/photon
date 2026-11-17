@@ -1,5 +1,6 @@
 package de.komoot.photon;
 
+import de.komoot.photon.analyzer.config.AnalyzerConfig;
 import de.komoot.photon.config.PhotonDBConfig;
 import de.komoot.photon.opensearch.*;
 import de.komoot.photon.query.ReverseRequest;
@@ -253,8 +254,8 @@ public class Server {
         return meta.get(PhotonIndex.META_DB_PROPERTIES).to(DatabaseProperties.class, new JacksonJsonpMapper(mapper));
     }
 
-    public Importer createImporter(DatabaseProperties dbProperties, int maxConcurrentRequests, boolean tuneRefresh) {
-        photonDocSerializer.configureFromDBProperties(dbProperties);
+    public Importer createImporter(DatabaseProperties dbProperties, AnalyzerConfig analyzerConfig, int maxConcurrentRequests, boolean tuneRefresh) {
+        photonDocSerializer.configure(dbProperties, analyzerConfig);
         var importer = new OpenSearchImporter(transport, maxConcurrentRequests);
         if (tuneRefresh) {
             importer.disableRefresh();
@@ -262,8 +263,8 @@ public class Server {
         return importer;
     }
 
-    public Updater createUpdater(DatabaseProperties dbProperties) {
-        photonDocSerializer.configureFromDBProperties(dbProperties);
+    public Updater createUpdater(DatabaseProperties dbProperties, AnalyzerConfig analyzerConfig) {
+        photonDocSerializer.configure(dbProperties, analyzerConfig);
         return new de.komoot.photon.opensearch.Updater(transport);
     }
 

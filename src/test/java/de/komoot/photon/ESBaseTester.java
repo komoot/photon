@@ -1,5 +1,6 @@
 package de.komoot.photon;
 
+import de.komoot.photon.analyzer.config.AnalyzerConfig;
 import de.komoot.photon.nominatim.model.AddressRow;
 import de.komoot.photon.nominatim.model.AddressType;
 import de.komoot.photon.nominatim.model.NameMap;
@@ -8,6 +9,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.locationtech.jts.geom.*;
 import org.locationtech.jts.io.ParseException;
 import org.locationtech.jts.io.WKTReader;
+import tools.jackson.dataformat.yaml.YAMLMapper;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -22,6 +24,7 @@ public class ESBaseTester {
 
     private TestServer server;
     private final DatabaseProperties dbProperties = new DatabaseProperties();
+    private AnalyzerConfig analyzerConfig = new AnalyzerConfig();
 
     protected NameMap makeDocNames(String... names) {
         Map<String, String> nameMap = new HashMap<>();
@@ -81,11 +84,11 @@ public class ESBaseTester {
     }
 
     protected Importer makeImporter() {
-        return server.createImporter(dbProperties);
+        return server.createImporter(dbProperties, analyzerConfig);
     }
 
     protected Updater makeUpdater() {
-        return server.createUpdater(dbProperties);
+        return server.createUpdater(dbProperties, analyzerConfig);
     }
 
     protected Server getServer() {
@@ -120,6 +123,16 @@ public class ESBaseTester {
 
     protected DatabaseProperties getProperties() {
         return dbProperties;
+    }
+
+    protected void setAnalyzerConfig(String config) {
+        analyzerConfig = YAMLMapper.shared().readValue(config, AnalyzerConfig.class);
+        dbProperties.setInputNormalizerRules(analyzerConfig.getInputNormalizerRules());
+    }
+
+    protected void setDefaultAnalyzerConfig() {
+        analyzerConfig = AnalyzerConfig.createDefault();
+        dbProperties.setInputNormalizerRules(analyzerConfig.getInputNormalizerRules());
     }
 
     protected void refresh() {

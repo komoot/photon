@@ -1,5 +1,7 @@
 package de.komoot.photon;
 
+import de.komoot.photon.analyzer.config.AnalyzerConfig;
+import de.komoot.photon.analyzer.normalization.Normalizer;
 import de.komoot.photon.config.PhotonDBConfig;
 import de.komoot.photon.config.PhotonDBLayoutConfig;
 import de.komoot.photon.opensearch.OpenSearchResult;
@@ -58,14 +60,14 @@ public class TestServer {
 
     }
 
-    public Importer createImporter(DatabaseProperties dbProperties) {
+    public Importer createImporter(DatabaseProperties dbProperties, AnalyzerConfig config) {
         // Don't tune refresh_interval,
         // or the explicit refresh() calls would no-op against refresh_interval=-1.
-        return testServer.createImporter(dbProperties, 1, false);
+        return testServer.createImporter(dbProperties, config, 1, false);
     }
 
-    public Updater createUpdater(DatabaseProperties dbProperties) {
-        return testServer.createUpdater(dbProperties);
+    public Updater createUpdater(DatabaseProperties dbProperties, AnalyzerConfig config) {
+        return testServer.createUpdater(dbProperties, config);
     }
 
     public void stopTestServer() {
