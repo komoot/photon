@@ -4,10 +4,13 @@ import com.ibm.icu.text.ReplaceableString;
 import com.ibm.icu.text.Transliterator;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ICUNormalizer implements Normalizer {
     private final List<Transliterator> transliterators = new ArrayList<>();
+    private final Map<String, String> cache = new HashMap<>();
 
     public ICUNormalizer(String id, List<String> rules) {
         for (var rule : rules) {
@@ -30,24 +33,30 @@ public class ICUNormalizer implements Normalizer {
             return input;
         }
 
-        var result = new ReplaceableString(input);
-        var index = new Transliterator.Position(0, input.length(), 0);
-
-        // Simplified implementation of the CompoundTransliterator loop.
-        for (var trans: transliterators) {
-            index.start = 0;
-
-            if (index.limit == 0) {
-                break;
-            }
-
-            trans.filteredTransliterate(result, index, false);
-
-            if (index.start != index.limit) {
-                throw new RuntimeException("Incomplete transliteration.");
-            }
+        if (cache.size() > 10000) {
+            cache.clear();
         }
 
-        return result.toString();
+        return cache.computeIfAbsent(input, v -> {
+            var result = new ReplaceableString(input);
+            var index = new Transliterator.Position(0, input.length(), 0);
+
+            // Simplified implementation of the CompoundTransliterator loop.
+            for (var trans : transliterators) {
+                index.start = 0;
+
+                if (index.limit == 0) {
+                    break;
+                }
+
+                trans.filteredTransliterate(result, index, false);
+
+                if (index.start != index.limit) {
+                    throw new RuntimeException("Incomplete transliteration.");
+                }
+            }
+
+            return result.toString();
+        });
     }
 }
