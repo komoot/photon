@@ -75,39 +75,61 @@ public class VariantProcessor {
         }
 
         public Set<String> transform(String nameType, String value) {
-            return transformInternal(nameType, Set.of(normalizer.transform(value)));
+            var finalTree = getFinalTree(nameType);
+            return finalTree == null ? Set.of(normalizer.transform(value)) : transformInternal(finalTree, value);
         }
 
         public Set<String> transform(String nameType, Collection<String> values) {
-            Set<String> startSet = new HashSet<>();
-            for (var s : values) {
-                startSet.add(normalizer.transform(s));
+            var finalTree = getFinalTree(nameType);
+            Set<String> finalSet = new HashSet<>();
+
+            if (finalTree == null) {
+                for (var v : values) {
+                    finalSet.add(normalizer.transform(v));
+                }
+            } else {
+                for (var v : values) {
+                    finalSet.addAll(transformInternal(finalTree, v));
+                }
             }
 
-            return transformInternal(nameType, startSet);
+            return finalSet;
         }
 
-        private Set<String> transformInternal(String nameType, Set<String> startSet) {
-            var variants = startSet;
+        private Set<String> transformInternal(TreeNode finalTree, String value) {
+            assert finalTree.data != null;
 
-            if (tree != null) {
-                var finalTree = tree;
-                var lang = languages.contains(nameType) ? nameType : defaultLanguage;
-                for (var filt : nameFilters) {
-                    finalTree = finalTree.getChild(filt.apply(lang));
-                    if (finalTree == null) {
-                        return variants;
-                    }
+            if (finalTree.cache == null) {
+                finalTree.cache = new HashMap<>();
+            } else if (finalTree.cache.size() > 5000) {
+                finalTree.cache.clear();
+            }
+
+            return finalTree.cache.computeIfAbsent(value, v -> {
+                var variants = Set.of(normalizer.transform(value));
+                for (var trans : finalTree.data) {
+                    variants = trans.transform(variants);
                 }
+                return variants;
+            });
+        }
 
-                if (finalTree.data != null) {
-                    for (var trans : finalTree.data) {
-                        variants = trans.transform(variants);
-                    }
+        @Nullable
+        private TreeNode getFinalTree(String nameType) {
+            if (tree == null) {
+                return null;
+            }
+
+            var finalTree = tree;
+            var lang = languages.contains(nameType) ? nameType : defaultLanguage;
+            for (var filt : nameFilters) {
+                finalTree = finalTree.getChild(filt.apply(lang));
+                if (finalTree == null) {
+                    break;
                 }
             }
 
-            return variants;
+            return finalTree;
         }
     }
 
@@ -116,6 +138,7 @@ public class VariantProcessor {
         @Nullable Map<String, TreeNode> children;
         @Nullable TreeNode defaultChild = null;
         @Nullable List<VariantGenerator> data;
+        @Nullable Map<String, Set<String>> cache;
 
         @Nullable TreeNode getChild(@Nullable String key) {
             if (children == null) {
