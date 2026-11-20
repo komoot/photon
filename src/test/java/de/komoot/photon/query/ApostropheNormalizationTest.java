@@ -18,6 +18,7 @@ class ApostropheNormalizationTest extends BaseTesterQuery {
 
     @BeforeAll
     void setUp(@TempDir Path dataDirectory) throws IOException {
+        setDefaultAnalyzerConfig();
         setUpES(dataDirectory);
 
         setupDocs(

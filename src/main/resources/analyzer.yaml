@@ -1,8 +1,6 @@
 normalization:
   input:
-    - ":: NFKC"
     - ":: lower"
-    - ":: Hans-Hant"
     - "ß > 'ss'"
     - "[’‘׳`\\'] > 'ʼ'"
     - "[[:Punctuation:][:Symbol:] - [ʼ]]+  > ' '"
