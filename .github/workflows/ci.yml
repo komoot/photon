@@ -76,7 +76,6 @@ jobs:
         with:
             path: |
                Nominatim/data/country_osm_grid.sql.gz
-               monaco-latest.osm.pbf
             key: nominatim-test-data-${{ env.cache_key }}
 
       - name: Install prerequisites
@@ -115,15 +114,13 @@ jobs:
 
       - name: Prepare import environment
         run: |
-            if [ ! -f monaco-latest.osm.pbf ]; then
-                wget --no-verbose https://download.geofabrik.de/europe/monaco-latest.osm.pbf
-            fi
+            wget --no-verbose https://nominatim.org/ci-test-data/test-country.osm.pbf
             mkdir data-env
         shell: bash
 
       - name: Import Nominatim
         run: |
-          ~/venv/bin/nominatim import --osm-file ../monaco-latest.osm.pbf --reverse-only
+          ~/venv/bin/nominatim import --osm-file ../test-country.osm.pbf --reverse-only
           ~/venv/bin/nominatim admin --check-database
         shell: bash
         working-directory: data-env
@@ -141,7 +138,8 @@ jobs:
         shell: bash
         working-directory: data-env
         env:
-          NOMINATIM_REPLICATION_MAX_DIFF: 10
+          NOMINATIM_REPLICATION_MAX_DIFF: 1
+          NOMINATIM_REPLICATION_URL: https://nominatim.org/ci-test-data/test-country/updates
 
       - name: Update Photon
         run: java -jar "target/photon-$PHOTON_VERSION.jar" update -database nominatim -user runner -password foobar
