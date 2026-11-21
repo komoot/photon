@@ -3,7 +3,8 @@ normalization:
     - ":: lower"
     - "ß > 'ss'"
     - "[’‘׳`\\'] > 'ʼ'"
-    - "[[:Punctuation:][:Symbol:] - [ʼ]]+  > ' '"
+    - "[;] > ','"
+    - "[[:Punctuation:][:Symbol:] - [ʼ,]]+  > ' '"
 language-defaults-per-country: /BUILTIN/ /language-defaults-per-country.yaml
 variants:
   - type: lexical
