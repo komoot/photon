@@ -12,6 +12,8 @@ import java.util.function.Function;
 public class VariantProcessor {
     private final Set<String> languages;
     private final Normalizer normalizer;
+    private final Map<String, String> normalizerCache = new HashMap<>();
+
     private final List<Function<PhotonDoc, @Nullable String>> photonDocFilters;
     private final List<Function<String, @Nullable String>> nameFilters;
     private final Map<String, String> countryLanguageMap = new HashMap<>();
@@ -71,12 +73,16 @@ public class VariantProcessor {
         }
 
         public String normalize(String input) {
-            return normalizer.transform(input);
+            if (normalizerCache.size() > 10000) {
+                normalizerCache.clear();
+            }
+
+            return normalizerCache.computeIfAbsent(input, normalizer::transform);
         }
 
         public Set<String> transform(String nameType, String value) {
             var finalTree = getFinalTree(nameType);
-            return finalTree == null ? Set.of(normalizer.transform(value)) : transformInternal(finalTree, value);
+            return finalTree == null ? Set.of(normalize(value)) : transformInternal(finalTree, value);
         }
 
         public Set<String> transform(String nameType, Collection<String> values) {
@@ -85,7 +91,7 @@ public class VariantProcessor {
 
             if (finalTree == null) {
                 for (var v : values) {
-                    finalSet.add(normalizer.transform(v));
+                    finalSet.add(normalize(v));
                 }
             } else {
                 for (var v : values) {
@@ -106,7 +112,7 @@ public class VariantProcessor {
             }
 
             return finalTree.cache.computeIfAbsent(value, v -> {
-                var variants = Set.of(normalizer.transform(value));
+                var variants = Set.of(normalize(value));
                 for (var trans : finalTree.data) {
                     variants = trans.transform(variants);
                 }
