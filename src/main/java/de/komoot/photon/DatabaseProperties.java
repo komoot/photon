@@ -30,6 +30,9 @@ public class DatabaseProperties {
     private boolean synonymFiltersAvailable = false;
     private ConfigExtraTags extraTags = new ConfigExtraTags();
     private boolean reverseOnly = false;
+    // Normalization of database input and queries.
+    // This must remain stable over the existence of the database.
+    private List<String> inputNormalizerRules = List.of();
 
     @SuppressWarnings("unused")
     public void setDatabaseVersion(String version) {
@@ -141,5 +144,13 @@ public class DatabaseProperties {
 
     public boolean getReverseOnly() {
         return reverseOnly;
+    }
+
+    public List<String> getInputNormalizerRules() {
+        return inputNormalizerRules;
+    }
+
+    public void setInputNormalizerRules(List<String> inputNormalizerRules) {
+        this.inputNormalizerRules = inputNormalizerRules;
     }
 }

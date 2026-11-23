@@ -1,7 +1,9 @@
 package de.komoot.photon.query;
 
+import de.komoot.photon.analyzer.normalization.Normalizer;
 import io.javalin.http.Context;
 import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 import java.util.Set;
@@ -18,8 +20,8 @@ public class StructuredSearchRequestFactory extends SearchRequestFactoryBase imp
                     .collect(Collectors.toSet());
 
 
-    public StructuredSearchRequestFactory(Set<String> supportedLanguages, String defaultLanguage, int maxResults, boolean supportGeometries) {
-        super(supportedLanguages, defaultLanguage, maxResults, supportGeometries);
+    public StructuredSearchRequestFactory(Set<String> supportedLanguages, String defaultLanguage, int maxResults, boolean supportGeometries, Normalizer normalizer) {
+        super(supportedLanguages, defaultLanguage, maxResults, supportGeometries, normalizer);
     }
 
     public StructuredSearchRequest create(Context context) {
@@ -34,16 +36,22 @@ public class StructuredSearchRequestFactory extends SearchRequestFactoryBase imp
         final var request = new StructuredSearchRequest();
 
         completeSearchRequest(request, context);
-        request.setCountryCode(context.queryParam("countrycode"));
-        request.setState(context.queryParam("state"));
-        request.setCounty(context.queryParam("county"));
-        request.setCity(context.queryParam("city"));
-        request.setPostCode(context.queryParam("postcode"));
-        request.setDistrict(context.queryParam("district"));
-        request.setStreet(context.queryParam("street"));
-        request.setHouseNumber(context.queryParam("housenumber"));
+        request.setCountryCode(getNormalizedParam(context, "countrycode"));
+        request.setState(getNormalizedParam(context, "state"));
+        request.setCounty(getNormalizedParam(context, "county"));
+        request.setCity(getNormalizedParam(context, "city"));
+        request.setPostCode(getNormalizedParam(context, "postcode"));
+        request.setDistrict(getNormalizedParam(context, "district"));
+        request.setStreet(getNormalizedParam(context, "street"));
+        request.setHouseNumber(getNormalizedParam(context, "housenumber"));
 
         return request;
+    }
+
+    @Nullable
+    private String getNormalizedParam(Context context, String name) {
+        var param = context.queryParam(name);
+        return param == null ? null : normalizer.transform(param);
     }
 
 }

@@ -1,6 +1,7 @@
 package de.komoot.photon.opensearch;
 
 import org.jspecify.annotations.NullMarked;
+import tools.jackson.core.JsonGenerator;
 
 import java.util.*;
 
@@ -63,4 +64,20 @@ public class NameCollector {
         }
         return out.toString();
     }
+
+    public void writeNamesAsArrayProperty(JsonGenerator gen, String field) {
+        gen.writeArrayPropertyStart(field);
+
+        var seen = new HashSet<String>();
+        for (var i = MAXPRIO; i >= 0; --i) {
+            for (var e : prioList[i]) {
+                if (seen.add(e)) {
+                    gen.writeString(e);
+                }
+            }
+        }
+
+        gen.writeEndArray();
+    }
+
 }

@@ -1,5 +1,6 @@
 package de.komoot.photon.query;
 
+import de.komoot.photon.analyzer.normalization.Normalizer;
 import io.javalin.http.Context;
 import org.jspecify.annotations.NullMarked;
 
@@ -13,8 +14,8 @@ public class SimpleSearchRequestFactory extends SearchRequestFactoryBase impleme
             Stream.concat(SEARCH_PARAMETERS.stream(), Stream.of("q", "countrycode"))
                     .collect(Collectors.toSet());
 
-    public SimpleSearchRequestFactory(Set<String> supportedLanguages, String defaultLanguage, int maxResults, boolean supportGeometries) {
-        super(supportedLanguages, defaultLanguage, maxResults, supportGeometries);
+    public SimpleSearchRequestFactory(Set<String> supportedLanguages, String defaultLanguage, int maxResults, boolean supportGeometries, Normalizer normalizer) {
+        super(supportedLanguages, defaultLanguage, maxResults, supportGeometries, normalizer);
     }
 
     public SimpleSearchRequest create(Context context) {
@@ -30,7 +31,7 @@ public class SimpleSearchRequestFactory extends SearchRequestFactoryBase impleme
                 throw new BadRequestException(400, "q parameter is required when no include categories are specified");
             }
         } else {
-            request.setQuery(query);
+            request.setQuery(normalizer.transform(query));
         }
 
         return request;

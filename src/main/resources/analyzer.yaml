@@ -1,0 +1,47 @@
+normalization:
+  input:
+    - ":: lower"
+    - "ß > 'ss'"
+    - "[’‘׳`\\'] > 'ʼ'"
+    - "[;] > ','"
+    - "[[:Punctuation:][:Symbol:] - [ʼ,]]+  > ' '"
+language-defaults-per-country: /BUILTIN/ /language-defaults-per-country.yaml
+variants:
+  - type: lexical
+    rules:
+        - /BUILTIN/ /variants/by-lang-bg.yaml
+        - /BUILTIN/ /variants/by-lang-ca.yaml
+        - /BUILTIN/ /variants/by-lang-cs.yaml
+        - /BUILTIN/ /variants/by-lang-da.yaml
+        - /BUILTIN/ /variants/by-lang-de.yaml
+        - /BUILTIN/ /variants/by-lang-el.yaml
+        - /BUILTIN/ /variants/by-lang-en.yaml
+        - /BUILTIN/ /variants/by-lang-es.yaml
+        - /BUILTIN/ /variants/by-lang-et.yaml
+        - /BUILTIN/ /variants/by-lang-eu.yaml
+        - /BUILTIN/ /variants/by-lang-fi.yaml
+        - /BUILTIN/ /variants/by-lang-fr.yaml
+        - /BUILTIN/ /variants/by-lang-gl.yaml
+        - /BUILTIN/ /variants/by-lang-hu.yaml
+        - /BUILTIN/ /variants/by-lang-it.yaml
+        - /BUILTIN/ /variants/by-lang-mg.yaml
+        - /BUILTIN/ /variants/by-lang-ms.yaml
+        - /BUILTIN/ /variants/by-lang-nl.yaml
+        - /BUILTIN/ /variants/by-lang-no.yaml
+        - /BUILTIN/ /variants/by-lang-pl.yaml
+        - /BUILTIN/ /variants/by-lang-pt.yaml
+        - /BUILTIN/ /variants/by-lang-ro.yaml
+        - /BUILTIN/ /variants/by-lang-ru.yaml
+        - /BUILTIN/ /variants/by-lang-sk.yaml
+        - /BUILTIN/ /variants/by-lang-sl.yaml
+        - /BUILTIN/ /variants/by-lang-sv.yaml
+        - /BUILTIN/ /variants/by-lang-tr.yaml
+        - /BUILTIN/ /variants/by-lang-uk.yaml
+        - /BUILTIN/ /variants/by-lang-vi.yaml
+  - type: icu-transform
+    rules:
+      - lang: de
+        transforms:
+          - ä > ae
+          - ö > oe
+          - ü > ue

@@ -3,6 +3,8 @@ package de.komoot.photon.opensearch;
 import de.komoot.photon.ConfigExtraTags;
 import de.komoot.photon.DatabaseProperties;
 import de.komoot.photon.PhotonDoc;
+import de.komoot.photon.analyzer.config.AnalyzerConfig;
+import de.komoot.photon.analyzer.variants.VariantProcessor;
 import de.komoot.photon.nominatim.model.AddressType;
 import de.komoot.photon.nominatim.model.PostcodeUtils;
 import org.jspecify.annotations.NullMarked;
@@ -13,33 +15,40 @@ import tools.jackson.core.JsonGenerator;
 import tools.jackson.databind.SerializationContext;
 import tools.jackson.databind.ser.std.StdSerializer;
 
+import java.util.EnumMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 @NullMarked
 public class PhotonDocSerializer extends StdSerializer<PhotonDoc> {
     private Set<String> primaryLanguages = Set.of("default");
     private ConfigExtraTags configExtraTags = new ConfigExtraTags();
+    @Nullable private VariantProcessor variantProcessor;
 
     public PhotonDocSerializer() {
         super(PhotonDoc.class);
     }
 
-    public void configureFromDBProperties(DatabaseProperties props) {
+    public void configure(DatabaseProperties props, AnalyzerConfig analyzerConfig) {
         primaryLanguages = new HashSet<>(props.getLanguages());
         primaryLanguages.add("default");
 
         configExtraTags = props.configExtraTags();
+        variantProcessor = analyzerConfig.createProcessor(
+                props.getLanguages(), props.getInputNormalizerRules());
     }
 
     @Override
     public void serialize(PhotonDoc value, JsonGenerator gen, SerializationContext context) {
+        assert variantProcessor != null;
+        final var docProcessor = variantProcessor.getTransformForDoc(value);
+
         final var atype = value.getAddressType();
         final var isNamed = !value.getName().isEmpty();
         final var isAddress = value.getHouseNumber() != null;
         final var termCollector = new NameCollector();
-        final var nameCollector  = new NameCollector();
+        final var nameCollector = new NameCollector();
+        final var fieldCollectors = new EnumMap<AddressType, Set<String>>(AddressType.class);
 
         gen.writeStartObject();
         gen.writeNumberProperty(DocFields.OSM_ID, value.getOsmId());
@@ -64,16 +73,17 @@ public class PhotonDocSerializer extends StdSerializer<PhotonDoc> {
         }
 
         if (isAddress) {
-            gen.writeStringProperty(DocFields.HOUSENUMBER, value.getHouseNumber());
-            termCollector.add(value.getHouseNumber(), isNamed ? 4 : 5);
+            var normHnr = docProcessor.normalize(value.getHouseNumber());
+            gen.writeStringProperty(DocFields.HOUSENUMBER, normHnr);
+            termCollector.add(normHnr, isNamed ? 4 : 5);
         }
 
         if (value.getPostcode() != null) {
             gen.writeStringProperty(DocFields.POSTCODE, value.getPostcode());
-            termCollector.add(value.getPostcode(), 2);
+            termCollector.add(docProcessor.normalize(value.getPostcode()), 2);
             var altPostcode = PostcodeUtils.postcodeAltName(value.getPostcode());
             if (altPostcode != null) {
-                termCollector.add(altPostcode, 2);
+                termCollector.add(docProcessor.normalize(altPostcode), 2);
             }
         }
 
@@ -82,10 +92,11 @@ public class PhotonDocSerializer extends StdSerializer<PhotonDoc> {
             context.writeValue(gen, value.getName());
 
             for (var entry : value.getName().entrySet()) {
-                final var name = entry.getValue();
-                final boolean isPrimaryName = primaryLanguages.contains(entry.getKey());
-                termCollector.add(name, isPrimaryName ? 5 : 2);
-                nameCollector.add(name, isPrimaryName ? 2 : 1);
+                var key = entry.getKey();
+                var names = docProcessor.transform(key, entry.getValue());
+                final boolean isPrimaryName = primaryLanguages.contains(key);
+                termCollector.addAll(names, isPrimaryName ? 5 : 2);
+                nameCollector.addAll(names, isPrimaryName ? 2 : 1);
             }
         }
 
@@ -97,20 +108,26 @@ public class PhotonDocSerializer extends StdSerializer<PhotonDoc> {
 
             gen.writeName(type.getName());
             context.writeValue(gen, values);
-            termCollector.addAll(values.values(), prio);
+            var fieldCollector = new HashSet<String>();
+            for (var val : values.entrySet()) {
+                var names = docProcessor.transform(val.getKey(), val.getValue());
+                termCollector.addAll(names, prio);
+                fieldCollector.addAll(names);
+            }
+            fieldCollectors.put(type, fieldCollector);
         }
 
         String countryCode = value.getCountryCode();
         if (countryCode != null) {
             gen.writeStringProperty(DocFields.COUNTRYCODE, countryCode);
-            termCollector.add(countryCode, 2);
+            termCollector.add(docProcessor.normalize(countryCode), 2);
         }
 
         configExtraTags.writeFilteredExtraTags(gen, DocFields.EXTRA, value.getExtratags());
         writeExtent(gen, value.getBbox());
 
-        for (var contextVal : value.getContext().values()) {
-            termCollector.addAll(contextVal, 1);
+        for (var contextVal : value.getContext().entrySet()) {
+            termCollector.addAll(docProcessor.transform(contextVal.getKey(), contextVal.getValue()), 1);
         }
 
         if (!value.getCategories().isEmpty()) {
@@ -127,18 +144,24 @@ public class PhotonDocSerializer extends StdSerializer<PhotonDoc> {
             gen.writeStringProperty("name", nameCollector.toCollectorString());
         }
         if (isAddress) {
-            var parentNames = value.getAddressParts().get(AddressType.STREET);
+            var parentNames = fieldCollectors.get(AddressType.STREET);
             if (parentNames != null) {
-                gen.writeStringProperty("parent", NameCollector.toCollectorString(parentNames.values()));
+                gen.writeStringProperty("parent", NameCollector.toCollectorString(parentNames));
             }
         }
 
         gen.writeObjectPropertyStart("field");
         if (isNamed) {
-            writeDistinctMapValuesAsList(gen, DocFields.NAME, value.getName());
+            nameCollector.writeNamesAsArrayProperty(gen, DocFields.NAME);
         }
-        for (var entry : value.getAddressParts().entrySet()) {
-            writeDistinctMapValuesAsList(gen, entry.getKey().getName(), entry.getValue());
+        for (var entry : fieldCollectors.entrySet()) {
+            gen.writeArrayPropertyStart(entry.getKey().getName());
+
+            for (String name : entry.getValue()) {
+                gen.writeString(name);
+            }
+
+            gen.writeEndArray();
         }
         gen.writeEndObject(); // collector.field
 
@@ -169,17 +192,4 @@ public class PhotonDocSerializer extends StdSerializer<PhotonDoc> {
         gen.writeEndObject();
     }
 
-    private void writeDistinctMapValuesAsList(JsonGenerator gen, String fieldName, Map<String, String> names) {
-        gen.writeName(fieldName);
-        gen.writeStartArray();
-
-        var seen = new HashSet<String>();
-        for (String name : names.values()) {
-            if (seen.add(name)) {
-                gen.writeString(name);
-            }
-        }
-
-        gen.writeEndArray();
-    }
 }

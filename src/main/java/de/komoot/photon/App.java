@@ -1,5 +1,6 @@
 package de.komoot.photon;
 
+import de.komoot.photon.analyzer.normalization.Normalizer;
 import de.komoot.photon.cli.Commands;
 import de.komoot.photon.cli.PhotonCli;
 import de.komoot.photon.config.*;
@@ -150,7 +151,11 @@ public class App {
             return;
         }
 
-        final var importer = esServer.createImporter(dbProperties, cli.getGeneralConfig().getThreads(), true);
+        final var importer = esServer.createImporter(
+                dbProperties,
+                cli.getImportFilterConfig().getAnalyzerConfig(),
+                cli.getGeneralConfig().getThreads(),
+                true);
 
         Date importDate;
         try {
@@ -268,7 +273,7 @@ public class App {
         }
 
         NominatimUpdater nominatimUpdater = new NominatimUpdater(postgresqlConfig, dbProperties);
-        nominatimUpdater.setUpdater(server.createUpdater(dbProperties));
+        nominatimUpdater.setUpdater(server.createUpdater(dbProperties, importFilterConfig.getAnalyzerConfig()));
         return nominatimUpdater;
     }
 
@@ -366,12 +371,14 @@ public class App {
             config.routes.get("/status", new StatusRequestHandler(server));
 
             if (!dbProperties.getReverseOnly()) {
+                var normalizer = Normalizer.fromICURules("photon-query-norm", dbProperties.getInputNormalizerRules());
                 config.routes.get("/api", new GenericSearchHandler<>(
                         new SimpleSearchRequestFactory(
                                 dbProperties.getLanguages(),
                                 args.getDefaultLanguage(),
                                 args.getMaxResults(),
-                                dbProperties.getSupportGeometries()),
+                                dbProperties.getSupportGeometries(),
+                                normalizer),
                         server.createSearchHandler(args.getQueryTimeout(), synonyms),
                         formatter));
 
@@ -380,7 +387,8 @@ public class App {
                                 dbProperties.getLanguages(),
                                 args.getDefaultLanguage(),
                                 args.getMaxResults(),
-                                dbProperties.getSupportGeometries()),
+                                dbProperties.getSupportGeometries(),
+                                normalizer),
                         server.createStructuredSearchHandler(args.getQueryTimeout()),
                         formatter));
             }

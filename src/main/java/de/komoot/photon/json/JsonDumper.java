@@ -1,6 +1,7 @@
 package de.komoot.photon.json;
 
 import de.komoot.photon.*;
+import de.komoot.photon.common.DocumentCounter;
 import de.komoot.photon.nominatim.model.AddressType;
 import de.komoot.photon.nominatim.model.NameMap;
 import org.apache.logging.log4j.LogManager;
@@ -22,6 +23,7 @@ public class JsonDumper implements Importer {
 
     private final DatabaseProperties dbProperties;
 
+    private final DocumentCounter counter = new DocumentCounter();
     private final JsonGenerator writer;
     private final GeoJsonWriter geojsonWriter = new GeoJsonWriter();
 
@@ -52,6 +54,7 @@ public class JsonDumper implements Importer {
             writer.writeStartArray();
             while (it.hasNext()) {
                 writeNominatimDocument(it.next());
+                counter.inc();
             }
             writer.writeEndArray();
 
@@ -66,6 +69,7 @@ public class JsonDumper implements Importer {
 
     @Override
     public void finish() {
+        counter.finish();
         writer.close();
     }
 

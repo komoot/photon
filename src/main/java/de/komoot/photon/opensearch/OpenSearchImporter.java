@@ -2,6 +2,7 @@ package de.komoot.photon.opensearch;
 
 import de.komoot.photon.Importer;
 import de.komoot.photon.PhotonDoc;
+import de.komoot.photon.common.DocumentCounter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jspecify.annotations.NullMarked;
@@ -19,7 +20,6 @@ import java.io.IOException;
 public class OpenSearchImporter implements Importer {
     private static final Logger LOGGER = LogManager.getLogger();
     private static final String OS_DEFAULT_REFRESH_INTERVAL = "1s";
-    private static final int PROGRESS_INTERVAL = 50000;
     /**
      * Estimated bytes per geometry coordinate in the GeoJSON encoding (two formatted doubles
      * plus brackets and separators). Deliberately generous so the byte estimate runs high and
@@ -39,15 +39,12 @@ public class OpenSearchImporter implements Importer {
     private long bytes = 0;
     private static final long maxBulkBytes = 10 * 1024 * 1024;
 
-    private final long startMillis;
-    private long counter = 0;
+    private final DocumentCounter counter = new DocumentCounter();
     private boolean hasPrintedNoUpdates = false;
 
     public OpenSearchImporter(OpenSearchTransport transport, int threads) {
         this.client = new OpenSearchClient(transport);
         this.requestPool = new BulkRequestPool(transport, threads);
-
-        this.startMillis = System.currentTimeMillis();
     }
 
     public void disableRefresh() {
@@ -85,10 +82,7 @@ public class OpenSearchImporter implements Importer {
                 flush();
             }
 
-            if (++counter % PROGRESS_INTERVAL == 0) {
-                final double documentsPerSecond = 1000d * counter / (System.currentTimeMillis() - startMillis);
-                LOGGER.info("Imported {} documents [{}/second]", counter, documentsPerSecond);
-            }
+            counter.inc();
         }
     }
 
@@ -115,9 +109,7 @@ public class OpenSearchImporter implements Importer {
             }
         }
 
-        LOGGER.info("Finished import of {} photon documents. (Total processing time: {}s)",
-                counter, (System.currentTimeMillis() - startMillis) / 1000);
-
+        counter.finish();
         try {
             client.indices().refresh(r -> r.index(PhotonIndex.NAME));
         } catch (IOException e) {
