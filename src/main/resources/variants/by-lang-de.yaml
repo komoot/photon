@@ -1,17 +1,21 @@
 # Source: https://wiki.openstreetmap.org/wiki/Name_finder:Abbreviations#Deutsch_-_German
 - lang: de
   words:
+    -  Altenheim -> AH
     -  am -> a
+    -  Amtsgericht -> AG
     -  an der -> a d
     -  Allgemeines Krankenhaus -> AKH
     -  Altstoffsammelzentrum -> ASZ
+    -  Arbeitsmedizinisches Zentrum -> AMZ
     -  auf der -> a d
     -  ~bach -> B
     -  Bad -> B
-    -  Bahnhof -> Bhf
+    -  Bahnhof -> Bhf, Bf
     -  Bayerisch, Bayerische, Bayerischer, Bayerisches -> Bayer
     -  Berg -> B
     -  ~berg |-> bg
+    -  Berufsfeuerwehr -> BF
     -  Bezirk -> Bez
     -  ~brücke -> Br
     -  Bundesgymnasium -> BG
@@ -29,23 +33,27 @@
     -  ~dorf |-> df
     -  Doktor -> Dr
     -  ehemalige, ehemaliger, ehemaliges -> ehem
+    -  evangelische, evangelisches, evangelischer -> ev, evgl
     -  Fabrik -> Fb
     -  Fachhochschule -> FH
-    -  Freiwillige Feuerwehr -> FF
+    -  Feuerwache -> FW
+    -  Feuerwehr -> FW
     -  Forsthaus -> Fh
+    -  Freiwillige Feuerwehr -> FF, FFW
     -  ~gasse |-> g
     -  Gasthaus -> Gh
     -  Gasthof -> Ghf
     -  Gemeinde -> Gde
     -  Graben -> Gr
     -  Großer, Große, Großes -> Gr, G
+    -  Güterbahnhof -> Gbf
     -  Gymnasium und Realgymnasium -> GRG
     -  Handelsakademie -> HAK
     -  Handelsschule -> HASCH
     -  Haltestelle -> Hst
     -  Hauptbahnhof -> Hbf
     -  Haus -> Hs
-    -  Heilige, Heiliger, Heiliges -> Hl
+    -  Heilige, Heiliger, Heiliges -> Hl, Hlg
     -  Hintere, Hinterer, Hinteres -> Ht, Hint
     -  Hohe, Hoher, Hohes -> H
     -  ~höhle -> H
@@ -60,6 +68,7 @@
     -  Jagdhütte -> Jhtt
     -  Kapelle -> Kap, Kpl
     -  Katastralgemeinde -> KG
+    -  Katholische, Katholischer, Katholisches -> kath
     -  Kläranlage -> KA
     -  Kleiner, Kleine, Kleines -> kl
     -  Klein~ |-> Kl.
@@ -69,7 +78,9 @@
     -  Konzentrationslager -> KZ, KL
     -  Krankenhaus -> KH
     -  ~kreuz |-> kz
+    -  Kreiskrankenhaus -> KKH
     -  Landeskrankenhaus -> LKH
+    -  Landgericht -> LG
     -  Maria -> Ma
     -  Magister -> Mag
     -  Magistratsabteilung -> MA
@@ -85,14 +96,18 @@
     -  ob -> o
     -  Oberer, Obere, Oberes -> ob
     -  Ober~ |-> Ob.
+    -  Oberlandesgericht -> OLG
     -  Österreichischer Alpenverein -> ÖAV
     -  Österreichischer Gebirgsverein -> ÖGV
     -  Österreichischer Touristenklub -> ÖTK
     -  östliche, östlicher, östliches -> östl
     -  Pater -> P
+    -  Personenbahnhof -> Pbf
     -  Pfad -> P
     -  Platz -> Pl
     -  ~platz$ -> pl
+    -  Polizeipräsidium -> PP
+    -  Polizeiinspektion -> PI
     -  Professor -> Prof
     -  Quelle -> Q, Qu
     -  Reservoir -> Res
